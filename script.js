@@ -94,7 +94,8 @@
       business: document.getElementById('business').value.trim(),
       email: document.getElementById('email').value.trim(),
       plan: document.getElementById('plan').value,
-      about: document.getElementById('about').value.trim()
+      about: document.getElementById('about').value.trim(),
+      wantApp: document.getElementById('wantapp').checked
     };
     console.log('Lead captured (not yet sent anywhere):', payload);
 

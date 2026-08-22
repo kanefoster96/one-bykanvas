@@ -41,14 +41,4 @@ build command, output directory `.`.
 | Business | £50/mo    | Build, domain, hosting, requested features, support. Edits £35 each |
 | Pro      | £90/mo    | + 5 edits/mo, SEO review, testing |
 | Max      | £150/mo   | + 10 edits/mo, monthly SEO improvements |
-| App      | £99/mo    | iOS + Android, bug fixes, 1 improvement/mo. Standalone or alongside a site |
-
-Business is listed first and visually featured — it is the "get online fast, no
-setup cost" entry point.
-
-## Icons
-
-Icons live in one inline SVG sprite at the top of `index.html` and are used as
-`<svg class="i"><use href="#i-name"/></svg>`. Stroke and fill are set in CSS on
-`.i`, not on the sprite — `<use>` instances do not inherit presentation
-attributes from a wrapping `<g>`.
+| App      | £100/mo   | Add-on: iOS + Android, bug fixes, 1 improvement/mo |
