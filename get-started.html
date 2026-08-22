@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Get started — one</title>
+<meta name="description" content="Tell us about your business and we'll build your site. Live in two weeks, no setup cost.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body class="auth-body">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="one, by Kanvas — home">one</a>
+  </div>
+</header>
+
+<main class="wiz">
+  <!-- progress -->
+  <div class="wiz-top" id="wizTop">
+    <p class="wiz-count"><span id="stepNow">1</span> of 4</p>
+    <div class="wiz-bar"><i id="bar"></i></div>
+  </div>
+
+  <div class="wiz-view">
+    <div class="wiz-track" id="track">
+
+      <!-- ============ 1. about you ============ -->
+      <section class="wiz-step" data-step="1" aria-label="About you">
+        <h1>Let's get you online.</h1>
+        <p class="wiz-sub">First, the basics. Takes a minute.</p>
+        <div class="field"><label for="contact_name">Your full name</label><input id="contact_name" type="text" autocomplete="name"></div>
+        <div class="field"><label for="business_name">Business name</label><input id="business_name" type="text" autocomplete="organization"></div>
+        <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="email"></div>
+        <div class="field">
+          <label for="password">Create a password</label>
+          <input id="password" type="password" autocomplete="new-password">
+          <p class="hint">At least 8 characters.</p>
+        </div>
+        <p class="note" id="note1" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <p class="wiz-foot">Already have an account? <a href="/login.html">Log in</a></p>
+      </section>
+
+      <!-- ============ 2. the business ============ -->
+      <section class="wiz-step" data-step="2" aria-label="Your business" hidden>
+        <h1>What do you do?</h1>
+        <p class="wiz-sub">So we build the right kind of site for you.</p>
+        <div class="field">
+          <label for="business_type">Type of business</label>
+          <input id="business_type" type="text" list="types" placeholder="Café, barber, landscaping…">
+          <datalist id="types">
+            <option value="Café"></option><option value="Restaurant"></option><option value="Takeaway"></option>
+            <option value="Barber"></option><option value="Hair &amp; beauty salon"></option><option value="Gym or personal trainer"></option>
+            <option value="Trades (plumber, electrician, builder)"></option><option value="Landscaping or gardening"></option>
+            <option value="Cleaning"></option><option value="Retail shop"></option><option value="Professional services"></option>
+          </datalist>
+        </div>
+
+        <p class="wiz-label">Three things you want the site to do</p>
+        <div class="field"><input id="use1" type="text" placeholder="Show customers my live menu" aria-label="First thing you want the site to do"></div>
+        <div class="field"><input id="use2" type="text" placeholder="Take bookings without phone calls" aria-label="Second thing you want the site to do"></div>
+        <div class="field"><input id="use3" type="text" placeholder="Get found by people searching nearby" aria-label="Third thing you want the site to do"></div>
+        <p class="hint">One is enough to get going — fill in what you know.</p>
+
+        <p class="note" id="note2" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <button class="linkish wiz-back" data-back type="button">Back</button>
+      </section>
+
+      <!-- ============ 3. plan ============ -->
+      <section class="wiz-step" data-step="3" aria-label="Choose a plan" hidden>
+        <h1>Pick your plan.</h1>
+        <p class="wiz-sub">We'd start on Business. Only move up if you want us changing things for you every month.</p>
+
+        <div class="pick" id="pick">
+          <label class="pick-row is-on">
+            <input type="radio" name="plan" value="business" checked>
+            <span class="pick-main">
+              <span class="pick-head"><b>Business</b><em>£50<span>/mo</span></em></span>
+              <span class="pick-note">Everything you need to be online. Recommended.</span>
+            </span>
+          </label>
+          <details class="pick-more">
+            <summary>What's included</summary>
+            <ul class="ticks">
+              <li>Built and live in 2 weeks</li>
+              <li>Domain, hosting and SSL included</li>
+              <li>Any features you ask for, built in</li>
+              <li>Ongoing support</li>
+              <li>Changes at £35 each, only when you need one</li>
+            </ul>
+          </details>
+
+          <label class="pick-row">
+            <input type="radio" name="plan" value="pro">
+            <span class="pick-main">
+              <span class="pick-head"><b>Pro</b><em>£90<span>/mo</span></em></span>
+              <span class="pick-note">If you change things often.</span>
+            </span>
+          </label>
+          <details class="pick-more">
+            <summary>What's included</summary>
+            <ul class="ticks">
+              <li>Everything in Business</li>
+              <li>5 changes included every month</li>
+              <li>Full SEO review</li>
+              <li>Performance and device testing</li>
+            </ul>
+          </details>
+
+          <label class="pick-row">
+            <input type="radio" name="plan" value="max">
+            <span class="pick-main">
+              <span class="pick-head"><b>Max</b><em>£150<span>/mo</span></em></span>
+              <span class="pick-note">If you want your ranking worked on monthly.</span>
+            </span>
+          </label>
+          <details class="pick-more">
+            <summary>What's included</summary>
+            <ul class="ticks">
+              <li>Everything in Pro</li>
+              <li>10 changes included every month</li>
+              <li>SEO improvements every month</li>
+              <li>Priority turnaround</li>
+            </ul>
+          </details>
+        </div>
+
+        <p class="hint">You can move up or down a plan any time.</p>
+        <p class="note" id="note3" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <button class="linkish wiz-back" data-back type="button">Back</button>
+      </section>
+
+      <!-- ============ 4. payment ============ -->
+      <section class="wiz-step" data-step="4" aria-label="Payment" hidden>
+        <h1>Your plan.</h1>
+        <p class="wiz-sub">Nothing to pay today.</p>
+
+        <div class="sumbox">
+          <div class="sumrow"><span>Plan</span><b id="sumPlan">Business</b></div>
+          <div class="sumrow"><span>Monthly</span><b id="sumPrice">£50</b></div>
+          <div class="sumrow"><span>Setup</span><b>£0</b></div>
+          <div class="sumrow total"><span>Due today</span><b>£0</b></div>
+        </div>
+
+        <!-- Placeholder. Card details must go through a payment provider's own
+             hosted fields (Stripe Checkout / Elements) — never a form we build. -->
+        <div class="paynote">
+          <p><strong>Card setup isn't connected yet.</strong></p>
+          <p>Your first payment is taken when your site goes live and you're happy with it — so there's nothing to pay now either way. We'll send a secure payment link with your draft.</p>
+        </div>
+
+        <p class="note" id="note4" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary full wiz-next" data-next type="button">Finish</button>
+        <button class="linkish wiz-back" data-back type="button">Back</button>
+      </section>
+
+      <!-- ============ done ============ -->
+      <section class="wiz-step" data-step="5" aria-label="All done" hidden>
+        <div class="done-tick" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        </div>
+        <h1>You're all set.</h1>
+        <p class="wiz-sub" id="doneSub">We've got what we need to make a start.</p>
+
+        <ol class="next-list">
+          <li><b>Check your email.</b> <span id="confirmLine">Confirm your address so you can get into your account.</span></li>
+          <li><b>We build your draft.</b> If anything's missing, we'll email you — no long forms.</li>
+          <li><b>You approve it and we go live.</b> Usually within a week, two at most.</li>
+        </ol>
+
+        <a class="btn btn-primary full" href="/account.html">Go to your account</a>
+        <p class="wiz-foot">Anything to add in the meantime? Put it on your account page — menus, photos, opening hours.</p>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<script src="vendor/supabase.js?v=1"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="supabase-client.js?v=1"></script>
+<script src="get-started.js?v=1"></script>
+</body>
+</html>

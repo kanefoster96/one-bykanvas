@@ -26,6 +26,8 @@ async function start() {
   user = res.data.session.user;
   document.getElementById('whoami').textContent = user.email;
 
+  await flushPendingOnboarding();
+
   var profile = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
   if (profile.error) {
     loading.innerHTML = '<p>Could not load your account: ' + ONE.friendlyError(profile.error) + '</p>';
@@ -35,6 +37,29 @@ async function start() {
 
   loading.hidden = true;
   app.hidden = false;
+}
+
+/* The wizard runs before the email is confirmed, so there is no session to
+   write with. It stashes the answers; this puts them into the profile the
+   first time the customer arrives here properly signed in. */
+async function flushPendingOnboarding() {
+  var raw;
+  try { raw = localStorage.getItem('one.pending-onboarding'); } catch (e) { return; }
+  if (!raw) return;
+
+  var row;
+  try { row = JSON.parse(raw); } catch (e) {
+    try { localStorage.removeItem('one.pending-onboarding'); } catch (e2) {}
+    return;
+  }
+
+  row.id = user.id;
+  row.onboarded_at = row.onboarded_at || new Date().toISOString();
+  var res = await ONE.db.from('profiles').upsert(row, { onConflict: 'id' });
+  // Only clear once it is safely saved, so a failure here does not lose it.
+  if (!res.error) {
+    try { localStorage.removeItem('one.pending-onboarding'); } catch (e) {}
+  }
 }
 
 function fill(row) {
