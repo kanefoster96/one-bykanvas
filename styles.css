@@ -10,6 +10,10 @@
   --bg-grey:#f5f5f7;
   --line:#d2d2d7;
   --line-soft:#e8e8ed;
+  /* Green means one thing only: included, or free. Never decoration. */
+  --good:#1a7f37;
+  --good-soft:#e7f6ec;
+  --good-dark:#5fd18f;   /* on the black app section */
   --blue:#1d1d1f;
   --blue-dark:#000000;
   --radius:18px;
@@ -289,6 +293,11 @@ body.locked{overflow:hidden}
 .cur{font-size:.62em;vertical-align:.16em;margin-right:1px}
 .per{font-size:15px;font-weight:400;color:var(--ink-3);letter-spacing:-.01em;margin-left:4px}
 .plan-note{margin:12px 0 24px;font-size:15px;line-height:1.45;color:var(--ink-2);min-height:44px}
+.plan-free{
+  display:inline-flex;align-items:center;gap:6px;margin:0 0 16px;
+  padding:5px 11px;border-radius:980px;background:var(--good-soft);color:var(--good);
+  font-size:12.5px;font-weight:600;letter-spacing:.01em;
+}
 .ticks{list-style:none;margin:26px 0 0;padding:0}
 .ticks li{
   position:relative;padding:0 0 0 27px;margin-bottom:13px;
@@ -297,7 +306,7 @@ body.locked{overflow:hidden}
 .ticks li strong{color:var(--ink);font-weight:600}
 .ticks li::before{
   content:"";position:absolute;left:2px;top:6px;width:12px;height:7px;
-  border-left:1.8px solid var(--blue);border-bottom:1.8px solid var(--blue);
+  border-left:2px solid var(--good);border-bottom:2px solid var(--good);
   transform:rotate(-45deg);
 }
 
@@ -310,7 +319,7 @@ body.locked{overflow:hidden}
 .app-price{margin:30px 0 6px;font-size:52px;font-weight:600;letter-spacing:-.04em;line-height:1;color:#fff}
 .app .per{color:#86868b}
 .app .ticks li{color:#a1a1a6}
-.app .ticks li::before{border-color:#fff}
+.app .ticks li::before{border-color:var(--good-dark)}
 .stores{display:flex;gap:12px;flex-wrap:wrap;margin:26px 0 12px}
 .store{
   display:inline-flex;align-items:center;gap:9px;padding:10px 17px;border-radius:13px;
@@ -662,7 +671,7 @@ body.locked{overflow:hidden}
   display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;text-align:left;
 }
 .cost-nots li{font-size:15.5px;color:var(--ink-2);line-height:1.4}
-.cost-nots b{display:inline-block;min-width:34px;color:var(--ink);font-weight:600}
+.cost-nots b{display:inline-block;min-width:34px;color:var(--good);font-weight:600}
 .cost-only{margin-top:30px;padding-top:26px;border-top:1px solid var(--line-soft);text-align:left}
 .cost-only h3{font-size:18px;font-weight:600;letter-spacing:-.02em;margin-bottom:12px}
 .cost-only p{margin:0 0 12px;font-size:15.5px;line-height:1.55;color:var(--ink-2)}
@@ -737,7 +746,8 @@ body.locked{overflow:hidden}
 .cmp thead td{background:var(--bg-grey);border-bottom:1px solid var(--line-soft)}
 .cmp tbody th{text-align:left;font-weight:400;color:var(--ink-2);min-width:230px}
 .cmp tbody tr:last-child th,.cmp tbody tr:last-child td{border-bottom:0}
-.tick-y{color:var(--ink);font-size:16px}
+.tick-y{color:var(--good);font-size:16px;font-weight:600}
+.cmp .free{color:var(--good);font-weight:600}
 .tick-n{color:var(--line)}
 
 .app .eyebrow,.app .app-price{text-align:center}
