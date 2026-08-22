@@ -34,6 +34,7 @@ async function start() {
     return;
   }
   if (profile.data) fill(profile.data);
+  showBilling(profile.data);
 
   loading.hidden = true;
   app.hidden = false;
@@ -169,6 +170,102 @@ document.getElementById('profileForm').addEventListener('submit', async function
   say(saveNote, 'Saved.', 'ok');
   if (!avatarPath) setAvatar(null);   // refresh initials if the name changed
 });
+
+/* ---------------- billing ---------------- */
+var STATUS_TEXT = {
+  active:             ['Active', 'Your subscription is live.'],
+  trialing:           ['Trial',  'You are on a trial.'],
+  past_due:           ['Past due', 'The last payment failed — update your card to stay live.'],
+  unpaid:             ['Unpaid', 'The last payment failed — update your card to stay live.'],
+  incomplete:         ['Pending', 'Payment did not finish. Try setting it up again.'],
+  incomplete_expired: ['Expired', 'That payment attempt expired. Start again when ready.'],
+  canceled:           ['Cancelled', 'Your subscription has ended.'],
+  paused:             ['Paused', 'Your subscription is paused.']
+};
+
+var PLAN_LABEL = { business: 'Business — £50/month', pro: 'Pro — £90/month', max: 'Max — £150/month' };
+
+function showBilling(row) {
+  var badge = document.getElementById('billBadge');
+  var planEl = document.getElementById('billPlan');
+  var stateEl = document.getElementById('billState');
+  var payBtn = document.getElementById('payBtn');
+  var pick = document.getElementById('planChoice');
+
+  if (row && row.selected_plan && PLAN_LABEL[row.selected_plan]) {
+    pick.value = row.selected_plan;
+  }
+
+  var status = row && row.subscription_status;
+  if (!status) {
+    planEl.textContent = 'No plan yet';
+    stateEl.textContent = 'Pick a plan to get your build started.';
+    badge.hidden = true;
+    payBtn.textContent = 'Set up payment';
+    return;
+  }
+
+  var info = STATUS_TEXT[status] || [status, ''];
+  planEl.textContent = PLAN_LABEL[row.selected_plan] || 'Your plan';
+  stateEl.textContent = info[1];
+  badge.hidden = false;
+  badge.textContent = info[0];
+  badge.className = 'bill-badge' + (status === 'active' || status === 'trialing' ? ' is-live' : ' is-warn');
+
+  if (row.current_period_end && (status === 'active' || status === 'trialing')) {
+    var when = new Date(row.current_period_end);
+    if (!isNaN(when)) {
+      stateEl.textContent = info[1] + ' Renews ' + when.toLocaleDateString('en-GB',
+        { day: 'numeric', month: 'long', year: 'numeric' }) + '.';
+    }
+  }
+
+  payBtn.textContent = (status === 'active' || status === 'trialing') ? 'Change plan' : 'Set up payment';
+}
+
+document.getElementById('payBtn').addEventListener('click', async function () {
+  var note = document.getElementById('billNote');
+  var btn = this;
+  var plan = document.getElementById('planChoice').value;
+
+  btn.disabled = true;
+  btn.textContent = 'Opening checkout…';
+  say(note, '');
+
+  try {
+    var sess = await ONE.db.auth.getSession();
+    var token = sess.data && sess.data.session && sess.data.session.access_token;
+    if (!token) throw new Error('Your session has expired. Log in and try again.');
+
+    var res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ plan: plan })
+    });
+    var data = await res.json().catch(function () { return {}; });
+    if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');
+    location.href = data.url;
+  } catch (err) {
+    say(note, ONE.friendlyError(err), 'bad');
+    btn.disabled = false;
+    btn.textContent = 'Set up payment';
+  }
+});
+
+/* Coming back from Stripe. The webhook is what actually flips the status, so
+   this only explains what is happening rather than claiming success. */
+(function () {
+  var state = new URLSearchParams(location.search).get('checkout');
+  if (!state) return;
+  var note = document.getElementById('billNote');
+  if (state === 'success') {
+    say(note, 'Payment set up — thanks. It can take a few seconds to show here.', 'ok');
+    setTimeout(function () { location.replace('/account.html'); }, 6000);
+  } else if (state === 'cancelled') {
+    say(note, 'Checkout cancelled — nothing was charged.', '');
+  }
+  history.replaceState(null, '', '/account.html');
+})();
 
 /* ---------------- log out ---------------- */
 document.getElementById('logout').addEventListener('click', async function () {

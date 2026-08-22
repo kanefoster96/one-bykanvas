@@ -1,0 +1,12 @@
+{
+  "name": "one-bykanvas",
+  "private": true,
+  "description": "Marketing site and customer accounts for one, by Kanvas.",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.3",
+    "stripe": "^17.5.0"
+  },
+  "devDependencies": {
+    "playwright": "1.49"
+  }
+}

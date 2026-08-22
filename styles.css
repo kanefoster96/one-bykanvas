@@ -560,3 +560,24 @@ body.locked{overflow:hidden}
   .wiz-track.slide{animation:none}
   .wiz-bar i{transition:none}
 }
+
+/* ---- billing panel ---- */
+.bill-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
+.bill-plan{margin:0;font-size:17px;font-weight:600;letter-spacing:-.02em}
+.bill-state{margin:5px 0 0;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.bill-badge{
+  flex:0 0 auto;font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+  padding:6px 12px;border-radius:980px;background:var(--bg-grey);color:var(--ink-2);
+}
+.bill-badge.is-live{background:#e7f6ec;color:#1a7f37}
+.bill-badge.is-warn{background:#fdecea;color:#b3261e}
+.bill-actions{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
+.bill-pick{flex:1;min-width:190px;margin-bottom:0}
+.bill-pick > span{display:block;margin-bottom:7px;font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.bill-pick select{
+  font-family:var(--font);font-size:16px;color:var(--ink);width:100%;
+  padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:#fff;
+}
+.bill-pick select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13)}
+.bill-actions .btn{height:48px}
+#billNote{margin-top:14px}

@@ -142,13 +142,21 @@
     var plan = PLANS[answers.selected_plan];
     $('sumPlan').textContent = plan.label;
     $('sumPrice').textContent = plan.price;
+
+    // Checkout needs a verified session; with email confirmation on there
+    // often is not one yet, so say so rather than opening a dead end.
+    var signedIn = Boolean(answers.hasSession);
+    $('payNow').hidden = !signedIn;
+    $('payLater').hidden = signedIn;
+    $('payAction').hidden = !signedIn;
+    $('skipPay').textContent = signedIn ? 'Skip for now — do it later' : 'Finish';
+
     show(4);
   }
 
   /* 4 — finish: save now if we can, otherwise stash for first login */
-  async function step4(button) {
-    var note = $('note4');
-    var row = {
+  function buildRow() {
+    return {
       business_name:  answers.business_name || null,
       contact_name:   answers.contact_name || null,
       business_type:  answers.business_type || null,
@@ -156,10 +164,11 @@
       selected_plan:  answers.selected_plan || null,
       site_goals:     answers.site_uses ? answers.site_uses.join('\n') : null
     };
+  }
 
-    button.disabled = true;
-    button.textContent = 'Saving…';
-
+  /* Returns true when it reached the database, false when it had to stash. */
+  async function step4Save() {
+    var row = buildRow();
     var saved = false;
     try {
       var sess = ONE.ready ? await ONE.db.auth.getSession() : { data: {} };
@@ -172,21 +181,61 @@
       }
     } catch (err) {
       // Not fatal: fall through and stash so nothing the customer typed is lost.
-      say(note, '', '');
+      saved = false;
     }
 
     if (!saved) {
       try { localStorage.setItem(PENDING_KEY, JSON.stringify(row)); } catch (e) {}
     }
+    return saved;
+  }
+
+  async function step4(button) {
+    button.disabled = true;
+    var label = button.textContent;
+    button.textContent = 'Saving…';
+
+    var saved = await step4Save();
 
     $('confirmLine').textContent = saved
       ? 'Your details are saved to your account.'
       : 'Confirm your address so you can get into your account — your answers are saved and will be waiting.';
 
     button.disabled = false;
-    button.textContent = 'Finish';
+    button.textContent = label;
     show(5);
   }
+
+  /* Stripe Checkout, for customers who already have a session. */
+  $('payAction').addEventListener('click', async function () {
+    var note = $('note4');
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = 'Opening checkout…';
+    say(note, '');
+
+    // Save first: leaving for Stripe means this page goes away.
+    try { await step4Save(); } catch (e) {}
+
+    try {
+      var sess = await ONE.db.auth.getSession();
+      var token = sess.data && sess.data.session && sess.data.session.access_token;
+      if (!token) throw new Error('Your session has expired. Log in and try again.');
+
+      var res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ plan: answers.selected_plan || 'business' })
+      });
+      var data = await res.json().catch(function () { return {}; });
+      if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');
+      location.href = data.url;
+    } catch (err) {
+      say(note, ONE.friendlyError(err), 'bad');
+      btn.disabled = false;
+      btn.textContent = 'Set up payment';
+    }
+  });
 
   /* --------------------------------------------------- already signed in */
   if (ONE.ready) {

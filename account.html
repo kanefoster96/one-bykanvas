@@ -42,6 +42,30 @@
     </div>
   </section>
 
+  <!-- Billing -->
+  <section class="panel" id="billingPanel">
+    <h2 class="panel-title">Plan &amp; billing</h2>
+    <div class="bill-row">
+      <div>
+        <p class="bill-plan" id="billPlan">No plan yet</p>
+        <p class="bill-state" id="billState">Pick a plan to get your build started.</p>
+      </div>
+      <span class="bill-badge" id="billBadge" hidden></span>
+    </div>
+    <div class="bill-actions">
+      <label class="field bill-pick" id="billPick">
+        <span>Plan</span>
+        <select id="planChoice">
+          <option value="business">Business — £50/month</option>
+          <option value="pro">Pro — £90/month</option>
+          <option value="max">Max — £150/month</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" id="payBtn" type="button">Set up payment</button>
+    </div>
+    <p class="note" id="billNote" role="status" aria-live="polite"></p>
+  </section>
+
   <!-- Business details -->
   <form class="panel" id="profileForm" novalidate>
     <h2 class="panel-title">Details</h2>

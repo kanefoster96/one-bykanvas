@@ -148,15 +148,20 @@
           <div class="sumrow total"><span>Due today</span><b>£0</b></div>
         </div>
 
-        <!-- Placeholder. Card details must go through a payment provider's own
-             hosted fields (Stripe Checkout / Elements) — never a form we build. -->
-        <div class="paynote">
-          <p><strong>Card setup isn't connected yet.</strong></p>
-          <p>Your first payment is taken when your site goes live and you're happy with it — so there's nothing to pay now either way. We'll send a secure payment link with your draft.</p>
+        <!-- Card details are collected by Stripe Checkout on Stripe's own
+             pages. We never see or handle a card number. -->
+        <div class="paynote" id="payLater" hidden>
+          <p><strong>Confirm your email first.</strong></p>
+          <p>We've sent you a link. Once you're in, you can set your payment up from your account in a couple of taps — and nothing is charged until your site is live.</p>
+        </div>
+        <div class="paynote" id="payNow" hidden>
+          <p><strong>Card handled by Stripe.</strong></p>
+          <p>You'll finish on Stripe's secure page — we never see your card details. Nothing is charged until your site is live and you're happy with it.</p>
         </div>
 
         <p class="note" id="note4" role="status" aria-live="polite"></p>
-        <button class="btn btn-primary full wiz-next" data-next type="button">Finish</button>
+        <button class="btn btn-primary full" id="payAction" type="button">Set up payment</button>
+        <button class="linkish wiz-next" data-next type="button" id="skipPay">Skip for now — do it later</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
 
