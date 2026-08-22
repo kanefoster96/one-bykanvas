@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your account — one</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body class="auth-body">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="one, by Kanvas — home">one</a>
+    <button class="linkish nav-out" id="logout" type="button">Log out</button>
+  </div>
+</header>
+
+<main class="acct-wrap" id="app" hidden>
+  <header class="acct-head">
+    <h1>Your business</h1>
+    <p class="lede left">The more you fill in, the faster we can build. Nothing here is set in stone — come back and change it any time.</p>
+  </header>
+
+  <!-- Logo / avatar -->
+  <section class="panel">
+    <h2 class="panel-title">Logo</h2>
+    <div class="avatar-row">
+      <div class="avatar-box" id="avatarBox">
+        <img id="avatarImg" alt="" hidden>
+        <span id="avatarFallback">—</span>
+      </div>
+      <div class="avatar-actions">
+        <label class="btn btn-ghost" for="avatarInput">Upload a logo</label>
+        <input id="avatarInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+        <button class="linkish" id="avatarRemove" type="button" hidden>Remove</button>
+        <p class="hint">PNG, JPG, WEBP or SVG. Up to 2&nbsp;MB.</p>
+        <p class="note" id="avatarNote" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Business details -->
+  <form class="panel" id="profileForm" novalidate>
+    <h2 class="panel-title">Details</h2>
+    <div class="acct-grid">
+      <div class="field"><label for="business_name">Business name</label><input id="business_name" type="text" autocomplete="organization"></div>
+      <div class="field"><label for="contact_name">Your name</label><input id="contact_name" type="text" autocomplete="name"></div>
+      <div class="field"><label for="phone">Phone</label><input id="phone" type="tel" autocomplete="tel"></div>
+      <div class="field"><label for="business_type">What sort of business is it?</label><input id="business_type" type="text" placeholder="Café, barber, landscaping…"></div>
+
+      <div class="field full"><label for="address">Address</label><input id="address" type="text" autocomplete="street-address" placeholder="Where customers find you"></div>
+      <div class="field full"><label for="service_area">Or the area you cover</label><input id="service_area" type="text" placeholder="If you travel to customers instead"></div>
+
+      <div class="field full"><label for="opening_hours">Opening hours</label><textarea id="opening_hours" rows="3" placeholder="Mon–Fri 8–5, Sat 9–1, closed Sunday"></textarea></div>
+      <div class="field full"><label for="services">Your menu or services</label><textarea id="services" rows="4" placeholder="List them, or just tell us where to find them — a photo of your menu is fine"></textarea></div>
+      <div class="field full"><label for="site_goals">What should the site do for you?</label><textarea id="site_goals" rows="3" placeholder="Take bookings, show a menu, get found locally, sell online…"></textarea></div>
+      <div class="field full"><label for="existing_links">Anything already online?</label><textarea id="existing_links" rows="2" placeholder="Current site, Facebook, Instagram, Google listing"></textarea></div>
+    </div>
+
+    <div class="acct-save">
+      <button class="btn btn-primary" id="save" type="submit">Save</button>
+      <p class="note" id="saveNote" role="status" aria-live="polite"></p>
+    </div>
+  </form>
+
+  <p class="acct-email">Signed in as <strong id="whoami"></strong></p>
+</main>
+
+<div class="acct-loading" id="loading"><p>Loading your account…</p></div>
+
+<script src="vendor/supabase.js?v=1"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="supabase-client.js?v=1"></script>
+<script src="account.js?v=1"></script>
+</body>
+</html>
