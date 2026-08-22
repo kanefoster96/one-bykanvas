@@ -2,6 +2,27 @@
 (function () {
   'use strict';
 
+  /* ---------- Start at the top on reload ---------- */
+  // Browsers restore the previous scroll position on reload; on a one-page
+  // site that drops you mid-page instead of at the hero.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  // In-page links scroll normally but don't leave a #hash in the address bar.
+  // Without this, reloading after clicking e.g. "Get started" jumps straight
+  // back down to that section. The skip link keeps native behaviour so it
+  // still moves keyboard focus.
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!link || link.classList.contains('skip')) return;
+    var id = link.getAttribute('href').slice(1);
+    if (!id) return;
+    var target = document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', location.pathname + location.search);
+  });
+
   /* ---------- Hamburger menu ---------- */
   var burger = document.getElementById('burger');
   var menu = document.getElementById('menu');
