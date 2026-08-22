@@ -19,27 +19,11 @@
 <!-- ============ NAV ============ -->
 <header class="nav" id="nav">
   <div class="nav-inner">
-    <a class="logo" href="#top" aria-label="one, by Kanvas — home">one</a>
-    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
-      <span></span><span></span>
-    </button>
+    <a class="logo" href="/" aria-label="one, by Kanvas — home">one</a>
   </div>
 </header>
 
-<div class="menu" id="menu" hidden>
-  <nav class="menu-inner" aria-label="Main">
-    <a href="#features">Features</a>
-    <a href="#reviews">Reviews</a>
-    <a href="#plans">Plans</a>
-    <a href="#faq">FAQs</a>
-    <a href="#app">App add-on</a>
-    <a class="menu-cta" href="#start">Start your site &rsaquo;</a>
-  </nav>
-</div>
-<div class="scrim" id="scrim" hidden></div>
-
 <main id="main">
-<span id="top"></span>
 
 <!-- ============ HERO ============ -->
 <section class="hero">
@@ -47,8 +31,8 @@
     <h1 class="reveal">one.</h1>
     <p class="sub reveal">A website for your business.<br>Built in two weeks.<br>Setup on us.</p>
     <div class="cta-row reveal">
-      <a class="btn btn-primary" href="#plans">See plans</a>
-      <a class="btn btn-ghost" href="#start">Get started &rsaquo;</a>
+      <!-- TODO: point at /plans --><button class="btn btn-primary" type="button">See plans</button>
+      <!-- TODO: point at /get-started --><button class="btn btn-ghost" type="button">Get started &rsaquo;</button>
     </div>
     <p class="fineprint reveal">From £50 a month. Domain and hosting included.</p>
   </div>
@@ -200,7 +184,7 @@
       <h3>Business</h3>
       <p class="price"><span class="cur">£</span>50<span class="per">/month</span></p>
       <p class="plan-note">Everything you need to be online properly.</p>
-      <a class="btn btn-ghost full" href="#start">Choose Business</a>
+      <!-- TODO: point at /get-started?plan=business --><button class="btn btn-ghost full" type="button">Choose Business</button>
       <ul class="ticks">
         <li>Website built and launched in 2 weeks</li>
         <li>Domain name included</li>
@@ -216,7 +200,7 @@
       <h3>Pro</h3>
       <p class="price"><span class="cur">£</span>90<span class="per">/month</span></p>
       <p class="plan-note">For businesses that change things often.</p>
-      <a class="btn btn-primary full" href="#start">Choose Pro</a>
+      <!-- TODO: point at /get-started?plan=pro --><button class="btn btn-primary full" type="button">Choose Pro</button>
       <ul class="ticks">
         <li>Everything in Business</li>
         <li><strong>5 edit requests</strong> included each month</li>
@@ -229,7 +213,7 @@
       <h3>Max</h3>
       <p class="price"><span class="cur">£</span>150<span class="per">/month</span></p>
       <p class="plan-note">For businesses actively chasing growth.</p>
-      <a class="btn btn-ghost full" href="#start">Choose Max</a>
+      <!-- TODO: point at /get-started?plan=max --><button class="btn btn-ghost full" type="button">Choose Max</button>
       <ul class="ticks">
         <li>Everything in Pro</li>
         <li><strong>10 edit requests</strong> included each month</li>
@@ -256,7 +240,7 @@
         <li>One improvement request every month</li>
         <li>Ordering, bookings, loyalty — whatever fits your business</li>
       </ul>
-      <a class="btn btn-primary" href="#start">Talk about an app</a>
+      <!-- TODO: point at /app --><button class="btn btn-primary" type="button">Talk about an app</button>
     </div>
 
     <div class="app-art reveal" aria-hidden="true">
@@ -348,9 +332,6 @@
   <div class="wrap">
     <p class="foot-logo">one</p>
     <p class="foot-by">by Kanvas</p>
-    <nav class="foot-links" aria-label="Footer">
-      <a href="#features">Features</a><a href="#plans">Plans</a><a href="#faq">FAQs</a><a href="#app">App</a><a href="#start">Get started</a>
-    </nav>
     <p class="foot-legal">All prices in GBP and exclude VAT where applicable. Website build begins once your brief is confirmed; two-week delivery is measured from that date. Domain registration is included for as long as your plan is active and the domain is registered to your business. Cancel with one month's notice.</p>
     <p class="foot-copy">© <span id="year">2026</span> Kanvas. All rights reserved.</p>
   </div>
