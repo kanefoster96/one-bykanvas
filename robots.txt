@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Account pages are per-customer, nothing for a crawler to index.
+Disallow: /account.html
+Disallow: /login.html
+Disallow: /api/
+
+Sitemap: https://one-bykanvas.vercel.app/sitemap.xml
