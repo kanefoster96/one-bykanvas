@@ -142,6 +142,7 @@
     var plan = PLANS[answers.selected_plan];
     $('sumPlan').textContent = plan.label;
     $('sumPrice').textContent = plan.price;
+    $('sumEmail').textContent = answers.email || '—';
 
     // Checkout needs a verified session; with email confirmation on there
     // often is not one yet, so say so rather than opening a dead end.
@@ -197,14 +198,29 @@
 
     var saved = await step4Save();
 
-    $('confirmLine').textContent = saved
-      ? 'Your details are saved to your account.'
-      : 'Confirm your address so you can get into your account — your answers are saved and will be waiting.';
+    if (saved) {
+      $('doneHead').textContent = 'Your account is ready.';
+      $('confirmLine').textContent = 'Everything you told us is saved against it.';
+    } else {
+      $('doneHead').textContent = 'Check your email.';
+      $('confirmLine').textContent = 'Confirm your address so you can get into your account — '
+        + 'your answers are saved and will be waiting.';
+    }
 
     button.disabled = false;
     button.textContent = label;
     show(5);
   }
+
+  /* No confirmation link means a typo would not surface until we email the
+     draft, so give them a way back to fix it. */
+  $('fixEmail').addEventListener('click', function () {
+    show(1);
+    $('email').focus({ preventScroll: true });
+    say($('note1'), signedUp
+      ? 'Your account is already created with this address — email us and we will change it.'
+      : 'Fix your email address, then carry on.', '');
+  });
 
   /* Stripe Checkout, for customers who already have a session. */
   $('payAction').addEventListener('click', async function () {

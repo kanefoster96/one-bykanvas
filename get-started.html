@@ -142,6 +142,7 @@
         <p class="wiz-sub">Nothing to pay today.</p>
 
         <div class="sumbox">
+          <div class="sumrow"><span>Account</span><b id="sumEmail">—</b></div>
           <div class="sumrow"><span>Plan</span><b id="sumPlan">Business</b></div>
           <div class="sumrow"><span>Monthly</span><b id="sumPrice">£50</b></div>
           <div class="sumrow"><span>Setup</span><b>£0</b></div>
@@ -162,6 +163,7 @@
         <p class="note" id="note4" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full" id="payAction" type="button">Set up payment</button>
         <button class="linkish wiz-next" data-next type="button" id="skipPay">Skip for now — do it later</button>
+        <button class="linkish" id="fixEmail" type="button">That email isn't right</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
 
@@ -174,7 +176,7 @@
         <p class="wiz-sub" id="doneSub">We've got what we need to make a start.</p>
 
         <ol class="next-list">
-          <li><b>Check your email.</b> <span id="confirmLine">Confirm your address so you can get into your account.</span></li>
+          <li><b id="doneHead">Check your email.</b> <span id="confirmLine">Confirm your address so you can get into your account.</span></li>
           <li><b>We build your draft.</b> If anything's missing, we'll email you — no long forms.</li>
           <li><b>You approve it and we go live.</b> Usually within a week, two at most.</li>
         </ol>
