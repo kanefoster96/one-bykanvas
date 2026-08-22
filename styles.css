@@ -583,3 +583,65 @@ body.locked{overflow:hidden}
 .bill-pick select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13)}
 .bill-actions .btn{height:48px}
 #billNote{margin-top:14px}
+
+/* ============================================================
+   How it works page
+   ============================================================ */
+.page-hero{padding:clamp(56px,9vw,96px) 0 clamp(30px,4vw,44px);text-align:center}
+.page-hero h1{font-size:clamp(38px,6.4vw,60px);font-weight:600;letter-spacing:-.035em;line-height:1.04}
+.section.pt0{padding-top:0}
+
+/* numbered steps */
+.steps{max-width:720px}
+.stepx{display:flex;gap:clamp(18px,3vw,28px);align-items:flex-start;padding:clamp(26px,4vw,34px) 0;border-bottom:1px solid var(--line-soft)}
+.stepx:last-child{border-bottom:0}
+.stepx-n{
+  flex:0 0 40px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+  background:var(--ink);color:#fff;font-size:16px;font-weight:600;margin-top:3px;
+}
+.stepx-body{flex:1;min-width:0}
+.stepx h2{font-size:clamp(20px,3vw,24px);font-weight:600;letter-spacing:-.025em;line-height:1.2;margin-bottom:10px}
+.stepx p{margin:0;font-size:16px;line-height:1.55;color:var(--ink-2)}
+.stepx-aside{
+  margin-top:12px!important;padding-left:14px;border-left:2px solid var(--line);
+  font-size:14.5px!important;color:var(--ink-3)!important;
+}
+
+/* what you get */
+.gets{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;margin-top:clamp(34px,5vw,46px)}
+.gets .ticks{margin:0}
+.gets .ticks li{margin-bottom:16px;font-size:16px}
+
+/* cost */
+.costbox{
+  max-width:640px;background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg);
+  padding:clamp(30px,5vw,44px);margin-top:clamp(30px,4vw,42px);text-align:center;
+  box-shadow:0 12px 40px rgba(0,0,0,.06);
+}
+.cost-big{margin:0;font-size:clamp(52px,9vw,72px);font-weight:600;letter-spacing:-.045em;line-height:1}
+.cost-big .per{display:block;margin-top:8px;font-size:15px;font-weight:400;color:var(--ink-3);letter-spacing:-.01em}
+.cost-line{margin:14px 0 0;font-size:17px;font-weight:500;color:var(--ink)}
+.cost-nots{
+  list-style:none;margin:28px 0 0;padding:24px 0 0;border-top:1px solid var(--line-soft);
+  display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;text-align:left;
+}
+.cost-nots li{font-size:15.5px;color:var(--ink-2);line-height:1.4}
+.cost-nots b{display:inline-block;min-width:34px;color:var(--ink);font-weight:600}
+.cost-only{margin-top:30px;padding-top:26px;border-top:1px solid var(--line-soft);text-align:left}
+.cost-only h3{font-size:18px;font-weight:600;letter-spacing:-.02em;margin-bottom:12px}
+.cost-only p{margin:0 0 12px;font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+.cost-only strong{color:var(--ink);font-weight:600}
+.cost-foot{
+  margin:18px 0 0!important;padding-top:16px;border-top:1px solid var(--line-soft);
+  font-size:14px!important;color:var(--ink-3)!important;
+}
+
+.cta-end .micro{margin-top:24px}
+
+@media (max-width:700px){
+  .gets{grid-template-columns:1fr;gap:0}
+  .gets .ticks:last-child{margin-top:16px}
+  .cost-nots{grid-template-columns:1fr;gap:12px}
+  .stepx{gap:16px}
+  .stepx-n{flex:0 0 34px;width:34px;height:34px;font-size:14px}
+}

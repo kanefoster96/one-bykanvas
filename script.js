@@ -12,6 +12,7 @@
   var menu = document.getElementById('menu');
   var scrim = document.getElementById('scrim');
 
+  if (burger && menu && scrim) {
   function setMenu(open) {
     burger.setAttribute('aria-expanded', String(open));
     menu.hidden = !open;
@@ -35,6 +36,7 @@
       burger.focus();
     }
   });
+  }
 
   /* ---------- Scroll reveal ---------- */
   var items = document.querySelectorAll('.reveal');
@@ -54,7 +56,7 @@
 
   /* ---------- Review rail ---------- */
   var rail = document.getElementById('rail');
-  document.querySelectorAll('.rail-btn').forEach(function (btn) {
+  if (rail) document.querySelectorAll('.rail-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var card = rail.querySelector('.quote');
       var step = card ? card.offsetWidth + 20 : rail.clientWidth * 0.8;
@@ -75,7 +77,7 @@
   var form = document.getElementById('lead');
   var note = document.getElementById('formnote');
 
-  form.addEventListener('submit', function (e) {
+  if (form && note) form.addEventListener('submit', function (e) {
     e.preventDefault();
 
     var required = ['name', 'business', 'email'];
@@ -112,5 +114,6 @@
   });
 
   /* ---------- Year ---------- */
-  document.getElementById('year').textContent = new Date().getFullYear();
+  var year = document.getElementById('year');
+  if (year) year.textContent = new Date().getFullYear();
 })();
