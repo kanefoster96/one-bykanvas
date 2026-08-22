@@ -181,12 +181,6 @@ body.locked{overflow:hidden}
 .sk-grid i{height:92px;border-radius:14px;background:#f2f2f6;display:block}
 @media (prefers-reduced-motion:reduce){.sk{animation:none}}
 
-/* ---------- Stats ---------- */
-.stats{background:var(--bg-grey);padding:52px 0}
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;text-align:center}
-.stat strong{display:block;font-size:clamp(22px,3.2vw,30px);font-weight:600;letter-spacing:-.03em}
-.stat span{display:block;margin-top:6px;font-size:14px;color:var(--ink-2)}
-
 /* ---------- Feature grid ---------- */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:clamp(42px,6vw,64px)}
 .card{
@@ -390,7 +384,6 @@ body.locked{overflow:hidden}
   .app .lede.left{margin-left:auto;margin-right:auto;text-align:center}
   .app .ticks{display:inline-block;text-align:left;margin-left:auto;margin-right:auto}
   .app-art{order:-1}
-  .stat-grid{grid-template-columns:repeat(2,1fr);gap:30px}
 }
 @media (max-width:600px){
   .grid{grid-template-columns:1fr}
