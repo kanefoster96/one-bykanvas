@@ -7,10 +7,44 @@
   // mid-page instead of at the top.
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-  /* ---------- Hamburger menu ---------- */
+  /* ---------- Menu ---------- */
+  // One source of truth for the nav. Pages only need an empty #menu element;
+  // the header itself stays in the markup so it renders without JavaScript.
+  var MENU = [
+    { label: 'How it works',    href: '/how-it-works.html' },
+    { label: "What\u2019s included", href: '/whats-included.html' },
+    { label: 'Features',        href: '/features.html' },
+    { label: 'Reviews',         href: '/reviews.html' },
+    { label: 'See all plans',   href: '/plans.html' }
+  ];
+
   var burger = document.getElementById('burger');
   var menu = document.getElementById('menu');
   var scrim = document.getElementById('scrim');
+
+  if (menu && !menu.children.length) {
+    var here = location.pathname.replace(/\/index\.html$/, '/');
+    var nav = document.createElement('nav');
+    nav.className = 'menu-inner';
+    nav.setAttribute('aria-label', 'Main');
+
+    MENU.forEach(function (item) {
+      var a = document.createElement('a');
+      a.className = 'menu-link';
+      a.href = item.href;
+      a.textContent = item.label;
+      if (item.href === here) a.setAttribute('aria-current', 'page');
+      nav.appendChild(a);
+    });
+
+    var actions = document.createElement('div');
+    actions.className = 'menu-actions';
+    actions.innerHTML =
+      '<a class="btn btn-ghost" href="/login.html">Log in</a>' +
+      '<a class="btn btn-primary" href="/get-started.html">Get started</a>';
+    nav.appendChild(actions);
+    menu.appendChild(nav);
+  }
 
   if (burger && menu && scrim) {
   function setMenu(open) {

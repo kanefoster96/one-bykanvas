@@ -28,19 +28,7 @@
 
 <!-- Menu items are placeholders: buttons, not links, until the pages exist.
      Swap each for <a href="/your-page"> when it is ready. -->
-<div class="menu" id="menu" hidden>
-  <nav class="menu-inner" aria-label="Main">
-    <a class="menu-link" href="/how-it-works.html">How it works</a>
-    <button class="menu-link" type="button">What&rsquo;s included</button>
-    <button class="menu-link" type="button">Features</button>
-    <button class="menu-link" type="button">Reviews</button>
-    <button class="menu-link" type="button">See all plans</button>
-    <div class="menu-actions">
-      <a class="btn btn-ghost" href="/login.html">Log in</a>
-      <a class="btn btn-primary" href="/get-started.html">Get started</a>
-    </div>
-  </nav>
-</div>
+<div class="menu" id="menu" hidden></div>
 <div class="scrim" id="scrim" hidden></div>
 
 <main id="main">
@@ -201,38 +189,14 @@
     <p class="lede reveal">The people who use it, on why they stayed.</p>
   </div>
 
-  <!-- NOTE: placeholder testimonials — swap for real, attributed quotes before launch. -->
-  <div class="rail" id="rail" role="region" aria-label="Customer reviews">
-    <article class="quote">
-      <div class="stars" aria-label="5 out of 5">★★★★★</div>
-      <blockquote>“We had a site live in nine days. I changed the menu prices from my phone on the bus. That's it, that's the whole job now.”</blockquote>
-      <footer><span class="avatar av1" aria-hidden="true">SM</span><div><strong>Sample Name</strong><span>Independent café</span></div></footer>
-    </article>
-    <article class="quote">
-      <div class="stars" aria-label="5 out of 5">★★★★★</div>
-      <blockquote>“I'd been quoted four figures upfront elsewhere. Fifty a month, no setup fee, and bookings come straight through the site.”</blockquote>
-      <footer><span class="avatar av2" aria-hidden="true">SN</span><div><strong>Sample Name</strong><span>Barber shop</span></div></footer>
-    </article>
-    <article class="quote">
-      <div class="stars" aria-label="5 out of 5">★★★★★</div>
-      <blockquote>“The monthly SEO work actually moved us. We're on the first page for our town now, which we never were before.”</blockquote>
-      <footer><span class="avatar av3" aria-hidden="true">SN</span><div><strong>Sample Name</strong><span>Landscaping</span></div></footer>
-    </article>
-    <article class="quote">
-      <div class="stars" aria-label="5 out of 5">★★★★★</div>
-      <blockquote>“I ask for a change, it's done the same week. No invoices to argue about, no waiting on a developer to have a free afternoon.”</blockquote>
-      <footer><span class="avatar av4" aria-hidden="true">SN</span><div><strong>Sample Name</strong><span>Dog groomer</span></div></footer>
-    </article>
-    <article class="quote">
-      <div class="stars" aria-label="5 out of 5">★★★★★</div>
-      <blockquote>“The app was the bit I never thought we could afford. Customers order ahead now and it's paid for itself twice over.”</blockquote>
-      <footer><span class="avatar av5" aria-hidden="true">SN</span><div><strong>Sample Name</strong><span>Takeaway</span></div></footer>
-    </article>
-  </div>
+  <!-- Filled by reviews.js: Google if /api/reviews is configured, otherwise
+       the placeholder set in that file. -->
+  <div class="rail" id="rail" data-reviews="6" role="region" aria-label="Customer reviews"></div>
   <div class="rail-nav">
     <button class="rail-btn" data-dir="-1" aria-label="Previous reviews">&lsaquo;</button>
     <button class="rail-btn" data-dir="1" aria-label="Next reviews">&rsaquo;</button>
   </div>
+  <p class="wrap center rail-more"><a href="/reviews.html">Read all reviews &rsaquo;</a></p>
 </section>
 
 <!-- ============ PLANS ============ -->
@@ -424,5 +388,6 @@
 </footer>
 
 <script src="script.js?v=2"></script>
+<script src="reviews.js?v=1"></script>
 </body>
 </html>
