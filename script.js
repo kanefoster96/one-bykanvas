@@ -7,6 +7,35 @@
   // mid-page instead of at the top.
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
+  /* ---------- Hamburger menu ---------- */
+  var burger = document.getElementById('burger');
+  var menu = document.getElementById('menu');
+  var scrim = document.getElementById('scrim');
+
+  function setMenu(open) {
+    burger.setAttribute('aria-expanded', String(open));
+    menu.hidden = !open;
+    scrim.hidden = !open;
+    menu.classList.toggle('open', open);
+    document.body.classList.toggle('locked', open);
+  }
+
+  burger.addEventListener('click', function () {
+    setMenu(burger.getAttribute('aria-expanded') !== 'true');
+  });
+  scrim.addEventListener('click', function () { setMenu(false); });
+  menu.addEventListener('click', function (e) {
+    // Closes on any item. The items do nothing else yet — they are placeholders
+    // until the pages exist.
+    if (e.target.closest('button, a')) setMenu(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
+      setMenu(false);
+      burger.focus();
+    }
+  });
+
   /* ---------- Scroll reveal ---------- */
   var items = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window) {

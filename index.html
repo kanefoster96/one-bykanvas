@@ -20,8 +20,28 @@
 <header class="nav" id="nav">
   <div class="nav-inner">
     <a class="logo" href="/" aria-label="one, by Kanvas — home">one</a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span>
+    </button>
   </div>
 </header>
+
+<!-- Menu items are placeholders: buttons, not links, until the pages exist.
+     Swap each for <a href="/your-page"> when it is ready. -->
+<div class="menu" id="menu" hidden>
+  <nav class="menu-inner" aria-label="Main">
+    <button class="menu-link" type="button">How it works</button>
+    <button class="menu-link" type="button">What&rsquo;s included</button>
+    <button class="menu-link" type="button">Features</button>
+    <button class="menu-link" type="button">Reviews</button>
+    <button class="menu-link" type="button">See all plans</button>
+    <div class="menu-actions">
+      <button class="btn btn-ghost" type="button">Log in</button>
+      <button class="btn btn-primary" type="button">Get started</button>
+    </div>
+  </nav>
+</div>
+<div class="scrim" id="scrim" hidden></div>
 
 <main id="main">
 
