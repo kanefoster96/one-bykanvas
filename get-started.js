@@ -143,6 +143,7 @@
     $('sumPlan').textContent = plan.label;
     $('sumPrice').textContent = plan.price;
     $('sumEmail').textContent = answers.email || '—';
+    $('sumDue').textContent = plan.price;
 
     // Checkout needs a verified session; with email confirmation on there
     // often is not one yet, so say so rather than opening a dead end.
