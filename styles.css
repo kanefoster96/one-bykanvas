@@ -201,14 +201,37 @@ body.locked{overflow:hidden}
 .ico-pink{background:#d63384}
 .ico-grey{background:#4a4a4f}
 
-/* ---------- Showcase chips ---------- */
-.showcase{padding:clamp(72px,10vw,116px) 0;background:linear-gradient(180deg,#fff 0%,#fbfbfd 100%)}
-.chips{list-style:none;margin:38px auto 0;padding:0;display:flex;flex-wrap:wrap;gap:11px;justify-content:center;max-width:760px}
-.chips li{
-  padding:10px 19px;border-radius:980px;background:#fff;border:1px solid var(--line);
-  font-size:15px;color:var(--ink);transition:border-color .25s var(--ease),transform .25s var(--ease);
+/* ---------- Showcase marquee ---------- */
+.showcase{padding:clamp(72px,10vw,116px) 0;background:linear-gradient(180deg,#fff 0%,#fbfbfd 100%);overflow:hidden}
+
+.mq{margin-top:clamp(34px,5vw,48px);display:flex;flex-direction:column;gap:12px}
+.mq-row{
+  overflow:hidden;
+  /* fade the ends so items enter and leave rather than being chopped off */
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
 }
-.chips li:hover{border-color:var(--ink);transform:translateY(-2px)}
+.mq-track{
+  display:flex;gap:12px;width:max-content;list-style:none;margin:0;padding:0;
+  animation:mqScroll 60s linear infinite;will-change:transform;
+}
+.mq-row:nth-child(even) .mq-track{animation-direction:reverse}
+@keyframes mqScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mq:hover .mq-track,.mq:focus-within .mq-track{animation-play-state:paused}
+
+.mq-track li{
+  flex:0 0 auto;white-space:nowrap;
+  padding:11px 20px;border-radius:980px;background:#fff;border:1px solid var(--line);
+  font-size:15px;color:var(--ink);
+}
+
+/* Until the script has duplicated a row, keep it from looking half-empty. */
+.mq-track:not(.is-running){animation:none}
+
+@media (prefers-reduced-motion:reduce){
+  .mq-row{overflow:visible;-webkit-mask-image:none;mask-image:none}
+  .mq-track{animation:none!important;width:auto;flex-wrap:wrap;justify-content:center}
+}
 
 /* ---------- Reviews ---------- */
 .rail{

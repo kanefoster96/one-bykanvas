@@ -54,6 +54,45 @@
     items.forEach(function (el) { el.classList.add('in'); });
   }
 
+  /* ---------- Feature marquee ---------- */
+  // Four items per row is narrower than the screen, so each row is duplicated
+  // until it is at least twice the viewport wide. The animation then shifts by
+  // half the track, which lands exactly on a copy boundary and loops seamlessly.
+  var SPEED = 26;   // pixels per second — slow enough to read
+
+  function startMarquee() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    document.querySelectorAll('.mq-track').forEach(function (track) {
+      var row = track.parentElement;
+      var originals = Array.prototype.slice.call(track.children);
+      if (!originals.length || track.dataset.built) return;
+
+      var setWidth = track.scrollWidth;
+      if (!setWidth || !row.offsetWidth) return;
+
+      // enough copies to cover two screens, rounded up to an even number
+      var copies = Math.ceil((row.offsetWidth * 2) / setWidth);
+      if (copies % 2) copies++;
+      copies = Math.max(copies, 2);
+
+      for (var n = 1; n < copies; n++) {
+        originals.forEach(function (el) {
+          var clone = el.cloneNode(true);
+          clone.setAttribute('aria-hidden', 'true');   // duplicates are decoration
+          track.appendChild(clone);
+        });
+      }
+
+      // same speed on every row regardless of how wide it ended up
+      track.style.animationDuration = ((track.scrollWidth / 2) / SPEED) + 's';
+      track.dataset.built = '1';
+      track.classList.add('is-running');
+    });
+  }
+
+  startMarquee();
+
   /* ---------- Review rail ---------- */
   var rail = document.getElementById('rail');
   if (rail) document.querySelectorAll('.rail-btn').forEach(function (btn) {
