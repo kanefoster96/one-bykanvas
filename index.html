@@ -58,11 +58,18 @@
 
         <!-- Real sites, phone widths only. These are screenshots of mobile
              sites, so they only sit right where the frame is narrow; the
-             skeleton stays on wider screens. -->
+             skeleton stays on wider screens. The build beat sits last so it
+             paints over the shots, and so the images stay children 1 to 3. -->
         <div class="device-shots">
           <img src="assets/IMG_5313.jpeg" alt="" width="1290" height="2061" loading="lazy" decoding="async">
           <img src="assets/IMG_5314.jpeg" alt="" width="1290" height="2286" loading="lazy" decoding="async">
           <img src="assets/IMG_5315.jpeg" alt="" width="1290" height="1928" loading="lazy" decoding="async">
+          <div class="device-build">
+            <svg class="build-star" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3.6v16.8M4.7 7.8l14.6 8.4M4.7 16.2l14.6-8.4"/>
+            </svg>
+            <span class="build-word">Building<i>.</i><i>.</i><i>.</i></span>
+          </div>
         </div>
       </div>
     </div>
