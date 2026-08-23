@@ -166,6 +166,11 @@ body.locked{overflow:hidden}
   font-size:clamp(76px,17vw,168px);
   letter-spacing:-.055em;line-height:.9;
 }
+.hero-by{margin:12px 0 0;font-size:12px;font-weight:600;color:var(--ink-3)}
+/* Tracking sits on the name only; stretching "by" as well reads as a typo.
+   The negative margin cancels the trailing space letter-spacing adds after
+   the last letter, which would otherwise push the line off centre. */
+.hero-by span{text-transform:uppercase;letter-spacing:.2em;margin-right:-.2em}
 .hero .sub{
   margin:22px auto 0;max-width:30ch;text-wrap:balance;
   font-size:clamp(20px,3.4vw,28px);line-height:1.28;font-weight:500;
