@@ -267,7 +267,6 @@ body.locked{overflow:hidden}
 }
 .mq-row:nth-child(even) .mq-track{animation-direction:reverse}
 @keyframes mqScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.mq:hover .mq-track,.mq:focus-within .mq-track{animation-play-state:paused}
 
 .mq-track li{
   flex:0 0 auto;white-space:nowrap;
