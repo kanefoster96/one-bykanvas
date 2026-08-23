@@ -297,15 +297,20 @@ body.locked{overflow:hidden}
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
   mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
 }
+/* The spacing is a margin on each item rather than a flex gap. A gap sits only
+   between items, so a track of N copies carries 4N-1 of them and translating by
+   half the width lands half a gap short of a copy boundary, jolting on every
+   loop. A trailing margin gives every item its own, making the track exactly N
+   whole copies wide. */
 .mq-track{
-  display:flex;gap:12px;width:max-content;list-style:none;margin:0;padding:0;
+  display:flex;width:max-content;list-style:none;margin:0;padding:0;
   animation:mqScroll 60s linear infinite;will-change:transform;
 }
 .mq-row:nth-child(even) .mq-track{animation-direction:reverse}
 @keyframes mqScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 .mq-track li{
-  flex:0 0 auto;white-space:nowrap;
+  flex:0 0 auto;white-space:nowrap;margin-right:12px;
   padding:11px 20px;border-radius:980px;background:#fff;border:1px solid var(--line);
   font-size:15px;color:var(--ink);
 }
@@ -315,7 +320,10 @@ body.locked{overflow:hidden}
 
 @media (prefers-reduced-motion:reduce){
   .mq-row{overflow:visible;-webkit-mask-image:none;mask-image:none}
-  .mq-track{animation:none!important;width:auto;flex-wrap:wrap;justify-content:center}
+  /* Nothing is looping here, so the spacing goes back to a gap: a trailing
+     margin on each wrapped line would sit it half a gap left of centre. */
+  .mq-track{animation:none!important;width:auto;flex-wrap:wrap;justify-content:center;gap:12px}
+  .mq-track li{margin-right:0}
 }
 
 /* ---------- Reviews ---------- */
