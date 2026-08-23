@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin — one</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body class="auth-body">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="one, by Kanvas — home">one</a>
+    <a class="linkish nav-out" href="/account.html">Your account</a>
+  </div>
+</header>
+
+<main class="admin-wrap" id="app" hidden>
+  <header class="acct-head">
+    <h1>Customers</h1>
+    <p class="lede left" id="adminSummary">&nbsp;</p>
+  </header>
+
+  <!-- Anything asked for and not yet finished, across every customer. -->
+  <section class="panel" id="queuePanel" hidden>
+    <h2 class="panel-title">Open requests</h2>
+    <ul class="queue" id="queue"></ul>
+  </section>
+
+  <section class="panel">
+    <h2 class="panel-title">Everyone</h2>
+    <div class="cust-list" id="custList"></div>
+  </section>
+
+  <p class="note" id="adminNote" role="status" aria-live="polite"></p>
+</main>
+
+<div class="acct-loading" id="loading"><p>Checking…</p></div>
+
+<script src="vendor/supabase.js?v=1"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="supabase-client.js?v=1"></script>
+<script src="admin.js?v=1"></script>
+<script src="admin-pill.js?v=1"></script>
+</body>
+</html>

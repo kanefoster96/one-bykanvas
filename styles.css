@@ -684,6 +684,57 @@ body.locked{overflow:hidden}
   .wiz-bar i{transition:none}
 }
 
+/* ---- admin ---- */
+.admin-pill{
+  margin-left:auto;margin-right:16px;flex:0 0 auto;
+  padding:5px 12px;border-radius:980px;
+  background:var(--ink);color:#fff;font-size:12.5px;font-weight:600;letter-spacing:.02em;
+}
+.admin-pill:hover{text-decoration:none;opacity:.82}
+/* The account and login headers put a link where the burger sits, so the pill
+   needs a gap rather than pushing itself all the way right. */
+.nav-inner .admin-pill + .nav-out{margin-left:0}
+
+.admin-wrap{max-width:900px;margin:0 auto;padding:clamp(36px,7vw,64px) 22px 90px}
+
+.queue{list-style:none;margin:0;padding:0}
+.queue-item{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:18px;
+  padding:16px 0;border-bottom:1px solid var(--line-soft);
+}
+.queue-item:last-child{border-bottom:0}
+.queue-main{flex:1;min-width:0}
+.queue-who{margin:0;font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--ink-3)}
+.queue-what{margin:4px 0 0;font-size:15.5px;line-height:1.45;color:var(--ink);overflow-wrap:anywhere}
+.queue-meta{margin:5px 0 0;font-size:13px;color:var(--ink-3)}
+.queue-actions{flex:0 0 auto}
+
+.cust{padding:20px 0;border-bottom:1px solid var(--line-soft)}
+.cust:first-child{padding-top:0}
+.cust:last-child{border-bottom:0;padding-bottom:0}
+.cust-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.cust-names{min-width:0}
+.cust-names h3{font-size:17px;font-weight:600;letter-spacing:-.02em;overflow-wrap:anywhere}
+.cust-sub{margin:4px 0 0;font-size:13.5px;color:var(--ink-3)}
+.cust-points{margin:10px 0 0;font-size:13.5px;color:var(--ink-2)}
+.cust-points.is-over{color:#b3261e;font-weight:600}
+.cust-site{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+
+.admin-input,.admin-select{
+  font-family:var(--font);font-size:15px;color:var(--ink);
+  padding:10px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;
+}
+.admin-input{flex:1;min-width:190px}
+.admin-input:focus,.admin-select:focus{
+  outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13);
+}
+.admin-save{height:42px;padding:0 20px;flex:0 0 auto}
+
+@media (max-width:600px){
+  .queue-item{flex-direction:column;gap:10px}
+  .admin-pill{margin-right:12px}
+}
+
 /* ---- account identity, site, points ---- */
 .acct-id{display:flex;align-items:center;gap:18px;margin-bottom:6px}
 .acct-id-badge{
