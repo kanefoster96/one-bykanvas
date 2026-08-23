@@ -684,6 +684,105 @@ body.locked{overflow:hidden}
   .wiz-bar i{transition:none}
 }
 
+/* ---- account identity, site, points ---- */
+.acct-id{display:flex;align-items:center;gap:18px;margin-bottom:6px}
+.acct-id-badge{
+  width:64px;height:64px;flex:0 0 64px;border-radius:18px;overflow:hidden;
+  background:#fff;border:1px solid var(--line-soft);
+  display:grid;place-items:center;color:var(--ink-3);font-size:20px;font-weight:600;
+}
+.acct-id-badge img{width:100%;height:100%;object-fit:cover}
+.acct-id-text{min-width:0}
+.acct-id h1{font-size:clamp(26px,4.6vw,34px);font-weight:600;letter-spacing:-.03em;line-height:1.1;overflow-wrap:anywhere}
+.acct-id-plan{margin:8px 0 0}
+.plan-chip{
+  display:inline-block;padding:5px 12px;border-radius:980px;
+  background:var(--ink);color:#fff;font-size:12.5px;font-weight:600;letter-spacing:.02em;
+}
+.plan-chip.is-none{background:var(--bg-grey);color:var(--ink-2)}
+
+.site-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.site-main{min-width:0}
+.site-url{font-size:17px;font-weight:500;color:var(--ink);text-decoration:none;overflow-wrap:anywhere}
+.site-url:hover{text-decoration:underline}
+.site-none{margin:0;font-size:15px;color:var(--ink-2)}
+.site-pill{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;
+  padding:6px 13px;border-radius:980px;background:var(--good-soft);color:var(--good);
+  font-size:12.5px;font-weight:600;letter-spacing:.02em;
+}
+.site-pill i{width:7px;height:7px;border-radius:50%;background:currentColor;animation:sitePulse 2.4s ease-in-out infinite}
+@keyframes sitePulse{0%,100%{opacity:1}50%{opacity:.35}}
+.site-pill.is-building{background:var(--bg-grey);color:var(--ink-2)}
+.site-pill.is-building i{animation:none}
+
+.points-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.points-big{margin:0;font-size:46px;font-weight:600;letter-spacing:-.04em;line-height:1}
+.points-of{display:block;margin-top:6px;font-size:13.5px;font-weight:400;letter-spacing:-.01em;color:var(--ink-3)}
+.points-side{flex:1;min-width:180px}
+.points-bar{height:6px;border-radius:6px;background:var(--bg-grey);overflow:hidden}
+.points-bar i{display:block;height:100%;background:var(--good);border-radius:6px;transition:width .4s var(--ease)}
+.points-note{margin:10px 0 0;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.points-upsell{margin-top:20px;padding:18px 20px;border-radius:16px;background:var(--bg-grey)}
+.points-upsell p{margin:0;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.points-upsell strong{color:var(--ink);font-weight:600}
+.points-upsell-more{margin-top:9px!important}
+
+.req-form{margin-top:24px;padding-top:22px;border-top:1px solid var(--line-soft)}
+.req-kinds{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.req-kind{display:block;cursor:pointer}
+.req-kind input{position:absolute;opacity:0;width:0;height:0}
+.req-kind span{
+  display:block;padding:15px 16px;border:1px solid var(--line);border-radius:16px;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
+}
+.req-kind input:checked + span{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.req-kind input:focus-visible + span{outline:2px solid var(--blue);outline-offset:3px}
+.req-kind b{display:block;font-size:15.5px;font-weight:600}
+.req-kind em{display:block;margin-top:3px;font-style:normal;font-size:13px;font-weight:600;color:var(--good)}
+.req-kind small{display:block;margin-top:6px;font-size:13px;line-height:1.4;color:var(--ink-3)}
+/* The details box sits outside .acct-grid, so it needs the same treatment the
+   other inputs get rather than the browser's monospace default. */
+.req-form textarea{
+  font-family:var(--font);font-size:16px;color:var(--ink);width:100%;line-height:1.45;resize:vertical;
+  padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:#fff;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
+}
+.req-form textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13)}
+.req-form .field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.req-form label{font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.req-send{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.req-send .note{margin:0}
+
+.req-list{margin-top:26px;padding-top:22px;border-top:1px solid var(--line-soft)}
+.req-list-title{margin:0 0 14px;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.req-list ul{list-style:none;margin:0;padding:0}
+.req-list li{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+.req-list li:last-child{border-bottom:0}
+.req-what{flex:1;min-width:0;font-size:14.5px;line-height:1.45;color:var(--ink);overflow-wrap:anywhere}
+.req-when{display:block;margin-top:3px;font-size:12.5px;color:var(--ink-3)}
+.req-state{
+  flex:0 0 auto;font-size:11.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+  padding:5px 10px;border-radius:980px;background:var(--bg-grey);color:var(--ink-2);
+}
+.req-state.is-done{background:var(--good-soft);color:var(--good)}
+.req-cost{flex:0 0 auto;font-size:12.5px;font-weight:600;color:var(--ink-3)}
+
+.bill-move{margin:14px 0 0;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.bill-manage{margin-top:22px;padding-top:18px;border-top:1px solid var(--line-soft)}
+.bill-manage .linkish{margin-top:0}
+.bill-manage .hint{margin-top:6px}
+
+@media (max-width:600px){
+  .req-kinds{grid-template-columns:1fr}
+  .acct-id{gap:14px}
+  .acct-id-badge{width:54px;height:54px;flex:0 0 54px;border-radius:15px}
+}
+@media (prefers-reduced-motion:reduce){
+  .site-pill i{animation:none}
+  .points-bar i{transition:none}
+}
+
 /* ---- billing panel ---- */
 .bill-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
 .bill-plan{margin:0;font-size:17px;font-weight:600;letter-spacing:-.02em}

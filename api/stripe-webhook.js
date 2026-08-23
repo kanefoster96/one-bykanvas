@@ -85,6 +85,14 @@ module.exports = async function handler(req, res) {
     };
     if (sub.metadata && sub.metadata.plan) patch.selected_plan = sub.metadata.plan;
 
+    /* active_plan is what the account page rations points from. selected_plan
+       cannot do that job: the customer can write it, so anyone could grant
+       themselves Max. This column is only ever written here, and it is cleared
+       the moment the subscription stops being live. */
+    patch.active_plan = isLive(sub.status) && sub.metadata && sub.metadata.plan
+      ? sub.metadata.plan
+      : null;
+
     const { error } = await admin.from('profiles').upsert(patch, { onConflict: 'id' });
     if (error) throw new Error(error.message);
     console.log('webhook: %s -> %s (live: %s)', id, sub.status, isLive(sub.status));

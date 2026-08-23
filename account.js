@@ -34,7 +34,10 @@ async function start() {
     return;
   }
   if (profile.data) fill(profile.data);
+  showIdentity(profile.data);
+  showSite(profile.data);
   showBilling(profile.data);
+  await showPoints(profile.data);
 
   loading.hidden = true;
   app.hidden = false;
@@ -82,15 +85,36 @@ function setAvatar(path) {
     fallback.hidden = false;
     fallback.textContent = initials();
     remove.hidden = true;
+    headerBadge(null);
     return;
   }
   var pub = ONE.db.storage.from('avatars').getPublicUrl(avatarPath);
   // Bust the browser cache so a re-upload to the same path shows immediately.
-  img.src = pub.data.publicUrl + '?t=' + Date.now();
+  var src = pub.data.publicUrl + '?t=' + Date.now();
+  img.src = src;
   img.alt = 'Your business logo';
   img.hidden = false;
   fallback.hidden = true;
   remove.hidden = false;
+  headerBadge(src);
+}
+
+/* The badge at the top of the page shows the same logo, so an upload or a
+   removal is reflected in both places without a reload. */
+function headerBadge(src) {
+  var img = document.getElementById('idAvatar');
+  var txt = document.getElementById('idInitials');
+  if (!img || !txt) return;
+  if (src) {
+    img.src = src;
+    img.alt = '';
+    img.hidden = false;
+    txt.hidden = true;
+  } else {
+    img.hidden = true;
+    txt.hidden = false;
+    txt.textContent = initials();
+  }
 }
 
 function initials() {
@@ -169,6 +193,204 @@ document.getElementById('profileForm').addEventListener('submit', async function
   if (res.error) return say(saveNote, ONE.friendlyError(res.error), 'bad');
   say(saveNote, 'Saved.', 'ok');
   if (!avatarPath) setAvatar(null);   // refresh initials if the name changed
+  var named = document.getElementById('business_name').value.trim();
+  document.getElementById('idName').textContent = named || 'Your business';
+});
+
+/* ---------------- identity, site, points ---------------- */
+
+/* Points per plan. api/_plans.js carries the same numbers for the server side;
+   change both. An edit costs one point, a feature three. */
+var PLAN_POINTS = { business: 0, pro: 3, max: 5 };
+var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
+var COST        = { edit: 1, feature: 3 };
+
+/* The plan we ration points from is active_plan, written only by the Stripe
+   webhook. selected_plan is whatever the customer last picked and they can
+   write it themselves, so it must never decide entitlements. */
+function entitledPlan(row) {
+  return row && row.active_plan && PLAN_POINTS[row.active_plan] !== undefined ? row.active_plan : null;
+}
+
+function showIdentity(row) {
+  var name = (row && row.business_name || '').trim();
+  document.getElementById('idName').textContent = name || 'Your business';
+
+  var chip = document.getElementById('idPlan');
+  var plan = entitledPlan(row);
+  chip.textContent = plan ? PLAN_NAME[plan] : 'No plan yet';
+  chip.className = 'plan-chip' + (plan ? '' : ' is-none');
+}
+
+function showSite(row) {
+  var link   = document.getElementById('siteUrl');
+  var none   = document.getElementById('siteNone');
+  var pill   = document.getElementById('sitePill');
+  var pillTx = document.getElementById('sitePillText');
+
+  var url = row && row.site_url;
+  var status = (row && row.site_status) || 'building';
+
+  if (url) {
+    var href = /^https?:\/\//i.test(url) ? url : 'https://' + url;
+    link.href = href;
+    link.textContent = href.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+    link.hidden = false;
+    none.hidden = true;
+  } else {
+    link.hidden = true;
+    none.hidden = false;
+  }
+
+  /* The green pill is only earned by a site that is actually up. Anything
+     else says so plainly rather than dressing up a build as live. */
+  if (status === 'live' && url) {
+    pill.hidden = false;
+    pill.className = 'site-pill';
+    pillTx.textContent = 'Live';
+  } else if (url && status === 'paused') {
+    pill.hidden = false;
+    pill.className = 'site-pill is-building';
+    pillTx.textContent = 'Paused';
+  } else {
+    pill.hidden = false;
+    pill.className = 'site-pill is-building';
+    pillTx.textContent = 'In build';
+  }
+}
+
+/* Start of the current billing period. Points reset with the invoice, not the
+   calendar, so this walks back one month from the renewal date. */
+function periodStart(row) {
+  var end = row && row.current_period_end ? new Date(row.current_period_end) : null;
+  if (end && !isNaN(end)) {
+    var start = new Date(end);
+    start.setMonth(start.getMonth() - 1);
+    return start;
+  }
+  var now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+}
+
+var pointsState = { allowance: 0, used: 0, plan: null };
+
+async function showPoints(row) {
+  var plan = entitledPlan(row);
+
+  /* Until there is a subscription there is nothing to charge a request to, so
+     the panel stays out of the way rather than offering work we cannot bill. */
+  var live = row && (row.subscription_status === 'active' || row.subscription_status === 'trialing');
+  document.getElementById('pointsPanel').hidden = !live;
+  if (!live) return;
+
+  var allowance = plan ? PLAN_POINTS[plan] : 0;
+  var start = periodStart(row);
+
+  var used = 0;
+  var recent = [];
+  var q = await ONE.db.from('requests')
+    .select('id, kind, points, detail, status, created_at')
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  if (!q.error && q.data) {
+    recent = q.data;
+    q.data.forEach(function (r) {
+      if (r.status !== 'declined' && new Date(r.created_at) >= start) used += r.points;
+    });
+  }
+
+  pointsState = { allowance: allowance, used: used, plan: plan };
+
+  var left = Math.max(0, allowance - used);
+  document.getElementById('pointsLeft').textContent = String(left);
+  document.getElementById('pointsOf').textContent = 'of ' + allowance + (allowance === 1 ? ' point' : ' points');
+
+  var bar = document.getElementById('pointsBar');
+  var note = document.getElementById('pointsNote');
+  var upsell = document.getElementById('pointsUpsell');
+
+  if (allowance > 0) {
+    bar.hidden = false;
+    document.getElementById('pointsFill').style.width = Math.round((left / allowance) * 100) + '%';
+    upsell.hidden = true;
+    note.textContent = left === 0
+      ? 'You have used this month\u2019s points. Anything else is charged at the normal rate \u2014 \u00a335 an edit, \u00a3105 a feature.'
+      : 'An edit costs 1 point, a new feature 3. Points reset each month and do not roll over.';
+  } else {
+    bar.hidden = true;
+    upsell.hidden = false;
+    note.textContent = used > 0
+      ? String(used) + (used === 1 ? ' point' : ' points') + ' asked for this month, invoiced separately.'
+      : '';
+  }
+
+  renderRequests(recent);
+}
+
+function renderRequests(rows) {
+  var wrap = document.getElementById('reqList');
+  var list = document.getElementById('reqItems');
+  if (!rows || !rows.length) { wrap.hidden = true; return; }
+
+  list.textContent = '';
+  rows.slice(0, 6).forEach(function (r) {
+    var li = document.createElement('li');
+
+    var what = document.createElement('span');
+    what.className = 'req-what';
+    what.textContent = r.detail;
+    var when = document.createElement('span');
+    when.className = 'req-when';
+    when.textContent = new Date(r.created_at).toLocaleDateString('en-GB',
+      { day: 'numeric', month: 'short', year: 'numeric' });
+    what.appendChild(when);
+
+    var cost = document.createElement('span');
+    cost.className = 'req-cost';
+    cost.textContent = r.points + (r.points === 1 ? ' pt' : ' pts');
+
+    var state = document.createElement('span');
+    state.className = 'req-state' + (r.status === 'done' ? ' is-done' : '');
+    state.textContent = { new: 'Received', in_progress: 'In progress', done: 'Done', declined: 'Declined' }[r.status] || r.status;
+
+    li.appendChild(what);
+    li.appendChild(cost);
+    li.appendChild(state);
+    list.appendChild(li);
+  });
+  wrap.hidden = false;
+}
+
+document.getElementById('reqForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  var note = document.getElementById('reqNote');
+  var btn  = document.getElementById('reqBtn');
+  var detail = document.getElementById('reqDetail').value.trim();
+  var kind = (document.querySelector('input[name="kind"]:checked') || {}).value || 'edit';
+
+  if (!detail) { say(note, 'Tell us what you would like changed.', 'bad'); return; }
+
+  btn.disabled = true;
+  say(note, 'Sending\u2026');
+
+  var ins = await ONE.db.from('requests').insert({
+    user_id: user.id, kind: kind, points: COST[kind], detail: detail
+  });
+
+  btn.disabled = false;
+  if (ins.error) { say(note, ONE.friendlyError(ins.error), 'bad'); return; }
+
+  /* Say what it cost them, since that is the question they will have. */
+  var left = pointsState.allowance - pointsState.used - COST[kind];
+  say(note, pointsState.allowance > 0 && left >= 0
+    ? 'Sent. That used ' + COST[kind] + (COST[kind] === 1 ? ' point' : ' points') +
+      ', leaving ' + left + '.'
+    : 'Sent. We will confirm the cost before starting.', 'ok');
+
+  document.getElementById('reqDetail').value = '';
+  var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
+  await showPoints(fresh.data);
 });
 
 /* ---------------- billing ---------------- */
@@ -192,9 +414,29 @@ function showBilling(row) {
   var payBtn = document.getElementById('payBtn');
   var pick = document.getElementById('planChoice');
 
-  if (row && row.selected_plan && PLAN_LABEL[row.selected_plan]) {
-    pick.value = row.selected_plan;
+  var current = entitledPlan(row);
+  if (current) pick.value = current;
+  else if (row && row.selected_plan && PLAN_LABEL[row.selected_plan]) pick.value = row.selected_plan;
+
+  /* Tell them which direction the selection moves before they commit. */
+  var ORDER = ['business', 'pro', 'max'];
+  function describeMove() {
+    var move = document.getElementById('billMove');
+    var chosen = pick.value;
+    if (!current || chosen === current) { move.hidden = true; return; }
+    var up = ORDER.indexOf(chosen) > ORDER.indexOf(current);
+    var pts = PLAN_POINTS[chosen];
+    move.hidden = false;
+    move.textContent = (up ? 'Upgrading' : 'Downgrading') + ' from ' + PLAN_NAME[current] +
+      ' to ' + PLAN_NAME[chosen] + ' \u2014 ' +
+      (pts ? pts + (pts === 1 ? ' point' : ' points') + ' a month' : 'no points included') +
+      '. Takes effect from your next payment.';
   }
+  pick.addEventListener('change', describeMove);
+  describeMove();
+
+  /* Managing a card only makes sense once there is a customer to manage. */
+  document.getElementById('billManage').hidden = !(row && row.stripe_customer_id);
 
   var status = row && row.subscription_status;
   if (!status) {
@@ -222,6 +464,29 @@ function showBilling(row) {
 
   payBtn.textContent = (status === 'active' || status === 'trialing') ? 'Change plan' : 'Set up payment';
 }
+
+document.getElementById('portalBtn').addEventListener('click', async function () {
+  var note = document.getElementById('portalNote');
+  var btn = this;
+  btn.disabled = true;
+  say(note, 'Opening\u2026');
+  try {
+    var sess = await ONE.db.auth.getSession();
+    var token = sess.data && sess.data.session && sess.data.session.access_token;
+    if (!token) throw new Error('Your session has expired. Log in and try again.');
+
+    var res = await fetch('/api/portal', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    var data = await res.json().catch(function () { return {}; });
+    if (!res.ok || !data.url) throw new Error(data.error || 'Could not open billing.');
+    location.href = data.url;
+  } catch (err) {
+    say(note, ONE.friendlyError(err), 'bad');
+    btn.disabled = false;
+  }
+});
 
 document.getElementById('payBtn').addEventListener('click', async function () {
   var note = document.getElementById('billNote');
