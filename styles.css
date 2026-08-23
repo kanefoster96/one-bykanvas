@@ -224,8 +224,8 @@ body.locked{overflow:hidden}
   /* The beat between previews. One element on a four-second loop, so it lands
      in the gap after every site rather than needing one copy per site. */
   .device-build{
-    position:absolute;inset:0;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;gap:13px;
+    position:absolute;inset:0;display:flex;
+    align-items:center;justify-content:center;gap:10px;
     background:var(--bg-grey);
     animation:buildCycle 4s linear infinite both;
   }
@@ -233,15 +233,17 @@ body.locked{overflow:hidden}
     width:25px;height:25px;fill:var(--ink);
     animation:buildSpin 2.2s linear infinite;
   }
-  /* The three words stack on one line and swap while the beat is faded out,
-     so a word never changes on screen. Each runs the full twelve-second cycle
-     and is up for one beat of it. */
-  .build-word{
-    position:relative;display:block;width:100%;text-align:center;
-    height:17px;line-height:17px;font-size:14px;color:var(--ink-2);
-  }
+  /* The three words stack in one grid cell and swap while the beat is faded
+     out, so a word never changes on screen. Each runs the full twelve-second
+     cycle and is up for one beat of it.
+
+     A grid rather than absolute positioning: the cell sizes itself to the
+     longest word, so the block still has a width sitting beside the star.
+     Absolute children would have collapsed it to nothing. Left-aligned inside
+     that cell, so the gap after the star stays put whichever word is up. */
+  .build-word{display:grid;font-size:14px;line-height:1.2;color:var(--ink-2)}
   .build-word b{
-    position:absolute;left:0;right:0;font-weight:500;opacity:0;
+    grid-area:1/1;justify-self:start;font-weight:500;opacity:0;
     animation:buildWord 12s linear infinite;
   }
   .build-word b:nth-of-type(2){animation-delay:4s}
