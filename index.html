@@ -50,20 +50,24 @@
     <div class="device">
       <div class="device-bar"><span></span><span></span><span></span></div>
       <div class="device-screen">
-        <div class="sk sk-logo"></div>
-        <div class="sk sk-hero"></div>
-        <div class="sk sk-line w70"></div>
-        <div class="sk sk-line w50"></div>
-        <div class="sk-grid"><i></i><i></i><i></i></div>
-
-        <!-- Real sites, phone widths only. These are screenshots of mobile
-             sites, so they only sit right where the frame is narrow; the
-             skeleton stays on wider screens. The build beat sits last so it
-             paints over the shots, and so the images stay children 1 to 3. -->
+        <!-- Real sites cycling in the frame. Two sets: desktop shots on wide
+             screens, phone shots on narrow ones, because a phone screenshot in
+             a wide frame is mostly empty space and the reverse is unreadable.
+             Both are lazy-loaded, so a visitor only fetches the set their own
+             screen shows. The build beat sits last so it paints over whichever
+             set is up, and so the images stay children 1 upwards. -->
         <div class="device-shots">
-          <img src="assets/IMG_5313.jpeg" alt="" width="1290" height="2061" loading="lazy" decoding="async">
-          <img src="assets/IMG_5314.jpeg" alt="" width="1290" height="2286" loading="lazy" decoding="async">
-          <img src="assets/IMG_5315.jpeg" alt="" width="1290" height="1928" loading="lazy" decoding="async">
+          <div class="shots shots-wide">
+            <img src="assets/desktop-fstr.jpg" alt="" width="1640" height="824" loading="lazy" decoding="async">
+            <img src="assets/desktop-dogs.jpg" alt="" width="1640" height="828" loading="lazy" decoding="async">
+            <img src="assets/desktop-dance.jpg" alt="" width="1640" height="846" loading="lazy" decoding="async">
+            <img src="assets/desktop-triumph.jpg" alt="" width="1640" height="819" loading="lazy" decoding="async">
+          </div>
+          <div class="shots shots-phone">
+            <img src="assets/IMG_5313.jpeg" alt="" width="1290" height="2061" loading="lazy" decoding="async">
+            <img src="assets/IMG_5314.jpeg" alt="" width="1290" height="2286" loading="lazy" decoding="async">
+            <img src="assets/IMG_5315.jpeg" alt="" width="1290" height="1928" loading="lazy" decoding="async">
+          </div>
           <div class="device-build">
             <svg class="build-star" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 2.8 14.12 9.09 20.75 9.16 15.42 13.11 17.41 19.44 12 15.6 6.59 19.44 8.58 13.11 3.25 9.16 9.88 9.09Z"/>
