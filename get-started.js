@@ -110,6 +110,24 @@
       if (res.error) throw res.error;
       signedUp = true;
       answers.hasSession = Boolean(res.data.session);
+
+      /* Two reasons signUp can come back with no session: email confirmation
+         is switched on, or this address already has an account - Supabase
+         answers the same way for both so it cannot be used to find out who is
+         registered. Signing in settles which it is. Without this, someone who
+         already has an account is told to confirm an email that never arrives,
+         and never sees the payment button. */
+      if (!answers.hasSession) {
+        var back = await ONE.db.auth.signInWithPassword({ email: mail, password: pass });
+        if (back.data && back.data.session) {
+          answers.hasSession = true;
+        } else if (back.error && /invalid login credentials/i.test(back.error.message || '')) {
+          say(note, 'There is already an account with that email. Log in instead and you '
+                  + 'can pick up from your account page.', 'bad');
+          return;
+        }
+      }
+
       say(note, '');
       show(2);
     } catch (err) {
@@ -151,10 +169,37 @@
     $('payNow').hidden = !signedIn;
     $('payLater').hidden = signedIn;
     $('payAction').hidden = !signedIn;
+    $('recheck').hidden = signedIn;
     $('skipPay').textContent = signedIn ? 'Skip for now — do it later' : 'Finish';
 
     show(4);
   }
+
+  /* They confirmed in another tab. Pick the session up and reveal the payment
+     button in place, rather than making them start the form again. */
+  $('recheck').addEventListener('click', async function () {
+    var note = $('note4');
+    var btn = this;
+    btn.disabled = true;
+    say(note, 'Checking\u2026');
+    var res = await ONE.db.auth.getSession();
+    var live = Boolean(res.data && res.data.session);
+    if (!live && answers.email && $('password') && $('password').value) {
+      // A confirmation opened in another tab leaves no session in this one.
+      var back = await ONE.db.auth.signInWithPassword({
+        email: answers.email, password: $('password').value
+      });
+      live = Boolean(back.data && back.data.session);
+    }
+    btn.disabled = false;
+    if (!live) {
+      say(note, 'Not confirmed yet. Open the link in your email, then try again.', 'bad');
+      return;
+    }
+    answers.hasSession = true;
+    say(note, '');
+    step3();   // re-renders the step, which now shows the payment button
+  }); 
 
   /* 4 — finish: save now if we can, otherwise stash for first login */
   function buildRow() {
@@ -260,6 +305,10 @@
       var session = res.data && res.data.session;
       if (!session) return;
       signedUp = true;
+      /* There is a live session, so checkout will work. Without this the
+         payment step decided there was no session and hid its own button,
+         which is what anyone already logged in saw. */
+      answers.hasSession = true;
       answers.email = session.user.email;
       var meta = session.user.user_metadata || {};
       if (meta.contact_name)  $('contact_name').value  = meta.contact_name;

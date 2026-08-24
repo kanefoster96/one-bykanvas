@@ -162,6 +162,10 @@
 
         <p class="note" id="note4" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full" id="payAction" type="button">Set up payment</button>
+        <!-- Shown only while there is no session: lets someone who has just
+             confirmed in another tab reveal the payment button without going
+             back through the form. -->
+        <button class="btn btn-ghost full" id="recheck" type="button" hidden>I&rsquo;ve confirmed — let me pay</button>
         <button class="linkish wiz-next" data-next type="button" id="skipPay">Skip for now — do it later</button>
         <button class="linkish" id="fixEmail" type="button">That email isn't right</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
