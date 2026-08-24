@@ -10,7 +10,7 @@
   'use strict';
 
   var PENDING_KEY = 'one.pending-onboarding';
-  var LAST = 4;                       // step 5 is the confirmation screen
+  var LAST = 5;                       // step 6 is the confirmation screen
 
   var track   = document.getElementById('track');
   var steps   = Array.prototype.slice.call(track.querySelectorAll('.wiz-step'));
@@ -72,8 +72,9 @@
   async function advance(button) {
     if (current === 1) return step1(button);
     if (current === 2) return step2();
-    if (current === 3) return step3();
-    if (current === 4) return step4(button);
+    if (current === 3) return stepDomain();
+    if (current === 4) return stepPlan();
+    if (current === 5) return stepPay(button);
   }
 
   /* 1 — details + account */
@@ -151,10 +152,150 @@
     answers.site_uses = uses;
     say(note, '');
     show(3);
+    askDomains();
   }
 
-  /* 3 — plan */
-  function step3() {
+  /* 3 — web address.
+   *
+   * Suggestions and availability both come from /api/domains, which asks the
+   * registries over RDAP. Nothing is bought here; this only records what they
+   * want so it can be registered when the site is ready.
+   */
+  var domainsAsked = false;
+
+  function domainRow(domain, checked) {
+    var label = document.createElement('label');
+    label.className = 'pick-row' + (checked ? ' is-on' : '');
+
+    var input = document.createElement('input');
+    input.type = 'radio';
+    input.name = 'domain';
+    input.value = domain;
+    input.checked = Boolean(checked);
+
+    var main = document.createElement('span');
+    main.className = 'pick-main';
+    var head = document.createElement('span');
+    head.className = 'pick-head';
+    var b = document.createElement('b');
+    b.textContent = domain;
+    var em = document.createElement('em');
+    em.className = 'dom-free';
+    em.textContent = 'Free';
+    head.appendChild(b);
+    head.appendChild(em);
+    main.appendChild(head);
+
+    label.appendChild(input);
+    label.appendChild(main);
+    return label;
+  }
+
+  function paintDomains(list, typed) {
+    var wrap = $('domList');
+    wrap.textContent = '';
+    list.forEach(function (d, i) {
+      wrap.appendChild(domainRow(d, d === (typed || answers.requested_domain) || (!typed && !answers.requested_domain && i === 0)));
+    });
+    if (list.length) answers.requested_domain = wrap.querySelector('input:checked').value;
+  }
+
+  async function askDomains() {
+    if (domainsAsked) return;
+    domainsAsked = true;
+    var state = $('domState');
+    try {
+      var res = await fetch('/api/domains', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'suggest',
+          business: answers.business_name,
+          business_type: answers.business_type
+        })
+      });
+      var data = await res.json().catch(function () { return {}; });
+      if (data.suggestions && data.suggestions.length) {
+        paintDomains(data.suggestions);
+        return;
+      }
+      /* Nothing to show. Say which kind of nothing it is: every name we tried
+         being taken is a different problem from not being able to ask. */
+      state.textContent = data.reachable === false
+        ? 'We could not reach the registry just now. Type the address you want below, or skip and we will sort it with you.'
+        : 'The obvious ones are taken. Type an address below to check it, or skip and we will find you a good one.';
+    } catch (err) {
+      state.textContent = 'We could not check just now. Type the address you want below, or skip and we will sort it with you.';
+      domainsAsked = false;      // let them get suggestions on a second visit
+    }
+  }
+
+  $('domList').addEventListener('change', function (e) {
+    if (!e.target.matches('input[name="domain"]')) return;
+    answers.requested_domain = e.target.value;
+    $('domList').querySelectorAll('.pick-row').forEach(function (row) {
+      row.classList.toggle('is-on', row.querySelector('input').checked);
+    });
+    say($('noteDomain'), '');
+  });
+
+  $('domCheck').addEventListener('click', async function () {
+    var note = $('domOwnNote');
+    var btn = this;
+    var typed = val('domOwn').toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
+    if (!typed) { note.textContent = 'Type an address first.'; return; }
+
+    btn.disabled = true;
+    note.textContent = 'Checking\u2026';
+    try {
+      var res = await fetch('/api/domains', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'check', domain: typed })
+      });
+      var data = await res.json().catch(function () { return {}; });
+      if (!res.ok) { note.textContent = data.error || 'That did not work.'; return; }
+
+      if (data.state === 'free') {
+        note.textContent = typed + ' is free. Selected.';
+        var rows = [].map.call($('domList').querySelectorAll('input[name="domain"]'), function (i) { return i.value; });
+        if (rows.indexOf(typed) === -1) rows.unshift(typed);
+        $('domState') && $('domState').remove();
+        paintDomains(rows.slice(0, 4), typed);
+      } else if (data.state === 'taken') {
+        note.textContent = typed + ' is already registered. Try another.';
+      } else {
+        /* Never call it free on a failed lookup. */
+        note.textContent = 'We could not check that one. Leave it with us and we will confirm.';
+        answers.requested_domain = typed;
+      }
+    } catch (err) {
+      note.textContent = 'We could not check just now. Leave it with us and we will confirm.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $('domSkip').addEventListener('click', function () {
+    answers.requested_domain = null;
+    say($('noteDomain'), '');
+    show(4);
+  });
+
+  function stepDomain() {
+    /* Typed but unchecked still counts as a request: better to record what they
+       want than to insist they press Check. */
+    var typed = val('domOwn').toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
+    var picked = $('domList').querySelector('input[name="domain"]:checked');
+    if (picked) answers.requested_domain = picked.value;
+    else if (typed) answers.requested_domain = typed;
+
+    say($('noteDomain'), '');
+    show(4);
+  }
+
+  /* 4 — plan */
+  function stepPlan() {
     var chosen = document.querySelector('input[name="plan"]:checked');
     answers.selected_plan = chosen ? chosen.value : 'business';
     var plan = PLANS[answers.selected_plan];
@@ -172,7 +313,7 @@
     $('recheck').hidden = signedIn;
     $('skipPay').textContent = signedIn ? 'Skip for now — do it later' : 'Finish';
 
-    show(4);
+    show(5);
   }
 
   /* They confirmed in another tab. Pick the session up and reveal the payment
@@ -198,10 +339,10 @@
     }
     answers.hasSession = true;
     say(note, '');
-    step3();   // re-renders the step, which now shows the payment button
+    stepPlan();   // re-renders the step, which now shows the payment button
   }); 
 
-  /* 4 — finish: save now if we can, otherwise stash for first login */
+  /* 5 — finish: save now if we can, otherwise stash for first login */
   function buildRow() {
     return {
       business_name:  answers.business_name || null,
@@ -209,12 +350,13 @@
       business_type:  answers.business_type || null,
       site_uses:      answers.site_uses && answers.site_uses.length ? answers.site_uses : null,
       selected_plan:  answers.selected_plan || null,
+      requested_domain: answers.requested_domain || null,
       site_goals:     answers.site_uses ? answers.site_uses.join('\n') : null
     };
   }
 
   /* Returns true when it reached the database, false when it had to stash. */
-  async function step4Save() {
+  async function saveAnswers() {
     var row = buildRow();
     var saved = false;
     try {
@@ -237,12 +379,12 @@
     return saved;
   }
 
-  async function step4(button) {
+  async function stepPay(button) {
     button.disabled = true;
     var label = button.textContent;
     button.textContent = 'Saving…';
 
-    var saved = await step4Save();
+    var saved = await saveAnswers();
 
     if (saved) {
       $('doneHead').textContent = 'Your account is ready.';
@@ -277,7 +419,7 @@
     say(note, '');
 
     // Save first: leaving for Stripe means this page goes away.
-    try { await step4Save(); } catch (e) {}
+    try { await saveAnswers(); } catch (e) {}
 
     try {
       var sess = await ONE.db.auth.getSession();

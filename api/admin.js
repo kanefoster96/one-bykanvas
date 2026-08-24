@@ -65,7 +65,7 @@ module.exports = async function handler(req, res) {
       const { data: profiles, error } = await db
         .from('profiles')
         .select('id, business_name, contact_name, business_type, active_plan, selected_plan, ' +
-                'subscription_status, current_period_end, site_url, site_status, created_at')
+                'subscription_status, current_period_end, site_url, site_status, requested_domain, created_at')
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw new Error(error.message);

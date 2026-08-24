@@ -21,7 +21,7 @@
 <main class="wiz">
   <!-- progress -->
   <div class="wiz-top" id="wizTop">
-    <p class="wiz-count"><span id="stepNow">1</span> of 4</p>
+    <p class="wiz-count"><span id="stepNow">1</span> of 5</p>
     <div class="wiz-bar"><i id="bar"></i></div>
   </div>
 
@@ -72,7 +72,35 @@
       </section>
 
       <!-- ============ 3. plan ============ -->
-      <section class="wiz-step" data-step="3" aria-label="Choose a plan" hidden>
+      <!-- ============ web address ============ -->
+      <section class="wiz-step" data-step="3" aria-label="Your web address" hidden>
+        <h1>Your web address.</h1>
+        <p class="wiz-sub">Here are three that are free right now. Pick one, or type the address you want and we&rsquo;ll check it.</p>
+
+        <div class="pick" id="domList" aria-live="polite">
+          <p class="dom-state" id="domState">Checking what&rsquo;s free&hellip;</p>
+        </div>
+
+        <div class="field">
+          <label for="domOwn">Or type your own</label>
+          <div class="dom-own">
+            <input id="domOwn" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="yourbusiness.co.uk">
+            <button class="btn btn-ghost" id="domCheck" type="button">Check</button>
+          </div>
+          <p class="hint" id="domOwnNote">&nbsp;</p>
+        </div>
+
+        <div class="paynote">
+          <p>Nothing is bought yet. We register whichever address you settle on when your site is ready, and it&rsquo;s included in your plan &mdash; you never pay for it separately.</p>
+        </div>
+
+        <p class="note" id="noteDomain" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <button class="linkish" id="domSkip" type="button">Help me choose later</button>
+        <button class="linkish wiz-back" data-back type="button">Back</button>
+      </section>
+
+      <section class="wiz-step" data-step="4" aria-label="Choose a plan" hidden>
         <h1>Pick your plan.</h1>
         <p class="wiz-sub">We'd start on Business. Only move up if you want us changing things for you every month.</p>
 
@@ -137,7 +165,7 @@
       </section>
 
       <!-- ============ 4. payment ============ -->
-      <section class="wiz-step" data-step="4" aria-label="Payment" hidden>
+      <section class="wiz-step" data-step="5" aria-label="Payment" hidden>
         <h1>Your plan.</h1>
         <p class="wiz-sub">Your first month starts the build.</p>
 
@@ -172,7 +200,7 @@
       </section>
 
       <!-- ============ done ============ -->
-      <section class="wiz-step" data-step="5" aria-label="All done" hidden>
+      <section class="wiz-step" data-step="6" aria-label="All done" hidden>
         <div class="done-tick" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
         </div>

@@ -194,13 +194,24 @@ function renderCustomers() {
       card.appendChild(line);
     }
 
+    /* What they asked for in the wizard, so it can be bought. */
+    if (p.requested_domain) {
+      var want = el('p', 'cust-want');
+      want.appendChild(el('span', null, 'Asked for '));
+      var strong = el('strong', null, p.requested_domain);
+      want.appendChild(strong);
+      card.appendChild(want);
+    }
+
     /* The site row: the only two fields on this page we can write. */
     var row = el('div', 'cust-site');
 
     var url = el('input', 'admin-input');
     url.type = 'text';
+    /* Prefilled with what they asked for once it is bought, so marking a site
+       live is one click rather than retyping the address. */
     url.value = p.site_url || '';
-    url.placeholder = 'their-site.co.uk';
+    url.placeholder = p.requested_domain || 'their-site.co.uk';
     url.setAttribute('aria-label', 'Site address for ' + (p.business_name || 'this customer'));
 
     var status = el('select', 'admin-select');

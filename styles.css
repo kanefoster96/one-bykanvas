@@ -676,6 +676,17 @@ body.locked{overflow:hidden}
 .pick-more .ticks{margin:12px 0 0 31px}
 .pick-more .ticks li{font-size:14px;margin-bottom:9px}
 
+/* web address step */
+.dom-state{margin:0 0 14px;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.dom-own{display:flex;gap:10px}
+.dom-own input{flex:1;min-width:0}
+.dom-own .btn{flex:0 0 auto;height:48px;padding:0 20px}
+/* .pick-head em is the big plan price and outranks a lone class, so the
+   domain badge has to be qualified to win. */
+.pick-head em.dom-free{font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--good)}
+.pick-row .pick-head b{font-size:15.5px;overflow-wrap:anywhere}
+#domOwnNote{min-height:18px}
+
 /* summary + payment */
 .sumbox{border:1px solid var(--line-soft);border-radius:16px;padding:6px 18px;margin-bottom:20px}
 .sumrow{display:flex;justify-content:space-between;align-items:baseline;padding:13px 0;font-size:15px;color:var(--ink-2);border-bottom:1px solid var(--line-soft)}
@@ -735,6 +746,8 @@ body.locked{overflow:hidden}
 .cust-names h3{font-size:17px;font-weight:600;letter-spacing:-.02em;overflow-wrap:anywhere}
 .cust-sub{margin:4px 0 0;font-size:13.5px;color:var(--ink-3)}
 .cust-points{margin:10px 0 0;font-size:13.5px;color:var(--ink-2)}
+.cust-want{margin:8px 0 0;font-size:13.5px;color:var(--ink-2)}
+.cust-want strong{color:var(--ink);font-weight:600}
 .cust-points.is-over{color:#b3261e;font-weight:600}
 .cust-site{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
 
