@@ -264,6 +264,19 @@
       .replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
   }
 
+  /* Suffixes that are themselves two labels, so example.co.uk is a bare name
+     rather than a subdomain of co.uk. */
+  var TWO_PART_SUFFIX = /\.(co|org|net|ac|me|gov|ltd|plc|sch)\.[a-z]{2}$/;
+
+  /* www. for the preview only. Something that is already a subdomain keeps its
+     own host: www.shop.example.com would be a different address, not a
+     prettier version of the same one. */
+  function withWww(domain) {
+    var labels = domain.split('.');
+    var bare = TWO_PART_SUFFIX.test(domain) ? labels.length === 3 : labels.length === 2;
+    return bare ? 'www.' + domain : domain;
+  }
+
   $('domCheck').addEventListener('click', async function () {
     var note = $('domOwnNote');
     var btn = this;
@@ -343,9 +356,10 @@
     $('sumDue').textContent = plan.price;
 
     /* The address they chose, shown in a browser bar so the thing they are
-       buying is on screen before they pay for it. */
+       buying is on screen before they pay for it. The www. is display only:
+       requested_domain stays the bare name, which is what gets registered. */
     var domain = answers.requested_domain;
-    $('urlbarText').textContent = domain || 'yourbusiness.co.uk';
+    $('urlbarText').textContent = domain ? withWww(domain) : 'www.yourbusiness.co.uk';
     $('urlbar').classList.toggle('is-set', Boolean(domain));
     $('urlbarNote').textContent = !domain
       ? 'We\u2019ll find you an address together after you sign up.'
