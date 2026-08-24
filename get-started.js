@@ -304,43 +304,15 @@
     $('sumEmail').textContent = answers.email || '—';
     $('sumDue').textContent = plan.price;
 
-    // Checkout needs a verified session; with email confirmation on there
-    // often is not one yet, so say so rather than opening a dead end.
-    var signedIn = Boolean(answers.hasSession);
-    $('payNow').hidden = !signedIn;
-    $('payLater').hidden = signedIn;
-    $('payAction').hidden = !signedIn;
-    $('recheck').hidden = signedIn;
-    $('skipPay').textContent = signedIn ? 'Skip for now — do it later' : 'Finish';
+    /* The payment button is always offered. If the session is not there yet
+       the click recovers it, so an unconfirmed address is something to sort out
+       after paying rather than a gate in front of it. */
+    $('payThen').hidden = Boolean(answers.hasSession);
+    $('skipPay').textContent = 'Skip for now — do it later';
 
     show(5);
   }
 
-  /* They confirmed in another tab. Pick the session up and reveal the payment
-     button in place, rather than making them start the form again. */
-  $('recheck').addEventListener('click', async function () {
-    var note = $('note4');
-    var btn = this;
-    btn.disabled = true;
-    say(note, 'Checking\u2026');
-    var res = await ONE.db.auth.getSession();
-    var live = Boolean(res.data && res.data.session);
-    if (!live && answers.email && $('password') && $('password').value) {
-      // A confirmation opened in another tab leaves no session in this one.
-      var back = await ONE.db.auth.signInWithPassword({
-        email: answers.email, password: $('password').value
-      });
-      live = Boolean(back.data && back.data.session);
-    }
-    btn.disabled = false;
-    if (!live) {
-      say(note, 'Not confirmed yet. Open the link in your email, then try again.', 'bad');
-      return;
-    }
-    answers.hasSession = true;
-    say(note, '');
-    stepPlan();   // re-renders the step, which now shows the payment button
-  }); 
 
   /* 5 — finish: save now if we can, otherwise stash for first login */
   function buildRow() {
@@ -411,6 +383,20 @@
   });
 
   /* Stripe Checkout, for customers who already have a session. */
+  /* The access token, fetching a session first if there isn't one. signUp
+     returns no session while email confirmation is on, so this is what lets
+     someone pay the moment they confirm without redoing the form. */
+  async function accessToken() {
+    var sess = await ONE.db.auth.getSession();
+    var token = sess.data && sess.data.session && sess.data.session.access_token;
+    if (token) return token;
+
+    var pass = $('password') ? $('password').value : '';
+    if (!answers.email || !pass) return null;
+    var back = await ONE.db.auth.signInWithPassword({ email: answers.email, password: pass });
+    return (back.data && back.data.session && back.data.session.access_token) || null;
+  }
+
   $('payAction').addEventListener('click', async function () {
     var note = $('note4');
     var btn = this;
@@ -422,9 +408,16 @@
     try { await saveAnswers(); } catch (e) {}
 
     try {
-      var sess = await ONE.db.auth.getSession();
-      var token = sess.data && sess.data.session && sess.data.session.access_token;
-      if (!token) throw new Error('Your session has expired. Log in and try again.');
+      var token = await accessToken();
+      if (!token) {
+        /* Checkout has to be able to prove who is subscribing, so this is the
+           one point where an unconfirmed address genuinely stops. Say exactly
+           that, and leave the button live so they can tap again. */
+        say(note, 'Confirm your email first — open the link we sent, then tap again.', 'bad');
+        btn.disabled = false;
+        btn.textContent = 'Set up payment';
+        return;
+      }
 
       var res = await fetch('/api/checkout', {
         method: 'POST',

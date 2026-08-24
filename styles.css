@@ -646,6 +646,9 @@ body.locked{overflow:hidden}
 }
 .wiz-step input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13)}
 .wiz-next{margin-top:8px}
+/* Secondary actions stack and centre; inline they run together and read as
+   one broken link. */
+.wiz-step .linkish{display:block;margin:14px auto 0}
 .wiz-back{display:block;margin:14px auto 0}
 .wiz-foot{margin:20px 0 0;text-align:center;font-size:13.5px;color:var(--ink-2)}
 .wiz-foot a{color:var(--ink);text-decoration:underline}
@@ -675,6 +678,13 @@ body.locked{overflow:hidden}
 .pick-more summary:hover{color:var(--ink)}
 .pick-more .ticks{margin:12px 0 0 31px}
 .pick-more .ticks li{font-size:14px;margin-bottom:9px}
+
+/* The confirmation ask, sitting under the payment button rather than in front
+   of it. */
+.pay-then{
+  margin:14px 0 0;text-align:center;
+  font-size:13.5px;line-height:1.5;color:var(--ink-2);
+}
 
 /* web address step */
 .dom-state{margin:0 0 14px;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
