@@ -197,9 +197,11 @@ function renderCustomers() {
     /* What they asked for in the wizard, so it can be bought. */
     if (p.requested_domain) {
       var want = el('p', 'cust-want');
-      want.appendChild(el('span', null, 'Asked for '));
-      var strong = el('strong', null, p.requested_domain);
-      want.appendChild(strong);
+      /* Owning it already is a different job - a move, not a purchase - so the
+         two do not read the same. */
+      want.appendChild(el('span', null, p.domain_owned ? 'Already owns ' : 'Wants '));
+      want.appendChild(el('strong', null, p.requested_domain));
+      want.appendChild(el('span', null, p.domain_owned ? ' \u2014 move it across' : ' \u2014 to register'));
       card.appendChild(want);
     }
 

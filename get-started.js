@@ -111,6 +111,9 @@
       if (res.error) throw res.error;
       signedUp = true;
       answers.hasSession = Boolean(res.data.session);
+      /* Checkout takes this in place of a session for a brand-new account, so
+         an unconfirmed address does not stop anyone paying. */
+      answers.pendingUserId = (res.data.user && res.data.user.id) || null;
 
       /* Two reasons signUp can come back with no session: email confirmation
          is switched on, or this address already has an account - Supabase
@@ -193,17 +196,31 @@
 
   function paintDomains(list, typed) {
     var wrap = $('domList');
-    wrap.textContent = '';
+    wrap.textContent = '';                 // clears the waiting rows too
+    wrap.removeAttribute('aria-busy');
     list.forEach(function (d, i) {
       wrap.appendChild(domainRow(d, d === (typed || answers.requested_domain) || (!typed && !answers.requested_domain && i === 0)));
     });
-    if (list.length) answers.requested_domain = wrap.querySelector('input:checked').value;
+    if (list.length) {
+      answers.requested_domain = wrap.querySelector('input:checked').value;
+      answers.domain_owned = false;
+    }
+  }
+
+  /* Nothing to choose from. Drop the waiting rows and say which kind of nothing
+     it is, rather than leaving three bars pulsing forever. */
+  function domainsUnavailable(message) {
+    var wrap = $('domList');
+    wrap.textContent = '';
+    wrap.removeAttribute('aria-busy');
+    var state = $('domState');
+    state.textContent = message;
+    state.hidden = false;
   }
 
   async function askDomains() {
     if (domainsAsked) return;
     domainsAsked = true;
-    var state = $('domState');
     try {
       var res = await fetch('/api/domains', {
         method: 'POST',
@@ -219,13 +236,13 @@
         paintDomains(data.suggestions);
         return;
       }
-      /* Nothing to show. Say which kind of nothing it is: every name we tried
-         being taken is a different problem from not being able to ask. */
-      state.textContent = data.reachable === false
+      /* Every name we tried being taken is a different problem from not being
+         able to ask, so the two do not share a message. */
+      domainsUnavailable(data.reachable === false
         ? 'We could not reach the registry just now. Type the address you want below, or skip and we will sort it with you.'
-        : 'The obvious ones are taken. Type an address below to check it, or skip and we will find you a good one.';
+        : 'The obvious ones are taken. Type an address below to check it, or skip and we will find you a good one.');
     } catch (err) {
-      state.textContent = 'We could not check just now. Type the address you want below, or skip and we will sort it with you.';
+      domainsUnavailable('We could not check just now. Type the address you want below, or skip and we will sort it with you.');
       domainsAsked = false;      // let them get suggestions on a second visit
     }
   }
@@ -233,16 +250,24 @@
   $('domList').addEventListener('change', function (e) {
     if (!e.target.matches('input[name="domain"]')) return;
     answers.requested_domain = e.target.value;
+    answers.domain_owned = false;
+    if ($('domHave')) $('domHave').value = '';
     $('domList').querySelectorAll('.pick-row').forEach(function (row) {
       row.classList.toggle('is-on', row.querySelector('input').checked);
     });
     say($('noteDomain'), '');
   });
 
+  /* Strips what people paste: scheme, www, trailing path. */
+  function tidyDomain(raw) {
+    return String(raw || '').trim().toLowerCase()
+      .replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
+  }
+
   $('domCheck').addEventListener('click', async function () {
     var note = $('domOwnNote');
     var btn = this;
-    var typed = val('domOwn').toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
+    var typed = tidyDomain(val('domOwn'));
     if (!typed) { note.textContent = 'Type an address first.'; return; }
 
     btn.disabled = true;
@@ -260,7 +285,7 @@
         note.textContent = typed + ' is free. Selected.';
         var rows = [].map.call($('domList').querySelectorAll('input[name="domain"]'), function (i) { return i.value; });
         if (rows.indexOf(typed) === -1) rows.unshift(typed);
-        $('domState') && $('domState').remove();
+        $('domState').hidden = true;
         paintDomains(rows.slice(0, 4), typed);
       } else if (data.state === 'taken') {
         note.textContent = typed + ' is already registered. Try another.';
@@ -268,6 +293,7 @@
         /* Never call it free on a failed lookup. */
         note.textContent = 'We could not check that one. Leave it with us and we will confirm.';
         answers.requested_domain = typed;
+        answers.domain_owned = false;
       }
     } catch (err) {
       note.textContent = 'We could not check just now. Leave it with us and we will confirm.';
@@ -278,17 +304,29 @@
 
   $('domSkip').addEventListener('click', function () {
     answers.requested_domain = null;
+    answers.domain_owned = false;
     say($('noteDomain'), '');
     show(4);
   });
 
   function stepDomain() {
     /* Typed but unchecked still counts as a request: better to record what they
-       want than to insist they press Check. */
-    var typed = val('domOwn').toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
+       want than to insist they press Check. An address they already own wins
+       over both, since moving one is what they have asked for. */
+    var have = tidyDomain(val('domHave'));
+    var typed = tidyDomain(val('domOwn'));
     var picked = $('domList').querySelector('input[name="domain"]:checked');
-    if (picked) answers.requested_domain = picked.value;
-    else if (typed) answers.requested_domain = typed;
+
+    if (have) {
+      answers.requested_domain = have;
+      answers.domain_owned = true;
+    } else if (picked) {
+      answers.requested_domain = picked.value;
+      answers.domain_owned = false;
+    } else if (typed) {
+      answers.requested_domain = typed;
+      answers.domain_owned = false;
+    }
 
     say($('noteDomain'), '');
     show(4);
@@ -303,6 +341,19 @@
     $('sumPrice').textContent = plan.price;
     $('sumEmail').textContent = answers.email || '—';
     $('sumDue').textContent = plan.price;
+
+    /* The address they chose, shown in a browser bar so the thing they are
+       buying is on screen before they pay for it. */
+    var domain = answers.requested_domain;
+    $('urlbarText').textContent = domain || 'yourbusiness.co.uk';
+    $('urlbar').classList.toggle('is-set', Boolean(domain));
+    $('urlbarNote').textContent = !domain
+      ? 'We\u2019ll find you an address together after you sign up.'
+      : answers.domain_owned
+        ? 'Yours already \u2014 we\u2019ll move it across to your new site.'
+        : 'Free with your plan. We register it when your site is ready.';
+    $('sumDomainRow').hidden = !domain;
+    $('sumDomain').textContent = domain || '\u2014';
 
     /* The payment button is always offered. If the session is not there yet
        the click recovers it, so an unconfirmed address is something to sort out
@@ -323,6 +374,7 @@
       site_uses:      answers.site_uses && answers.site_uses.length ? answers.site_uses : null,
       selected_plan:  answers.selected_plan || null,
       requested_domain: answers.requested_domain || null,
+      domain_owned:     Boolean(answers.domain_owned),
       site_goals:     answers.site_uses ? answers.site_uses.join('\n') : null
     };
   }
@@ -369,7 +421,7 @@
 
     button.disabled = false;
     button.textContent = label;
-    show(5);
+    show(6);            // the confirmation screen, one along since the domain step
   }
 
   /* No confirmation link means a typo would not surface until we email the
@@ -409,20 +461,28 @@
 
     try {
       var token = await accessToken();
-      if (!token) {
-        /* Checkout has to be able to prove who is subscribing, so this is the
-           one point where an unconfirmed address genuinely stops. Say exactly
-           that, and leave the button live so they can tap again. */
-        say(note, 'Confirm your email first — open the link we sent, then tap again.', 'bad');
+      if (!token && !answers.pendingUserId) {
+        say(note, 'Log in and try again.', 'bad');
         btn.disabled = false;
         btn.textContent = 'Set up payment';
         return;
       }
 
+      /* With a session the token proves who is paying. Without one - which is
+         every brand-new signup while email confirmation is on - the id signUp
+         gave this browser stands in for it, so confirming the address stays a
+         job for afterwards instead of a gate in front of the card. */
+      var headers = { 'Content-Type': 'application/json' };
+      if (token) headers.Authorization = 'Bearer ' + token;
+
       var res = await fetch('/api/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ plan: answers.selected_plan || 'business' })
+        headers: headers,
+        body: JSON.stringify(token
+          ? { plan: answers.selected_plan || 'business' }
+          : { plan: answers.selected_plan || 'business',
+              pendingUserId: answers.pendingUserId,
+              email: answers.email })
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');

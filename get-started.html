@@ -77,18 +77,36 @@
         <h1>Your web address.</h1>
         <p class="wiz-sub">Here are three that are free right now. Pick one, or type the address you want and we&rsquo;ll check it.</p>
 
-        <div class="pick" id="domList" aria-live="polite">
-          <p class="dom-state" id="domState">Checking what&rsquo;s free&hellip;</p>
+        <!-- Three placeholder rows stand in while the registries are asked, so
+             the step has its final shape from the first frame and nobody is
+             left looking at an empty box. -->
+        <div class="pick" id="domList" aria-live="polite" aria-busy="true">
+          <div class="pick-row is-waiting"><span class="dom-bar"></span><span class="dom-searching">Searching&hellip;</span></div>
+          <div class="pick-row is-waiting"><span class="dom-bar"></span></div>
+          <div class="pick-row is-waiting"><span class="dom-bar"></span></div>
         </div>
+        <p class="dom-state" id="domState" hidden></p>
 
         <div class="field">
-          <label for="domOwn">Or type your own</label>
+          <label for="domOwn">Or type the one you want</label>
           <div class="dom-own">
             <input id="domOwn" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="yourbusiness.co.uk">
             <button class="btn btn-ghost" id="domCheck" type="button">Check</button>
           </div>
           <p class="hint" id="domOwnNote">&nbsp;</p>
         </div>
+
+        <!-- Someone who already owns a domain is a different job: it gets moved
+             across, not registered, and "already taken" is the right answer for
+             it rather than a problem. -->
+        <details class="dom-have">
+          <summary>Have a domain already?</summary>
+          <div class="field">
+            <label for="domHave">Your current web address</label>
+            <input id="domHave" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="yourbusiness.co.uk">
+            <p class="hint">We&rsquo;ll request the move and point it at your new site when it&rsquo;s ready. Nothing goes offline in the meantime.</p>
+          </div>
+        </details>
 
         <div class="paynote">
           <p>Nothing is bought yet. We register whichever address you settle on when your site is ready, and it&rsquo;s included in your plan &mdash; you never pay for it separately.</p>
@@ -169,19 +187,27 @@
         <h1>Your plan.</h1>
         <p class="wiz-sub">Your first month starts the build.</p>
 
+        <!-- Their address in a browser bar, so the thing they are buying is on
+             screen before they pay for it. -->
+        <div class="urlbar" id="urlbar" aria-hidden="true">
+          <span class="urlbar-lights"><i></i><i></i><i></i></span>
+          <span class="urlbar-pill">
+            <svg class="urlbar-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="11" width="14" height="9" rx="2.5"/>
+              <path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/>
+            </svg>
+            <span id="urlbarText">yourbusiness.co.uk</span>
+          </span>
+        </div>
+        <p class="urlbar-note" id="urlbarNote">&nbsp;</p>
+
         <div class="sumbox">
           <div class="sumrow"><span>Account</span><b id="sumEmail">—</b></div>
+          <div class="sumrow" id="sumDomainRow" hidden><span>Web address</span><b id="sumDomain">—</b></div>
           <div class="sumrow"><span>Plan</span><b id="sumPlan">Business</b></div>
           <div class="sumrow"><span>Monthly</span><b id="sumPrice">£50</b></div>
-          <div class="sumrow"><span>Setup</span><b>£0</b></div>
+          <div class="sumrow"><span>Setup</span><b class="sum-free">Free</b></div>
           <div class="sumrow total"><span>Due today</span><b id="sumDue">£50</b></div>
-        </div>
-
-        <!-- Card details are collected by Stripe Checkout on Stripe's own
-             pages. We never see or handle a card number. -->
-        <div class="paynote" id="payNow">
-          <p><strong>Card handled by Stripe.</strong></p>
-          <p>You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month starts the build; a draft follows within a few days.</p>
         </div>
 
         <p class="note" id="note4" role="status" aria-live="polite"></p>
@@ -189,6 +215,13 @@
         <!-- Shown while their address is still unconfirmed: the next thing to do
              after paying, not a gate in front of it. -->
         <p class="pay-then" id="payThen" hidden>Next, please confirm your email &mdash; we&rsquo;ve sent you a link.</p>
+
+        <!-- Card details are collected by Stripe Checkout on Stripe's own
+             pages. We never see or handle a card number. -->
+        <div class="paynote" id="payNow">
+          <p><strong>Card handled by Stripe.</strong></p>
+          <p>You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month starts the build; a draft follows within a few days.</p>
+        </div>
         <button class="linkish wiz-next" data-next type="button" id="skipPay">Skip for now — do it later</button>
         <button class="linkish" id="fixEmail" type="button">That email isn't right</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>

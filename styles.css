@@ -686,6 +686,29 @@ body.locked{overflow:hidden}
   font-size:13.5px;line-height:1.5;color:var(--ink-2);
 }
 
+/* A browser bar showing the address they picked, on the payment step. */
+.urlbar{
+  display:flex;align-items:center;gap:12px;
+  padding:9px 12px;margin-bottom:10px;
+  border:1px solid var(--line-soft);border-radius:14px;background:#fbfbfd;
+}
+.urlbar-lights{display:flex;gap:5px;flex:0 0 auto}
+.urlbar-lights i{width:8px;height:8px;border-radius:50%;background:#e3e3e8}
+.urlbar-pill{
+  flex:1;min-width:0;display:flex;align-items:center;gap:7px;
+  padding:7px 12px;border-radius:980px;background:#fff;border:1px solid var(--line-soft);
+  font-size:14px;color:var(--ink-3);
+}
+.urlbar-lock{width:14px;height:14px;flex:0 0 auto;color:var(--ink-3)}
+.urlbar-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Once there is a real address the padlock earns its green and the name its
+   weight; before that it is a placeholder and should look like one. */
+.urlbar.is-set .urlbar-pill{color:var(--ink);font-weight:500}
+.urlbar.is-set .urlbar-lock{color:var(--good)}
+.urlbar-note{margin:0 0 22px;text-align:center;font-size:13px;color:var(--ink-3);min-height:18px}
+
+.sum-free{color:var(--good)}
+
 /* web address step */
 .dom-state{margin:0 0 14px;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
 .dom-own{display:flex;gap:10px}
@@ -696,6 +719,30 @@ body.locked{overflow:hidden}
 .pick-head em.dom-free{font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--good)}
 .pick-row .pick-head b{font-size:15.5px;overflow-wrap:anywhere}
 #domOwnNote{min-height:18px}
+
+/* Placeholder rows while the registries are being asked. */
+.pick-row.is-waiting{
+  display:flex;align-items:center;gap:14px;cursor:default;
+  border-color:var(--line-soft);
+}
+.dom-bar{
+  flex:1;height:13px;border-radius:7px;
+  background:linear-gradient(90deg,#f0f0f4,#e6e6ec,#f0f0f4);
+  background-size:200% 100%;animation:domWait 1.6s linear infinite;
+}
+.pick-row.is-waiting:nth-of-type(2) .dom-bar{max-width:78%}
+.pick-row.is-waiting:nth-of-type(3) .dom-bar{max-width:60%}
+.dom-searching{flex:0 0 auto;font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--ink-3)}
+@keyframes domWait{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.dom-bar{animation:none}}
+
+.dom-have{margin:-4px 0 18px}
+.dom-have summary{
+  list-style:none;cursor:pointer;font-size:14px;color:var(--ink-2);text-decoration:underline;
+}
+.dom-have summary::-webkit-details-marker{display:none}
+.dom-have summary:hover{color:var(--ink)}
+.dom-have .field{margin-top:14px}
 
 /* summary + payment */
 .sumbox{border:1px solid var(--line-soft);border-radius:16px;padding:6px 18px;margin-bottom:20px}
