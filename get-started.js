@@ -361,11 +361,21 @@
     var domain = answers.requested_domain;
     $('urlbarText').textContent = domain ? withWww(domain) : 'www.yourbusiness.co.uk';
     $('urlbar').classList.toggle('is-set', Boolean(domain));
-    $('urlbarNote').textContent = !domain
-      ? 'We\u2019ll find you an address together after you sign up.'
-      : answers.domain_owned
-        ? 'Yours already \u2014 we\u2019ll move it across to your new site.'
-        : 'Free with your plan. We register it when your site is ready.';
+    /* Built rather than assigned, so the word carrying the reassurance can be
+       the one wearing the colour. textContent on the parts keeps it safe from
+       anything the customer typed. */
+    var note = $('urlbarNote');
+    note.textContent = '';
+    if (!domain) {
+      note.textContent = 'We\u2019ll find you an address together after you sign up.';
+    } else if (answers.domain_owned) {
+      note.appendChild(document.createTextNode('Yours already \u2014 we\u2019ll move it across to your new site.'));
+    } else {
+      var free = document.createElement('b');
+      free.textContent = 'Free with your plan.';
+      note.appendChild(free);
+      note.appendChild(document.createTextNode(' We register it when your site is ready.'));
+    }
     $('sumDomainRow').hidden = !domain;
     $('sumDomain').textContent = domain || '\u2014';
 

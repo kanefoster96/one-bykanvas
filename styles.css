@@ -706,8 +706,35 @@ body.locked{overflow:hidden}
 .urlbar.is-set .urlbar-pill{color:var(--ink);font-weight:500}
 .urlbar.is-set .urlbar-lock{color:var(--good)}
 .urlbar-note{margin:0 0 22px;text-align:center;font-size:13px;color:var(--ink-3);min-height:18px}
+.urlbar-note b{color:var(--good);font-weight:600}
 
-.sum-free{color:var(--good)}
+/* Qualified because .sumrow b outranks a lone class - the reason this stayed
+   black. Green is only ever "included or free" on this site, and £0 setup is
+   exactly that. */
+.sumrow b.sum-free{
+  display:inline-flex;align-items:center;gap:7px;color:var(--good);
+}
+.sumrow b.sum-free::before{
+  content:"";width:11px;height:6px;flex:0 0 auto;
+  border-left:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(-45deg) translateY(-1px);
+}
+
+/* The three reassurances under the payment button. Green ticks, grey words:
+   the colour marks what is included without shouting over the price. */
+.pay-assure{
+  list-style:none;margin:18px 0 20px;padding:0;
+  display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;
+}
+.pay-assure li{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:13px;color:var(--ink-2);
+}
+.pay-assure li::before{
+  content:"";width:10px;height:5px;flex:0 0 auto;
+  border-left:2px solid var(--good);border-bottom:2px solid var(--good);
+  transform:rotate(-45deg) translateY(-1px);
+}
 
 /* web address step */
 .dom-state{margin:0 0 14px;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
@@ -748,7 +775,10 @@ body.locked{overflow:hidden}
 .sumbox{border:1px solid var(--line-soft);border-radius:16px;padding:6px 18px;margin-bottom:20px}
 .sumrow{display:flex;justify-content:space-between;align-items:baseline;padding:13px 0;font-size:15px;color:var(--ink-2);border-bottom:1px solid var(--line-soft)}
 .sumrow b{color:var(--ink);font-weight:600}
-.sumrow.total{border-bottom:0}
+.sumrow.total{
+  border-bottom:0;margin:0 -18px;padding-left:18px;padding-right:18px;
+  background:var(--bg-grey);border-radius:0 0 15px 15px;
+}
 .sumrow.total b{font-size:20px;letter-spacing:-.02em}
 .paynote{background:var(--bg-grey);border-radius:16px;padding:18px 20px;margin-bottom:20px}
 .paynote p{margin:0;font-size:14px;line-height:1.55;color:var(--ink-2)}
