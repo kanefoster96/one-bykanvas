@@ -29,6 +29,14 @@
       if (/email not confirmed/i.test(msg))         return 'Check your inbox and confirm your email address first.';
       if (/already registered/i.test(msg))          return 'There is already an account with that email. Try logging in.';
       if (/password should be at least/i.test(msg)) return 'Passwords need to be at least 8 characters.';
+      /* The mail limit is its own thing and clears in about an hour, so it must
+         not share the generic "wait a minute" line: following that advice gets
+         the same refusal ten minutes later with no idea why. */
+      if (/email rate limit|over_email_send_rate_limit/i.test(msg))
+        return 'We could not send your confirmation email just now. Try again in an hour, '
+             + 'or email us and we will set you up by hand.';
+      if (/email address .* is invalid|email_address_invalid/i.test(msg))
+        return 'That email address was rejected. Check it is spelled correctly.';
       if (/rate limit|too many|for security purposes/i.test(msg)) return 'Too many attempts just now. Wait a minute and try again.';
       if (/failed to fetch|network/i.test(msg))     return 'Could not reach the server. Check your connection and try again.';
       return msg;
