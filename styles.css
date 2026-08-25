@@ -770,6 +770,12 @@ body.locked{overflow:hidden}
   .wiz-bar i{transition:none}
 }
 
+/* Landing back from Stripe without a session yet. */
+.acct-land{max-width:460px;text-align:center}
+.acct-land h1{font-size:26px;font-weight:600;letter-spacing:-.03em;margin-bottom:14px}
+.acct-land p{margin:0 0 12px;font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+.acct-land .btn{margin-top:10px}
+
 /* ---- admin ---- */
 .admin-pill{
   margin-left:auto;margin-right:16px;flex:0 0 auto;

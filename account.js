@@ -13,6 +13,11 @@ var FIELDS = ['business_name','contact_name','phone','business_type','address',
 var user = null;
 var avatarPath = null;
 
+/* Read once, at load. The block that greets people coming back from Stripe
+   strips the query string off the URL, and it runs before the session lookup
+   resolves, so anything reading location.search later finds it already gone. */
+var CHECKOUT_STATE = new URLSearchParams(location.search).get('checkout');
+
 if (!ONE.ready) {
   loading.innerHTML = '<p>Accounts are not connected yet — add your Supabase URL and '
                     + 'publishable key to <code>supabase-config.js</code>.</p>';
@@ -20,9 +25,43 @@ if (!ONE.ready) {
   start();
 }
 
+/* No session on the account page.
+ *
+ * Normally that just means log in. But Stripe sends people back here straight
+ * after paying, and someone who has not confirmed their email yet still has no
+ * session - so bouncing them to a login they cannot get through would meet a
+ * customer who has just paid with a wall. Say what happened instead. */
+function landedWithoutSession() {
+  var state = CHECKOUT_STATE;
+
+  if (state === 'success') {
+    loading.innerHTML =
+      '<div class="acct-land">' +
+      '<h1>Payment received &mdash; thank you.</h1>' +
+      '<p>Your build is in the queue and we&rsquo;ll be in touch today.</p>' +
+      '<p>One thing left: open the link in the email we sent when you signed up, ' +
+      'and you&rsquo;ll be straight into your account.</p>' +
+      '<p><a class="btn btn-ghost" href="/login.html">Go to log in</a></p>' +
+      '</div>';
+    return;
+  }
+
+  if (state === 'cancelled') {
+    loading.innerHTML =
+      '<div class="acct-land">' +
+      '<h1>Nothing was charged.</h1>' +
+      '<p>You can start your plan any time from your account.</p>' +
+      '<p><a class="btn btn-ghost" href="/login.html">Go to log in</a></p>' +
+      '</div>';
+    return;
+  }
+
+  location.replace('/login.html');
+}
+
 async function start() {
   var res = await ONE.db.auth.getSession();
-  if (!res.data.session) { location.replace('/login.html'); return; }
+  if (!res.data.session) { landedWithoutSession(); return; }
   user = res.data.session.user;
   document.getElementById('whoami').textContent = user.email;
 
@@ -41,6 +80,13 @@ async function start() {
 
   loading.hidden = true;
   app.hidden = false;
+
+  /* Just back from Stripe and signed in: the webhook writes the status a moment
+     later, so refresh once to pick it up. Only from here, where a session is
+     known to exist. */
+  if (CHECKOUT_STATE === 'success' && !(profile.data && profile.data.active_plan)) {
+    setTimeout(function () { location.replace('/account.html'); }, 6000);
+  }
 }
 
 /* The wizard runs before the email is confirmed, so there is no session to
@@ -520,12 +566,15 @@ document.getElementById('payBtn').addEventListener('click', async function () {
 /* Coming back from Stripe. The webhook is what actually flips the status, so
    this only explains what is happening rather than claiming success. */
 (function () {
-  var state = new URLSearchParams(location.search).get('checkout');
+  var state = CHECKOUT_STATE;
   if (!state) return;
   var note = document.getElementById('billNote');
   if (state === 'success') {
     say(note, 'Payment set up — thanks. It can take a few seconds to show here.', 'ok');
-    setTimeout(function () { location.replace('/account.html'); }, 6000);
+    /* The reload that picks up the webhook's write is scheduled by start(),
+       once it knows there is a session. Reloading without one would land on the
+       stripped URL, find no checkout state, and bounce a customer who has just
+       paid to a login they cannot get through yet. */
   } else if (state === 'cancelled') {
     say(note, 'Checkout cancelled — nothing was charged.', '');
   }
