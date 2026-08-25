@@ -11,6 +11,7 @@
  * one person.
  */
 const { createClient } = require('@supabase/supabase-js');
+const { missingEnv } = require('./_env.js');
 
 const DEFAULT_ADMINS = ['kane.foster@ymail.com'];
 
@@ -28,7 +29,9 @@ module.exports = async function handler(req, res) {
 
   const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_PUBLISHABLE_KEY } = process.env;
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error('admin: missing environment variables');
+    console.error('admin: missing environment variables:',
+      missingEnv(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY',
+                  'SUPABASE_PUBLISHABLE_KEY']).join(', ') || '(none named)');
     return res.status(500).json({ error: 'Not configured.' });
   }
 

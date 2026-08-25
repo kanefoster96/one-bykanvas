@@ -8,6 +8,7 @@
  */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
+const { missingEnv } = require('./_env.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -23,7 +24,9 @@ module.exports = async function handler(req, res) {
   } = process.env;
 
   if (!STRIPE_SECRET_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error('portal: missing environment variables');
+    console.error('portal: missing environment variables:',
+      missingEnv(['STRIPE_SECRET_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY',
+                  'SUPABASE_PUBLISHABLE_KEY']).join(', ') || '(none named)');
     return res.status(500).json({ error: 'Billing is not configured yet.' });
   }
 

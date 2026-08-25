@@ -6,6 +6,7 @@
  */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
+const { missingEnv } = require('./_env.js');
 
 // Keep Vercel from parsing the body so the signature can be verified.
 module.exports.config = { api: { bodyParser: false } };
@@ -36,7 +37,9 @@ module.exports = async function handler(req, res) {
 
   const { STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
   if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error('webhook: missing environment variables');
+    console.error('webhook: missing environment variables:',
+      missingEnv(['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SUPABASE_URL',
+                  'SUPABASE_SERVICE_ROLE_KEY']).join(', ') || '(none named)');
     return res.status(500).end('Not configured');
   }
 

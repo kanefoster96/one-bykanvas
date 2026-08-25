@@ -7,6 +7,7 @@
  */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
+const { missingEnv } = require('./_env.js');
 const { PLANS } = require('./_plans.js');
 
 module.exports = async function handler(req, res) {
@@ -23,7 +24,9 @@ module.exports = async function handler(req, res) {
   } = process.env;
 
   if (!STRIPE_SECRET_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error('checkout: missing environment variables');
+    console.error('checkout: missing environment variables:',
+      missingEnv(['STRIPE_SECRET_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY',
+                  'SUPABASE_PUBLISHABLE_KEY']).join(', ') || '(none named)');
     return res.status(500).json({ error: 'Payments are not configured yet.' });
   }
 
