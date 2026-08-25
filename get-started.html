@@ -42,6 +42,10 @@
         </div>
         <p class="note" id="note1" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <ul class="assure">
+          <li>No card needed yet</li>
+          <li>Takes about two minutes</li>
+        </ul>
         <p class="wiz-foot">Already have an account? <a href="/login.html">Log in</a></p>
       </section>
 
@@ -68,6 +72,10 @@
 
         <p class="note" id="note2" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <ul class="assure">
+          <li>Nothing here is final</li>
+          <li>We fill in the gaps with you</li>
+        </ul>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
 
@@ -114,6 +122,10 @@
 
         <p class="note" id="noteDomain" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <ul class="assure">
+          <li>Included in your plan</li>
+          <li>Change it before we buy it</li>
+        </ul>
         <button class="linkish" id="domSkip" type="button">Help me choose later</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
@@ -127,7 +139,7 @@
             <input type="radio" name="plan" value="business" checked>
             <span class="pick-main">
               <span class="pick-head"><b>Business</b><em>£50<span>/mo</span></em></span>
-              <span class="pick-note">Everything you need to be online. Recommended.</span>
+              <span class="pick-note"><b class="pick-flag">Recommended</b>Everything you need to be online.</span>
             </span>
           </label>
           <details class="pick-more">
@@ -176,9 +188,13 @@
           </details>
         </div>
 
-        <p class="hint">You can move up or down a plan any time.</p>
         <p class="note" id="note3" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <ul class="assure">
+          <li>No setup fee</li>
+          <li>Move up or down any time</li>
+          <li>Cancel with a month&rsquo;s notice</li>
+        </ul>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
 
@@ -217,7 +233,7 @@
         <p class="pay-then" id="payThen" hidden>Next, please confirm your email &mdash; we&rsquo;ve sent you a link.</p>
 
         <!-- The three things someone hesitates over, answered on the way past. -->
-        <ul class="pay-assure">
+        <ul class="assure">
           <li>No setup fee</li>
           <li>Cancel with a month&rsquo;s notice</li>
           <li>Online within 10 days</li>

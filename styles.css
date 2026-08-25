@@ -720,20 +720,28 @@ body.locked{overflow:hidden}
   transform:rotate(-45deg) translateY(-1px);
 }
 
-/* The three reassurances under the payment button. Green ticks, grey words:
-   the colour marks what is included without shouting over the price. */
-.pay-assure{
+/* The reassurances under a step's button: whatever someone hesitates over at
+   that point, answered on the way past. Green ticks, grey words - the colour
+   marks what is free or included without shouting over the content. */
+.assure{
   list-style:none;margin:18px 0 20px;padding:0;
   display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;
 }
-.pay-assure li{
+.assure li{
   display:inline-flex;align-items:center;gap:7px;
   font-size:13px;color:var(--ink-2);
 }
-.pay-assure li::before{
+.assure li::before{
   content:"";width:10px;height:5px;flex:0 0 auto;
   border-left:2px solid var(--good);border-bottom:2px solid var(--good);
   transform:rotate(-45deg) translateY(-1px);
+}
+
+/* Marks the plan we would put someone on, so choosing is not work. */
+.pick-flag{
+  display:inline-block;margin-right:7px;padding:2px 9px;border-radius:980px;
+  background:var(--good-soft);color:var(--good);
+  font-size:11.5px;font-weight:600;letter-spacing:.02em;
 }
 
 /* web address step */
@@ -787,7 +795,8 @@ body.locked{overflow:hidden}
 
 /* done */
 .done-tick{
-  width:52px;height:52px;border-radius:50%;background:var(--ink);color:#fff;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--good-soft);color:var(--good);
   display:grid;place-items:center;margin-bottom:22px;
 }
 .done-tick svg{width:26px;height:26px}
