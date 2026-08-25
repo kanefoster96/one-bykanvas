@@ -66,15 +66,41 @@ module.exports = async function handler(req, res) {
     return data ? data.id : null;
   }
 
+  /* When the current billing period ends.
+   *
+   * Stripe moved this. Up to the Basil release it sat on the subscription as
+   * current_period_end; from there on it lives on each subscription item, and a
+   * subscription serialised by a newer API version has no such field at the top
+   * level. The endpoint's API version decides which shape arrives, and that is
+   * chosen in the dashboard rather than here, so both are read: whichever is
+   * present wins, and with items the latest one does.
+   *
+   * Getting this wrong is quiet rather than loud. The column would simply be
+   * null, the account page would stop showing a renewal date, and monthly points
+   * would reset on the first of the month instead of on the billing date.
+   */
+  function periodEndOf(sub) {
+    let unix = sub.current_period_end || null;
+
+    const items = (sub.items && sub.items.data) || [];
+    for (const item of items) {
+      if (item && item.current_period_end && item.current_period_end > (unix || 0)) {
+        unix = item.current_period_end;
+      }
+    }
+    if (!unix) return null;
+
+    const when = new Date(unix * 1000);
+    return isNaN(when) ? null : when.toISOString();
+  }
+
   async function writeSubscription(sub) {
     const id = await profileIdFor(sub);
     if (!id) {
       console.error('webhook: no profile for customer', sub.customer);
       return;
     }
-    const periodEnd = sub.current_period_end
-      ? new Date(sub.current_period_end * 1000).toISOString()
-      : null;
+    const periodEnd = periodEndOf(sub);
 
     const patch = {
       id,
