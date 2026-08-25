@@ -7,6 +7,7 @@
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv } = require('./_env.js');
+const { sendEmail, adminAddresses } = require('./_email.js');
 
 // Keep Vercel from parsing the body so the signature can be verified.
 module.exports.config = { api: { bodyParser: false } };
@@ -105,6 +106,14 @@ module.exports = async function handler(req, res) {
     }
     const periodEnd = periodEndOf(sub);
 
+    /* Was this subscription already live before this event? Stripe sends
+       checkout.session.completed and customer.subscription.created for the same
+       signup, and an updated event for every later change, so without this the
+       same customer would be announced several times over. */
+    const { data: before } = await admin
+      .from('profiles').select('subscription_status').eq('id', id).maybeSingle();
+    const wasLive = Boolean(before && isLive(before.subscription_status));
+
     const patch = {
       id,
       stripe_customer_id: typeof sub.customer === 'string' ? sub.customer : sub.customer.id,
@@ -125,6 +134,51 @@ module.exports = async function handler(req, res) {
     const { error } = await admin.from('profiles').upsert(patch, { onConflict: 'id' });
     if (error) throw new Error(error.message);
     console.log('webhook: %s -> %s (live: %s)', id, sub.status, isLive(sub.status));
+
+    /* Tell us a customer has arrived. Deliberately after the write and outside
+       its error path: the subscription is already recorded, and a mail problem
+       must not fail the event and have Stripe retry it. */
+    if (isLive(sub.status) && !wasLive) await announceNewCustomer(id, patch);
+  }
+
+  /* Everything worth knowing to start the build, in one message. Without this
+     a payment lands in the database and nothing says so. */
+  async function announceNewCustomer(id, patch) {
+    const { data: p } = await admin
+      .from('profiles')
+      .select('business_name, contact_name, phone, business_type, requested_domain, domain_owned, site_goals')
+      .eq('id', id)
+      .maybeSingle();
+
+    const { data: who } = await admin.auth.admin.getUserById(id);
+    const email = (who && who.user && who.user.email) || 'unknown';
+    const name = (p && p.business_name) || 'A new customer';
+
+    const domainLine = p && p.requested_domain
+      ? `${p.requested_domain}${p.domain_owned ? ' (they already own it - move it across)' : ' (to register)'}`
+      : 'none chosen yet';
+
+    const lines = [
+      `${name} is on ${patch.active_plan || 'a plan'}.`,
+      '',
+      `Contact:   ${(p && p.contact_name) || '-'} <${email}>`,
+      `Phone:     ${(p && p.phone) || '-'}`,
+      `Trade:     ${(p && p.business_type) || '-'}`,
+      `Address:   ${domainLine}`,
+      '',
+      'What they want the site to do:',
+      (p && p.site_goals) || '-',
+      '',
+      `Admin: https://one-bykanvas.vercel.app/admin.html`
+    ];
+
+    const result = await sendEmail({
+      to: adminAddresses(),
+      subject: `New ${patch.active_plan || ''} customer: ${name}`.replace(/\s+/g, ' ').trim(),
+      text: lines.join('\n'),
+      replyTo: email !== 'unknown' ? email : undefined
+    });
+    console.log('webhook: new customer email', result);
   }
 
   try {
