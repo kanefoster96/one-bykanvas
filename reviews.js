@@ -11,22 +11,22 @@
   'use strict';
 
   var FALLBACK = [
-    { author: 'Sample Name', trade: 'Independent café',  rating: 5, when: 'placeholder',
-      text: 'Live in nine days. I change the menu prices from my phone on the bus now — that’s the whole job.' },
-    { author: 'Sample Name', trade: 'Barber shop',       rating: 5, when: 'placeholder',
-      text: 'I’d been quoted four figures upfront elsewhere. Fifty a month, nothing to set up, and bookings come straight through.' },
-    { author: 'Sample Name', trade: 'Landscaping',       rating: 5, when: 'placeholder',
-      text: 'We’re on the first page for our town now. That’s new customers every week who’d never have found us.' },
-    { author: 'Sample Name', trade: 'Dog groomer',       rating: 5, when: 'placeholder',
-      text: 'I ask for a change, it’s done that week. No invoices to argue about, no waiting on a developer to be free.' },
-    { author: 'Sample Name', trade: 'Takeaway',          rating: 5, when: 'placeholder',
-      text: 'The app was the bit I never thought we could afford. Customers order ahead and it’s paid for itself twice over.' },
-    { author: 'Sample Name', trade: 'Personal trainer',  rating: 5, when: 'placeholder',
-      text: 'Clients book and pay their own sessions now. That’s an evening a week back for me.' },
-    { author: 'Sample Name', trade: 'Nail salon',        rating: 5, when: 'placeholder',
-      text: 'Deposits stopped the no-shows almost overnight. I wish I’d done it a year ago.' },
-    { author: 'Sample Name', trade: 'Plumber',           rating: 5, when: 'placeholder',
-      text: 'I’m not a computer person at all. I filled in one form and they did the rest.' }
+    { author: 'Priya Shah',       trade: 'Independent café',  rating: 5, when: 'placeholder',
+      text: 'been live about a week now and i’ve already changed the menu twice myself, so much easier than i thought it’d be' },
+    { author: 'Jamie Ellis',      trade: 'Barber shop',       rating: 5, when: 'placeholder',
+      text: 'no idea why i left it so long tbh. up and running in about 10 days and bookings just come straight through now' },
+    { author: 'Craig Whitfield',  trade: 'Landscaping',       rating: 5, when: 'placeholder',
+      text: 'we’re actually showing up when people search for gardeners near us now, wasn’t expecting that so quick' },
+    { author: 'Sophie Marsh',     trade: 'Dog groomer',       rating: 5, when: 'placeholder',
+      text: 'i just message if i want something changed and it’s sorted, no faffing about with invoices or waiting around' },
+    { author: 'Faisal Ahmed',     trade: 'Takeaway',          rating: 5, when: 'placeholder',
+      text: 'the ordering thing has genuinely been huge for us, loads of regulars order ahead now instead of ringing up' },
+    { author: 'Liam Doyle',       trade: 'Personal trainer',  rating: 5, when: 'placeholder',
+      text: 'clients book and pay for their own sessions now, honestly saved me so much time chasing people about it' },
+    { author: 'Chloe Bennett',    trade: 'Nail salon',        rating: 5, when: 'placeholder',
+      text: 'deposits have pretty much stopped the no shows, should’ve set this up ages ago' },
+    { author: 'Dave Sutton',      trade: 'Plumber',           rating: 5, when: 'placeholder',
+      text: 'not great with computers if i’m honest but they just sorted the whole thing for me, dead easy' }
   ];
 
   var AV = ['av1', 'av2', 'av3', 'av4', 'av5'];

@@ -27,8 +27,10 @@ build command, output directory `.`.
 
 ## Before launch
 
-- **Reviews** in `index.html` are placeholders (`Sample Name`). Replace them
-  with real, attributed quotes — the section is marked with an HTML comment.
+- **Reviews** (`reviews.js`, `FALLBACK` array) are still placeholder quotes
+  with invented names — swap them for real, attributed customer quotes, or
+  connect Google reviews via `/api/reviews` (see the comment at the top of
+  the file).
 - **Lead form** currently validates and logs to the console only. Point the
   submit handler in `script.js` at a real endpoint (Formspree, a Vercel
   function, or your CRM).
