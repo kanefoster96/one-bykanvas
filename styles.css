@@ -858,6 +858,9 @@ body.locked{overflow:hidden}
 .cust-names h3{font-size:17px;font-weight:600;letter-spacing:-.02em;overflow-wrap:anywhere}
 .cust-sub{margin:4px 0 0;font-size:13.5px;color:var(--ink-3)}
 .cust-points{margin:10px 0 0;font-size:13.5px;color:var(--ink-2)}
+.cust-reach{margin:8px 0 0;font-size:13.5px;color:var(--ink-3)}
+.cust-reach a{color:var(--ink);font-weight:500}
+.contact-search{width:100%;margin-bottom:20px}
 .cust-want{margin:8px 0 0;font-size:13.5px;color:var(--ink-2)}
 .cust-want strong{color:var(--ink);font-weight:600}
 .cust-points.is-over{color:#b3261e;font-weight:600}
