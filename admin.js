@@ -15,9 +15,9 @@ var note    = document.getElementById('adminNote');
 
 var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
 var PLAN_POINTS = { business: 0, pro: 3, max: 5 };
-var STATUS_NAME = { new: 'Received', in_progress: 'In progress', done: 'Done', declined: 'Declined' };
+var STATUS_NAME = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
 
-var state = { profiles: [], requests: [] };
+var state = { profiles: [], requests: [], templates: [] };
 
 if (!ONE.ready) {
   loading.innerHTML = '<p>Accounts are not connected yet.</p>';
@@ -141,7 +141,7 @@ function render() {
      over-allowance job never quietly falls out of view once it is finished -
      it only leaves the queue once billed_at is set. */
   var open = state.requests.filter(function (r) {
-    if (r.status === 'new' || r.status === 'in_progress') return true;
+    if (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress') return true;
     return r.status === 'done' && r.shortfallPoints > 0 && !r.billed_at;
   });
 
@@ -150,7 +150,9 @@ function render() {
     open.length + ' open request' + (open.length === 1 ? '' : 's');
 
   renderQueue(open);
+  renderDoneList();
   renderCustomers();
+  renderTemplates();
 }
 
 /* One item of the queue: the status picker every request gets, plus a
@@ -174,7 +176,7 @@ function queueItem(r) {
 
   var actions = el('div', 'queue-actions');
   var sel = el('select', 'admin-select');
-  ['new', 'in_progress', 'done', 'declined'].forEach(function (s) {
+  ['new', 'accepted', 'in_progress', 'done', 'declined'].forEach(function (s) {
     var o = el('option', null, STATUS_NAME[s]);
     o.value = s;
     if (s === r.status) o.selected = true;
@@ -213,7 +215,7 @@ function queueItem(r) {
   // job is finished - once billed or done, the price is settled. Whether
   // this needs the customer's sign-off is decided later, the next time it is
   // moved to in_progress - not here.
-  if (r.status === 'new' || r.status === 'in_progress') {
+  if (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress') {
     var toKind = r.kind === 'feature' ? 'edit' : 'feature';
     var reclass = el('button', 'linkish queue-reclass',
       'Mark as ' + toKind + ' instead');
@@ -292,6 +294,97 @@ function renderQueue(open) {
     wrap.appendChild(list);
   });
   panel.hidden = false;
+}
+
+/* The last 20 delivered, newest first - the one place a done request stays
+   visible once it drops out of the open queue, and the only place one gets
+   saved as a template. */
+function renderDoneList() {
+  var panel = document.getElementById('doneListPanel');
+  var wrap = document.getElementById('doneList');
+
+  var items = state.requests.filter(function (r) { return r.status === 'done'; })
+    .sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); })
+    .slice(0, 20);
+  if (!items.length) { panel.hidden = true; return; }
+
+  wrap.textContent = '';
+  var list = el('ul', 'queue');
+  items.forEach(function (r) {
+    var owner = state.profiles.filter(function (p) { return p.id === r.user_id; })[0];
+    var li = el('li', 'queue-item');
+
+    var main = el('div', 'queue-main');
+    main.appendChild(el('p', 'queue-who', (owner && owner.business_name) || 'Unknown business'));
+    main.appendChild(el('p', 'queue-what', r.detail));
+    main.appendChild(el('p', 'queue-meta',
+      (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' + when(r.created_at)));
+    li.appendChild(main);
+
+    var actions = el('div', 'queue-actions');
+    var save = el('button', 'linkish queue-reclass', 'Save as template');
+    save.type = 'button';
+    save.addEventListener('click', async function () {
+      var name = prompt('Name this template (shown to customers):', r.detail.slice(0, 60));
+      if (!name || !name.trim()) return;
+      save.disabled = true;
+      try {
+        await api({ action: 'saveTemplate', kind: r.kind, name: name.trim(), description: r.detail });
+        say('Saved as a template.', 'ok');
+        await load();
+      } catch (err) {
+        say(err.message, 'bad');
+        save.disabled = false;
+      }
+    });
+    actions.appendChild(save);
+    li.appendChild(actions);
+    list.appendChild(li);
+  });
+  wrap.appendChild(list);
+  panel.hidden = false;
+}
+
+/* The saved templates themselves - retiring one keeps it out of the
+   customer's picker without losing the history of who picked it before. */
+function renderTemplates() {
+  var wrap = document.getElementById('templates');
+  wrap.textContent = '';
+
+  if (!state.templates.length) {
+    wrap.appendChild(el('p', 'site-none', 'None saved yet — save one from a completed request above.'));
+    return;
+  }
+
+  var list = el('ul', 'queue');
+  state.templates.forEach(function (t) {
+    var li = el('li', 'queue-item');
+
+    var main = el('div', 'queue-main');
+    main.appendChild(el('p', 'queue-who', t.name + (t.active ? '' : ' (retired)')));
+    main.appendChild(el('p', 'queue-meta', (t.kind === 'feature' ? 'Feature' : 'Edit')));
+    li.appendChild(main);
+
+    var actions = el('div', 'queue-actions');
+    var toggle = el('button', 'linkish queue-reclass', t.active ? 'Retire' : 'Restore');
+    toggle.type = 'button';
+    toggle.addEventListener('click', async function () {
+      toggle.disabled = true;
+      try {
+        await api({ action: 'setTemplateActive', templateId: t.id, active: !t.active });
+        t.active = !t.active;
+        say(t.active ? 'Restored.' : 'Retired.', 'ok');
+        render();
+      } catch (err) {
+        say(err.message, 'bad');
+        toggle.disabled = false;
+      }
+    });
+    actions.appendChild(toggle);
+    li.appendChild(actions);
+    list.appendChild(li);
+  });
+  wrap.appendChild(list);
 }
 
 function renderCustomers() {

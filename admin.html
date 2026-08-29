@@ -35,6 +35,21 @@
     <div class="cust-list" id="custList"></div>
   </section>
 
+  <!-- The ones already delivered - the only place a done request is still
+       visible once it drops out of the open queue above, and where one gets
+       saved as a template for next time. -->
+  <section class="panel" id="doneListPanel" hidden>
+    <h2 class="panel-title">Recently completed</h2>
+    <div id="doneList"></div>
+  </section>
+
+  <!-- Named edit/feature requests customers can pick instead of writing from
+       scratch. Saved from a finished request above. -->
+  <section class="panel">
+    <h2 class="panel-title">Templates</h2>
+    <div id="templates"></div>
+  </section>
+
   <p class="note" id="adminNote" role="status" aria-live="polite"></p>
 </main>
 
@@ -44,7 +59,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="admin.js?v=1"></script>
+<script src="admin.js?v=2"></script>
 <script src="admin-pill.js?v=2"></script>
 </body>
 </html>

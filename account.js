@@ -77,6 +77,7 @@ async function start() {
   showSite(profile.data);
   showBilling(profile.data);
   await showPoints(profile.data);
+  await loadTemplates();
 
   loading.hidden = true;
   app.hidden = false;
@@ -335,7 +336,7 @@ async function showPoints(row) {
   var used = 0;
   var recent = [];
   var q = await ONE.db.from('requests')
-    .select('id, kind, points, detail, status, created_at, billed_at, billed_amount')
+    .select('id, kind, points, detail, status, created_at, billed_at, billed_amount, confirm_token')
     .order('created_at', { ascending: false })
     .limit(20);
 
@@ -367,12 +368,15 @@ async function showPoints(row) {
     bar.hidden = true;
     upsell.hidden = false;
     note.textContent = used > 0
-      ? String(used) + (used === 1 ? ' point' : ' points') + ' asked for this month, invoiced separately.'
+      ? String(used) + (used === 1 ? ' point' : ' points') + ' asked for this month, charged to the card on file once done.'
       : '';
   }
 
+  updatePricePreview();
   renderRequests(recent);
 }
+
+var STATUS_TEXT_LABEL = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
 
 function requestRow(r) {
   var li = document.createElement('li');
@@ -386,6 +390,16 @@ function requestRow(r) {
     { day: 'numeric', month: 'short', year: 'numeric' });
   what.appendChild(when);
 
+  // Reclassifying resets a request to Request and re-sends this - surfaced
+  // right here so confirming does not depend on finding the email again.
+  if (r.confirm_token) {
+    var confirmLink = document.createElement('a');
+    confirmLink.className = 'req-confirm';
+    confirmLink.href = '/api/confirm-request?token=' + encodeURIComponent(r.confirm_token);
+    confirmLink.textContent = 'Confirm the price';
+    what.appendChild(confirmLink);
+  }
+
   var cost = document.createElement('span');
   cost.className = 'req-cost';
   cost.textContent = r.billed_at
@@ -394,7 +408,7 @@ function requestRow(r) {
 
   var state = document.createElement('span');
   state.className = 'req-state' + (r.status === 'done' ? ' is-done' : '');
-  state.textContent = { new: 'Received', in_progress: 'In progress', done: 'Done', declined: 'Declined' }[r.status] || r.status;
+  state.textContent = STATUS_TEXT_LABEL[r.status] || r.status;
 
   li.appendChild(what);
   li.appendChild(cost);
@@ -427,6 +441,95 @@ function renderRequests(rows) {
   wrap.hidden = !any;
 }
 
+/* ---------------- request picker: templates, price preview ---------------- */
+
+var templates = [];
+
+async function loadTemplates() {
+  if (!ONE.ready) return;
+  var q = await ONE.db.from('templates').select('id, kind, name, description').eq('active', true);
+  templates = (!q.error && q.data) || [];
+  renderPicker();
+}
+
+function renderPicker() {
+  var groups = [
+    { kind: 'edit',    group: document.getElementById('tplGroupEdit'),    list: document.getElementById('tplListEdit') },
+    { kind: 'feature', group: document.getElementById('tplGroupFeature'), list: document.getElementById('tplListFeature') }
+  ];
+  groups.forEach(function (g) {
+    var items = templates.filter(function (t) { return t.kind === g.kind; });
+    g.list.textContent = '';
+    if (!items.length) { g.group.hidden = true; return; }
+    items.forEach(function (t) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tpl-tile';
+      btn.textContent = t.name;
+      btn.addEventListener('click', function () { pickTemplate(t); });
+      g.list.appendChild(btn);
+    });
+    g.group.hidden = false;
+  });
+}
+
+function pickTemplate(t) {
+  var radio = document.querySelector('input[name="kind"][value="' + t.kind + '"]');
+  if (radio) radio.checked = true;
+  document.getElementById('reqDetail').value = t.description || '';
+  openForm();
+}
+
+function openForm() {
+  document.getElementById('reqLaunch').hidden = true;
+  document.getElementById('reqPicker').hidden = true;
+  document.getElementById('reqForm').hidden = false;
+  updatePricePreview();
+  document.getElementById('reqDetail').focus();
+}
+
+document.getElementById('reqOpenBtn').addEventListener('click', function () {
+  document.getElementById('reqLaunch').hidden = true;
+  document.getElementById('reqPicker').hidden = false;
+});
+
+document.getElementById('tplSomethingElse').addEventListener('click', function () {
+  document.getElementById('reqDetail').value = '';
+  openForm();
+});
+
+document.querySelectorAll('input[name="kind"]').forEach(function (r) {
+  r.addEventListener('change', updatePricePreview);
+});
+
+/* What this specific request would actually cost right now - the points
+   left this month, not the flat per-kind rate - so the price shown is the
+   true one, the same shortfall math the server itself will check. Seeing
+   this before sending is what lets sending it count as agreeing to it. */
+function updatePricePreview() {
+  var el = document.getElementById('reqPrice');
+  if (!el) return;
+  var kind = (document.querySelector('input[name="kind"]:checked') || {}).value || 'edit';
+  var cost = COST[kind];
+  var remaining = Math.max(0, pointsState.allowance - pointsState.used);
+  var covered = Math.min(cost, remaining);
+  var shortfall = cost - covered;
+
+  if (shortfall <= 0) {
+    el.textContent = 'Uses ' + cost + (cost === 1 ? ' point' : ' points')
+      + ' \u2014 you will have ' + (remaining - covered) + ' left this month.';
+    el.className = 'req-price';
+  } else if (covered > 0) {
+    el.textContent = 'Uses your last ' + covered + (covered === 1 ? ' point' : ' points')
+      + ', plus \u00a3' + (shortfall * 35) + ' on the card on file once it is done.';
+    el.className = 'req-price is-charge';
+  } else {
+    el.textContent = 'No points left this month \u2014 \u00a3' + (shortfall * 35)
+      + ' on the card on file once it is done.';
+    el.className = 'req-price is-charge';
+  }
+}
+
 document.getElementById('reqForm').addEventListener('submit', async function (e) {
   e.preventDefault();
   var note = document.getElementById('reqNote');
@@ -452,12 +555,11 @@ document.getElementById('reqForm').addEventListener('submit', async function (e)
     var data = await res.json().catch(function () { return {}; });
     if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
 
-    /* Say what it cost them, since that is the question they will have. */
-    var left = pointsState.allowance - pointsState.used - COST[kind];
-    say(note, pointsState.allowance > 0 && left >= 0
-      ? 'Sent. That used ' + COST[kind] + (COST[kind] === 1 ? ' point' : ' points') +
-        ', leaving ' + left + '.'
-      : 'Sent. We will confirm the cost before starting.', 'ok');
+    /* The preview already showed this exact number before they hit send, so
+       sending was already their agreement to it - nothing further to ask. */
+    say(note, data.shortfall > 0
+      ? 'Accepted \u2014 \u00a3' + (data.amount / 100).toFixed(0) + ' will be charged to your card on file once it is done.'
+      : 'Accepted \u2014 covered by your points.', 'ok');
 
     document.getElementById('reqDetail').value = '';
     var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();

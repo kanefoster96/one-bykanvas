@@ -54,7 +54,7 @@ module.exports = async function handler(req, res) {
     }
 
     const { error: updErr } = await db.from('requests')
-      .update({ confirm_token: null, price_confirmed_at: new Date().toISOString() })
+      .update({ confirm_token: null, price_confirmed_at: new Date().toISOString(), status: 'accepted' })
       .eq('id', reqRow.id);
     if (updErr) throw new Error(updErr.message);
 

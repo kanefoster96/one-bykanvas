@@ -5,11 +5,19 @@
  * tampered client gets the same answer twice. Going through this endpoint
  * rather than a direct client insert is what lets a new request email us;
  * a plain insert would record the row just as well but nobody would know.
+ *
+ * The account page shows the live price before this is ever called, so
+ * submitting it already is the customer's agreement to that price - this
+ * goes straight to accepted rather than sitting as an unconfirmed Request,
+ * with a fresh price_confirmed_at recorded whenever it fell outside the
+ * points. Only a later reclassification, which invalidates that agreement,
+ * sends it back through the confirmation email.
  */
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
+const { shortfallFor } = require('./_billing.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -56,6 +64,15 @@ module.exports = async function handler(req, res) {
     }).select().single();
     if (error) throw new Error(error.message);
 
+    const { shortfall } = await shortfallFor(db, user.id, row.id);
+    const amount = shortfall * REQUEST_COST.edit.amount; // £35/point, same rate either kind
+
+    const patch = { status: 'accepted' };
+    if (shortfall > 0) patch.price_confirmed_at = new Date().toISOString();
+    const { data: updated, error: updErr } = await db.from('requests')
+      .update(patch).eq('id', row.id).select().single();
+    if (updErr) throw new Error(updErr.message);
+
     const { data: profile } = await db.from('profiles')
       .select('business_name').eq('id', user.id).maybeSingle();
     const name = (profile && profile.business_name) || user.email || 'A customer';
@@ -64,12 +81,15 @@ module.exports = async function handler(req, res) {
       to: adminAddresses(),
       subject: `New ${kind === 'feature' ? 'feature' : 'edit'} request: ${name}`,
       text: `${name} asked for ${kind === 'feature' ? 'a new feature' : 'an edit'}:\n\n${detail}\n\n`
+          + (shortfall > 0
+              ? `Already accepted £${(amount / 100).toFixed(0)} over allowance - ready to build.\n\n`
+              : 'Covered by their points - ready to build.\n\n')
           + `Admin: https://one-bykanvas.vercel.app/admin.html`,
       replyTo: user.email
     });
     console.log('requests: notify email', result);
 
-    return res.status(200).json({ request: row });
+    return res.status(200).json({ request: updated, shortfall, amount });
   } catch (err) {
     console.error('requests:', err && err.message);
     return res.status(500).json({ error: 'Something went wrong. Try again.' });
