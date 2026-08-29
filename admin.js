@@ -391,7 +391,7 @@ function queueItem(r) {
   var li = el('li', 'queue-item');
 
   var main = el('div', 'queue-main');
-  main.appendChild(el('p', 'queue-who', (owner && owner.business_name) || 'Unknown business'));
+  main.appendChild(el('p', 'queue-who', ownerLabel(owner)));
   main.appendChild(el('p', 'queue-what', r.detail));
   main.appendChild(el('p', 'queue-meta',
     (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' + r.points +
@@ -538,6 +538,16 @@ function planChip(p) {
   if (p.active_plan) return el('span', 'plan-chip', PLAN_NAME[p.active_plan]);
   return el('span', 'plan-chip is-none',
     p.selected_plan ? PLAN_NAME[p.selected_plan] + ' (unpaid)' : 'No plan');
+}
+
+/* "Riverside Cafe — Sam Wells": the business and the person, together,
+   anywhere a row names who something belongs to. A business name alone
+   reads fine until two customers trade under similar names, or you need
+   to open an email with an actual person's name. */
+function ownerLabel(p) {
+  if (!p) return 'Unknown business';
+  var biz = p.business_name || 'Unnamed business';
+  return p.contact_name ? biz + ' — ' + p.contact_name : biz;
 }
 
 function matchesSearch(p, term) {
@@ -826,12 +836,12 @@ function customerDetail(p) {
   var head = el('div', 'cust-head');
   var names = el('div', 'cust-names');
   names.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
-  names.appendChild(el('p', 'cust-sub', p.business_type || 'No trade listed'));
+  names.appendChild(el('p', 'cust-sub',
+    [p.contact_name, p.business_type].filter(Boolean).join(' \u00b7 ') || 'No details yet'));
   head.appendChild(names);
   head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan]));
   wrap.appendChild(head);
 
-  if (p.contact_name) wrap.appendChild(el('p', 'cust-sub', p.contact_name));
   var reach = contactLine(p);
   if (reach) wrap.appendChild(reach);
   wrap.appendChild(el('p', 'cust-sub', 'Signed up ' + when(p.created_at)
@@ -927,12 +937,12 @@ function contactDetail(p) {
   var head = el('div', 'cust-head');
   var names = el('div', 'cust-names');
   names.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
-  names.appendChild(el('p', 'cust-sub', p.business_type || 'No trade listed'));
+  names.appendChild(el('p', 'cust-sub',
+    [p.contact_name, p.business_type].filter(Boolean).join(' \u00b7 ') || 'No details yet'));
   head.appendChild(names);
   head.appendChild(planChip(p));
   wrap.appendChild(head);
 
-  if (p.contact_name) wrap.appendChild(el('p', 'cust-sub', p.contact_name));
   var reach = contactLine(p);
   if (reach) wrap.appendChild(reach);
   wrap.appendChild(el('p', 'cust-sub', 'Signed up ' + when(p.created_at)
@@ -1016,7 +1026,7 @@ function renderPlansSection() {
       var row = el('div', 'cust cust-clickable');
       row.tabIndex = 0;
       row.setAttribute('role', 'button');
-      row.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
+      row.appendChild(el('h3', null, ownerLabel(p)));
       row.appendChild(el('p', 'cust-sub', pointsUsed(p) + ' of ' + PLAN_POINTS[key] + ' points used this month'));
       function openCustomer() { selectedCustomerId = p.id; activeSection = 'customers'; render(); }
       row.addEventListener('click', openCustomer);
@@ -1057,7 +1067,7 @@ function renderPaymentsSection() {
       var owner = state.profiles.filter(function (p) { return p.id === r.user_id; })[0];
       var li = el('li', 'queue-item');
       var main = el('div', 'queue-main');
-      main.appendChild(el('p', 'queue-who', (owner && owner.business_name) || 'Unknown business'));
+      main.appendChild(el('p', 'queue-who', ownerLabel(owner)));
       main.appendChild(el('p', 'queue-what', r.detail));
       main.appendChild(el('p', 'queue-meta', (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · £' +
         (r.billed_amount / 100).toFixed(0) + ' · ' + when(r.billed_at)));
@@ -1087,7 +1097,7 @@ function renderDoneList() {
     var li = el('li', 'queue-item');
 
     var main = el('div', 'queue-main');
-    main.appendChild(el('p', 'queue-who', (owner && owner.business_name) || 'Unknown business'));
+    main.appendChild(el('p', 'queue-who', ownerLabel(owner)));
     main.appendChild(el('p', 'queue-what', r.detail));
     main.appendChild(el('p', 'queue-meta',
       (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' + when(r.created_at)));
