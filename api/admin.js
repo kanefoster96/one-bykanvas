@@ -16,6 +16,7 @@ const { missingEnv } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 
 const DEFAULT_ADMINS = ['kane.foster@ymail.com'];
+const PLAN_POINTS = { business: 0, pro: 3, max: 5 }; // must match admin.js and account.js
 
 function adminList() {
   const fromEnv = (process.env.ADMIN_EMAILS || '')
@@ -139,13 +140,54 @@ module.exports = async function handler(req, res) {
       if (reqRow.billed_at) return res.status(400).json({ error: 'Already charged.' });
 
       const { data: profile, error: pErr } = await db
-        .from('profiles').select('business_name, stripe_customer_id').eq('id', reqRow.user_id).maybeSingle();
+        .from('profiles')
+        .select('business_name, stripe_customer_id, active_plan, current_period_end')
+        .eq('id', reqRow.user_id).maybeSingle();
       if (pErr) throw new Error(pErr.message);
       if (!profile || !profile.stripe_customer_id) {
         return res.status(400).json({ error: 'No card on file for them yet.' });
       }
 
-      const amount = REQUEST_COST[reqRow.kind].amount;
+      /* How many of this request's points the plan's allowance did not cover -
+       * recomputed here rather than trusted from the browser, the same reason
+       * checkout.js prices a plan from PLANS rather than the request body. A
+       * request only part-covered by what points were left (one point left,
+       * a 3-point feature) is billed for the shortfall, not the whole thing.
+       */
+      const allowance = PLAN_POINTS[profile.active_plan] || 0;
+      // Mirrors periodStart() in admin.js and account.js exactly, so the
+      // period boundary this charges against is never a few hours off from
+      // what the customer and admin page both already show.
+      const end = profile.current_period_end ? new Date(profile.current_period_end) : null;
+      let start;
+      if (end && !isNaN(end)) {
+        start = new Date(end);
+        start.setMonth(start.getMonth() - 1);
+      } else {
+        const now = new Date();
+        start = new Date(now.getFullYear(), now.getMonth(), 1);
+      }
+
+      const { data: periodReqs, error: prErr } = await db
+        .from('requests')
+        .select('id, points, created_at')
+        .eq('user_id', reqRow.user_id)
+        .neq('status', 'declined')
+        .gte('created_at', start.toISOString())
+        .order('created_at', { ascending: true });
+      if (prErr) throw new Error(prErr.message);
+
+      let used = 0, shortfall = 0;
+      for (const r of (periodReqs || [])) {
+        const covered = Math.max(0, Math.min(r.points, allowance - used));
+        if (r.id === reqRow.id) { shortfall = r.points - covered; break; }
+        used += r.points;
+      }
+      if (shortfall <= 0) {
+        return res.status(400).json({ error: 'This request is covered by their points — nothing to charge.' });
+      }
+
+      const amount = shortfall * REQUEST_COST.edit.amount; // £35/point, same rate either kind
       const stripe = new Stripe(STRIPE_SECRET_KEY);
 
       const customer = await stripe.customers.retrieve(profile.stripe_customer_id);

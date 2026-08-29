@@ -54,7 +54,7 @@ async function load() {
     loading.innerHTML = '<p>' + esc(err.message) + '</p>';
     return;
   }
-  markOverage();
+  markShortfall();
   render();
   loading.hidden = true;
   app.hidden = false;
@@ -96,14 +96,16 @@ function pointsUsed(p) {
   }, 0);
 }
 
-var REQUEST_PRICE = { edit: 3500, feature: 10500 }; // pence — must match api/_plans.js
+var POINT_PRICE = 3500; // pence per point — £35 either way in api/_plans.js REQUEST_COST
 
-/* Marks each request .overAllowance: true once the running total for that
-   customer, within the current billing period, passes their plan's points -
-   the same rule the account page's own copy states ("charged at the normal
-   rate"). Declined requests and anything from a previous period are excluded,
-   matching pointsUsed() above, so the two views can never disagree. */
-function markOverage() {
+/* Marks each request .shortfallPoints: how many of its points the plan's
+   allowance did not cover, worked out in the order requests were made. A
+   feature that lands once the allowance is half spent is billed only for the
+   points that ran out, not the whole thing - one point left and a 3-point
+   feature bills 2 points (£70), not the full £105. Declined requests and
+   anything from a previous period are excluded, matching pointsUsed() above,
+   so the two views can never disagree. */
+function markShortfall() {
   var byUser = {};
   state.requests.forEach(function (r) { (byUser[r.user_id] = byUser[r.user_id] || []).push(r); });
 
@@ -117,7 +119,8 @@ function markOverage() {
       .filter(function (r) { return r.status !== 'declined' && new Date(r.created_at) >= start; })
       .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); })
       .forEach(function (r) {
-        r.overAllowance = used >= allowance;
+        var covered = Math.max(0, Math.min(r.points, allowance - used));
+        r.shortfallPoints = r.points - covered;
         used += r.points;
       });
   });
@@ -133,7 +136,7 @@ function render() {
      it only leaves the queue once billed_at is set. */
   var open = state.requests.filter(function (r) {
     if (r.status === 'new' || r.status === 'in_progress') return true;
-    return r.status === 'done' && r.overAllowance && !r.billed_at;
+    return r.status === 'done' && r.shortfallPoints > 0 && !r.billed_at;
   });
 
   document.getElementById('adminSummary').textContent =
@@ -157,7 +160,10 @@ function queueItem(r) {
   main.appendChild(el('p', 'queue-meta',
     (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' + r.points +
     (r.points === 1 ? ' point' : ' points') +
-    (r.overAllowance ? ' · over allowance' : '') + ' · asked ' + when(r.created_at)));
+    (r.shortfallPoints > 0
+      ? ' · ' + r.shortfallPoints + (r.shortfallPoints === 1 ? ' point' : ' points') + ' over allowance'
+      : '') +
+    ' · asked ' + when(r.created_at)));
   li.appendChild(main);
 
   var actions = el('div', 'queue-actions');
@@ -180,12 +186,12 @@ function queueItem(r) {
   });
   actions.appendChild(sel);
 
-  if (r.status === 'done' && r.overAllowance) {
+  if (r.status === 'done' && r.shortfallPoints > 0) {
     if (r.billed_at) {
       actions.appendChild(el('p', 'queue-billed', 'Charged £' + (r.billed_amount / 100).toFixed(0) + ' · ' + when(r.billed_at)));
     } else {
       var charge = el('button', 'btn btn-ghost admin-charge',
-        'Charge card — £' + (REQUEST_PRICE[r.kind] / 100).toFixed(0));
+        'Charge card — £' + (r.shortfallPoints * POINT_PRICE / 100).toFixed(0));
       charge.type = 'button';
       charge.addEventListener('click', async function () {
         charge.disabled = true;
