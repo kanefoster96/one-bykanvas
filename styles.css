@@ -79,9 +79,10 @@ h3{font-size:21px;letter-spacing:-.02em}
 }
 .nav-inner{
   max-width:var(--wrap);margin:0 auto;padding:0 22px;height:100%;
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;
 }
 .logo{
+  margin-right:auto;
   font-size:22px;font-weight:600;letter-spacing:-.045em;color:var(--ink);
   text-transform:lowercase;line-height:1;
 }
@@ -548,7 +549,7 @@ body.locked{overflow:hidden}
    Account pages (login.html, account.html)
    ============================================================ */
 .auth-body{background:var(--bg-grey);min-height:100vh}
-.nav-out{margin-left:auto;font-size:14px}
+.nav-out{margin-left:14px;font-size:14px}
 
 .auth-wrap{max-width:440px;margin:0 auto;padding:clamp(40px,9vw,80px) 22px 80px}
 .auth-card{background:#fff;border-radius:var(--radius-lg);padding:clamp(28px,5vw,40px);box-shadow:0 2px 24px rgba(0,0,0,.06)}
@@ -612,7 +613,8 @@ body.locked{overflow:hidden}
 .acct-grid .full{grid-column:1/-1}
 .acct-save{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:8px}
 .acct-save .note{margin:0}
-.acct-email{margin:26px 0 0;font-size:13px;color:var(--ink-3);text-align:center}
+.acct-foot{margin-top:26px;text-align:center}
+.acct-email{margin:0;font-size:13px;color:var(--ink-3)}
 
 @media (max-width:600px){
   .acct-grid{grid-template-columns:1fr}
@@ -817,14 +819,11 @@ body.locked{overflow:hidden}
 
 /* ---- admin ---- */
 .admin-pill{
-  margin-left:auto;margin-right:16px;flex:0 0 auto;
+  margin-left:14px;flex:0 0 auto;
   padding:5px 12px;border-radius:980px;
   background:var(--ink);color:#fff;font-size:12.5px;font-weight:600;letter-spacing:.02em;
 }
 .admin-pill:hover{text-decoration:none;opacity:.82}
-/* The account and login headers put a link where the burger sits, so the pill
-   needs a gap rather than pushing itself all the way right. */
-.nav-inner .admin-pill + .nav-out{margin-left:0}
 
 .admin-wrap{max-width:900px;margin:0 auto;padding:clamp(36px,7vw,64px) 22px 90px}
 
@@ -877,7 +876,6 @@ body.locked{overflow:hidden}
 
 @media (max-width:600px){
   .queue-item{flex-direction:column;gap:10px}
-  .admin-pill{margin-right:12px}
 }
 
 /* ---- account identity, site, points ---- */

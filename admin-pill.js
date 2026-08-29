@@ -25,8 +25,9 @@
     a.textContent = text;
     /* Before whichever of these sits furthest right already, so that stays
        the rightmost thing in the header - the burger on marketing pages,
-       Log out on account.html and admin.html. Appending would just tack the
-       pill on after it instead. */
+       "Your account" on admin.html. Appending would just tack the pill on
+       after it instead. account.html has neither, so it falls through to
+       appendChild below, landing after the logo same as everything else. */
     var anchor = bar.querySelector('.burger') || bar.querySelector('.nav-out');
     if (anchor) bar.insertBefore(a, anchor); else bar.appendChild(a);
   }
