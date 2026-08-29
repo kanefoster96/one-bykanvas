@@ -876,21 +876,29 @@ body.locked{overflow:hidden}
 }
 .admin-save{height:42px;padding:0 20px;flex:0 0 auto}
 
-/* The section menu - a row of tabs rather than one long scrolling page, each
-   opening only when clicked. A dot carries a count rather than just meaning
-   "something's here", so it reads the same as a real notification badge. */
-.admin-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
-.admin-nav-btn{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:9px 16px;border-radius:980px;border:1px solid var(--line);background:#fff;
-  font-family:inherit;font-size:14px;font-weight:500;color:var(--ink-2);cursor:pointer;
-  transition:background .18s var(--ease),color .18s var(--ease),border-color .18s var(--ease);
+/* The admin home is a menu, not a tab row - one full-width row per area,
+   icon left, count badge and chevron right, hairline separators. Opening a
+   row swaps the whole menu for that section's page; ← Menu comes back. */
+.admin-menu{
+  background:#fff;border-radius:var(--radius-lg);border:1px solid var(--line-soft);
+  padding:6px clamp(20px,4vw,28px);
 }
-.admin-nav-btn:hover{border-color:var(--ink-3)}
-.admin-nav-btn.is-active{background:var(--ink);border-color:var(--ink);color:#fff}
+.menu-row{
+  display:flex;align-items:center;gap:15px;width:100%;
+  padding:18px 0;border:0;border-bottom:1px solid var(--line-soft);background:none;
+  font-family:inherit;font-size:16.5px;font-weight:500;letter-spacing:-.01em;color:var(--ink);
+  cursor:pointer;text-align:left;transition:opacity .15s var(--ease);
+}
+.menu-row:last-child{border-bottom:0}
+.menu-row:hover{opacity:.65}
+.menu-icon{display:flex;flex:0 0 auto;color:var(--ink-2)}
+.menu-icon svg{width:21px;height:21px}
+.menu-label{flex:1;min-width:0}
+.menu-chevron{flex:0 0 auto;font-size:20px;line-height:1;color:var(--ink-3)}
+.admin-back{margin:0 0 4px;font-size:15px}
 .nav-dot{
-  display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;
-  padding:0 5px;border-radius:980px;background:#d93025;color:#fff;font-size:11px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;
+  padding:0 6px;border-radius:980px;background:#d93025;color:#fff;font-size:11.5px;font-weight:700;
 }
 
 .cust-clickable{cursor:pointer;transition:opacity .15s var(--ease)}

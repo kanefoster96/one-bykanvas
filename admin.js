@@ -22,6 +22,17 @@ var STATUS_NAME = { new: 'Request', accepted: 'Accepted', in_progress: 'In build
 
 var state = { profiles: [], requests: [], templates: [], seoUpdates: [], siteFeatures: [] };
 
+/* Simple line icons, stroke-only, matching the site's weight. Drawn inline
+   rather than fetched so the menu never waits on anything. */
+var ICONS = {
+  requests:  '<path d="M3 13.5 5.5 5h13L21 13.5V19H3z"/><path d="M3 13.5h5a4 4 0 0 0 8 0h5"/>',
+  customers: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5"/>',
+  contacts:  '<rect x="4.5" y="3.5" width="15" height="17" rx="2.5"/><path d="M8 3.5v17M12.5 9h4M12.5 12.5h4"/>',
+  plans:     '<path d="m12 3.5 8.5 4.75L12 13 3.5 8.25z"/><path d="m3.5 13 8.5 4.75L20.5 13"/>',
+  payments:  '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
+  templates: '<rect x="7.5" y="7.5" width="13" height="13" rx="2.5"/><path d="M16.5 7.5v-2a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/>'
+};
+
 var SECTIONS = [
   { key: 'requests',  label: 'Requests' },
   { key: 'customers', label: 'Customers' },
@@ -30,7 +41,7 @@ var SECTIONS = [
   { key: 'payments',  label: 'Payments' },
   { key: 'templates', label: 'Templates' }
 ];
-var activeSection = 'requests';
+var activeSection = null; // null = the menu itself
 var selectedCustomerId = null;
 var selectedContactId = null;
 
@@ -200,17 +211,29 @@ function switchSection(key) {
   render();
 }
 
-function renderNav(requestsDot, customersDot) {
+/* The Wix-style home: one row per area - icon, label, a count badge where
+   something needs doing, and a chevron. Only shown while no section is
+   open; opening one swaps the whole menu for that section's page. */
+function renderMenu(requestsDot, customersDot) {
   var nav = document.getElementById('adminNav');
   nav.textContent = '';
   SECTIONS.forEach(function (s) {
-    var btn = el('button', 'admin-nav-btn' + (s.key === activeSection ? ' is-active' : ''));
-    btn.type = 'button';
-    btn.appendChild(document.createTextNode(s.label));
+    var row = el('button', 'menu-row');
+    row.type = 'button';
+
+    var icon = el('span', 'menu-icon');
+    icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" '
+      + 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[s.key] + '</svg>';
+    row.appendChild(icon);
+
+    row.appendChild(el('span', 'menu-label', s.label));
+
     var count = s.key === 'requests' ? requestsDot : s.key === 'customers' ? customersDot : 0;
-    if (count > 0) btn.appendChild(el('span', 'nav-dot', String(count)));
-    btn.addEventListener('click', function () { switchSection(s.key); });
-    nav.appendChild(btn);
+    if (count > 0) row.appendChild(el('span', 'nav-dot', String(count)));
+    row.appendChild(el('span', 'menu-chevron', '›'));
+
+    row.addEventListener('click', function () { switchSection(s.key); });
+    nav.appendChild(row);
   });
 }
 
@@ -230,7 +253,17 @@ function render() {
     state.profiles.length + ' signed up · ' + paying + ' paying · ' + live + ' live · ' +
     open.length + ' open request' + (open.length === 1 ? '' : 's');
 
-  renderNav(open.length + unbuilt.length, pendingSeo.length);
+  var onMenu = activeSection === null;
+  var nav = document.getElementById('adminNav');
+  nav.hidden = !onMenu;
+  if (onMenu) renderMenu(open.length + unbuilt.length, pendingSeo.length);
+
+  var back = document.getElementById('backToMenu');
+  back.hidden = onMenu;
+  if (!back.dataset.bound) {
+    back.dataset.bound = '1';
+    back.addEventListener('click', function () { switchSection(null); });
+  }
 
   Object.keys(SECTION_IDS).forEach(function (key) {
     document.getElementById(SECTION_IDS[key]).hidden = activeSection !== key;
