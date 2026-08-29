@@ -39,11 +39,26 @@
 
     var actions = document.createElement('div');
     actions.className = 'menu-actions';
-    actions.innerHTML =
-      '<a class="btn btn-ghost" href="/login.html">Log in</a>' +
-      '<a class="btn btn-primary" href="/get-started.html">Get started</a>';
+
+    var signedIn = window.ONE_SESSION && window.ONE_SESSION.email();
+    actions.innerHTML = signedIn
+      ? '<a class="btn btn-ghost" href="/account.html">Your account</a>' +
+        '<button class="btn btn-primary" type="button" id="navLogout">Log out</button>'
+      : '<a class="btn btn-ghost" href="/login.html">Log in</a>' +
+        '<a class="btn btn-primary" href="/get-started.html">Get started</a>';
     nav.appendChild(actions);
     menu.appendChild(nav);
+
+    var navLogout = document.getElementById('navLogout');
+    if (navLogout) {
+      navLogout.addEventListener('click', function () {
+        navLogout.disabled = true;
+        navLogout.textContent = 'Logging out…';
+        Promise.resolve(window.ONE_SESSION.logOut()).then(function () {
+          location.href = '/';
+        });
+      });
+    }
   }
 
   if (burger && menu && scrim) {
