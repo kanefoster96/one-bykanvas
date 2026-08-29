@@ -165,7 +165,7 @@
   var form = document.getElementById('lead');
   var note = document.getElementById('formnote');
 
-  if (form && note) form.addEventListener('submit', function (e) {
+  if (form && note) form.addEventListener('submit', async function (e) {
     e.preventDefault();
 
     var required = ['name', 'business', 'email'];
@@ -185,20 +185,41 @@
       return;
     }
 
-    // TODO: point this at a real endpoint (Formspree, a Vercel function, or your CRM).
-    var payload = {
-      name: document.getElementById('name').value.trim(),
-      business: document.getElementById('business').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      plan: document.getElementById('plan').value,
-      about: document.getElementById('about').value.trim(),
-      wantApp: document.getElementById('wantapp').checked
-    };
-    console.log('Lead captured (not yet sent anywhere):', payload);
+    /* The plan <select> shows prices ("Pro — £120/month"); the endpoint wants
+       the plan key. Read the option's position rather than parsing its text,
+       so a price change never quietly stops this matching. */
+    var planEl = document.getElementById('plan');
+    var PLAN_KEYS = ['business', 'pro', 'max', 'unsure'];
 
-    note.textContent = 'Thanks — we’ll be in touch within one working day.';
-    note.className = 'formnote ok';
-    form.reset();
+    var btn = form.querySelector('button[type="submit"]');
+    if (btn) btn.disabled = true;
+    note.textContent = 'Sending…';
+    note.className = 'formnote';
+
+    try {
+      var res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: document.getElementById('name').value.trim(),
+          business: document.getElementById('business').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          plan: PLAN_KEYS[planEl.selectedIndex] || 'unsure',
+          about: document.getElementById('about').value.trim(),
+          wantApp: document.getElementById('wantapp').checked
+        })
+      });
+      var data = await res.json().catch(function () { return {}; });
+      if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
+
+      note.textContent = 'Thanks — we’ll be in touch within one working day.';
+      note.className = 'formnote ok';
+      form.reset();
+    } catch (err) {
+      note.textContent = err.message || 'Could not send that. Try again.';
+      note.className = 'formnote bad';
+    }
+    if (btn) btn.disabled = false;
   });
 
   /* ---------- Year ---------- */

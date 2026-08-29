@@ -20,7 +20,7 @@ var PLAN_POINTS = { business: 1, pro: 3, max: 5 };
 var PLAN_PRICE  = { business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
 var STATUS_NAME = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
 
-var state = { profiles: [], requests: [], templates: [], seoUpdates: [], siteFeatures: [] };
+var state = { profiles: [], requests: [], templates: [], seoUpdates: [], siteFeatures: [], leads: [], tasks: [] };
 
 /* Simple line icons, stroke-only, matching the site's weight. Drawn inline
    rather than fetched so the menu never waits on anything. */
@@ -30,13 +30,17 @@ var ICONS = {
   contacts:  '<rect x="4.5" y="3.5" width="15" height="17" rx="2.5"/><path d="M8 3.5v17M12.5 9h4M12.5 12.5h4"/>',
   plans:     '<path d="m12 3.5 8.5 4.75L12 13 3.5 8.25z"/><path d="m3.5 13 8.5 4.75L20.5 13"/>',
   payments:  '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
-  templates: '<rect x="7.5" y="7.5" width="13" height="13" rx="2.5"/><path d="M16.5 7.5v-2a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/>'
+  templates: '<rect x="7.5" y="7.5" width="13" height="13" rx="2.5"/><path d="M16.5 7.5v-2a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/>',
+  leads:     '<path d="M3.5 6.5h17v11h-17z"/><path d="m3.5 7 8.5 6 8.5-6"/>',
+  tasks:     '<path d="M4 7.5h10M4 12h10M4 16.5h7"/><path d="m17 6.5 1.6 1.6L21.5 5"/>'
 };
 
 var SECTIONS = [
   { key: 'requests',  label: 'Requests' },
   { key: 'customers', label: 'Customers' },
   { key: 'contacts',  label: 'Contacts' },
+  { key: 'leads',     label: 'Enquiries' },
+  { key: 'tasks',     label: 'Tasks' },
   { key: 'plans',     label: 'Plans' },
   { key: 'payments',  label: 'Payments' },
   { key: 'templates', label: 'Templates' }
@@ -164,6 +168,23 @@ function pendingSeoCustomers() {
   return state.profiles.filter(function (p) { return p.active_plan === 'max' && !seoLoggedThisPeriod(p); });
 }
 
+/* Enquiries nobody has picked up yet, and tasks not ticked off - the two
+   things worth a badge on their own menu rows. */
+function newLeads() {
+  return state.leads.filter(function (l) { return l.status === 'new'; });
+}
+
+function openTasks() {
+  return state.tasks.filter(function (t) { return !t.done_at; });
+}
+
+/* Signed up, picked a plan, never paid - Wix would call this an abandoned
+   cart. Worth surfacing because it is the one group where a nudge is
+   obviously worth sending. */
+function stalledSignups() {
+  return state.profiles.filter(function (p) { return !p.active_plan && p.selected_plan; });
+}
+
 /* "Open" also holds a done request nobody has charged yet, so an
    over-allowance job never quietly falls out of view once it is finished -
    it only leaves the queue once billed_at is set. */
@@ -214,7 +235,7 @@ function switchSection(key) {
 /* The Wix-style home: one row per area - icon, label, a count badge where
    something needs doing, and a chevron. Only shown while no section is
    open; opening one swaps the whole menu for that section's page. */
-function renderMenu(requestsDot, customersDot) {
+function renderMenu(counts) {
   var nav = document.getElementById('adminNav');
   nav.textContent = '';
   SECTIONS.forEach(function (s) {
@@ -228,7 +249,7 @@ function renderMenu(requestsDot, customersDot) {
 
     row.appendChild(el('span', 'menu-label', s.label));
 
-    var count = s.key === 'requests' ? requestsDot : s.key === 'customers' ? customersDot : 0;
+    var count = counts[s.key] || 0;
     if (count > 0) row.appendChild(el('span', 'nav-dot', String(count)));
     row.appendChild(el('span', 'menu-chevron', '›'));
 
@@ -239,7 +260,8 @@ function renderMenu(requestsDot, customersDot) {
 
 var SECTION_IDS = {
   requests: 'sectionRequests', customers: 'sectionCustomers', contacts: 'sectionContacts',
-  plans: 'sectionPlans', payments: 'sectionPayments', templates: 'sectionTemplates'
+  plans: 'sectionPlans', payments: 'sectionPayments', templates: 'sectionTemplates',
+  leads: 'sectionLeads', tasks: 'sectionTasks'
 };
 
 function render() {
@@ -256,7 +278,12 @@ function render() {
   var onMenu = activeSection === null;
   var nav = document.getElementById('adminNav');
   nav.hidden = !onMenu;
-  if (onMenu) renderMenu(open.length + unbuilt.length, pendingSeo.length);
+  if (onMenu) renderMenu({
+    requests: open.length + unbuilt.length,
+    customers: pendingSeo.length,
+    leads: newLeads().length,
+    tasks: openTasks().length
+  });
 
   var back = document.getElementById('backToMenu');
   back.hidden = onMenu;
@@ -275,6 +302,8 @@ function render() {
   else if (activeSection === 'plans') renderPlansSection();
   else if (activeSection === 'payments') renderPaymentsSection();
   else if (activeSection === 'templates') renderTemplatesSection();
+  else if (activeSection === 'leads') renderLeadsSection();
+  else if (activeSection === 'tasks') renderTasksSection();
 }
 
 /* ---------------- shared: the site address/status editor ---------------- */
@@ -1206,5 +1235,255 @@ function renderTemplates() {
 function renderTemplatesSection() {
   renderDoneList();
   renderTemplates();
+}
+
+/* ---------------- Enquiries: the public form, and the pipeline ---------------- */
+
+var LEAD_STATUS = [
+  ['new', 'New'], ['contacted', 'Contacted'], ['quoted', 'Quoted'],
+  ['won', 'Won'], ['lost', 'Lost']
+];
+var LEAD_STATUS_NAME = {};
+LEAD_STATUS.forEach(function (pair) { LEAD_STATUS_NAME[pair[0]] = pair[1]; });
+
+function leadCard(l) {
+  var card = el('div', 'cust');
+
+  var head = el('div', 'cust-head');
+  var names = el('div', 'cust-names');
+  names.appendChild(el('h3', null, l.business + ' — ' + l.name));
+  names.appendChild(el('p', 'cust-sub',
+    (l.plan_interest ? 'Interested in ' + (PLAN_NAME[l.plan_interest] || l.plan_interest) : 'No plan named')
+    + (l.want_app ? ' · wants an app' : '')));
+  head.appendChild(names);
+  head.appendChild(el('span', 'plan-chip' + (l.status === 'won' ? '' : ' is-none'), LEAD_STATUS_NAME[l.status]));
+  card.appendChild(head);
+
+  card.appendChild(contactLine({ email: l.email }));
+  card.appendChild(el('p', 'cust-sub', 'Enquired ' + when(l.created_at)));
+  if (l.about) card.appendChild(el('p', 'cust-want', l.about));
+
+  var row = el('div', 'cust-site');
+
+  var sel = el('select', 'admin-select');
+  LEAD_STATUS.forEach(function (pair) {
+    var o = el('option', null, pair[1]);
+    o.value = pair[0];
+    if (pair[0] === l.status) o.selected = true;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', async function () {
+    sel.disabled = true;
+    try {
+      await api({ action: 'setLeadStatus', leadId: l.id, status: sel.value });
+      l.status = sel.value;
+      say('Updated.', 'ok');
+      render();
+    } catch (err) { say(err.message, 'bad'); sel.value = l.status; }
+    sel.disabled = false;
+  });
+  row.appendChild(sel);
+
+  // Straight from an enquiry to a reminder to chase it - the follow-up is
+  // the whole point of a pipeline.
+  var task = el('button', 'btn btn-ghost admin-save', 'Add follow-up');
+  task.type = 'button';
+  task.addEventListener('click', async function () {
+    var title = prompt('What is the follow-up?', 'Follow up with ' + l.business);
+    if (!title || !title.trim()) return;
+    task.disabled = true;
+    try {
+      var res = await api({ action: 'addTask', title: title.trim(), leadId: l.id });
+      state.tasks.unshift(res.task);
+      say('Task added.', 'ok');
+      render();
+    } catch (err) { say(err.message, 'bad'); task.disabled = false; }
+  });
+  row.appendChild(task);
+  card.appendChild(row);
+
+  var notes = document.createElement('textarea');
+  notes.className = 'admin-input notes-textarea';
+  notes.rows = 2;
+  notes.value = l.admin_notes || '';
+  notes.placeholder = 'Notes on this enquiry…';
+  var saveNotes = el('button', 'linkish', 'Save notes');
+  saveNotes.type = 'button';
+  saveNotes.addEventListener('click', async function () {
+    saveNotes.disabled = true;
+    try {
+      await api({ action: 'setLeadNotes', leadId: l.id, notes: notes.value });
+      l.admin_notes = notes.value.trim() || null;
+      say('Saved.', 'ok');
+    } catch (err) { say(err.message, 'bad'); }
+    saveNotes.disabled = false;
+  });
+  card.appendChild(notes);
+  card.appendChild(saveNotes);
+
+  return card;
+}
+
+function renderLeadsSection() {
+  var wrap = document.getElementById('leadsBody');
+  wrap.textContent = '';
+
+  // Signed up but never paid: not an enquiry, but the same job - someone to
+  // chase - so it belongs on the same page rather than hidden in Contacts.
+  var stalled = stalledSignups();
+  if (stalled.length) {
+    wrap.appendChild(el('h3', 'req-list-title', 'Signed up, never paid'));
+    stalled.forEach(function (p) {
+      var card = el('div', 'cust');
+      var head = el('div', 'cust-head');
+      var names = el('div', 'cust-names');
+      names.appendChild(el('h3', null, ownerLabel(p)));
+      names.appendChild(el('p', 'cust-sub', 'Picked ' + (PLAN_NAME[p.selected_plan] || p.selected_plan)
+        + ' · signed up ' + when(p.created_at)));
+      head.appendChild(names);
+      head.appendChild(el('span', 'plan-chip is-none', 'Unpaid'));
+      card.appendChild(head);
+      var reach = contactLine(p);
+      if (reach) card.appendChild(reach);
+      wrap.appendChild(card);
+    });
+  }
+
+  wrap.appendChild(el('h3', 'req-list-title', 'Enquiries'));
+  if (!state.leads.length) {
+    wrap.appendChild(el('p', 'site-none', 'Nothing through the form yet.'));
+    return;
+  }
+  // Open ones first, then won/lost - the pipeline reads as work, not history.
+  var order = { new: 0, contacted: 1, quoted: 2, won: 3, lost: 4 };
+  state.leads.slice()
+    .sort(function (a, b) { return (order[a.status] - order[b.status]) || (new Date(b.created_at) - new Date(a.created_at)); })
+    .forEach(function (l) { wrap.appendChild(leadCard(l)); });
+}
+
+/* ---------------- Tasks: the admin's own to-do list ---------------- */
+
+function taskWho(t) {
+  if (t.user_id) {
+    var p = state.profiles.filter(function (x) { return x.id === t.user_id; })[0];
+    if (p) return ownerLabel(p);
+  }
+  if (t.lead_id) {
+    var l = state.leads.filter(function (x) { return x.id === t.lead_id; })[0];
+    if (l) return l.business + ' — ' + l.name;
+  }
+  return null;
+}
+
+function taskRow(t) {
+  var li = el('li', 'queue-item');
+  var main = el('div', 'queue-main');
+
+  var label = el('label', 'task-line');
+  var box = document.createElement('input');
+  box.type = 'checkbox';
+  box.checked = Boolean(t.done_at);
+  box.addEventListener('change', async function () {
+    box.disabled = true;
+    try {
+      var res = await api({ action: 'setTaskDone', taskId: t.id, done: box.checked });
+      t.done_at = res.task.done_at;
+      render();
+    } catch (err) { say(err.message, 'bad'); box.checked = !box.checked; }
+    box.disabled = false;
+  });
+  label.appendChild(box);
+  label.appendChild(el('span', t.done_at ? 'task-done' : null, t.title));
+  main.appendChild(label);
+
+  var bits = [];
+  var who = taskWho(t);
+  if (who) bits.push(who);
+  if (t.due_on) {
+    // Overdue is the only thing here worth colouring - everything else is
+    // just when it was written down.
+    var overdue = !t.done_at && new Date(t.due_on) < new Date(new Date().toDateString());
+    bits.push((overdue ? 'Overdue — due ' : 'Due ') + when(t.due_on));
+  }
+  if (bits.length) main.appendChild(el('p', 'queue-meta', bits.join(' · ')));
+  li.appendChild(main);
+
+  var actions = el('div', 'queue-actions');
+  var remove = el('button', 'linkish queue-reclass', 'Remove');
+  remove.type = 'button';
+  remove.addEventListener('click', async function () {
+    remove.disabled = true;
+    try {
+      await api({ action: 'removeTask', taskId: t.id });
+      state.tasks = state.tasks.filter(function (x) { return x.id !== t.id; });
+      render();
+    } catch (err) { say(err.message, 'bad'); remove.disabled = false; }
+  });
+  actions.appendChild(remove);
+  li.appendChild(actions);
+  return li;
+}
+
+function renderTasksSection() {
+  var wrap = document.getElementById('tasksBody');
+  wrap.textContent = '';
+
+  var form = el('div', 'feature-add');
+  var input = el('input', 'admin-input');
+  input.type = 'text';
+  input.placeholder = 'Something to do…';
+  input.maxLength = 300;
+  var due = el('input', 'admin-input task-due');
+  due.type = 'date';
+  due.setAttribute('aria-label', 'Due date (optional)');
+  var add = el('button', 'btn btn-ghost admin-save', 'Add task');
+  add.type = 'button';
+
+  async function submit() {
+    var title = input.value.trim();
+    if (!title) return;
+    add.disabled = true;
+    try {
+      var res = await api({ action: 'addTask', title: title, dueOn: due.value || null });
+      state.tasks.unshift(res.task);
+      input.value = ''; due.value = '';
+      say('Added.', 'ok');
+      render();
+    } catch (err) { say(err.message, 'bad'); add.disabled = false; }
+  }
+  add.addEventListener('click', submit);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+
+  form.appendChild(input);
+  form.appendChild(due);
+  form.appendChild(add);
+  wrap.appendChild(form);
+
+  var open = openTasks();
+  var done = state.tasks.filter(function (t) { return t.done_at; }).slice(0, 20);
+
+  // Soonest due first, then anything undated - a list you work top-down.
+  open.sort(function (a, b) {
+    if (a.due_on && b.due_on) return new Date(a.due_on) - new Date(b.due_on);
+    if (a.due_on) return -1;
+    if (b.due_on) return 1;
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
+
+  wrap.appendChild(el('h3', 'req-list-title', 'To do'));
+  if (!open.length) {
+    wrap.appendChild(el('p', 'site-none', 'Nothing outstanding.'));
+  } else {
+    var list = el('ul', 'queue');
+    open.forEach(function (t) { list.appendChild(taskRow(t)); });
+    wrap.appendChild(list);
+  }
+
+  if (done.length) {
+    wrap.appendChild(el('h3', 'req-list-title', 'Done'));
+    var doneList = el('ul', 'queue');
+    done.forEach(function (t) { doneList.appendChild(taskRow(t)); });
+    wrap.appendChild(doneList);
+  }
 }
 })();
