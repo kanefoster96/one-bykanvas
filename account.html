@@ -61,7 +61,24 @@
       <p class="points-upsell-more">Changing something most months? <strong>Pro</strong> is £90 and includes three points, which covers a new feature or three edits.</p>
     </div>
 
-    <form class="req-form" id="reqForm" novalidate>
+    <div class="req-launch" id="reqLaunch">
+      <button class="btn btn-primary" id="reqOpenBtn" type="button">Request a site change</button>
+    </div>
+
+    <!-- Pick something done before, or write it from scratch. -->
+    <div class="req-picker" id="reqPicker" hidden>
+      <div class="req-tpl-group" id="tplGroupEdit" hidden>
+        <h3 class="req-list-title">Edits</h3>
+        <div class="req-tpl-list" id="tplListEdit"></div>
+      </div>
+      <div class="req-tpl-group" id="tplGroupFeature" hidden>
+        <h3 class="req-list-title">Features</h3>
+        <div class="req-tpl-list" id="tplListFeature"></div>
+      </div>
+      <button class="linkish" id="tplSomethingElse" type="button">Something else</button>
+    </div>
+
+    <form class="req-form" id="reqForm" novalidate hidden>
       <div class="req-kinds">
         <label class="req-kind">
           <input type="radio" name="kind" value="edit" checked>
@@ -72,6 +89,7 @@
           <span><b>A new feature</b><em>3 points &middot; £105</em><small>Bookings, payments, a members area, a new page</small></span>
         </label>
       </div>
+      <p class="req-price" id="reqPrice"></p>
       <div class="field full">
         <label for="reqDetail">What would you like?</label>
         <textarea id="reqDetail" rows="3" maxlength="4000" placeholder="Swap the photo on the homepage for the new shopfront one…"></textarea>
@@ -177,7 +195,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="account.js?v=1"></script>
+<script src="account.js?v=2"></script>
 <script src="admin-pill.js?v=2"></script>
 </body>
 </html>

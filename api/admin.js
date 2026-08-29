@@ -16,60 +16,14 @@ const Stripe = require('stripe');
 const { missingEnv } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
+const { shortfallFor } = require('./_billing.js');
 
 const DEFAULT_ADMINS = ['kane.foster@ymail.com'];
-const PLAN_POINTS = { business: 0, pro: 3, max: 5 }; // must match admin.js and account.js
 
 function adminList() {
   const fromEnv = (process.env.ADMIN_EMAILS || '')
     .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
   return fromEnv.length ? fromEnv : DEFAULT_ADMINS;
-}
-
-/* How many of one request's points its owner's plan did not cover, worked
- * out fresh from the database rather than trusted from anywhere else - the
- * same reason checkout.js prices a plan from PLANS rather than the request
- * body. Shared by chargeRequest and reclassifyRequest so the two can never
- * disagree about what a request is actually worth.
- *
- * Mirrors periodStart() in admin.js and account.js exactly, so the period
- * boundary this measures against is never a few hours off from what the
- * customer and admin page both already show.
- */
-async function shortfallFor(db, userId, requestId) {
-  const { data: profile, error: pErr } = await db
-    .from('profiles')
-    .select('business_name, stripe_customer_id, active_plan, current_period_end')
-    .eq('id', userId).maybeSingle();
-  if (pErr) throw new Error(pErr.message);
-
-  const allowance = PLAN_POINTS[profile && profile.active_plan] || 0;
-  const end = profile && profile.current_period_end ? new Date(profile.current_period_end) : null;
-  let start;
-  if (end && !isNaN(end)) {
-    start = new Date(end);
-    start.setMonth(start.getMonth() - 1);
-  } else {
-    const now = new Date();
-    start = new Date(now.getFullYear(), now.getMonth(), 1);
-  }
-
-  const { data: periodReqs, error: prErr } = await db
-    .from('requests')
-    .select('id, points, created_at')
-    .eq('user_id', userId)
-    .neq('status', 'declined')
-    .gte('created_at', start.toISOString())
-    .order('created_at', { ascending: true });
-  if (prErr) throw new Error(prErr.message);
-
-  let used = 0, shortfall = 0;
-  for (const r of (periodReqs || [])) {
-    const covered = Math.max(0, Math.min(r.points, allowance - used));
-    if (r.id === requestId) { shortfall = r.points - covered; break; }
-    used += r.points;
-  }
-  return { profile, shortfall };
 }
 
 /* Sets the request on hold for the customer's own sign-off and emails them
@@ -170,7 +124,15 @@ module.exports = async function handler(req, res) {
       const shaped = (reqs || []).map(({ confirm_token, ...r }) =>
         Object.assign(r, { awaitingConfirmation: Boolean(confirm_token) }));
 
-      return res.status(200).json({ profiles: profiles || [], requests: shaped });
+      // Both active and retired, so a retired one can still be brought back
+      // rather than needing to be typed out again.
+      const { data: templates, error: tplError } = await db
+        .from('templates')
+        .select('id, kind, name, description, active, created_at')
+        .order('created_at', { ascending: false });
+      if (tplError) throw new Error(tplError.message);
+
+      return res.status(200).json({ profiles: profiles || [], requests: shaped, templates: templates || [] });
     }
 
     // ---- write: the site address and whether it is live ----------------
@@ -207,7 +169,7 @@ module.exports = async function handler(req, res) {
       const id = String(body.requestId || '');
       const status = String(body.status || '');
       if (!id) return res.status(400).json({ error: 'Which request?' });
-      if (!['new', 'in_progress', 'done', 'declined'].includes(status)) {
+      if (!['new', 'accepted', 'in_progress', 'done', 'declined'].includes(status)) {
         return res.status(400).json({ error: 'Unknown status.' });
       }
 
@@ -223,7 +185,9 @@ module.exports = async function handler(req, res) {
           });
         }
 
-        if (!reqRow.price_confirmed_at) {
+        // Already accepted - either free, or already confirmed - so there is
+        // nothing left to check.
+        if (reqRow.status !== 'accepted') {
           const { shortfall } = await shortfallFor(db, reqRow.user_id, id);
           if (shortfall > 0) {
             const amount = await askForConfirmation(db, reqRow, shortfall);
@@ -263,15 +227,42 @@ module.exports = async function handler(req, res) {
       // A confirmation already sent or given was for the old price - it does
       // not carry over to the new one.
       const patch = { kind, points: REQUEST_COST[kind].points, confirm_token: null, price_confirmed_at: null };
-      // Already under way and turned out to be the other kind: pull it back
-      // to New rather than let it continue against a price nobody has agreed.
-      if (reqRow.status === 'in_progress') patch.status = 'new';
+      // Already accepted or under way and turned out to be the other kind:
+      // pull it back to Request rather than let it continue, or start,
+      // against a price nobody has agreed to.
+      if (reqRow.status === 'accepted' || reqRow.status === 'in_progress') patch.status = 'new';
 
       const { error: kindErr } = await db.from('requests').update(patch).eq('id', id);
       if (kindErr) throw new Error(kindErr.message);
 
       const { shortfall } = await shortfallFor(db, reqRow.user_id, id);
       return res.status(200).json({ ok: true, shortfall, amount: shortfall * REQUEST_COST.edit.amount });
+    }
+
+    // ---- write: save a finished request as a reusable template ----------
+    if (action === 'saveTemplate') {
+      const kind = String(body.kind || '').toLowerCase();
+      const name = String(body.name || '').trim();
+      const description = body.description == null ? null : String(body.description).trim() || null;
+      if (!Object.prototype.hasOwnProperty.call(REQUEST_COST, kind)) {
+        return res.status(400).json({ error: 'Unknown kind.' });
+      }
+      if (!name) return res.status(400).json({ error: 'Give the template a name.' });
+
+      const { data, error } = await db.from('templates')
+        .insert({ kind, name, description }).select().single();
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true, template: data });
+    }
+
+    // ---- write: retire or restore a template -----------------------------
+    if (action === 'setTemplateActive') {
+      const id = String(body.templateId || '');
+      const active = Boolean(body.active);
+      if (!id) return res.status(400).json({ error: 'Which template?' });
+      const { error } = await db.from('templates').update({ active }).eq('id', id);
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true });
     }
 
     // ---- write: charge the card on file for a request the points did not

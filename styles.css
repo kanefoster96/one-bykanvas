@@ -922,6 +922,18 @@ body.locked{overflow:hidden}
 .points-upsell strong{color:var(--ink);font-weight:600}
 .points-upsell-more{margin-top:9px!important}
 
+.req-launch{margin-top:24px;padding-top:22px;border-top:1px solid var(--line-soft)}
+.req-picker{margin-top:24px;padding-top:22px;border-top:1px solid var(--line-soft)}
+.req-tpl-group{margin-bottom:18px}
+.req-tpl-list{display:flex;flex-wrap:wrap;gap:9px}
+.tpl-tile{
+  font-family:var(--font);font-size:14px;color:var(--ink);cursor:pointer;
+  padding:9px 15px;border:1px solid var(--line);border-radius:980px;background:#fff;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
+}
+.tpl-tile:hover{border-color:var(--ink)}
+.tpl-tile:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
 .req-form{margin-top:24px;padding-top:22px;border-top:1px solid var(--line-soft)}
 .req-kinds{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
 .req-kind{display:block;cursor:pointer}
@@ -947,6 +959,8 @@ body.locked{overflow:hidden}
 .req-form label{font-size:13.5px;font-weight:500;color:var(--ink-2)}
 .req-send{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .req-send .note{margin:0}
+.req-price{margin:0 0 16px;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.req-price.is-charge{color:var(--ink);font-weight:600}
 
 .req-list{margin-top:26px;padding-top:22px;border-top:1px solid var(--line-soft)}
 .req-list-title{margin:0 0 14px;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
@@ -955,6 +969,7 @@ body.locked{overflow:hidden}
 .req-list li:last-child{border-bottom:0}
 .req-what{flex:1;min-width:0;font-size:14.5px;line-height:1.45;color:var(--ink);overflow-wrap:anywhere}
 .req-when{display:block;margin-top:3px;font-size:12.5px;color:var(--ink-3)}
+.req-confirm{display:inline-block;margin-top:5px;font-size:12.5px;font-weight:600;color:var(--blue)}
 .req-state{
   flex:0 0 auto;font-size:11.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
   padding:5px 10px;border-radius:980px;background:var(--bg-grey);color:var(--ink-2);
