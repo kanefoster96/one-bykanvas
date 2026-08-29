@@ -172,6 +172,9 @@ function queueItem(r) {
     var o = el('option', null, STATUS_NAME[s]);
     o.value = s;
     if (s === r.status) o.selected = true;
+    // Held for the customer's own sign-off - do not let it start until
+    // that link has been clicked, same rule the server itself enforces.
+    if (s === 'in_progress' && r.awaitingConfirmation) o.disabled = true;
     sel.appendChild(o);
   });
   sel.addEventListener('change', async function () {
@@ -185,6 +188,34 @@ function queueItem(r) {
     sel.disabled = false;
   });
   actions.appendChild(sel);
+
+  // Booked as one thing, turned out to be the other. Only offered before the
+  // job is finished - once billed or done, the price is settled.
+  if (r.status === 'new' || r.status === 'in_progress') {
+    var toKind = r.kind === 'feature' ? 'edit' : 'feature';
+    var reclass = el('button', 'linkish queue-reclass',
+      'Mark as ' + toKind + ' instead');
+    reclass.type = 'button';
+    reclass.addEventListener('click', async function () {
+      if (!confirm('Reclassify this as ' + (toKind === 'feature' ? 'a feature (3 points)' : 'an edit (1 point)') + '?')) return;
+      reclass.disabled = true;
+      try {
+        var res = await api({ action: 'reclassifyRequest', requestId: r.id, kind: toKind });
+        say(res.needsConfirmation
+          ? 'Reclassified — emailed them to confirm £' + (res.amount / 100).toFixed(0) + ' before this can start.'
+          : 'Reclassified.', 'ok');
+        await load(); // kind can move it between the Edit/Feature lists, so reload rather than patch in place
+      } catch (err) {
+        say(err.message, 'bad');
+        reclass.disabled = false;
+      }
+    });
+    actions.appendChild(reclass);
+  }
+
+  if (r.awaitingConfirmation) {
+    actions.appendChild(el('p', 'queue-billed', 'Sent — waiting on their confirmation'));
+  }
 
   if (r.status === 'done' && r.shortfallPoints > 0) {
     if (r.billed_at) {
