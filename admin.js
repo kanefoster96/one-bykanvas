@@ -510,6 +510,43 @@ function queueItem(r) {
 
 var POINT_PRICE = 4000; // pence per point — £40 either way in api/_plans.js REQUEST_COST
 
+/* ---------------- shared: how to reach someone ---------------- */
+
+/* Email and phone as real links - mailto/tel - so contacting someone is one
+   click from anywhere their card shows, not a copy-paste job. */
+function contactLine(p) {
+  if (!p.email && !p.phone) return null;
+  var line = el('p', 'cust-reach');
+  // These sit inside clickable cards - without this, mailing someone would
+  // also flip the card open underneath the compose window.
+  function link(href, text) {
+    var a = document.createElement('a');
+    a.href = href;
+    a.textContent = text;
+    a.addEventListener('click', function (e) { e.stopPropagation(); });
+    line.appendChild(a);
+  }
+  if (p.email) link('mailto:' + p.email, p.email);
+  if (p.email && p.phone) line.appendChild(document.createTextNode(' · '));
+  if (p.phone) link('tel:' + String(p.phone).replace(/\s+/g, ''), p.phone);
+  return line;
+}
+
+/* The chip is the truth about money: a live plan by name, a picked-but-unpaid
+   plan marked as such, or no plan at all. */
+function planChip(p) {
+  if (p.active_plan) return el('span', 'plan-chip', PLAN_NAME[p.active_plan]);
+  return el('span', 'plan-chip is-none',
+    p.selected_plan ? PLAN_NAME[p.selected_plan] + ' (unpaid)' : 'No plan');
+}
+
+function matchesSearch(p, term) {
+  if (!term) return true;
+  var hay = [p.business_name, p.contact_name, p.email, p.phone, p.business_type,
+             p.requested_domain, p.site_url].filter(Boolean).join(' ').toLowerCase();
+  return hay.indexOf(term.toLowerCase()) !== -1;
+}
+
 /* ---------------- Customers: list + detail ---------------- */
 
 function customerListRow(p) {
@@ -525,6 +562,9 @@ function customerListRow(p) {
   head.appendChild(names);
   head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan]));
   card.appendChild(head);
+
+  var reach = contactLine(p);
+  if (reach) card.appendChild(reach);
 
   var used = pointsUsed(p);
   var allow = PLAN_POINTS[p.active_plan];
@@ -786,11 +826,16 @@ function customerDetail(p) {
   var head = el('div', 'cust-head');
   var names = el('div', 'cust-names');
   names.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
-  names.appendChild(el('p', 'cust-sub',
-    [p.contact_name, p.phone, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
+  names.appendChild(el('p', 'cust-sub', p.business_type || 'No trade listed'));
   head.appendChild(names);
   head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan]));
   wrap.appendChild(head);
+
+  if (p.contact_name) wrap.appendChild(el('p', 'cust-sub', p.contact_name));
+  var reach = contactLine(p);
+  if (reach) wrap.appendChild(reach);
+  wrap.appendChild(el('p', 'cust-sub', 'Signed up ' + when(p.created_at)
+    + (p.last_sign_in_at ? ' · last signed in ' + when(p.last_sign_in_at) : '')));
 
   wrap.appendChild(siteEditorRow(p));
 
@@ -837,7 +882,15 @@ function renderCustomersSection() {
   renderCustomersList(wrap);
 }
 
-/* ---------------- Contacts: everyone who has not paid yet ---------------- */
+/* ---------------- Contacts: the whole address book ---------------- */
+/*
+ * Everyone with an account - paying customers included, since "find this
+ * person and get hold of them" should never depend on remembering whether
+ * they've paid yet. Customers stay in the Customers section too; that one
+ * is the work view (site, points, features), this one is the who view.
+ */
+
+var contactSearch = '';
 
 function contactListRow(p) {
   var card = el('div', 'cust cust-clickable');
@@ -850,9 +903,11 @@ function contactListRow(p) {
   names.appendChild(el('p', 'cust-sub',
     [p.contact_name, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
   head.appendChild(names);
-  head.appendChild(el('span', 'plan-chip is-none',
-    p.selected_plan ? PLAN_NAME[p.selected_plan] + ' (unpaid)' : 'No plan'));
+  head.appendChild(planChip(p));
   card.appendChild(head);
+
+  var reach = contactLine(p);
+  if (reach) card.appendChild(reach);
   card.appendChild(el('p', 'cust-sub', 'Signed up ' + when(p.created_at)));
 
   function openContact() { selectedContactId = p.id; render(); }
@@ -872,12 +927,30 @@ function contactDetail(p) {
   var head = el('div', 'cust-head');
   var names = el('div', 'cust-names');
   names.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
-  names.appendChild(el('p', 'cust-sub',
-    [p.contact_name, p.phone, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
+  names.appendChild(el('p', 'cust-sub', p.business_type || 'No trade listed'));
   head.appendChild(names);
-  head.appendChild(el('span', 'plan-chip is-none',
-    p.selected_plan ? PLAN_NAME[p.selected_plan] + ' (unpaid)' : 'No plan'));
+  head.appendChild(planChip(p));
   wrap.appendChild(head);
+
+  if (p.contact_name) wrap.appendChild(el('p', 'cust-sub', p.contact_name));
+  var reach = contactLine(p);
+  if (reach) wrap.appendChild(reach);
+  wrap.appendChild(el('p', 'cust-sub', 'Signed up ' + when(p.created_at)
+    + (p.last_sign_in_at ? ' · last signed in ' + when(p.last_sign_in_at) : '')));
+
+  // A paying customer's real home is the Customers section - everything
+  // billable lives there. This page stays the address-book view of them.
+  if (isCustomer(p)) {
+    var through = el('button', 'btn btn-ghost admin-save', 'Open customer page');
+    through.type = 'button';
+    through.addEventListener('click', function () {
+      selectedContactId = null;
+      selectedCustomerId = p.id;
+      activeSection = 'customers';
+      render();
+    });
+    wrap.appendChild(through);
+  }
 
   var want = domainWantLine(p);
   if (want) wrap.appendChild(want);
@@ -902,9 +975,28 @@ function renderContactsSection() {
   if (p) { wrap.appendChild(contactDetail(p)); return; }
   selectedContactId = null;
 
-  var contacts = state.profiles.filter(function (x) { return !isCustomer(x); });
-  if (!contacts.length) { wrap.appendChild(el('p', 'site-none', 'Nobody has signed up without a plan.')); return; }
-  contacts.forEach(function (c) { wrap.appendChild(contactListRow(c)); });
+  if (!state.profiles.length) { wrap.appendChild(el('p', 'site-none', 'Nobody has signed up yet.')); return; }
+
+  var search = el('input', 'admin-input contact-search');
+  search.type = 'search';
+  search.placeholder = 'Search name, email, phone, trade…';
+  search.value = contactSearch;
+  search.setAttribute('aria-label', 'Search contacts');
+  var list = el('div');
+
+  function paint() {
+    list.textContent = '';
+    var shown = state.profiles.filter(function (c) { return matchesSearch(c, contactSearch); });
+    if (!shown.length) { list.appendChild(el('p', 'site-none', 'Nobody matches that.')); return; }
+    shown.forEach(function (c) { list.appendChild(contactListRow(c)); });
+  }
+  // Repaint just the list on each keystroke - a full render() would rebuild
+  // the input itself and drop focus mid-word.
+  search.addEventListener('input', function () { contactSearch = search.value.trim(); paint(); });
+
+  wrap.appendChild(search);
+  wrap.appendChild(list);
+  paint();
 }
 
 /* ---------------- Plans: everyone paying, grouped ---------------- */

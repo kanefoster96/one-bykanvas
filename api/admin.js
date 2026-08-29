@@ -187,6 +187,24 @@ module.exports = async function handler(req, res) {
         .limit(200);
       if (error) throw new Error(error.message);
 
+      // Emails live in auth.users, not on profiles - without this join the
+      // admin page has no way to show or contact anyone. Best effort: a
+      // profile whose auth row can't be found just shows without an email
+      // rather than failing the whole list.
+      const emailById = {};
+      for (let page = 1; page <= 5; page++) {
+        const { data: usersPage, error: usersErr } = await db.auth.admin.listUsers({ page, perPage: 200 });
+        if (usersErr) { console.error('admin: listUsers failed:', usersErr.message); break; }
+        const users = (usersPage && usersPage.users) || [];
+        users.forEach((u) => { emailById[u.id] = { email: u.email, lastSignIn: u.last_sign_in_at }; });
+        if (users.length < 200) break;
+      }
+      (profiles || []).forEach((p) => {
+        const u = emailById[p.id];
+        p.email = (u && u.email) || null;
+        p.last_sign_in_at = (u && u.lastSignIn) || null;
+      });
+
       const { data: reqs, error: reqError } = await db
         .from('requests')
         .select('id, user_id, kind, points, detail, status, created_at, billed_at, billed_amount, confirm_token, attachment_paths')
