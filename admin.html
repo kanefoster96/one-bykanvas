@@ -24,9 +24,12 @@
     <p class="lede left" id="adminSummary">&nbsp;</p>
   </header>
 
-  <!-- Which section is showing - built by JS so a notification dot's count
-       lives in the one place that already knows it. -->
-  <nav class="admin-nav" id="adminNav"></nav>
+  <!-- The menu is the admin home - one full-width row per area of the
+       business, with a count badge where something needs doing. A section
+       opens as its own page, and the back link below returns here. Built
+       by JS so the badge counts live in the one place that knows them. -->
+  <nav class="admin-menu" id="adminNav" aria-label="Admin sections"></nav>
+  <button class="linkish admin-back" id="backToMenu" type="button" hidden>&larr; Menu</button>
 
   <!-- A fresh paying customer whose site isn't built yet, pinned above the
        open edit/feature queue - what they asked for at signup, so it's
@@ -82,7 +85,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="admin.js?v=9"></script>
+<script src="admin.js?v=10"></script>
 <script src="admin-pill.js?v=4"></script>
 </body>
 </html>
