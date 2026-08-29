@@ -14,7 +14,6 @@
 <header class="nav">
   <div class="nav-inner">
     <a class="logo" href="/" aria-label="one, by Kanvas — home">one.</a>
-    <button class="linkish nav-out" id="logout" type="button">Log out</button>
   </div>
 </header>
 
@@ -196,7 +195,10 @@
     </div>
   </form>
 
-  <p class="acct-email">Signed in as <strong id="whoami"></strong></p>
+  <footer class="acct-foot">
+    <p class="acct-email">Signed in as <strong id="whoami"></strong></p>
+    <button class="linkish" id="logout" type="button">Log out</button>
+  </footer>
 </main>
 
 <div class="acct-loading" id="loading"><p>Loading your account…</p></div>
