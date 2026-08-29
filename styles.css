@@ -838,7 +838,16 @@ body.locked{overflow:hidden}
 .queue-who{margin:0;font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--ink-3)}
 .queue-what{margin:4px 0 0;font-size:15.5px;line-height:1.45;color:var(--ink);overflow-wrap:anywhere}
 .queue-meta{margin:5px 0 0;font-size:13px;color:var(--ink-3)}
-.queue-actions{flex:0 0 auto}
+.queue-actions{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.admin-charge{height:38px;padding:0 16px;font-size:13.5px}
+.queue-billed{margin:0;font-size:12.5px;color:var(--ink-3);text-align:right}
+
+/* Edit/feature sub-headings inside the open-requests queue — same title
+   style as the customer's own request history, spaced from whatever came
+   before it. */
+#queue .req-list-title{margin-top:24px}
+#queue .req-list-title:first-child{margin-top:0}
+.req-group + .req-group{margin-top:22px}
 
 .cust{padding:20px 0;border-bottom:1px solid var(--line-soft)}
 .cust:first-child{padding-top:0}

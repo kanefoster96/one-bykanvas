@@ -11,7 +11,9 @@
  * one person.
  */
 const { createClient } = require('@supabase/supabase-js');
+const Stripe = require('stripe');
 const { missingEnv } = require('./_env.js');
+const { REQUEST_COST } = require('./_plans.js');
 
 const DEFAULT_ADMINS = ['kane.foster@ymail.com'];
 
@@ -75,7 +77,7 @@ module.exports = async function handler(req, res) {
 
       const { data: reqs, error: reqError } = await db
         .from('requests')
-        .select('id, user_id, kind, points, detail, status, created_at')
+        .select('id, user_id, kind, points, detail, status, created_at, billed_at, billed_amount')
         .order('created_at', { ascending: false })
         .limit(500);
       if (reqError) throw new Error(reqError.message);
@@ -115,6 +117,83 @@ module.exports = async function handler(req, res) {
       const { error } = await db.from('requests').update({ status: status }).eq('id', id);
       if (error) throw new Error(error.message);
       return res.status(200).json({ ok: true });
+    }
+
+    // ---- write: charge the card on file for a request the points did not
+    //      cover, once it is done. Never twice - billed_at is the guard. ----
+    if (action === 'chargeRequest') {
+      const { STRIPE_SECRET_KEY } = process.env;
+      if (!STRIPE_SECRET_KEY) {
+        console.error('admin: missing environment variables:', missingEnv(['STRIPE_SECRET_KEY']).join(', '));
+        return res.status(500).json({ error: 'Payments are not configured yet.' });
+      }
+
+      const requestId = String(body.requestId || '');
+      if (!requestId) return res.status(400).json({ error: 'Which request?' });
+
+      const { data: reqRow, error: reqErr } = await db
+        .from('requests').select('*').eq('id', requestId).maybeSingle();
+      if (reqErr) throw new Error(reqErr.message);
+      if (!reqRow) return res.status(404).json({ error: 'Request not found.' });
+      if (reqRow.status !== 'done') return res.status(400).json({ error: 'Mark it done before charging for it.' });
+      if (reqRow.billed_at) return res.status(400).json({ error: 'Already charged.' });
+
+      const { data: profile, error: pErr } = await db
+        .from('profiles').select('business_name, stripe_customer_id').eq('id', reqRow.user_id).maybeSingle();
+      if (pErr) throw new Error(pErr.message);
+      if (!profile || !profile.stripe_customer_id) {
+        return res.status(400).json({ error: 'No card on file for them yet.' });
+      }
+
+      const amount = REQUEST_COST[reqRow.kind].amount;
+      const stripe = new Stripe(STRIPE_SECRET_KEY);
+
+      const customer = await stripe.customers.retrieve(profile.stripe_customer_id);
+      let paymentMethodId = customer && customer.invoice_settings
+        && customer.invoice_settings.default_payment_method;
+      if (!paymentMethodId) {
+        const pms = await stripe.paymentMethods.list({ customer: profile.stripe_customer_id, type: 'card' });
+        paymentMethodId = pms.data[0] && pms.data[0].id;
+      }
+      if (!paymentMethodId) {
+        return res.status(400).json({ error: 'No card on file for them — ask them to add one from their account page.' });
+      }
+
+      let pi;
+      try {
+        pi = await stripe.paymentIntents.create({
+          amount: amount,
+          currency: 'gbp',
+          customer: profile.stripe_customer_id,
+          payment_method: paymentMethodId,
+          off_session: true,
+          confirm: true,
+          description: (reqRow.kind === 'feature' ? 'Feature request' : 'Edit request')
+            + (profile.business_name ? ' — ' + profile.business_name : ''),
+          metadata: { request_id: reqRow.id, supabase_user_id: reqRow.user_id }
+        });
+      } catch (err) {
+        if (err && err.type === 'StripeCardError') {
+          return res.status(400).json({ error: 'Card declined: ' + (err.message || 'ask them to update their card.') });
+        }
+        throw err;
+      }
+
+      if (pi.status !== 'succeeded') {
+        return res.status(400).json({
+          error: 'Payment did not complete (status: ' + pi.status + '). '
+            + 'Ask them to confirm it from their end, or update their card.'
+        });
+      }
+
+      const { error: updErr } = await db.from('requests').update({
+        billed_at: new Date().toISOString(),
+        billed_amount: amount,
+        stripe_payment_intent_id: pi.id
+      }).eq('id', requestId);
+      if (updErr) throw new Error(updErr.message);
+
+      return res.status(200).json({ ok: true, amount: amount });
     }
 
     return res.status(400).json({ error: 'Unknown action.' });
