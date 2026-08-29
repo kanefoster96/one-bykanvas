@@ -930,6 +930,15 @@ body.locked{overflow:hidden}
 
 .seo-panel .queue{margin-top:16px}
 
+#tasksBody .req-list-title,#leadsBody .req-list-title{margin-top:28px}
+#tasksBody .req-list-title:first-child,#leadsBody .req-list-title:first-child{margin-top:0}
+#leadsBody .cust + .req-list-title{margin-top:30px}
+
+.task-line{display:flex;align-items:flex-start;gap:11px;font-size:15.5px;line-height:1.45;color:var(--ink);cursor:pointer}
+.task-line input{margin-top:2px;flex:0 0 auto;width:17px;height:17px;accent-color:var(--ink)}
+.task-done{color:var(--ink-3);text-decoration:line-through}
+.task-due{flex:0 0 auto;min-width:0}
+
 .payments-panel{margin:10px 0}
 .payments-body{margin-top:14px}
 .payments-body .queue{margin-top:14px}
