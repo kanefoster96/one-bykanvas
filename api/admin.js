@@ -14,6 +14,7 @@ const { createClient } = require('@supabase/supabase-js');
 const Stripe = require('stripe');
 const { missingEnv } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
+const { sendEmail } = require('./_email.js');
 const { shortfallFor } = require('./_billing.js');
 
 const DEFAULT_ADMINS = ['kane.foster@ymail.com'];
@@ -75,6 +76,25 @@ async function chargeCardForRequest(stripe, profile, reqRow, amount) {
   return pi;
 }
 
+/* Tells a customer a feature on their site was added or updated - best
+   effort, same reasoning as everywhere else email is sent here: the change
+   itself already took effect, so a failed send delays them finding out
+   rather than blocking anything. */
+async function notifyFeatureEmail(db, userId, name, verb) {
+  const { data: who } = await db.auth.admin.getUserById(userId);
+  const customerEmail = who && who.user && who.user.email;
+  if (!customerEmail) return;
+
+  const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+  const result = await sendEmail({
+    to: customerEmail,
+    subject: `A feature on your site was ${verb}`,
+    text: `We've ${verb} a feature on your site: "${name}".\n\n`
+        + `See it on your account page:\n${site}/account.html`
+  });
+  console.log('admin: feature notify email', result);
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -124,7 +144,7 @@ module.exports = async function handler(req, res) {
         .select('id, business_name, contact_name, phone, business_type, active_plan, selected_plan, ' +
                 'subscription_status, current_period_end, site_url, site_status, requested_domain, domain_owned, ' +
                 'address, service_area, opening_hours, services, site_goals, site_uses, existing_links, ' +
-                'admin_notes, site_features, created_at')
+                'admin_notes, created_at')
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw new Error(error.message);
@@ -174,8 +194,19 @@ module.exports = async function handler(req, res) {
         .limit(300);
       if (seoError) throw new Error(seoError.message);
 
+      // Everything a customer's site can do - updated_at (not created_at) is
+      // what the 30-day NEW pill is measured against, bumped by "mark as
+      // updated" as well as on insert.
+      const { data: siteFeatures, error: sfError } = await db
+        .from('site_features')
+        .select('id, user_id, name, created_at, updated_at')
+        .order('updated_at', { ascending: false })
+        .limit(1000);
+      if (sfError) throw new Error(sfError.message);
+
       return res.status(200).json({
-        profiles: profiles || [], requests: shaped, templates: templates || [], seoUpdates: seoUpdates || []
+        profiles: profiles || [], requests: shaped, templates: templates || [],
+        seoUpdates: seoUpdates || [], siteFeatures: siteFeatures || []
       });
     }
 
@@ -210,18 +241,43 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    // ---- write: the freely-editable "features on your site" list. The
-    //      whole list is replaced each time rather than added to/removed
-    //      from piecemeal - the admin page always has the current array in
-    //      hand, so there is nothing to reconcile server-side. ------------
-    if (action === 'setSiteFeatures') {
+    // ---- write: add something to a customer's "features on your site"
+    //      list by hand - the same list a finished feature request also
+    //      lands on. Tells them about it, same as marking one updated. ----
+    if (action === 'addSiteFeature') {
       const userId = String(body.userId || '');
-      const features = Array.isArray(body.features)
-        ? body.features.map((f) => String(f).trim()).filter(Boolean).slice(0, 40).map((f) => f.slice(0, 200))
-        : [];
+      const name = String(body.name || '').trim().slice(0, 200);
       if (!userId) return res.status(400).json({ error: 'Which customer?' });
-      const { error } = await db.from('profiles')
-        .update({ site_features: features.length ? features : null }).eq('id', userId);
+      if (!name) return res.status(400).json({ error: 'Name the feature.' });
+
+      const { data, error } = await db.from('site_features')
+        .insert({ user_id: userId, name }).select().single();
+      if (error) throw new Error(error.message);
+
+      await notifyFeatureEmail(db, userId, name, 'added');
+      return res.status(200).json({ ok: true, feature: data });
+    }
+
+    // ---- write: refresh a feature's 30-day NEW pill without renaming it -
+    //      for when something existing gets reworked, not replaced. --------
+    if (action === 'markFeatureUpdated') {
+      const id = String(body.featureId || '');
+      if (!id) return res.status(400).json({ error: 'Which feature?' });
+
+      const { data, error } = await db.from('site_features')
+        .update({ updated_at: new Date().toISOString() }).eq('id', id).select().single();
+      if (error) throw new Error(error.message);
+      if (!data) return res.status(404).json({ error: 'Feature not found.' });
+
+      await notifyFeatureEmail(db, data.user_id, data.name, 'updated');
+      return res.status(200).json({ ok: true, feature: data });
+    }
+
+    // ---- write: remove one - no email, nothing to tell them about ----
+    if (action === 'removeSiteFeature') {
+      const id = String(body.featureId || '');
+      if (!id) return res.status(400).json({ error: 'Which feature?' });
+      const { error } = await db.from('site_features').delete().eq('id', id);
       if (error) throw new Error(error.message);
       return res.status(200).json({ ok: true });
     }
@@ -304,16 +360,14 @@ module.exports = async function handler(req, res) {
       if (error) throw new Error(error.message);
 
       // Turned live just now - a finished feature becomes something their
-      // site has, added to the same freely-editable list a note can also be
-      // added to by hand. Edits don't get one: nothing new to list.
+      // site has, added to the same list a feature can also be added to by
+      // hand, and told about the same way. Edits don't get one: nothing new
+      // to list.
       if (status === 'done' && reqRow.status !== 'done' && reqRow.kind === 'feature') {
-        const { data: prof, error: profErr } = await db
-          .from('profiles').select('site_features').eq('id', reqRow.user_id).maybeSingle();
-        if (profErr) throw new Error(profErr.message);
-        const features = ((prof && prof.site_features) || []).concat(reqRow.detail);
-        const { error: featErr } = await db
-          .from('profiles').update({ site_features: features }).eq('id', reqRow.user_id);
+        const { error: featErr } = await db.from('site_features')
+          .insert({ user_id: reqRow.user_id, name: reqRow.detail });
         if (featErr) throw new Error(featErr.message);
+        await notifyFeatureEmail(db, reqRow.user_id, reqRow.detail, 'added');
       }
 
       return res.status(200).json({ ok: true, amount });
