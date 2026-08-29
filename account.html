@@ -92,6 +92,7 @@
           <span><b>A new feature</b><em>3 points &middot; £120</em><small>Bookings, payments, a members area, a new page</small></span>
         </label>
       </div>
+      <p class="hint">Sending this doesn&rsquo;t charge anything &mdash; we&rsquo;ll look it over and accept it first. Nothing is built, and nothing&rsquo;s taken from the card on file, until then.</p>
       <p class="req-price" id="reqPrice"></p>
       <div class="field full">
         <label for="reqDetail">What would you like?</label>
@@ -117,6 +118,22 @@
       <div class="req-group" id="reqGroupFeature" hidden>
         <h3 class="req-list-title">Feature requests</h3>
         <ul id="reqItemsFeature"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Everything delivered - a done feature is something the site has now,
+       not just a closed ticket, so it stays listed here once it is live. -->
+  <section class="panel" id="completedPanel" hidden>
+    <h2 class="panel-title">Completed requests</h2>
+    <div class="req-list">
+      <div class="req-group" id="doneGroupEdit" hidden>
+        <h3 class="req-list-title">Edits</h3>
+        <ul id="doneItemsEdit"></ul>
+      </div>
+      <div class="req-group" id="doneGroupFeature" hidden>
+        <h3 class="req-list-title">Features on your site</h3>
+        <ul id="doneItemsFeature"></ul>
       </div>
     </div>
   </section>
@@ -207,7 +224,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="account.js?v=4"></script>
+<script src="account.js?v=5"></script>
 <script src="admin-pill.js?v=4"></script>
 </body>
 </html>

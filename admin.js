@@ -43,13 +43,7 @@ async function api(payload) {
   });
   var data = await res.json().catch(function () { return {}; });
   if (res.status === 404) throw new Error('This page is not for this account.');
-  if (!res.ok) {
-    // A rejection can carry more than a message - awaitingConfirmation, say -
-    // that a caller needs to react to, not just display.
-    var err = new Error(data.error || 'Something went wrong.');
-    err.data = data;
-    throw err;
-  }
+  if (!res.ok) throw new Error(data.error || 'Something went wrong.');
   return data;
 }
 
@@ -201,41 +195,50 @@ function queueItem(r) {
     var o = el('option', null, STATUS_NAME[s]);
     o.value = s;
     if (s === r.status) o.selected = true;
-    // Held for the customer's own sign-off - do not let it start until
-    // that link has been clicked, same rule the server itself enforces.
-    if (s === 'in_progress' && r.awaitingConfirmation) o.disabled = true;
     sel.appendChild(o);
   });
   sel.addEventListener('change', async function () {
+    var target = sel.value;
+    var payload = { action: 'setRequestStatus', requestId: r.id, status: target };
+
+    // Accepting is where points get redeemed or the card gets charged for
+    // whatever they don't cover - ask before it happens, prefilled with the
+    // shortfall already worked out above, editable for a discount (or to
+    // waive it) on something that turned out easier than its points suggest.
+    if (target === 'accepted' && r.status === 'new' && r.shortfallPoints > 0) {
+      var suggested = (r.shortfallPoints * POINT_PRICE / 100).toFixed(0);
+      var input = prompt(
+        'Charge the card on file before starting this?\n\n'
+        + 'Amount in pounds (0 for none - to comp it or cover it yourself):',
+        suggested
+      );
+      if (input === null) { sel.value = r.status; return; }
+      var pounds = parseFloat(input);
+      if (isNaN(pounds) || pounds < 0) { say('Enter a valid amount.', 'bad'); sel.value = r.status; return; }
+      payload.amount = Math.round(pounds * 100);
+    }
+
     sel.disabled = true;
     try {
-      await api({ action: 'setRequestStatus', requestId: r.id, status: sel.value });
-      r.status = sel.value;
-      say('Updated.', 'ok');
+      var res = await api(payload);
+      r.status = target;
+      if (res.amount > 0) {
+        r.billed_at = new Date().toISOString();
+        r.billed_amount = res.amount;
+      }
+      say(res.amount > 0 ? 'Accepted — charged £' + (res.amount / 100).toFixed(0) + '.' : 'Updated.', 'ok');
       render();
     } catch (err) {
-      // Trying to start it is what actually asks the points-vs-price
-      // question server-side - a rejection here can mean an email just went
-      // out, not just that something failed, so it is shown as ok, and the
-      // request re-renders greyed out immediately rather than waiting on a
-      // full reload to notice.
-      if (err.data && err.data.awaitingConfirmation) {
-        r.awaitingConfirmation = true;
-        say(err.message, 'ok');
-        render();
-      } else {
-        say(err.message, 'bad');
-        sel.value = r.status;
-      }
+      say(err.message, 'bad');
+      sel.value = r.status;
     }
     sel.disabled = false;
   });
   actions.appendChild(sel);
 
   // Booked as one thing, turned out to be the other. Only offered before the
-  // job is finished - once billed or done, the price is settled. Whether
-  // this needs the customer's sign-off is decided later, the next time it is
-  // moved to in_progress - not here.
+  // job is finished - once billed or done, the price is settled. Whether it
+  // needs charging for is decided fresh next time it is accepted - not here.
   if (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress') {
     var toKind = r.kind === 'feature' ? 'edit' : 'feature';
     var reclass = el('button', 'linkish queue-reclass',
@@ -248,7 +251,7 @@ function queueItem(r) {
         var res = await api({ action: 'reclassifyRequest', requestId: r.id, kind: toKind });
         say(res.shortfall > 0
           ? 'Reclassified — £' + (res.amount / 100).toFixed(0) + ' over allowance. '
-            + 'They will be asked to confirm before you can start it.'
+            + 'Back to Request - accept it again to charge or redeem for the new price.'
           : 'Reclassified.', 'ok');
         await load(); // kind can move it between the Edit/Feature lists, so reload rather than patch in place
       } catch (err) {
@@ -257,10 +260,6 @@ function queueItem(r) {
       }
     });
     actions.appendChild(reclass);
-  }
-
-  if (r.awaitingConfirmation) {
-    actions.appendChild(el('p', 'queue-billed', 'Sent — waiting on their confirmation'));
   }
 
   if (r.status === 'done' && r.shortfallPoints > 0) {
