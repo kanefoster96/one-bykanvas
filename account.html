@@ -29,6 +29,10 @@
     <div class="acct-id-text">
       <h1 id="idName">Your business</h1>
       <p class="acct-id-plan"><span class="plan-chip" id="idPlan">No plan yet</span></p>
+      <p class="acct-id-site" id="idSite" hidden>
+        <a id="idSiteLink" class="site-url" href="#" target="_blank" rel="noopener"></a>
+        <span class="site-pill"><i></i>Live</span>
+      </p>
     </div>
   </header>
 
@@ -93,6 +97,12 @@
       <div class="field full">
         <label for="reqDetail">What would you like?</label>
         <textarea id="reqDetail" rows="3" maxlength="4000" placeholder="Swap the photo on the homepage for the new shopfront one…"></textarea>
+      </div>
+      <div class="field full">
+        <label for="reqFiles">Screenshots (optional)</label>
+        <input id="reqFiles" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+        <p class="hint">Up to 6, 5&nbsp;MB each &mdash; the part to change, or a feature from another site to copy.</p>
+        <p class="note" id="reqFilesNote" role="status" aria-live="polite"></p>
       </div>
       <div class="req-send">
         <button class="btn btn-primary" id="reqBtn" type="submit">Send request</button>
@@ -195,7 +205,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="account.js?v=2"></script>
-<script src="admin-pill.js?v=2"></script>
+<script src="account.js?v=3"></script>
+<script src="admin-pill.js?v=3"></script>
 </body>
 </html>

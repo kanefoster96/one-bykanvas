@@ -55,12 +55,22 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Tell us what you would like changed.' });
     }
 
+    /* Only paths the caller could actually have uploaded - storage itself
+       only lets a path starting with the caller's own id be written, so
+       anything else here is either a mistake or someone trying to reference
+       a file that is not theirs. Capped, same reason the avatar upload caps
+       file size: this is a screenshot attachment, not a file store. */
+    const attachmentPaths = Array.isArray(body.attachmentPaths)
+      ? body.attachmentPaths.map(String).filter((p) => p.startsWith(user.id + '/')).slice(0, 6)
+      : [];
+
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false }
     });
 
     const { data: row, error } = await db.from('requests').insert({
-      user_id: user.id, kind: kind, points: REQUEST_COST[kind].points, detail: detail
+      user_id: user.id, kind: kind, points: REQUEST_COST[kind].points, detail: detail,
+      attachment_paths: attachmentPaths.length ? attachmentPaths : null
     }).select().single();
     if (error) throw new Error(error.message);
 
@@ -81,6 +91,7 @@ module.exports = async function handler(req, res) {
       to: adminAddresses(),
       subject: `New ${kind === 'feature' ? 'feature' : 'edit'} request: ${name}`,
       text: `${name} asked for ${kind === 'feature' ? 'a new feature' : 'an edit'}:\n\n${detail}\n\n`
+          + (attachmentPaths.length ? `${attachmentPaths.length} screenshot${attachmentPaths.length === 1 ? '' : 's'} attached - view in admin.\n\n` : '')
           + (shortfall > 0
               ? `Already accepted £${(amount / 100).toFixed(0)} over allowance - ready to build.\n\n`
               : 'Covered by their points - ready to build.\n\n')

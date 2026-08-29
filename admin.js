@@ -158,6 +158,25 @@ function render() {
 /* One item of the queue: the status picker every request gets, plus a
    Charge card button that only appears once it is done, fell outside the
    month's points, and nobody has charged it yet. */
+
+/* Signed links straight to storage - generated once, server-side, in the
+   list response, since our own session has no read access to a customer's
+   folder to sign them on demand. */
+function attachmentLinks(r) {
+  if (!r.attachments || !r.attachments.length) return null;
+  var p = el('p', 'queue-attachments');
+  r.attachments.forEach(function (url, i) {
+    if (i) p.appendChild(document.createTextNode(' · '));
+    var a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = 'Screenshot' + (r.attachments.length > 1 ? ' ' + (i + 1) : '');
+    p.appendChild(a);
+  });
+  return p;
+}
+
 function queueItem(r) {
   var owner = state.profiles.filter(function (p) { return p.id === r.user_id; })[0];
   var li = el('li', 'queue-item');
@@ -172,6 +191,8 @@ function queueItem(r) {
       ? ' · ' + r.shortfallPoints + (r.shortfallPoints === 1 ? ' point' : ' points') + ' over allowance'
       : '') +
     ' · asked ' + when(r.created_at)));
+  var links = attachmentLinks(r);
+  if (links) main.appendChild(links);
   li.appendChild(main);
 
   var actions = el('div', 'queue-actions');
@@ -319,6 +340,8 @@ function renderDoneList() {
     main.appendChild(el('p', 'queue-what', r.detail));
     main.appendChild(el('p', 'queue-meta',
       (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' + when(r.created_at)));
+    var links = attachmentLinks(r);
+    if (links) main.appendChild(links);
     li.appendChild(main);
 
     var actions = el('div', 'queue-actions');
