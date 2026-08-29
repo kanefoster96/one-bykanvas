@@ -12,7 +12,7 @@
 (function () {
   'use strict';
 
-  var ADMINS = ['kane.foster@ymail.com'];
+  var ADMINS = ['kane.foster@ymail.com', 'kane@kanvas.one'];
 
   /* supabase-js keeps the session under sb-<project-ref>-auth-token. The shape
      has moved around between versions, so take the email from whichever of the
