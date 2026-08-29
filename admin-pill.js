@@ -23,9 +23,12 @@
     a.className = cls;
     a.href = href;
     a.textContent = text;
-    // Before the burger, so the burger stays hard against the right edge.
-    var burger = bar.querySelector('.burger');
-    if (burger) bar.insertBefore(a, burger); else bar.appendChild(a);
+    /* Before whichever of these sits furthest right already, so that stays
+       the rightmost thing in the header - the burger on marketing pages,
+       Log out on account.html and admin.html. Appending would just tack the
+       pill on after it instead. */
+    var anchor = bar.querySelector('.burger') || bar.querySelector('.nav-out');
+    if (anchor) bar.insertBefore(a, anchor); else bar.appendChild(a);
   }
 
   function add() {
