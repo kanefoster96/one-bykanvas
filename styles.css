@@ -874,6 +874,45 @@ body.locked{overflow:hidden}
 }
 .admin-save{height:42px;padding:0 20px;flex:0 0 auto}
 
+/* The section menu - a row of tabs rather than one long scrolling page, each
+   opening only when clicked. A dot carries a count rather than just meaning
+   "something's here", so it reads the same as a real notification badge. */
+.admin-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.admin-nav-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 16px;border-radius:980px;border:1px solid var(--line);background:#fff;
+  font-family:inherit;font-size:14px;font-weight:500;color:var(--ink-2);cursor:pointer;
+  transition:background .18s var(--ease),color .18s var(--ease),border-color .18s var(--ease);
+}
+.admin-nav-btn:hover{border-color:var(--ink-3)}
+.admin-nav-btn.is-active{background:var(--ink);border-color:var(--ink);color:#fff}
+.nav-dot{
+  display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;
+  padding:0 5px;border-radius:980px;background:#d93025;color:#fff;font-size:11px;font-weight:700;
+}
+
+.cust-clickable{cursor:pointer;transition:opacity .15s var(--ease)}
+.cust-clickable:hover{opacity:.7}
+.cust-clickable:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+.cust-detail > .linkish:first-child{margin-top:0}
+.cust-detail .cust-head{margin-top:22px}
+.cust-detail > .cust-head:first-of-type{margin-top:18px}
+.cust-detail h3.req-list-title{margin-top:26px}
+
+.feature-list{list-style:none;margin:0 0 12px;padding:0}
+.feature-item{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:10px 0;border-bottom:1px solid var(--line-soft);font-size:14.5px;color:var(--ink);
+}
+.feature-item:last-child{border-bottom:0}
+.feature-item .linkish{margin:0;font-size:12.5px;flex:0 0 auto}
+.feature-add{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+
+.notes-textarea{width:100%;min-width:0;resize:vertical;margin-bottom:12px}
+
+.seo-panel .queue{margin-top:16px}
+
 @media (max-width:600px){
   .queue-item{flex-direction:column;gap:10px}
 }

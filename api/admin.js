@@ -121,8 +121,10 @@ module.exports = async function handler(req, res) {
     if (action === 'list') {
       const { data: profiles, error } = await db
         .from('profiles')
-        .select('id, business_name, contact_name, business_type, active_plan, selected_plan, ' +
-                'subscription_status, current_period_end, site_url, site_status, requested_domain, domain_owned, created_at')
+        .select('id, business_name, contact_name, phone, business_type, active_plan, selected_plan, ' +
+                'subscription_status, current_period_end, site_url, site_status, requested_domain, domain_owned, ' +
+                'address, service_area, opening_hours, services, site_goals, site_uses, existing_links, ' +
+                'admin_notes, site_features, created_at')
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw new Error(error.message);
@@ -162,7 +164,19 @@ module.exports = async function handler(req, res) {
         .order('created_at', { ascending: false });
       if (tplError) throw new Error(tplError.message);
 
-      return res.status(200).json({ profiles: profiles || [], requests: shaped, templates: templates || [] });
+      // Logged history of monthly SEO updates for Max customers - enough
+      // rows to tell whether this billing period already has one, and to
+      // show the log itself on a customer's page.
+      const { data: seoUpdates, error: seoError } = await db
+        .from('seo_updates')
+        .select('id, user_id, note, created_at')
+        .order('created_at', { ascending: false })
+        .limit(300);
+      if (seoError) throw new Error(seoError.message);
+
+      return res.status(200).json({
+        profiles: profiles || [], requests: shaped, templates: templates || [], seoUpdates: seoUpdates || []
+      });
     }
 
     // ---- write: the site address and whether it is live ----------------
@@ -184,6 +198,44 @@ module.exports = async function handler(req, res) {
         .eq('id', userId);
       if (error) throw new Error(error.message);
       return res.status(200).json({ ok: true });
+    }
+
+    // ---- write: admin's own notes about a customer - never shown to them ----
+    if (action === 'setAdminNotes') {
+      const userId = String(body.userId || '');
+      const notes = body.notes == null ? null : String(body.notes).trim() || null;
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      const { error } = await db.from('profiles').update({ admin_notes: notes }).eq('id', userId);
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true });
+    }
+
+    // ---- write: the freely-editable "features on your site" list. The
+    //      whole list is replaced each time rather than added to/removed
+    //      from piecemeal - the admin page always has the current array in
+    //      hand, so there is nothing to reconcile server-side. ------------
+    if (action === 'setSiteFeatures') {
+      const userId = String(body.userId || '');
+      const features = Array.isArray(body.features)
+        ? body.features.map((f) => String(f).trim()).filter(Boolean).slice(0, 40).map((f) => f.slice(0, 200))
+        : [];
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      const { error } = await db.from('profiles')
+        .update({ site_features: features.length ? features : null }).eq('id', userId);
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true });
+    }
+
+    // ---- write: log a Max customer's SEO update for this billing period ----
+    if (action === 'logSeoUpdate') {
+      const userId = String(body.userId || '');
+      const note = String(body.note || '').trim();
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      if (!note || note.length > 2000) return res.status(400).json({ error: 'Say what was actually changed.' });
+      const { data, error } = await db.from('seo_updates')
+        .insert({ user_id: userId, note }).select().single();
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true, entry: data });
     }
 
     // ---- write: move a request along ------------------------------------
@@ -250,6 +302,20 @@ module.exports = async function handler(req, res) {
 
       const { error } = await db.from('requests').update({ status: status }).eq('id', id);
       if (error) throw new Error(error.message);
+
+      // Turned live just now - a finished feature becomes something their
+      // site has, added to the same freely-editable list a note can also be
+      // added to by hand. Edits don't get one: nothing new to list.
+      if (status === 'done' && reqRow.status !== 'done' && reqRow.kind === 'feature') {
+        const { data: prof, error: profErr } = await db
+          .from('profiles').select('site_features').eq('id', reqRow.user_id).maybeSingle();
+        if (profErr) throw new Error(profErr.message);
+        const features = ((prof && prof.site_features) || []).concat(reqRow.detail);
+        const { error: featErr } = await db
+          .from('profiles').update({ site_features: features }).eq('id', reqRow.user_id);
+        if (featErr) throw new Error(featErr.message);
+      }
+
       return res.status(200).json({ ok: true, amount });
     }
 

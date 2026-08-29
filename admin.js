@@ -2,8 +2,10 @@
 (function () {
   'use strict';
 
-/* Customer list, the open request queue, and the two things only we can set:
-   a customer's site address and whether it is live.
+/* A menu of sections rather than one long page: Requests, Customers,
+   Contacts, Plans, Payments, Templates. Each renders lazily, only when its
+   nav button is clicked, straight from the one `state` object load() already
+   has in memory - switching sections never refetches.
 
    Nothing here decides who is allowed in. Every call goes to /api/admin, which
    verifies the token and the email before it touches the service role; if you
@@ -15,9 +17,22 @@ var note    = document.getElementById('adminNote');
 
 var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
 var PLAN_POINTS = { business: 1, pro: 3, max: 5 };
+var PLAN_PRICE  = { business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
 var STATUS_NAME = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
 
-var state = { profiles: [], requests: [], templates: [] };
+var state = { profiles: [], requests: [], templates: [], seoUpdates: [] };
+
+var SECTIONS = [
+  { key: 'requests',  label: 'Requests' },
+  { key: 'customers', label: 'Customers' },
+  { key: 'contacts',  label: 'Contacts' },
+  { key: 'plans',     label: 'Plans' },
+  { key: 'payments',  label: 'Payments' },
+  { key: 'templates', label: 'Templates' }
+];
+var activeSection = 'requests';
+var selectedCustomerId = null;
+var selectedContactId = null;
 
 if (!ONE.ready) {
   loading.innerHTML = '<p>Accounts are not connected yet.</p>';
@@ -80,7 +95,8 @@ function when(iso) {
 }
 
 /* Points spent this billing period, worked out the same way the customer's own
-   page works it out so the two never disagree. */
+   page works it out so the two never disagree. Also the period an SEO log or
+   a shortfall walk is measured against - one function, three uses. */
 function periodStart(p) {
   var end = p.current_period_end ? new Date(p.current_period_end) : null;
   if (end && !isNaN(end)) { var s = new Date(end); s.setMonth(s.getMonth() - 1); return s; }
@@ -96,7 +112,44 @@ function pointsUsed(p) {
   }, 0);
 }
 
-var POINT_PRICE = 4000; // pence per point — £40 either way in api/_plans.js REQUEST_COST
+function isCustomer(p) { return !!p.active_plan; }
+
+function lifetimeSpent(userId) {
+  return state.requests.reduce(function (sum, r) {
+    return r.user_id === userId && r.billed_at ? sum + (r.billed_amount || 0) : sum;
+  }, 0);
+}
+
+function seoHistoryFor(userId) {
+  return state.seoUpdates.filter(function (s) { return s.user_id === userId; })
+    .sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+}
+
+function seoLoggedThisPeriod(p) {
+  var start = periodStart(p);
+  return state.seoUpdates.some(function (s) { return s.user_id === p.id && new Date(s.created_at) >= start; });
+}
+
+/* A customer whose site is still marked "building" - the one thing worth a
+   notification dot, since it means work is owed regardless of the request
+   queue being empty. */
+function unbuiltCustomers() {
+  return state.profiles.filter(function (p) { return p.active_plan && p.site_status === 'building'; });
+}
+
+function pendingSeoCustomers() {
+  return state.profiles.filter(function (p) { return p.active_plan === 'max' && !seoLoggedThisPeriod(p); });
+}
+
+/* "Open" also holds a done request nobody has charged yet, so an
+   over-allowance job never quietly falls out of view once it is finished -
+   it only leaves the queue once billed_at is set. */
+function openRequests() {
+  return state.requests.filter(function (r) {
+    if (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress') return true;
+    return r.status === 'done' && r.shortfallPoints > 0 && !r.billed_at;
+  });
+}
 
 /* Marks each request .shortfallPoints: how many of its points the plan's
    allowance did not cover, worked out in the order requests were made. A
@@ -126,32 +179,179 @@ function markShortfall() {
   });
 }
 
+/* ---------------- nav + top-level render ---------------- */
+
+function switchSection(key) {
+  activeSection = key;
+  selectedCustomerId = null;
+  selectedContactId = null;
+  render();
+}
+
+function renderNav(requestsDot, customersDot) {
+  var nav = document.getElementById('adminNav');
+  nav.textContent = '';
+  SECTIONS.forEach(function (s) {
+    var btn = el('button', 'admin-nav-btn' + (s.key === activeSection ? ' is-active' : ''));
+    btn.type = 'button';
+    btn.appendChild(document.createTextNode(s.label));
+    var count = s.key === 'requests' ? requestsDot : s.key === 'customers' ? customersDot : 0;
+    if (count > 0) btn.appendChild(el('span', 'nav-dot', String(count)));
+    btn.addEventListener('click', function () { switchSection(s.key); });
+    nav.appendChild(btn);
+  });
+}
+
+var SECTION_IDS = {
+  requests: 'sectionRequests', customers: 'sectionCustomers', contacts: 'sectionContacts',
+  plans: 'sectionPlans', payments: 'sectionPayments', templates: 'sectionTemplates'
+};
+
 function render() {
   var live = state.profiles.filter(function (p) { return p.site_status === 'live'; }).length;
-  var paying = state.profiles.filter(function (p) {
-    return p.subscription_status === 'active' || p.subscription_status === 'trialing';
-  }).length;
-  /* "Open" also holds a done request nobody has charged yet, so an
-     over-allowance job never quietly falls out of view once it is finished -
-     it only leaves the queue once billed_at is set. */
-  var open = state.requests.filter(function (r) {
-    if (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress') return true;
-    return r.status === 'done' && r.shortfallPoints > 0 && !r.billed_at;
-  });
+  var paying = state.profiles.filter(isCustomer).length;
+  var open = openRequests();
+  var unbuilt = unbuiltCustomers();
+  var pendingSeo = pendingSeoCustomers();
 
   document.getElementById('adminSummary').textContent =
     state.profiles.length + ' signed up · ' + paying + ' paying · ' + live + ' live · ' +
     open.length + ' open request' + (open.length === 1 ? '' : 's');
 
-  renderQueue(open);
-  renderDoneList();
-  renderCustomers();
-  renderTemplates();
+  renderNav(open.length + unbuilt.length, pendingSeo.length);
+
+  Object.keys(SECTION_IDS).forEach(function (key) {
+    document.getElementById(SECTION_IDS[key]).hidden = activeSection !== key;
+  });
+
+  if (activeSection === 'requests') renderRequestsSection(open, unbuilt);
+  else if (activeSection === 'customers') renderCustomersSection();
+  else if (activeSection === 'contacts') renderContactsSection();
+  else if (activeSection === 'plans') renderPlansSection();
+  else if (activeSection === 'payments') renderPaymentsSection();
+  else if (activeSection === 'templates') renderTemplatesSection();
 }
 
-/* One item of the queue: the status picker every request gets, plus a
-   Charge card button that only appears once it is done, fell outside the
-   month's points, and nobody has charged it yet. */
+/* ---------------- shared: the site address/status editor ---------------- */
+
+/* The only two fields on this page we write to a profile directly - reused
+   wherever a site needs marking live: a fresh build in Requests, and a
+   customer's own detail page. */
+function siteEditorRow(p) {
+  var row = el('div', 'cust-site');
+
+  var url = el('input', 'admin-input');
+  url.type = 'text';
+  // Prefilled with what they asked for once it is bought, so marking a site
+  // live is one click rather than retyping the address.
+  url.value = p.site_url || '';
+  url.placeholder = p.requested_domain || 'their-site.co.uk';
+  url.setAttribute('aria-label', 'Site address for ' + (p.business_name || 'this customer'));
+
+  var status = el('select', 'admin-select');
+  [['building', 'In build'], ['live', 'Live'], ['paused', 'Paused']].forEach(function (pair) {
+    var o = el('option', null, pair[1]);
+    o.value = pair[0];
+    if (pair[0] === (p.site_status || 'building')) o.selected = true;
+    status.appendChild(o);
+  });
+
+  var save = el('button', 'btn btn-ghost admin-save', 'Save');
+  save.type = 'button';
+  save.addEventListener('click', async function () {
+    save.disabled = true;
+    var was = save.textContent;
+    save.textContent = 'Saving…';
+    try {
+      await api({ action: 'setSite', userId: p.id, siteUrl: url.value, siteStatus: status.value });
+      p.site_url = url.value.trim() || null;
+      p.site_status = status.value;
+      say('Saved.', 'ok');
+      render();
+    } catch (err) { say(err.message, 'bad'); }
+    save.disabled = false;
+    save.textContent = was;
+  });
+
+  row.appendChild(url);
+  row.appendChild(status);
+  row.appendChild(save);
+  return row;
+}
+
+/* What they told us in the onboarding wizard - shown as reference on both a
+   fresh build card and a customer/contact's own detail page. */
+function onboardingLines(p) {
+  var frag = document.createDocumentFragment();
+  [
+    ['Wants the site to', p.site_goals], ['Asked for', (p.site_uses || []).join(', ')],
+    ['Menu/services', p.services], ['Opening hours', p.opening_hours],
+    ['Address', p.address], ['Covers', p.service_area], ['Already online', p.existing_links]
+  ].filter(function (pair) { return pair[1]; }).forEach(function (pair) {
+    var line = el('p', 'cust-sub');
+    line.appendChild(el('strong', null, pair[0] + ': '));
+    line.appendChild(document.createTextNode(pair[1]));
+    frag.appendChild(line);
+  });
+  return frag;
+}
+
+function domainWantLine(p) {
+  if (!p.requested_domain) return null;
+  var want = el('p', 'cust-want');
+  want.appendChild(el('span', null, p.domain_owned ? 'Already owns ' : 'Wants '));
+  want.appendChild(el('strong', null, p.requested_domain));
+  want.appendChild(el('span', null, p.domain_owned ? ' — move it across' : ' — to register'));
+  return want;
+}
+
+/* ---------------- Requests: new builds + the open queue ---------------- */
+
+function newBuildCard(p) {
+  var card = el('div', 'cust');
+  var head = el('div', 'cust-head');
+  var names = el('div', 'cust-names');
+  names.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
+  names.appendChild(el('p', 'cust-sub',
+    [p.contact_name, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
+  head.appendChild(names);
+  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan]));
+  card.appendChild(head);
+
+  card.appendChild(onboardingLines(p));
+  var want = domainWantLine(p);
+  if (want) card.appendChild(want);
+
+  card.appendChild(siteEditorRow(p));
+  return card;
+}
+
+function renderRequestsSection(open, unbuilt) {
+  var newWrap = document.getElementById('newBuilds');
+  newWrap.textContent = '';
+  if (unbuilt.length) {
+    newWrap.appendChild(el('h3', 'req-list-title', 'New customer builds'));
+    unbuilt.forEach(function (p) { newWrap.appendChild(newBuildCard(p)); });
+  }
+
+  var queueWrap = document.getElementById('queue');
+  queueWrap.textContent = '';
+  if (!open.length) {
+    queueWrap.appendChild(el('p', 'site-none', 'No open edit or feature requests.'));
+  } else {
+    [['edit', 'Edit requests'], ['feature', 'Feature requests']].forEach(function (pair) {
+      var items = open.filter(function (r) { return r.kind === pair[0]; })
+        // Oldest first: the thing waiting longest is the thing to do next.
+        .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+      if (!items.length) return;
+
+      queueWrap.appendChild(el('h3', 'req-list-title', pair[1]));
+      var list = el('ul', 'queue');
+      items.forEach(function (r) { list.appendChild(queueItem(r)); });
+      queueWrap.appendChild(list);
+    });
+  }
+}
 
 /* Signed links straight to storage - generated once, server-side, in the
    list response, since our own session has no read access to a customer's
@@ -171,6 +371,9 @@ function attachmentLinks(r) {
   return p;
 }
 
+/* One item of the queue: the status picker every request gets, plus a
+   Charge card button that only appears once it is done, fell outside the
+   month's points, and nobody has charged it yet. */
 function queueItem(r) {
   var owner = state.profiles.filter(function (p) { return p.id === r.user_id; })[0];
   var li = el('li', 'queue-item');
@@ -293,42 +496,413 @@ function queueItem(r) {
   return li;
 }
 
-/* Edits and features get their own list, same as the customer's own account
-   page, so a run of feature builds does not bury the one-line edits (or the
-   other way round). */
-function renderQueue(open) {
-  var panel = document.getElementById('queuePanel');
-  var wrap = document.getElementById('queue');
-  if (!open.length) { panel.hidden = true; return; }
+var POINT_PRICE = 4000; // pence per point — £40 either way in api/_plans.js REQUEST_COST
 
-  wrap.textContent = '';
-  [['edit', 'Edit requests'], ['feature', 'Feature requests']].forEach(function (pair) {
-    var items = open.filter(function (r) { return r.kind === pair[0]; })
-      // Oldest first: the thing waiting longest is the thing to do next.
-      .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
-    if (!items.length) return;
+/* ---------------- Customers: list + detail ---------------- */
 
-    wrap.appendChild(el('h3', 'req-list-title', pair[1]));
-    var list = el('ul', 'queue');
-    items.forEach(function (r) { list.appendChild(queueItem(r)); });
-    wrap.appendChild(list);
-  });
-  panel.hidden = false;
+function customerListRow(p) {
+  var card = el('div', 'cust cust-clickable');
+  card.tabIndex = 0;
+  card.setAttribute('role', 'button');
+
+  var head = el('div', 'cust-head');
+  var names = el('div', 'cust-names');
+  names.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
+  names.appendChild(el('p', 'cust-sub',
+    [p.contact_name, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
+  head.appendChild(names);
+  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan]));
+  card.appendChild(head);
+
+  var used = pointsUsed(p);
+  var allow = PLAN_POINTS[p.active_plan];
+  var over = used > allow;
+  card.appendChild(el('p', 'cust-points' + (over ? ' is-over' : ''),
+    used + ' of ' + allow + ' points used this month · £' + (lifetimeSpent(p.id) / 100).toFixed(0) + ' spent lifetime'));
+
+  if (p.active_plan === 'max') {
+    var due = !seoLoggedThisPeriod(p);
+    card.appendChild(el('p', 'cust-points' + (due ? ' is-over' : ''),
+      due ? 'SEO update due this month' : 'SEO update logged this month'));
+  }
+
+  function openCustomer() { selectedCustomerId = p.id; render(); }
+  card.addEventListener('click', openCustomer);
+  card.addEventListener('keydown', function (e) { if (e.key === 'Enter') openCustomer(); });
+  return card;
 }
+
+function renderCustomersList(wrap) {
+  var customers = state.profiles.filter(isCustomer);
+  if (!customers.length) { wrap.appendChild(el('p', 'site-none', 'No paying customers yet.')); return; }
+  customers.forEach(function (p) { wrap.appendChild(customerListRow(p)); });
+}
+
+/* Freely editable - the whole list is replaced each save rather than
+   added to/removed from piecemeal, since the page always has the current
+   array in hand already. A feature request marked done pushes onto this
+   same list server-side, so what shows here is never only what was typed
+   in by hand. */
+function featureEditor(p) {
+  var wrap = el('div', 'feature-editor');
+  var features = p.site_features || [];
+
+  function save(next, msg) {
+    return api({ action: 'setSiteFeatures', userId: p.id, features: next }).then(function () {
+      p.site_features = next.length ? next : null;
+      say(msg, 'ok');
+      render();
+    }, function (err) { say(err.message, 'bad'); });
+  }
+
+  var list = el('ul', 'feature-list');
+  if (!features.length) {
+    wrap.appendChild(el('p', 'site-none', 'Nothing added yet.'));
+  } else {
+    features.forEach(function (f, i) {
+      var li = el('li', 'feature-item');
+      li.appendChild(el('span', null, f));
+      var remove = el('button', 'linkish', 'Remove');
+      remove.type = 'button';
+      remove.addEventListener('click', function () {
+        save(features.slice(0, i).concat(features.slice(i + 1)), 'Removed.');
+      });
+      li.appendChild(remove);
+      list.appendChild(li);
+    });
+    wrap.appendChild(list);
+  }
+
+  var form = el('div', 'feature-add');
+  var input = el('input', 'admin-input');
+  input.type = 'text';
+  input.placeholder = 'e.g. Online table booking';
+  input.maxLength = 200;
+  var add = el('button', 'btn btn-ghost admin-save', 'Add');
+  add.type = 'button';
+  add.addEventListener('click', function () {
+    var val = input.value.trim();
+    if (!val) return;
+    input.value = '';
+    save(features.concat(val), 'Added.');
+  });
+  form.appendChild(input);
+  form.appendChild(add);
+  wrap.appendChild(form);
+
+  return wrap;
+}
+
+function notesEditor(p) {
+  var wrap = el('div', 'notes-editor');
+  var textarea = document.createElement('textarea');
+  textarea.className = 'admin-input notes-textarea';
+  textarea.rows = 3;
+  textarea.value = p.admin_notes || '';
+  textarea.placeholder = 'Anything worth remembering about them…';
+
+  var save = el('button', 'btn btn-ghost admin-save', 'Save notes');
+  save.type = 'button';
+  save.addEventListener('click', async function () {
+    save.disabled = true;
+    var was = save.textContent;
+    save.textContent = 'Saving…';
+    try {
+      await api({ action: 'setAdminNotes', userId: p.id, notes: textarea.value });
+      p.admin_notes = textarea.value.trim() || null;
+      say('Saved.', 'ok');
+    } catch (err) { say(err.message, 'bad'); }
+    save.disabled = false;
+    save.textContent = was;
+  });
+
+  wrap.appendChild(textarea);
+  wrap.appendChild(save);
+  return wrap;
+}
+
+/* A note each time, not just a checkbox - what was actually changed this
+   month, building a visible history rather than only a done/not-done flag. */
+function seoLogPanel(p) {
+  var wrap = el('div', 'seo-panel');
+  var due = !seoLoggedThisPeriod(p);
+  wrap.appendChild(el('p', 'cust-points' + (due ? ' is-over' : ''), due ? 'Due this month.' : 'Logged this month.'));
+
+  var form = el('div', 'feature-add');
+  var input = document.createElement('textarea');
+  input.className = 'admin-input notes-textarea';
+  input.rows = 2;
+  input.placeholder = 'What did you actually change? e.g. Updated meta descriptions, added alt text to gallery photos';
+  var log = el('button', 'btn btn-ghost admin-save', 'Log update');
+  log.type = 'button';
+  log.addEventListener('click', async function () {
+    var text = input.value.trim();
+    if (!text) { say('Say what was actually changed.', 'bad'); return; }
+    log.disabled = true;
+    try {
+      var res = await api({ action: 'logSeoUpdate', userId: p.id, note: text });
+      state.seoUpdates.unshift(res.entry);
+      say('Logged.', 'ok');
+      render();
+    } catch (err) {
+      say(err.message, 'bad');
+      log.disabled = false;
+    }
+  });
+  form.appendChild(input);
+  form.appendChild(log);
+  wrap.appendChild(form);
+
+  var history = seoHistoryFor(p.id);
+  if (history.length) {
+    var list = el('ul', 'queue');
+    history.forEach(function (s) {
+      var li = el('li', 'queue-item');
+      var main = el('div', 'queue-main');
+      main.appendChild(el('p', 'queue-what', s.note));
+      main.appendChild(el('p', 'queue-meta', when(s.created_at)));
+      li.appendChild(main);
+      list.appendChild(li);
+    });
+    wrap.appendChild(list);
+  }
+  return wrap;
+}
+
+function recentRequestsList(userId) {
+  var recent = state.requests.filter(function (r) { return r.user_id === userId; })
+    .sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); })
+    .slice(0, 8);
+  if (!recent.length) return null;
+
+  var list = el('ul', 'queue');
+  recent.forEach(function (r) {
+    var li = el('li', 'queue-item');
+    var main = el('div', 'queue-main');
+    main.appendChild(el('p', 'queue-what', r.detail));
+    main.appendChild(el('p', 'queue-meta', (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' +
+      STATUS_NAME[r.status] + ' · ' + when(r.created_at) +
+      (r.billed_at ? ' · charged £' + (r.billed_amount / 100).toFixed(0) : '')));
+    li.appendChild(main);
+    list.appendChild(li);
+  });
+  return list;
+}
+
+function customerDetail(p) {
+  var wrap = el('div', 'cust-detail');
+
+  var back = el('button', 'linkish', '← Back to customers');
+  back.type = 'button';
+  back.addEventListener('click', function () { selectedCustomerId = null; render(); });
+  wrap.appendChild(back);
+
+  var head = el('div', 'cust-head');
+  var names = el('div', 'cust-names');
+  names.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
+  names.appendChild(el('p', 'cust-sub',
+    [p.contact_name, p.phone, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
+  head.appendChild(names);
+  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan]));
+  wrap.appendChild(head);
+
+  wrap.appendChild(siteEditorRow(p));
+
+  var used = pointsUsed(p);
+  var allow = PLAN_POINTS[p.active_plan];
+  wrap.appendChild(el('p', 'cust-points' + (used > allow ? ' is-over' : ''), used + ' of ' + allow + ' points used this month'));
+  wrap.appendChild(el('p', 'cust-points', '£' + (lifetimeSpent(p.id) / 100).toFixed(0) + ' spent lifetime'));
+
+  wrap.appendChild(el('h3', 'req-list-title', 'Features on your site'));
+  wrap.appendChild(featureEditor(p));
+
+  if (p.active_plan === 'max') {
+    wrap.appendChild(el('h3', 'req-list-title', 'SEO updates'));
+    wrap.appendChild(seoLogPanel(p));
+  }
+
+  var onboarding = onboardingLines(p);
+  if (onboarding.childNodes.length) {
+    wrap.appendChild(el('h3', 'req-list-title', 'What they told us'));
+    wrap.appendChild(onboarding);
+  }
+  var want = domainWantLine(p);
+  if (want) wrap.appendChild(want);
+
+  wrap.appendChild(el('h3', 'req-list-title', 'Notes (only you see these)'));
+  wrap.appendChild(notesEditor(p));
+
+  var recent = recentRequestsList(p.id);
+  if (recent) {
+    wrap.appendChild(el('h3', 'req-list-title', 'Recent requests'));
+    wrap.appendChild(recent);
+  }
+
+  return wrap;
+}
+
+function renderCustomersSection() {
+  var wrap = document.getElementById('customersBody');
+  wrap.textContent = '';
+
+  var p = selectedCustomerId && state.profiles.filter(function (x) { return x.id === selectedCustomerId; })[0];
+  if (p) { wrap.appendChild(customerDetail(p)); return; }
+  selectedCustomerId = null;
+  renderCustomersList(wrap);
+}
+
+/* ---------------- Contacts: everyone who has not paid yet ---------------- */
+
+function contactListRow(p) {
+  var card = el('div', 'cust cust-clickable');
+  card.tabIndex = 0;
+  card.setAttribute('role', 'button');
+
+  var head = el('div', 'cust-head');
+  var names = el('div', 'cust-names');
+  names.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
+  names.appendChild(el('p', 'cust-sub',
+    [p.contact_name, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
+  head.appendChild(names);
+  head.appendChild(el('span', 'plan-chip is-none',
+    p.selected_plan ? PLAN_NAME[p.selected_plan] + ' (unpaid)' : 'No plan'));
+  card.appendChild(head);
+  card.appendChild(el('p', 'cust-sub', 'Signed up ' + when(p.created_at)));
+
+  function openContact() { selectedContactId = p.id; render(); }
+  card.addEventListener('click', openContact);
+  card.addEventListener('keydown', function (e) { if (e.key === 'Enter') openContact(); });
+  return card;
+}
+
+function contactDetail(p) {
+  var wrap = el('div', 'cust-detail');
+
+  var back = el('button', 'linkish', '← Back to contacts');
+  back.type = 'button';
+  back.addEventListener('click', function () { selectedContactId = null; render(); });
+  wrap.appendChild(back);
+
+  var head = el('div', 'cust-head');
+  var names = el('div', 'cust-names');
+  names.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
+  names.appendChild(el('p', 'cust-sub',
+    [p.contact_name, p.phone, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
+  head.appendChild(names);
+  head.appendChild(el('span', 'plan-chip is-none',
+    p.selected_plan ? PLAN_NAME[p.selected_plan] + ' (unpaid)' : 'No plan'));
+  wrap.appendChild(head);
+
+  var want = domainWantLine(p);
+  if (want) wrap.appendChild(want);
+
+  var onboarding = onboardingLines(p);
+  if (onboarding.childNodes.length) {
+    wrap.appendChild(el('h3', 'req-list-title', 'What they told us'));
+    wrap.appendChild(onboarding);
+  }
+
+  wrap.appendChild(el('h3', 'req-list-title', 'Notes (only you see these)'));
+  wrap.appendChild(notesEditor(p));
+
+  return wrap;
+}
+
+function renderContactsSection() {
+  var wrap = document.getElementById('contactsBody');
+  wrap.textContent = '';
+
+  var p = selectedContactId && state.profiles.filter(function (x) { return x.id === selectedContactId; })[0];
+  if (p) { wrap.appendChild(contactDetail(p)); return; }
+  selectedContactId = null;
+
+  var contacts = state.profiles.filter(function (x) { return !isCustomer(x); });
+  if (!contacts.length) { wrap.appendChild(el('p', 'site-none', 'Nobody has signed up without a plan.')); return; }
+  contacts.forEach(function (c) { wrap.appendChild(contactListRow(c)); });
+}
+
+/* ---------------- Plans: everyone paying, grouped ---------------- */
+
+function renderPlansSection() {
+  var wrap = document.getElementById('plansBody');
+  wrap.textContent = '';
+
+  ['business', 'pro', 'max'].forEach(function (key) {
+    var customers = state.profiles.filter(function (p) { return p.active_plan === key; });
+    wrap.appendChild(el('h3', 'req-list-title', PLAN_NAME[key] + ' (' + customers.length + ')'));
+    if (!customers.length) {
+      wrap.appendChild(el('p', 'site-none', 'Nobody on this plan yet.'));
+      return;
+    }
+    customers.forEach(function (p) {
+      var row = el('div', 'cust cust-clickable');
+      row.tabIndex = 0;
+      row.setAttribute('role', 'button');
+      row.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
+      row.appendChild(el('p', 'cust-sub', pointsUsed(p) + ' of ' + PLAN_POINTS[key] + ' points used this month'));
+      function openCustomer() { selectedCustomerId = p.id; activeSection = 'customers'; render(); }
+      row.addEventListener('click', openCustomer);
+      row.addEventListener('keydown', function (e) { if (e.key === 'Enter') openCustomer(); });
+      wrap.appendChild(row);
+    });
+  });
+}
+
+/* ---------------- Payments: revenue summary + charge history ---------------- */
+
+function renderPaymentsSection() {
+  var wrap = document.getElementById('paymentsBody');
+  wrap.textContent = '';
+
+  var mrr = state.profiles.reduce(function (sum, p) {
+    var billing = p.subscription_status === 'active' || p.subscription_status === 'trialing';
+    return p.active_plan && billing ? sum + (PLAN_PRICE[p.active_plan] || 0) : sum;
+  }, 0);
+
+  var now = new Date();
+  var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  var charged = state.requests.filter(function (r) { return r.billed_at; });
+  var thisMonth = charged.filter(function (r) { return new Date(r.billed_at) >= monthStart; })
+    .reduce(function (sum, r) { return sum + r.billed_amount; }, 0);
+  var allTime = charged.reduce(function (sum, r) { return sum + r.billed_amount; }, 0);
+
+  wrap.appendChild(el('p', 'cust-points', 'Estimated monthly recurring revenue: £' + (mrr / 100).toFixed(0)));
+  wrap.appendChild(el('p', 'cust-points', 'Charged this month (edits/features over allowance): £' + (thisMonth / 100).toFixed(0)));
+  wrap.appendChild(el('p', 'cust-points', 'Charged all-time (edits/features over allowance): £' + (allTime / 100).toFixed(0)));
+
+  wrap.appendChild(el('h3', 'req-list-title', 'Charge history'));
+  if (!charged.length) { wrap.appendChild(el('p', 'site-none', 'Nothing charged yet.')); return; }
+
+  var list = el('ul', 'queue');
+  charged.slice().sort(function (a, b) { return new Date(b.billed_at) - new Date(a.billed_at); })
+    .forEach(function (r) {
+      var owner = state.profiles.filter(function (p) { return p.id === r.user_id; })[0];
+      var li = el('li', 'queue-item');
+      var main = el('div', 'queue-main');
+      main.appendChild(el('p', 'queue-who', (owner && owner.business_name) || 'Unknown business'));
+      main.appendChild(el('p', 'queue-what', r.detail));
+      main.appendChild(el('p', 'queue-meta', (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · £' +
+        (r.billed_amount / 100).toFixed(0) + ' · ' + when(r.billed_at)));
+      li.appendChild(main);
+      list.appendChild(li);
+    });
+  wrap.appendChild(list);
+}
+
+/* ---------------- Templates: recently completed + saved templates ---------------- */
 
 /* The last 20 delivered, newest first - the one place a done request stays
    visible once it drops out of the open queue, and the only place one gets
    saved as a template. */
 function renderDoneList() {
-  var panel = document.getElementById('doneListPanel');
   var wrap = document.getElementById('doneList');
+  wrap.textContent = '';
 
   var items = state.requests.filter(function (r) { return r.status === 'done'; })
     .sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); })
     .slice(0, 20);
-  if (!items.length) { panel.hidden = true; return; }
+  if (!items.length) { wrap.appendChild(el('p', 'site-none', 'Nothing finished yet.')); return; }
 
-  wrap.textContent = '';
   var list = el('ul', 'queue');
   items.forEach(function (r) {
     var owner = state.profiles.filter(function (p) { return p.id === r.user_id; })[0];
@@ -364,7 +938,6 @@ function renderDoneList() {
     list.appendChild(li);
   });
   wrap.appendChild(list);
-  panel.hidden = false;
 }
 
 /* The saved templates themselves - retiring one keeps it out of the
@@ -409,98 +982,8 @@ function renderTemplates() {
   wrap.appendChild(list);
 }
 
-function renderCustomers() {
-  var wrap = document.getElementById('custList');
-  wrap.textContent = '';
-
-  if (!state.profiles.length) {
-    wrap.appendChild(el('p', 'site-none', 'Nobody has signed up yet.'));
-    return;
-  }
-
-  state.profiles.forEach(function (p) {
-    var card = el('div', 'cust');
-
-    var head = el('div', 'cust-head');
-    var names = el('div', 'cust-names');
-    names.appendChild(el('h3', null, p.business_name || 'Unnamed business'));
-    names.appendChild(el('p', 'cust-sub',
-      [p.contact_name, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
-    head.appendChild(names);
-
-    var plan = p.active_plan;
-    var chip = el('span', 'plan-chip' + (plan ? '' : ' is-none'),
-      plan ? PLAN_NAME[plan] : (p.selected_plan ? PLAN_NAME[p.selected_plan] + ' (unpaid)' : 'No plan'));
-    head.appendChild(chip);
-    card.appendChild(head);
-
-    if (plan) {
-      var used = pointsUsed(p);
-      var allow = PLAN_POINTS[plan];
-      /* Over the allowance is the one number here worth chasing, so it is
-         marked rather than left to blend in with the rest. */
-      var over = allow > 0 && used > allow;
-      var line = el('p', 'cust-points' + (over || (!allow && used) ? ' is-over' : ''),
-        allow ? used + ' of ' + allow + ' points used this month' +
-                (over ? ' \u2014 ' + (used - allow) + ' over, charge from the queue once done' : '')
-              : used ? used + (used === 1 ? ' point' : ' points') + ' asked for this month \u2014 charge from the queue once done'
-                     : 'No points included');
-      card.appendChild(line);
-    }
-
-    /* What they asked for in the wizard, so it can be bought. */
-    if (p.requested_domain) {
-      var want = el('p', 'cust-want');
-      /* Owning it already is a different job - a move, not a purchase - so the
-         two do not read the same. */
-      want.appendChild(el('span', null, p.domain_owned ? 'Already owns ' : 'Wants '));
-      want.appendChild(el('strong', null, p.requested_domain));
-      want.appendChild(el('span', null, p.domain_owned ? ' \u2014 move it across' : ' \u2014 to register'));
-      card.appendChild(want);
-    }
-
-    /* The site row: the only two fields on this page we can write. */
-    var row = el('div', 'cust-site');
-
-    var url = el('input', 'admin-input');
-    url.type = 'text';
-    /* Prefilled with what they asked for once it is bought, so marking a site
-       live is one click rather than retyping the address. */
-    url.value = p.site_url || '';
-    url.placeholder = p.requested_domain || 'their-site.co.uk';
-    url.setAttribute('aria-label', 'Site address for ' + (p.business_name || 'this customer'));
-
-    var status = el('select', 'admin-select');
-    [['building', 'In build'], ['live', 'Live'], ['paused', 'Paused']].forEach(function (pair) {
-      var o = el('option', null, pair[1]);
-      o.value = pair[0];
-      if (pair[0] === (p.site_status || 'building')) o.selected = true;
-      status.appendChild(o);
-    });
-
-    var save = el('button', 'btn btn-ghost admin-save', 'Save');
-    save.type = 'button';
-    save.addEventListener('click', async function () {
-      save.disabled = true;
-      var was = save.textContent;
-      save.textContent = 'Saving…';
-      try {
-        await api({ action: 'setSite', userId: p.id, siteUrl: url.value, siteStatus: status.value });
-        p.site_url = url.value.trim() || null;
-        p.site_status = status.value;
-        say('Saved.', 'ok');
-        render();
-      } catch (err) { say(err.message, 'bad'); }
-      save.disabled = false;
-      save.textContent = was;
-    });
-
-    row.appendChild(url);
-    row.appendChild(status);
-    row.appendChild(save);
-    card.appendChild(row);
-
-    wrap.appendChild(card);
-  });
+function renderTemplatesSection() {
+  renderDoneList();
+  renderTemplates();
 }
 })();

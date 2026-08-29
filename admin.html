@@ -20,33 +20,56 @@
 
 <main class="admin-wrap" id="app" hidden>
   <header class="acct-head">
-    <h1>Customers</h1>
+    <h1>Admin</h1>
     <p class="lede left" id="adminSummary">&nbsp;</p>
   </header>
 
-  <!-- Anything asked for and not yet finished, across every customer. -->
-  <section class="panel" id="queuePanel" hidden>
-    <h2 class="panel-title">Open requests</h2>
+  <!-- Which section is showing - built by JS so a notification dot's count
+       lives in the one place that already knows it. -->
+  <nav class="admin-nav" id="adminNav"></nav>
+
+  <!-- A fresh paying customer whose site isn't built yet, pinned above the
+       open edit/feature queue - what they asked for at signup, so it's
+       clear at a glance what kind of site to build. -->
+  <section class="panel" id="sectionRequests">
+    <h2 class="panel-title">Requests</h2>
+    <div id="newBuilds"></div>
     <div id="queue"></div>
   </section>
 
-  <section class="panel">
-    <h2 class="panel-title">Everyone</h2>
-    <div class="cust-list" id="custList"></div>
+  <!-- Anyone with a paid, active plan. Click through for their site, points,
+       lifetime spend, feature list and notes. -->
+  <section class="panel" id="sectionCustomers" hidden>
+    <h2 class="panel-title">Customers</h2>
+    <div id="customersBody"></div>
+  </section>
+
+  <!-- Signed up, no plan yet - a lead rather than a customer. -->
+  <section class="panel" id="sectionContacts" hidden>
+    <h2 class="panel-title">Contacts</h2>
+    <div id="contactsBody"></div>
+  </section>
+
+  <!-- Everyone paying, grouped by plan. -->
+  <section class="panel" id="sectionPlans" hidden>
+    <h2 class="panel-title">Plans</h2>
+    <div id="plansBody"></div>
+  </section>
+
+  <!-- Revenue at a glance, and the log of every overage charge. -->
+  <section class="panel" id="sectionPayments" hidden>
+    <h2 class="panel-title">Payments</h2>
+    <div id="paymentsBody"></div>
   </section>
 
   <!-- The ones already delivered - the only place a done request is still
-       visible once it drops out of the open queue above, and where one gets
-       saved as a template for next time. -->
-  <section class="panel" id="doneListPanel" hidden>
-    <h2 class="panel-title">Recently completed</h2>
-    <div id="doneList"></div>
-  </section>
-
-  <!-- Named edit/feature requests customers can pick instead of writing from
-       scratch. Saved from a finished request above. -->
-  <section class="panel">
+       visible once it drops out of the open queue, and where one gets saved
+       as a reusable template for next time. -->
+  <section class="panel" id="sectionTemplates" hidden>
     <h2 class="panel-title">Templates</h2>
+    <h3 class="req-list-title">Recently completed</h3>
+    <div id="doneList"></div>
+    <h3 class="req-list-title">Saved templates</h3>
     <div id="templates"></div>
   </section>
 
@@ -59,7 +82,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="admin.js?v=5"></script>
+<script src="admin.js?v=6"></script>
 <script src="admin-pill.js?v=4"></script>
 </body>
 </html>
