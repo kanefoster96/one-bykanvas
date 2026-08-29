@@ -304,6 +304,19 @@ function showSite(row) {
     pill.className = 'site-pill is-building';
     pillTx.textContent = 'In build';
   }
+
+  /* Same "live" fact, repeated right under the name rather than only further
+     down the page - the first thing worth seeing once there is a site to see. */
+  var idSite = document.getElementById('idSite');
+  var idSiteLink = document.getElementById('idSiteLink');
+  if (status === 'live' && url) {
+    var liveHref = /^https?:\/\//i.test(url) ? url : 'https://' + url;
+    idSiteLink.href = liveHref;
+    idSiteLink.textContent = liveHref.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+    idSite.hidden = false;
+  } else {
+    idSite.hidden = true;
+  }
 }
 
 /* Start of the current billing period. Points reset with the invoice, not the
@@ -336,7 +349,7 @@ async function showPoints(row) {
   var used = 0;
   var recent = [];
   var q = await ONE.db.from('requests')
-    .select('id, kind, points, detail, status, created_at, billed_at, billed_amount, confirm_token')
+    .select('id, kind, points, detail, status, created_at, billed_at, billed_amount, confirm_token, attachment_paths')
     .order('created_at', { ascending: false })
     .limit(20);
 
@@ -400,6 +413,30 @@ function requestRow(r) {
     what.appendChild(confirmLink);
   }
 
+  if (r.attachment_paths && r.attachment_paths.length) {
+    var viewLink = document.createElement('a');
+    viewLink.className = 'req-confirm';
+    viewLink.href = '#';
+    viewLink.textContent = 'View ' + r.attachment_paths.length
+      + (r.attachment_paths.length === 1 ? ' screenshot' : ' screenshots');
+    viewLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      viewAttachments(r.attachment_paths, viewLink);
+    });
+    what.appendChild(viewLink);
+
+    // The point of a screenshot is to show us something before the work
+    // happens - once the site is live it has done its job.
+    if (r.status === 'done') {
+      var clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'linkish req-confirm';
+      clearBtn.textContent = 'Clear screenshots';
+      clearBtn.addEventListener('click', function () { clearAttachments(r.id, clearBtn); });
+      what.appendChild(clearBtn);
+    }
+  }
+
   var cost = document.createElement('span');
   cost.className = 'req-cost';
   cost.textContent = r.billed_at
@@ -414,6 +451,56 @@ function requestRow(r) {
   li.appendChild(cost);
   li.appendChild(state);
   return li;
+}
+
+/* Signed on demand rather than up front, since most requests are never
+   opened again - no point paying for a round trip nobody asked for. Our own
+   session can sign these itself; the storage policy already scopes reads to
+   our own folder. */
+async function viewAttachments(paths, linkEl) {
+  linkEl.textContent = 'Loading…';
+  try {
+    var q = await ONE.db.storage.from('request-attachments').createSignedUrls(paths, 3600);
+    if (q.error) throw q.error;
+    var frag = document.createDocumentFragment();
+    (q.data || []).forEach(function (s, i) {
+      if (i) frag.appendChild(document.createTextNode(' · '));
+      var a = document.createElement('a');
+      a.href = s.signedUrl;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.className = 'req-confirm';
+      a.textContent = 'Screenshot' + (paths.length > 1 ? ' ' + (i + 1) : '');
+      frag.appendChild(a);
+    });
+    linkEl.replaceWith(frag);
+  } catch (err) {
+    linkEl.textContent = 'Could not load screenshots.';
+  }
+}
+
+async function clearAttachments(requestId, btn) {
+  if (!confirm('Delete the screenshots for this request? This frees storage and cannot be undone.')) return;
+  btn.disabled = true;
+  try {
+    var sess = await ONE.db.auth.getSession();
+    var token = sess.data && sess.data.session && sess.data.session.access_token;
+    if (!token) throw new Error('Your session has expired. Log in and try again.');
+
+    var res = await fetch('/api/clear-attachments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ requestId: requestId })
+    });
+    var data = await res.json().catch(function () { return {}; });
+    if (!res.ok) throw new Error(data.error || 'Could not clear those. Try again.');
+
+    var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
+    await showPoints(fresh.data);
+  } catch (err) {
+    alert(ONE.friendlyError(err));
+    btn.disabled = false;
+  }
 }
 
 /* Edits and features are kept as two separate lists rather than one mixed
@@ -530,6 +617,45 @@ function updatePricePreview() {
   }
 }
 
+var MAX_ATTACHMENTS = 6;
+var MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024;
+
+document.getElementById('reqFiles').addEventListener('change', function (e) {
+  var note = document.getElementById('reqFilesNote');
+  var files = Array.prototype.slice.call(e.target.files || []);
+  if (files.length > MAX_ATTACHMENTS) {
+    say(note, 'Up to ' + MAX_ATTACHMENTS + ' screenshots — pick fewer and try again.', 'bad');
+    e.target.value = '';
+    return;
+  }
+  var tooBig = files.filter(function (f) { return f.size > MAX_ATTACHMENT_SIZE; });
+  if (tooBig.length) {
+    say(note, tooBig[0].name + ' is over 5 MB — try a smaller one.', 'bad');
+    e.target.value = '';
+    return;
+  }
+  say(note, files.length ? files.length + (files.length === 1 ? ' file' : ' files') + ' selected.' : '');
+});
+
+/* Uploaded straight to storage from here, same as the logo does - the
+   points cost and admin email only happen once /api/requests has the
+   resulting paths, so a failed upload never leaves half a request behind. */
+async function uploadAttachments(files, userId) {
+  var batch = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+    : String(Date.now()) + Math.random().toString(36).slice(2);
+  var paths = [];
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var ext = (file.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
+    var path = userId + '/' + batch + '-' + i + '.' + ext;
+    var up = await ONE.db.storage.from('request-attachments')
+      .upload(path, file, { contentType: file.type });
+    if (up.error) throw new Error('Could not upload ' + file.name + ': ' + ONE.friendlyError(up.error));
+    paths.push(path);
+  }
+  return paths;
+}
+
 document.getElementById('reqForm').addEventListener('submit', async function (e) {
   e.preventDefault();
   var note = document.getElementById('reqNote');
@@ -547,10 +673,19 @@ document.getElementById('reqForm').addEventListener('submit', async function (e)
     var token = sess.data && sess.data.session && sess.data.session.access_token;
     if (!token) throw new Error('Your session has expired. Log in and try again.');
 
+    var filesInput = document.getElementById('reqFiles');
+    var files = Array.prototype.slice.call(filesInput.files || []);
+    var attachmentPaths = [];
+    if (files.length) {
+      say(note, 'Uploading screenshots\u2026');
+      attachmentPaths = await uploadAttachments(files, user.id);
+      say(note, 'Sending\u2026');
+    }
+
     var res = await fetch('/api/requests', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ kind: kind, detail: detail })
+      body: JSON.stringify({ kind: kind, detail: detail, attachmentPaths: attachmentPaths })
     });
     var data = await res.json().catch(function () { return {}; });
     if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
@@ -562,6 +697,8 @@ document.getElementById('reqForm').addEventListener('submit', async function (e)
       : 'Accepted \u2014 covered by your points.', 'ok');
 
     document.getElementById('reqDetail').value = '';
+    filesInput.value = '';
+    say(document.getElementById('reqFilesNote'), '');
     var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
     await showPoints(fresh.data);
   } catch (err) {

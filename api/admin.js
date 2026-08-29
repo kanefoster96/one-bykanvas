@@ -114,15 +114,31 @@ module.exports = async function handler(req, res) {
 
       const { data: reqs, error: reqError } = await db
         .from('requests')
-        .select('id, user_id, kind, points, detail, status, created_at, billed_at, billed_amount, confirm_token')
+        .select('id, user_id, kind, points, detail, status, created_at, billed_at, billed_amount, confirm_token, attachment_paths')
         .order('created_at', { ascending: false })
         .limit(500);
       if (reqError) throw new Error(reqError.message);
 
+      // The bucket is private, so a plain path is useless to the browser -
+      // one short-lived signed URL per screenshot, generated with the
+      // service role since our own admin session has no storage access to
+      // a customer's folder.
+      const allPaths = (reqs || []).flatMap((r) => r.attachment_paths || []);
+      let signedByPath = {};
+      if (allPaths.length) {
+        const { data: signedList, error: signErr } = await db.storage
+          .from('request-attachments').createSignedUrls(allPaths, 3600);
+        if (signErr) throw new Error(signErr.message);
+        (signedList || []).forEach((s) => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
+      }
+
       // The token itself is only ever the customer's to have, mailed straight
       // to them - the admin page only needs to know one is outstanding.
-      const shaped = (reqs || []).map(({ confirm_token, ...r }) =>
-        Object.assign(r, { awaitingConfirmation: Boolean(confirm_token) }));
+      const shaped = (reqs || []).map(({ confirm_token, attachment_paths, ...r }) =>
+        Object.assign(r, {
+          awaitingConfirmation: Boolean(confirm_token),
+          attachments: (attachment_paths || []).map((p) => signedByPath[p]).filter(Boolean)
+        }));
 
       // Both active and retired, so a retired one can still be brought back
       // rather than needing to be typed out again.
