@@ -38,7 +38,11 @@ build command, output directory `.`.
 
 | Plan     | Price      | Includes |
 |----------|-----------|----------|
-| Business | £50/mo    | Build, domain, hosting, requested features, support. Edits £35 each |
-| Pro      | £90/mo    | + 5 edits/mo, SEO review, testing |
-| Max      | £150/mo   | + 10 edits/mo, monthly SEO improvements |
+| Business | £50/mo    | Build, domain, hosting, requested features, support. 1 point/mo |
+| Pro      | £120/mo   | + 3 points/mo, SEO review, testing |
+| Max      | £250/mo   | + 5 points/mo, monthly SEO updates |
 | App      | £100/mo   | Add-on: iOS + Android, bug fixes, 1 improvement/mo |
+
+An edit costs 1 point, a feature 3, on every plan — see `api/_plans.js`
+(REQUEST_COST) for the exact pence values. Beyond a plan's points, an edit
+is £40 and a feature £120.
