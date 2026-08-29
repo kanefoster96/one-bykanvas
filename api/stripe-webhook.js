@@ -8,6 +8,9 @@ const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
+const { html: emailHtml } = require('./_email_template.js');
+
+const PLAN_NAME = { business: 'Business', pro: 'Pro', max: 'Max' }; // must match admin.js/account.js
 
 // Keep Vercel from parsing the body so the signature can be verified.
 module.exports.config = { api: { bodyParser: false } };
@@ -113,6 +116,12 @@ module.exports = async function handler(req, res) {
     const { data: before } = await admin
       .from('profiles').select('subscription_status').eq('id', id).maybeSingle();
     const wasLive = Boolean(before && isLive(before.subscription_status));
+    /* Separately: had the cancellation already been sent? Checked against
+       "was it already canceled", not "was it already live" - by the time
+       Smart Retries finally give up, the status has usually already moved
+       through past_due first, so wasLive alone would miss this transition
+       entirely and never fire the email at all. */
+    const alreadyCanceled = Boolean(before && before.subscription_status === 'canceled');
 
     const patch = {
       id,
@@ -135,10 +144,130 @@ module.exports = async function handler(req, res) {
     if (error) throw new Error(error.message);
     console.log('webhook: %s -> %s (live: %s)', id, sub.status, isLive(sub.status));
 
-    /* Tell us a customer has arrived. Deliberately after the write and outside
-       its error path: the subscription is already recorded, and a mail problem
-       must not fail the event and have Stripe retry it. */
-    if (isLive(sub.status) && !wasLive) await announceNewCustomer(id, patch);
+    /* Tell us a customer has arrived, and tell them too. Deliberately after
+       the write and outside its error path: the subscription is already
+       recorded, and a mail problem must not fail the event and have Stripe
+       retry it. */
+    if (isLive(sub.status) && !wasLive) {
+      await announceNewCustomer(id, patch);
+      await welcomeCustomer(id, patch);
+    }
+    if (sub.status === 'canceled' && !alreadyCanceled) await announceCancellation(id);
+  }
+
+  /* The first thing a customer sees once their card is actually charged -
+     what plan, where to go, and that the build is starting. */
+  async function welcomeCustomer(id, patch) {
+    const { data: p } = await admin
+      .from('profiles').select('business_name').eq('id', id).maybeSingle();
+    const { data: who } = await admin.auth.admin.getUserById(id);
+    const email = who && who.user && who.user.email;
+    if (!email) return;
+
+    const planName = PLAN_NAME[patch.active_plan] || 'your';
+    const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+
+    const result = await sendEmail({
+      to: email,
+      subject: "You're all set — welcome to one",
+      text: `Welcome to one${p && p.business_name ? ', ' + p.business_name : ''}.\n\n`
+          + `Your ${planName} plan is now active - thanks for signing up.\n\n`
+          + `We'll be in touch as we start building your site. In the meantime, you can see `
+          + `everything from your account - your plan, your requests, and your site once it's live.\n\n`
+          + `Your account: ${site}/account.html`,
+      html: emailHtml({
+        heading: `Welcome to one${p && p.business_name ? ', ' + p.business_name : ''}.`,
+        lines: [
+          `Your <strong>${planName}</strong> plan is now active &mdash; thanks for signing up.`,
+          `We&rsquo;ll be in touch as we start building your site. In the meantime, you can see everything from your account &mdash; your plan, your requests, and your site once it&rsquo;s live.`
+        ],
+        ctaText: 'Go to your account',
+        ctaHref: `${site}/account.html`
+      })
+    });
+    console.log('webhook: welcome email', result);
+  }
+
+  /* The subscription is already gone by the time this fires - both sides
+     need telling: the customer, since their site and domain are now at
+     risk, and us, since cancelling a domain is still a manual job. */
+  async function announceCancellation(id) {
+    const { data: p } = await admin
+      .from('profiles')
+      .select('business_name, site_url, requested_domain, domain_owned')
+      .eq('id', id)
+      .maybeSingle();
+    const { data: who } = await admin.auth.admin.getUserById(id);
+    const email = who && who.user && who.user.email;
+    const name = (p && p.business_name) || 'A customer';
+    const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+
+    if (email) {
+      const result = await sendEmail({
+        to: email,
+        subject: 'Your plan has ended',
+        text: `We weren't able to take payment after several attempts, so your one plan has now ended.\n\n`
+            + `Your site and domain may be affected - please get in touch as soon as you can if you'd `
+            + `like to keep them, or reactivate your plan any time from your account:\n${site}/account.html`,
+        html: emailHtml({
+          heading: 'Your plan has ended.',
+          lines: [
+            'We weren’t able to take payment after several attempts, so your plan has now ended.',
+            '<strong>Your site and domain may be affected</strong> &mdash; please get in touch as soon as you can if you’d like to keep them, or reactivate your plan any time.'
+          ],
+          ctaText: 'Reactivate your plan',
+          ctaHref: `${site}/account.html`
+        })
+      });
+      console.log('webhook: cancellation email', result);
+    }
+
+    const domainLine = (p && (p.site_url || p.requested_domain)) || 'no domain on file';
+    const adminResult = await sendEmail({
+      to: adminAddresses(),
+      subject: `${name}'s plan ended - check their domain`,
+      text: `${name}'s subscription ended after failed payment retries.\n\n`
+          + `Domain: ${domainLine}\n\n`
+          + `If you don't hear from them, you may need to cancel or release it, and take their site down.\n\n`
+          + `Admin: ${site}/admin.html`
+    });
+    console.log('webhook: cancellation admin email', adminResult);
+  }
+
+  /* Only the first failed attempt in a billing cycle - Smart Retries tries
+     again automatically over the days that follow, and a fresh email for
+     every one of those attempts would be noise, not news. */
+  async function announcePaymentFailed(invoice) {
+    if (invoice.attempt_count && invoice.attempt_count > 1) return;
+
+    const customerId = typeof invoice.customer === 'string' ? invoice.customer : (invoice.customer && invoice.customer.id);
+    if (!customerId) return;
+    const { data: p } = await admin
+      .from('profiles').select('id').eq('stripe_customer_id', customerId).maybeSingle();
+    if (!p) return;
+
+    const { data: who } = await admin.auth.admin.getUserById(p.id);
+    const email = who && who.user && who.user.email;
+    if (!email) return;
+
+    const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+    const result = await sendEmail({
+      to: email,
+      subject: "We couldn't take payment for your plan",
+      text: `We tried to charge the card on file for your one plan and it didn't go through.\n\n`
+          + `We'll automatically retry over the next week - to make sure it goes through, you can `
+          + `update your card any time from your account:\n${site}/account.html`,
+      html: emailHtml({
+        heading: 'We couldn’t take payment.',
+        lines: [
+          'We tried to charge the card on file for your plan and it didn’t go through.',
+          'We’ll automatically retry over the next week &mdash; to make sure it goes through, you can update your card any time from your account.'
+        ],
+        ctaText: 'Update payment details',
+        ctaHref: `${site}/account.html`
+      })
+    });
+    console.log('webhook: payment failed email', result);
   }
 
   /* Everything worth knowing to start the build, in one message. Without this
@@ -201,6 +330,10 @@ module.exports = async function handler(req, res) {
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted':
         await writeSubscription(event.data.object);
+        break;
+
+      case 'invoice.payment_failed':
+        await announcePaymentFailed(event.data.object);
         break;
 
       default:

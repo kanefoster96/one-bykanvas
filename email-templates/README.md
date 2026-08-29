@@ -1,0 +1,32 @@
+# Supabase Auth email templates
+
+These two aren't sent by this app's own code - they're sent directly by
+Supabase Auth (`confirm-signup.html` when someone signs up, `reset-password.html`
+when someone asks to reset their password), so they live here as reference
+files rather than in `api/`. Paste their contents into the Supabase dashboard
+by hand; nothing in this repo deploys them automatically.
+
+Match the same branded shell used everywhere else (see `api/_email_template.js`)
+so every email - app-sent or Supabase-sent - looks like it came from the same
+place.
+
+## One-time setup
+
+1. **Route Supabase Auth email through Resend**, so these actually get
+   delivered reliably (Supabase's own built-in sender is rate-limited and
+   not meant for production use):
+   Supabase Dashboard → Authentication → Emails → SMTP Settings → enable
+   Custom SMTP:
+   - Host: `smtp.resend.com`
+   - Port: `465`
+   - Username: `resend`
+   - Password: your Resend API key
+   - Sender email: the same address `EMAIL_FROM` uses in Vercel
+   - Sender name: `one, by Kanvas`
+
+2. **Paste the templates**: Authentication → Email Templates →
+   - "Confirm signup" → paste `confirm-signup.html`
+   - "Reset password" → paste `reset-password.html`
+
+   Supabase's own `{{ .ConfirmationURL }}` variable is left in place in both
+   files - it fills in automatically, nothing to edit there.

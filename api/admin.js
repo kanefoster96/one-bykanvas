@@ -15,6 +15,7 @@ const Stripe = require('stripe');
 const { missingEnv } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { sendEmail } = require('./_email.js');
+const { html: emailHtml, esc } = require('./_email_template.js');
 const { shortfallFor } = require('./_billing.js');
 
 const DEFAULT_ADMINS = ['kane.foster@ymail.com'];
@@ -86,13 +87,50 @@ async function notifyFeatureEmail(db, userId, name, verb) {
   if (!customerEmail) return;
 
   const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+  const heading = verb === 'updated' ? 'Updated on your site' : 'New on your site';
   const result = await sendEmail({
     to: customerEmail,
     subject: `A feature on your site was ${verb}`,
     text: `We've ${verb} a feature on your site: "${name}".\n\n`
-        + `See it on your account page:\n${site}/account.html`
+        + `See it on your account page:\n${site}/account.html`,
+    html: emailHtml({
+      heading,
+      lines: [`We&rsquo;ve ${verb} a feature on your site: &ldquo;<strong>${esc(name)}</strong>&rdquo;.`],
+      ctaText: 'See it on your account',
+      ctaHref: `${site}/account.html`
+    })
   });
   console.log('admin: feature notify email', result);
+}
+
+/* The moment a build actually finishes - the one email in this whole system
+ * a customer has been waiting the longest for. */
+async function notifySiteLive(db, userId, businessName, siteUrl) {
+  const { data: who } = await db.auth.admin.getUserById(userId);
+  const customerEmail = who && who.user && who.user.email;
+  if (!customerEmail) return;
+
+  const href = /^https?:\/\//i.test(siteUrl) ? siteUrl : 'https://' + siteUrl;
+  const shown = href.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+  const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+
+  const result = await sendEmail({
+    to: customerEmail,
+    subject: 'Your site is live',
+    text: `${businessName || 'Your site'} is live at ${shown}.\n\n`
+        + `Have a look, and let us know if there's anything you'd like changed.\n\n`
+        + `Manage your account: ${site}/account.html`,
+    html: emailHtml({
+      heading: `${esc(businessName) || 'Your site'} is live.`,
+      lines: [
+        `Your site is now live at <strong>${esc(shown)}</strong>.`,
+        `Have a look, and let us know if there&rsquo;s anything you&rsquo;d like changed.`
+      ],
+      ctaText: 'View your site',
+      ctaHref: href
+    })
+  });
+  console.log('admin: site live email', result);
 }
 
 module.exports = async function handler(req, res) {
@@ -223,11 +261,23 @@ module.exports = async function handler(req, res) {
       if (siteStatus === 'live' && !siteUrl) {
         return res.status(400).json({ error: 'Add the address before marking it live.' });
       }
+
+      const { data: before, error: beforeErr } = await db
+        .from('profiles').select('site_status, business_name').eq('id', userId).maybeSingle();
+      if (beforeErr) throw new Error(beforeErr.message);
+
       const { error } = await db
         .from('profiles')
         .update({ site_url: siteUrl || null, site_status: siteStatus })
         .eq('id', userId);
       if (error) throw new Error(error.message);
+
+      // Told the moment it actually goes live, not on every save of this
+      // form - re-saving an already-live address should not re-announce it.
+      if (siteStatus === 'live' && before && before.site_status !== 'live') {
+        await notifySiteLive(db, userId, before.business_name, siteUrl);
+      }
+
       return res.status(200).json({ ok: true });
     }
 

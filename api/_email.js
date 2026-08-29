@@ -26,8 +26,13 @@ function adminAddresses() {
     .split(',').map(s => s.trim()).filter(Boolean);
 }
 
-/* Returns 'sent', 'skipped' or 'failed'. Never throws. */
-async function sendEmail({ to, subject, text, replyTo }) {
+/* Returns 'sent', 'skipped' or 'failed'. Never throws.
+ *
+ * html is optional - internal admin-facing notices stay text-only, since
+ * nobody but us reads them and plain text is one less thing to get wrong.
+ * Anything a customer sees should pass both: Resend (and most inboxes)
+ * expect a text part alongside html, not html alone. */
+async function sendEmail({ to, subject, text, html, replyTo }) {
   const key = process.env.RESEND_API_KEY;
   if (!key) return 'skipped';
 
@@ -48,6 +53,7 @@ async function sendEmail({ to, subject, text, replyTo }) {
         to: recipients,
         subject,
         text,
+        ...(html ? { html } : {}),
         ...(replyTo ? { reply_to: replyTo } : {})
       }),
       signal: ctrl.signal
