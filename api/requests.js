@@ -6,12 +6,10 @@
  * rather than a direct client insert is what lets a new request email us;
  * a plain insert would record the row just as well but nobody would know.
  *
- * The account page shows the live price before this is ever called, so
- * submitting it already is the customer's agreement to that price - this
- * goes straight to accepted rather than sitting as an unconfirmed Request,
- * with a fresh price_confirmed_at recorded whenever it fell outside the
- * points. Only a later reclassification, which invalidates that agreement,
- * sends it back through the confirmation email.
+ * Always lands as a fresh Request (the table's own default), never
+ * pre-accepted - only the admin page accepting it decides whether points
+ * cover it or the card on file gets charged, and nothing is built before
+ * that happens.
  */
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv } = require('./_env.js');
@@ -74,14 +72,11 @@ module.exports = async function handler(req, res) {
     }).select().single();
     if (error) throw new Error(error.message);
 
+    // For the notify email only - what accepting this would come to, not a
+    // decision made here. Nothing is charged or agreed until the admin page
+    // accepts it.
     const { shortfall } = await shortfallFor(db, user.id, row.id);
     const amount = shortfall * REQUEST_COST.edit.amount; // £40/point, same rate either kind
-
-    const patch = { status: 'accepted' };
-    if (shortfall > 0) patch.price_confirmed_at = new Date().toISOString();
-    const { data: updated, error: updErr } = await db.from('requests')
-      .update(patch).eq('id', row.id).select().single();
-    if (updErr) throw new Error(updErr.message);
 
     const { data: profile } = await db.from('profiles')
       .select('business_name').eq('id', user.id).maybeSingle();
@@ -93,14 +88,14 @@ module.exports = async function handler(req, res) {
       text: `${name} asked for ${kind === 'feature' ? 'a new feature' : 'an edit'}:\n\n${detail}\n\n`
           + (attachmentPaths.length ? `${attachmentPaths.length} screenshot${attachmentPaths.length === 1 ? '' : 's'} attached - view in admin.\n\n` : '')
           + (shortfall > 0
-              ? `Already accepted £${(amount / 100).toFixed(0)} over allowance - ready to build.\n\n`
-              : 'Covered by their points - ready to build.\n\n')
-          + `Admin: https://one-bykanvas.vercel.app/admin.html`,
+              ? `Would come to £${(amount / 100).toFixed(0)} over their allowance once accepted.\n\n`
+              : 'Covered by their points once accepted.\n\n')
+          + `Accept it from admin: https://one-bykanvas.vercel.app/admin.html`,
       replyTo: user.email
     });
     console.log('requests: notify email', result);
 
-    return res.status(200).json({ request: updated, shortfall, amount });
+    return res.status(200).json({ request: row, shortfall, amount });
   } catch (err) {
     console.error('requests:', err && err.message);
     return res.status(500).json({ error: 'Something went wrong. Try again.' });

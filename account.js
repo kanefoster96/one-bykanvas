@@ -349,9 +349,9 @@ async function showPoints(row) {
   var used = 0;
   var recent = [];
   var q = await ONE.db.from('requests')
-    .select('id, kind, points, detail, status, created_at, billed_at, billed_amount, confirm_token, attachment_paths')
+    .select('id, kind, points, detail, status, created_at, billed_at, billed_amount, attachment_paths')
     .order('created_at', { ascending: false })
-    .limit(20);
+    .limit(40);
 
   if (!q.error && q.data) {
     recent = q.data;
@@ -375,18 +375,19 @@ async function showPoints(row) {
     document.getElementById('pointsFill').style.width = Math.round((left / allowance) * 100) + '%';
     upsell.hidden = true;
     note.textContent = left === 0
-      ? 'You have used this month\u2019s points. Anything else is charged at the normal rate \u2014 \u00a340 an edit, \u00a3120 a feature.'
+      ? 'You have used this month\u2019s points. Anything else is charged at the normal rate \u2014 \u00a340 an edit, \u00a3120 a feature \u2014 once we accept the request, before we start.'
       : 'An edit costs 1 point, a new feature 3. Points reset each month and do not roll over.';
   } else {
     bar.hidden = true;
     upsell.hidden = false;
     note.textContent = used > 0
-      ? String(used) + (used === 1 ? ' point' : ' points') + ' asked for this month, charged to the card on file once done.'
+      ? String(used) + (used === 1 ? ' point' : ' points') + ' asked for this month \u2014 charged to the card on file once we accept the request, before we start.'
       : '';
   }
 
   updatePricePreview();
   renderRequests(recent);
+  renderCompleted(recent);
 }
 
 var STATUS_TEXT_LABEL = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
@@ -402,16 +403,6 @@ function requestRow(r) {
   when.textContent = new Date(r.created_at).toLocaleDateString('en-GB',
     { day: 'numeric', month: 'short', year: 'numeric' });
   what.appendChild(when);
-
-  // Reclassifying resets a request to Request and re-sends this - surfaced
-  // right here so confirming does not depend on finding the email again.
-  if (r.confirm_token) {
-    var confirmLink = document.createElement('a');
-    confirmLink.className = 'req-confirm';
-    confirmLink.href = '/api/confirm-request?token=' + encodeURIComponent(r.confirm_token);
-    confirmLink.textContent = 'Confirm the price';
-    what.appendChild(confirmLink);
-  }
 
   if (r.attachment_paths && r.attachment_paths.length) {
     var viewLink = document.createElement('a');
@@ -505,10 +496,13 @@ async function clearAttachments(requestId, btn) {
 
 /* Edits and features are kept as two separate lists rather than one mixed
    feed, since a customer with a lot of history would otherwise have to scan
-   past features to find their last edit or the other way round. */
+   past features to find their last edit or the other way round. Live (done)
+   ones move out of here entirely - renderCompleted() below is where they
+   live on, a permanent record rather than something to scroll past. */
 function renderRequests(rows) {
   var wrap = document.getElementById('reqList');
-  if (!rows || !rows.length) { wrap.hidden = true; return; }
+  var active = rows.filter(function (r) { return r.status !== 'done'; });
+  if (!active.length) { wrap.hidden = true; return; }
 
   var groups = [
     { kind: 'edit',    group: document.getElementById('reqGroupEdit'),    list: document.getElementById('reqItemsEdit') },
@@ -517,7 +511,7 @@ function renderRequests(rows) {
 
   var any = false;
   groups.forEach(function (g) {
-    var items = rows.filter(function (r) { return r.kind === g.kind; }).slice(0, 6);
+    var items = active.filter(function (r) { return r.kind === g.kind; }).slice(0, 6);
     g.list.textContent = '';
     if (!items.length) { g.group.hidden = true; return; }
     any = true;
@@ -526,6 +520,30 @@ function renderRequests(rows) {
   });
 
   wrap.hidden = !any;
+}
+
+/* Everything delivered, kept on its own once it is live - a done feature
+   is something the site now has, not just a ticket that got closed, so it
+   stays listed here rather than dropping out of sight. */
+function renderCompleted(rows) {
+  var panel = document.getElementById('completedPanel');
+  var done = rows.filter(function (r) { return r.status === 'done'; });
+  if (!done.length) { panel.hidden = true; return; }
+
+  var groups = [
+    { kind: 'edit',    group: document.getElementById('doneGroupEdit'),    list: document.getElementById('doneItemsEdit') },
+    { kind: 'feature', group: document.getElementById('doneGroupFeature'), list: document.getElementById('doneItemsFeature') }
+  ];
+
+  groups.forEach(function (g) {
+    var items = done.filter(function (r) { return r.kind === g.kind; }).slice(0, 10);
+    g.list.textContent = '';
+    if (!items.length) { g.group.hidden = true; return; }
+    items.forEach(function (r) { g.list.appendChild(requestRow(r)); });
+    g.group.hidden = false;
+  });
+
+  panel.hidden = false;
 }
 
 /* ---------------- request picker: templates, price preview ---------------- */
@@ -608,11 +626,11 @@ function updatePricePreview() {
     el.className = 'req-price';
   } else if (covered > 0) {
     el.textContent = 'Uses your last ' + covered + (covered === 1 ? ' point' : ' points')
-      + ', plus \u00a3' + (shortfall * 40) + ' on the card on file once it is done.';
+      + ', plus \u00a3' + (shortfall * 40) + ' on the card on file if we accept it, before we start.';
     el.className = 'req-price is-charge';
   } else {
     el.textContent = 'No points left this month \u2014 \u00a3' + (shortfall * 40)
-      + ' on the card on file once it is done.';
+      + ' on the card on file if we accept it, before we start.';
     el.className = 'req-price is-charge';
   }
 }
@@ -690,11 +708,11 @@ document.getElementById('reqForm').addEventListener('submit', async function (e)
     var data = await res.json().catch(function () { return {}; });
     if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
 
-    /* The preview already showed this exact number before they hit send, so
-       sending was already their agreement to it - nothing further to ask. */
+    /* Nothing is charged or redeemed yet - accepting it is what does that,
+       from the admin side, before any work starts. */
     say(note, data.shortfall > 0
-      ? 'Accepted \u2014 \u00a3' + (data.amount / 100).toFixed(0) + ' will be charged to your card on file once it is done.'
-      : 'Accepted \u2014 covered by your points.', 'ok');
+      ? 'Sent \u2014 if we accept it, \u00a3' + (data.amount / 100).toFixed(0) + ' will be charged to your card on file before we start.'
+      : 'Sent \u2014 we\u2019ll take a look and accept it shortly.', 'ok');
 
     document.getElementById('reqDetail').value = '';
     filesInput.value = '';

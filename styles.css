@@ -965,6 +965,7 @@ body.locked{overflow:hidden}
 .req-price.is-charge{color:var(--ink);font-weight:600}
 
 .req-list{margin-top:26px;padding-top:22px;border-top:1px solid var(--line-soft)}
+#completedPanel .req-list{margin-top:0;padding-top:0;border-top:0}
 .req-list-title{margin:0 0 14px;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
 .req-list ul{list-style:none;margin:0;padding:0}
 .req-list li{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--line-soft)}

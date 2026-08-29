@@ -10,12 +10,10 @@
  * ADMIN_EMAILS (comma separated) overrides the default if it is ever more than
  * one person.
  */
-const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const Stripe = require('stripe');
 const { missingEnv } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
-const { sendEmail, adminAddresses } = require('./_email.js');
 const { shortfallFor } = require('./_billing.js');
 
 const DEFAULT_ADMINS = ['kane.foster@ymail.com'];
@@ -26,38 +24,55 @@ function adminList() {
   return fromEnv.length ? fromEnv : DEFAULT_ADMINS;
 }
 
-/* Sets the request on hold for the customer's own sign-off and emails them
- * the one-click link, mailed straight to the address on their account -
- * no login, the token itself is the credential. Returns the pence amount so
- * the caller can say what was asked for. */
-async function askForConfirmation(db, reqRow, shortfall) {
-  const confirmToken = crypto.randomUUID();
-  const amount = shortfall * REQUEST_COST.edit.amount; // £40/point, same rate either kind
-
-  const { error: patchErr } = await db.from('requests')
-    .update({ confirm_token: confirmToken, price_confirmed_at: null })
-    .eq('id', reqRow.id);
-  if (patchErr) throw new Error(patchErr.message);
-
-  // Telling them is best effort - the hold itself already took effect via
-  // confirm_token, so a failed send delays them finding out, not the hold.
-  const { data: who } = await db.auth.admin.getUserById(reqRow.user_id);
-  const customerEmail = who && who.user && who.user.email;
-  if (customerEmail) {
-    const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
-    const link = site + '/api/confirm-request?token=' + confirmToken;
-    const result = await sendEmail({
-      to: customerEmail,
-      subject: 'Please confirm the price for your request',
-      text: `Before we start on this - "${reqRow.detail}" - we wanted to check you're happy with the cost: `
-          + `it comes to an extra £${(amount / 100).toFixed(0)} on top of what your plan covers this month.\n\n`
-          + `Click below to confirm and we'll get started:\n${link}\n\n`
-          + `If that doesn't sound right, just reply to this email.`
-    });
-    console.log('admin: confirmation email', result);
+/* Charges the card on file off-session, for a shortfall already worked out
+ * by the caller. Shared by accepting a request (the normal path - before any
+ * work starts) and the legacy done-stage charge button. Throws a plain Error
+ * with .httpStatus set on anything the caller should show rather than a 500 -
+ * no card on file, a decline, or a payment that did not complete. */
+async function chargeCardForRequest(stripe, profile, reqRow, amount) {
+  if (!profile || !profile.stripe_customer_id) {
+    const e = new Error('No card on file for them yet.'); e.httpStatus = 400; throw e;
   }
 
-  return amount;
+  const customer = await stripe.customers.retrieve(profile.stripe_customer_id);
+  let paymentMethodId = customer && customer.invoice_settings
+    && customer.invoice_settings.default_payment_method;
+  if (!paymentMethodId) {
+    const pms = await stripe.paymentMethods.list({ customer: profile.stripe_customer_id, type: 'card' });
+    paymentMethodId = pms.data[0] && pms.data[0].id;
+  }
+  if (!paymentMethodId) {
+    const e = new Error('No card on file for them — ask them to add one from their account page.');
+    e.httpStatus = 400; throw e;
+  }
+
+  let pi;
+  try {
+    pi = await stripe.paymentIntents.create({
+      amount, currency: 'gbp',
+      customer: profile.stripe_customer_id,
+      payment_method: paymentMethodId,
+      off_session: true,
+      confirm: true,
+      description: (reqRow.kind === 'feature' ? 'Feature request' : 'Edit request')
+        + (profile.business_name ? ' — ' + profile.business_name : ''),
+      metadata: { request_id: reqRow.id, supabase_user_id: reqRow.user_id }
+    });
+  } catch (err) {
+    if (err && err.type === 'StripeCardError') {
+      const e = new Error('Card declined: ' + (err.message || 'ask them to update their card.'));
+      e.httpStatus = 400; throw e;
+    }
+    throw err;
+  }
+
+  if (pi.status !== 'succeeded') {
+    const e = new Error('Payment did not complete (status: ' + pi.status + '). '
+      + 'Ask them to confirm it from their end, or update their card.');
+    e.httpStatus = 400; throw e;
+  }
+
+  return pi;
 }
 
 module.exports = async function handler(req, res) {
@@ -132,11 +147,10 @@ module.exports = async function handler(req, res) {
         (signedList || []).forEach((s) => { if (s.signedUrl) signedByPath[s.path] = s.signedUrl; });
       }
 
-      // The token itself is only ever the customer's to have, mailed straight
-      // to them - the admin page only needs to know one is outstanding.
+      // confirm_token is a legacy field - nothing sets it any more, so it is
+      // left out of the response rather than surfaced as anything to react to.
       const shaped = (reqs || []).map(({ confirm_token, attachment_paths, ...r }) =>
         Object.assign(r, {
-          awaitingConfirmation: Boolean(confirm_token),
           attachments: (attachment_paths || []).map((p) => signedByPath[p]).filter(Boolean)
         }));
 
@@ -174,14 +188,15 @@ module.exports = async function handler(req, res) {
 
     // ---- write: move a request along ------------------------------------
     //
-    // Starting work is the one gate that matters: whichever way a request
-    // got here - submitted that way, or reclassified into it - trying to
-    // move it to in_progress is what decides whether the points cover it
-    // (silent, nothing to do) or the customer needs to agree to pay the
-    // difference first. Nothing is asked of them until this point, and
-    // never twice for the same price - confirm_token is both the guard and
-    // the trigger.
+    // Accepting is the one gate that matters: it is the moment points get
+    // redeemed or the card on file gets charged for whatever they don't
+    // cover - never automatically, always this admin choosing to (and,
+    // for a shortfall, choosing how much - see chargeCardForRequest). Once
+    // accepted, nothing is charged twice for the same request, and nothing
+    // can skip straight from a fresh Request to in_progress or done without
+    // going through this first.
     if (action === 'setRequestStatus') {
+      const { STRIPE_SECRET_KEY } = process.env;
       const id = String(body.requestId || '');
       const status = String(body.status || '');
       if (!id) return res.status(400).json({ error: 'Which request?' });
@@ -189,35 +204,53 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'Unknown status.' });
       }
 
-      if (status === 'in_progress') {
-        const { data: reqRow, error: curErr } = await db.from('requests').select('*').eq('id', id).maybeSingle();
-        if (curErr) throw new Error(curErr.message);
-        if (!reqRow) return res.status(404).json({ error: 'Request not found.' });
+      const { data: reqRow, error: curErr } = await db.from('requests').select('*').eq('id', id).maybeSingle();
+      if (curErr) throw new Error(curErr.message);
+      if (!reqRow) return res.status(404).json({ error: 'Request not found.' });
 
-        if (reqRow.confirm_token) {
-          return res.status(400).json({
-            error: 'Waiting on the customer to confirm the price first.',
-            awaitingConfirmation: true
-          });
-        }
+      // Legacy safety net: a request still carrying an old email-confirmation
+      // token (from before accepting moved to this admin action) cannot move
+      // on until that is resolved. Nothing new ever sets this token any more.
+      if ((status === 'in_progress' || status === 'done') && reqRow.confirm_token) {
+        return res.status(400).json({ error: 'Still waiting on their price confirmation email.' });
+      }
+      if ((status === 'in_progress' || status === 'done') && reqRow.status === 'new') {
+        return res.status(400).json({ error: 'Accept the request first.' });
+      }
 
-        // Already accepted - either free, or already confirmed - so there is
-        // nothing left to check.
-        if (reqRow.status !== 'accepted') {
-          const { shortfall } = await shortfallFor(db, reqRow.user_id, id);
-          if (shortfall > 0) {
-            const amount = await askForConfirmation(db, reqRow, shortfall);
-            return res.status(400).json({
-              error: 'Sent — asked them to confirm £' + (amount / 100).toFixed(0) + ' before this can start.',
-              awaitingConfirmation: true
-            });
+      let amount = 0;
+      if (status === 'accepted' && reqRow.status === 'new') {
+        const { profile, shortfall } = await shortfallFor(db, reqRow.user_id, id);
+        const computed = shortfall * REQUEST_COST.edit.amount; // £40/point, same rate either kind
+        // The admin can override the computed amount - a discount on a request
+        // that turned out easier than its points suggest, say. Never asked of
+        // the customer; this admin decides it before the charge goes through.
+        amount = body.amount == null ? computed : Math.max(0, Math.round(Number(body.amount)));
+
+        if (amount > 0) {
+          if (!STRIPE_SECRET_KEY) {
+            console.error('admin: missing environment variables:', missingEnv(['STRIPE_SECRET_KEY']).join(', '));
+            return res.status(500).json({ error: 'Payments are not configured yet.' });
           }
+          const stripe = new Stripe(STRIPE_SECRET_KEY);
+          let pi;
+          try {
+            pi = await chargeCardForRequest(stripe, profile, reqRow, amount);
+          } catch (err) {
+            if (err.httpStatus) return res.status(err.httpStatus).json({ error: err.message });
+            throw err;
+          }
+
+          const { error: billErr } = await db.from('requests').update({
+            billed_at: new Date().toISOString(), billed_amount: amount, stripe_payment_intent_id: pi.id
+          }).eq('id', id);
+          if (billErr) throw new Error(billErr.message);
         }
       }
 
       const { error } = await db.from('requests').update({ status: status }).eq('id', id);
       if (error) throw new Error(error.message);
-      return res.status(200).json({ ok: true });
+      return res.status(200).json({ ok: true, amount });
     }
 
     // ---- write: change edit <-> feature. Any price question that raises
@@ -240,12 +273,11 @@ module.exports = async function handler(req, res) {
       if (reqRow.billed_at) return res.status(400).json({ error: 'Already charged — cannot reclassify.' });
       if (reqRow.kind === kind) return res.status(200).json({ ok: true, shortfall: 0 });
 
-      // A confirmation already sent or given was for the old price - it does
-      // not carry over to the new one.
-      const patch = { kind, points: REQUEST_COST[kind].points, confirm_token: null, price_confirmed_at: null };
+      const patch = { kind, points: REQUEST_COST[kind].points };
       // Already accepted or under way and turned out to be the other kind:
       // pull it back to Request rather than let it continue, or start,
-      // against a price nobody has agreed to.
+      // against a price nobody has agreed - or paid - to yet. Accepting it
+      // again is what works out the new shortfall, fresh.
       if (reqRow.status === 'accepted' || reqRow.status === 'in_progress') patch.status = 'new';
 
       const { error: kindErr } = await db.from('requests').update(patch).eq('id', id);
@@ -282,7 +314,9 @@ module.exports = async function handler(req, res) {
     }
 
     // ---- write: charge the card on file for a request the points did not
-    //      cover, once it is done. Never twice - billed_at is the guard. ----
+    //      cover. Normally settled the moment it is accepted (above) - this
+    //      stays as a fallback for anything that reached done without being
+    //      charged. Never twice - billed_at is the guard. ----
     if (action === 'chargeRequest') {
       const { STRIPE_SECRET_KEY } = process.env;
       if (!STRIPE_SECRET_KEY) {
@@ -301,9 +335,6 @@ module.exports = async function handler(req, res) {
       if (reqRow.billed_at) return res.status(400).json({ error: 'Already charged.' });
 
       const { profile, shortfall } = await shortfallFor(db, reqRow.user_id, reqRow.id);
-      if (!profile || !profile.stripe_customer_id) {
-        return res.status(400).json({ error: 'No card on file for them yet.' });
-      }
       if (shortfall <= 0) {
         return res.status(400).json({ error: 'This request is covered by their points — nothing to charge.' });
       }
@@ -311,42 +342,12 @@ module.exports = async function handler(req, res) {
       const amount = shortfall * REQUEST_COST.edit.amount; // £40/point, same rate either kind
       const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-      const customer = await stripe.customers.retrieve(profile.stripe_customer_id);
-      let paymentMethodId = customer && customer.invoice_settings
-        && customer.invoice_settings.default_payment_method;
-      if (!paymentMethodId) {
-        const pms = await stripe.paymentMethods.list({ customer: profile.stripe_customer_id, type: 'card' });
-        paymentMethodId = pms.data[0] && pms.data[0].id;
-      }
-      if (!paymentMethodId) {
-        return res.status(400).json({ error: 'No card on file for them — ask them to add one from their account page.' });
-      }
-
       let pi;
       try {
-        pi = await stripe.paymentIntents.create({
-          amount: amount,
-          currency: 'gbp',
-          customer: profile.stripe_customer_id,
-          payment_method: paymentMethodId,
-          off_session: true,
-          confirm: true,
-          description: (reqRow.kind === 'feature' ? 'Feature request' : 'Edit request')
-            + (profile.business_name ? ' — ' + profile.business_name : ''),
-          metadata: { request_id: reqRow.id, supabase_user_id: reqRow.user_id }
-        });
+        pi = await chargeCardForRequest(stripe, profile, reqRow, amount);
       } catch (err) {
-        if (err && err.type === 'StripeCardError') {
-          return res.status(400).json({ error: 'Card declined: ' + (err.message || 'ask them to update their card.') });
-        }
+        if (err.httpStatus) return res.status(err.httpStatus).json({ error: err.message });
         throw err;
-      }
-
-      if (pi.status !== 'succeeded') {
-        return res.status(400).json({
-          error: 'Payment did not complete (status: ' + pi.status + '). '
-            + 'Ask them to confirm it from their end, or update their card.'
-        });
       }
 
       const { error: updErr } = await db.from('requests').update({
