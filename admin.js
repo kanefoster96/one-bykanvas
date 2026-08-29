@@ -54,6 +54,7 @@ async function load() {
     loading.innerHTML = '<p>' + esc(err.message) + '</p>';
     return;
   }
+  markOverage();
   render();
   loading.hidden = true;
   app.hidden = false;
@@ -95,12 +96,45 @@ function pointsUsed(p) {
   }, 0);
 }
 
+var REQUEST_PRICE = { edit: 3500, feature: 10500 }; // pence — must match api/_plans.js
+
+/* Marks each request .overAllowance: true once the running total for that
+   customer, within the current billing period, passes their plan's points -
+   the same rule the account page's own copy states ("charged at the normal
+   rate"). Declined requests and anything from a previous period are excluded,
+   matching pointsUsed() above, so the two views can never disagree. */
+function markOverage() {
+  var byUser = {};
+  state.requests.forEach(function (r) { (byUser[r.user_id] = byUser[r.user_id] || []).push(r); });
+
+  Object.keys(byUser).forEach(function (uid) {
+    var p = state.profiles.filter(function (x) { return x.id === uid; })[0];
+    var allowance = p && p.active_plan ? PLAN_POINTS[p.active_plan] : 0;
+    var start = p ? periodStart(p) : new Date(0);
+
+    var used = 0;
+    byUser[uid]
+      .filter(function (r) { return r.status !== 'declined' && new Date(r.created_at) >= start; })
+      .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); })
+      .forEach(function (r) {
+        r.overAllowance = used >= allowance;
+        used += r.points;
+      });
+  });
+}
+
 function render() {
   var live = state.profiles.filter(function (p) { return p.site_status === 'live'; }).length;
   var paying = state.profiles.filter(function (p) {
     return p.subscription_status === 'active' || p.subscription_status === 'trialing';
   }).length;
-  var open = state.requests.filter(function (r) { return r.status === 'new' || r.status === 'in_progress'; });
+  /* "Open" also holds a done request nobody has charged yet, so an
+     over-allowance job never quietly falls out of view once it is finished -
+     it only leaves the queue once billed_at is set. */
+  var open = state.requests.filter(function (r) {
+    if (r.status === 'new' || r.status === 'in_progress') return true;
+    return r.status === 'done' && r.overAllowance && !r.billed_at;
+  });
 
   document.getElementById('adminSummary').textContent =
     state.profiles.length + ' signed up · ' + paying + ' paying · ' + live + ' live · ' +
@@ -110,47 +144,92 @@ function render() {
   renderCustomers();
 }
 
+/* One item of the queue: the status picker every request gets, plus a
+   Charge card button that only appears once it is done, fell outside the
+   month's points, and nobody has charged it yet. */
+function queueItem(r) {
+  var owner = state.profiles.filter(function (p) { return p.id === r.user_id; })[0];
+  var li = el('li', 'queue-item');
+
+  var main = el('div', 'queue-main');
+  main.appendChild(el('p', 'queue-who', (owner && owner.business_name) || 'Unknown business'));
+  main.appendChild(el('p', 'queue-what', r.detail));
+  main.appendChild(el('p', 'queue-meta',
+    (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' + r.points +
+    (r.points === 1 ? ' point' : ' points') +
+    (r.overAllowance ? ' · over allowance' : '') + ' · asked ' + when(r.created_at)));
+  li.appendChild(main);
+
+  var actions = el('div', 'queue-actions');
+  var sel = el('select', 'admin-select');
+  ['new', 'in_progress', 'done', 'declined'].forEach(function (s) {
+    var o = el('option', null, STATUS_NAME[s]);
+    o.value = s;
+    if (s === r.status) o.selected = true;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', async function () {
+    sel.disabled = true;
+    try {
+      await api({ action: 'setRequestStatus', requestId: r.id, status: sel.value });
+      r.status = sel.value;
+      say('Updated.', 'ok');
+      render();
+    } catch (err) { say(err.message, 'bad'); sel.value = r.status; }
+    sel.disabled = false;
+  });
+  actions.appendChild(sel);
+
+  if (r.status === 'done' && r.overAllowance) {
+    if (r.billed_at) {
+      actions.appendChild(el('p', 'queue-billed', 'Charged £' + (r.billed_amount / 100).toFixed(0) + ' · ' + when(r.billed_at)));
+    } else {
+      var charge = el('button', 'btn btn-ghost admin-charge',
+        'Charge card — £' + (REQUEST_PRICE[r.kind] / 100).toFixed(0));
+      charge.type = 'button';
+      charge.addEventListener('click', async function () {
+        charge.disabled = true;
+        var was = charge.textContent;
+        charge.textContent = 'Charging…';
+        try {
+          var res = await api({ action: 'chargeRequest', requestId: r.id });
+          r.billed_at = new Date().toISOString();
+          r.billed_amount = res.amount;
+          say('Charged.', 'ok');
+          render();
+        } catch (err) {
+          say(err.message, 'bad');
+          charge.disabled = false;
+          charge.textContent = was;
+        }
+      });
+      actions.appendChild(charge);
+    }
+  }
+
+  li.appendChild(actions);
+  return li;
+}
+
+/* Edits and features get their own list, same as the customer's own account
+   page, so a run of feature builds does not bury the one-line edits (or the
+   other way round). */
 function renderQueue(open) {
   var panel = document.getElementById('queuePanel');
-  var list = document.getElementById('queue');
+  var wrap = document.getElementById('queue');
   if (!open.length) { panel.hidden = true; return; }
 
-  list.textContent = '';
-  // Oldest first: the thing waiting longest is the thing to do next.
-  open.slice().sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); })
-      .forEach(function (r) {
-    var owner = state.profiles.filter(function (p) { return p.id === r.user_id; })[0];
-    var li = el('li', 'queue-item');
+  wrap.textContent = '';
+  [['edit', 'Edit requests'], ['feature', 'Feature requests']].forEach(function (pair) {
+    var items = open.filter(function (r) { return r.kind === pair[0]; })
+      // Oldest first: the thing waiting longest is the thing to do next.
+      .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+    if (!items.length) return;
 
-    var main = el('div', 'queue-main');
-    main.appendChild(el('p', 'queue-who', (owner && owner.business_name) || 'Unknown business'));
-    main.appendChild(el('p', 'queue-what', r.detail));
-    main.appendChild(el('p', 'queue-meta',
-      (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' + r.points +
-      (r.points === 1 ? ' point' : ' points') + ' · asked ' + when(r.created_at)));
-    li.appendChild(main);
-
-    var actions = el('div', 'queue-actions');
-    var sel = el('select', 'admin-select');
-    ['new', 'in_progress', 'done', 'declined'].forEach(function (s) {
-      var o = el('option', null, STATUS_NAME[s]);
-      o.value = s;
-      if (s === r.status) o.selected = true;
-      sel.appendChild(o);
-    });
-    sel.addEventListener('change', async function () {
-      sel.disabled = true;
-      try {
-        await api({ action: 'setRequestStatus', requestId: r.id, status: sel.value });
-        r.status = sel.value;
-        say('Updated.', 'ok');
-        render();
-      } catch (err) { say(err.message, 'bad'); sel.value = r.status; }
-      sel.disabled = false;
-    });
-    actions.appendChild(sel);
-    li.appendChild(actions);
-    list.appendChild(li);
+    wrap.appendChild(el('h3', 'req-list-title', pair[1]));
+    var list = el('ul', 'queue');
+    items.forEach(function (r) { list.appendChild(queueItem(r)); });
+    wrap.appendChild(list);
   });
   panel.hidden = false;
 }
@@ -188,8 +267,8 @@ function renderCustomers() {
       var over = allow > 0 && used > allow;
       var line = el('p', 'cust-points' + (over || (!allow && used) ? ' is-over' : ''),
         allow ? used + ' of ' + allow + ' points used this month' +
-                (over ? ' \u2014 ' + (used - allow) + ' over, invoice the extra' : '')
-              : used ? used + (used === 1 ? ' point' : ' points') + ' asked for this month \u2014 invoice separately'
+                (over ? ' \u2014 ' + (used - allow) + ' over, charge from the queue once done' : '')
+              : used ? used + (used === 1 ? ' point' : ' points') + ' asked for this month \u2014 charge from the queue once done'
                      : 'No points included');
       card.appendChild(line);
     }

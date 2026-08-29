@@ -335,7 +335,7 @@ async function showPoints(row) {
   var used = 0;
   var recent = [];
   var q = await ONE.db.from('requests')
-    .select('id, kind, points, detail, status, created_at')
+    .select('id, kind, points, detail, status, created_at, billed_at, billed_amount')
     .order('created_at', { ascending: false })
     .limit(20);
 
@@ -374,38 +374,57 @@ async function showPoints(row) {
   renderRequests(recent);
 }
 
+function requestRow(r) {
+  var li = document.createElement('li');
+
+  var what = document.createElement('span');
+  what.className = 'req-what';
+  what.textContent = r.detail;
+  var when = document.createElement('span');
+  when.className = 'req-when';
+  when.textContent = new Date(r.created_at).toLocaleDateString('en-GB',
+    { day: 'numeric', month: 'short', year: 'numeric' });
+  what.appendChild(when);
+
+  var cost = document.createElement('span');
+  cost.className = 'req-cost';
+  cost.textContent = r.billed_at
+    ? 'Charged £' + (r.billed_amount / 100).toFixed(0)
+    : r.points + (r.points === 1 ? ' pt' : ' pts');
+
+  var state = document.createElement('span');
+  state.className = 'req-state' + (r.status === 'done' ? ' is-done' : '');
+  state.textContent = { new: 'Received', in_progress: 'In progress', done: 'Done', declined: 'Declined' }[r.status] || r.status;
+
+  li.appendChild(what);
+  li.appendChild(cost);
+  li.appendChild(state);
+  return li;
+}
+
+/* Edits and features are kept as two separate lists rather than one mixed
+   feed, since a customer with a lot of history would otherwise have to scan
+   past features to find their last edit or the other way round. */
 function renderRequests(rows) {
   var wrap = document.getElementById('reqList');
-  var list = document.getElementById('reqItems');
   if (!rows || !rows.length) { wrap.hidden = true; return; }
 
-  list.textContent = '';
-  rows.slice(0, 6).forEach(function (r) {
-    var li = document.createElement('li');
+  var groups = [
+    { kind: 'edit',    group: document.getElementById('reqGroupEdit'),    list: document.getElementById('reqItemsEdit') },
+    { kind: 'feature', group: document.getElementById('reqGroupFeature'), list: document.getElementById('reqItemsFeature') }
+  ];
 
-    var what = document.createElement('span');
-    what.className = 'req-what';
-    what.textContent = r.detail;
-    var when = document.createElement('span');
-    when.className = 'req-when';
-    when.textContent = new Date(r.created_at).toLocaleDateString('en-GB',
-      { day: 'numeric', month: 'short', year: 'numeric' });
-    what.appendChild(when);
-
-    var cost = document.createElement('span');
-    cost.className = 'req-cost';
-    cost.textContent = r.points + (r.points === 1 ? ' pt' : ' pts');
-
-    var state = document.createElement('span');
-    state.className = 'req-state' + (r.status === 'done' ? ' is-done' : '');
-    state.textContent = { new: 'Received', in_progress: 'In progress', done: 'Done', declined: 'Declined' }[r.status] || r.status;
-
-    li.appendChild(what);
-    li.appendChild(cost);
-    li.appendChild(state);
-    list.appendChild(li);
+  var any = false;
+  groups.forEach(function (g) {
+    var items = rows.filter(function (r) { return r.kind === g.kind; }).slice(0, 6);
+    g.list.textContent = '';
+    if (!items.length) { g.group.hidden = true; return; }
+    any = true;
+    items.forEach(function (r) { g.list.appendChild(requestRow(r)); });
+    g.group.hidden = false;
   });
-  wrap.hidden = false;
+
+  wrap.hidden = !any;
 }
 
 document.getElementById('reqForm').addEventListener('submit', async function (e) {
@@ -420,23 +439,34 @@ document.getElementById('reqForm').addEventListener('submit', async function (e)
   btn.disabled = true;
   say(note, 'Sending\u2026');
 
-  var ins = await ONE.db.from('requests').insert({
-    user_id: user.id, kind: kind, points: COST[kind], detail: detail
-  });
+  try {
+    var sess = await ONE.db.auth.getSession();
+    var token = sess.data && sess.data.session && sess.data.session.access_token;
+    if (!token) throw new Error('Your session has expired. Log in and try again.');
 
-  btn.disabled = false;
-  if (ins.error) { say(note, ONE.friendlyError(ins.error), 'bad'); return; }
+    var res = await fetch('/api/requests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ kind: kind, detail: detail })
+    });
+    var data = await res.json().catch(function () { return {}; });
+    if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
 
-  /* Say what it cost them, since that is the question they will have. */
-  var left = pointsState.allowance - pointsState.used - COST[kind];
-  say(note, pointsState.allowance > 0 && left >= 0
-    ? 'Sent. That used ' + COST[kind] + (COST[kind] === 1 ? ' point' : ' points') +
-      ', leaving ' + left + '.'
-    : 'Sent. We will confirm the cost before starting.', 'ok');
+    /* Say what it cost them, since that is the question they will have. */
+    var left = pointsState.allowance - pointsState.used - COST[kind];
+    say(note, pointsState.allowance > 0 && left >= 0
+      ? 'Sent. That used ' + COST[kind] + (COST[kind] === 1 ? ' point' : ' points') +
+        ', leaving ' + left + '.'
+      : 'Sent. We will confirm the cost before starting.', 'ok');
 
-  document.getElementById('reqDetail').value = '';
-  var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
-  await showPoints(fresh.data);
+    document.getElementById('reqDetail').value = '';
+    var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
+    await showPoints(fresh.data);
+  } catch (err) {
+    say(note, ONE.friendlyError(err), 'bad');
+  } finally {
+    btn.disabled = false;
+  }
 });
 
 /* ---------------- billing ---------------- */

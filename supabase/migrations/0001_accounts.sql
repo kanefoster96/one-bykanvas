@@ -24,6 +24,12 @@ comment on table public.profiles is
 
 alter table public.profiles enable row level security;
 
+-- RLS narrows access that already exists; it does not grant it. Without this,
+-- every client-side read or write from the authenticated role fails with
+-- "permission denied for table profiles" before the policies below are even
+-- consulted.
+grant select, insert, update on public.profiles to authenticated;
+
 -- A user may only ever see or touch their own row.
 drop policy if exists "profiles: read own"   on public.profiles;
 drop policy if exists "profiles: insert own" on public.profiles;
