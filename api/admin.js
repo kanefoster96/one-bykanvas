@@ -260,84 +260,10 @@ module.exports = async function handler(req, res) {
         .limit(1000);
       if (sfError) throw new Error(sfError.message);
 
-      // Enquiries from the public form, and the follow-ups that come out of
-      // them. Won/lost leads stay in the list - the pipeline is only useful
-      // if you can see what came of things.
-      const { data: leads, error: leadsError } = await db
-        .from('leads')
-        .select('id, name, business, email, plan_interest, about, want_app, status, admin_notes, created_at')
-        .order('created_at', { ascending: false })
-        .limit(500);
-      if (leadsError) throw new Error(leadsError.message);
-
-      const { data: tasks, error: tasksError } = await db
-        .from('tasks')
-        .select('id, title, due_on, done_at, user_id, lead_id, created_at')
-        .order('created_at', { ascending: false })
-        .limit(500);
-      if (tasksError) throw new Error(tasksError.message);
-
       return res.status(200).json({
         profiles: profiles || [], requests: shaped, templates: templates || [],
-        seoUpdates: seoUpdates || [], siteFeatures: siteFeatures || [],
-        leads: leads || [], tasks: tasks || []
+        seoUpdates: seoUpdates || [], siteFeatures: siteFeatures || []
       });
-    }
-
-    // ---- write: move a lead along the pipeline -------------------------
-    if (action === 'setLeadStatus') {
-      const id = String(body.leadId || '');
-      const status = String(body.status || '');
-      if (!id) return res.status(400).json({ error: 'Which enquiry?' });
-      if (!['new', 'contacted', 'quoted', 'won', 'lost'].includes(status)) {
-        return res.status(400).json({ error: 'Unknown status.' });
-      }
-      const { error } = await db.from('leads').update({ status }).eq('id', id);
-      if (error) throw new Error(error.message);
-      return res.status(200).json({ ok: true });
-    }
-
-    // ---- write: notes on an enquiry, same as notes on a customer -------
-    if (action === 'setLeadNotes') {
-      const id = String(body.leadId || '');
-      const notes = body.notes == null ? null : String(body.notes).trim() || null;
-      if (!id) return res.status(400).json({ error: 'Which enquiry?' });
-      const { error } = await db.from('leads').update({ admin_notes: notes }).eq('id', id);
-      if (error) throw new Error(error.message);
-      return res.status(200).json({ ok: true });
-    }
-
-    // ---- write: the admin's own to-do list ------------------------------
-    if (action === 'addTask') {
-      const title = String(body.title || '').trim().slice(0, 300);
-      if (!title) return res.status(400).json({ error: 'What needs doing?' });
-      const { data, error } = await db.from('tasks').insert({
-        title,
-        due_on: body.dueOn ? String(body.dueOn).slice(0, 10) : null,
-        user_id: body.userId ? String(body.userId) : null,
-        lead_id: body.leadId ? String(body.leadId) : null
-      }).select().single();
-      if (error) throw new Error(error.message);
-      return res.status(200).json({ ok: true, task: data });
-    }
-
-    // done_at rather than a flag, so ticking one off records when.
-    if (action === 'setTaskDone') {
-      const id = String(body.taskId || '');
-      if (!id) return res.status(400).json({ error: 'Which task?' });
-      const { data, error } = await db.from('tasks')
-        .update({ done_at: body.done ? new Date().toISOString() : null })
-        .eq('id', id).select().single();
-      if (error) throw new Error(error.message);
-      return res.status(200).json({ ok: true, task: data });
-    }
-
-    if (action === 'removeTask') {
-      const id = String(body.taskId || '');
-      if (!id) return res.status(400).json({ error: 'Which task?' });
-      const { error } = await db.from('tasks').delete().eq('id', id);
-      if (error) throw new Error(error.message);
-      return res.status(200).json({ ok: true });
     }
 
     // ---- write: the site address and whether it is live ----------------

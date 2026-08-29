@@ -881,7 +881,7 @@ body.locked{overflow:hidden}
    row swaps the whole menu for that section's page; ← Menu comes back. */
 .admin-menu{
   background:#fff;border-radius:var(--radius-lg);border:1px solid var(--line-soft);
-  padding:6px clamp(20px,4vw,28px);
+  padding:6px clamp(20px,4vw,28px);margin-top:26px;
 }
 .menu-row{
   display:flex;align-items:center;gap:15px;width:100%;
@@ -930,14 +930,37 @@ body.locked{overflow:hidden}
 
 .seo-panel .queue{margin-top:16px}
 
-#tasksBody .req-list-title,#leadsBody .req-list-title{margin-top:28px}
-#tasksBody .req-list-title:first-child,#leadsBody .req-list-title:first-child{margin-top:0}
-#leadsBody .cust + .req-list-title{margin-top:30px}
+/* Payments, laid out like a statement: a summary strip, then rows grouped
+   under a date with the amount and status set hard right. */
+.pay-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.pay-stat{
+  flex:1 1 140px;min-width:0;padding:15px 17px;
+  background:var(--bg-grey);border-radius:16px;display:flex;flex-direction:column;gap:5px;
+}
+.pay-stat-label{font-size:12.5px;color:var(--ink-3);letter-spacing:.01em}
+.pay-stat-value{font-size:23px;font-weight:600;letter-spacing:-.03em;color:var(--ink)}
 
-.task-line{display:flex;align-items:flex-start;gap:11px;font-size:15.5px;line-height:1.45;color:var(--ink);cursor:pointer}
-.task-line input{margin-top:2px;flex:0 0 auto;width:17px;height:17px;accent-color:var(--ink)}
-.task-done{color:var(--ink-3);text-decoration:line-through}
-.task-due{flex:0 0 auto;min-width:0}
+#paymentsBody .req-list-title{margin-top:28px}
+.pay-day{
+  margin:26px 0 2px;font-size:12px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink-3);
+}
+.pay-list{list-style:none;margin:0;padding:0}
+.pay-row{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:18px;
+  padding:16px 0;border-bottom:1px solid var(--line-soft);
+}
+.pay-row:last-child{border-bottom:0}
+.pay-main{flex:1;min-width:0}
+.pay-who{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em;color:var(--ink);overflow-wrap:anywhere}
+.pay-what{margin:3px 0 0;font-size:14px;line-height:1.4;color:var(--ink-2);overflow-wrap:anywhere}
+.pay-meta{margin:4px 0 0;font-size:12.5px;color:var(--ink-3)}
+.pay-side{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.pay-amount{margin:0;font-size:18px;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.pay-pill{
+  padding:4px 11px;border-radius:980px;background:var(--good-soft);color:var(--good);
+  font-size:11.5px;font-weight:600;letter-spacing:.02em;
+}
 
 .payments-panel{margin:10px 0}
 .payments-body{margin-top:14px}
