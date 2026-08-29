@@ -72,6 +72,40 @@ async function shortfallFor(db, userId, requestId) {
   return { profile, shortfall };
 }
 
+/* Sets the request on hold for the customer's own sign-off and emails them
+ * the one-click link, mailed straight to the address on their account -
+ * no login, the token itself is the credential. Returns the pence amount so
+ * the caller can say what was asked for. */
+async function askForConfirmation(db, reqRow, shortfall) {
+  const confirmToken = crypto.randomUUID();
+  const amount = shortfall * REQUEST_COST.edit.amount; // £35/point, same rate either kind
+
+  const { error: patchErr } = await db.from('requests')
+    .update({ confirm_token: confirmToken, price_confirmed_at: null })
+    .eq('id', reqRow.id);
+  if (patchErr) throw new Error(patchErr.message);
+
+  // Telling them is best effort - the hold itself already took effect via
+  // confirm_token, so a failed send delays them finding out, not the hold.
+  const { data: who } = await db.auth.admin.getUserById(reqRow.user_id);
+  const customerEmail = who && who.user && who.user.email;
+  if (customerEmail) {
+    const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+    const link = site + '/api/confirm-request?token=' + confirmToken;
+    const result = await sendEmail({
+      to: customerEmail,
+      subject: 'Please confirm the price for your request',
+      text: `Before we start on this - "${reqRow.detail}" - we wanted to check you're happy with the cost: `
+          + `it comes to an extra £${(amount / 100).toFixed(0)} on top of what your plan covers this month.\n\n`
+          + `Click below to confirm and we'll get started:\n${link}\n\n`
+          + `If that doesn't sound right, just reply to this email.`
+    });
+    console.log('admin: confirmation email', result);
+  }
+
+  return amount;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -160,7 +194,15 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    // ---- write: move a request along --------------------------------
+    // ---- write: move a request along ------------------------------------
+    //
+    // Starting work is the one gate that matters: whichever way a request
+    // got here - submitted that way, or reclassified into it - trying to
+    // move it to in_progress is what decides whether the points cover it
+    // (silent, nothing to do) or the customer needs to agree to pay the
+    // difference first. Nothing is asked of them until this point, and
+    // never twice for the same price - confirm_token is both the guard and
+    // the trigger.
     if (action === 'setRequestStatus') {
       const id = String(body.requestId || '');
       const status = String(body.status || '');
@@ -168,21 +210,39 @@ module.exports = async function handler(req, res) {
       if (!['new', 'in_progress', 'done', 'declined'].includes(status)) {
         return res.status(400).json({ error: 'Unknown status.' });
       }
+
       if (status === 'in_progress') {
-        const { data: cur, error: curErr } = await db
-          .from('requests').select('confirm_token').eq('id', id).maybeSingle();
+        const { data: reqRow, error: curErr } = await db.from('requests').select('*').eq('id', id).maybeSingle();
         if (curErr) throw new Error(curErr.message);
-        if (cur && cur.confirm_token) {
-          return res.status(400).json({ error: 'Waiting on the customer to confirm the new price first.' });
+        if (!reqRow) return res.status(404).json({ error: 'Request not found.' });
+
+        if (reqRow.confirm_token) {
+          return res.status(400).json({
+            error: 'Waiting on the customer to confirm the price first.',
+            awaitingConfirmation: true
+          });
+        }
+
+        if (!reqRow.price_confirmed_at) {
+          const { shortfall } = await shortfallFor(db, reqRow.user_id, id);
+          if (shortfall > 0) {
+            const amount = await askForConfirmation(db, reqRow, shortfall);
+            return res.status(400).json({
+              error: 'Sent — asked them to confirm £' + (amount / 100).toFixed(0) + ' before this can start.',
+              awaitingConfirmation: true
+            });
+          }
         }
       }
+
       const { error } = await db.from('requests').update({ status: status }).eq('id', id);
       if (error) throw new Error(error.message);
       return res.status(200).json({ ok: true });
     }
 
-    // ---- write: change edit <-> feature, and hold for the customer's
-    //      sign-off if that raised what they owe --------------------------
+    // ---- write: change edit <-> feature. Any price question that raises
+    //      is decided fresh the next time this is moved to in_progress,
+    //      not asked here. ------------------------------------------------
     if (action === 'reclassifyRequest') {
       const id = String(body.requestId || '');
       const kind = String(body.kind || '').toLowerCase();
@@ -198,52 +258,20 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'Too late to reclassify a finished request.' });
       }
       if (reqRow.billed_at) return res.status(400).json({ error: 'Already charged — cannot reclassify.' });
-      if (reqRow.kind === kind) return res.status(200).json({ ok: true, needsConfirmation: false });
+      if (reqRow.kind === kind) return res.status(200).json({ ok: true, shortfall: 0 });
 
-      const { error: kindErr } = await db.from('requests')
-        .update({ kind, points: REQUEST_COST[kind].points }).eq('id', id);
-      if (kindErr) throw new Error(kindErr.message);
-
-      const { profile, shortfall } = await shortfallFor(db, reqRow.user_id, id);
-
-      // Covered by their points even under the new kind - nothing to hold for.
-      if (shortfall <= 0) {
-        const { error: clearErr } = await db.from('requests')
-          .update({ confirm_token: null }).eq('id', id);
-        if (clearErr) throw new Error(clearErr.message);
-        return res.status(200).json({ ok: true, needsConfirmation: false });
-      }
-
-      const confirmToken = crypto.randomUUID();
-      const amount = shortfall * REQUEST_COST.edit.amount; // £35/point, same rate either kind
-      const patch = { confirm_token: confirmToken, price_confirmed_at: null };
-      // Already under way and turned out bigger than booked: it must wait
-      // for confirmation before continuing, not carry on unpaid-for.
+      // A confirmation already sent or given was for the old price - it does
+      // not carry over to the new one.
+      const patch = { kind, points: REQUEST_COST[kind].points, confirm_token: null, price_confirmed_at: null };
+      // Already under way and turned out to be the other kind: pull it back
+      // to New rather than let it continue against a price nobody has agreed.
       if (reqRow.status === 'in_progress') patch.status = 'new';
 
-      const { error: patchErr } = await db.from('requests').update(patch).eq('id', id);
-      if (patchErr) throw new Error(patchErr.message);
+      const { error: kindErr } = await db.from('requests').update(patch).eq('id', id);
+      if (kindErr) throw new Error(kindErr.message);
 
-      // Telling them is best effort - the hold itself already took effect via
-      // confirm_token, so a failed send delays them finding out, not the hold.
-      const { data: who } = await db.auth.admin.getUserById(reqRow.user_id);
-      const customerEmail = who && who.user && who.user.email;
-      if (customerEmail) {
-        const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
-        const link = site + '/api/confirm-request?token=' + confirmToken;
-        const result = await sendEmail({
-          to: customerEmail,
-          subject: 'Please confirm the price for your request',
-          text: `Looking at what you asked for — "${reqRow.detail}" — this is actually `
-              + `${kind === 'feature' ? 'a new feature' : 'an edit'} rather than what it was booked as, `
-              + `which comes to an extra £${(amount / 100).toFixed(0)} on top of what your plan covers.\n\n`
-              + `We won't start until you've confirmed you're happy with that:\n${link}\n\n`
-              + `If that doesn't sound right, just reply to this email.`
-        });
-        console.log('admin: reclassify confirmation email', result);
-      }
-
-      return res.status(200).json({ ok: true, needsConfirmation: true, amount: amount });
+      const { shortfall } = await shortfallFor(db, reqRow.user_id, id);
+      return res.status(200).json({ ok: true, shortfall, amount: shortfall * REQUEST_COST.edit.amount });
     }
 
     // ---- write: charge the card on file for a request the points did not

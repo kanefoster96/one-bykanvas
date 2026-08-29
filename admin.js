@@ -43,7 +43,13 @@ async function api(payload) {
   });
   var data = await res.json().catch(function () { return {}; });
   if (res.status === 404) throw new Error('This page is not for this account.');
-  if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+  if (!res.ok) {
+    // A rejection can carry more than a message - awaitingConfirmation, say -
+    // that a caller needs to react to, not just display.
+    var err = new Error(data.error || 'Something went wrong.');
+    err.data = data;
+    throw err;
+  }
   return data;
 }
 
@@ -184,13 +190,29 @@ function queueItem(r) {
       r.status = sel.value;
       say('Updated.', 'ok');
       render();
-    } catch (err) { say(err.message, 'bad'); sel.value = r.status; }
+    } catch (err) {
+      // Trying to start it is what actually asks the points-vs-price
+      // question server-side - a rejection here can mean an email just went
+      // out, not just that something failed, so it is shown as ok, and the
+      // request re-renders greyed out immediately rather than waiting on a
+      // full reload to notice.
+      if (err.data && err.data.awaitingConfirmation) {
+        r.awaitingConfirmation = true;
+        say(err.message, 'ok');
+        render();
+      } else {
+        say(err.message, 'bad');
+        sel.value = r.status;
+      }
+    }
     sel.disabled = false;
   });
   actions.appendChild(sel);
 
   // Booked as one thing, turned out to be the other. Only offered before the
-  // job is finished - once billed or done, the price is settled.
+  // job is finished - once billed or done, the price is settled. Whether
+  // this needs the customer's sign-off is decided later, the next time it is
+  // moved to in_progress - not here.
   if (r.status === 'new' || r.status === 'in_progress') {
     var toKind = r.kind === 'feature' ? 'edit' : 'feature';
     var reclass = el('button', 'linkish queue-reclass',
@@ -201,8 +223,9 @@ function queueItem(r) {
       reclass.disabled = true;
       try {
         var res = await api({ action: 'reclassifyRequest', requestId: r.id, kind: toKind });
-        say(res.needsConfirmation
-          ? 'Reclassified — emailed them to confirm £' + (res.amount / 100).toFixed(0) + ' before this can start.'
+        say(res.shortfall > 0
+          ? 'Reclassified — £' + (res.amount / 100).toFixed(0) + ' over allowance. '
+            + 'They will be asked to confirm before you can start it.'
           : 'Reclassified.', 'ok');
         await load(); // kind can move it between the Edit/Feature lists, so reload rather than patch in place
       } catch (err) {
