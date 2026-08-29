@@ -14,7 +14,7 @@ var app     = document.getElementById('app');
 var note    = document.getElementById('adminNote');
 
 var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
-var PLAN_POINTS = { business: 0, pro: 3, max: 5 };
+var PLAN_POINTS = { business: 1, pro: 3, max: 5 };
 var STATUS_NAME = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
 
 var state = { profiles: [], requests: [], templates: [] };
@@ -102,13 +102,13 @@ function pointsUsed(p) {
   }, 0);
 }
 
-var POINT_PRICE = 3500; // pence per point — £35 either way in api/_plans.js REQUEST_COST
+var POINT_PRICE = 4000; // pence per point — £40 either way in api/_plans.js REQUEST_COST
 
 /* Marks each request .shortfallPoints: how many of its points the plan's
    allowance did not cover, worked out in the order requests were made. A
    feature that lands once the allowance is half spent is billed only for the
    points that ran out, not the whole thing - one point left and a 3-point
-   feature bills 2 points (£70), not the full £105. Declined requests and
+   feature bills 2 points (£80), not the full £120. Declined requests and
    anything from a previous period are excluded, matching pointsUsed() above,
    so the two views can never disagree. */
 function markShortfall() {

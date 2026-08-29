@@ -7,7 +7,7 @@
  * boundary this measures against is never a few hours off from what the
  * customer and admin page both already show.
  */
-const PLAN_POINTS = { business: 0, pro: 3, max: 5 }; // must match admin.js and account.js
+const PLAN_POINTS = { business: 1, pro: 3, max: 5 }; // must match admin.js and account.js
 
 async function shortfallFor(db, userId, requestId) {
   const { data: profile, error: pErr } = await db

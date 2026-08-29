@@ -32,7 +32,7 @@ function adminList() {
  * the caller can say what was asked for. */
 async function askForConfirmation(db, reqRow, shortfall) {
   const confirmToken = crypto.randomUUID();
-  const amount = shortfall * REQUEST_COST.edit.amount; // £35/point, same rate either kind
+  const amount = shortfall * REQUEST_COST.edit.amount; // £40/point, same rate either kind
 
   const { error: patchErr } = await db.from('requests')
     .update({ confirm_token: confirmToken, price_confirmed_at: null })
@@ -308,7 +308,7 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'This request is covered by their points — nothing to charge.' });
       }
 
-      const amount = shortfall * REQUEST_COST.edit.amount; // £35/point, same rate either kind
+      const amount = shortfall * REQUEST_COST.edit.amount; // £40/point, same rate either kind
       const stripe = new Stripe(STRIPE_SECRET_KEY);
 
       const customer = await stripe.customers.retrieve(profile.stripe_customer_id);

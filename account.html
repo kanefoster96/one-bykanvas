@@ -59,10 +59,10 @@
       </div>
     </div>
 
-    <!-- Business has no points, so the panel makes the case for Pro instead. -->
+    <!-- Only shown while active_plan hasn't landed yet - every real plan has
+         at least one point now, so allowance is never really zero. -->
     <div class="points-upsell" id="pointsUpsell" hidden>
-      <p><strong>Business doesn&rsquo;t include points.</strong> Ask for anything you like &mdash; an edit is £35, a new feature is £105 &mdash; and we&rsquo;ll charge the card on file once it&rsquo;s done.</p>
-      <p class="points-upsell-more">Changing something most months? <strong>Pro</strong> is £90 and includes three points, which covers a new feature or three edits.</p>
+      <p>Setting up your plan&rsquo;s points now &mdash; this will show what you have as soon as it&rsquo;s through.</p>
     </div>
 
     <div class="req-launch" id="reqLaunch">
@@ -86,11 +86,11 @@
       <div class="req-kinds">
         <label class="req-kind">
           <input type="radio" name="kind" value="edit" checked>
-          <span><b>An edit</b><em>1 point &middot; £35</em><small>A photo, some wording, prices, hours</small></span>
+          <span><b>An edit</b><em>1 point &middot; £40</em><small>A photo, some wording, prices, hours</small></span>
         </label>
         <label class="req-kind">
           <input type="radio" name="kind" value="feature">
-          <span><b>A new feature</b><em>3 points &middot; £105</em><small>Bookings, payments, a members area, a new page</small></span>
+          <span><b>A new feature</b><em>3 points &middot; £120</em><small>Bookings, payments, a members area, a new page</small></span>
         </label>
       </div>
       <p class="req-price" id="reqPrice"></p>
@@ -155,8 +155,8 @@
         <span>Plan</span>
         <select id="planChoice">
           <option value="business">Business — £50/month</option>
-          <option value="pro">Pro — £90/month</option>
-          <option value="max">Max — £150/month</option>
+          <option value="pro">Pro — £120/month</option>
+          <option value="max">Max — £250/month</option>
         </select>
       </label>
       <button class="btn btn-primary" id="payBtn" type="button">Set up payment</button>
@@ -205,7 +205,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="account.js?v=3"></script>
+<script src="account.js?v=4"></script>
 <script src="admin-pill.js?v=4"></script>
 </body>
 </html>

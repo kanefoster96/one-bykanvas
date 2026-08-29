@@ -75,7 +75,7 @@ module.exports = async function handler(req, res) {
     if (error) throw new Error(error.message);
 
     const { shortfall } = await shortfallFor(db, user.id, row.id);
-    const amount = shortfall * REQUEST_COST.edit.amount; // £35/point, same rate either kind
+    const amount = shortfall * REQUEST_COST.edit.amount; // £40/point, same rate either kind
 
     const patch = { status: 'accepted' };
     if (shortfall > 0) patch.price_confirmed_at = new Date().toISOString();

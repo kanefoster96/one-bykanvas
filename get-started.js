@@ -24,8 +24,8 @@
 
   var PLANS = {
     business: { label: 'Business', price: '£50' },
-    pro:      { label: 'Pro',      price: '£90' },
-    max:      { label: 'Max',      price: '£150' }
+    pro:      { label: 'Pro',      price: '£120' },
+    max:      { label: 'Max',      price: '£250' }
   };
 
   function $(id) { return document.getElementById(id); }

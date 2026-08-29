@@ -248,7 +248,7 @@ document.getElementById('profileForm').addEventListener('submit', async function
 
 /* Points per plan. api/_plans.js carries the same numbers for the server side;
    change both. An edit costs one point, a feature three. */
-var PLAN_POINTS = { business: 0, pro: 3, max: 5 };
+var PLAN_POINTS = { business: 1, pro: 3, max: 5 };
 var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
 var COST        = { edit: 1, feature: 3 };
 
@@ -375,7 +375,7 @@ async function showPoints(row) {
     document.getElementById('pointsFill').style.width = Math.round((left / allowance) * 100) + '%';
     upsell.hidden = true;
     note.textContent = left === 0
-      ? 'You have used this month\u2019s points. Anything else is charged at the normal rate \u2014 \u00a335 an edit, \u00a3105 a feature.'
+      ? 'You have used this month\u2019s points. Anything else is charged at the normal rate \u2014 \u00a340 an edit, \u00a3120 a feature.'
       : 'An edit costs 1 point, a new feature 3. Points reset each month and do not roll over.';
   } else {
     bar.hidden = true;
@@ -608,10 +608,10 @@ function updatePricePreview() {
     el.className = 'req-price';
   } else if (covered > 0) {
     el.textContent = 'Uses your last ' + covered + (covered === 1 ? ' point' : ' points')
-      + ', plus \u00a3' + (shortfall * 35) + ' on the card on file once it is done.';
+      + ', plus \u00a3' + (shortfall * 40) + ' on the card on file once it is done.';
     el.className = 'req-price is-charge';
   } else {
-    el.textContent = 'No points left this month \u2014 \u00a3' + (shortfall * 35)
+    el.textContent = 'No points left this month \u2014 \u00a3' + (shortfall * 40)
       + ' on the card on file once it is done.';
     el.className = 'req-price is-charge';
   }
@@ -720,7 +720,7 @@ var STATUS_TEXT = {
   paused:             ['Paused', 'Your subscription is paused.']
 };
 
-var PLAN_LABEL = { business: 'Business — £50/month', pro: 'Pro — £90/month', max: 'Max — £150/month' };
+var PLAN_LABEL = { business: 'Business — £50/month', pro: 'Pro — £120/month', max: 'Max — £250/month' };
 
 function showBilling(row) {
   var badge = document.getElementById('billBadge');
