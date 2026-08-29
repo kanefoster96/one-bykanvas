@@ -77,6 +77,7 @@ async function start() {
   showSite(profile.data);
   showBilling(profile.data);
   await showPoints(profile.data);
+  await showFeatures();
   await loadTemplates();
 
   loading.hidden = true;
@@ -317,6 +318,41 @@ function showSite(row) {
   } else {
     idSite.hidden = true;
   }
+}
+
+var FEATURE_NEW_DAYS = 30;
+
+/* What the site can do, added by us - by hand, or when a feature request is
+   delivered. A green New pill marks anything touched in the last 30 days,
+   measured from updated_at rather than created_at so re-marking one keeps
+   it fresh without renaming it. */
+async function showFeatures() {
+  var panel = document.getElementById('featuresPanel');
+  var list = document.getElementById('featureList');
+
+  var q = await ONE.db.from('site_features').select('id, name, updated_at').order('updated_at', { ascending: false });
+  var rows = (!q.error && q.data) || [];
+  if (!rows.length) { panel.hidden = true; return; }
+
+  list.textContent = '';
+  rows.forEach(function (f) {
+    var li = document.createElement('li');
+    li.className = 'feature-item';
+    var main = document.createElement('div');
+    main.className = 'feature-item-main';
+    main.appendChild(document.createTextNode(f.name));
+
+    var updated = new Date(f.updated_at);
+    if (!isNaN(updated) && (Date.now() - updated.getTime()) <= FEATURE_NEW_DAYS * 24 * 60 * 60 * 1000) {
+      var pill = document.createElement('span');
+      pill.className = 'feature-new';
+      pill.textContent = 'New';
+      main.appendChild(pill);
+    }
+    li.appendChild(main);
+    list.appendChild(li);
+  });
+  panel.hidden = false;
 }
 
 /* Start of the current billing period. Points reset with the invoice, not the

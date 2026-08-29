@@ -20,7 +20,7 @@ var PLAN_POINTS = { business: 1, pro: 3, max: 5 };
 var PLAN_PRICE  = { business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
 var STATUS_NAME = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
 
-var state = { profiles: [], requests: [], templates: [], seoUpdates: [] };
+var state = { profiles: [], requests: [], templates: [], seoUpdates: [], siteFeatures: [] };
 
 var SECTIONS = [
   { key: 'requests',  label: 'Requests' },
@@ -123,6 +123,18 @@ function lifetimeSpent(userId) {
 function seoHistoryFor(userId) {
   return state.seoUpdates.filter(function (s) { return s.user_id === userId; })
     .sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+}
+
+var FEATURE_NEW_DAYS = 30;
+
+function isFreshFeature(iso) {
+  var d = new Date(iso);
+  return !isNaN(d) && (Date.now() - d.getTime()) <= FEATURE_NEW_DAYS * 24 * 60 * 60 * 1000;
+}
+
+function featuresFor(userId) {
+  return state.siteFeatures.filter(function (f) { return f.user_id === userId; })
+    .sort(function (a, b) { return new Date(b.updated_at) - new Date(a.updated_at); });
 }
 
 function seoLoggedThisPeriod(p) {
@@ -538,36 +550,58 @@ function renderCustomersList(wrap) {
   customers.forEach(function (p) { wrap.appendChild(customerListRow(p)); });
 }
 
-/* Freely editable - the whole list is replaced each save rather than
-   added to/removed from piecemeal, since the page always has the current
-   array in hand already. A feature request marked done pushes onto this
-   same list server-side, so what shows here is never only what was typed
-   in by hand. */
+/* Each feature is its own row now, not a plain array - so one can be marked
+   updated (refreshing its NEW pill and telling the customer) or removed
+   (silently - nothing to tell them about a feature going away) without
+   touching the rest. A feature request marked done adds one here too, the
+   same way and with the same email, so what shows here is never only what
+   was typed in by hand. */
 function featureEditor(p) {
   var wrap = el('div', 'feature-editor');
-  var features = p.site_features || [];
+  var features = featuresFor(p.id);
 
-  function save(next, msg) {
-    return api({ action: 'setSiteFeatures', userId: p.id, features: next }).then(function () {
-      p.site_features = next.length ? next : null;
-      say(msg, 'ok');
-      render();
-    }, function (err) { say(err.message, 'bad'); });
-  }
-
-  var list = el('ul', 'feature-list');
   if (!features.length) {
     wrap.appendChild(el('p', 'site-none', 'Nothing added yet.'));
   } else {
-    features.forEach(function (f, i) {
+    var list = el('ul', 'feature-list');
+    features.forEach(function (f) {
       var li = el('li', 'feature-item');
-      li.appendChild(el('span', null, f));
+
+      var main = el('div', 'feature-item-main');
+      main.appendChild(el('span', null, f.name));
+      if (isFreshFeature(f.updated_at)) main.appendChild(el('span', 'feature-new', 'New'));
+      li.appendChild(main);
+
+      var actions = el('div', 'feature-item-actions');
+
+      var refresh = el('button', 'linkish', 'Mark as updated');
+      refresh.type = 'button';
+      refresh.addEventListener('click', async function () {
+        refresh.disabled = true;
+        try {
+          var res = await api({ action: 'markFeatureUpdated', featureId: f.id });
+          f.updated_at = res.feature.updated_at;
+          say('Marked as updated — they’ve been emailed.', 'ok');
+          render();
+        } catch (err) { say(err.message, 'bad'); refresh.disabled = false; }
+      });
+      actions.appendChild(refresh);
+
       var remove = el('button', 'linkish', 'Remove');
       remove.type = 'button';
-      remove.addEventListener('click', function () {
-        save(features.slice(0, i).concat(features.slice(i + 1)), 'Removed.');
+      remove.addEventListener('click', async function () {
+        if (!confirm('Remove "' + f.name + '" from their feature list?')) return;
+        remove.disabled = true;
+        try {
+          await api({ action: 'removeSiteFeature', featureId: f.id });
+          state.siteFeatures = state.siteFeatures.filter(function (x) { return x.id !== f.id; });
+          say('Removed.', 'ok');
+          render();
+        } catch (err) { say(err.message, 'bad'); remove.disabled = false; }
       });
-      li.appendChild(remove);
+      actions.appendChild(remove);
+
+      li.appendChild(actions);
       list.appendChild(li);
     });
     wrap.appendChild(list);
@@ -578,18 +612,70 @@ function featureEditor(p) {
   input.type = 'text';
   input.placeholder = 'e.g. Online table booking';
   input.maxLength = 200;
-  var add = el('button', 'btn btn-ghost admin-save', 'Add');
+  var add = el('button', 'btn btn-ghost admin-save', 'Add new feature');
   add.type = 'button';
-  add.addEventListener('click', function () {
+  add.addEventListener('click', async function () {
     var val = input.value.trim();
     if (!val) return;
-    input.value = '';
-    save(features.concat(val), 'Added.');
+    add.disabled = true;
+    try {
+      var res = await api({ action: 'addSiteFeature', userId: p.id, name: val });
+      state.siteFeatures.unshift(res.feature);
+      input.value = '';
+      say('Added — they’ve been emailed.', 'ok');
+      render();
+    } catch (err) {
+      say(err.message, 'bad');
+      add.disabled = false;
+    }
   });
   form.appendChild(input);
   form.appendChild(add);
   wrap.appendChild(form);
 
+  return wrap;
+}
+
+/* Tucked behind a click rather than shown inline next to the feature list -
+   what they've been charged is a different question from what their site
+   can do, and the two used to sit awkwardly on top of each other. */
+function paymentsPanel(p) {
+  var wrap = el('div', 'payments-panel');
+
+  var toggle = el('button', 'btn btn-ghost admin-save', 'View payments');
+  toggle.type = 'button';
+
+  var body = el('div', 'payments-body');
+  body.hidden = true;
+
+  var charged = state.requests.filter(function (r) { return r.user_id === p.id && r.billed_at; })
+    .sort(function (a, b) { return new Date(b.billed_at) - new Date(a.billed_at); });
+  var total = lifetimeSpent(p.id);
+
+  body.appendChild(el('p', 'cust-points', '£' + (total / 100).toFixed(0) + ' charged lifetime'));
+  if (!charged.length) {
+    body.appendChild(el('p', 'site-none', 'Nothing charged yet.'));
+  } else {
+    var list = el('ul', 'queue');
+    charged.forEach(function (r) {
+      var li = el('li', 'queue-item');
+      var main = el('div', 'queue-main');
+      main.appendChild(el('p', 'queue-what', r.detail));
+      main.appendChild(el('p', 'queue-meta', (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · £' +
+        (r.billed_amount / 100).toFixed(0) + ' · ' + when(r.billed_at)));
+      li.appendChild(main);
+      list.appendChild(li);
+    });
+    body.appendChild(list);
+  }
+
+  toggle.addEventListener('click', function () {
+    body.hidden = !body.hidden;
+    toggle.textContent = body.hidden ? 'View payments' : 'Hide payments';
+  });
+
+  wrap.appendChild(toggle);
+  wrap.appendChild(body);
   return wrap;
 }
 
@@ -711,7 +797,7 @@ function customerDetail(p) {
   var used = pointsUsed(p);
   var allow = PLAN_POINTS[p.active_plan];
   wrap.appendChild(el('p', 'cust-points' + (used > allow ? ' is-over' : ''), used + ' of ' + allow + ' points used this month'));
-  wrap.appendChild(el('p', 'cust-points', '£' + (lifetimeSpent(p.id) / 100).toFixed(0) + ' spent lifetime'));
+  wrap.appendChild(paymentsPanel(p));
 
   wrap.appendChild(el('h3', 'req-list-title', 'Features on your site'));
   wrap.appendChild(featureEditor(p));
