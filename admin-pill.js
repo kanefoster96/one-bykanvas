@@ -14,7 +14,7 @@
 (function () {
   'use strict';
 
-  var ADMINS = ['kane.foster@ymail.com', 'kane@kanvas.one'];
+  var ADMINS = ['kane@kanvas.one'];
 
   function pill(bar, id, cls, href, text) {
     if (document.getElementById(id)) return;

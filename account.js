@@ -23,6 +23,23 @@ var avatarPath = null;
    resolves, so anything reading location.search later finds it already gone. */
 var CHECKOUT_STATE = new URLSearchParams(location.search).get('checkout');
 
+/* Read at load for the same reason, and because supabase-js clears the hash
+   once it has looked at it.
+
+   A confirmation link that does not work reports itself here rather than by
+   landing somewhere different, so without this the customer is bounced
+   silently to the login page with no idea why the link did nothing. The usual
+   cause is the link having already been opened - mail scanners follow links
+   in mail they are filtering, and the token is single-use, so the scan spends
+   it before the customer ever clicks. */
+var LINK_ERROR = (function () {
+  var hash  = new URLSearchParams(String(location.hash || '').replace(/^#/, ''));
+  var query = new URLSearchParams(location.search);
+  function pick(name) { return hash.get(name) || query.get(name) || ''; }
+  if (!pick('error') && !pick('error_code') && !pick('error_description')) return null;
+  return { code: pick('error_code'), desc: pick('error_description').replace(/\+/g, ' ') };
+})();
+
 if (!ONE.ready) {
   loading.innerHTML = '<p>Accounts are not connected yet — add your Supabase URL and '
                     + 'publishable key to <code>supabase-config.js</code>.</p>';
@@ -38,6 +55,29 @@ if (!ONE.ready) {
  * customer who has just paid with a wall. Say what happened instead. */
 function landedWithoutSession() {
   var state = CHECKOUT_STATE;
+
+  /* Before the Stripe cases: someone whose link failed needs telling that,
+     whatever else brought them here. */
+  if (LINK_ERROR) {
+    /* Supabase's own wording is written for developers, and it arrives in the
+       URL where anyone could put anything - so it goes to the console for us
+       and never into the page. */
+    console.warn('auth link rejected:', LINK_ERROR.code, LINK_ERROR.desc);
+
+    var expired = /expired|invalid|otp/i.test(LINK_ERROR.code + ' ' + LINK_ERROR.desc);
+    loading.innerHTML =
+      '<div class="acct-land">' +
+      '<h1>That link didn&rsquo;t work.</h1>' +
+      (expired
+        ? '<p>Confirmation links can only be opened once, and they expire after 24 hours. ' +
+          'If your email provider scanned the message before you got to it, the link was ' +
+          'already spent by the time you clicked.</p>'
+        : '<p>The link was rejected before it could sign you in.</p>') +
+      '<p>Log in with the password you chose and we&rsquo;ll take it from there.</p>' +
+      '<p><a class="btn btn-ghost" href="/login.html">Go to log in</a></p>' +
+      '</div>';
+    return;
+  }
 
   if (state === 'success') {
     loading.innerHTML =

@@ -22,7 +22,7 @@ function sender() {
 }
 
 function adminAddresses() {
-  return (process.env.ADMIN_EMAILS || 'kane.foster@ymail.com')
+  return (process.env.ADMIN_EMAILS || 'kane@kanvas.one')
     .split(',').map(s => s.trim()).filter(Boolean);
 }
 
