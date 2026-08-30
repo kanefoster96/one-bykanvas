@@ -5,7 +5,7 @@
  * can never be replayed).
  */
 const { createClient } = require('@supabase/supabase-js');
-const { missingEnv } = require('./_env.js');
+const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 
 function page(title, body) {
@@ -65,7 +65,7 @@ module.exports = async function handler(req, res) {
       to: adminAddresses(),
       subject: `Confirmed: ${(profile && profile.business_name) || 'a customer'} agreed the new price`,
       text: `They confirmed the ${reqRow.kind} — "${reqRow.detail}" — go ahead and start it.\n\n`
-          + `Admin: https://one-bykanvas.vercel.app/admin.html`
+          + `Admin: ${ourSiteUrl()}/admin.html`
     });
     console.log('confirm-request: notify email', result);
 

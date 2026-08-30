@@ -12,7 +12,7 @@
  */
 const { createClient } = require('@supabase/supabase-js');
 const Stripe = require('stripe');
-const { missingEnv } = require('./_env.js');
+const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { sendEmail } = require('./_email.js');
 const { html: emailHtml, standardFooter } = require('./_email_template.js');
@@ -86,7 +86,7 @@ async function notifyFeatureEmail(db, userId, name, verb) {
   const customerEmail = who && who.user && who.user.email;
   if (!customerEmail) return;
 
-  const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+  const site = ourSiteUrl();
   const heading = verb === 'updated' ? 'Updated on your site' : 'New on your site';
   const result = await sendEmail({
     to: customerEmail,
@@ -125,7 +125,7 @@ async function notifySiteLive(db, userId, businessName, siteUrl) {
 
   const href = /^https?:\/\//i.test(siteUrl) ? siteUrl : 'https://' + siteUrl;
   const shown = href.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-  const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+  const site = ourSiteUrl();
 
   const result = await sendEmail({
     to: customerEmail,

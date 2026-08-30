@@ -6,7 +6,7 @@
  */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
-const { missingEnv } = require('./_env.js');
+const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { PLANS } = require('./_plans.js');
@@ -168,7 +168,7 @@ module.exports = async function handler(req, res) {
     const planName = PLAN_NAME[patch.active_plan] || 'your';
     const plan = PLANS[patch.active_plan];
     const points = plan ? plan.points : null;
-    const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+    const site = ourSiteUrl();
     const who2 = p && p.business_name ? ', ' + p.business_name : '';
     const started = new Date().toLocaleDateString('en-GB',
       { day: 'numeric', month: 'long', year: 'numeric' });
@@ -232,7 +232,7 @@ module.exports = async function handler(req, res) {
     const { data: who } = await admin.auth.admin.getUserById(id);
     const email = who && who.user && who.user.email;
     const name = (p && p.business_name) || 'A customer';
-    const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+    const site = ourSiteUrl();
 
     if (email) {
       const result = await sendEmail({
@@ -295,7 +295,7 @@ module.exports = async function handler(req, res) {
     const email = who && who.user && who.user.email;
     if (!email) return;
 
-    const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+    const site = ourSiteUrl();
 
     /* Stripe reports the outstanding amount in the smallest currency unit,
        and the retry window is the 7 days Smart Retries is configured for. */
@@ -373,7 +373,7 @@ module.exports = async function handler(req, res) {
       'What they want the site to do:',
       (p && p.site_goals) || '-',
       '',
-      `Admin: https://one-bykanvas.vercel.app/admin.html`
+      `Admin: ${ourSiteUrl()}/admin.html`
     ];
 
     const result = await sendEmail({

@@ -12,7 +12,7 @@
  * that happens.
  */
 const { createClient } = require('@supabase/supabase-js');
-const { missingEnv } = require('./_env.js');
+const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { shortfallFor } = require('./_billing.js');
@@ -90,7 +90,7 @@ module.exports = async function handler(req, res) {
           + (shortfall > 0
               ? `Would come to £${(amount / 100).toFixed(0)} over their allowance once accepted.\n\n`
               : 'Covered by their points once accepted.\n\n')
-          + `Accept it from admin: https://one-bykanvas.vercel.app/admin.html`,
+          + `Accept it from admin: ${ourSiteUrl()}/admin.html`,
       replyTo: user.email
     });
     console.log('requests: notify email', result);

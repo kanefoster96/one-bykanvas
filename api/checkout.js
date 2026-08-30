@@ -7,7 +7,7 @@
  */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
-const { missingEnv } = require('./_env.js');
+const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { PLANS } = require('./_plans.js');
 
 module.exports = async function handler(req, res) {
@@ -118,8 +118,11 @@ module.exports = async function handler(req, res) {
     }
 
     // ---- the session ----------------------------------------------------
+    /* ourSiteUrl() falls back to the custom domain, so only reach for the
+       request's own host when SITE_URL is genuinely unset. */
     const origin = process.env.SITE_URL
-      || (req.headers.origin || `https://${req.headers.host}`);
+      ? ourSiteUrl()
+      : (req.headers.origin || `https://${req.headers.host}`);
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
