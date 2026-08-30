@@ -415,6 +415,38 @@ body.locked{overflow:hidden}
   transform:rotate(-45deg);
 }
 
+/* The one line that is the whole reason Max exists, so it carries the colour
+   the ticks only hint at. */
+.ticks li.tick-hero{color:var(--good);font-weight:600}
+.ticks li.tick-hero::before{border-color:var(--good);border-width:2.5px}
+
+/* And the case for it, under the three cards rather than crammed into one. */
+.seo-pitch{
+  margin-top:34px;padding:clamp(26px,4vw,38px);border-radius:var(--radius-lg);
+  background:var(--good-soft);border:1px solid rgba(26,127,55,.18);
+}
+/* Qualified: .seo-pitch p below is more specific than a lone class and was
+   painting this grey. */
+.seo-pitch p.seo-pitch-tag{
+  margin:0 0 12px;font-size:11.5px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--good);
+}
+.seo-pitch h3{
+  margin:0 0 16px;font-size:clamp(22px,3.4vw,27px);font-weight:600;
+  letter-spacing:-.025em;line-height:1.2;max-width:22ch;text-wrap:balance;
+}
+.seo-pitch p{margin:0 0 14px;font-size:16px;line-height:1.6;color:var(--ink-2);max-width:62ch}
+.seo-pitch-close{color:var(--ink)!important;font-weight:500}
+.seo-pitch .btn{margin-top:8px;flex:0 0 auto}
+.seo-pitch-copy > :last-child{margin-bottom:0}
+
+/* Wide enough for two columns, the button moves beside the copy rather than
+   leaving half the card empty under it. */
+@media (min-width:900px){
+  .seo-pitch{display:flex;align-items:center;gap:clamp(28px,5vw,64px)}
+  .seo-pitch .btn{margin-top:0}
+}
+
 /* ---------- App ---------- */
 .app{background:var(--ink);color:#f5f5f7;overflow:hidden}
 .app h2{color:#fff}
@@ -572,15 +604,18 @@ body.locked{overflow:hidden}
 .seg-btn.is-on{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
 
 .auth-card .field,.acct-grid .field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
-.auth-card label,.acct-grid label,.bc-form label{font-size:13.5px;font-weight:500;color:var(--ink-2)}
-.auth-card input,.acct-grid input,.acct-grid textarea,
+.auth-card label,.acct-grid label,.bc-form label,.pw-fields label{font-size:13.5px;font-weight:500;color:var(--ink-2)}
+/* .pw-fields sits outside .acct-grid, so it was getting no styling at all -
+   which meant the browser default, and any field under 16px makes iOS Safari
+   zoom the whole page the moment it is focused. */
+.auth-card input,.acct-grid input,.acct-grid textarea,.pw-fields input,
 .bc-form input:not([type="file"]),.bc-form select,.bc-form textarea{
   font-family:var(--font);font-size:16px;color:var(--ink);width:100%;
   padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:#fff;
   transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
 }
 .acct-grid textarea,.bc-form textarea{resize:vertical;line-height:1.45}
-.auth-card input:focus,.acct-grid input:focus,.acct-grid textarea:focus,
+.auth-card input:focus,.acct-grid input:focus,.acct-grid textarea:focus,.pw-fields input:focus,
 .bc-form input:focus,.bc-form select:focus,.bc-form textarea:focus{
   outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13);
 }
@@ -589,6 +624,8 @@ body.locked{overflow:hidden}
    row are separate points and were running together as one grey block. */
 .hint + .hint{margin-top:9px}
 .mail-pref + .hint{margin-top:8px}
+/* Two preferences stacked need air between them, or they read as one. */
+.mail-pref + .mail-pref{margin-top:13px}
 
 .note{margin:12px 0 0;font-size:14px;line-height:1.45;min-height:20px;color:var(--ink-2)}
 /* min-height keeps the layout still when a message appears - but an empty one
@@ -1000,7 +1037,8 @@ body.locked{overflow:hidden}
 .pw-block{margin-top:26px;padding-top:22px;border-top:1px solid var(--line-soft)}
 .pw-block .req-list-title{margin-bottom:10px}
 .pw-block .linkish{margin-top:0}
-.pw-fields{margin-top:14px}
+.pw-fields{margin-top:14px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.pw-fields .field{width:100%}
 
 .notes-textarea{width:100%;min-width:0;resize:vertical;margin-bottom:12px}
 

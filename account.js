@@ -305,25 +305,51 @@ var pwNote = document.getElementById('pwNote');
 document.getElementById('pwOpen').addEventListener('click', function () {
   var fields = document.getElementById('pwFields');
   fields.hidden = !fields.hidden;
-  if (!fields.hidden) document.getElementById('pwNew').focus();
+  if (!fields.hidden) document.getElementById('pwCurrent').focus();
 });
 
 /* Already signed in, so this is a straight update rather than the emailed
-   reset link the login page uses for people who cannot get in at all. */
+   reset link the login page uses for people who cannot get in at all.
+ *
+ * Being signed in is not the same as being the account holder, though: a
+ * session left open on a borrowed phone is one, and without the current
+ * password anyone who found it could lock the owner out of their own
+ * account. Supabase has no verify-password call, so the check is a sign-in
+ * with the address already on the session - it either works or it does not,
+ * and it tells us nothing we are not entitled to know. */
 document.getElementById('pwSave').addEventListener('click', async function () {
-  var input = document.getElementById('pwNew');
+  var current = document.getElementById('pwCurrent');
+  var next = document.getElementById('pwNew');
+  var confirm = document.getElementById('pwConfirm');
   var btn = this;
-  if (input.value.length < 8) return say(pwNote, 'Use at least 8 characters.', 'bad');
+
+  if (!current.value) return say(pwNote, 'Enter your current password.', 'bad');
+  if (next.value.length < 8) return say(pwNote, 'Use at least 8 characters.', 'bad');
+  if (next.value !== confirm.value) return say(pwNote, 'Those two passwords do not match.', 'bad');
+  if (next.value === current.value) {
+    return say(pwNote, 'That is the password you already have.', 'bad');
+  }
 
   btn.disabled = true;
-  say(pwNote, 'Saving…');
-  var res = await ONE.db.auth.updateUser({ password: input.value });
+  say(pwNote, 'Checking\u2026');
+
+  var check = await ONE.db.auth.signInWithPassword({
+    email: user.email, password: current.value
+  });
+  if (check.error) {
+    btn.disabled = false;
+    return say(pwNote, 'That is not your current password.', 'bad');
+  }
+
+  say(pwNote, 'Saving\u2026');
+  var res = await ONE.db.auth.updateUser({ password: next.value });
   btn.disabled = false;
 
   if (res.error) return say(pwNote, ONE.friendlyError(res.error), 'bad');
-  input.value = '';
+
+  current.value = ''; next.value = ''; confirm.value = '';
   document.getElementById('pwFields').hidden = true;
-  say(pwNote, 'Password changed.', 'ok');
+  say(pwNote, 'Password changed. You are still signed in here.', 'ok');
 });
 
 /* ---------------- business details: its own view ---------------- */

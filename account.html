@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=8">
+<link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body class="auth-body">
 
@@ -204,9 +204,17 @@
       <button class="linkish" id="pwOpen" type="button">Change your password</button>
       <div class="pw-fields" id="pwFields" hidden>
         <div class="field full">
+          <label for="pwCurrent">Current password</label>
+          <input id="pwCurrent" type="password" autocomplete="current-password">
+        </div>
+        <div class="field full">
           <label for="pwNew">New password</label>
           <input id="pwNew" type="password" autocomplete="new-password" minlength="8">
           <p class="hint">At least 8 characters.</p>
+        </div>
+        <div class="field full">
+          <label for="pwConfirm">Confirm new password</label>
+          <input id="pwConfirm" type="password" autocomplete="new-password">
         </div>
         <button class="btn btn-ghost" id="pwSave" type="button">Save password</button>
       </div>
@@ -270,7 +278,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="account.js?v=16"></script>
+<script src="account.js?v=17"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>
