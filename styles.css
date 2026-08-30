@@ -926,6 +926,34 @@ body.locked{overflow:hidden}
 }
 .feature-add{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
 
+/* Where a feature stands, on the customer's own page: one pill, no prices. */
+.feature-pill{
+  flex:0 0 auto;padding:4px 11px;border-radius:980px;
+  font-size:11.5px;font-weight:600;letter-spacing:.02em;
+}
+.feature-pill.is-live{background:var(--bg-grey);color:var(--ink-2)}
+.feature-pill.is-new{background:var(--good-soft);color:var(--good)}
+.feature-pill.is-pending{background:#eef2ff;color:#3730a3}
+
+/* The pencil under the logo - the way into everything about the business. */
+.acct-id-side{display:flex;flex-direction:column;align-items:center;gap:8px;flex:0 0 auto}
+.id-edit{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:980px;
+  border:1px solid var(--line);background:#fff;font-family:inherit;font-size:12.5px;
+  font-weight:500;color:var(--ink-2);cursor:pointer;transition:border-color .18s var(--ease)
+}
+.id-edit:hover{border-color:var(--ink-3)}
+.id-edit svg{width:13px;height:13px}
+
+.biz-title{font-size:28px;font-weight:600;letter-spacing:-.03em;margin:14px 0 0}
+#bizView .lede.left{margin-bottom:4px}
+.biz-heading{margin-top:32px}
+
+.pw-block{margin-top:26px;padding-top:22px;border-top:1px solid var(--line-soft)}
+.pw-block .req-list-title{margin-bottom:10px}
+.pw-block .linkish{margin-top:0}
+.pw-fields{margin-top:14px}
+
 .notes-textarea{width:100%;min-width:0;resize:vertical;margin-bottom:12px}
 
 .seo-panel .queue{margin-top:16px}
