@@ -18,7 +18,7 @@ const { sendEmail } = require('./_email.js');
 const { html: emailHtml, standardFooter } = require('./_email_template.js');
 const { shortfallFor } = require('./_billing.js');
 
-const DEFAULT_ADMINS = ['kane.foster@ymail.com'];
+const DEFAULT_ADMINS = ['kane@kanvas.one'];
 
 function adminList() {
   const fromEnv = (process.env.ADMIN_EMAILS || '')
