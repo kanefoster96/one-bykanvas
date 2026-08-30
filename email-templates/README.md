@@ -6,9 +6,16 @@ when someone asks to reset their password), so they live here as reference
 files rather than in `api/`. Paste their contents into the Supabase dashboard
 by hand; nothing in this repo deploys them automatically.
 
-Match the same branded shell used everywhere else (see `api/_email_template.js`)
-so every email - app-sent or Supabase-sent - looks like it came from the same
-place.
+Both are **generated** from the same branded shell every other email uses, so
+they cannot drift out of step with it:
+
+```
+node email-templates/build.js
+```
+
+Edit the copy in `build.js`, run it, then paste the regenerated files into the
+Supabase dashboard. Never hand-edit the `.html` files - the next run overwrites
+them.
 
 ## One-time setup
 
