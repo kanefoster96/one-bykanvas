@@ -12,7 +12,7 @@
  * always describes what was actually saved.
  */
 const { createClient } = require('@supabase/supabase-js');
-const { missingEnv } = require('./_env.js');
+const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 
 module.exports = async function handler(req, res) {
@@ -51,7 +51,7 @@ module.exports = async function handler(req, res) {
     if (error) throw new Error(error.message);
 
     const name = (p && p.business_name) || user.email || 'A customer';
-    const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+    const site = ourSiteUrl();
 
     /* Raise it in the same queue as edits and features, so there is one place
        to look for work. Zero points, so it never touches their allowance and

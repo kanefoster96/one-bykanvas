@@ -11,7 +11,7 @@
  * notification, not the enquiry.
  */
 const { createClient } = require('@supabase/supabase-js');
-const { missingEnv } = require('./_env.js');
+const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 
 const PLAN_INTEREST = ['business', 'pro', 'max', 'unsure'];
@@ -62,7 +62,7 @@ module.exports = async function handler(req, res) {
     }).select().single();
     if (error) throw new Error(error.message);
 
-    const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+    const site = ourSiteUrl();
     const result = await sendEmail({
       to: adminAddresses(),
       subject: `New enquiry: ${business}`,
