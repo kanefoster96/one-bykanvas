@@ -34,8 +34,8 @@ function esc(s) {
 function brand() {
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
             <tr>
-              <td width="38" height="38" align="center" valign="middle" style="width:38px;height:38px;background:${INK};border-radius:11px;">
-                <span style="font-size:16px;font-weight:600;letter-spacing:-.05em;color:#ffffff;font-family:${FONT};line-height:38px;">one</span>
+              <td width="40" height="40" align="center" valign="middle" style="width:40px;height:40px;background:${INK};border-radius:11px;">
+                <span style="font-size:15.5px;font-weight:600;letter-spacing:-.045em;color:#ffffff;font-family:${FONT};line-height:40px;">one.</span>
               </td>
               <td style="padding-left:11px;font-size:16px;font-weight:600;letter-spacing:-.015em;color:${INK};font-family:${FONT};">by Kanvas</td>
             </tr>
