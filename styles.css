@@ -1070,18 +1070,23 @@ body.locked{overflow:hidden}
 .req-tpl-list{display:flex;flex-direction:column;gap:0}
 .tpl-row{border-bottom:1px solid var(--line-soft)}
 .tpl-row:last-child{border-bottom:0}
-.tpl-head{
-  display:flex;align-items:center;gap:12px;width:100%;padding:14px 0;
-  border:0;background:none;font-family:inherit;font-size:15.5px;font-weight:500;
-  color:var(--ink);cursor:pointer;text-align:left;
+.tpl-head{display:flex;align-items:center;gap:8px;width:100%}
+/* The name is the shortcut: tap it and the request is already filled in. */
+.tpl-name{
+  flex:1;min-width:0;padding:14px 0;border:0;background:none;font-family:inherit;
+  font-size:15.5px;font-weight:500;color:var(--ink);cursor:pointer;text-align:left;
 }
-.tpl-name{flex:1;min-width:0}
-.tpl-chevron{
-  flex:0 0 auto;font-size:19px;line-height:1;color:var(--ink-3);
-  transition:transform .2s var(--ease);
+.tpl-name:hover{color:var(--ink-2)}
+/* The arrow only ever opens the description - it never picks anything. */
+.tpl-toggle{
+  flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border:0;border-radius:50%;background:none;cursor:pointer;
+  transition:background .18s var(--ease);
 }
-.tpl-head.is-open .tpl-chevron{transform:rotate(90deg)}
-.tpl-head:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.tpl-toggle:hover{background:var(--bg-grey)}
+.tpl-chevron{font-size:19px;line-height:1;color:var(--ink-3);transition:transform .2s var(--ease)}
+.tpl-toggle.is-open .tpl-chevron{transform:rotate(90deg)}
+.tpl-name:focus-visible,.tpl-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .tpl-body{padding:0 0 16px}
 .tpl-desc{margin:0 0 14px;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
 .tpl-pick{height:40px;padding:0 18px;font-size:14px}
