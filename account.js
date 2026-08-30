@@ -670,23 +670,60 @@ function renderPicker() {
     var items = templates.filter(function (t) { return t.kind === g.kind; });
     g.list.textContent = '';
     if (!items.length) { g.group.hidden = true; return; }
-    items.forEach(function (t) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'tpl-tile';
-      btn.textContent = t.name;
-      btn.addEventListener('click', function () { pickTemplate(t); });
-      g.list.appendChild(btn);
-    });
+    items.forEach(function (t) { g.list.appendChild(templateRow(t)); });
     g.group.hidden = false;
   });
 }
 
+/* One row per saved feature, opening to show what it actually does before
+   anyone asks for it - the name alone ("Online ordering") rarely settles
+   whether it is the thing they have in mind. */
+function templateRow(t) {
+  var row = document.createElement('div');
+  row.className = 'tpl-row';
+
+  var head = document.createElement('button');
+  head.type = 'button';
+  head.className = 'tpl-head';
+  head.setAttribute('aria-expanded', 'false');
+  head.appendChild(el('span', 'tpl-name', t.name));
+  head.appendChild(el('span', 'tpl-chevron', '\u203a'));
+
+  var body = document.createElement('div');
+  body.className = 'tpl-body';
+  body.hidden = true;
+  if (t.description) body.appendChild(el('p', 'tpl-desc', t.description));
+
+  var pick = document.createElement('button');
+  pick.type = 'button';
+  pick.className = 'btn btn-ghost tpl-pick';
+  pick.textContent = t.kind === 'feature' ? 'Request this feature' : 'Request this edit';
+  pick.addEventListener('click', function () { pickTemplate(t); });
+  body.appendChild(pick);
+
+  head.addEventListener('click', function () {
+    var open = body.hidden;
+    body.hidden = !open;
+    head.setAttribute('aria-expanded', String(open));
+    head.classList.toggle('is-open', open);
+  });
+
+  row.appendChild(head);
+  row.appendChild(body);
+  return row;
+}
+
+/* Their own words go on top of ours: the description explains the feature,
+   and the blank line under it is where they say what they want for their
+   own site. */
 function pickTemplate(t) {
   var radio = document.querySelector('input[name="kind"][value="' + t.kind + '"]');
   if (radio) radio.checked = true;
-  document.getElementById('reqDetail').value = t.description || '';
+  var detail = document.getElementById('reqDetail');
+  detail.value = t.description ? t.name + ' — ' + t.description + '\n\n' : t.name + '\n\n';
   openForm();
+  // Land the cursor at the end, ready for their own notes.
+  detail.setSelectionRange(detail.value.length, detail.value.length);
 }
 
 function openForm() {
