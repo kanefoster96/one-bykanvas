@@ -43,6 +43,49 @@ module.exports = async function handler(req, res) {
     const user = userData.user;
 
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+
+    const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false }
+    });
+
+    /* Deleting a request's screenshots lives here rather than in an endpoint
+       of its own. It is the same table, the same owner check and the same
+       authentication, and Vercel's plan allows a fixed number of functions -
+       spending one on a single action nobody calls twice a month is what
+       stopped a deploy going out.
+
+       It goes through the server at all because the customer has no UPDATE
+       grant on requests, and because the storage delete and the column clear
+       have to happen together rather than leaving one without the other. */
+    if (body.action === 'clearAttachments') {
+      const requestId = String(body.requestId || '');
+      if (!requestId) return res.status(400).json({ error: 'Which request?' });
+
+      const { data: reqRow, error: reqErr } = await db.from('requests')
+        .select('id, user_id, status, attachment_paths').eq('id', requestId).maybeSingle();
+      if (reqErr) throw new Error(reqErr.message);
+      if (!reqRow || reqRow.user_id !== user.id) {
+        return res.status(404).json({ error: 'Request not found.' });
+      }
+      /* Only once the site is live: the point of a screenshot is to show us
+         something before the work happens, so it stays for as long as that
+         could still matter. */
+      if (reqRow.status !== 'done') {
+        return res.status(400).json({ error: 'This is only available once the site is live.' });
+      }
+
+      const paths = reqRow.attachment_paths || [];
+      if (paths.length) {
+        const { error: rmErr } = await db.storage.from('request-attachments').remove(paths);
+        if (rmErr) throw new Error(rmErr.message);
+      }
+      const { error: updErr } = await db.from('requests')
+        .update({ attachment_paths: null }).eq('id', requestId);
+      if (updErr) throw new Error(updErr.message);
+
+      return res.status(200).json({ ok: true });
+    }
+
     const kind = String(body.kind || '').toLowerCase();
     const detail = String(body.detail || '').trim();
 
@@ -61,10 +104,6 @@ module.exports = async function handler(req, res) {
     const attachmentPaths = Array.isArray(body.attachmentPaths)
       ? body.attachmentPaths.map(String).filter((p) => p.startsWith(user.id + '/')).slice(0, 6)
       : [];
-
-    const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-      auth: { persistSession: false, autoRefreshToken: false }
-    });
 
     const { data: row, error } = await db.from('requests').insert({
       user_id: user.id, kind: kind, points: REQUEST_COST[kind].points, detail: detail,

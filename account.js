@@ -667,10 +667,10 @@ async function clearAttachments(requestId, btn) {
     var token = sess.data && sess.data.session && sess.data.session.access_token;
     if (!token) throw new Error('Your session has expired. Log in and try again.');
 
-    var res = await fetch('/api/clear-attachments', {
+    var res = await fetch('/api/requests', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ requestId: requestId })
+      body: JSON.stringify({ action: 'clearAttachments', requestId: requestId })
     });
     var data = await res.json().catch(function () { return {}; });
     if (!res.ok) throw new Error(data.error || 'Could not clear those. Try again.');
