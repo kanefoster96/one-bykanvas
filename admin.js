@@ -105,6 +105,34 @@ function when(iso) {
   return isNaN(d) ? '' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
+/* How long something has been sitting. In a queue this is the thing that
+   matters - "asked 3 weeks ago" reads as a problem in a way that a date
+   never does. */
+function howLong(iso) {
+  var d = new Date(iso);
+  if (isNaN(d)) return '';
+  var days = Math.floor((Date.now() - d.getTime()) / 864e5);
+  if (days <= 0) return 'asked today';
+  if (days === 1) return 'asked yesterday';
+  if (days < 14) return 'asked ' + days + ' days ago';
+  if (days < 60) return 'asked ' + Math.floor(days / 7) + ' weeks ago';
+  return 'asked ' + when(iso);
+}
+
+/* Splits rows into [{ day, rows }] runs, newest first, for lists that read
+   as a ledger - the date is a heading rather than a repeated field. Assumes
+   rows are already sorted; it only breaks the run when the day changes. */
+function dayGroups(rows, field) {
+  var out = [];
+  rows.forEach(function (r) {
+    var day = when(r[field]);
+    var last = out[out.length - 1];
+    if (!last || last.day !== day) { last = { day: day, rows: [] }; out.push(last); }
+    last.rows.push(r);
+  });
+  return out;
+}
+
 /* Points spent this billing period, worked out the same way the customer's own
    page works it out so the two never disagree. Also the period an SEO log or
    a shortfall walk is measured against - one function, three uses. */
@@ -429,13 +457,18 @@ function queueItem(r) {
   var main = el('div', 'queue-main');
   main.appendChild(el('p', 'queue-who', ownerLabel(owner)));
   main.appendChild(el('p', 'queue-what', r.detail));
-  main.appendChild(el('p', 'queue-meta',
+  /* How long it has been waiting, not the date it landed - in a queue the
+     age is the thing that tells you what to pick up next. */
+  var meta = el('p', 'queue-meta',
     (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' + r.points +
-    (r.points === 1 ? ' point' : ' points') +
-    (r.shortfallPoints > 0
-      ? ' · ' + r.shortfallPoints + (r.shortfallPoints === 1 ? ' point' : ' points') + ' over allowance'
-      : '') +
-    ' · asked ' + when(r.created_at)));
+    (r.points === 1 ? ' point' : ' points') + ' · ' + howLong(r.created_at));
+  main.appendChild(meta);
+
+  // The money flag, given its own pill so it cannot be skim-read past.
+  if (r.shortfallPoints > 0) {
+    main.appendChild(el('span', 'over-pill',
+      r.shortfallPoints + (r.shortfallPoints === 1 ? ' point' : ' points') + ' over allowance'));
+  }
   var links = attachmentLinks(r);
   if (links) main.appendChild(links);
   li.appendChild(main);
@@ -853,9 +886,14 @@ function recentRequestsList(userId) {
     var main = el('div', 'queue-main');
     main.appendChild(el('p', 'queue-what', r.detail));
     main.appendChild(el('p', 'queue-meta', (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' +
-      STATUS_NAME[r.status] + ' · ' + when(r.created_at) +
+      when(r.created_at) +
       (r.billed_at ? ' · charged £' + (r.billed_amount / 100).toFixed(0) : '')));
     li.appendChild(main);
+
+    // Where it got to, set right as a pill rather than buried mid-sentence.
+    var side = el('div', 'queue-actions');
+    side.appendChild(el('span', 'req-state' + (r.status === 'done' ? ' is-done' : ''), STATUS_NAME[r.status]));
+    li.appendChild(side);
     list.appendChild(li);
   });
   return list;
@@ -1156,16 +1194,17 @@ function renderDoneList() {
     .slice(0, 20);
   if (!items.length) { wrap.appendChild(el('p', 'site-none', 'Nothing finished yet.')); return; }
 
+  dayGroups(items, 'created_at').forEach(function (group) {
+  wrap.appendChild(el('h4', 'pay-day', group.day));
   var list = el('ul', 'queue');
-  items.forEach(function (r) {
+  group.rows.forEach(function (r) {
     var owner = state.profiles.filter(function (p) { return p.id === r.user_id; })[0];
     var li = el('li', 'queue-item');
 
     var main = el('div', 'queue-main');
     main.appendChild(el('p', 'queue-who', ownerLabel(owner)));
     main.appendChild(el('p', 'queue-what', r.detail));
-    main.appendChild(el('p', 'queue-meta',
-      (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' + when(r.created_at)));
+    main.appendChild(el('p', 'queue-meta', r.kind === 'feature' ? 'Feature' : 'Edit'));
     var links = attachmentLinks(r);
     if (links) main.appendChild(links);
     li.appendChild(main);
@@ -1191,6 +1230,7 @@ function renderDoneList() {
     list.appendChild(li);
   });
   wrap.appendChild(list);
+  });
 }
 
 /* The saved templates themselves - retiring one keeps it out of the
