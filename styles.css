@@ -558,6 +558,12 @@ body.locked{overflow:hidden}
 .auth-foot a{color:var(--ink);text-decoration:underline}
 
 .seg{display:flex;gap:4px;margin:26px 0 22px;padding:4px;background:var(--bg-grey);border-radius:980px}
+/* The tabs' margin is the only thing holding a form off the subtitle above
+   it. Both auth cards can be without them - login.html hides them to reset a
+   password, reset.html never has them - and then the first label sits on top
+   of the subtitle. */
+.seg[hidden] + form,
+.auth-sub + form{margin-top:26px}
 .seg-btn{
   flex:1;border:0;background:none;font-family:inherit;font-size:14px;font-weight:500;
   color:var(--ink-2);padding:9px 10px;border-radius:980px;cursor:pointer;

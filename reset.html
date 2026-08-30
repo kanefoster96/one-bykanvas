@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Choose a new password — one</title>
+<meta name="description" content="Set a new password for your one account.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=4">
+</head>
+<body class="auth-body">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="one, by Kanvas — home">one.</a>
+  </div>
+</header>
+
+<main class="auth-wrap">
+  <div class="auth-card">
+    <!-- Until the recovery link in the URL has been checked, neither of the
+         states below is the honest one to show. -->
+    <div id="checking">
+      <h1 class="auth-title">Just a moment</h1>
+      <p class="auth-sub">Checking your link&hellip;</p>
+    </div>
+
+    <div id="ready" hidden>
+      <h1 class="auth-title">Choose a new password</h1>
+      <p class="auth-sub" id="forWho">Nearly there.</p>
+
+      <form id="form" novalidate>
+        <div class="field">
+          <label for="password">New password</label>
+          <input id="password" name="password" type="password" autocomplete="new-password" required>
+          <p class="hint">At least 8 characters.</p>
+        </div>
+        <div class="field">
+          <label for="confirm">Confirm new password</label>
+          <input id="confirm" name="confirm" type="password" autocomplete="new-password" required>
+        </div>
+
+        <button class="btn btn-primary full" id="submit" type="submit">Save new password</button>
+        <p class="note" id="note" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <div id="failed" hidden>
+      <h1 class="auth-title">That link didn&rsquo;t work</h1>
+      <p class="auth-sub" id="why">Reset links can only be opened once, and they expire after
+        24 hours.</p>
+      <p><a class="btn btn-ghost full" href="/login.html?reset=1">Send me a new link</a></p>
+    </div>
+  </div>
+
+  <p class="auth-foot"><a href="/login.html">Back to log in</a></p>
+</main>
+
+<script src="vendor/supabase.js?v=1"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="supabase-client.js?v=1"></script>
+<script src="session.js?v=1"></script>
+<script src="reset.js?v=1"></script>
+</body>
+</html>

@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body class="auth-body">
 
@@ -23,7 +23,7 @@
     <h1 class="auth-title" id="title">Log in</h1>
     <p class="auth-sub" id="subtitle">Welcome back.</p>
 
-    <div class="seg" role="tablist" aria-label="Log in or create an account">
+    <div class="seg" id="tabs" role="tablist" aria-label="Log in or create an account">
       <button class="seg-btn is-on" id="tab-login"  type="button" role="tab" aria-selected="true">Log in</button>
       <button class="seg-btn"       id="tab-signup" type="button" role="tab" aria-selected="false">Create account</button>
     </div>
@@ -41,7 +41,7 @@
         <label for="email">Email</label>
         <input id="email" name="email" type="email" autocomplete="email" required>
       </div>
-      <div class="field">
+      <div class="field" id="passwordField">
         <label for="password">Password</label>
         <input id="password" name="password" type="password" autocomplete="current-password" required>
         <p class="hint signup-only" hidden>At least 8 characters.</p>
@@ -52,6 +52,7 @@
     </form>
 
     <button class="linkish" id="forgot" type="button">Forgotten your password?</button>
+    <button class="linkish" id="backToLogin" type="button" hidden>Back to log in</button>
   </div>
 
   <p class="auth-foot">Not got a site with us yet? <a href="/">See how it works</a></p>
@@ -61,7 +62,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="auth.js?v=1"></script>
+<script src="auth.js?v=2"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>
