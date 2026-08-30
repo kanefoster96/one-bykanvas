@@ -38,7 +38,7 @@ function brand() {
      radius is round everywhere except Outlook desktop, which ignores the
      radius and lands on the square it would have drawn anyway. */
   const dot = `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                 <tr><td width="4" height="4" style="width:4px;height:4px;font-size:0;line-height:4px;background:#ffffff;border-radius:50%;">&nbsp;</td></tr>
+                 <tr><td width="3" height="3" style="width:3px;height:3px;font-size:0;line-height:3px;background:#ffffff;border-radius:50%;">&nbsp;</td></tr>
                </table>`;
 
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
