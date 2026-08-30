@@ -22,35 +22,50 @@ function secret() {
   return process.env.UNSUBSCRIBE_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 }
 
-function sign(userId) {
-  return crypto.createHmac('sha256', secret()).update('unsub:' + userId).digest('base64url');
+/* Two things a customer can turn off, and they are not the same thing:
+   'notify' is updates about their own site, 'marketing' is us selling to them.
+   The scope rides inside the signature so a link for one cannot be edited into
+   a link for the other. */
+const SCOPES = { notify: 'notify_optout', marketing: 'marketing_optin' };
+
+function sign(payload) {
+  return crypto.createHmac('sha256', secret()).update('unsub:' + payload).digest('base64url');
 }
 
-function tokenFor(userId) {
+function tokenFor(userId, scope) {
   if (!userId || !secret()) return null;
-  return Buffer.from(String(userId)).toString('base64url') + '.' + sign(userId);
+  const use = SCOPES[scope] ? scope : 'notify';
+  /* A bare id with no scope is a link from before there were two - it still
+     means notifications, so old links keep working. */
+  const payload = use === 'notify' ? String(userId) : use + '.' + String(userId);
+  return Buffer.from(payload).toString('base64url') + '.' + sign(payload);
 }
 
 /* Returns the user id the token vouches for, or null. Compared in constant
    time so a wrong signature cannot be narrowed down one character at a time. */
-function userIdFrom(token) {
+function readToken(token) {
   const raw = String(token || '');
   const dot = raw.lastIndexOf('.');
   if (dot < 1 || !secret()) return null;
 
-  let userId;
-  try { userId = Buffer.from(raw.slice(0, dot), 'base64url').toString('utf8'); }
+  let payload;
+  try { payload = Buffer.from(raw.slice(0, dot), 'base64url').toString('utf8'); }
   catch (e) { return null; }
+
+  const split = payload.indexOf('.');
+  const scope = split > 0 ? payload.slice(0, split) : 'notify';
+  const userId = split > 0 ? payload.slice(split + 1) : payload;
+  if (!SCOPES[scope]) return null;
   if (!/^[0-9a-f-]{36}$/i.test(userId)) return null;
 
   const given = Buffer.from(raw.slice(dot + 1));
-  const want = Buffer.from(sign(userId));
+  const want = Buffer.from(sign(payload));
   if (given.length !== want.length) return null;
-  return crypto.timingSafeEqual(given, want) ? userId : null;
+  return crypto.timingSafeEqual(given, want) ? { userId, scope, column: SCOPES[scope] } : null;
 }
 
-function unsubscribeUrl(userId) {
-  const token = tokenFor(userId);
+function unsubscribeUrl(userId, scope) {
+  const token = tokenFor(userId, scope);
   return token ? `${ourSiteUrl()}/api/unsubscribe?u=${encodeURIComponent(token)}` : null;
 }
 
@@ -58,8 +73,8 @@ function unsubscribeUrl(userId) {
    one-click button rather than making the reader hunt for a link, and it is
    only honoured when the URL is https - a mailto: alternative would disable
    it, so there deliberately isn't one. */
-function unsubscribeHeaders(userId) {
-  const url = unsubscribeUrl(userId);
+function unsubscribeHeaders(userId, scope) {
+  const url = unsubscribeUrl(userId, scope);
   if (!url) return {};
   return {
     'List-Unsubscribe': `<${url}>`,
@@ -83,4 +98,4 @@ async function optedOut(db, userId) {
   }
 }
 
-module.exports = { tokenFor, userIdFrom, unsubscribeUrl, unsubscribeHeaders, optedOut };
+module.exports = { SCOPES, tokenFor, readToken, unsubscribeUrl, unsubscribeHeaders, optedOut };

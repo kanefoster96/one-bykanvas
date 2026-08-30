@@ -34,7 +34,8 @@ var ICONS = {
   contacts:  '<rect x="4.5" y="3.5" width="15" height="17" rx="2.5"/><path d="M8 3.5v17M12.5 9h4M12.5 12.5h4"/>',
   plans:     '<path d="m12 3.5 8.5 4.75L12 13 3.5 8.25z"/><path d="m3.5 13 8.5 4.75L20.5 13"/>',
   payments:  '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
-  templates: '<rect x="7.5" y="7.5" width="13" height="13" rx="2.5"/><path d="M16.5 7.5v-2a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/>'
+  templates: '<rect x="7.5" y="7.5" width="13" height="13" rx="2.5"/><path d="M16.5 7.5v-2a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/>',
+  marketing: '<path d="M3 7.5 12 13l9-5.5"/><rect x="3" y="5" width="18" height="14" rx="2.5"/>'
 };
 
 var SECTIONS = [
@@ -43,7 +44,8 @@ var SECTIONS = [
   { key: 'contacts',  label: 'Contacts' },
   { key: 'plans',     label: 'Plans' },
   { key: 'payments',  label: 'Payments' },
-  { key: 'templates', label: 'Templates' }
+  { key: 'templates', label: 'Templates' },
+  { key: 'marketing', label: 'Marketing' }
 ];
 var activeSection = null; // null = the menu itself
 var selectedCustomerId = null;
@@ -246,6 +248,9 @@ function switchSection(key) {
   selectedCustomerId = null;
   selectedContactId = null;
   render();
+  /* The audience counts are asked for when the section opens rather than at
+     boot: they are a server round trip nobody needs until they are looking. */
+  if (key === 'marketing') loadAudiences();
 }
 
 /* The Wix-style home: one row per area - icon, label, a count badge where
@@ -276,7 +281,8 @@ function renderMenu(counts) {
 
 var SECTION_IDS = {
   requests: 'sectionRequests', customers: 'sectionCustomers', contacts: 'sectionContacts',
-  plans: 'sectionPlans', payments: 'sectionPayments', templates: 'sectionTemplates'
+  plans: 'sectionPlans', payments: 'sectionPayments', templates: 'sectionTemplates',
+  marketing: 'sectionMarketing'
 };
 
 function render() {
@@ -1439,5 +1445,143 @@ function renderTemplatesSection() {
   renderDoneList();
   renderTemplates();
 }
+/* ---------------------------------------------------------------- marketing
+ *
+ * The counts come from the server rather than from the profiles already
+ * loaded here, because the server is what decides who is actually in a group -
+ * having two answers to "who gets this" is how somebody gets emailed twice or
+ * not at all.
+ */
+var AUDIENCE_LABEL = {
+  all: 'Everyone', customers: 'Paying customers', contacts: 'Contacts (no plan yet)',
+  business: 'Business plan', pro: 'Pro plan', max: 'Max plan'
+};
+var bcImageUrl = null;
+
+/* The page-wide say() writes to one shared note at the top; this panel has its
+   own two, so it gets its own writers. */
+function noteWriter(id) {
+  return function (msg, kind) {
+    var n = document.getElementById(id);
+    if (!n) return;
+    n.textContent = msg || '';
+    n.className = 'note' + (kind ? ' ' + kind : '');
+  };
+}
+var bcSay = noteWriter('bcNote');
+var imgSay = noteWriter('bcImageNote');
+
+async function loadAudiences() {
+  var sel = document.getElementById('bcAudience');
+  if (!sel) return;
+  var keep = sel.value;
+  try {
+    var res = await api({ action: 'broadcastAudience', audience: 'all' });
+    sel.textContent = '';
+    Object.keys(AUDIENCE_LABEL).forEach(function (key) {
+      var n = res.counts[key];
+      if (n === undefined) return;
+      var o = document.createElement('option');
+      o.value = key;
+      o.textContent = AUDIENCE_LABEL[key] + ' — ' + n + (n === 1 ? ' person' : ' people');
+      o.disabled = n === 0;
+      sel.appendChild(o);
+    });
+    if (keep) sel.value = keep;
+    bcSay(res.optedOut ? res.optedOut + ' opted out and are never included.' : '');
+  } catch (err) {
+    bcSay(ONE.friendlyError(err), 'bad');
+  }
+}
+
+function bcFields() {
+  return {
+    audience: document.getElementById('bcAudience').value,
+    subject: document.getElementById('bcSubject').value.trim(),
+    title: document.getElementById('bcTitle').value.trim(),
+    body: document.getElementById('bcBody').value.trim(),
+    buttonText: document.getElementById('bcButtonText').value.trim(),
+    buttonUrl: document.getElementById('bcButtonUrl').value.trim(),
+    imageUrl: bcImageUrl || ''
+  };
+}
+
+/* The picture goes up before the send rather than with it: an email needs a
+   URL its reader's mail client can fetch, and that means the file has to
+   already be somewhere public. */
+async function uploadBroadcastImage(file) {
+  if (!file) { bcImageUrl = null; imgSay(''); return; }
+  if (file.size > 5 * 1024 * 1024) return imgSay('That is over 5 MB.', 'bad');
+
+  imgSay('Uploading\u2026');
+  var ext = (file.name.split('.').pop() || 'png').toLowerCase().slice(0, 5);
+  var path = 'broadcast/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+
+  var up = await ONE.db.storage.from('broadcast-images').upload(path, file, { upsert: false });
+  if (up.error) { bcImageUrl = null; return imgSay(ONE.friendlyError(up.error), 'bad'); }
+
+  var pub = ONE.db.storage.from('broadcast-images').getPublicUrl(path);
+  bcImageUrl = pub && pub.data && pub.data.publicUrl;
+  imgSay(bcImageUrl ? 'Picture ready.' : 'Uploaded, but no address came back.',
+         bcImageUrl ? 'ok' : 'bad');
+}
+
+function wireMarketing() {
+  var img = document.getElementById('bcImage');
+  if (!img) return;
+
+  img.addEventListener('change', function () { uploadBroadcastImage(this.files && this.files[0]); });
+
+  /* Preview builds the same email the server would, by asking for one
+     addressed to nobody - so what is on screen is not a second guess at the
+     layout that could drift from the real thing. */
+  document.getElementById('bcPreview').addEventListener('click', async function () {
+    var f = bcFields();
+    if (!f.subject || !f.title || !f.body) {
+      return bcSay('Subject, heading and body first.', 'bad');
+    }
+    var wrap = document.getElementById('bcPreviewWrap');
+    var frame = document.getElementById('bcPreviewFrame');
+    try {
+      var res = await api(Object.assign({ action: 'sendBroadcast', preview: true }, f));
+      frame.srcdoc = res.html;
+      wrap.hidden = false;
+      bcSay('This is what ' + AUDIENCE_LABEL[f.audience] + ' would get.', 'ok');
+    } catch (err) {
+      bcSay(ONE.friendlyError(err), 'bad');
+    }
+  });
+
+  document.getElementById('bcSend').addEventListener('click', async function () {
+    var f = bcFields();
+    var btn = this;
+
+    var count = (document.getElementById('bcAudience').selectedOptions[0] || {}).textContent || '';
+    if (!confirm('Send "' + f.subject + '" to ' + count + '?\n\nThis cannot be taken back.')) return;
+
+    btn.disabled = true;
+    bcSay('Sending\u2026');
+    try {
+      var res = await api(Object.assign({ action: 'sendBroadcast' }, f));
+      bcSay('Sent to ' + res.sent + (res.sent === 1 ? ' person' : ' people')
+        + (res.failed ? ', ' + res.failed + ' failed' : '') + '.', res.failed ? 'bad' : 'ok');
+      if (!res.failed) {
+        ['bcSubject', 'bcTitle', 'bcBody', 'bcButtonText', 'bcButtonUrl'].forEach(function (id) {
+          document.getElementById(id).value = '';
+        });
+        document.getElementById('bcImage').value = '';
+        bcImageUrl = null;
+        document.getElementById('bcPreviewWrap').hidden = true;
+      }
+    } catch (err) {
+      bcSay(ONE.friendlyError(err), 'bad');
+    }
+    btn.disabled = false;
+  });
+}
+
+/* Bound once, at load: the marketing section's controls live in the page from
+   the start, hidden, so there is nothing to re-bind when it opens. */
+if (document.getElementById('bcSend')) wireMarketing();
 
 })();

@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body class="auth-body">
 
@@ -68,6 +68,57 @@
   <!-- The ones already delivered - the only place a done request is still
        visible once it drops out of the open queue, and where one gets saved
        as a reusable template for next time. -->
+  <section class="panel" id="sectionMarketing" hidden>
+    <h2 class="panel-title">Marketing</h2>
+    <p class="hint">Goes only to people who have not opted out. Anything about
+      a plan or a payment is a service message and does not belong here.</p>
+
+    <div class="bc-form">
+      <div class="field">
+        <label for="bcAudience">Send to</label>
+        <select id="bcAudience"></select>
+      </div>
+      <div class="field">
+        <label for="bcSubject">Subject line</label>
+        <input id="bcSubject" type="text" maxlength="200" placeholder="What lands in their inbox">
+      </div>
+      <div class="field">
+        <label for="bcTitle">Heading</label>
+        <input id="bcTitle" type="text" maxlength="200" placeholder="The big line inside the email">
+      </div>
+      <div class="field full">
+        <label for="bcBody">Body</label>
+        <textarea id="bcBody" class="notes-textarea" rows="7" maxlength="6000"
+          placeholder="Leave a blank line between paragraphs."></textarea>
+      </div>
+      <div class="field full">
+        <label for="bcImage">Picture</label>
+        <input id="bcImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+        <p class="hint">Optional. Up to 5&nbsp;MB. Sits under the text, above the button.</p>
+        <p class="note" id="bcImageNote" role="status" aria-live="polite"></p>
+      </div>
+      <div class="field">
+        <label for="bcButtonText">Button text</label>
+        <input id="bcButtonText" type="text" maxlength="60" placeholder="See the plans">
+      </div>
+      <div class="field">
+        <label for="bcButtonUrl">Button link</label>
+        <input id="bcButtonUrl" type="url" maxlength="500" placeholder="https://kanvas.one/plans">
+      </div>
+    </div>
+
+    <div class="bc-actions">
+      <button class="btn btn-ghost" id="bcPreview" type="button">Preview</button>
+      <button class="btn btn-primary" id="bcSend" type="button">Send</button>
+    </div>
+    <p class="note" id="bcNote" role="status" aria-live="polite"></p>
+
+    <div class="bc-preview" id="bcPreviewWrap" hidden>
+      <h3 class="req-list-title">Preview</h3>
+      <iframe id="bcPreviewFrame" title="Email preview"></iframe>
+    </div>
+  </section>
+
   <section class="panel" id="sectionTemplates" hidden>
     <h2 class="panel-title">Templates</h2>
     <h3 class="req-list-title">Recently completed</h3>
@@ -85,7 +136,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="admin.js?v=16"></script>
+<script src="admin.js?v=17"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>

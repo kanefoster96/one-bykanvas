@@ -12,6 +12,8 @@
  * again and again. A customer's payment must never depend on our mail working.
  */
 const ENDPOINT = 'https://api.resend.com/emails';
+const BATCH_ENDPOINT = 'https://api.resend.com/emails/batch';
+const BATCH_MAX = 100;
 const TIMEOUT_MS = 5000;
 
 /* Where our own mail comes from. Resend needs this to be a verified domain, so
@@ -89,4 +91,63 @@ async function sendEmail({ to, subject, text, html, replyTo, headers }) {
   }
 }
 
-module.exports = { sendEmail, adminAddresses, replyAddress };
+/* Sends many different messages in as few requests as possible.
+ *
+ * One call per person would be one HTTP round trip per person, and a function
+ * that has ten seconds to live cannot make three hundred of them. Resend takes
+ * a hundred at a time; anything larger is chunked and the chunks go in order.
+ *
+ * Each entry is its own message - the unsubscribe link differs per person, so
+ * this is not one email to many addresses, and nobody sees anyone else's.
+ *
+ * Returns { sent, failed }. Like sendEmail it never throws: a broadcast that
+ * fails halfway should report what got through, not lose the count.
+ */
+async function sendBatch(messages) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return { sent: 0, failed: 0, skipped: messages.length };
+
+  let sent = 0, failed = 0;
+
+  for (let i = 0; i < messages.length; i += BATCH_MAX) {
+    const chunk = messages.slice(i, i + BATCH_MAX).map((m) => ({
+      from: sender(),
+      to: Array.isArray(m.to) ? m.to : [m.to],
+      subject: m.subject,
+      text: m.text,
+      ...(m.html ? { html: m.html } : {}),
+      reply_to: m.replyTo || replyAddress(),
+      headers: Object.assign({
+        'Auto-Submitted': 'auto-generated',
+        'X-Entity-Ref-ID': `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+      }, m.headers || {})
+    }));
+
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS * 2);
+    try {
+      const res = await fetch(BATCH_ENDPOINT, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(chunk),
+        signal: ctrl.signal
+      });
+      if (res.ok) {
+        sent += chunk.length;
+      } else {
+        const detail = await res.text().catch(() => '');
+        console.error('email: batch refused', res.status, detail.slice(0, 300));
+        failed += chunk.length;
+      }
+    } catch (err) {
+      console.error('email: batch failed', err && err.message);
+      failed += chunk.length;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  return { sent, failed };
+}
+
+module.exports = { sendEmail, sendBatch, adminAddresses, replyAddress };

@@ -94,7 +94,7 @@ function calloutBox(callout) {
  * escaped here, so callers pass those in raw.
  */
 function html({
-  preheader, heading, lines = [], details = [],
+  preheader, heading, lines = [], details = [], image,
   ctaText, ctaHref, ctaNote, callout, footer, footerLinks = []
 }) {
   /* What the inbox list shows beside the subject. Without it the client
@@ -107,6 +107,17 @@ function html({
     .join('');
 
   const facts = details.length ? detailCard(details) : '';
+
+  /* Width and height are set on the tag as well as in the style: a mail client
+     that has not loaded the image yet still needs to know how much room to
+     leave, or the text below it jumps when it arrives. */
+  const picture = image && image.src ? `
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 4px;">
+          <tr><td>
+            <img src="${esc(image.src)}" alt="${esc(image.alt || '')}" width="480"
+                 style="display:block;width:100%;max-width:480px;height:auto;border:0;border-radius:14px;">
+          </td></tr>
+        </table>` : '';
 
   /* Full width, the way a primary action is set on a phone - the same pill
      radius as .btn on the site. */
@@ -139,7 +150,7 @@ function html({
         </td></tr>
         <tr><td style="padding:26px 36px 0;">
           <h1 style="margin:0 0 16px;font-size:25px;font-weight:600;letter-spacing:-.025em;line-height:1.2;color:${INK};font-family:${FONT};">${esc(heading)}</h1>
-          ${body}${facts}${cta}${note}${warn}
+          ${body}${picture}${facts}${cta}${note}${warn}
         </td></tr>
         <tr><td style="padding:30px 36px 34px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid ${LINE};">

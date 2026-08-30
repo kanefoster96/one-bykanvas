@@ -13,9 +13,9 @@
 const { createClient } = require('@supabase/supabase-js');
 const Stripe = require('stripe');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
-const { REQUEST_COST } = require('./_plans.js');
-const { sendEmail } = require('./_email.js');
-const { html: emailHtml, standardFooter } = require('./_email_template.js');
+const { REQUEST_COST, PLANS } = require('./_plans.js');
+const { sendEmail, sendBatch } = require('./_email.js');
+const { html: emailHtml, standardFooter, esc } = require('./_email_template.js');
 const { unsubscribeHeaders, unsubscribeUrl, optedOut } = require('./_unsubscribe.js');
 const { shortfallFor } = require('./_billing.js');
 
@@ -77,6 +77,30 @@ async function chargeCardForRequest(stripe, profile, reqRow, amount) {
 
   return pi;
 }
+
+
+/* Who a broadcast goes to.
+ *
+ * Every audience is filtered to marketing_optin first, so an opt-out cannot be
+ * undone by picking a different group. "contacts" is people who signed up and
+ * never bought - the ones worth telling about a plan; "customers" is anyone
+ * paying, and a plan name narrows that to one tier.
+ *
+ * Enquiries from the public form are deliberately not here. They have no
+ * account, so there is nowhere to record a preference and no way to give them
+ * a working unsubscribe link - and an unsubscribe that does not work is worse
+ * than not asking.
+ */
+function inAudience(p, audience) {
+  if (!p.marketing_optin) return false;
+  const paying = p.subscription_status === 'active' || p.subscription_status === 'trialing';
+  if (audience === 'all') return true;
+  if (audience === 'customers') return paying;
+  if (audience === 'contacts') return !paying;
+  return paying && p.active_plan === audience;
+}
+
+const AUDIENCES = ['all', 'customers', 'contacts'].concat(Object.keys(PLANS));
 
 /* Tells a customer a feature on their site was added or updated - best
    effort, same reasoning as everywhere else email is sent here: the change
@@ -351,6 +375,115 @@ module.exports = async function handler(req, res) {
     }
 
     // ---- write: admin's own notes about a customer - never shown to them ----
+    /* ---- marketing: who would get this, and then sending it ------------ */
+    if (action === 'broadcastAudience' || action === 'sendBroadcast') {
+      const audience = String(body.audience || 'all');
+      if (AUDIENCES.indexOf(audience) === -1) {
+        return res.status(400).json({ error: 'Unknown audience.' });
+      }
+
+      const { data: people, error: peopleErr } = await db.from('profiles')
+        .select('id, business_name, marketing_optin, subscription_status, active_plan');
+      if (peopleErr) throw new Error(peopleErr.message);
+
+      const chosen = (people || []).filter((p) => inAudience(p, audience));
+
+      if (action === 'broadcastAudience') {
+        const counts = {};
+        AUDIENCES.forEach((a) => {
+          counts[a] = (people || []).filter((p) => inAudience(p, a)).length;
+        });
+        return res.status(200).json({
+          ok: true, counts, audience, count: chosen.length,
+          optedOut: (people || []).filter((p) => !p.marketing_optin).length
+        });
+      }
+
+      // ---- send ----
+      const subject = String(body.subject || '').trim().slice(0, 200);
+      const title = String(body.title || '').trim().slice(0, 200);
+      const bodyText = String(body.body || '').trim().slice(0, 6000);
+      const buttonText = String(body.buttonText || '').trim().slice(0, 60);
+      const buttonUrl = String(body.buttonUrl || '').trim().slice(0, 500);
+      const imageUrl = String(body.imageUrl || '').trim().slice(0, 500);
+
+      if (!subject) return res.status(400).json({ error: 'Give it a subject line.' });
+      if (!title) return res.status(400).json({ error: 'Give it a heading.' });
+      if (!bodyText) return res.status(400).json({ error: 'Write something in the body.' });
+      if (buttonText && !buttonUrl) return res.status(400).json({ error: 'The button needs a link.' });
+      if (buttonUrl && !/^https:\/\//i.test(buttonUrl)) {
+        return res.status(400).json({ error: 'The button link must start with https://' });
+      }
+      if (imageUrl && !/^https:\/\//i.test(imageUrl)) {
+        return res.status(400).json({ error: 'The image link must start with https://' });
+      }
+      if (!chosen.length) return res.status(400).json({ error: 'Nobody is in that group.' });
+
+      const who = await db.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      const emailById = new Map(
+        ((who && who.data && who.data.users) || []).map((u) => [u.id, u.email])
+      );
+
+      /* Each message is built for one person, because the unsubscribe link is
+         theirs alone. Written as paragraphs so a blank line in the box comes
+         out as a blank line in the email. */
+      const paras = bodyText.split(/\n\s*\n/).map((t) => esc(t.trim()).replace(/\n/g, '<br>'));
+      const site = ourSiteUrl();
+
+      const messages = [];
+      for (const p of chosen) {
+        const to = emailById.get(p.id);
+        if (!to) continue;
+        const unsub = unsubscribeUrl(p.id, 'marketing');
+
+        messages.push({
+          to,
+          subject,
+          headers: unsubscribeHeaders(p.id, 'marketing'),
+          text: title + '\n\n' + bodyText
+              + (buttonUrl ? '\n\n' + (buttonText || 'Find out more') + ': ' + buttonUrl : '')
+              + (unsub ? '\n\nNot interested in these? ' + unsub : ''),
+          html: emailHtml({
+            preheader: bodyText.slice(0, 140),
+            heading: title,
+            lines: paras,
+            image: imageUrl ? { src: imageUrl, alt: title } : null,
+            ctaText: buttonText && buttonUrl ? buttonText : null,
+            ctaHref: buttonText && buttonUrl ? buttonUrl : null,
+            footer: 'You&rsquo;re getting this because you have an account with one, by Kanvas.'
+              + (unsub ? ' <a href="' + unsub + '" style="color:#86868b;">Unsubscribe</a>.' : ''),
+            footerLinks: standardFooter(site)
+          })
+        });
+      }
+
+      if (!messages.length) {
+        return res.status(400).json({ error: 'Nobody in that group has an email address.' });
+      }
+
+      /* Preview returns the first person's copy and sends nothing. It is built
+         by the same code that does the sending, so what is on screen cannot
+         drift away from what would actually go out. */
+      if (body.preview) {
+        return res.status(200).json({
+          ok: true, preview: true, html: messages[0].html,
+          wouldSendTo: messages.length
+        });
+      }
+
+      const result = await sendBatch(messages);
+      console.log('admin: broadcast to %s - %d sent, %d failed', audience, result.sent, result.failed);
+
+      await db.from('broadcasts').insert({
+        subject, title, body: bodyText,
+        image_path: imageUrl || null,
+        button_text: buttonText || null, button_url: buttonUrl || null,
+        audience, sent_count: result.sent, failed_count: result.failed
+      });
+
+      return res.status(200).json({ ok: true, sent: result.sent, failed: result.failed });
+    }
+
     if (action === 'setAdminNotes') {
       const userId = String(body.userId || '');
       const notes = body.notes == null ? null : String(body.notes).trim() || null;
