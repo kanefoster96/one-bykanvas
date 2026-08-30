@@ -127,7 +127,10 @@ module.exports = async function handler(req, res) {
        and the money is what the two behaviours actually differ on. */
     const currentAmount = PLANS[current] ? PLANS[current].amount : (item.price && item.price.unit_amount) || 0;
     const upgrading = PLANS[plan].amount > currentAmount;
-    const renewsAt = sub.current_period_end;
+    /* Newer API versions carry the period on the item rather than the
+       subscription, and an account can be pinned to either. */
+    const renewsAt = sub.current_period_end
+      || (item.current_period_end || null);
 
     if (!apply) {
       return res.status(200).json({
@@ -156,6 +159,18 @@ module.exports = async function handler(req, res) {
         payment_behavior: 'error_if_incomplete',
         metadata
       });
+
+      /* An upgrade is a fresh payment for a bigger allowance, so the allowance
+         starts over: someone who has spent their single Business point and
+         then pays for Pro gets three, not two. Stamped only after the charge
+         has gone through, so a declined card cannot hand out free points.
+         The webhook never moves this backwards, so it stands until the next
+         renewal overtakes it. */
+      const { error: stampErr } = await admin
+        .from('profiles')
+        .update({ points_reset_at: new Date().toISOString() })
+        .eq('id', user.id);
+      if (stampErr) console.error('change-plan: points not reset:', stampErr.message);
     } else {
       /* No proration either way: they keep the plan they have paid for until
          the period they paid for runs out. plan_effective_at is what tells the

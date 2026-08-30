@@ -140,7 +140,12 @@ function dayGroups(rows, field) {
 /* Points spent this billing period, worked out the same way the customer's own
    page works it out so the two never disagree. Also the period an SEO log or
    a shortfall walk is measured against - one function, three uses. */
+/* Same rule as account.js and api/_billing.js - points_reset_at when it is
+   set, the old derivation only for rows written before it existed. */
 function periodStart(p) {
+  var stamped = p && p.points_reset_at ? new Date(p.points_reset_at) : null;
+  if (stamped && !isNaN(stamped)) return stamped;
+
   var end = p.current_period_end ? new Date(p.current_period_end) : null;
   if (end && !isNaN(end)) { var s = new Date(end); s.setMonth(s.getMonth() - 1); return s; }
   var now = new Date();
