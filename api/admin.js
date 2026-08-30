@@ -459,6 +459,12 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'Too late to reclassify a finished request.' });
       }
       if (reqRow.billed_at) return res.status(400).json({ error: 'Already charged — cannot reclassify.' });
+      /* A business-details job is free by definition - turning it into a
+         paid edit or feature would bill someone for a change they made
+         themselves. The admin page hides the button; this refuses it. */
+      if (reqRow.kind === 'info') {
+        return res.status(400).json({ error: 'A business details change is free — it cannot become an edit or feature.' });
+      }
       if (reqRow.kind === kind) return res.status(200).json({ ok: true, shortfall: 0 });
 
       const patch = { kind, points: REQUEST_COST[kind].points };
