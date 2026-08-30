@@ -12,6 +12,10 @@ var subtitle = document.getElementById('subtitle');
 var tabLogin = document.getElementById('tab-login');
 var tabSignup= document.getElementById('tab-signup');
 var password = document.getElementById('password');
+var passwordField = document.getElementById('passwordField');
+var tabs     = document.getElementById('tabs');
+var forgot   = document.getElementById('forgot');
+var backToLogin = document.getElementById('backToLogin');
 var mode     = 'login';
 
 ONE.requireConfig(note);
@@ -26,17 +30,41 @@ if (ONE.ready) {
 function setMode(next) {
   mode = next;
   var signup = mode === 'signup';
+  var reset  = mode === 'reset';
+
+  /* Resetting is not a third tab - it is a detour off the login one, so the
+     tabs stay showing where you came from and the way back is a link. */
   tabLogin.classList.toggle('is-on', !signup);
   tabSignup.classList.toggle('is-on', signup);
   tabLogin.setAttribute('aria-selected', String(!signup));
   tabSignup.setAttribute('aria-selected', String(signup));
-  title.textContent = signup ? 'Create your account' : 'Log in';
-  subtitle.textContent = signup
-    ? 'A few details now saves us asking later.'
-    : 'Welcome back.';
-  submit.textContent = signup ? 'Create account' : 'Log in';
+  tabs.hidden = reset;
+
+  title.textContent = reset ? 'Reset your password'
+                    : signup ? 'Create your account'
+                    : 'Log in';
+  subtitle.textContent = reset
+    ? 'Tell us the email address on your account and we will send you a link.'
+    : signup
+      ? 'A few details now saves us asking later.'
+      : 'Welcome back.';
+  submit.textContent = reset ? 'Send reset link'
+                     : signup ? 'Create account'
+                     : 'Log in';
+
+  /* The password box is not just hidden for a reset - a required field that
+     cannot be seen blocks the form from submitting at all. */
+  passwordField.hidden = reset;
+  password.disabled = reset;
+  password.required = !reset;
   password.setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
-  document.querySelectorAll('.signup-only').forEach(function (el) { el.hidden = !signup; });
+
+  document.querySelectorAll('.signup-only').forEach(function (el) {
+    el.hidden = !signup;
+  });
+  forgot.hidden = reset;
+  backToLogin.hidden = !reset;
+
   note.textContent = '';
   note.className = 'note';
 }
@@ -51,12 +79,18 @@ function say(message, kind) {
 
 function busy(on, label) {
   submit.disabled = on;
-  submit.textContent = on ? label : (mode === 'signup' ? 'Create account' : 'Log in');
+  submit.textContent = on ? label
+    : mode === 'reset'  ? 'Send reset link'
+    : mode === 'signup' ? 'Create account'
+    : 'Log in';
 }
 
 form.addEventListener('submit', async function (e) {
   e.preventDefault();
   if (!ONE.requireConfig(note)) return;
+
+  /* Same form, same button - only the job changes. */
+  if (mode === 'reset') return sendReset();
 
   var email = document.getElementById('email').value.trim();
   var pass  = password.value;
@@ -102,19 +136,42 @@ form.addEventListener('submit', async function (e) {
   }
 });
 
-document.getElementById('forgot').addEventListener('click', async function () {
-  if (!ONE.requireConfig(note)) return;
-  var email = document.getElementById('email').value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-    return say('Type your email address above first, then tap this again.', 'bad');
-  }
-  var res = await ONE.db.auth.resetPasswordForEmail(email, {
-    redirectTo: location.origin + '/account.html'
-  });
-  if (res.error) return say(ONE.friendlyError(res.error), 'bad');
-  say('If that email has an account, a reset link is on its way.', 'ok');
+/* Switches the card into its reset state rather than acting on whatever
+   happens to be typed above - being told to go and fill in a box you have
+   already walked past is the sort of small rudeness that makes a form feel
+   broken. Carries the address across if there is one. */
+forgot.addEventListener('click', function () {
+  setMode('reset');
+  document.getElementById('email').focus();
 });
 
-/* /login.html?new=1 opens straight on the create-account tab. */
-setMode(new URLSearchParams(location.search).get('new') ? 'signup' : 'login');
+backToLogin.addEventListener('click', function () {
+  setMode('login');
+});
+
+async function sendReset() {
+  var email = document.getElementById('email').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    return say('That does not look like an email address.', 'bad');
+  }
+
+  busy(true, 'Sending…');
+  var res = await ONE.db.auth.resetPasswordForEmail(email, {
+    redirectTo: location.origin + '/reset.html'
+  });
+  busy(false);
+
+  if (res.error) return say(ONE.friendlyError(res.error), 'bad');
+
+  /* Deliberately not "we found your account" or "we didn't": answering that
+     turns this box into a way for anyone to test which addresses have
+     accounts here. */
+  say('If that address has an account, a reset link is on its way. It expires in '
+    + '24 hours and only works once.', 'ok');
+}
+
+/* ?new=1 opens on the create-account tab; ?reset=1 opens straight on the
+   reset state, which is where reset.html sends anyone whose link expired. */
+var opening = new URLSearchParams(location.search);
+setMode(opening.get('reset') ? 'reset' : opening.get('new') ? 'signup' : 'login');
 })();
