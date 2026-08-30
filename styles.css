@@ -781,12 +781,18 @@ body.locked{overflow:hidden}
 .dom-have .field{margin-top:14px}
 
 /* summary + payment */
-.sumbox{border:1px solid var(--line-soft);border-radius:16px;padding:6px 18px;margin-bottom:20px}
+/* overflow clips the total row's square corners to the card's own radius, so
+   the grey reaches the corners exactly instead of the row guessing at a
+   radius that has to be kept in step with this one. */
+.sumbox{border:1px solid var(--line-soft);border-radius:16px;padding:6px 18px;margin-bottom:20px;overflow:hidden}
 .sumrow{display:flex;justify-content:space-between;align-items:baseline;padding:13px 0;font-size:15px;color:var(--ink-2);border-bottom:1px solid var(--line-soft)}
 .sumrow b{color:var(--ink);font-weight:600}
 .sumrow.total{
-  border-bottom:0;margin:0 -18px;padding-left:18px;padding-right:18px;
-  background:var(--bg-grey);border-radius:0 0 15px 15px;
+  /* Negative margins on all three sides pull the fill out through the card's
+     padding and onto its inside edge - without the bottom one the grey
+     stopped 6px short and left a white strip under it. */
+  border-bottom:0;margin:0 -18px -6px;padding-left:18px;padding-right:18px;
+  background:var(--bg-grey);
 }
 .sumrow.total b{font-size:20px;letter-spacing:-.02em}
 .paynote{background:var(--bg-grey);border-radius:16px;padding:18px 20px;margin-bottom:20px}
