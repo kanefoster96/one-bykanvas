@@ -131,6 +131,9 @@ async function start() {
   var notify = document.getElementById('notifyOptIn');
   if (notify) notify.checked = !(profile.data && profile.data.notify_optout);
 
+  var marketing = document.getElementById('marketingOptIn');
+  if (marketing) marketing.checked = !(profile.data && profile.data.marketing_optin === false);
+
   loading.hidden = true;
   app.hidden = false;
 
@@ -1170,23 +1173,35 @@ document.getElementById('payBtn').addEventListener('click', async function () {
   var note = document.getElementById('notifyNote');
   if (!box) return;
 
-  box.addEventListener('change', async function () {
-    var wanted = box.checked;
-    box.disabled = true;
-    say(note, 'Saving\u2026');
+  /* Two switches, one saver. They are separate columns on purpose: mail about
+     their own site and mail selling to them are different things to want. */
+  function wire(el, column, invert, onText, offText) {
+    if (!el) return;
+    el.addEventListener('change', async function () {
+      var wanted = el.checked;
+      el.disabled = true;
+      say(note, 'Saving\u2026');
 
-    var res = await ONE.db.from('profiles')
-      .update({ notify_optout: !wanted })
-      .eq('id', user.id);
+      var patch = {};
+      patch[column] = invert ? !wanted : wanted;
+      var res = await ONE.db.from('profiles').update(patch).eq('id', user.id);
 
-    box.disabled = false;
-    if (res.error) {
-      box.checked = !wanted;
-      return say(note, ONE.friendlyError(res.error), 'bad');
-    }
-    say(note, wanted ? 'We\u2019ll let you know about changes to your site.'
-                     : 'Turned off. Plan and payment emails still come through.', 'ok');
-  });
+      el.disabled = false;
+      if (res.error) {
+        el.checked = !wanted;
+        return say(note, ONE.friendlyError(res.error), 'bad');
+      }
+      say(note, wanted ? onText : offText, 'ok');
+    });
+  }
+
+  wire(box, 'notify_optout', true,
+    'We\u2019ll let you know about changes to your site.',
+    'Turned off. Plan and payment emails still come through.');
+
+  wire(document.getElementById('marketingOptIn'), 'marketing_optin', false,
+    'We\u2019ll send you the occasional tip or offer.',
+    'Turned off. You\u2019ll still hear about your plan and your site.');
 })();
 
 /* Coming back from Stripe. The webhook is what actually flips the status, so

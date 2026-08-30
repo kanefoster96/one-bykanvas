@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body class="auth-body">
 
@@ -47,6 +47,11 @@
         <p class="hint signup-only" hidden>At least 8 characters.</p>
       </div>
 
+      <label class="mail-pref signup-only" id="marketingOptIn" hidden>
+        <input type="checkbox" id="marketingBox" checked>
+        <span>Email me occasional tips, offers and new features. Unsubscribe any time.</span>
+      </label>
+
       <button class="btn btn-primary full" id="submit" type="submit">Log in</button>
       <p class="note" id="note" role="status" aria-live="polite"></p>
     </form>
@@ -62,7 +67,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="auth.js?v=2"></script>
+<script src="auth.js?v=3"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>

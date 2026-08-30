@@ -116,6 +116,20 @@ form.addEventListener('submit', async function (e) {
       });
       if (signUp.error) throw signUp.error;
 
+      /* The column defaults to true, so only a refusal needs carrying. It goes
+         into the same stash the wizard uses, which account.js writes to the
+         profile the first time they arrive properly signed in - there is no
+         session yet here to write it with. */
+      var wantsMarketing = document.getElementById('marketingBox');
+      if (wantsMarketing && !wantsMarketing.checked) {
+        try {
+          var key = 'one.pending-onboarding';
+          var stash = JSON.parse(localStorage.getItem(key) || '{}');
+          stash.marketing_optin = false;
+          localStorage.setItem(key, JSON.stringify(stash));
+        } catch (e) { /* private mode - they can turn it off from the account page */ }
+      }
+
       // With email confirmation on, there is no session until they click the link.
       if (signUp.data.session) {
         location.href = '/account.html';
