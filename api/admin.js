@@ -15,7 +15,7 @@ const Stripe = require('stripe');
 const { missingEnv } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { sendEmail } = require('./_email.js');
-const { html: emailHtml, esc } = require('./_email_template.js');
+const { html: emailHtml, standardFooter } = require('./_email_template.js');
 const { shortfallFor } = require('./_billing.js');
 
 const DEFAULT_ADMINS = ['kane.foster@ymail.com'];
@@ -94,10 +94,23 @@ async function notifyFeatureEmail(db, userId, name, verb) {
     text: `We've ${verb} a feature on your site: "${name}".\n\n`
         + `See it on your account page:\n${site}/account.html`,
     html: emailHtml({
+      preheader: `${name} is ${verb} on your site.`,
       heading,
-      lines: [`We&rsquo;ve ${verb} a feature on your site: &ldquo;<strong>${esc(name)}</strong>&rdquo;.`],
+      lines: [
+        verb === 'updated'
+          ? `We&rsquo;ve made an improvement to something already on your site &mdash; nothing for you to do, it&rsquo;s live now.`
+          : `Something new has been added to your site. It&rsquo;s live now, so have a look when you get a minute.`
+      ],
+      details: [
+        { label: 'Feature', value: name },
+        { label: 'Change', value: verb === 'updated' ? 'Updated' : 'Added' },
+        { label: 'Date', value: new Date().toLocaleDateString('en-GB',
+            { day: 'numeric', month: 'long', year: 'numeric' }) }
+      ],
       ctaText: 'See it on your account',
-      ctaHref: `${site}/account.html`
+      ctaHref: `${site}/account.html`,
+      footer: 'You&rsquo;re getting this because your site with one, by Kanvas was changed.',
+      footerLinks: standardFooter(site)
     })
   });
   console.log('admin: feature notify email', result);
@@ -121,13 +134,24 @@ async function notifySiteLive(db, userId, businessName, siteUrl) {
         + `Have a look, and let us know if there's anything you'd like changed.\n\n`
         + `Manage your account: ${site}/account.html`,
     html: emailHtml({
-      heading: `${esc(businessName) || 'Your site'} is live.`,
+      /* heading is escaped inside the shell, so the raw name goes in here -
+         escaping it twice turned an ampersand into &amp;amp; on the page. */
+      preheader: `${shown} is live. Have a look and tell us what you think.`,
+      heading: `${businessName || 'Your site'} is live 🎉`,
       lines: [
-        `Your site is now live at <strong>${esc(shown)}</strong>.`,
-        `Have a look, and let us know if there&rsquo;s anything you&rsquo;d like changed.`
+        `It&rsquo;s built, it&rsquo;s online, and it&rsquo;s yours.`,
+        `Have a look through, and let us know if there&rsquo;s anything you&rsquo;d like changed &mdash; that&rsquo;s what your monthly changes are for.`
+      ],
+      details: [
+        { label: 'Business', value: businessName || '—' },
+        { label: 'Web address', value: shown },
+        { label: 'Status', value: 'Live' }
       ],
       ctaText: 'View your site',
-      ctaHref: href
+      ctaHref: href,
+      ctaNote: 'Ask for a change any time from your account.',
+      footer: 'You&rsquo;re getting this because your site with one, by Kanvas has gone live.',
+      footerLinks: standardFooter(site)
     })
   });
   console.log('admin: site live email', result);

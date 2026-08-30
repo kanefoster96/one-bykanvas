@@ -8,7 +8,8 @@ const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
-const { html: emailHtml } = require('./_email_template.js');
+const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
+const { PLANS } = require('./_plans.js');
 
 const PLAN_NAME = { business: 'Business', pro: 'Pro', max: 'Max' }; // must match admin.js/account.js
 
@@ -165,24 +166,55 @@ module.exports = async function handler(req, res) {
     if (!email) return;
 
     const planName = PLAN_NAME[patch.active_plan] || 'your';
+    const plan = PLANS[patch.active_plan];
+    const points = plan ? plan.points : null;
     const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+    const who2 = p && p.business_name ? ', ' + p.business_name : '';
+    const started = new Date().toLocaleDateString('en-GB',
+      { day: 'numeric', month: 'long', year: 'numeric' });
+
+    /* The three things someone actually wants confirmed after paying: which
+       plan they are on, what it gets them each month, and from when. */
+    const facts = [{ label: 'Plan', value: `one — ${planName}` }];
+    if (plan) {
+      facts.push({
+        label: 'Monthly',
+        value: `£${(plan.amount / 100).toFixed(0)}`
+      });
+      facts.push({
+        label: 'Changes included',
+        value: `${points} point${points === 1 ? '' : 's'} a month`
+      });
+    }
+    facts.push({ label: 'Started', value: started });
 
     const result = await sendEmail({
       to: email,
       subject: "You're all set — welcome to one",
-      text: `Welcome to one${p && p.business_name ? ', ' + p.business_name : ''}.\n\n`
+      text: `Welcome to one${who2} 👋\n\n`
           + `Your ${planName} plan is now active - thanks for signing up.\n\n`
+          + (plan
+              ? `Plan:             one - ${planName}\n`
+                + `Monthly:          £${(plan.amount / 100).toFixed(0)}\n`
+                + `Changes included: ${points} point${points === 1 ? '' : 's'} a month\n`
+                + `Started:          ${started}\n\n`
+              : '')
           + `We'll be in touch as we start building your site. In the meantime, you can see `
           + `everything from your account - your plan, your requests, and your site once it's live.\n\n`
           + `Your account: ${site}/account.html`,
       html: emailHtml({
-        heading: `Welcome to one${p && p.business_name ? ', ' + p.business_name : ''}.`,
+        preheader: `Your ${planName} plan is active. Here's what happens next.`,
+        heading: `Welcome to one${who2} 👋`,
         lines: [
-          `Your <strong>${planName}</strong> plan is now active &mdash; thanks for signing up.`,
-          `We&rsquo;ll be in touch as we start building your site. In the meantime, you can see everything from your account &mdash; your plan, your requests, and your site once it&rsquo;s live.`
+          `Your <strong>${esc(planName)}</strong> plan is now active &mdash; thanks for signing up.`,
+          `We&rsquo;ll be in touch shortly as we start building your site. Everything lives in your account from here: your plan, the changes you ask for, and your site once it&rsquo;s live.`
         ],
+        details: facts,
         ctaText: 'Go to your account',
-        ctaHref: `${site}/account.html`
+        ctaHref: `${site}/account.html`,
+        ctaNote: 'Nothing else to do for now &mdash; we&rsquo;ll come to you.',
+        footer: 'You&rsquo;re getting this because you started a plan with one, by Kanvas.',
+        footerLinks: standardFooter(site)
       })
     });
     console.log('webhook: welcome email', result);
@@ -210,13 +242,26 @@ module.exports = async function handler(req, res) {
             + `Your site and domain may be affected - please get in touch as soon as you can if you'd `
             + `like to keep them, or reactivate your plan any time from your account:\n${site}/account.html`,
         html: emailHtml({
+          preheader: 'Your site and web address are at risk — here’s how to put it back.',
           heading: 'Your plan has ended.',
           lines: [
             'We weren’t able to take payment after several attempts, so your plan has now ended.',
-            '<strong>Your site and domain may be affected</strong> &mdash; please get in touch as soon as you can if you’d like to keep them, or reactivate your plan any time.'
+            'Reactivating puts everything back as it was &mdash; your site, your web address and the changes you have left this month.'
+          ],
+          details: [
+            { label: 'Business', value: name },
+            { label: 'Site', value: (p && p.site_url) || 'not live yet' },
+            { label: 'Web address', value: (p && p.requested_domain) || '—' },
+            { label: 'Status', value: 'Ended' }
           ],
           ctaText: 'Reactivate your plan',
-          ctaHref: `${site}/account.html`
+          ctaHref: `${site}/account.html`,
+          callout: {
+            text: 'Your site and web address are at risk while the plan is inactive. '
+                + 'If you would like to keep them, please get in touch as soon as you can.'
+          },
+          footer: 'You&rsquo;re getting this because your plan with one, by Kanvas has ended.',
+          footerLinks: standardFooter(site)
         })
       });
       console.log('webhook: cancellation email', result);
@@ -251,20 +296,50 @@ module.exports = async function handler(req, res) {
     if (!email) return;
 
     const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
+
+    /* Stripe reports the outstanding amount in the smallest currency unit,
+       and the retry window is the 7 days Smart Retries is configured for. */
+    const due = typeof invoice.amount_due === 'number' ? invoice.amount_due : null;
+    const amountDue = due == null
+      ? '—'
+      : new Intl.NumberFormat('en-GB', {
+          style: 'currency',
+          currency: (invoice.currency || 'gbp').toUpperCase(),
+          minimumFractionDigits: due % 100 === 0 ? 0 : 2
+        }).format(due / 100);
+    const retryUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      .toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+
     const result = await sendEmail({
       to: email,
       subject: "We couldn't take payment for your plan",
       text: `We tried to charge the card on file for your one plan and it didn't go through.\n\n`
-          + `We'll automatically retry over the next week - to make sure it goes through, you can `
-          + `update your card any time from your account:\n${site}/account.html`,
+          + `Amount due:     ${amountDue}\n`
+          + `Retrying until: ${retryUntil}\n\n`
+          + `We'll automatically retry over the next 7 days - to make sure it goes through, you can `
+          + `update your card any time from your account:\n${site}/account.html\n\n`
+          + `If payment still hasn't gone through after 7 days your plan will end, and your site `
+          + `and web address will be at risk.`,
       html: emailHtml({
+        preheader: 'We’ll retry over the next 7 days — updating your card fixes it straight away.',
         heading: 'We couldn’t take payment.',
         lines: [
-          'We tried to charge the card on file for your plan and it didn’t go through.',
-          'We’ll automatically retry over the next week &mdash; to make sure it goes through, you can update your card any time from your account.'
+          'We tried to charge the card on file for your plan and it didn’t go through. It happens &mdash; usually an expired card or a bank check.',
+          'We’ll retry automatically over the next 7 days. Updating your card sorts it immediately.'
+        ],
+        details: [
+          { label: 'Amount due', value: amountDue },
+          { label: 'Next retry', value: 'Within 3 days' },
+          { label: 'Retrying until', value: retryUntil }
         ],
         ctaText: 'Update payment details',
-        ctaHref: `${site}/account.html`
+        ctaHref: `${site}/account.html`,
+        callout: {
+          text: 'If payment still hasn’t gone through after 7 days your plan will end, '
+              + 'and your site and web address will be at risk.'
+        },
+        footer: 'You&rsquo;re getting this because a payment for your one plan was declined.',
+        footerLinks: standardFooter(site)
       })
     });
     console.log('webhook: payment failed email', result);
