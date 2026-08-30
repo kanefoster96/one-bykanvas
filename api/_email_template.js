@@ -32,10 +32,24 @@ function esc(s) {
    need hosting somewhere reachable and is blocked by default in most clients
    until the reader asks for images, which would leave the email headless. */
 function brand() {
+  /* The full stop is a drawn circle, not a typed period. SF renders a round
+     one, but Helvetica and Arial - what a Windows client falls back to -
+     render a square, and the mark on the site is round. A cell with a 50%
+     radius is round everywhere except Outlook desktop, which ignores the
+     radius and lands on the square it would have drawn anyway. */
+  const dot = `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                 <tr><td width="4" height="4" style="width:4px;height:4px;font-size:0;line-height:4px;background:#ffffff;border-radius:50%;">&nbsp;</td></tr>
+               </table>`;
+
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
             <tr>
               <td width="40" height="40" align="center" valign="middle" style="width:40px;height:40px;background:${INK};border-radius:11px;">
-                <span style="font-size:15.5px;font-weight:600;letter-spacing:-.045em;color:#ffffff;font-family:${FONT};line-height:40px;">one.</span>
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+                  <tr>
+                    <td valign="bottom" style="font-size:15.5px;font-weight:600;letter-spacing:-.045em;color:#ffffff;font-family:${FONT};line-height:20px;">one</td>
+                    <td valign="bottom" style="padding:0 0 4px 2px;line-height:0;">${dot}</td>
+                  </tr>
+                </table>
               </td>
               <td style="padding-left:11px;font-size:16px;font-weight:600;letter-spacing:-.015em;color:${INK};font-family:${FONT};">by Kanvas</td>
             </tr>
