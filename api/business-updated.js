@@ -53,6 +53,40 @@ module.exports = async function handler(req, res) {
     const name = (p && p.business_name) || user.email || 'A customer';
     const site = process.env.SITE_URL || 'https://one-bykanvas.vercel.app';
 
+    /* Raise it in the same queue as edits and features, so there is one place
+       to look for work. Zero points, so it never touches their allowance and
+       accepting it can never charge anything.
+
+       Saving twice does not stack up two jobs: an info request still open is
+       rewritten rather than duplicated, since the only thing that matters is
+       what their details say now. */
+    const summary = 'Business details updated — check the live site matches: '
+      + [
+          p && p.business_name,
+          p && p.public_email,
+          p && p.phone,
+          p && p.address || (p && p.service_area),
+          p && p.opening_hours
+        ].filter(Boolean).join(' · ').slice(0, 3000);
+
+    const { data: openInfo, error: openErr } = await db.from('requests')
+      .select('id')
+      .eq('user_id', user.id).eq('kind', 'info')
+      .not('status', 'in', '("done","declined")')
+      .limit(1);
+    if (openErr) throw new Error(openErr.message);
+
+    if (openInfo && openInfo.length) {
+      const { error: upErr } = await db.from('requests')
+        .update({ detail: summary, created_at: new Date().toISOString() })
+        .eq('id', openInfo[0].id);
+      if (upErr) throw new Error(upErr.message);
+    } else {
+      const { error: insErr } = await db.from('requests')
+        .insert({ user_id: user.id, kind: 'info', points: 0, detail: summary });
+      if (insErr) throw new Error(insErr.message);
+    }
+
     const lines = [
       `${name} updated their business details.`,
       '',
@@ -70,7 +104,8 @@ module.exports = async function handler(req, res) {
       '',
       `Their site: ${(p && p.site_url) || 'not live yet'}`,
       '',
-      'Check whether their live site needs the same change.',
+      'This is in your queue as a free job - accept it and mark it live once',
+      'the site matches. Nothing is charged for it.',
       `Admin: ${site}/admin.html`
     ];
 

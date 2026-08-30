@@ -19,6 +19,10 @@ var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
 var PLAN_POINTS = { business: 1, pro: 3, max: 5 };
 var PLAN_PRICE  = { business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
 var STATUS_NAME = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
+/* info is a business-details change the customer made themselves - free, and
+   raised by api/business-updated.js rather than asked for. */
+var KIND_NAME = { edit: 'Edit', feature: 'Feature', info: 'Business info' };
+function kindName(k) { return KIND_NAME[k] || 'Edit'; }
 
 var state = { profiles: [], requests: [], templates: [], seoUpdates: [], siteFeatures: [] };
 
@@ -415,7 +419,7 @@ function renderRequestsSection(open, unbuilt) {
   if (!open.length) {
     queueWrap.appendChild(el('p', 'site-none', 'No open edit or feature requests.'));
   } else {
-    [['edit', 'Edit requests'], ['feature', 'Feature requests']].forEach(function (pair) {
+    [['info', 'Business details changed'], ['edit', 'Edit requests'], ['feature', 'Feature requests']].forEach(function (pair) {
       var items = open.filter(function (r) { return r.kind === pair[0]; })
         // Oldest first: the thing waiting longest is the thing to do next.
         .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
@@ -460,8 +464,9 @@ function queueItem(r) {
   /* How long it has been waiting, not the date it landed - in a queue the
      age is the thing that tells you what to pick up next. */
   var meta = el('p', 'queue-meta',
-    (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' + r.points +
-    (r.points === 1 ? ' point' : ' points') + ' · ' + howLong(r.created_at));
+    kindName(r.kind) + ' · '
+    + (r.points === 0 ? 'free' : r.points + (r.points === 1 ? ' point' : ' points'))
+    + ' · ' + howLong(r.created_at));
   main.appendChild(meta);
 
   // The money flag, given its own pill so it cannot be skim-read past.
@@ -523,7 +528,7 @@ function queueItem(r) {
   // Booked as one thing, turned out to be the other. Only offered before the
   // job is finished - once billed or done, the price is settled. Whether it
   // needs charging for is decided fresh next time it is accepted - not here.
-  if (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress') {
+  if (r.kind !== 'info' && (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress')) {
     var toKind = r.kind === 'feature' ? 'edit' : 'feature';
     var reclass = el('button', 'linkish queue-reclass',
       'Mark as ' + toKind + ' instead');
@@ -780,7 +785,7 @@ function paymentsPanel(p) {
       var li = el('li', 'queue-item');
       var main = el('div', 'queue-main');
       main.appendChild(el('p', 'queue-what', r.detail));
-      main.appendChild(el('p', 'queue-meta', (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · £' +
+      main.appendChild(el('p', 'queue-meta', kindName(r.kind) + ' · £' +
         (r.billed_amount / 100).toFixed(0) + ' · ' + when(r.billed_at)));
       li.appendChild(main);
       list.appendChild(li);
@@ -885,7 +890,7 @@ function recentRequestsList(userId) {
     var li = el('li', 'queue-item');
     var main = el('div', 'queue-main');
     main.appendChild(el('p', 'queue-what', r.detail));
-    main.appendChild(el('p', 'queue-meta', (r.kind === 'feature' ? 'Feature' : 'Edit') + ' · ' +
+    main.appendChild(el('p', 'queue-meta', kindName(r.kind) + ' · ' +
       when(r.created_at) +
       (r.billed_at ? ' · charged £' + (r.billed_amount / 100).toFixed(0) : '')));
     li.appendChild(main);
@@ -1204,7 +1209,7 @@ function renderDoneList() {
     var main = el('div', 'queue-main');
     main.appendChild(el('p', 'queue-who', ownerLabel(owner)));
     main.appendChild(el('p', 'queue-what', r.detail));
-    main.appendChild(el('p', 'queue-meta', r.kind === 'feature' ? 'Feature' : 'Edit'));
+    main.appendChild(el('p', 'queue-meta', kindName(r.kind)));
     var links = attachmentLinks(r);
     if (links) main.appendChild(links);
     li.appendChild(main);
@@ -1250,7 +1255,7 @@ function renderTemplates() {
 
     var main = el('div', 'queue-main');
     main.appendChild(el('p', 'queue-who', t.name + (t.active ? '' : ' (retired)')));
-    main.appendChild(el('p', 'queue-meta', (t.kind === 'feature' ? 'Feature' : 'Edit')));
+    main.appendChild(el('p', 'queue-meta', kindName(t.kind)));
     li.appendChild(main);
 
     var actions = el('div', 'queue-actions');
