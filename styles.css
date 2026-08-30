@@ -961,6 +961,10 @@ body.locked{overflow:hidden}
 #bizView .lede.left{margin-bottom:4px}
 .biz-heading{margin-top:32px}
 
+/* One preference, so it reads as a sentence rather than a form field. */
+.mail-pref{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--ink);cursor:pointer}
+.mail-pref input{width:17px;height:17px;margin:1px 0 0;flex:0 0 auto;accent-color:var(--ink);cursor:pointer}
+.mail-pref span{line-height:1.5}
 .pw-block{margin-top:26px;padding-top:22px;border-top:1px solid var(--line-soft)}
 .pw-block .req-list-title{margin-bottom:10px}
 .pw-block .linkish{margin-top:0}
