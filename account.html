@@ -21,9 +21,18 @@
 
   <!-- Who this is: logo, business name, and the plan we are actually billing. -->
   <header class="acct-id">
-    <div class="acct-id-badge" id="idBadge">
-      <img id="idAvatar" alt="" hidden>
-      <span id="idInitials">&mdash;</span>
+    <div class="acct-id-side">
+      <div class="acct-id-badge" id="idBadge">
+        <img id="idAvatar" alt="" hidden>
+        <span id="idInitials">&mdash;</span>
+      </div>
+      <button class="id-edit" id="bizEditBtn" type="button" aria-label="Edit your business details">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 20h4L20 8l-4-4L4 16z"/><path d="m14.5 5.5 4 4"/>
+        </svg>
+        Edit
+      </button>
     </div>
     <div class="acct-id-text">
       <h1 id="idName">Your business</h1>
@@ -47,13 +56,6 @@
     </div>
   </section>
 
-  <!-- What the site can do - added by us, by hand or when a feature request
-       is delivered. A green New pill marks anything from the last 30 days. -->
-  <section class="panel" id="featuresPanel" hidden>
-    <h2 class="panel-title">Features on your site</h2>
-    <ul class="feature-list" id="featureList"></ul>
-  </section>
-
   <!-- Points: what this month's plan covers, and what is left of it. -->
   <section class="panel points-panel" id="pointsPanel">
     <h2 class="panel-title">Requests this month</h2>
@@ -72,7 +74,8 @@
     </div>
 
     <div class="req-launch" id="reqLaunch">
-      <button class="btn btn-primary" id="reqOpenBtn" type="button">Request a site change</button>
+      <button class="btn btn-primary" id="reqEditBtn" type="button">Edit my site</button>
+      <button class="btn btn-ghost" id="reqFeatureBtn" type="button">Add a feature</button>
     </div>
 
     <!-- Pick something done before, or write it from scratch. -->
@@ -118,49 +121,16 @@
     </form>
 
     <div class="req-list" id="reqList" hidden>
-      <div class="req-group" id="reqGroupEdit" hidden>
-        <h3 class="req-list-title">Edit requests</h3>
-        <ul id="reqItemsEdit"></ul>
-      </div>
-      <div class="req-group" id="reqGroupFeature" hidden>
-        <h3 class="req-list-title">Feature requests</h3>
-        <ul id="reqItemsFeature"></ul>
-      </div>
+      <h3 class="req-list-title">Edits in progress</h3>
+      <ul id="reqItemsEdit"></ul>
     </div>
   </section>
 
-  <!-- Everything delivered - a done feature is something the site has now,
-       not just a closed ticket, so it stays listed here once it is live. -->
-  <section class="panel" id="completedPanel" hidden>
-    <h2 class="panel-title">Completed requests</h2>
-    <div class="req-list">
-      <div class="req-group" id="doneGroupEdit" hidden>
-        <h3 class="req-list-title">Edits</h3>
-        <ul id="doneItemsEdit"></ul>
-      </div>
-      <div class="req-group" id="doneGroupFeature" hidden>
-        <h3 class="req-list-title">Features on your site</h3>
-        <ul id="doneItemsFeature"></ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- Logo / avatar -->
-  <section class="panel">
-    <h2 class="panel-title">Logo</h2>
-    <div class="avatar-row">
-      <div class="avatar-box" id="avatarBox">
-        <img id="avatarImg" alt="" hidden>
-        <span id="avatarFallback">—</span>
-      </div>
-      <div class="avatar-actions">
-        <label class="btn btn-ghost" for="avatarInput">Upload a logo</label>
-        <input id="avatarInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
-        <button class="linkish" id="avatarRemove" type="button" hidden>Remove</button>
-        <p class="hint">PNG, JPG, WEBP or SVG. Up to 2&nbsp;MB.</p>
-        <p class="note" id="avatarNote" role="status" aria-live="polite"></p>
-      </div>
-    </div>
+  <!-- What the site can do, and what is on the way. One pill per feature,
+       whether it is already live or still being built. -->
+  <section class="panel" id="featuresPanel" hidden>
+    <h2 class="panel-title">Features on your site</h2>
+    <ul class="feature-list" id="featureList"></ul>
   </section>
 
   <!-- Billing -->
@@ -195,27 +165,35 @@
     </div>
   </section>
 
-  <!-- Business details -->
+  <!-- Personal, not business: who they are to us, and how they get in. -->
   <form class="panel" id="profileForm" novalidate>
-    <h2 class="panel-title">Details</h2>
+    <h2 class="panel-title">Your account</h2>
     <div class="acct-grid">
-      <div class="field"><label for="business_name">Business name</label><input id="business_name" type="text" autocomplete="organization"></div>
       <div class="field"><label for="contact_name">Your name</label><input id="contact_name" type="text" autocomplete="name"></div>
-      <div class="field"><label for="phone">Phone</label><input id="phone" type="tel" autocomplete="tel"></div>
-      <div class="field"><label for="business_type">What sort of business is it?</label><input id="business_type" type="text" placeholder="Café, barber, landscaping…"></div>
-
-      <div class="field full"><label for="address">Address</label><input id="address" type="text" autocomplete="street-address" placeholder="Where customers find you"></div>
-      <div class="field full"><label for="service_area">Or the area you cover</label><input id="service_area" type="text" placeholder="If you travel to customers instead"></div>
-
-      <div class="field full"><label for="opening_hours">Opening hours</label><textarea id="opening_hours" rows="3" placeholder="Mon–Fri 8–5, Sat 9–1, closed Sunday"></textarea></div>
-      <div class="field full"><label for="services">Your menu or services</label><textarea id="services" rows="4" placeholder="List them, or just tell us where to find them — a photo of your menu is fine"></textarea></div>
-      <div class="field full"><label for="site_goals">What should the site do for you?</label><textarea id="site_goals" rows="3" placeholder="Take bookings, show a menu, get found locally, sell online…"></textarea></div>
-      <div class="field full"><label for="existing_links">Anything already online?</label><textarea id="existing_links" rows="2" placeholder="Current site, Facebook, Instagram, Google listing"></textarea></div>
+      <div class="field">
+        <label for="loginEmail">Email you log in with</label>
+        <input id="loginEmail" type="email" disabled>
+      </div>
     </div>
+    <p class="hint">Changing the address you log in with isn&rsquo;t something you can do here &mdash; message us and we&rsquo;ll move it across for you.</p>
 
     <div class="acct-save">
       <button class="btn btn-primary" id="save" type="submit">Save</button>
       <p class="note" id="saveNote" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="pw-block">
+      <h3 class="req-list-title">Password</h3>
+      <button class="linkish" id="pwOpen" type="button">Change your password</button>
+      <div class="pw-fields" id="pwFields" hidden>
+        <div class="field full">
+          <label for="pwNew">New password</label>
+          <input id="pwNew" type="password" autocomplete="new-password" minlength="8">
+          <p class="hint">At least 8 characters.</p>
+        </div>
+        <button class="btn btn-ghost" id="pwSave" type="button">Save password</button>
+      </div>
+      <p class="note" id="pwNote" role="status" aria-live="polite"></p>
     </div>
   </form>
 
@@ -225,13 +203,57 @@
   </footer>
 </main>
 
+<main class="acct-wrap" id="bizView" hidden>
+  <button class="linkish" id="bizBack" type="button">&larr; Back to your account</button>
+  <h1 class="biz-title">Your business</h1>
+  <p class="lede left">This is what your site says about you. Save a change here and we&rsquo;ll update your live site to match &mdash; no points, no charge.</p>
+
+  <form class="panel" id="bizForm" novalidate>
+    <h2 class="panel-title">Logo</h2>
+    <div class="avatar-row">
+      <div class="avatar-box" id="avatarBox">
+        <img id="avatarImg" alt="" hidden>
+        <span id="avatarFallback">&mdash;</span>
+      </div>
+      <div class="avatar-actions">
+        <label class="btn btn-ghost" for="avatarInput">Upload a logo</label>
+        <input id="avatarInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+        <button class="linkish" id="avatarRemove" type="button" hidden>Remove</button>
+        <p class="hint">PNG, JPG, WEBP or SVG. Up to 2&nbsp;MB.</p>
+        <p class="note" id="avatarNote" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <h2 class="panel-title biz-heading">Details</h2>
+    <div class="acct-grid">
+      <div class="field"><label for="business_name">Business name</label><input id="business_name" type="text" autocomplete="organization"></div>
+      <div class="field"><label for="business_type">What sort of business is it?</label><input id="business_type" type="text" placeholder="Caf&eacute;, barber, landscaping&hellip;"></div>
+      <div class="field"><label for="public_email">Contact email for your customers</label><input id="public_email" type="email" placeholder="hello@yourbusiness.co.uk"></div>
+      <div class="field"><label for="phone">Phone</label><input id="phone" type="tel" autocomplete="tel"></div>
+
+      <div class="field full"><label for="address">Address</label><input id="address" type="text" autocomplete="street-address" placeholder="Where customers find you"></div>
+      <div class="field full"><label for="service_area">Or the area you cover</label><input id="service_area" type="text" placeholder="If you travel to customers instead"></div>
+
+      <div class="field full"><label for="opening_hours">Opening hours</label><textarea id="opening_hours" rows="3" placeholder="Mon&ndash;Fri 8&ndash;5, Sat 9&ndash;1, closed Sunday"></textarea></div>
+      <div class="field full"><label for="services">Your menu or services</label><textarea id="services" rows="4" placeholder="List them, or just tell us where to find them &mdash; a photo of your menu is fine"></textarea></div>
+      <div class="field full"><label for="site_goals">What should the site do for you?</label><textarea id="site_goals" rows="3" placeholder="Take bookings, show a menu, get found locally, sell online&hellip;"></textarea></div>
+      <div class="field full"><label for="existing_links">Anything already online?</label><textarea id="existing_links" rows="2" placeholder="Current site, Facebook, Instagram, Google listing"></textarea></div>
+    </div>
+
+    <div class="acct-save">
+      <button class="btn btn-primary" id="bizSave" type="submit">Save changes</button>
+      <p class="note" id="bizNote" role="status" aria-live="polite"></p>
+    </div>
+  </form>
+</main>
+
 <div class="acct-loading" id="loading"><p>Loading your account…</p></div>
 
 <script src="vendor/supabase.js?v=1"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="account.js?v=6"></script>
+<script src="account.js?v=7"></script>
 <script src="admin-pill.js?v=4"></script>
 </body>
 </html>

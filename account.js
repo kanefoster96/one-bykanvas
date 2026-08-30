@@ -7,8 +7,13 @@
 var loading = document.getElementById('loading');
 var app     = document.getElementById('app');
 
-var FIELDS = ['business_name','contact_name','phone','business_type','address',
-              'service_area','opening_hours','services','site_goals','existing_links'];
+/* Split by where they are edited: the business ones sit behind the pencil on
+   the identity header, contact_name is personal and stays on the account
+   card. Saving a business field emails us, since their live site usually
+   needs the same change - see api/business-updated.js. */
+var BIZ_FIELDS = ['business_name','business_type','public_email','phone','address',
+                  'service_area','opening_hours','services','site_goals','existing_links'];
+var FIELDS = BIZ_FIELDS.concat(['contact_name']);
 
 var user = null;
 var avatarPath = null;
@@ -79,6 +84,9 @@ async function start() {
   await showPoints(profile.data);
   await showFeatures();
   await loadTemplates();
+
+  var loginEmail = document.getElementById('loginEmail');
+  if (loginEmail) loginEmail.value = user.email || '';
 
   loading.hidden = true;
   app.hidden = false;
@@ -171,6 +179,13 @@ function initials() {
   return name.split(/\s+/).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase();
 }
 
+function el(tag, cls, text) {
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
 function say(el, message, kind) {
   el.textContent = message;
   el.className = 'note' + (kind ? ' ' + kind : '');
@@ -228,21 +243,90 @@ document.getElementById('profileForm').addEventListener('submit', async function
   saveBtn.disabled = true;
   saveBtn.textContent = 'Saving…';
 
-  var row = { id: user.id };
-  FIELDS.forEach(function (key) {
-    var el = document.getElementById(key);
-    row[key] = el && el.value.trim() ? el.value.trim() : null;
-  });
-
-  var res = await ONE.db.from('profiles').upsert(row, { onConflict: 'id' });
+  var el = document.getElementById('contact_name');
+  var res = await ONE.db.from('profiles')
+    .upsert({ id: user.id, contact_name: el.value.trim() || null }, { onConflict: 'id' });
   saveBtn.disabled = false;
   saveBtn.textContent = 'Save';
 
   if (res.error) return say(saveNote, ONE.friendlyError(res.error), 'bad');
   say(saveNote, 'Saved.', 'ok');
-  if (!avatarPath) setAvatar(null);   // refresh initials if the name changed
-  var named = document.getElementById('business_name').value.trim();
-  document.getElementById('idName').textContent = named || 'Your business';
+});
+
+/* ---------------- password ---------------- */
+var pwNote = document.getElementById('pwNote');
+
+document.getElementById('pwOpen').addEventListener('click', function () {
+  var fields = document.getElementById('pwFields');
+  fields.hidden = !fields.hidden;
+  if (!fields.hidden) document.getElementById('pwNew').focus();
+});
+
+/* Already signed in, so this is a straight update rather than the emailed
+   reset link the login page uses for people who cannot get in at all. */
+document.getElementById('pwSave').addEventListener('click', async function () {
+  var input = document.getElementById('pwNew');
+  var btn = this;
+  if (input.value.length < 8) return say(pwNote, 'Use at least 8 characters.', 'bad');
+
+  btn.disabled = true;
+  say(pwNote, 'Saving…');
+  var res = await ONE.db.auth.updateUser({ password: input.value });
+  btn.disabled = false;
+
+  if (res.error) return say(pwNote, ONE.friendlyError(res.error), 'bad');
+  input.value = '';
+  document.getElementById('pwFields').hidden = true;
+  say(pwNote, 'Password changed.', 'ok');
+});
+
+/* ---------------- business details: its own view ---------------- */
+var bizNote = document.getElementById('bizNote');
+
+function showBizView(on) {
+  document.getElementById('app').hidden = on;
+  document.getElementById('bizView').hidden = !on;
+  window.scrollTo(0, 0);
+}
+
+document.getElementById('bizEditBtn').addEventListener('click', function () { showBizView(true); });
+document.getElementById('bizBack').addEventListener('click', function () { showBizView(false); });
+
+document.getElementById('bizForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  var btn = document.getElementById('bizSave');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  var row = { id: user.id };
+  BIZ_FIELDS.forEach(function (key) {
+    var el = document.getElementById(key);
+    row[key] = el && el.value.trim() ? el.value.trim() : null;
+  });
+
+  var res = await ONE.db.from('profiles').upsert(row, { onConflict: 'id' });
+  btn.disabled = false;
+  btn.textContent = 'Save changes';
+  if (res.error) return say(bizNote, ONE.friendlyError(res.error), 'bad');
+
+  // Reflect it on the page behind before anything else.
+  if (!avatarPath) setAvatar(null);
+  document.getElementById('idName').textContent = row.business_name || 'Your business';
+
+  /* Telling us is the point of saving here - their live site usually needs
+     the same change. Best effort: the save already happened, so a failed
+     notify is worth saying out loud but is not a failed save. */
+  try {
+    var sess = await ONE.db.auth.getSession();
+    var token = sess.data && sess.data.session && sess.data.session.access_token;
+    var notify = await fetch('/api/business-updated', {
+      method: 'POST', headers: { Authorization: 'Bearer ' + token }
+    });
+    if (!notify.ok) throw new Error('notify failed');
+    say(bizNote, 'Saved — we’ll update your site to match.', 'ok');
+  } catch (err) {
+    say(bizNote, 'Saved, but we could not let anyone know — message us so your site gets updated too.', 'bad');
+  }
 });
 
 /* ---------------- identity, site, points ---------------- */
@@ -326,31 +410,44 @@ var FEATURE_NEW_DAYS = 30;
    delivered. A green New pill marks anything touched in the last 30 days,
    measured from updated_at rather than created_at so re-marking one keeps
    it fresh without renaming it. */
+/* What the site can do, and what is on the way - one row per feature with a
+   single pill saying where it stands. Live ones come from site_features (the
+   list we keep), anything still moving comes from their own open feature
+   requests, so a customer can see a feature they asked for before it exists.
+   Deliberately no prices or screenshots here: this is what the site has, not
+   what it cost. */
 async function showFeatures() {
   var panel = document.getElementById('featuresPanel');
   var list = document.getElementById('featureList');
 
   var q = await ONE.db.from('site_features').select('id, name, updated_at').order('updated_at', { ascending: false });
-  var rows = (!q.error && q.data) || [];
-  if (!rows.length) { panel.hidden = true; return; }
+  var live = (!q.error && q.data) || [];
 
-  list.textContent = '';
-  rows.forEach(function (f) {
+  var pending = (recentRequests || []).filter(function (r) {
+    return r.kind === 'feature' && r.status !== 'done' && r.status !== 'declined';
+  });
+
+  if (!live.length && !pending.length) { panel.hidden = true; return; }
+
+  function row(name, label, cls) {
     var li = document.createElement('li');
     li.className = 'feature-item';
     var main = document.createElement('div');
     main.className = 'feature-item-main';
-    main.appendChild(document.createTextNode(f.name));
-
-    var updated = new Date(f.updated_at);
-    if (!isNaN(updated) && (Date.now() - updated.getTime()) <= FEATURE_NEW_DAYS * 24 * 60 * 60 * 1000) {
-      var pill = document.createElement('span');
-      pill.className = 'feature-new';
-      pill.textContent = 'New';
-      main.appendChild(pill);
-    }
+    main.appendChild(document.createTextNode(name));
     li.appendChild(main);
-    list.appendChild(li);
+    li.appendChild(el('span', 'feature-pill ' + cls, label));
+    return li;
+  }
+
+  list.textContent = '';
+  pending.forEach(function (r) {
+    list.appendChild(row(r.detail, r.status === 'in_progress' ? 'In build' : 'Requested', 'is-pending'));
+  });
+  live.forEach(function (f) {
+    var fresh = !isNaN(new Date(f.updated_at))
+      && (Date.now() - new Date(f.updated_at).getTime()) <= FEATURE_NEW_DAYS * 24 * 60 * 60 * 1000;
+    list.appendChild(row(f.name, fresh ? 'New' : 'Live', fresh ? 'is-new' : 'is-live'));
   });
   panel.hidden = false;
 }
@@ -369,6 +466,9 @@ function periodStart(row) {
 }
 
 var pointsState = { allowance: 0, used: 0, plan: null };
+/* The last fetch of their requests, shared with showFeatures() so it can show
+   a feature that is asked for but not built yet without refetching. */
+var recentRequests = [];
 
 async function showPoints(row) {
   var plan = entitledPlan(row);
@@ -397,6 +497,7 @@ async function showPoints(row) {
   }
 
   pointsState = { allowance: allowance, used: used, plan: plan };
+  recentRequests = recent;
 
   var left = Math.max(0, allowance - used);
   document.getElementById('pointsLeft').textContent = String(left);
@@ -423,7 +524,6 @@ async function showPoints(row) {
 
   updatePricePreview();
   renderRequests(recent);
-  renderCompleted(recent);
 }
 
 var STATUS_TEXT_LABEL = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
@@ -524,62 +624,30 @@ async function clearAttachments(requestId, btn) {
 
     var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
     await showPoints(fresh.data);
+    await showFeatures();
   } catch (err) {
     alert(ONE.friendlyError(err));
     btn.disabled = false;
   }
 }
 
-/* Edits and features are kept as two separate lists rather than one mixed
-   feed, since a customer with a lot of history would otherwise have to scan
-   past features to find their last edit or the other way round. Live (done)
-   ones move out of here entirely - renderCompleted() below is where they
-   live on, a permanent record rather than something to scroll past. */
+/* Edits still moving. Features are not here - they have their own panel,
+   where a requested one sits alongside the ones already live. */
 function renderRequests(rows) {
   var wrap = document.getElementById('reqList');
-  var active = rows.filter(function (r) { return r.status !== 'done'; });
+  var list = document.getElementById('reqItemsEdit');
+  var active = rows.filter(function (r) {
+    if (r.kind !== 'edit' || r.status === 'declined') return false;
+    /* A finished edit drops out of the list, unless its screenshots are still
+       sitting in storage - that is the only place they can clear them. */
+    if (r.status === 'done') return (r.attachment_paths || []).length > 0;
+    return true;
+  }).slice(0, 6);
+
+  list.textContent = '';
   if (!active.length) { wrap.hidden = true; return; }
-
-  var groups = [
-    { kind: 'edit',    group: document.getElementById('reqGroupEdit'),    list: document.getElementById('reqItemsEdit') },
-    { kind: 'feature', group: document.getElementById('reqGroupFeature'), list: document.getElementById('reqItemsFeature') }
-  ];
-
-  var any = false;
-  groups.forEach(function (g) {
-    var items = active.filter(function (r) { return r.kind === g.kind; }).slice(0, 6);
-    g.list.textContent = '';
-    if (!items.length) { g.group.hidden = true; return; }
-    any = true;
-    items.forEach(function (r) { g.list.appendChild(requestRow(r)); });
-    g.group.hidden = false;
-  });
-
-  wrap.hidden = !any;
-}
-
-/* Everything delivered, kept on its own once it is live - a done feature
-   is something the site now has, not just a ticket that got closed, so it
-   stays listed here rather than dropping out of sight. */
-function renderCompleted(rows) {
-  var panel = document.getElementById('completedPanel');
-  var done = rows.filter(function (r) { return r.status === 'done'; });
-  if (!done.length) { panel.hidden = true; return; }
-
-  var groups = [
-    { kind: 'edit',    group: document.getElementById('doneGroupEdit'),    list: document.getElementById('doneItemsEdit') },
-    { kind: 'feature', group: document.getElementById('doneGroupFeature'), list: document.getElementById('doneItemsFeature') }
-  ];
-
-  groups.forEach(function (g) {
-    var items = done.filter(function (r) { return r.kind === g.kind; }).slice(0, 10);
-    g.list.textContent = '';
-    if (!items.length) { g.group.hidden = true; return; }
-    items.forEach(function (r) { g.list.appendChild(requestRow(r)); });
-    g.group.hidden = false;
-  });
-
-  panel.hidden = false;
+  active.forEach(function (r) { list.appendChild(requestRow(r)); });
+  wrap.hidden = false;
 }
 
 /* ---------------- request picker: templates, price preview ---------------- */
@@ -629,10 +697,22 @@ function openForm() {
   document.getElementById('reqDetail').focus();
 }
 
-document.getElementById('reqOpenBtn').addEventListener('click', function () {
+/* Two doors into the same form, each pre-picking its kind - "edit my site"
+   and "add a feature" are how a customer thinks about it, where a single
+   generic button made them choose the vocabulary first. */
+function openPicker(kind) {
+  var radio = document.querySelector('input[name="kind"][value="' + kind + '"]');
+  if (radio) radio.checked = true;
   document.getElementById('reqLaunch').hidden = true;
   document.getElementById('reqPicker').hidden = false;
-});
+  // Only the templates of that kind are worth showing now.
+  document.getElementById('tplGroupEdit').hidden = kind !== 'edit' || !templates.some(function (t) { return t.kind === 'edit'; });
+  document.getElementById('tplGroupFeature').hidden = kind !== 'feature' || !templates.some(function (t) { return t.kind === 'feature'; });
+  updatePricePreview();
+}
+
+document.getElementById('reqEditBtn').addEventListener('click', function () { openPicker('edit'); });
+document.getElementById('reqFeatureBtn').addEventListener('click', function () { openPicker('feature'); });
 
 document.getElementById('tplSomethingElse').addEventListener('click', function () {
   document.getElementById('reqDetail').value = '';
@@ -755,6 +835,7 @@ document.getElementById('reqForm').addEventListener('submit', async function (e)
     say(document.getElementById('reqFilesNote'), '');
     var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
     await showPoints(fresh.data);
+    await showFeatures();
   } catch (err) {
     say(note, ONE.friendlyError(err), 'bad');
   } finally {
