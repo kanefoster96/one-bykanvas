@@ -682,12 +682,18 @@ function templateRow(t) {
   var row = document.createElement('div');
   row.className = 'tpl-row';
 
-  var head = document.createElement('button');
-  head.type = 'button';
+  /* Two things on the row, not one: the name picks it straight away, the
+     arrow beside it only opens the description. Someone who already knows
+     what they want never has to expand anything to ask for it. */
+  var head = document.createElement('div');
   head.className = 'tpl-head';
-  head.setAttribute('aria-expanded', 'false');
-  head.appendChild(el('span', 'tpl-name', t.name));
-  head.appendChild(el('span', 'tpl-chevron', '\u203a'));
+
+  var name = document.createElement('button');
+  name.type = 'button';
+  name.className = 'tpl-name';
+  name.textContent = t.name;
+  name.addEventListener('click', function () { pickTemplate(t); });
+  head.appendChild(name);
 
   var body = document.createElement('div');
   body.className = 'tpl-body';
@@ -701,12 +707,19 @@ function templateRow(t) {
   pick.addEventListener('click', function () { pickTemplate(t); });
   body.appendChild(pick);
 
-  head.addEventListener('click', function () {
+  var toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'tpl-toggle';
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.setAttribute('aria-label', 'What ' + t.name + ' does');
+  toggle.appendChild(el('span', 'tpl-chevron', '\u203a'));
+  toggle.addEventListener('click', function () {
     var open = body.hidden;
     body.hidden = !open;
-    head.setAttribute('aria-expanded', String(open));
-    head.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.classList.toggle('is-open', open);
   });
+  head.appendChild(toggle);
 
   row.appendChild(head);
   row.appendChild(body);
