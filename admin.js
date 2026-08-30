@@ -1217,18 +1217,9 @@ function renderDoneList() {
     var actions = el('div', 'queue-actions');
     var save = el('button', 'linkish queue-reclass', 'Save as template');
     save.type = 'button';
-    save.addEventListener('click', async function () {
-      var name = prompt('Name this template (shown to customers):', r.detail.slice(0, 60));
-      if (!name || !name.trim()) return;
-      save.disabled = true;
-      try {
-        await api({ action: 'saveTemplate', kind: r.kind, name: name.trim(), description: r.detail });
-        say('Saved as a template.', 'ok');
-        await load();
-      } catch (err) {
-        say(err.message, 'bad');
-        save.disabled = false;
-      }
+    save.addEventListener('click', function () {
+      save.hidden = true;
+      main.appendChild(saveTemplateForm(r, save));
     });
     actions.appendChild(save);
     li.appendChild(actions);
@@ -1236,6 +1227,155 @@ function renderDoneList() {
   });
   wrap.appendChild(list);
   });
+}
+
+/* Saving a finished job as something other businesses can ask for.
+   A name and a description in the customer's language - the raw request
+   text is only ever a starting point, since it was written about one
+   business - plus build notes that stay ours. */
+function saveTemplateForm(r, launchBtn) {
+  var wrap = el('div', 'tpl-form');
+
+  var name = el('input', 'admin-input');
+  name.type = 'text';
+  name.placeholder = 'Name customers see, e.g. Online table booking';
+  name.maxLength = 120;
+  wrap.appendChild(labelled('Name', name));
+
+  var desc = document.createElement('textarea');
+  desc.className = 'admin-input notes-textarea';
+  desc.rows = 3;
+  desc.placeholder = 'What it does, in their language — shown before they request it.';
+  desc.value = r.detail || '';
+  wrap.appendChild(labelled('Description customers see', desc));
+
+  var notes = document.createElement('textarea');
+  notes.className = 'admin-input notes-textarea';
+  notes.rows = 3;
+  notes.placeholder = 'Code, gotchas, how you built it — only you ever see this.';
+  wrap.appendChild(labelled('Build notes (only you see these)', notes));
+
+  var row = el('div', 'feature-add');
+  var go = el('button', 'btn btn-ghost admin-save', 'Save template');
+  go.type = 'button';
+  go.addEventListener('click', async function () {
+    if (!name.value.trim()) { say('Give the template a name.', 'bad'); return; }
+    go.disabled = true;
+    try {
+      await api({ action: 'saveTemplate', kind: r.kind, name: name.value.trim(),
+                  description: desc.value.trim(), adminNotes: notes.value.trim() });
+      say('Saved as a template.', 'ok');
+      await load();
+    } catch (err) { say(err.message, 'bad'); go.disabled = false; }
+  });
+  var cancel = el('button', 'linkish', 'Cancel');
+  cancel.type = 'button';
+  cancel.addEventListener('click', function () { wrap.remove(); launchBtn.hidden = false; });
+  row.appendChild(go);
+  row.appendChild(cancel);
+  wrap.appendChild(row);
+
+  return wrap;
+}
+
+function labelled(text, field) {
+  var f = el('div', 'field full');
+  f.appendChild(el('label', null, text));
+  f.appendChild(field);
+  return f;
+}
+
+/* Everything about one template in one place: what customers read, and the
+   notes and reference shots that never leave this page. */
+function templateEditor(t) {
+  var wrap = el('div', 'tpl-form');
+
+  var name = el('input', 'admin-input');
+  name.type = 'text';
+  name.value = t.name || '';
+  name.maxLength = 120;
+  wrap.appendChild(labelled('Name customers see', name));
+
+  var desc = document.createElement('textarea');
+  desc.className = 'admin-input notes-textarea';
+  desc.rows = 3;
+  desc.value = t.description || '';
+  desc.placeholder = 'What it does, in their language.';
+  wrap.appendChild(labelled('Description customers see', desc));
+
+  var notes = document.createElement('textarea');
+  notes.className = 'admin-input notes-textarea';
+  notes.rows = 4;
+  notes.value = t.admin_notes || '';
+  notes.placeholder = 'Code, gotchas, how you built it — only you ever see this.';
+  wrap.appendChild(labelled('Build notes (only you see these)', notes));
+
+  // Reference shots, private to the admin bucket.
+  var shots = el('div', 'tpl-shots');
+  function paintShots() {
+    shots.textContent = '';
+    (t.images || []).forEach(function (img) {
+      var a = document.createElement('a');
+      a.className = 'tpl-shot';
+      a.href = img.url; a.target = '_blank'; a.rel = 'noopener';
+      var thumb = document.createElement('img');
+      thumb.src = img.url; thumb.alt = '';
+      a.appendChild(thumb);
+      shots.appendChild(a);
+    });
+  }
+  paintShots();
+  wrap.appendChild(shots);
+
+  var file = document.createElement('input');
+  file.type = 'file';
+  file.accept = 'image/png,image/jpeg,image/webp';
+  file.multiple = true;
+  file.className = 'admin-input';
+  file.addEventListener('change', async function () {
+    var files = Array.prototype.slice.call(file.files || []);
+    if (!files.length) return;
+    say('Uploading…');
+    try {
+      var paths = (t.admin_images || []).slice();
+      for (var i = 0; i < files.length; i++) {
+        var f = files[i];
+        if (f.size > 5 * 1024 * 1024) throw new Error(f.name + ' is over 5 MB.');
+        var ext = (f.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
+        var path = t.id + '/' + Date.now() + '-' + i + '.' + ext;
+        var up = await ONE.db.storage.from('template-assets').upload(path, f, { contentType: f.type });
+        if (up.error) throw new Error(up.error.message);
+        paths.push(path);
+      }
+      var res = await api({ action: 'updateTemplate', templateId: t.id, adminImages: paths });
+      t.admin_images = res.template.admin_images;
+      t.images = res.template.images;
+      file.value = '';
+      paintShots();
+      say('Uploaded.', 'ok');
+    } catch (err) { say(err.message, 'bad'); }
+  });
+  wrap.appendChild(labelled('Reference shots (only you see these)', file));
+
+  var row = el('div', 'feature-add');
+  var save = el('button', 'btn btn-ghost admin-save', 'Save changes');
+  save.type = 'button';
+  save.addEventListener('click', async function () {
+    save.disabled = true;
+    try {
+      await api({ action: 'updateTemplate', templateId: t.id, name: name.value,
+                  description: desc.value, adminNotes: notes.value });
+      t.name = name.value.trim();
+      t.description = desc.value.trim();
+      t.admin_notes = notes.value.trim();
+      say('Saved.', 'ok');
+      render();
+    } catch (err) { say(err.message, 'bad'); save.disabled = false; }
+  });
+  row.appendChild(save);
+  wrap.appendChild(row);
+
+  return wrap;
 }
 
 /* The saved templates themselves - retiring one keeps it out of the
@@ -1255,7 +1395,17 @@ function renderTemplates() {
 
     var main = el('div', 'queue-main');
     main.appendChild(el('p', 'queue-who', t.name + (t.active ? '' : ' (retired)')));
-    main.appendChild(el('p', 'queue-meta', kindName(t.kind)));
+    main.appendChild(el('p', 'queue-meta', kindName(t.kind)
+      + ((t.admin_notes || (t.images || []).length) ? ' · has your notes' : '')));
+    if (t.description) main.appendChild(el('p', 'queue-what', t.description));
+
+    var edit = el('button', 'linkish queue-reclass', 'Edit');
+    edit.type = 'button';
+    edit.addEventListener('click', function () {
+      if (li.querySelector('.tpl-form')) { li.querySelector('.tpl-form').remove(); return; }
+      main.appendChild(templateEditor(t));
+    });
+    main.appendChild(edit);
     li.appendChild(main);
 
     var actions = el('div', 'queue-actions');

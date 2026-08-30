@@ -236,9 +236,23 @@ module.exports = async function handler(req, res) {
       // rather than needing to be typed out again.
       const { data: templates, error: tplError } = await db
         .from('templates')
-        .select('id, kind, name, description, active, created_at')
+        .select('id, kind, name, description, admin_notes, admin_images, active, created_at')
         .order('created_at', { ascending: false });
       if (tplError) throw new Error(tplError.message);
+
+      /* The bucket is private and admin-only, so the browser needs signed
+         URLs the same way request screenshots do. */
+      const tplPaths = (templates || []).flatMap((t) => t.admin_images || []);
+      let tplSigned = {};
+      if (tplPaths.length) {
+        const { data: signedTpl, error: tplSignErr } = await db.storage
+          .from('template-assets').createSignedUrls(tplPaths, 3600);
+        if (tplSignErr) throw new Error(tplSignErr.message);
+        (signedTpl || []).forEach((x) => { if (x.signedUrl) tplSigned[x.path] = x.signedUrl; });
+      }
+      (templates || []).forEach((t) => {
+        t.images = (t.admin_images || []).map((p) => ({ path: p, url: tplSigned[p] })).filter((x) => x.url);
+      });
 
       // Logged history of monthly SEO updates for Max customers - enough
       // rows to tell whether this billing period already has one, and to
@@ -491,10 +505,47 @@ module.exports = async function handler(req, res) {
       }
       if (!name) return res.status(400).json({ error: 'Give the template a name.' });
 
+      const adminNotes = body.adminNotes == null ? null : String(body.adminNotes).trim() || null;
       const { data, error } = await db.from('templates')
-        .insert({ kind, name, description }).select().single();
+        .insert({ kind, name, description, admin_notes: adminNotes }).select().single();
       if (error) throw new Error(error.message);
-      return res.status(200).json({ ok: true, template: data });
+      return res.status(200).json({ ok: true, template: Object.assign(data, { images: [] }) });
+    }
+
+    /* ---- write: edit a saved template -----------------------------------
+     *
+     * Only the fields actually sent are touched, so saving the customer-facing
+     * half from one form cannot wipe the build notes written in another. */
+    if (action === 'updateTemplate') {
+      const id = String(body.templateId || '');
+      if (!id) return res.status(400).json({ error: 'Which template?' });
+
+      const patch = {};
+      if (body.name != null) {
+        const n = String(body.name).trim().slice(0, 120);
+        if (!n) return res.status(400).json({ error: 'Give the template a name.' });
+        patch.name = n;
+      }
+      if (body.description != null) patch.description = String(body.description).trim().slice(0, 4000) || null;
+      if (body.adminNotes != null) patch.admin_notes = String(body.adminNotes).trim().slice(0, 8000) || null;
+      if (Array.isArray(body.adminImages)) {
+        patch.admin_images = body.adminImages.map(String).filter(Boolean).slice(0, 12);
+        if (!patch.admin_images.length) patch.admin_images = null;
+      }
+      if (!Object.keys(patch).length) return res.status(400).json({ error: 'Nothing to change.' });
+
+      const { data, error } = await db.from('templates')
+        .update(patch).eq('id', id).select().single();
+      if (error) throw new Error(error.message);
+      if (!data) return res.status(404).json({ error: 'Template not found.' });
+
+      let images = [];
+      if ((data.admin_images || []).length) {
+        const { data: sg } = await db.storage
+          .from('template-assets').createSignedUrls(data.admin_images, 3600);
+        images = (sg || []).filter((x) => x.signedUrl).map((x) => ({ path: x.path, url: x.signedUrl }));
+      }
+      return res.status(200).json({ ok: true, template: Object.assign(data, { images }) });
     }
 
     // ---- write: retire or restore a template -----------------------------
