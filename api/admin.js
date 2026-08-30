@@ -16,6 +16,7 @@ const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { sendEmail } = require('./_email.js');
 const { html: emailHtml, standardFooter } = require('./_email_template.js');
+const { unsubscribeHeaders, unsubscribeUrl, optedOut } = require('./_unsubscribe.js');
 const { shortfallFor } = require('./_billing.js');
 
 const DEFAULT_ADMINS = ['kane@kanvas.one'];
@@ -82,17 +83,28 @@ async function chargeCardForRequest(stripe, profile, reqRow, amount) {
    itself already took effect, so a failed send delays them finding out
    rather than blocking anything. */
 async function notifyFeatureEmail(db, userId, name, verb) {
+  /* The one customer email that is genuinely optional - it carries an
+     unsubscribe header, so it has to actually stop when someone uses it.
+     Offering the choice and then ignoring it is worse than never offering. */
+  if (await optedOut(db, userId)) {
+    console.log('admin: feature notify skipped, customer opted out');
+    return;
+  }
+
   const { data: who } = await db.auth.admin.getUserById(userId);
   const customerEmail = who && who.user && who.user.email;
   if (!customerEmail) return;
 
   const site = ourSiteUrl();
   const heading = verb === 'updated' ? 'Updated on your site' : 'New on your site';
+  const unsubUrl = unsubscribeUrl(userId);
   const result = await sendEmail({
     to: customerEmail,
+    headers: unsubscribeHeaders(userId),
     subject: `A feature on your site was ${verb}`,
     text: `We've ${verb} a feature on your site: "${name}".\n\n`
-        + `See it on your account page:\n${site}/account.html`,
+        + `See it on your account page:\n${site}/account.html`
+        + (unsubUrl ? `\n\nDon't want these? ${unsubUrl}` : ''),
     html: emailHtml({
       preheader: `${name} is ${verb} on your site.`,
       heading,
@@ -109,7 +121,8 @@ async function notifyFeatureEmail(db, userId, name, verb) {
       ],
       ctaText: 'See it on your account',
       ctaHref: `${site}/account.html`,
-      footer: 'You&rsquo;re getting this because your site with one, by Kanvas was changed.',
+      footer: 'You&rsquo;re getting this because your site with one, by Kanvas was changed.'
+        + (unsubUrl ? ' <a href="' + unsubUrl + '" style="color:#86868b;">Turn these off</a>.' : ''),
       footerLinks: standardFooter(site)
     })
   });

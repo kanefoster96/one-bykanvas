@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=4">
+<link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body class="auth-body">
 
@@ -185,6 +185,17 @@
     </div>
 
     <div class="pw-block">
+      <h3 class="req-list-title">Emails</h3>
+      <label class="mail-pref">
+        <input type="checkbox" id="notifyOptIn" checked>
+        <span>Tell me when something is added or improved on my site</span>
+      </label>
+      <p class="hint">Anything about your plan or a payment always comes through
+        &mdash; that&rsquo;s about your account, not an update.</p>
+      <p class="note" id="notifyNote" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="pw-block">
       <h3 class="req-list-title">Password</h3>
       <button class="linkish" id="pwOpen" type="button">Change your password</button>
       <div class="pw-fields" id="pwFields" hidden>
@@ -255,7 +266,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="account.js?v=12"></script>
+<script src="account.js?v=13"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>

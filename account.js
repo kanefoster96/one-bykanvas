@@ -128,6 +128,9 @@ async function start() {
   var loginEmail = document.getElementById('loginEmail');
   if (loginEmail) loginEmail.value = user.email || '';
 
+  var notify = document.getElementById('notifyOptIn');
+  if (notify) notify.checked = !(profile.data && profile.data.notify_optout);
+
   loading.hidden = true;
   app.hidden = false;
 
@@ -1156,6 +1159,35 @@ document.getElementById('payBtn').addEventListener('click', async function () {
     btn.textContent = label;
   }
 });
+
+/* Whether they want the optional site-update emails.
+ *
+ * Saved on its own rather than with the Save button: a preference that only
+ * takes effect after you remember to press something else is how people end up
+ * getting mail they thought they had turned off. */
+(function () {
+  var box = document.getElementById('notifyOptIn');
+  var note = document.getElementById('notifyNote');
+  if (!box) return;
+
+  box.addEventListener('change', async function () {
+    var wanted = box.checked;
+    box.disabled = true;
+    say(note, 'Saving\u2026');
+
+    var res = await ONE.db.from('profiles')
+      .update({ notify_optout: !wanted })
+      .eq('id', user.id);
+
+    box.disabled = false;
+    if (res.error) {
+      box.checked = !wanted;
+      return say(note, ONE.friendlyError(res.error), 'bad');
+    }
+    say(note, wanted ? 'We\u2019ll let you know about changes to your site.'
+                     : 'Turned off. Plan and payment emails still come through.', 'ok');
+  });
+})();
 
 /* Coming back from Stripe. The webhook is what actually flips the status, so
    this only explains what is happening rather than claiming success. */

@@ -21,6 +21,13 @@ function sender() {
   return process.env.EMAIL_FROM || 'one by Kanvas <onboarding@resend.dev>';
 }
 
+/* Where a reply lands. EMAIL_FROM is usually a real mailbox already, but a
+   customer hitting reply and reaching nobody is both a bad experience and a
+   thing spam filters notice, so every message says explicitly where to go. */
+function replyAddress() {
+  return process.env.REPLY_TO_EMAIL || 'kane@kanvas.one';
+}
+
 function adminAddresses() {
   return (process.env.ADMIN_EMAILS || 'kane@kanvas.one')
     .split(',').map(s => s.trim()).filter(Boolean);
@@ -32,12 +39,21 @@ function adminAddresses() {
  * nobody but us reads them and plain text is one less thing to get wrong.
  * Anything a customer sees should pass both: Resend (and most inboxes)
  * expect a text part alongside html, not html alone. */
-async function sendEmail({ to, subject, text, html, replyTo }) {
+async function sendEmail({ to, subject, text, html, replyTo, headers }) {
   const key = process.env.RESEND_API_KEY;
   if (!key) return 'skipped';
 
   const recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);
   if (!recipients.length || !subject || !text) return 'skipped';
+
+  /* Auto-Submitted stops well-behaved autoresponders replying to a machine,
+     which otherwise loops. X-Entity-Ref-ID is the documented way to stop Gmail
+     collapsing separate notifications into one thread, where the second and
+     third go unread under a "show trimmed content" fold. */
+  const wireHeaders = Object.assign({
+    'Auto-Submitted': 'auto-generated',
+    'X-Entity-Ref-ID': `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+  }, headers || {});
 
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
@@ -54,7 +70,8 @@ async function sendEmail({ to, subject, text, html, replyTo }) {
         subject,
         text,
         ...(html ? { html } : {}),
-        ...(replyTo ? { reply_to: replyTo } : {})
+        reply_to: replyTo || replyAddress(),
+        headers: wireHeaders
       }),
       signal: ctrl.signal
     });
@@ -72,4 +89,4 @@ async function sendEmail({ to, subject, text, html, replyTo }) {
   }
 }
 
-module.exports = { sendEmail, adminAddresses };
+module.exports = { sendEmail, adminAddresses, replyAddress };
