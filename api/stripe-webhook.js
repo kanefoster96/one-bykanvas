@@ -29,6 +29,20 @@ function rawBody(req) {
   });
 }
 
+/* An invoice's subscription. Newer API versions moved it from invoice.subscription
+   to invoice.parent.subscription_details.subscription, and the account can be
+   pinned to either, so both shapes are read rather than assumed. */
+function subscriptionIdOf(invoice) {
+  const direct = invoice && invoice.subscription;
+  if (typeof direct === 'string') return direct;
+  if (direct && direct.id) return direct.id;
+  const nested = invoice && invoice.parent && invoice.parent.subscription_details
+    && invoice.parent.subscription_details.subscription;
+  if (typeof nested === 'string') return nested;
+  if (nested && nested.id) return nested.id;
+  return null;
+}
+
 /* Which Stripe statuses mean "this customer is paying us". */
 function isLive(status) {
   return status === 'active' || status === 'trialing';
@@ -417,6 +431,19 @@ module.exports = async function handler(req, res) {
       case 'customer.subscription.deleted':
         await writeSubscription(event.data.object);
         break;
+
+      /* Every renewal produces a paid invoice, and re-reading the subscription
+         from it is what makes a scheduled downgrade actually take effect: the
+         plan is held until plan_effective_at passes, so something has to look
+         again once it has. customer.subscription.updated usually fires at a
+         renewal too, but "usually" is not good enough to hang a customer's
+         allowance on, and writeSubscription is idempotent so arriving twice
+         costs nothing. */
+      case 'invoice.paid': {
+        const subId = subscriptionIdOf(event.data.object);
+        if (subId) await writeSubscription(await stripe.subscriptions.retrieve(subId));
+        break;
+      }
 
       case 'invoice.payment_failed':
         await announcePaymentFailed(event.data.object);
