@@ -494,7 +494,17 @@ async function showFeatures() {
 
 /* Start of the current billing period. Points reset with the invoice, not the
    calendar, so this walks back one month from the renewal date. */
+/* When this month's points started counting.
+ *
+ * points_reset_at is the answer whenever it is set - the webhook moves it at
+ * each renewal and an upgrade stamps it, so it already accounts for a change
+ * of plan part-way through a month. The fallback is only for rows written
+ * before that column existed. api/_billing.js and admin.js carry the same
+ * rule; change all three. */
 function periodStart(row) {
+  var stamped = row && row.points_reset_at ? new Date(row.points_reset_at) : null;
+  if (stamped && !isNaN(stamped)) return stamped;
+
   var end = row && row.current_period_end ? new Date(row.current_period_end) : null;
   if (end && !isNaN(end)) {
     var start = new Date(end);

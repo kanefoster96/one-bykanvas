@@ -1,3 +1,27 @@
+/* When the current points window opened.
+ *
+ * points_reset_at is the answer whenever it is set: the webhook moves it at
+ * each renewal and change-plan.js stamps it on an upgrade, so it already knows
+ * about a mid-month change of plan. The fallback is only for rows written
+ * before that column existed, and is deliberately the old derivation so those
+ * accounts see no sudden jump.
+ *
+ * account.js and admin.js carry the same rule for display. Change all three.
+ */
+function pointsWindowStart(profile) {
+  const stamped = profile && profile.points_reset_at ? new Date(profile.points_reset_at) : null;
+  if (stamped && !isNaN(stamped)) return stamped;
+
+  const end = profile && profile.current_period_end ? new Date(profile.current_period_end) : null;
+  if (end && !isNaN(end)) {
+    const start = new Date(end);
+    start.setMonth(start.getMonth() - 1);
+    return start;
+  }
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+}
+
 /* Shared between api/admin.js and api/requests.js: how many of a request's
  * points its owner's plan did not cover, worked out fresh from the database
  * rather than trusted from anywhere else - the same reason checkout.js
@@ -12,20 +36,12 @@ const PLAN_POINTS = { business: 1, pro: 3, max: 5 }; // must match admin.js and 
 async function shortfallFor(db, userId, requestId) {
   const { data: profile, error: pErr } = await db
     .from('profiles')
-    .select('business_name, stripe_customer_id, active_plan, current_period_end')
+    .select('business_name, stripe_customer_id, active_plan, current_period_end, points_reset_at')
     .eq('id', userId).maybeSingle();
   if (pErr) throw new Error(pErr.message);
 
   const allowance = PLAN_POINTS[profile && profile.active_plan] || 0;
-  const end = profile && profile.current_period_end ? new Date(profile.current_period_end) : null;
-  let start;
-  if (end && !isNaN(end)) {
-    start = new Date(end);
-    start.setMonth(start.getMonth() - 1);
-  } else {
-    const now = new Date();
-    start = new Date(now.getFullYear(), now.getMonth(), 1);
-  }
+  const start = pointsWindowStart(profile);
 
   const { data: periodReqs, error: prErr } = await db
     .from('requests')
@@ -45,4 +61,4 @@ async function shortfallFor(db, userId, requestId) {
   return { profile, shortfall };
 }
 
-module.exports = { PLAN_POINTS, shortfallFor };
+module.exports = { PLAN_POINTS, shortfallFor, pointsWindowStart };

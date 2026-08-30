@@ -101,6 +101,20 @@ module.exports = async function handler(req, res) {
    * null, the account page would stop showing a renewal date, and monthly points
    * would reset on the first of the month instead of on the billing date.
    */
+  /* Same both-places read as periodEndOf, for the other end of the window. */
+  function periodStartOf(sub) {
+    let unix = sub.current_period_start || null;
+    const items = (sub.items && sub.items.data) || [];
+    for (const item of items) {
+      if (item && item.current_period_start && item.current_period_start > (unix || 0)) {
+        unix = item.current_period_start;
+      }
+    }
+    if (!unix) return null;
+    const when = new Date(unix * 1000);
+    return isNaN(when) ? null : when.toISOString();
+  }
+
   function periodEndOf(sub) {
     let unix = sub.current_period_end || null;
 
@@ -129,7 +143,8 @@ module.exports = async function handler(req, res) {
        signup, and an updated event for every later change, so without this the
        same customer would be announced several times over. */
     const { data: before } = await admin
-      .from('profiles').select('subscription_status, active_plan').eq('id', id).maybeSingle();
+      .from('profiles').select('subscription_status, active_plan, points_reset_at')
+      .eq('id', id).maybeSingle();
     const wasLive = Boolean(before && isLive(before.subscription_status));
     /* Separately: had the cancellation already been sent? Checked against
        "was it already canceled", not "was it already live" - by the time
@@ -165,6 +180,18 @@ module.exports = async function handler(req, res) {
     }
 
     patch.active_plan = isLive(sub.status) ? entitled : null;
+
+    /* When this month's points started counting. Never moves backwards: an
+       upgrade part-way through a month stamps a later time than the period
+       start, and that stamp has to survive every subscription event until the
+       next renewal actually overtakes it. */
+    const startedAt = periodStartOf(sub);
+    if (startedAt) {
+      const held = before && before.points_reset_at ? new Date(before.points_reset_at) : null;
+      patch.points_reset_at = (held && !isNaN(held) && held > new Date(startedAt))
+        ? held.toISOString()
+        : startedAt;
+    }
 
     const { error } = await admin.from('profiles').upsert(patch, { onConflict: 'id' });
     if (error) throw new Error(error.message);
