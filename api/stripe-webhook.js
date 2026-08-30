@@ -115,7 +115,7 @@ module.exports = async function handler(req, res) {
        signup, and an updated event for every later change, so without this the
        same customer would be announced several times over. */
     const { data: before } = await admin
-      .from('profiles').select('subscription_status').eq('id', id).maybeSingle();
+      .from('profiles').select('subscription_status, active_plan').eq('id', id).maybeSingle();
     const wasLive = Boolean(before && isLive(before.subscription_status));
     /* Separately: had the cancellation already been sent? Checked against
        "was it already canceled", not "was it already live" - by the time
@@ -137,9 +137,20 @@ module.exports = async function handler(req, res) {
        cannot do that job: the customer can write it, so anyone could grant
        themselves Max. This column is only ever written here, and it is cleared
        the moment the subscription stops being live. */
-    patch.active_plan = isLive(sub.status) && sub.metadata && sub.metadata.plan
-      ? sub.metadata.plan
-      : null;
+    let entitled = (sub.metadata && sub.metadata.plan) || null;
+
+    /* A downgrade is agreed now and paid for later: api/change-plan.js has
+       already put the cheaper price on the subscription, but the customer has
+       paid for this month at the old rate and keeps it until that month is up.
+       plan_effective_at is when the new plan starts counting. Once it passes,
+       the renewal's own event comes through here and the lower plan applies
+       with nothing further to do. */
+    const startsAt = Number(sub.metadata && sub.metadata.plan_effective_at);
+    if (entitled && startsAt && startsAt * 1000 > Date.now() && before && before.active_plan) {
+      entitled = before.active_plan;
+    }
+
+    patch.active_plan = isLive(sub.status) ? entitled : null;
 
     const { error } = await admin.from('profiles').upsert(patch, { onConflict: 'id' });
     if (error) throw new Error(error.message);

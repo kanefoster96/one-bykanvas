@@ -958,19 +958,40 @@ function showBilling(row) {
   if (current) pick.value = current;
   else if (row && row.selected_plan && PLAN_LABEL[row.selected_plan]) pick.value = row.selected_plan;
 
-  /* Tell them which direction the selection moves before they commit. */
+  /* Say what the change will actually do, and what it costs, before they
+     commit. The old wording promised "takes effect from your next payment" in
+     both directions, which was never true of an upgrade. */
   var ORDER = ['business', 'pro', 'max'];
+  var previewSeq = 0;
+
   function describeMove() {
     var move = document.getElementById('billMove');
     var chosen = pick.value;
     if (!current || chosen === current) { move.hidden = true; return; }
+
     var up = ORDER.indexOf(chosen) > ORDER.indexOf(current);
     var pts = PLAN_POINTS[chosen];
-    move.hidden = false;
-    move.textContent = (up ? 'Upgrading' : 'Downgrading') + ' from ' + PLAN_NAME[current] +
+    var head = (up ? 'Upgrading' : 'Downgrading') + ' from ' + PLAN_NAME[current] +
       ' to ' + PLAN_NAME[chosen] + ' \u2014 ' +
-      (pts ? pts + (pts === 1 ? ' point' : ' points') + ' a month' : 'no points included') +
-      '. Takes effect from your next payment.';
+      (pts ? pts + (pts === 1 ? ' point' : ' points') + ' a month' : 'no points included') + '.';
+
+    move.hidden = false;
+    move.textContent = head + (up
+      ? ' You only pay the difference for the rest of this month.'
+      : ' Nothing to pay now, and you keep your current plan until it renews.');
+
+    /* Then replace the vague half with the real number, once Stripe has
+       worked it out. Sequenced so a quick second change cannot be overwritten
+       by the first one's slower answer. */
+    if (!up) return;
+    var mine = ++previewSeq;
+    planPreview(chosen).then(function (p) {
+      if (mine !== previewSeq || !p) return;
+      if (typeof p.dueNow === 'number') {
+        move.textContent = head + ' You pay ' + money(p.dueNow) + ' today for the rest of '
+          + 'this month, then ' + PLAN_LABEL[chosen].split(' \u2014 ')[1] + '.';
+      }
+    });
   }
   pick.addEventListener('change', describeMove);
   describeMove();
@@ -984,6 +1005,7 @@ function showBilling(row) {
     stateEl.textContent = 'Pick a plan to get your build started.';
     badge.hidden = true;
     payBtn.textContent = 'Set up payment';
+    payBtn.dataset.mode = '';
     return;
   }
 
@@ -1002,7 +1024,9 @@ function showBilling(row) {
     }
   }
 
-  payBtn.textContent = (status === 'active' || status === 'trialing') ? 'Change plan' : 'Set up payment';
+  var subscribed = status === 'active' || status === 'trialing';
+  payBtn.textContent = subscribed ? 'Change plan' : 'Set up payment';
+  payBtn.dataset.mode = subscribed ? 'change' : '';
 }
 
 document.getElementById('portalBtn').addEventListener('click', async function () {
@@ -1028,32 +1052,98 @@ document.getElementById('portalBtn').addEventListener('click', async function ()
   }
 });
 
+function money(pence) {
+  return new Intl.NumberFormat('en-GB', {
+    style: 'currency', currency: 'GBP',
+    minimumFractionDigits: pence % 100 === 0 ? 0 : 2
+  }).format(pence / 100);
+}
+
+async function billingToken() {
+  var sess = await ONE.db.auth.getSession();
+  var token = sess.data && sess.data.session && sess.data.session.access_token;
+  if (!token) throw new Error('Your session has expired. Log in and try again.');
+  return token;
+}
+
+/* What the change would cost, without committing to it. */
+async function planPreview(plan) {
+  try {
+    var token = await billingToken();
+    var res = await fetch('/api/change-plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ action: 'preview', plan: plan })
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) { return null; }
+}
+
+/* Two different jobs behind one button.
+ *
+ * With no subscription this starts one, which is checkout's job. With one
+ * already running it changes that subscription instead - sending an existing
+ * customer back through checkout charged the new plan in full and left them
+ * paying for both. */
 document.getElementById('payBtn').addEventListener('click', async function () {
   var note = document.getElementById('billNote');
   var btn = this;
   var plan = document.getElementById('planChoice').value;
+  var changing = btn.dataset.mode === 'change';
+  var label = btn.textContent;
 
   btn.disabled = true;
-  btn.textContent = 'Opening checkout…';
+  btn.textContent = changing ? 'Changing…' : 'Opening checkout…';
   say(note, '');
 
   try {
-    var sess = await ONE.db.auth.getSession();
-    var token = sess.data && sess.data.session && sess.data.session.access_token;
-    if (!token) throw new Error('Your session has expired. Log in and try again.');
+    var token = await billingToken();
 
-    var res = await fetch('/api/checkout', {
+    if (!changing) {
+      var res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ plan: plan })
+      });
+      var data = await res.json().catch(function () { return {}; });
+      if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');
+      location.href = data.url;
+      return;
+    }
+
+    var cres = await fetch('/api/change-plan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ plan: plan })
+      body: JSON.stringify({ action: 'apply', plan: plan })
     });
-    var data = await res.json().catch(function () { return {}; });
-    if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');
-    location.href = data.url;
+    var cdata = await cres.json().catch(function () { return {}; });
+
+    /* The endpoint refuses a customer with no subscription rather than
+       guessing - that is checkout's job, so send them there. */
+    if (!cres.ok && cdata.needsCheckout) {
+      btn.dataset.mode = '';
+      throw new Error('Set up payment first, then you can change plan.');
+    }
+    if (!cres.ok) throw new Error(cdata.error || 'Could not change your plan.');
+
+    var when = cdata.renewsAt ? new Date(cdata.renewsAt * 1000)
+      .toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
+
+    say(note, cdata.upgrading
+      ? 'You are on ' + (PLAN_NAME[cdata.to] || cdata.to) + ' from now. '
+        + 'Only the difference for the rest of this month was charged.'
+      : 'You will move to ' + (PLAN_NAME[cdata.to] || cdata.to)
+        + (when ? ' on ' + when : ' at your next renewal')
+        + '. Nothing has been charged, and your current plan runs until then.',
+      'ok');
+
+    /* The webhook writes the new plan, so re-read rather than guessing. */
+    setTimeout(function () { location.replace('/account.html'); }, 2500);
   } catch (err) {
     say(note, ONE.friendlyError(err), 'bad');
     btn.disabled = false;
-    btn.textContent = 'Set up payment';
+    btn.textContent = label;
   }
 });
 
