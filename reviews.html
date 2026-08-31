@@ -36,7 +36,9 @@
     <h1 class="reveal">What owners say.</h1>
     <p class="lede reveal">People who run cafés, salons, gyms and vans &mdash; not people who run websites.</p>
 
-    <div class="rv-summary reveal">
+    <!-- Shown only once /api/reviews returns real Google data: a score and a
+         count are claims about verified reviews, so they wait for them. -->
+    <div class="rv-summary reveal" id="rvSummary" hidden>
       <p class="rv-score" id="rvRating">5.0</p>
       <p class="rv-stars" aria-label="Average rating 5 out of 5">★★★★★</p>
       <p class="rv-total" id="rvTotal">Based on <span data-review-count>8</span> reviews</p>
@@ -100,11 +102,11 @@
   </div>
 </footer>
 
-<script src="consent.js?v=1"></script>
+<script src="consent.js?v=2"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=2"></script>
-<script src="script.js?v=9"></script>
-<script src="reviews.js?v=1"></script>
+<script src="script.js?v=10"></script>
+<script src="reviews.js?v=2"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>

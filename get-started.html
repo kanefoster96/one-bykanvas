@@ -31,11 +31,11 @@
       <!-- ============ 1. about you ============ -->
       <section class="wiz-step" data-step="1" aria-label="About you">
         <h1>Let's get you online.</h1>
-        <p class="wiz-sub">First, the basics. Takes a minute.</p>
+        <p class="wiz-sub">First, the basics. Takes about two minutes.</p>
         <div class="field"><label for="contact_name">Your full name</label><input id="contact_name" type="text" autocomplete="name"></div>
       <div class="hp" aria-hidden="true">
-        <label for="wiz_website">Website</label>
-        <input id="wiz_website" name="website" type="text" tabindex="-1" autocomplete="off">
+        <label for="wiz_extra">Leave this empty</label>
+        <input id="wiz_extra" name="wiz_extra" type="text" tabindex="-1" autocomplete="off">
       </div>
         <div class="field"><label for="business_name">Business name</label><input id="business_name" type="text" autocomplete="organization"></div>
         <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="email"></div>
@@ -230,6 +230,7 @@
           <div class="sumrow"><span>Monthly</span><b id="sumPrice">£50</b></div>
           <div class="sumrow"><span>Setup</span><b class="sum-free">Free</b></div>
           <div class="sumrow total"><span>Due today</span><b id="sumDue">£50</b></div>
+          <div class="sumrow" id="sumOfferRow" hidden><span>Offer</span><b class="sum-free" id="sumOffer">—</b></div>
         </div>
 
         <p class="note" id="note4" role="status" aria-live="polite"></p>
@@ -287,11 +288,11 @@
 </main>
 
 <script src="vendor/supabase.js?v=1"></script>
-<script src="consent.js?v=1"></script>
+<script src="consent.js?v=2"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=2"></script>
-<script src="get-started.js?v=4"></script>
+<script src="get-started.js?v=5"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>

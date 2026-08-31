@@ -1045,6 +1045,11 @@ function showBilling(row) {
   if (!status) {
     planEl.textContent = 'No plan yet';
     stateEl.textContent = 'Pick a plan to get your build started.';
+    /* The code they arrived with, said out loud before they pay - a discount
+       nobody mentions is one they assume was lost on the way. */
+    var offer = (window.ONE_SESSION && window.ONE_SESSION.offerCode
+                 && window.ONE_SESSION.offerCode()) || '';
+    if (offer) stateEl.textContent += ' Your code ' + offer + ' will be applied at checkout.';
     badge.hidden = true;
     payBtn.textContent = 'Set up payment';
     payBtn.dataset.mode = '';
@@ -1245,6 +1250,10 @@ document.getElementById('payBtn').addEventListener('click', async function () {
   var note = document.getElementById('billNote');
   if (state === 'success') {
     say(note, 'Payment set up — thanks. It can take a few seconds to show here.', 'ok');
+    /* The offer has done its job. Left behind, it would quietly ride along
+       on any future checkout - a re-subscribe months from now would claim a
+       welcome discount that is not theirs any more. */
+    if (window.ONE_SESSION && window.ONE_SESSION.clearOffer) window.ONE_SESSION.clearOffer();
     /* The reload that picks up the webhook's write is scheduled by start(),
        once it knows there is a session. Reloading without one would land on the
        stripped URL, find no checkout state, and bounce a customer who has just
