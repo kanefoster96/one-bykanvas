@@ -54,9 +54,8 @@
         r.classList.remove('is-on');
       });
       label.classList.add('is-on');
-      dnote.textContent = domain + ' is free right now. We’ll build your example '
-        + 'on it. It’s yours from the moment you start a plan — until then it’s '
-        + 'first come, first served, like any address.';
+      dnote.textContent = domain + ' is free right now. We’ll use it for your '
+        + 'example. It’s yours once you join — until then anyone can take it.';
     });
 
     var text = document.createElement('span');
@@ -82,7 +81,7 @@
 
     field.hidden = false;
     clearPicker();
-    dnote.textContent = 'Looking for addresses…';
+    dnote.textContent = 'Looking…';
 
     var data;
     try {
@@ -96,7 +95,7 @@
     } catch (e) {
       /* The address is a bonus, never a blocker: the form still sends without
          one, so a registry being down must not stop somebody asking. */
-      dnote.textContent = 'We couldn’t check addresses just now — send the form '
+      dnote.textContent = 'We couldn’t check addresses just now. Send the form '
         + 'anyway and we’ll find you one.';
       return;
     }
@@ -104,14 +103,14 @@
     var found = (data && data.suggestions) || [];
     if (!found.length) {
       dnote.textContent = data && data.reachable === false
-        ? 'We couldn’t reach the registries just now — send the form anyway and '
-          + 'we’ll find you one.'
-        : 'Nothing obvious was free for that name — send the form anyway and we’ll '
-          + 'suggest some when we reply.';
+        ? 'We couldn’t check addresses just now. Send the form anyway and we’ll '
+          + 'find you one.'
+        : 'Nothing free for that name yet. Send the form anyway and we’ll find '
+          + 'you some.';
       return;
     }
 
-    dnote.textContent = 'Pick one, or leave it and we’ll suggest some.';
+    dnote.textContent = 'Pick one, or leave it to us.';
     found.forEach(function (d) { list.appendChild(row(d)); });
   }
 
@@ -131,7 +130,7 @@
 
     if (!biz)  return say('Tell us your business name.', 'bad');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) return say('Enter a valid email address.', 'bad');
-    if (!soc)  return say('Tell us where to find you — Instagram or Facebook.', 'bad');
+    if (!soc)  return say('Add your Instagram or Facebook.', 'bad');
 
     btn.disabled = true;
     say('Sending…');
