@@ -15,7 +15,8 @@
     { label: "What\u2019s included", href: '/whats-included.html' },
     { label: 'Features',        href: '/features.html' },
     { label: 'Reviews',         href: '/reviews.html' },
-    { label: 'See all plans',   href: '/plans.html' }
+    { label: 'See all plans',   href: '/plans.html' },
+    { label: 'Contact',         href: '/contact.html' }
   ];
 
   var burger = document.getElementById('burger');
