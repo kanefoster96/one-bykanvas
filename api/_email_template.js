@@ -113,13 +113,22 @@ function offerBox(offer) {
     ? `<tr><td align="center" style="padding:0 22px 18px;font-size:13px;line-height:1.5;color:${GOOD_INK};font-family:${FONT};">${offer.note}</td></tr>`
     : '';
 
+  /* No copy button, because there is no such thing in an email: every client
+     strips scripts, so nothing can reach a clipboard from here. The code
+     travels in the link instead - tapping it carries the discount to the site,
+     which then hands it to Stripe - so there is nothing to copy and nothing to
+     mistype. It stays legible for anyone who would rather read it out. */
+  const code = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="background:#ffffff;border:1px dashed ${GOOD_LINE};border-radius:10px;">
+                  <tr><td style="padding:11px 22px;font-size:19px;font-weight:700;letter-spacing:.12em;color:${GOOD};font-family:${MONO};">${esc(offer.code)}</td></tr>
+                </table>`;
+
+  const tappable = offer.href
+    ? `<a href="${esc(offer.href)}" style="text-decoration:none;display:inline-block;">${code}</a>`
+    : code;
+
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 6px;background:${GOOD_BG};border:1px solid ${GOOD_LINE};border-radius:14px;">
             <tr><td align="center" style="padding:20px 22px 10px;font-size:15px;line-height:1.5;color:${GOOD_INK};font-family:${FONT};">${offer.text}</td></tr>
-            <tr><td align="center" style="padding:0 22px 14px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="background:#ffffff;border:1px dashed ${GOOD_LINE};border-radius:10px;">
-                <tr><td style="padding:11px 22px;font-size:19px;font-weight:700;letter-spacing:.12em;color:${GOOD};font-family:${MONO};">${esc(offer.code)}</td></tr>
-              </table>
-            </td></tr>
+            <tr><td align="center" style="padding:0 22px 14px;">${tappable}</td></tr>
             ${note}
           </table>`;
 }

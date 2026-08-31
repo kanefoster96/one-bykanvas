@@ -124,6 +124,29 @@ module.exports = async function handler(req, res) {
       ? ourSiteUrl()
       : (req.headers.origin || `https://${req.headers.host}`);
 
+    /* An offer code arriving from the browser is a claim, not a discount.
+       Stripe is asked whether it is real, and only what Stripe returns is
+       used - so a made-up code, an expired one, or one somebody typed into
+       the URL themselves simply does not resolve, and checkout carries on at
+       full price rather than failing.
+
+       discounts and allow_promotion_codes cannot both be set. With a code
+       that resolved, it is applied for them; without one, the box on the
+       payment page stays available for anyone typing it by hand. */
+    let discounts = null;
+    const wanted = String(body.offer || '').trim().toUpperCase();
+    if (wanted && /^[A-Z0-9._-]{3,40}$/.test(wanted)) {
+      try {
+        const found = await stripe.promotionCodes.list({ code: wanted, active: true, limit: 1 });
+        const promo = found && found.data && found.data[0];
+        if (promo) discounts = [{ promotion_code: promo.id }];
+        else console.log('checkout: offer %s did not resolve', wanted);
+      } catch (e) {
+        /* A lookup that fails is not a reason to block a sale. */
+        console.error('checkout: offer lookup failed:', e && e.message);
+      }
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       customer: customerId,
@@ -141,7 +164,7 @@ module.exports = async function handler(req, res) {
       metadata: { supabase_user_id: user.id, plan },
       success_url: `${origin}/account.html?checkout=success`,
       cancel_url: `${origin}/account.html?checkout=cancelled`,
-      allow_promotion_codes: true
+      ...(discounts ? { discounts } : { allow_promotion_codes: true })
     });
 
     return res.status(200).json({ url: session.url });

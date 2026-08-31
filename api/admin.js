@@ -511,9 +511,11 @@ module.exports = async function handler(req, res) {
           ctaNote: 'Yours to keep, whether you join or not.',
           offer: {
             code: PREVIEW_OFFER.code,
+            href: `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}`,
             text: '<strong>Want it online, properly?</strong><br>'
-                + 'Use this at checkout for 50% off your first three months.',
-            note: 'Works on any plan. Enter it in the box on the payment page.'
+                + 'Tap the code for 50% off your first three months.',
+            note: 'It comes with you &mdash; nothing to copy, and it is already '
+                + 'on the bill when you pay. Works on any plan.'
           },
           perks: perks,
           footer: 'You&rsquo;re getting this because you asked us for a free example at '
@@ -523,8 +525,9 @@ module.exports = async function handler(req, res) {
         text: `Here it is - the free example we made for ${lead.business}.\n\n`
             + `${url}\n\n`
             + `It's yours to keep, whether you join or not.\n\n`
-            + `Want it online properly? Use ${PREVIEW_OFFER.code} at checkout for 50% off `
-            + `your first three months. Works on any plan.\n\n`
+            + `Want it online properly? 50% off your first three months with `
+            + `${PREVIEW_OFFER.code}, on any plan:\n`
+            + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`
             + perks.map((t) => '- ' + t).join('\n') + '\n\n'
             + `See the plans: ${site}/plans.html\n`
       });
