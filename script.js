@@ -235,6 +235,95 @@
     if (btn) btn.disabled = false;
   });
 
+
+  /* ---------- Hero clips ----------
+   *
+   * The frame shows still screenshots by default. Name a clip here and it
+   * takes that slot instead, so a site's banner, ticker or flashing dot is
+   * visible in the preview rather than frozen.
+   *
+   * One entry per shot, in the order they appear in the markup; an empty
+   * string leaves that one as a still. Leave both lists empty - the default -
+   * and nothing below runs and nothing extra is fetched.
+   *
+   * MP4, H.264, no audio track. Not GIF: five seconds of a page at any decent
+   * frame rate is megabytes as a GIF and a couple of hundred kilobytes as a
+   * video, for better colour.
+   */
+  var HERO_CLIPS = {
+    wide:  ['', '', '', ''],
+    phone: ['', '', '']
+  };
+
+  function heroClips() {
+    var frame = document.querySelector('.device-shots');
+    if (!frame) return;
+
+    /* Reasons not to, all decided before a single byte is fetched. Someone who
+       has asked for less motion, or is watching their data, gets the stills -
+       which is the whole point of the stills still being here. */
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var saving = navigator.connection && navigator.connection.saveData;
+    if (still || saving) return;
+
+    var swapped = [];
+
+    Object.keys(HERO_CLIPS).forEach(function (set) {
+      var holder = frame.querySelector('.shots-' + set);
+      if (!holder) return;
+      var shots = [].slice.call(holder.children);
+
+      HERO_CLIPS[set].forEach(function (src, i) {
+        var img = shots[i];
+        if (!src || !img || img.tagName !== 'IMG') return;
+
+        var video = document.createElement('video');
+        /* The still becomes the poster, so the frame looks exactly as it does
+           now until the clip has enough to play - and stays that way for good
+           if the file is missing or the browser refuses to autoplay. Nothing
+           to detect and nothing to fall back to: the fallback is the default. */
+        video.poster = img.getAttribute('src');
+        video.src = src;
+        video.muted = true;              // required, or no browser will autoplay
+        video.defaultMuted = true;
+        video.loop = true;
+        video.playsInline = true;        // iOS opens it fullscreen without this
+        video.setAttribute('playsinline', '');
+        video.setAttribute('muted', '');
+        video.setAttribute('aria-hidden', 'true');
+        video.preload = 'none';          // the observer below decides when
+        video.tabIndex = -1;
+
+        img.parentNode.replaceChild(video, img);
+        swapped.push(video);
+      });
+    });
+
+    if (!swapped.length) return;
+
+    /* Nothing loads or plays until the frame is actually on screen, and it all
+       stops again when it is not. The hero is off screen for most of a visit,
+       and four videos decoding behind the footer is battery spent on something
+       nobody is looking at. */
+    function start() {
+      swapped.forEach(function (v) {
+        v.preload = 'auto';
+        var p = v.play();
+        /* Low Power Mode on iOS refuses autoplay outright. That is not an
+           error to report - it is the poster doing its job. */
+        if (p && p.catch) p.catch(function () {});
+      });
+    }
+    function stop() { swapped.forEach(function (v) { v.pause(); }); }
+
+    if (!('IntersectionObserver' in window)) return start();
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { e.isIntersecting ? start() : stop(); });
+    }, { threshold: 0.1 }).observe(frame);
+  }
+
+  heroClips();
+
   /* ---------- Year ---------- */
   var year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();
