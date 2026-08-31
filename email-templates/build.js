@@ -32,7 +32,7 @@ const files = {
     ctaText: 'Confirm your email',
     ctaHref: CONFIRM_URL,
     ctaNote: 'This link expires in 24 hours.',
-    footer: 'You&rsquo;re getting this because someone signed up to one, by Kanvas with this '
+    footer: 'You&rsquo;re getting this because someone signed up to Kanvas (one.) with this '
           + 'address. If it wasn&rsquo;t you, ignore this email &mdash; no account is created '
           + 'until the link above is clicked.',
     footerLinks: standardFooter(SITE)
