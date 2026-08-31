@@ -557,7 +557,6 @@ module.exports = async function handler(req, res) {
                 ? `${lead.requested_domain} has been registered by somebody else since you `
                   + `asked. Join and we'll find you a good one that is free.\n\n`
                 : '')
-            + `It's yours to keep, whether you join or not.\n\n`
             + `Want it online properly? 50% off your first three months with `
             + `${PREVIEW_OFFER.code}, on any plan:\n`
             + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`
