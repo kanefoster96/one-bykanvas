@@ -93,7 +93,6 @@
     if (!name) return say(note, 'Please tell us your name.', 'bad');
     if (!biz)  return say(note, 'Please tell us your business name.', 'bad');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) return say(note, 'Enter a valid email address.', 'bad');
-    if (pass.length < 8) return say(note, 'Passwords need to be at least 8 characters.', 'bad');
 
     /* Honeypot, same as the login form: signUp goes straight to Supabase, so
        this can only be checked here. Stops at step one rather than pretending
@@ -105,7 +104,11 @@
     answers.business_name = biz;
     answers.email = mail;
 
+    /* Already signed in (or already signed up this visit): the account and
+       its password exist, and the password field is hidden - so it is not
+       demanded here, and Next simply moves on. */
     if (signedUp) { say(note, ''); return show(2); }
+    if (pass.length < 8) return say(note, 'Passwords need to be at least 8 characters.', 'bad');
     if (!ONE.requireConfig(note)) return;
 
     button.disabled = true;
@@ -567,10 +570,16 @@
       if (meta.contact_name)  $('contact_name').value  = meta.contact_name;
       if (meta.business_name) $('business_name').value = meta.business_name;
       $('email').value = session.user.email;
-      // Their account already exists, so skip straight past step 1.
       answers.contact_name  = $('contact_name').value.trim();
       answers.business_name = $('business_name').value.trim();
-      if (answers.contact_name && answers.business_name) show(2);
+      /* Step 1 still shows - jumping ahead read as the form being broken,
+         and this way their prefilled details are on screen to check. Only
+         the password field goes: the account already has one, and a box
+         that does nothing invites typing into it. */
+      var pw = $('passwordField');
+      if (pw) pw.hidden = true;
+      var pwLabel = document.querySelector('.wiz-step[data-step="1"] .wiz-sub');
+      if (pwLabel) pwLabel.textContent = 'You’re signed in — check your details and carry on.';
     });
   }
 
