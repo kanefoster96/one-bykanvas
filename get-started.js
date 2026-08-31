@@ -9,6 +9,11 @@
 (function () {
   'use strict';
 
+  function offerCode() {
+    return (window.ONE_SESSION && window.ONE_SESSION.offerCode &&
+            window.ONE_SESSION.offerCode()) || '';
+  }
+
   var PENDING_KEY = 'one.pending-onboarding';
   var LAST = 5;                       // step 6 is the confirmation screen
 
@@ -513,11 +518,14 @@
       var res = await fetch('/api/checkout', {
         method: 'POST',
         headers: headers,
+        /* Carried from the link in their email, if they came from one, so the
+           discount is already on the page they pay from. */
         body: JSON.stringify(token
-          ? { plan: answers.selected_plan || 'business' }
+          ? { plan: answers.selected_plan || 'business', offer: offerCode() }
           : { plan: answers.selected_plan || 'business',
               pendingUserId: answers.pendingUserId,
-              email: answers.email })
+              email: answers.email,
+              offer: offerCode() })
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');

@@ -70,5 +70,46 @@
     if (found) { try { localStorage.removeItem(found.key); } catch (e) {} }
   }
 
-  window.ONE_SESSION = { email: email, logOut: logOut };
+  /* ---------------------------------------------------------- offer code
+   *
+   * An email cannot copy anything to a clipboard - no mail client runs
+   * scripts - so the code travels in the link instead. Arrive from one and
+   * the discount is remembered here, then handed to checkout, and there is
+   * nothing to copy, type or mistype.
+   *
+   * Kept rather than applied: the code is only a claim until Stripe agrees,
+   * and Stripe is asked at checkout. Anyone can put ?offer= on a URL, which
+   * is exactly as true of typing one into the box on the payment page.
+   */
+  var OFFER_KEY = 'one.offer';
+
+  function rememberOffer() {
+    var code;
+    try {
+      code = new URLSearchParams(location.search).get('offer');
+    } catch (e) { return; }
+    if (!code) return;
+
+    /* Codes are short and boring by nature; anything else is somebody
+       playing, and there is no reason to carry it around. */
+    code = String(code).trim().toUpperCase();
+    if (!/^[A-Z0-9._-]{3,40}$/.test(code)) return;
+
+    try { localStorage.setItem(OFFER_KEY, code); } catch (e) {}
+  }
+
+  function offerCode() {
+    try { return localStorage.getItem(OFFER_KEY) || ''; } catch (e) { return ''; }
+  }
+
+  function clearOffer() {
+    try { localStorage.removeItem(OFFER_KEY); } catch (e) {}
+  }
+
+  rememberOffer();
+
+  window.ONE_SESSION = {
+    email: email, logOut: logOut,
+    offerCode: offerCode, clearOffer: clearOffer
+  };
 })();

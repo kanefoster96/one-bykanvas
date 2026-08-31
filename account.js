@@ -1146,7 +1146,10 @@ document.getElementById('payBtn').addEventListener('click', async function () {
       var res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ plan: plan })
+        /* Carried from the link in their email, if they came from one. */
+        body: JSON.stringify({ plan: plan,
+          offer: (window.ONE_SESSION && window.ONE_SESSION.offerCode
+                  && window.ONE_SESSION.offerCode()) || '' })
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');
