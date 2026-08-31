@@ -1150,6 +1150,10 @@ document.getElementById('payBtn').addEventListener('click', async function () {
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');
+
+      /* Same event the wizard sends, so both routes to Stripe look alike to
+         Meta. A no-op unless they accepted cookies. */
+      if (window.oneTrack) window.oneTrack('InitiateCheckout', { content_category: plan });
       location.href = data.url;
       return;
     }
