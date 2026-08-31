@@ -197,7 +197,7 @@ module.exports = async function handler(req, res) {
           perks: perks,
           ctaText: 'See the plans',
           ctaHref: `${site}/plans.html`,
-          ctaNote: 'From £50 a month. Cancel with a month’s notice.',
+          ctaNote: 'From £50 a month. Cancel anytime.',
           footer: 'You&rsquo;re getting this because you asked for a free example at '
                 + 'kanvas.one. No account has been created and nothing has been charged.',
           footerLinks: standardFooter(site)
@@ -208,7 +208,7 @@ module.exports = async function handler(req, res) {
             + `What joining gets you:\n`
             + perks.map((t) => '- ' + t.replace(/<[^>]+>/g, '')).join('\n') + '\n\n'
             + `See the plans: ${site}/plans.html\n`
-            + `From GBP 50 a month. Cancel with a month's notice.\n`
+            + `From GBP 50 a month. Cancel anytime.\n`
       });
       console.log('lead: confirmation email', theirs);
       }
