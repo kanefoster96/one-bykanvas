@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=19">
+<link rel="stylesheet" href="styles.css?v=21">
 </head>
 <body class="auth-body">
 
@@ -45,6 +45,13 @@
   <section class="panel" id="sectionCustomers" hidden>
     <h2 class="panel-title">Customers</h2>
     <div id="customersBody"></div>
+  </section>
+
+  <!-- People who asked for something and have no account yet: the free-example
+       queue, and enquiries from the homepage form. -->
+  <section class="panel" id="sectionEnquiries" hidden>
+    <h2 class="panel-title">Enquiries</h2>
+    <div id="enquiriesBody"></div>
   </section>
 
   <!-- Signed up, no plan yet - a lead rather than a customer. -->
@@ -145,7 +152,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="admin.js?v=18"></script>
+<script src="admin.js?v=19"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>

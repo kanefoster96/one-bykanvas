@@ -24,6 +24,9 @@ const WARN_LINE = '#f0e2c4';
 const WARN_INK = '#8a5a17';
 /* The same green the site uses, and for the same reason: included, or free. */
 const GOOD = '#1a7f37';
+const GOOD_BG = '#eef8f1';
+const GOOD_LINE = '#c8e6d3';
+const GOOD_INK = '#1c6b33';
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -101,6 +104,26 @@ function perkList(perks) {
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:22px 0 6px;">${rows}</table>`;
 }
 
+/* A discount, set apart so it survives a skim. Green rather than the amber
+   the callout uses: amber is for a problem, and this is the opposite. The
+   code is mono and generously spaced because most people retype it rather
+   than copy it, on a phone, one thumb. */
+function offerBox(offer) {
+  const note = offer.note
+    ? `<tr><td align="center" style="padding:0 22px 18px;font-size:13px;line-height:1.5;color:${GOOD_INK};font-family:${FONT};">${offer.note}</td></tr>`
+    : '';
+
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 6px;background:${GOOD_BG};border:1px solid ${GOOD_LINE};border-radius:14px;">
+            <tr><td align="center" style="padding:20px 22px 10px;font-size:15px;line-height:1.5;color:${GOOD_INK};font-family:${FONT};">${offer.text}</td></tr>
+            <tr><td align="center" style="padding:0 22px 14px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="background:#ffffff;border:1px dashed ${GOOD_LINE};border-radius:10px;">
+                <tr><td style="padding:11px 22px;font-size:19px;font-weight:700;letter-spacing:.12em;color:${GOOD};font-family:${MONO};">${esc(offer.code)}</td></tr>
+              </table>
+            </td></tr>
+            ${note}
+          </table>`;
+}
+
 /* lines and callout.text are raw HTML, not escaped here - callers
  * interpolating a dynamic value (a business name, a domain) must esc() that
  * value themselves first, same rule as every other bit of user-supplied text
@@ -108,7 +131,7 @@ function perkList(perks) {
  * escaped here, so callers pass those in raw.
  */
 function html({
-  preheader, heading, lines = [], details = [], image, perks = [],
+  preheader, heading, lines = [], details = [], image, perks = [], offer,
   ctaText, ctaHref, ctaNote, callout, footer, footerLinks = []
 }) {
   /* What the inbox list shows beside the subject. Without it the client
@@ -122,6 +145,7 @@ function html({
 
   const facts = details.length ? detailCard(details) : '';
   const good = perks.length ? perkList(perks) : '';
+  const deal = offer && offer.code ? offerBox(offer) : '';
 
   /* Width and height are set on the tag as well as in the style: a mail client
      that has not loaded the image yet still needs to know how much room to
@@ -165,7 +189,7 @@ function html({
         </td></tr>
         <tr><td style="padding:26px 36px 0;">
           <h1 style="margin:0 0 16px;font-size:25px;font-weight:600;letter-spacing:-.025em;line-height:1.2;color:${INK};font-family:${FONT};">${esc(heading)}</h1>
-          ${body}${picture}${facts}${good}${cta}${note}${warn}
+          ${body}${picture}${facts}${good}${cta}${note}${deal}${warn}
         </td></tr>
         <tr><td style="padding:30px 36px 34px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid ${LINE};">

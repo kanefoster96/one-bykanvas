@@ -35,11 +35,13 @@ var ICONS = {
   plans:     '<path d="m12 3.5 8.5 4.75L12 13 3.5 8.25z"/><path d="m3.5 13 8.5 4.75L20.5 13"/>',
   payments:  '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
   templates: '<rect x="7.5" y="7.5" width="13" height="13" rx="2.5"/><path d="M16.5 7.5v-2a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/>',
-  marketing: '<path d="M3 7.5 12 13l9-5.5"/><rect x="3" y="5" width="18" height="14" rx="2.5"/>'
+  marketing: '<path d="M3 7.5 12 13l9-5.5"/><rect x="3" y="5" width="18" height="14" rx="2.5"/>',
+  enquiries: '<rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/>'
 };
 
 var SECTIONS = [
   { key: 'requests',  label: 'Requests' },
+  { key: 'enquiries', label: 'Enquiries' },
   { key: 'customers', label: 'Customers' },
   { key: 'contacts',  label: 'Contacts' },
   { key: 'plans',     label: 'Plans' },
@@ -280,7 +282,8 @@ function renderMenu(counts) {
 }
 
 var SECTION_IDS = {
-  requests: 'sectionRequests', customers: 'sectionCustomers', contacts: 'sectionContacts',
+  requests: 'sectionRequests', enquiries: 'sectionEnquiries',
+  customers: 'sectionCustomers', contacts: 'sectionContacts',
   plans: 'sectionPlans', payments: 'sectionPayments', templates: 'sectionTemplates',
   marketing: 'sectionMarketing'
 };
@@ -316,6 +319,7 @@ function render() {
   });
 
   if (activeSection === 'requests') renderRequestsSection(open, unbuilt);
+  else if (activeSection === 'enquiries') renderEnquiriesSection();
   else if (activeSection === 'customers') renderCustomersSection();
   else if (activeSection === 'contacts') renderContactsSection();
   else if (activeSection === 'plans') renderPlansSection();
@@ -985,6 +989,182 @@ function renderCustomersSection() {
   renderCustomersList(wrap);
 }
 
+
+/* ---------------- Enquiries: the free-example queue ---------------- */
+/*
+ * Everything in the leads table: free examples waiting to be made, and
+ * enquiries from the homepage form. These never appeared here at all, which
+ * meant the only record of them was an inbox.
+ *
+ * Loaded when the section is opened rather than with everything else. It is a
+ * work queue, not a dashboard, and most visits to this page are not about it.
+ */
+var leadState = { loaded: false, loading: false, rows: [], error: '' };
+
+async function loadLeads(force) {
+  if (leadState.loading) return;
+  if (leadState.loaded && !force) return;
+  leadState.loading = true;
+  leadState.error = '';
+  try {
+    var out = await api({ action: 'listLeads' });
+    leadState.rows = (out && out.leads) || [];
+    leadState.loaded = true;
+  } catch (err) {
+    leadState.error = err.message;
+  }
+  leadState.loading = false;
+  render();
+}
+
+function leadCard(row) {
+  var free = row.source === 'free-preview';
+  var card = el('div', 'cust');
+
+  var head = el('div', 'cust-head');
+  var names = el('div', 'cust-names');
+  names.appendChild(el('h3', null, row.business || row.name || 'No name'));
+  names.appendChild(el('p', 'cust-sub', when(row.created_at)
+    + (row.name && row.business ? ' · ' + row.name : '')));
+  head.appendChild(names);
+
+  var chip = el('span', 'plan-chip' + (free ? ' is-free' : ''), free ? 'Free example' : 'Enquiry');
+  head.appendChild(chip);
+  card.appendChild(head);
+
+  var reach = el('p', 'cust-contact');
+  var mail = el('a', null, row.email);
+  mail.href = 'mailto:' + row.email;
+  reach.appendChild(mail);
+  if (row.handle) reach.appendChild(el('span', 'cust-sub', ' · ' + row.handle));
+  if (row.requested_domain) reach.appendChild(el('span', 'cust-sub', ' · ' + row.requested_domain));
+  card.appendChild(reach);
+
+  if (row.about) card.appendChild(el('p', 'queue-what', row.about));
+  if (!free && row.plan_interest) {
+    card.appendChild(el('p', 'cust-sub', 'Interested in ' + row.plan_interest
+      + (row.want_app ? ', wants an app' : '')));
+  }
+
+  if (free) card.appendChild(previewSender(row));
+  card.appendChild(leadRemover(row));
+  return card;
+}
+
+/* The whole job in one row: paste where it lives, press send. Everything else
+   in the email is already known from what they told us. */
+function previewSender(row) {
+  var wrap = el('div', 'send-preview');
+  var note = el('p', 'note');
+
+  if (row.preview_sent_at) {
+    wrap.appendChild(el('p', 'cust-points', 'Sent ' + when(row.preview_sent_at)));
+    if (row.preview_url) {
+      var seen = el('a', 'cust-sub', row.preview_url);
+      seen.href = row.preview_url;
+      seen.target = '_blank';
+      seen.rel = 'noopener';
+      wrap.appendChild(seen);
+    }
+  }
+
+  var input = el('input', 'admin-input');
+  input.type = 'url';
+  input.placeholder = 'https://… where their example lives';
+  input.value = row.preview_url || '';
+  input.setAttribute('aria-label', 'Where the example for ' + (row.business || 'this business') + ' lives');
+
+  var btn = el('button', 'btn btn-ghost admin-save',
+    row.preview_sent_at ? 'Send again' : 'Send free website design');
+  btn.type = 'button';
+
+  btn.addEventListener('click', async function () {
+    var url = input.value.trim();
+    if (!url) { note.textContent = 'Paste the address first.'; note.className = 'note bad'; return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      await api({ action: 'sendPreview', leadId: row.id, url: url,
+                  again: Boolean(row.preview_sent_at) });
+      note.textContent = 'Sent to ' + row.email + '.';
+      note.className = 'note ok';
+      await loadLeads(true);
+    } catch (err) {
+      note.textContent = err.message;
+      note.className = 'note bad';
+      btn.disabled = false;
+      btn.textContent = row.preview_sent_at ? 'Send again' : 'Send free website design';
+    }
+  });
+
+  var row2 = el('div', 'send-row');
+  row2.appendChild(input);
+  row2.appendChild(btn);
+  wrap.appendChild(row2);
+  wrap.appendChild(el('p', 'hint', 'They get the design on the button, and '
+    + 'WELCOME26 for 50% off their first three months.'));
+  wrap.appendChild(note);
+  return wrap;
+}
+
+function leadRemover(row) {
+  var wrap = el('div', 'lead-remove');
+  var armed = false;
+  var btn = el('button', 'linkish', 'Delete');
+  btn.type = 'button';
+  btn.addEventListener('click', async function () {
+    if (!armed) { armed = true; btn.textContent = 'Really delete?'; return; }
+    btn.disabled = true;
+    try {
+      await api({ action: 'deleteLead', leadId: row.id });
+      await loadLeads(true);
+    } catch (err) {
+      btn.disabled = false;
+      armed = false;
+      btn.textContent = 'Delete';
+      say(err.message, 'bad');
+    }
+  });
+  wrap.appendChild(btn);
+  return wrap;
+}
+
+function renderEnquiriesSection() {
+  var wrap = document.getElementById('enquiriesBody');
+  wrap.textContent = '';
+
+  if (!leadState.loaded) {
+    wrap.appendChild(el('p', 'site-none', leadState.error || 'Loading…'));
+    loadLeads(false);
+    if (leadState.error) {
+      var retry = el('button', 'btn btn-ghost admin-save', 'Try again');
+      retry.type = 'button';
+      retry.addEventListener('click', function () { loadLeads(true); });
+      wrap.appendChild(retry);
+    }
+    return;
+  }
+
+  var free = leadState.rows.filter(function (r) { return r.source === 'free-preview'; });
+  var waiting = free.filter(function (r) { return !r.preview_sent_at; });
+  var done = free.filter(function (r) { return r.preview_sent_at; });
+  var asked = leadState.rows.filter(function (r) { return r.source !== 'free-preview'; });
+
+  /* Oldest first where there is work to do: somebody who has waited three days
+     should not be under somebody who asked this morning. */
+  waiting.sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+
+  function group(title, rows, empty) {
+    wrap.appendChild(el('h3', 'req-list-title', title));
+    if (!rows.length) { wrap.appendChild(el('p', 'site-none', empty)); return; }
+    rows.forEach(function (r) { wrap.appendChild(leadCard(r)); });
+  }
+
+  group('Free examples to make (' + waiting.length + ')', waiting, 'Nothing waiting.');
+  group('Enquiries (' + asked.length + ')', asked, 'None yet.');
+  group('Already sent (' + done.length + ')', done, 'None yet.');
+}
 
 /* ---------------- Ending a membership ---------------- */
 /*

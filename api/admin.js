@@ -21,6 +21,12 @@ const { shortfallFor } = require('./_billing.js');
 
 const DEFAULT_ADMINS = ['kane@kanvas.one'];
 
+/* The code offered when a free example goes out. It is a real promotion code
+   in Stripe - checkout already accepts codes, so nothing here has to apply it;
+   the customer types it and Stripe does the rest. Changing the discount means
+   changing it in Stripe, not here: this is only the word we print. */
+const PREVIEW_OFFER = { code: 'WELCOME26' };
+
 function adminList() {
   const fromEnv = (process.env.ADMIN_EMAILS || '')
     .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
@@ -417,6 +423,117 @@ module.exports = async function handler(req, res) {
           endsAt: endsAt ? new Date(endsAt * 1000).toISOString() : null
         }
       });
+    }
+
+    /* ---- the free-example queue ----------------------------------------
+     *
+     * Enquiries and free examples both live in leads. They are read here
+     * rather than in the main list because they are nobody's dashboard: this
+     * is a work queue, opened when there is work to do.
+     */
+    if (action === 'listLeads') {
+      const { data: leads, error } = await db
+        .from('leads')
+        .select('id, name, business, email, about, plan_interest, want_app, '
+              + 'source, handle, requested_domain, preview_url, preview_sent_at, created_at')
+        .order('created_at', { ascending: false })
+        .limit(500);
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ leads: leads || [] });
+    }
+
+    if (action === 'deleteLead') {
+      const id = String(body.leadId || '');
+      if (!id) return res.status(400).json({ error: 'Which one?' });
+      const { error } = await db.from('leads').delete().eq('id', id);
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true });
+    }
+
+    /* ---- sending somebody their finished example -----------------------
+     *
+     * Everything in the email comes from the row: their business, the address
+     * they picked, the social we designed from. The only thing typed here is
+     * where the example lives, because that is the only thing we did not
+     * already know.
+     */
+    if (action === 'sendPreview') {
+      const id = String(body.leadId || '');
+      const url = String(body.url || '').trim();
+      if (!id) return res.status(400).json({ error: 'Which one?' });
+      if (!/^https:\/\/[^\s]+\.[^\s]{2,}/i.test(url)) {
+        return res.status(400).json({ error: 'That needs to be a full https:// address.' });
+      }
+
+      const { data: lead, error: leadErr } = await db
+        .from('leads').select('*').eq('id', id).maybeSingle();
+      if (leadErr) throw new Error(leadErr.message);
+      if (!lead) return res.status(404).json({ error: 'That request is gone.' });
+
+      /* Sending twice reads as not knowing what you are doing, so it takes a
+         deliberate second ask rather than a second click. */
+      if (lead.preview_sent_at && !body.again) {
+        return res.status(409).json({
+          error: 'This one was already sent ' + new Date(lead.preview_sent_at).toDateString()
+               + '. Send it again only if you meant to.'
+        });
+      }
+
+      const site = ourSiteUrl();
+      const facts = [{ label: 'Business', value: lead.business }];
+      if (lead.requested_domain) facts.push({ label: 'Address', value: lead.requested_domain });
+
+      const perks = [
+        'Nothing technical to set up. We put it live for you.',
+        'No time lost. We build and look after it while you get on with the job.',
+        'If anything breaks, we fix it. Included, and it never costs you a point.',
+        'Your web address and hosting are in the monthly price, with nothing else to buy.'
+      ];
+
+      const sent = await sendEmail({
+        to: lead.email,
+        subject: `Your website is ready to look at, ${lead.business}`,
+        html: emailHtml({
+          preheader: 'Here it is - the free one-page example you asked for.',
+          heading: 'Your website is ready 🎁',
+          lines: [
+            `Here it is. We designed this for <strong>${esc(lead.business)}</strong> from `
+              + `${lead.handle ? 'your ' + esc(lead.handle) : 'what you sent us'}, so it should `
+              + `already look like you.`,
+            'Have a look on your phone as well as a computer &mdash; that is where most '
+              + 'of your customers will see it.'
+          ],
+          details: facts,
+          ctaText: '🎁 See your website',
+          ctaHref: url,
+          ctaNote: 'Yours to keep, whether you join or not.',
+          offer: {
+            code: PREVIEW_OFFER.code,
+            text: '<strong>Want it online, properly?</strong><br>'
+                + 'Use this at checkout for 50% off your first three months.',
+            note: 'Works on any plan. Enter it in the box on the payment page.'
+          },
+          perks: perks,
+          footer: 'You&rsquo;re getting this because you asked us for a free example at '
+                + 'kanvas.one. No account has been created and nothing has been charged.',
+          footerLinks: standardFooter(site)
+        }),
+        text: `Here it is - the free example we made for ${lead.business}.\n\n`
+            + `${url}\n\n`
+            + `It's yours to keep, whether you join or not.\n\n`
+            + `Want it online properly? Use ${PREVIEW_OFFER.code} at checkout for 50% off `
+            + `your first three months. Works on any plan.\n\n`
+            + perks.map((t) => '- ' + t).join('\n') + '\n\n'
+            + `See the plans: ${site}/plans.html\n`
+      });
+
+      const { error: markErr } = await db.from('leads')
+        .update({ preview_url: url, preview_sent_at: new Date().toISOString() })
+        .eq('id', id);
+      if (markErr) throw new Error(markErr.message);
+
+      console.log('admin: sent preview for %s -> %s', id, sent && sent.ok);
+      return res.status(200).json({ ok: true, sentAt: new Date().toISOString() });
     }
 
     /* ---- ending a membership ------------------------------------------
