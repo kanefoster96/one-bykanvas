@@ -18,6 +18,7 @@ const { sendEmail, sendBatch } = require('./_email.js');
 const { html: emailHtml, standardFooter, esc } = require('./_email_template.js');
 const { unsubscribeHeaders, unsubscribeUrl, optedOut } = require('./_unsubscribe.js');
 const { shortfallFor } = require('./_billing.js');
+const { lookup: domainLookup } = require('./domains.js');
 
 const DEFAULT_ADMINS = ['kane@kanvas.one'];
 
@@ -481,7 +482,26 @@ module.exports = async function handler(req, res) {
 
       const site = ourSiteUrl();
       const facts = [{ label: 'Business', value: lead.business }];
-      if (lead.requested_domain) facts.push({ label: 'Address', value: lead.requested_domain });
+
+      /* Asked again, not assumed. They picked this days ago and nothing was
+         reserved, so "still available" has to be checked at the moment we say
+         it - and when the registries cannot be reached, it says nothing at all
+         rather than guessing in either direction. */
+      let domainState = 'unknown';
+      if (lead.requested_domain) {
+        try {
+          domainState = await domainLookup(lead.requested_domain);
+        } catch (e) {
+          console.error('admin: domain re-check failed:', e && e.message);
+        }
+        facts.push({
+          label: 'Address',
+          value: lead.requested_domain,
+          tag: domainState === 'free'  ? { text: 'Still available' }
+             : domainState === 'taken' ? { text: 'Now taken', tone: 'warn' }
+             : null
+        });
+      }
 
       const perks = [
         'Nothing technical to set up. We put it live for you.',
@@ -500,11 +520,20 @@ module.exports = async function handler(req, res) {
             `Here it is. We designed this for <strong>${esc(lead.business)}</strong> from `
               + `${lead.handle ? 'your ' + esc(lead.handle) : 'what you sent us'}, so it should `
               + `already look like you.`
-          ],
+          ].concat(domainState === 'taken'
+            ? [`One thing: <strong>${esc(lead.requested_domain)}</strong> has been `
+               + `registered by somebody else since you asked. Join and we&rsquo;ll find `
+               + `you a good one that is free.`]
+            : []),
           details: facts,
           ctaText: '🎁 See your website',
           ctaHref: url,
-          ctaNote: 'Yours to keep, whether you join or not.',
+          /* The address bar will not say their name, and an unexplained one
+             looks like a mistake. Said under the button, where they are about
+             to see it. */
+          ctaNote: lead.requested_domain && domainState !== 'taken'
+            ? `This opens on a temporary address. ${esc(lead.requested_domain)} is yours when you join.`
+            : 'This opens on a temporary address while it&rsquo;s an example.',
           offer: {
             code: PREVIEW_OFFER.code,
             href: `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}`,
@@ -520,6 +549,14 @@ module.exports = async function handler(req, res) {
         }),
         text: `Here it is - the free example we made for ${lead.business}.\n\n`
             + `${url}\n\n`
+            + (lead.requested_domain && domainState !== 'taken'
+                ? `This opens on a temporary address. ${lead.requested_domain} is yours `
+                  + `when you join${domainState === 'free' ? ' - it is still available' : ''}.\n\n`
+                : `This opens on a temporary address while it's an example.\n\n`)
+            + (domainState === 'taken'
+                ? `${lead.requested_domain} has been registered by somebody else since you `
+                  + `asked. Join and we'll find you a good one that is free.\n\n`
+                : '')
             + `It's yours to keep, whether you join or not.\n\n`
             + `Want it online properly? 50% off your first three months with `
             + `${PREVIEW_OFFER.code}, on any plan:\n`

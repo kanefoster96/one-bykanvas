@@ -133,3 +133,6 @@ module.exports = async function handler(req, res) {
 module.exports.candidates = candidates;
 module.exports.slug = slug;
 module.exports.isValidDomain = isValidDomain;
+/* api/admin.js re-checks a domain when it sends somebody their example, so
+   the email can say whether it is still free rather than assume it. */
+module.exports.lookup = lookup;
