@@ -14,6 +14,7 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
+const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 
 const PLAN_INTEREST = ['business', 'pro', 'max', 'unsure'];
 
@@ -131,6 +132,58 @@ module.exports = async function handler(req, res) {
       replyTo: email
     });
     console.log('lead: notify email', result);
+
+    /* And a word back to them, for a free example only. An enquiry gets a
+       reply from a person, which is better than an automated one; a free
+       example is a job going in a queue, so silence here reads as the form
+       not having worked.
+
+       It confirms the request and says what joining would get them. Those two
+       jobs belong in one email rather than two, because the second would be
+       marketing arriving unasked, and this one they have just asked for. */
+    if (free) {
+      const perks = [
+        'Nothing technical to set up. You send us your details, we do the rest.',
+        'No time lost. We build it while you get on with the job.',
+        'If anything breaks, we fix it. Included, and it never costs you a point.',
+        'Your web address and hosting are in the monthly price, with nothing else to buy.'
+      ];
+
+      const facts = [{ label: 'Business', value: business }];
+      if (handle) facts.push({ label: 'Social', value: handle });
+      if (requested_domain) facts.push({ label: 'Address', value: requested_domain });
+
+      const theirs = await sendEmail({
+        to: email,
+        subject: 'Your free example is on its way',
+        html: emailHtml({
+          preheader: 'We have your details. Your free one-page example is being made.',
+          heading: 'We’re on it 👍',
+          lines: [
+            `Thanks &mdash; we&rsquo;ve got your details and we&rsquo;re designing a page for `
+              + `<strong>${esc(business)}</strong>. It&rsquo;ll land in this inbox when it&rsquo;s ready.`,
+            'We make these by hand, one at a time, so at busy moments it can take a '
+              + 'little longer. Nothing for you to do in the meantime.'
+          ],
+          details: facts,
+          perks: perks,
+          ctaText: 'See the plans',
+          ctaHref: `${site}/plans.html`,
+          ctaNote: 'From £50 a month. Cancel with a month’s notice.',
+          footer: 'You&rsquo;re getting this because you asked for a free example at '
+                + 'kanvas.one. No account has been created and nothing has been charged.',
+          footerLinks: standardFooter(site)
+        }),
+        text: `Thanks - we've got your details and we're designing a page for ${business}.\n\n`
+            + `It'll land in this inbox when it's ready. We make these by hand, one at a `
+            + `time, so at busy moments it can take a little longer.\n\n`
+            + `What joining gets you:\n`
+            + perks.map((t) => '- ' + t.replace(/<[^>]+>/g, '')).join('\n') + '\n\n'
+            + `See the plans: ${site}/plans.html\n`
+            + `From GBP 50 a month. Cancel with a month's notice.\n`
+      });
+      console.log('lead: confirmation email', theirs);
+    }
 
     return res.status(200).json({ ok: true, id: row.id });
   } catch (err) {

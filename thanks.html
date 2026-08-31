@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Page not found — one</title>
-<meta name="description" content="That page could not be found.">
+<title>Your free example is on its way — one</title>
+<meta name="description" content="We have your details and your free one-page example is being made.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
-<meta property="og:title" content="Page not found — one">
-<meta property="og:description" content="That page could not be found.">
+<meta property="og:title" content="Your free example is on its way — one">
+<meta property="og:description" content="We have your details and your free one-page example is being made.">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css?v=19">
@@ -31,16 +31,36 @@
 
 <main id="main">
 
-<section class="section">
+<section class="page-hero offer-hero">
+  <div class="wrap center">
+    <p class="hero-pill reveal"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg> Requested</p>
+    <h1 class="reveal">Your free example<br>is on its way.</h1>
+    <p class="lede reveal" id="thanksLede">We&rsquo;ve got your details. We&rsquo;ll email
+       you as soon as your page is ready.</p>
+
+    <ul class="ticks offer-ticks reveal">
+      <li>Nothing else to do &mdash; we&rsquo;ll come to you</li>
+      <li>No account made, nothing charged</li>
+      <li>Yours to keep, even if you don&rsquo;t join</li>
+    </ul>
+
+    <div class="cta-row reveal">
+      <a class="btn btn-primary" href="/plans.html">See the plans</a>
+      <a class="btn btn-ghost" href="/get-started.html">Create an account &rsaquo;</a>
+    </div>
+    <p class="fineprint reveal">From £50 a month. Cancel with a month&rsquo;s notice.</p>
+  </div>
+</section>
+
+<section class="section pt0">
   <div class="wrap">
-    <div class="notfound">
-      <h1>Page not found.</h1>
-      <p>That link has moved or never existed. Nothing you did wrong &mdash; here is the way back.</p>
-      <div class="notfound-links">
-        <a class="btn btn-primary" href="/">Home</a>
-        <a class="btn btn-ghost" href="/plans.html">See the plans</a>
-        <a class="btn btn-ghost" href="/contact.html">Contact us</a>
-      </div>
+    <div class="offer-after">
+      <h2>While you wait</h2>
+      <p>Nothing needs doing. If you&rsquo;d rather not wait, you can start an account
+         now and we&rsquo;ll build the whole site instead of one page.</p>
+      <p class="offer-plans"><a href="/how-it-works.html">See how it works</a>
+         &middot; <a href="/whats-included.html">What&rsquo;s included</a>
+         &middot; <a href="/contact.html">Ask us anything</a></p>
     </div>
   </div>
 </section>
@@ -66,6 +86,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=1"></script>
 <script src="script.js?v=9"></script>
+<script src="thanks.js?v=1"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>
