@@ -87,6 +87,17 @@ async function lookup(domain) {
 }
 
 module.exports = async function handler(req, res) {
+  /* The badge on a free example runs on whatever host that example is on, so
+     the availability check has to be reachable from another origin. This
+     endpoint has no session, reads nothing private and already answers anyone
+     who can send it a POST - CORS only decides whether a browser will show
+     them the answer, so opening it costs nothing that was not already open. */
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Max-Age', '86400');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });

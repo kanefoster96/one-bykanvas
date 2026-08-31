@@ -1105,6 +1105,57 @@ function previewSender(row) {
   wrap.appendChild(el('p', 'hint', 'They get the design on the button, and '
     + 'WELCOME26 for 50% off their first three months.'));
   wrap.appendChild(note);
+  wrap.appendChild(badgeSnippet(row));
+  return wrap;
+}
+
+/* The tag that puts the pill on the example itself. Built here with their
+   address already in it, because the one moment worth asking is while they
+   are looking at their own business on their own phone - and the example is
+   the only page that happens on. */
+function badgeSnippet(row) {
+  var wrap = el('details', 'badge-snippet');
+  var head = document.createElement('summary');
+  head.textContent = 'Pill for the example site';
+  wrap.appendChild(head);
+
+  var tag = '<script src="' + location.origin + '/preview-badge.js"'
+          + (row.requested_domain ? '\n        data-domain="' + row.requested_domain + '"' : '')
+          + ' defer><\/script>';
+
+  var pre = el('pre', 'badge-code');
+  pre.textContent = tag;
+  wrap.appendChild(pre);
+
+  var copy = el('button', 'btn btn-ghost admin-save', 'Copy');
+  copy.type = 'button';
+  copy.addEventListener('click', function () {
+    /* A page can reach the clipboard, unlike an email. Older browsers and
+       insecure origins cannot, so there is a fallback that selects it. */
+    function done() {
+      copy.textContent = 'Copied';
+      setTimeout(function () { copy.textContent = 'Copy'; }, 1600);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(tag).then(done, select);
+    } else {
+      select();
+    }
+    function select() {
+      var r = document.createRange();
+      r.selectNodeContents(pre);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(r);
+      copy.textContent = 'Press ⌘C';
+      setTimeout(function () { copy.textContent = 'Copy'; }, 2600);
+    }
+  });
+  wrap.appendChild(copy);
+
+  wrap.appendChild(el('p', 'hint', 'Paste before </body> on the example. It checks '
+    + 'the address is still free before saying so, and says nothing about it if '
+    + 'it is not.'));
   return wrap;
 }
 
