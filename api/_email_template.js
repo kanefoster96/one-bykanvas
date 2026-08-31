@@ -65,12 +65,21 @@ function brand() {
    of the prose so they can be checked at a glance. Values are set in mono
    because they are nearly always data: a plan name, a date, an amount, a
    web address. */
+/* A short state next to a value - "still available" against a domain nobody
+   has bought yet. Two tones only: green for good news, amber for the same
+   news gone the other way, matching what those colours already mean here. */
+function tagChip(tag) {
+  const good = tag.tone !== 'warn';
+  return `<span style="display:inline-block;margin-left:8px;padding:3px 9px;border-radius:980px;background:${good ? GOOD_BG : WARN_BG};border:1px solid ${good ? GOOD_LINE : WARN_LINE};font-size:11px;font-weight:600;letter-spacing:.01em;color:${good ? GOOD : WARN_INK};font-family:${FONT};white-space:nowrap;">${esc(tag.text)}</span>`;
+}
+
 function detailCard(details) {
   const rows = details.map((d, i) => {
     const top = i === 0 ? '' : `border-top:1px solid ${LINE};`;
+    const chip = d.tag && d.tag.text ? tagChip(d.tag) : '';
     return `<tr>
       <td style="${top}padding:13px 0;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${INK_3};font-family:${FONT};" align="left" valign="top">${esc(d.label)}</td>
-      <td style="${top}padding:13px 0;font-size:13.5px;color:${INK};font-family:${MONO};" align="right" valign="top">${esc(d.value)}</td>
+      <td style="${top}padding:13px 0;font-size:13.5px;color:${INK};font-family:${MONO};" align="right" valign="top">${esc(d.value)}${chip}</td>
     </tr>`;
   }).join('');
 
