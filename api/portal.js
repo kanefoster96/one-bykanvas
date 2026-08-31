@@ -8,7 +8,7 @@
  */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
-const { missingEnv } = require('./_env.js');
+const { missingEnv, ourSiteUrl } = require('./_env.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -54,11 +54,16 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'There is no payment set up on this account yet.' });
     }
 
-    const origin = req.headers.origin || ('https://' + (req.headers.host || ''));
+    /* Same rule as checkout: SITE_URL when it is set, the request's own host
+       only as a fallback - so the way back from Stripe always lands on the
+       real site rather than whatever alias the page was opened on. */
+    const origin = process.env.SITE_URL
+      ? ourSiteUrl()
+      : (req.headers.origin || ('https://' + (req.headers.host || '')));
     const stripe = new Stripe(STRIPE_SECRET_KEY);
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
-      return_url: origin + '/account'
+      return_url: origin + '/account.html'
     });
 
     return res.status(200).json({ url: session.url });

@@ -99,9 +99,17 @@ module.exports = async function handler(req, res) {
     }
     const { data: profile } = await admin
       .from('profiles')
-      .select('stripe_customer_id, business_name')
+      .select('stripe_customer_id, business_name, subscription_status')
       .eq('id', user.id)
       .maybeSingle();
+
+    /* The signed-in path needs the same guard the unconfirmed path has: a
+       second checkout on an already-subscribed account would create a second
+       subscription billing alongside the first. Plan changes go through
+       change-plan.js, which swaps the price on the existing subscription. */
+    if (profile && (profile.subscription_status === 'active' || profile.subscription_status === 'trialing')) {
+      return res.status(400).json({ error: 'There is already a plan on this account. You can change plan from your account page.' });
+    }
 
     const stripe = new Stripe(STRIPE_SECRET_KEY);
     let customerId = profile && profile.stripe_customer_id;

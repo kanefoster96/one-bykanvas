@@ -69,9 +69,11 @@ module.exports = async function handler(req, res) {
     const body = await rawBody(req);
     event = stripe.webhooks.constructEvent(body, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET);
   } catch (err) {
-    // Unsigned or tampered — never act on it.
+    /* Unsigned or tampered — never act on it. The reason goes to the log
+       only: this endpoint is public, and the library's message describes
+       what the check expected, which is nobody else's business. */
     console.error('webhook signature rejected:', err && err.message);
-    return res.status(400).end(`Webhook Error: ${err && err.message}`);
+    return res.status(400).end('Webhook Error: invalid signature');
   }
 
   const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -179,7 +181,14 @@ module.exports = async function handler(req, res) {
       entitled = before.active_plan;
     }
 
-    patch.active_plan = isLive(sub.status) ? entitled : null;
+    /* A live subscription whose event carries no plan in its metadata (say,
+       one edited by hand in the Stripe dashboard) must not wipe the plan the
+       customer is paying for - keep what is already on the row. Only a
+       subscription that has stopped being live clears it. */
+    if (!isLive(sub.status)) patch.active_plan = null;
+    else if (entitled) patch.active_plan = entitled;
+    else if (before && before.active_plan) patch.active_plan = before.active_plan;
+    else patch.active_plan = null;
 
     /* When this month's points started counting. Never moves backwards: an
        upgrade part-way through a month stamps a later time than the period
@@ -205,7 +214,7 @@ module.exports = async function handler(req, res) {
       await announceNewCustomer(id, patch);
       await welcomeCustomer(id, patch);
     }
-    if (sub.status === 'canceled' && !alreadyCanceled) await announceCancellation(id);
+    if (sub.status === 'canceled' && !alreadyCanceled) await announceCancellation(id, sub);
   }
 
   /* The first thing a customer sees once their card is actually charged -
@@ -274,8 +283,12 @@ module.exports = async function handler(req, res) {
 
   /* The subscription is already gone by the time this fires - both sides
      need telling: the customer, since their site and domain are now at
-     risk, and us, since cancelling a domain is still a manual job. */
-  async function announceCancellation(id) {
+     risk, and us, since cancelling a domain is still a manual job.
+     Why it ended changes the words: someone who asked to cancel must not
+     be told their card failed, and vice versa. */
+  async function announceCancellation(id, sub) {
+    const reason = (sub && sub.cancellation_details && sub.cancellation_details.reason) || '';
+    const requested = reason === 'cancellation_requested';
     const { data: p } = await admin
       .from('profiles')
       .select('business_name, site_url, requested_domain, domain_owned')
@@ -287,17 +300,23 @@ module.exports = async function handler(req, res) {
     const site = ourSiteUrl();
 
     if (email) {
+      const why = requested
+        ? `As you asked, your one plan has now ended.`
+        : `We weren't able to take payment after several attempts, so your one plan has now ended.`;
+      const whyHtml = requested
+        ? 'As you asked, your plan has now ended. Thanks for being with us.'
+        : 'We weren’t able to take payment after several attempts, so your plan has now ended.';
       const result = await sendEmail({
         to: email,
         subject: 'Your plan has ended',
-        text: `We weren't able to take payment after several attempts, so your one plan has now ended.\n\n`
+        text: `${why}\n\n`
             + `Your site and domain may be affected - please get in touch as soon as you can if you'd `
             + `like to keep them, or reactivate your plan any time from your account:\n${site}/account.html`,
         html: emailHtml({
           preheader: 'Your site and web address are at risk — here’s how to put it back.',
           heading: 'Your plan has ended.',
           lines: [
-            'We weren’t able to take payment after several attempts, so your plan has now ended.',
+            whyHtml,
             'Reactivating puts everything back as it was &mdash; your site, your web address and the changes you have left this month.'
           ],
           details: [
@@ -323,7 +342,7 @@ module.exports = async function handler(req, res) {
     const adminResult = await sendEmail({
       to: adminAddresses(),
       subject: `${name}'s plan ended - check their domain`,
-      text: `${name}'s subscription ended after failed payment retries.\n\n`
+      text: `${name}'s subscription ended (${requested ? 'they cancelled' : 'payment retries failed'}).\n\n`
           + `Domain: ${domainLine}\n\n`
           + `If you don't hear from them, you may need to cancel or release it, and take their site down.\n\n`
           + `Admin: ${site}/admin.html`
@@ -370,8 +389,8 @@ module.exports = async function handler(req, res) {
           + `Retrying until: ${retryUntil}\n\n`
           + `We'll automatically retry over the next 7 days - to make sure it goes through, you can `
           + `update your card any time from your account:\n${site}/account.html\n\n`
-          + `If payment still hasn't gone through after 7 days your plan will end, and your site `
-          + `and web address will be at risk.`,
+          + `If payment keeps failing we'll be in touch, and your plan may be paused until it's `
+          + `settled - which would put your site and web address at risk.`,
       html: emailHtml({
         preheader: 'We’ll retry over the next 7 days — updating your card fixes it straight away.',
         heading: 'We couldn’t take payment.',
@@ -387,8 +406,8 @@ module.exports = async function handler(req, res) {
         ctaText: 'Update payment details',
         ctaHref: `${site}/account.html`,
         callout: {
-          text: 'If payment still hasn’t gone through after 7 days your plan will end, '
-              + 'and your site and web address will be at risk.'
+          text: 'If payment keeps failing we’ll be in touch, and your plan may be paused '
+              + 'until it’s settled — which would put your site and web address at risk.'
         },
         footer: 'You&rsquo;re getting this because a payment for your one plan was declined.',
         footerLinks: standardFooter(site)
