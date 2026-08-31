@@ -36,17 +36,27 @@
       .map(function (w) { return w[0]; }).join('').toUpperCase();
   }
 
+  /* Escapes quotes as well as tags, because some of this lands inside
+     attribute values, where a stray double-quote is the way out. */
   function esc(str) {
-    var d = document.createElement('div');
-    d.textContent = str == null ? '' : str;
-    return d.innerHTML;
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  /* A photo goes into a src attribute, so it has to actually be a web
+     address - anything else (javascript:, data:, or plain junk) is skipped
+     and the initials avatar stands in. */
+  function safePhoto(u) {
+    var s = String(u || '');
+    return /^(https:\/\/|\/)/i.test(s) ? s : '';
   }
 
   function card(review, i) {
     var stars = '★★★★★'.slice(0, Math.round(review.rating || 5));
     var sub = review.trade || review.when || '';
-    var avatar = review.photo
-      ? '<img class="avatar" src="' + esc(review.photo) + '" alt="" loading="lazy" width="42" height="42">'
+    var avatar = safePhoto(review.photo)
+      ? '<img class="avatar" src="' + esc(safePhoto(review.photo)) + '" alt="" loading="lazy" width="42" height="42">'
       : '<span class="avatar ' + AV[i % AV.length] + '" aria-hidden="true">' + esc(initials(review.author)) + '</span>';
 
     return '<article class="quote">'
@@ -75,6 +85,10 @@
     var total = document.getElementById('rvTotal');
     if (rating && data.rating) rating.textContent = Number(data.rating).toFixed(1);
     if (total && data.total) total.textContent = data.total + ' Google reviews';
+    /* The score block stays hidden until here: an average and a count are
+       claims about real, verifiable reviews, and only Google data is that. */
+    var summary = document.getElementById('rvSummary');
+    if (summary && data.rating) summary.hidden = false;
   }
 
   if (!document.querySelector('[data-reviews]')) return;

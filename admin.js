@@ -1078,9 +1078,24 @@ function previewSender(row) {
     row.preview_sent_at ? 'Send again' : 'Send free website design');
   btn.type = 'button';
 
+  /* A second send lands a second email in a customer's inbox, so it takes a
+     second click - same shape as delete. The first send stays one click. */
+  var armed = false, disarm = null;
+
   btn.addEventListener('click', async function () {
     var url = input.value.trim();
     if (!url) { note.textContent = 'Paste the address first.'; note.className = 'note bad'; return; }
+
+    if (row.preview_sent_at && !armed) {
+      armed = true;
+      btn.textContent = 'They already have it — send again?';
+      disarm = setTimeout(function () {
+        armed = false;
+        btn.textContent = 'Send again';
+      }, 6000);
+      return;
+    }
+    if (disarm) clearTimeout(disarm);
 
     btn.disabled = true;
     btn.textContent = 'Sending…';
@@ -1161,11 +1176,22 @@ function badgeSnippet(row) {
 
 function leadRemover(row) {
   var wrap = el('div', 'lead-remove');
-  var armed = false;
+  var armed = false, disarm = null;
   var btn = el('button', 'linkish', 'Delete');
   btn.type = 'button';
   btn.addEventListener('click', async function () {
-    if (!armed) { armed = true; btn.textContent = 'Really delete?'; return; }
+    if (!armed) {
+      armed = true;
+      btn.textContent = 'Really delete?';
+      /* Left alone, the armed state would sit there until an eventual stray
+         click deleted something. It stands down by itself. */
+      disarm = setTimeout(function () {
+        armed = false;
+        btn.textContent = 'Delete';
+      }, 5000);
+      return;
+    }
+    if (disarm) clearTimeout(disarm);
     btn.disabled = true;
     try {
       await api({ action: 'deleteLead', leadId: row.id });
@@ -1187,12 +1213,15 @@ function renderEnquiriesSection() {
 
   if (!leadState.loaded) {
     wrap.appendChild(el('p', 'site-none', leadState.error || 'Loading…'));
-    loadLeads(false);
+    /* A failed load waits for the button. Kicking off another load here would
+       loop: the load failing calls render, and render would load again. */
     if (leadState.error) {
       var retry = el('button', 'btn btn-ghost admin-save', 'Try again');
       retry.type = 'button';
       retry.addEventListener('click', function () { loadLeads(true); });
       wrap.appendChild(retry);
+    } else {
+      loadLeads(false);
     }
     return;
   }

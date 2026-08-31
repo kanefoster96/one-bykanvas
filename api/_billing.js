@@ -52,11 +52,21 @@ async function shortfallFor(db, userId, requestId) {
     .order('created_at', { ascending: true });
   if (prErr) throw new Error(prErr.message);
 
-  let used = 0, shortfall = 0;
+  let used = 0, shortfall = 0, found = false;
   for (const r of (periodReqs || [])) {
     const covered = Math.max(0, Math.min(r.points, allowance - used));
-    if (r.id === requestId) { shortfall = r.points - covered; break; }
+    if (r.id === requestId) { shortfall = r.points - covered; found = true; break; }
     used += r.points;
+  }
+
+  /* A request created before the current window opened is not in periodReqs,
+   * and without this it would fall through with a shortfall of zero - billed
+   * as free. Points from a past window are spent; the whole request is owed. */
+  if (!found) {
+    const { data: outside, error: oErr } = await db
+      .from('requests').select('points').eq('id', requestId).maybeSingle();
+    if (oErr) throw new Error(oErr.message);
+    shortfall = (outside && Number(outside.points)) || 0;
   }
   return { profile, shortfall };
 }

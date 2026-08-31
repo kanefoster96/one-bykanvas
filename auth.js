@@ -94,7 +94,7 @@ form.addEventListener('submit', async function (e) {
      Supabase walks past this. It still stops the crawlers that fill in a page's
      fields and press submit, which is what this is for. Claim success and do
      nothing: being told it failed is what makes a bot try again. */
-  var hp = document.getElementById('auth_website');
+  var hp = document.getElementById('auth_extra');
   if (hp && hp.value) {
     say(mode === 'reset' ? 'Check your email for the link.' : 'Check your email.', 'ok');
     return;

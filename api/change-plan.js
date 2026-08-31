@@ -175,8 +175,13 @@ module.exports = async function handler(req, res) {
       /* No proration either way: they keep the plan they have paid for until
          the period they paid for runs out. plan_effective_at is what tells the
          webhook to hold their current allowance until then - without it the
-         allowance would drop the moment they clicked. */
-      metadata.plan_effective_at = String(renewsAt);
+         allowance would drop the moment they clicked. String(null) would
+         store the word "null" and parse to NaN in the webhook, so when the
+         renewal date could not be read the marker is left off entirely and
+         the new plan simply applies at once - the safe direction, since a
+         downgrade applying early only ever gives away less, never charges. */
+      if (renewsAt != null) metadata.plan_effective_at = String(renewsAt);
+      else delete metadata.plan_effective_at;
       await stripe.subscriptions.update(sub.id, {
         items,
         proration_behavior: 'none',

@@ -98,7 +98,7 @@
     /* Honeypot, same as the login form: signUp goes straight to Supabase, so
        this can only be checked here. Stops at step one rather than pretending
        to advance, since there is nothing further along for a bot to reach. */
-    var hp = document.getElementById('wiz_website');
+    var hp = document.getElementById('wiz_extra');
     if (hp && hp.value) { say(note, ''); return; }
 
     answers.contact_name = name;
@@ -269,7 +269,8 @@
     answers.domain_owned = false;
     if ($('domHave')) $('domHave').value = '';
     $('domList').querySelectorAll('.pick-row').forEach(function (row) {
-      row.classList.toggle('is-on', row.querySelector('input').checked);
+      var pick = row.querySelector('input');
+      if (pick) row.classList.toggle('is-on', pick.checked);
     });
     say($('noteDomain'), '');
   });
@@ -370,6 +371,16 @@
     $('sumPrice').textContent = plan.price;
     $('sumEmail').textContent = answers.email || '—';
     $('sumDue').textContent = plan.price;
+
+    /* If they arrived with a code, say so before the price - a discount they
+       cannot see is a discount they think never happened. Stripe applies it
+       on the payment page; this line only promises what that page will show. */
+    var offer = (window.ONE_SESSION && window.ONE_SESSION.offerCode
+                 && window.ONE_SESSION.offerCode()) || '';
+    if ($('sumOfferRow')) {
+      $('sumOfferRow').hidden = !offer;
+      if (offer) $('sumOffer').textContent = offer + ' applied at checkout';
+    }
 
     /* The address they chose, shown in a browser bar so the thing they are
        buying is on screen before they pay for it. The www. is display only:
@@ -566,7 +577,8 @@
   /* keep the plan rows visually in sync with the radio */
   document.getElementById('pick').addEventListener('change', function () {
     document.querySelectorAll('.pick-row').forEach(function (row) {
-      row.classList.toggle('is-on', row.querySelector('input').checked);
+      var pick = row.querySelector('input');
+      if (pick) row.classList.toggle('is-on', pick.checked);
     });
   });
 

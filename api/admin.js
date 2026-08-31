@@ -433,14 +433,21 @@ module.exports = async function handler(req, res) {
      * is a work queue, opened when there is work to do.
      */
     if (action === 'listLeads') {
-      const { data: leads, error } = await db
-        .from('leads')
-        .select('id, name, business, email, about, plan_interest, want_app, '
-              + 'source, handle, requested_domain, preview_url, preview_sent_at, created_at')
-        .order('created_at', { ascending: false })
-        .limit(500);
-      if (error) throw new Error(error.message);
-      return res.status(200).json({ leads: leads || [] });
+      const COLS = 'id, name, business, email, about, plan_interest, want_app, '
+                 + 'source, handle, requested_domain, preview_url, preview_sent_at, created_at';
+      /* Two reads on purpose. The recent page is capped, and once enquiries
+         pass the cap the oldest rows fall off it - which must never include a
+         free example still waiting to be made. Those are fetched outright. */
+      const [recent, waiting] = await Promise.all([
+        db.from('leads').select(COLS).order('created_at', { ascending: false }).limit(500),
+        db.from('leads').select(COLS)
+          .eq('source', 'free-preview').is('preview_sent_at', null)
+      ]);
+      if (recent.error) throw new Error(recent.error.message);
+      if (waiting.error) throw new Error(waiting.error.message);
+      const seen = new Set((recent.data || []).map((r) => r.id));
+      const rows = (recent.data || []).concat((waiting.data || []).filter((r) => !seen.has(r.id)));
+      return res.status(200).json({ leads: rows });
     }
 
     if (action === 'deleteLead') {
@@ -512,7 +519,7 @@ module.exports = async function handler(req, res) {
 
       const sent = await sendEmail({
         to: lead.email,
-        subject: `Your website is ready to look at, ${lead.business}`,
+        subject: `Your website is ready to look at, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
         html: emailHtml({
           preheader: 'Here it is - the free one-page example you asked for.',
           heading: 'Your website is ready 🎁',
@@ -564,12 +571,22 @@ module.exports = async function handler(req, res) {
             + `See the plans: ${site}/plans.html\n`
       });
 
+      /* sendEmail answers 'sent', 'skipped' or 'failed', and only the first
+         may mark this done: stamping a failed send would show "Sent" in the
+         queue while the customer waits for an email that never went. */
+      if (sent !== 'sent') {
+        console.error('admin: preview email for %s did not send: %s', id, sent);
+        return res.status(502).json({
+          error: 'The email did not send (' + sent + '). Nothing was marked, so you can try again.'
+        });
+      }
+
       const { error: markErr } = await db.from('leads')
         .update({ preview_url: url, preview_sent_at: new Date().toISOString() })
         .eq('id', id);
       if (markErr) throw new Error(markErr.message);
 
-      console.log('admin: sent preview for %s -> %s', id, sent && sent.ok);
+      console.log('admin: preview sent for %s', id);
       return res.status(200).json({ ok: true, sentAt: new Date().toISOString() });
     }
 
@@ -645,8 +662,26 @@ module.exports = async function handler(req, res) {
 
       /* A live subscription outlives the account it belonged to - Stripe does
          not know the customer is gone and keeps taking the money, with nobody
-         left to email about it. End the plan first, deliberately. */
-      const live = who && ['active', 'trialing', 'past_due', 'unpaid'].includes(who.subscription_status);
+         left to email about it. End the plan first, deliberately.
+
+         Asked of Stripe when there is a subscription to ask about, because the
+         mirrored column is the one this file elsewhere refuses to trust: a
+         webhook that never landed leaves it saying canceled while the billing
+         runs on, and this is the one place that mistake cannot be undone. */
+      let live = who && ['active', 'trialing', 'past_due', 'unpaid'].includes(who.subscription_status);
+      if (who && who.stripe_subscription_id && !live) {
+        const { STRIPE_SECRET_KEY } = process.env;
+        if (STRIPE_SECRET_KEY) {
+          try {
+            const sub = await new Stripe(STRIPE_SECRET_KEY)
+              .subscriptions.retrieve(who.stripe_subscription_id);
+            live = ['active', 'trialing', 'past_due', 'unpaid'].includes(sub.status);
+          } catch (e) {
+            /* A subscription Stripe has genuinely forgotten is not live. */
+            console.log('admin: delete pre-check, Stripe lookup:', e && e.message);
+          }
+        }
+      }
       if (live) {
         return res.status(400).json({
           error: 'This account still has a subscription. Cancel it first, or Stripe will keep billing them.'
@@ -760,12 +795,13 @@ module.exports = async function handler(req, res) {
       const result = await sendBatch(messages);
       console.log('admin: broadcast to %s - %d sent, %d failed', audience, result.sent, result.failed);
 
-      await db.from('broadcasts').insert({
+      const audit = await db.from('broadcasts').insert({
         subject, title, body: bodyText,
         image_path: imageUrl || null,
         button_text: buttonText || null, button_url: buttonUrl || null,
         audience, sent_count: result.sent, failed_count: result.failed
       });
+      if (audit.error) console.error('admin: broadcast record failed:', audit.error.message);
 
       return res.status(200).json({ ok: true, sent: result.sent, failed: result.failed });
     }
@@ -865,12 +901,15 @@ module.exports = async function handler(req, res) {
       }
 
       let amount = 0;
-      if (status === 'accepted' && reqRow.status === 'new') {
+      if (status === 'accepted' && reqRow.status === 'new' && !reqRow.billed_at) {
         const { profile, shortfall } = await shortfallFor(db, reqRow.user_id, id);
         const computed = shortfall * REQUEST_COST.edit.amount; // £40/point, same rate either kind
         // The admin can override the computed amount - a discount on a request
         // that turned out easier than its points suggest, say. Never asked of
         // the customer; this admin decides it before the charge goes through.
+        if (body.amount != null && !Number.isFinite(Number(body.amount))) {
+          return res.status(400).json({ error: 'That amount is not a number.' });
+        }
         amount = body.amount == null ? computed : Math.max(0, Math.round(Number(body.amount)));
 
         if (amount > 0) {
@@ -903,7 +942,7 @@ module.exports = async function handler(req, res) {
       // to list.
       if (status === 'done' && reqRow.status !== 'done' && reqRow.kind === 'feature') {
         const { error: featErr } = await db.from('site_features')
-          .insert({ user_id: reqRow.user_id, name: reqRow.detail });
+          .insert({ user_id: reqRow.user_id, name: String(reqRow.detail).slice(0, 200) });
         if (featErr) throw new Error(featErr.message);
         await notifyFeatureEmail(db, reqRow.user_id, reqRow.detail, 'added');
       }

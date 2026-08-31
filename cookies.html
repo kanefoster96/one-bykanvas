@@ -46,12 +46,12 @@
 
     <div class="legal-key">
       <p>Nothing that measures you is stored until you choose <strong>Accept all</strong>. Choose <strong>Essential only</strong> and no advertising cookie is ever set &mdash; the page does not load the code that would set one. You can change your mind at any time, and it takes effect immediately.</p>
-      <p><button class="btn btn-ghost" type="button" id="cookieSettings">Change your cookie choice</button></p>
+      <p><button class="btn btn-ghost" type="button" id="cookieSettings" hidden>Change your cookie choice</button></p>
     </div>
 
     <h2 id="essential">Essential &mdash; always on</h2>
-    <p>These two are what UK law calls strictly necessary: without them the thing you asked for does not work. They cannot be turned off, and consent is not required for them.</p>
-    <p>Both use your browser&rsquo;s local storage rather than a cookie. Local storage is not sent to our servers with every request the way a cookie is; it stays on your device until it is cleared.</p>
+    <p>These are what UK law calls strictly necessary: without them the thing you asked for does not work. They cannot be turned off, and consent is not required for them.</p>
+    <p>All of them use your browser&rsquo;s local storage rather than a cookie. Local storage is not sent to our servers with every request the way a cookie is; it stays on your device until it is cleared.</p>
     <dl>
       <dt>sb-&hellip;-auth-token</dt>
       <dd>Set when you log in, so you stay logged in as you move between pages and when you come back later. It holds the token that identifies your session. Removed when you log out. Set by Supabase, which provides our sign-in system.</dd>
@@ -59,6 +59,12 @@
       <dd>Holds the business details you entered while signing up, so they survive the gap between confirming your email address and arriving at your account. Deleted as soon as they have been saved.</dd>
       <dt>one.consent</dt>
       <dd>Remembers which of the two buttons you pressed, so you are not asked again on every page. Ironically the one thing we have to store in order to respect a refusal.</dd>
+      <dt>one.offer</dt>
+      <dd>Set only if you arrive from a link carrying a discount code, so the code is still there when you reach the payment page. It holds the code and nothing else, and is removed once payment is set up.</dd>
+      <dt>one.free-requested</dt>
+      <dd>Set for a moment when you ask for a free example, so the thank-you page knows the form really was sent. Cleared when you close the tab.</dd>
+      <dt>one.purchase-tracked</dt>
+      <dd>A single flag set after payment, so that reloading the confirmation page cannot report the same purchase to Meta twice. It identifies nothing and is cleared when you close the tab. Only ever set if you accepted advertising cookies.</dd>
     </dl>
 
     <h2 id="ads">Advertising &mdash; only if you accept</h2>
@@ -111,10 +117,10 @@
   </div>
 </footer>
 
-<script src="consent.js?v=1"></script>
+<script src="consent.js?v=2"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=2"></script>
-<script src="script.js?v=9"></script>
+<script src="script.js?v=10"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>

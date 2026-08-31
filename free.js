@@ -21,7 +21,7 @@
   var business = document.getElementById('business');
   var email    = document.getElementById('email');
   var handle   = document.getElementById('handle');
-  var hp       = document.getElementById('offer_website');
+  var hp       = document.getElementById('offer_extra');
   var btn      = document.getElementById('offerSend');
   var note     = document.getElementById('offerNote');
 

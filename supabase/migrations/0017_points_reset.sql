@@ -10,6 +10,13 @@
 -- and api/change-plan.js stamps it when someone upgrades, because an upgrade
 -- is a fresh payment for a bigger allowance and starts that allowance over.
 
+-- The backfill below reads current_period_end, which was added to the live
+-- database by hand before any migration recorded it. Created here (a no-op
+-- where it already exists) so this file runs on a fresh database too; the
+-- full billing set is recorded properly in 0022.
+alter table public.profiles
+  add column if not exists current_period_end timestamptz;
+
 alter table public.profiles
   add column if not exists points_reset_at timestamptz;
 

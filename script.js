@@ -196,6 +196,9 @@
        so a price change never quietly stops this matching. */
     var planEl = document.getElementById('plan');
     var PLAN_KEYS = ['business', 'pro', 'max', 'unsure'];
+    /* Read once, before form.reset() puts the select back to its first
+       option - the tracking call below runs after the reset. */
+    var pickedPlan = PLAN_KEYS[planEl.selectedIndex] || 'unsure';
 
     var btn = form.querySelector('button[type="submit"]');
     if (btn) btn.disabled = true;
@@ -210,10 +213,10 @@
           name: document.getElementById('name').value.trim(),
           business: document.getElementById('business').value.trim(),
           email: document.getElementById('email').value.trim(),
-          plan: PLAN_KEYS[planEl.selectedIndex] || 'unsure',
+          plan: pickedPlan,
           about: document.getElementById('about').value.trim(),
           wantApp: document.getElementById('wantapp').checked,
-          website: (document.getElementById('lead_website') || {}).value || '',
+          website: (document.getElementById('lead_extra') || {}).value || '',
           elapsed: Date.now() - formShownAt
         })
       });
@@ -227,7 +230,7 @@
       /* Fires only if they accepted cookies; a no-op otherwise. No name or
          email goes with it - the plan is all Meta needs to optimise on. */
       if (window.oneTrack) window.oneTrack('Lead', {
-        content_category: PLAN_KEYS[planEl.selectedIndex] || 'unsure'
+        content_category: pickedPlan
       });
     } catch (err) {
       note.textContent = err.message || 'Could not send that. Try again.';

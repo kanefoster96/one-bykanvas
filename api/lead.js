@@ -28,6 +28,12 @@ function clean(v, max) {
   return String(v == null ? '' : v).trim().slice(0, max);
 }
 
+/* For anything that ends up in an email subject line: a line break in a
+   subject is how header injection starts, and no business name needs one. */
+function oneLine(s) {
+  return String(s).replace(/[\r\n]+/g, ' ').trim();
+}
+
 /* What a dropped submission is told. It has to match a real success exactly,
    id and all, or the difference is itself the signal: a bot that can tell it
    was caught comes back having learned which field to leave alone. The id is
@@ -114,7 +120,7 @@ module.exports = async function handler(req, res) {
        do. The subject line says which before it is opened. */
     const result = await sendEmail({
       to: adminAddresses(),
-      subject: free ? `Free example wanted: ${business}` : `New enquiry: ${business}`,
+      subject: oneLine(free ? `Free example wanted: ${business}` : `New enquiry: ${business}`),
       text: free
         ? `${name} at ${business} wants a free example.\n\n`
           + `Email:   ${email}\n`
@@ -142,6 +148,28 @@ module.exports = async function handler(req, res) {
        jobs belong in one email rather than two, because the second would be
        marketing arriving unasked, and this one they have just asked for. */
     if (free) {
+      /* This endpoint is open and this branch emails whatever address was
+         typed in, which is everything a mail-bomber needs. The lead is kept
+         either way; only the automatic reply is rationed - after a few in a
+         day to one address, the rest go quiet. A real person asking twice
+         still gets an answer, because we do, by hand. */
+      let allowed = true;
+      try {
+        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const { count } = await db.from('leads')
+          .select('id', { count: 'exact', head: true })
+          .eq('email', email)
+          .gte('created_at', dayAgo);
+        if (Number.isFinite(count) && count > 3) {
+          allowed = false;
+          console.log('lead: %s already has %s leads today, confirmation not sent', email, count);
+        }
+      } catch (e) {
+        /* Counting going wrong is no reason to hold a real person's email. */
+        console.error('lead: rate check failed:', e && e.message);
+      }
+
+      if (allowed) {
       const perks = [
         'Nothing technical to set up. You send us your details, we do the rest.',
         'No time lost. We build it while you get on with the job.',
@@ -183,6 +211,7 @@ module.exports = async function handler(req, res) {
             + `From GBP 50 a month. Cancel with a month's notice.\n`
       });
       console.log('lead: confirmation email', theirs);
+      }
     }
 
     return res.status(200).json({ ok: true, id: row.id });

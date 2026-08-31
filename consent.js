@@ -31,19 +31,27 @@
 
   /* ---------------------------------------------------------------- store */
 
+  /* Some browsers (private windows, storage blocked) throw on localStorage.
+     Without this the pill would come straight back after every click - the
+     choice could never be recorded, so it could never stop being asked. The
+     answer is held in memory instead: it lasts this page view only, which is
+     the most such a browser allows, and the pill stays closed meanwhile. */
+  var memChoice = null;
+
   function read() {
     try {
       var raw = localStorage.getItem(KEY);
-      if (!raw) return null;
+      if (!raw) return memChoice;
       var v = JSON.parse(raw);
       /* A choice made against an older set of trackers is not a choice about
          this one, so a version bump re-asks rather than assuming yes. */
-      if (!v || v.v !== VERSION) return null;
+      if (!v || v.v !== VERSION) return memChoice;
       return v.choice === 'all' ? 'all' : 'essential';
-    } catch (e) { return null; }       /* private mode: treat as undecided */
+    } catch (e) { return memChoice; }
   }
 
   function write(choice) {
+    memChoice = choice === 'all' ? 'all' : 'essential';
     try {
       localStorage.setItem(KEY, JSON.stringify({
         v: VERSION, choice: choice, at: new Date().toISOString()
