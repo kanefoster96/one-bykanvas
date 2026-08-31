@@ -56,25 +56,29 @@
     var wrap = document.createElement('div');
     wrap.setAttribute('role', 'region');
     wrap.setAttribute('aria-label', 'About this example');
-    /* The site's own green, used as the fill rather than the ink, and let
-       through at 78% so their page shows behind it. Solid white text on top,
-       because this floats over a design we have never seen: a pale pill would
-       vanish on a pale site, and the one thing it cannot do is be unreadable
-       on the page it is selling. */
+    /* Deeper than the site's green on purpose. Transparency over a white page
+       washes a tint towards white, and the brand green at 50% leaves white text
+       at 2.1:1 - unreadable, on exactly the kind of pale site most of these
+       will be. A darker green can afford to be more see-through: this is 65%,
+       which measures 4.5:1 on white and 15:1 on a dark page. More transparent
+       than it was, and still legible either way. */
+    var narrow = window.matchMedia && window.matchMedia('(max-width: 520px)').matches;
+
     css(wrap, {
       position: 'fixed', left: '50%', bottom: '16px', zIndex: '2147483000',
       transform: 'translate(-50%, 14px)', opacity: '0',
       transition: 'opacity .4s ease, transform .4s ease',
-      display: 'flex', alignItems: 'center', gap: '11px',
+      display: 'flex', alignItems: 'center', gap: narrow ? '9px' : '13px',
       maxWidth: 'calc(100vw - 24px)', boxSizing: 'border-box',
-      padding: '8px 9px 8px 15px', borderRadius: '980px',
-      background: 'rgba(26,127,55,.78)',
-      backdropFilter: 'saturate(180%) blur(18px)',
-      WebkitBackdropFilter: 'saturate(180%) blur(18px)',
-      border: '1px solid rgba(255,255,255,.22)',
-      boxShadow: '0 10px 30px rgba(20,70,35,.28)',
-      font: '500 13px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif',
-      color: 'rgba(255,255,255,.94)'
+      padding: narrow ? '8px 8px 8px 12px' : '8px 9px 8px 15px',
+      borderRadius: '980px',
+      background: 'rgba(10,56,23,.65)',
+      backdropFilter: 'saturate(180%) blur(26px)',
+      WebkitBackdropFilter: 'saturate(180%) blur(26px)',
+      border: '1px solid rgba(255,255,255,.2)',
+      boxShadow: '0 10px 30px rgba(8,40,18,.26)',
+      font: '500 ' + (narrow ? '12.5px' : '13px') + '/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif',
+      color: 'rgba(255,255,255,.95)'
     });
 
     /* Still a gift, because it is still 50% off. */
@@ -88,22 +92,30 @@
       + '<path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>';
     css(gift, { flex: '0 0 auto', display: 'inline-flex', color: '#fff' });
 
+    /* Two short lines rather than one long one: the address they care about,
+       then what it costs. Stacked keeps the pill narrow enough to sit in one
+       row on a phone, which is what stops it being tall. */
     var text = document.createElement('span');
-    /* One line on a wide screen. The stacked layout below takes over well
-       before the sentence would run off the edge. */
-    css(text, { minWidth: '0', whiteSpace: 'nowrap' });
+    css(text, { minWidth: '0', display: 'flex', flexDirection: 'column', gap: '1px' });
 
     if (freeDomain) {
+      var top = document.createElement('span');
       var name = document.createElement('b');
       name.textContent = freeDomain;
       css(name, { color: '#fff', fontWeight: '600' });
-      text.appendChild(name);
-      text.appendChild(document.createTextNode(
-        ' is still available! Join today for 50% off your first three months.'));
-    } else {
-      text.appendChild(document.createTextNode(
-        'Join today for 50% off your first three months.'));
+      top.appendChild(name);
+      top.appendChild(document.createTextNode(' is still available!'));
+      css(top, { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' });
+      text.appendChild(top);
     }
+
+    var deal = document.createElement('span');
+    deal.textContent = freeDomain
+      ? '50% off your first three months'
+      : 'Join today for 50% off your first three months';
+    css(deal, { color: 'rgba(255,255,255,.82)', whiteSpace: 'nowrap',
+                overflow: 'hidden', textOverflow: 'ellipsis' });
+    text.appendChild(deal);
 
     var go = document.createElement('a');
     go.href = home + '/plans.html?offer=' + encodeURIComponent(code);
@@ -111,9 +123,11 @@
     go.rel = 'noopener';
     go.textContent = 'Join';
     css(go, {
-      flex: '0 0 auto', display: 'inline-block', padding: '8px 16px',
-      borderRadius: '980px', background: '#fff', color: '#166b2e',
-      textDecoration: 'none', fontWeight: '600', fontSize: '13px'
+      flex: '0 0 auto', display: 'inline-block',
+      padding: narrow ? '6px 12px' : '7px 14px',
+      borderRadius: '980px', background: '#fff', color: '#0a3817',
+      textDecoration: 'none', fontWeight: '600',
+      fontSize: narrow ? '12.5px' : '13px', lineHeight: '1.2'
     });
 
     var shut = document.createElement('button');
@@ -121,9 +135,9 @@
     shut.setAttribute('aria-label', 'Hide this');
     shut.textContent = '×';
     css(shut, {
-      flex: '0 0 auto', width: '26px', height: '26px', padding: '0',
+      flex: '0 0 auto', width: '24px', height: '24px', padding: '0',
       borderRadius: '980px', border: '0', background: 'transparent',
-      color: 'rgba(255,255,255,.72)', fontSize: '17px', lineHeight: '1',
+      color: 'rgba(255,255,255,.7)', fontSize: '17px', lineHeight: '1',
       cursor: 'pointer'
     });
     shut.addEventListener('click', function () {
@@ -136,28 +150,10 @@
     wrap.appendChild(go);
     wrap.appendChild(shut);
 
-    /* Narrow screens get the same pill with the text above the buttons, so a
-       long address never pushes Join off the edge. */
-    /* 780 rather than a phone width: the sentence is long enough that a
-       tablet held in one hand would run out of room on one line. */
-    if (window.matchMedia && window.matchMedia('(max-width: 780px)').matches) {
-      css(wrap, {
-        left: '12px', right: '12px', transform: 'translateY(14px)',
-        borderRadius: '20px', padding: '14px 16px',
-        flexDirection: 'column', alignItems: 'stretch', gap: '10px'
-      });
-      css(go, { textAlign: 'center' });
-      css(gift, { position: 'absolute', top: '15px', left: '16px' });
-      css(text, { paddingLeft: '25px', whiteSpace: 'normal' });
-      css(shut, {
-        position: 'absolute', top: '8px', right: '10px', width: '24px', height: '24px'
-      });
-    }
-
     document.body.appendChild(wrap);
     requestAnimationFrame(function () {
       wrap.style.opacity = '1';
-      wrap.style.transform = wrap.style.right ? 'translateY(0)' : 'translate(-50%, 0)';
+      wrap.style.transform = 'translate(-50%, 0)';
     });
   }
 
