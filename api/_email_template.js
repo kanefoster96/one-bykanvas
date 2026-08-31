@@ -92,6 +92,11 @@ function calloutBox(callout) {
           </table>`;
 }
 
+/* Order below: the offer sits above the button and the reasons below it. A
+   discount is the thing that decides whether the button gets pressed, so it
+   has to be seen first; the reasons are what convinces somebody who has
+   already come back from pressing it. */
+
 /* What joining gets you, as a ticked list. A text tick rather than an image:
    an image is the first thing a mail client refuses to load, and a list of
    benefits with the ticks missing reads as a list of things you do not get. */
@@ -198,7 +203,7 @@ function html({
         </td></tr>
         <tr><td style="padding:26px 36px 0;">
           <h1 style="margin:0 0 16px;font-size:25px;font-weight:600;letter-spacing:-.025em;line-height:1.2;color:${INK};font-family:${FONT};">${esc(heading)}</h1>
-          ${body}${picture}${facts}${good}${cta}${note}${deal}${warn}
+          ${body}${picture}${facts}${deal}${cta}${note}${good}${warn}
         </td></tr>
         <tr><td style="padding:30px 36px 34px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid ${LINE};">
