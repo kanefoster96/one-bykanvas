@@ -20,7 +20,7 @@ const TIMEOUT_MS = 5000;
    until one is set up the default will be rejected - which is fine, because
    without a key nothing is attempted anyway. */
 function sender() {
-  return process.env.EMAIL_FROM || 'one by Kanvas <onboarding@resend.dev>';
+  return process.env.EMAIL_FROM || 'Kanvas (one.) <onboarding@resend.dev>';
 }
 
 /* Where a reply lands. EMAIL_FROM is usually a real mailbox already, but a

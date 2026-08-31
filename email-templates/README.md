@@ -48,7 +48,7 @@ enable **Custom SMTP**:
 | Field | Value |
 | --- | --- |
 | Sender email | the address `EMAIL_FROM` uses in Vercel |
-| Sender name | `one, by Kanvas` |
+| Sender name | `Kanvas (one.)` |
 | Host | `smtp.resend.com` |
 | Port | `465` |
 | Username | `resend` |
