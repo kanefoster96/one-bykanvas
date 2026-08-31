@@ -597,10 +597,11 @@ module.exports = async function handler(req, res) {
 
     /* ---- ending a membership ------------------------------------------
      *
-     * At the period end, never immediately. The terms say a month's notice and
-     * that money already taken is not refunded, so cutting someone off the
-     * moment the button is pressed would take a payment for a month they then
-     * do not get. Stripe keeps billing nothing and stops at the renewal.
+     * At the period end, never immediately. The terms say cancel anytime with
+     * no further payments, and that money already taken is not refunded - so
+     * cutting someone off the moment the button is pressed would take away a
+     * month they have paid for. Stripe bills nothing more and stops at the
+     * renewal.
      *
      * Reversible on purpose. This is one button next to a customer's name, and
      * the cost of a mis-click should be another click, not a lost customer.
