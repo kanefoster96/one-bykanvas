@@ -538,6 +538,67 @@ body.locked{overflow:hidden}
 .ph-shot i.w{width:70%}
 .ph-copy{margin:0;font-size:11.5px;line-height:1.55;color:var(--ink-2)}
 
+/* ---------- The free example offer ---------- */
+/* The gift is the only icon on the site that carries meaning rather than
+   decoration, so it inherits the green that already means "included, or
+   free" rather than bringing a colour of its own. */
+.gift{width:15px;height:15px;flex:0 0 auto}
+
+/* The pill was a label. As a link it needs to look pressable without
+   becoming a second button above the logo. */
+a.hero-pill{text-decoration:none;transition:background .2s var(--ease)}
+a.hero-pill:hover{background:#d7efdf;text-decoration:none}
+a.hero-pill:focus-visible{outline:2px solid var(--good);outline-offset:3px}
+.pill-go{margin-left:1px;font-size:15px;line-height:1;opacity:.75}
+a.hero-pill:hover .pill-go{opacity:1}
+
+.offer-hero .hero-pill{margin-bottom:clamp(20px,3vw,28px)}
+.offer-hero h1{
+  font-size:clamp(38px,6.4vw,64px);line-height:1.04;letter-spacing:-.035em;
+  font-weight:600;margin:0 0 clamp(16px,2.4vw,22px);
+}
+
+/* Ticks centred under the promise, and wide enough that none of the three
+   wraps onto a lonely second line on a phone. */
+.offer-ticks{
+  max-width:34ch;margin:clamp(26px,4vw,34px) auto 0;text-align:left;
+  display:inline-block;
+}
+
+.offer-form{
+  max-width:520px;margin:0 auto;display:grid;gap:17px;
+  padding:clamp(24px,4vw,32px);border:1px solid var(--line-soft);
+  border-radius:var(--radius-lg);background:#fff;
+}
+.offer-form .field{display:flex;flex-direction:column;gap:7px}
+.offer-form label{font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.offer-form input[type=text],.offer-form input[type=email]{
+  font-family:var(--font);font-size:16px;color:var(--ink);
+  padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:#fff;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease);width:100%;
+}
+.offer-form input:focus{
+  outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13);
+}
+.offer-form .hint{margin:0}
+.offer-form .btn{margin-top:4px}
+.offer-form .note:empty{margin:0;min-height:0}
+.offer-wait{margin:0;color:var(--ink-3);line-height:1.55}
+
+.pick-list{display:grid;gap:9px}
+
+.offer-after{max-width:520px;margin:clamp(40px,6vw,60px) auto 0}
+.offer-after h2{
+  margin:clamp(28px,4vw,36px) 0 12px;font-size:clamp(19px,2.4vw,22px);
+  font-weight:600;letter-spacing:-.02em;
+}
+.offer-after h2:first-child{margin-top:0}
+.offer-after p{margin:0 0 14px;font-size:16px;line-height:1.6;color:var(--ink-2)}
+.offer-steps{margin:0;padding-left:20px}
+.offer-steps li{margin:0 0 10px;font-size:16px;line-height:1.55;color:var(--ink-2)}
+.offer-plans{margin-top:22px}
+.offer-plans a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+
 /* ---------- Admin: the irreversible things ---------- */
 /* Set apart rather than dressed up in red. A permanent border of alarm stops
    being read after the third visit; what actually protects a customer is the
