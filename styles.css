@@ -534,6 +534,60 @@ body.locked{overflow:hidden}
 .ph-shot i.w{width:70%}
 .ph-copy{margin:0;font-size:11.5px;line-height:1.55;color:var(--ink-2)}
 
+/* ---------- Legal / prose pages ---------- */
+/* Terms, privacy and cookies are read to find one clause, not read through,
+   so the headings carry ids and the measure stays narrow. */
+.legal{max-width:72ch;margin:0 auto;padding-bottom:8px}
+.legal-meta{margin:0 0 clamp(28px,4vw,38px);font-size:13.5px;color:var(--ink-3)}
+.legal h2{
+  margin:clamp(34px,4.5vw,46px) 0 14px;font-size:clamp(20px,2.6vw,24px);
+  font-weight:600;letter-spacing:-.022em;scroll-margin-top:calc(var(--nav-h) + 18px);
+}
+.legal h2:first-of-type{margin-top:0}
+.legal h3{margin:26px 0 10px;font-size:16.5px;font-weight:600;letter-spacing:-.015em}
+.legal p{margin:0 0 15px;font-size:16px;line-height:1.62;color:var(--ink-2)}
+.legal ul{margin:0 0 15px;padding-left:20px}
+.legal li{margin:0 0 9px;font-size:16px;line-height:1.6;color:var(--ink-2)}
+.legal li:last-child{margin-bottom:0}
+.legal strong{color:var(--ink);font-weight:600}
+.legal a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.legal a:hover{color:var(--blue)}
+.legal dl{margin:0 0 15px}
+.legal dt{margin:16px 0 4px;font-size:15.5px;font-weight:600;color:var(--ink)}
+.legal dd{margin:0;font-size:16px;line-height:1.62;color:var(--ink-2)}
+
+/* Contents list at the top of a long policy. */
+.legal-toc{
+  margin:0 0 clamp(30px,4vw,40px);padding:20px 22px;border:1px solid var(--line-soft);
+  border-radius:var(--radius);background:var(--bg-grey);
+}
+.legal-toc p{margin:0 0 11px;font-size:13px;font-weight:600;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--ink-3)}
+.legal-toc ol{margin:0;padding-left:19px}
+.legal-toc li{margin:0 0 7px;font-size:15px;line-height:1.45}
+.legal-toc a{color:var(--ink-2);text-decoration:none}
+.legal-toc a:hover{color:var(--ink);text-decoration:underline}
+
+/* A pulled-out clause: the thing people came to the page to check. */
+.legal-key{
+  margin:0 0 15px;padding:18px 20px;border:1px solid var(--line);
+  border-radius:var(--radius);background:#fff;
+}
+.legal-key p:last-child{margin-bottom:0}
+
+/* Placeholders the site owner still has to fill in. Deliberately loud, so a
+   blank company number cannot ship quietly. */
+.todo{
+  background:#fff4cf;border-bottom:1.5px solid #d9a400;
+  padding:1px 5px;border-radius:4px;color:#6b4e00;font-weight:600;
+}
+
+/* ---------- 404 ---------- */
+.notfound{max-width:520px;margin:0 auto;text-align:center;padding:clamp(50px,10vw,90px) 0}
+.notfound h1{margin:0 0 14px}
+.notfound p{margin:0 auto 26px;font-size:17px;line-height:1.55;color:var(--ink-2);max-width:44ch}
+.notfound-links{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+
 /* ---------- FAQ ---------- */
 .faq{max-width:760px;margin-top:clamp(36px,5vw,52px)}
 .faq details{border-bottom:1px solid var(--line);background:none}
@@ -584,9 +638,17 @@ body.locked{overflow:hidden}
 .foot{background:var(--bg-grey);padding:56px 0 calc(68px + env(safe-area-inset-bottom));border-top:1px solid var(--line-soft)}
 .foot-logo{margin:0;font-size:24px;font-weight:600;letter-spacing:-.045em}
 .foot-by{margin:2px 0 0;font-size:13px;color:var(--ink-3)}
-.foot-links{display:flex;flex-wrap:wrap;gap:22px;margin:26px 0 28px}
+.foot-links{display:flex;flex-wrap:wrap;gap:22px;margin:26px 0 14px}
 .foot-links a{font-size:14px;color:var(--ink-2)}
 .foot-links a:hover{color:var(--ink);text-decoration:none}
+/* Legal sits under the main links, quieter but never hidden. */
+.foot-legal-links{display:flex;flex-wrap:wrap;gap:18px;margin:0 0 26px}
+.foot-legal-links a{font-size:13px;color:var(--ink-3)}
+.foot-legal-links a:hover{color:var(--ink-2);text-decoration:none}
+/* Terms and privacy at the point the account is created. */
+.legal-consent{margin-top:12px}
+.legal-consent a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
+.legal-consent a:hover{color:var(--ink)}
 .foot-legal{margin:0;font-size:12px;line-height:1.6;color:var(--ink-3);max-width:70ch}
 .foot-copy{margin:20px 0 0;font-size:12px;color:var(--ink-3)}
 
@@ -661,6 +723,9 @@ body.locked{overflow:hidden}
   outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13);
 }
 .hint{margin:0;font-size:12.5px;color:var(--ink-3)}
+/* Defined after .hint so the consent line keeps its own spacing when it is
+   also a .hint on the login form. */
+.hint.legal-consent{margin-top:13px;line-height:1.5}
 /* A hint under a field is a caption and belongs tight to it. Two hints in a
    row are separate points and were running together as one grey block. */
 .hint + .hint{margin-top:9px}
@@ -712,6 +777,14 @@ body.locked{overflow:hidden}
 .acct-save{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:8px}
 .acct-save .note{margin:0}
 .acct-foot{margin-top:26px;text-align:center}
+/* account, admin, login, reset and the wizard have no site footer, so the
+   legal links ride along at the bottom of the page instead. */
+.mini-legal{
+  margin:34px 0 calc(10px + env(safe-area-inset-bottom));text-align:center;
+  display:flex;flex-wrap:wrap;gap:16px;justify-content:center;
+}
+.mini-legal a{font-size:12.5px;color:var(--ink-3)}
+.mini-legal a:hover{color:var(--ink-2);text-decoration:none}
 .acct-email{margin:0;font-size:13px;color:var(--ink-3)}
 
 @media (max-width:600px){
