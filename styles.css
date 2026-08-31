@@ -534,6 +534,60 @@ body.locked{overflow:hidden}
 .ph-shot i.w{width:70%}
 .ph-copy{margin:0;font-size:11.5px;line-height:1.55;color:var(--ink-2)}
 
+/* ---------- Cookie consent ---------- */
+/* A pill, not a bar: it sits above the page rather than blocking it, and
+   both answers are the same size and weight, because under PECR refusing
+   has to be as easy as accepting. */
+.consent{
+  position:fixed;z-index:60;left:50%;transform:translate(-50%,14px);
+  bottom:calc(16px + env(safe-area-inset-bottom));
+  width:max-content;max-width:min(560px,calc(100vw - 24px));
+  display:flex;align-items:center;gap:14px;
+  padding:9px 10px 9px 18px;border-radius:980px;
+  background:rgba(28,28,30,.72);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  backdrop-filter:saturate(180%) blur(20px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 12px 34px rgba(0,0,0,.28);
+  opacity:0;transition:opacity .38s var(--ease),transform .38s var(--ease);
+}
+.consent.in{opacity:1;transform:translate(-50%,0)}
+.consent-text{margin:0;font-size:13px;line-height:1.35;color:rgba(255,255,255,.82);white-space:nowrap}
+.consent-text a{color:#fff;text-decoration:underline;text-underline-offset:2px}
+.consent-actions{display:flex;gap:7px;flex:0 0 auto}
+.consent-btn{
+  font-family:var(--font);font-size:13px;font-weight:500;letter-spacing:-.01em;
+  padding:8px 15px;border-radius:980px;cursor:pointer;white-space:nowrap;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.14);color:#fff;
+  transition:background .2s var(--ease);
+}
+.consent-btn:hover{background:rgba(255,255,255,.26)}
+.consent-btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+/* Accept is styled identically to refuse on purpose. Making the yes button
+   brighter is the nudge the ICO has written to sites about: refusing has to
+   be as easy as accepting, and "as easy" covers how it looks, not just how
+   many clicks it takes. */
+.consent-btn-yes{background:rgba(255,255,255,.14)}
+
+/* Narrow screens cannot hold the pill on one line, so it becomes a rounded
+   card with the text above the two buttons - still not a full-width bar. */
+@media (max-width:560px){
+  .consent{
+    flex-direction:column;align-items:stretch;gap:11px;
+    width:auto;left:12px;right:12px;transform:translateY(14px);
+    padding:15px 17px;border-radius:22px;
+  }
+  .consent.in{transform:translateY(0)}
+  .consent-text{white-space:normal;font-size:13.5px}
+  .consent-actions{gap:8px}
+  .consent-btn{flex:1 1 0;padding:10px 12px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .consent{transition:none;opacity:1;transform:translate(-50%,0)}
+  .consent.in{transform:translate(-50%,0)}
+}
+
 /* ---------- Legal / prose pages ---------- */
 /* Terms, privacy and cookies are read to find one clause, not read through,
    so the headings carry ids and the measure stays narrow. */
@@ -645,6 +699,14 @@ body.locked{overflow:hidden}
 .foot-legal-links{display:flex;flex-wrap:wrap;gap:18px;margin:0 0 26px}
 .foot-legal-links a{font-size:13px;color:var(--ink-3)}
 .foot-legal-links a:hover{color:var(--ink-2);text-decoration:none}
+/* Reopening the cookie choice is a button, not a link - it changes state
+   rather than going anywhere - but it has to sit in the row like one. */
+.linkish-foot{
+  font-family:var(--font);font-size:13px;color:var(--ink-3);
+  background:none;border:0;padding:0;cursor:pointer;
+}
+.linkish-foot:hover{color:var(--ink-2)}
+.mini-legal .linkish-foot{font-size:12.5px}
 /* Terms and privacy at the point the account is created. */
 .legal-consent{margin-top:12px}
 .legal-consent a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}

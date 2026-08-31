@@ -1246,6 +1246,18 @@ document.getElementById('payBtn').addEventListener('click', async function () {
     say(note, 'Checkout cancelled — nothing was charged.', '');
   }
   history.replaceState(null, '', '/account.html');
+
+  /* Ad conversion. A no-op unless they accepted cookies, and guarded so that
+     re-pasting the success URL cannot report a second sale: Stripe redirects
+     here once per checkout, but a URL is a thing people paste. */
+  if (state === 'success' && window.oneTrack) {
+    var seen;
+    try { seen = sessionStorage.getItem('one.purchase-tracked'); } catch (e) {}
+    if (!seen) {
+      try { sessionStorage.setItem('one.purchase-tracked', '1'); } catch (e) {}
+      window.oneTrack('Subscribe', { currency: 'GBP' });
+    }
+  }
 })();
 
 /* ---------------- log out ---------------- */

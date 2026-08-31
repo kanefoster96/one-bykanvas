@@ -116,6 +116,9 @@ form.addEventListener('submit', async function (e) {
       });
       if (signUp.error) throw signUp.error;
 
+      /* No-op unless they accepted cookies. Nothing identifying goes with it. */
+      if (window.oneTrack) window.oneTrack('CompleteRegistration');
+
       /* The column defaults to true, so only a refusal needs carrying. It goes
          into the same stash the wizard uses, which account.js writes to the
          profile the first time they arrive properly signed in - there is no
