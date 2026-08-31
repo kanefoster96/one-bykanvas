@@ -164,6 +164,10 @@
 
   /* ---------- Lead form ---------- */
   var form = document.getElementById('lead');
+  /* When the form first existed, so the endpoint can see how long it took to
+     fill in. Read at load rather than at first keystroke: a bot may never
+     dispatch one. */
+  var formShownAt = Date.now();
   var note = document.getElementById('formnote');
 
   if (form && note) form.addEventListener('submit', async function (e) {
@@ -207,7 +211,9 @@
           email: document.getElementById('email').value.trim(),
           plan: PLAN_KEYS[planEl.selectedIndex] || 'unsure',
           about: document.getElementById('about').value.trim(),
-          wantApp: document.getElementById('wantapp').checked
+          wantApp: document.getElementById('wantapp').checked,
+          website: (document.getElementById('lead_website') || {}).value || '',
+          elapsed: Date.now() - formShownAt
         })
       });
       var data = await res.json().catch(function () { return {}; });

@@ -10,6 +10,7 @@
  * already saved by the time it is attempted, so a mail problem costs a
  * notification, not the enquiry.
  */
+const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
@@ -24,6 +25,14 @@ function looksLikeEmail(s) {
 
 function clean(v, max) {
   return String(v == null ? '' : v).trim().slice(0, max);
+}
+
+/* What a dropped submission is told. It has to match a real success exactly,
+   id and all, or the difference is itself the signal: a bot that can tell it
+   was caught comes back having learned which field to leave alone. The id is
+   random and refers to nothing, which is the point - nothing was stored. */
+function dropped() {
+  return { ok: true, id: crypto.randomUUID() };
 }
 
 module.exports = async function handler(req, res) {
@@ -51,6 +60,29 @@ module.exports = async function handler(req, res) {
 
     if (!name || !business) return res.status(400).json({ error: 'Tell us your name and business.' });
     if (!looksLikeEmail(email)) return res.status(400).json({ error: 'That email does not look right.' });
+
+    /* Bot filters. Both answer 200 with the same shape a real submission gets:
+       a bot told it failed comes back and tries again, whereas one told it
+       succeeded moves on. Nothing is written and nobody is emailed.
+
+       website is a honeypot - a field positioned off-screen that a person
+       never sees and a form-filling crawler cannot resist, doubly so for the
+       link-spam kind, which is most of them.
+
+       elapsed is how long the form was on screen. It comes from the browser so
+       it is forgeable, and it is only here to catch the crude ones; the
+       threshold is deliberately low, because a real person using autofill can
+       be quick and turning one of them away costs far more than letting a bot
+       through. */
+    if (clean(body.website, 200)) {
+      console.log('lead: honeypot filled, dropped');
+      return res.status(200).json(dropped());
+    }
+    const elapsed = Number(body.elapsed);
+    if (Number.isFinite(elapsed) && elapsed >= 0 && elapsed < 2000) {
+      console.log('lead: submitted in %sms, dropped', elapsed);
+      return res.status(200).json(dropped());
+    }
 
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false }

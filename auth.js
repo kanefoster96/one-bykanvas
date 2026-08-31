@@ -89,6 +89,17 @@ form.addEventListener('submit', async function (e) {
   e.preventDefault();
   if (!ONE.requireConfig(note)) return;
 
+  /* Honeypot. This form talks to Supabase directly rather than to an endpoint
+     of ours, so there is no server to check it - a bot posting straight at
+     Supabase walks past this. It still stops the crawlers that fill in a page's
+     fields and press submit, which is what this is for. Claim success and do
+     nothing: being told it failed is what makes a bot try again. */
+  var hp = document.getElementById('auth_website');
+  if (hp && hp.value) {
+    say(mode === 'reset' ? 'Check your email for the link.' : 'Check your email.', 'ok');
+    return;
+  }
+
   /* Same form, same button - only the job changes. */
   if (mode === 'reset') return sendReset();
 

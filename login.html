@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=14">
+<link rel="stylesheet" href="styles.css?v=15">
 </head>
 <body class="auth-body">
 
@@ -29,6 +29,10 @@
     </div>
 
     <form id="form" novalidate>
+      <div class="hp" aria-hidden="true">
+        <label for="auth_website">Website</label>
+        <input id="auth_website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
       <div class="field signup-only" hidden>
         <label for="business">Business name</label>
         <input id="business" name="business" type="text" autocomplete="organization">
@@ -78,7 +82,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="auth.js?v=3"></script>
+<script src="auth.js?v=4"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>

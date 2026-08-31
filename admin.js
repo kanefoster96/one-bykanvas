@@ -969,6 +969,9 @@ function customerDetail(p) {
     wrap.appendChild(recent);
   }
 
+  wrap.appendChild(el('h3', 'req-list-title', 'Membership'));
+  wrap.appendChild(billingPanel(p));
+
   return wrap;
 }
 
@@ -980,6 +983,233 @@ function renderCustomersSection() {
   if (p) { wrap.appendChild(customerDetail(p)); return; }
   selectedCustomerId = null;
   renderCustomersList(wrap);
+}
+
+
+/* ---------------- Ending a membership ---------------- */
+/*
+ * Cancels at the end of the period they have paid for, which is what the terms
+ * promise, and can be undone right up until it happens.
+ *
+ * The current state comes from Stripe when the panel opens rather than from a
+ * column here, so it cannot go stale after a change made in the Stripe
+ * dashboard or a webhook that never landed.
+ *
+ * Two clicks to cancel. "End membership" sitting one stray tap from a
+ * customer's plan is how a plan gets ended by accident.
+ */
+function billingPanel(p) {
+  var wrap = el('div', 'danger-panel');
+  var note = el('p', 'note');
+
+  if (!p.stripe_subscription_id) {
+    wrap.appendChild(el('p', 'hint', 'No subscription on this account.'));
+    return wrap;
+  }
+
+  var body = el('div');
+  wrap.appendChild(body);
+  wrap.appendChild(note);
+  body.appendChild(el('p', 'hint', 'Checking with Stripe…'));
+
+  function fail(msg) {
+    body.textContent = '';
+    body.appendChild(el('p', 'hint', msg));
+  }
+
+  async function paint() {
+    var out;
+    try {
+      out = await api({ action: 'subscriptionState', userId: p.id });
+    } catch (err) { return fail(err.message); }
+
+    var sub = out && out.subscription;
+    body.textContent = '';
+    if (!sub) return fail('Stripe has no live subscription for this account.');
+
+    var ends = sub.endsAt ? when(sub.endsAt) : 'their next payment date';
+
+    if (sub.cancelAtPeriodEnd) {
+      body.appendChild(el('p', 'hint', 'Set to end on ' + ends
+        + '. They keep everything until then.'));
+      body.appendChild(actionBtn('Keep them on', false, 'Restoring…'));
+      return;
+    }
+
+    body.appendChild(el('p', 'hint', 'Ends at their next payment date, not today \u2014 they '
+      + 'keep the month they have paid for, which is what the terms say. '
+      + 'You can undo it any time before ' + ends + '.'));
+
+    var armed = false;
+    var btn = el('button', 'btn btn-ghost admin-save danger', 'End membership');
+    btn.type = 'button';
+    var stand = el('button', 'linkish', 'Keep it');
+    stand.type = 'button';
+    stand.hidden = true;
+
+    stand.addEventListener('click', function () {
+      armed = false;
+      btn.textContent = 'End membership';
+      btn.classList.remove('is-armed');
+      stand.hidden = true;
+      note.textContent = '';
+      note.className = 'note';
+    });
+
+    btn.addEventListener('click', async function () {
+      if (!armed) {
+        armed = true;
+        btn.textContent = 'Yes, end it at the next payment';
+        btn.classList.add('is-armed');
+        stand.hidden = false;
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Ending…';
+      try {
+        var res = await api({ action: 'setCancelAtPeriodEnd', userId: p.id, cancel: true });
+        note.textContent = res && res.endsAt
+          ? 'Ending on ' + when(res.endsAt) + '.'
+          : 'Ending at their next payment date.';
+        note.className = 'note ok';
+        await paint();
+      } catch (err) {
+        note.textContent = err.message;
+        note.className = 'note bad';
+        btn.disabled = false;
+        btn.textContent = 'End membership';
+        btn.classList.remove('is-armed');
+        stand.hidden = true;
+        armed = false;
+      }
+    });
+
+    var row = el('div', 'danger-row');
+    row.appendChild(btn);
+    row.appendChild(stand);
+    body.appendChild(row);
+  }
+
+  /* Undoing takes one click - it is the safe direction. */
+  function actionBtn(label, cancel, busyLabel) {
+    var b = el('button', 'btn btn-ghost admin-save', label);
+    b.type = 'button';
+    b.addEventListener('click', async function () {
+      b.disabled = true;
+      b.textContent = busyLabel;
+      try {
+        await api({ action: 'setCancelAtPeriodEnd', userId: p.id, cancel: cancel });
+        note.textContent = 'Back on. Their plan will renew as normal.';
+        note.className = 'note ok';
+        await paint();
+      } catch (err) {
+        note.textContent = err.message;
+        note.className = 'note bad';
+        b.disabled = false;
+        b.textContent = label;
+      }
+    });
+    return b;
+  }
+
+  paint();
+  return wrap;
+}
+
+/* ---------------- Deleting a contact ---------------- */
+/*
+ * Removes the account and everything hanging off it. There is no undo, so it
+ * asks for the business name to be typed rather than settling for a second
+ * click: the point is to make it impossible to do to the wrong person while
+ * half looking at something else.
+ *
+ * The endpoint refuses while a subscription is live, whatever this says.
+ */
+function deletePanel(p) {
+  var wrap = el('div', 'danger-panel');
+  var note = el('p', 'note');
+  var label = p.business_name || p.contact_name || '';
+
+  var live = ['active', 'trialing', 'past_due', 'unpaid'].indexOf(p.subscription_status) !== -1;
+  if (live) {
+    wrap.appendChild(el('p', 'hint', 'This account has a live subscription. End the membership '
+      + 'on their customer page first \u2014 deleting them here would leave Stripe billing a '
+      + 'person who no longer exists.'));
+    return wrap;
+  }
+
+  wrap.appendChild(el('p', 'hint', 'Deletes the account, their profile, their requests and '
+    + 'anything they uploaded. This cannot be undone.'));
+
+  var open = el('button', 'btn btn-ghost admin-save danger', 'Delete this contact');
+  open.type = 'button';
+
+  var confirm = el('div', 'danger-confirm');
+  confirm.hidden = true;
+
+  var prompt = el('label', 'hint', label
+    ? 'Type ' + label + ' to confirm'
+    : 'Type DELETE to confirm');
+  var want = label || 'DELETE';
+
+  var field = el('input');
+  field.type = 'text';
+  field.autocomplete = 'off';
+  field.className = 'danger-input';
+
+  var go = el('button', 'btn btn-ghost admin-save danger', 'Delete permanently');
+  go.type = 'button';
+  go.disabled = true;
+
+  var stand = el('button', 'linkish', 'Keep them');
+  stand.type = 'button';
+
+  field.addEventListener('input', function () {
+    go.disabled = field.value.trim().toLowerCase() !== want.trim().toLowerCase();
+  });
+
+  open.addEventListener('click', function () {
+    confirm.hidden = false;
+    open.hidden = true;
+    field.focus();
+  });
+
+  stand.addEventListener('click', function () {
+    confirm.hidden = true;
+    open.hidden = false;
+    field.value = '';
+    go.disabled = true;
+    note.textContent = '';
+    note.className = 'note';
+  });
+
+  go.addEventListener('click', async function () {
+    go.disabled = true;
+    go.textContent = 'Deleting…';
+    try {
+      await api({ action: 'deleteContact', userId: p.id });
+      selectedContactId = null;
+      selectedCustomerId = null;
+      await load();
+    } catch (err) {
+      note.textContent = err.message;
+      note.className = 'note bad';
+      go.disabled = false;
+      go.textContent = 'Delete permanently';
+    }
+  });
+
+  confirm.appendChild(prompt);
+  confirm.appendChild(field);
+  var row = el('div', 'danger-row');
+  row.appendChild(go);
+  row.appendChild(stand);
+  confirm.appendChild(row);
+
+  wrap.appendChild(open);
+  wrap.appendChild(confirm);
+  wrap.appendChild(note);
+  return wrap;
 }
 
 /* ---------------- Contacts: the whole address book ---------------- */
@@ -1063,6 +1293,9 @@ function contactDetail(p) {
 
   wrap.appendChild(el('h3', 'req-list-title', 'Notes (only you see these)'));
   wrap.appendChild(notesEditor(p));
+
+  wrap.appendChild(el('h3', 'req-list-title', 'Danger zone'));
+  wrap.appendChild(deletePanel(p));
 
   return wrap;
 }
