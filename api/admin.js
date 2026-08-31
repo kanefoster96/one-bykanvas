@@ -247,10 +247,15 @@ module.exports = async function handler(req, res) {
     if (action === 'list') {
       const { data: profiles, error } = await db
         .from('profiles')
+        /* stripe_subscription_id has to be here: the membership panel decides
+           whether there is anything to cancel from it, and without it every
+           customer - paying or not - read as "no subscription" while the
+           delete panel, reading subscription_status, still refused to delete
+           them. A paying customer was unmanageable from both sides. */
         .select('id, business_name, contact_name, phone, business_type, active_plan, selected_plan, ' +
                 'subscription_status, current_period_end, points_reset_at, site_url, site_status, requested_domain, domain_owned, ' +
                 'address, service_area, opening_hours, services, site_goals, site_uses, existing_links, ' +
-                'admin_notes, created_at')
+                'admin_notes, created_at, stripe_customer_id, stripe_subscription_id')
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw new Error(error.message);
