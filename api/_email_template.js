@@ -51,7 +51,7 @@ function brand() {
                   </tr>
                 </table>
               </td>
-              <td style="padding-left:11px;font-size:16px;font-weight:600;letter-spacing:-.015em;color:${INK};font-family:${FONT};">by Kanvas</td>
+              <td style="padding-left:11px;font-size:16px;font-weight:600;letter-spacing:-.015em;color:${INK};font-family:${FONT};">Kanvas (one.)</td>
             </tr>
           </table>`;
 }
@@ -154,7 +154,7 @@ function html({
         </td></tr>
         <tr><td style="padding:30px 36px 34px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid ${LINE};">
-            <tr><td style="padding-top:20px;font-size:12.5px;line-height:1.55;color:${INK_3};font-family:${FONT};">${footer || 'one, by Kanvas'}</td></tr>${links}
+            <tr><td style="padding-top:20px;font-size:12.5px;line-height:1.55;color:${INK_3};font-family:${FONT};">${footer || 'Kanvas (one.)'}</td></tr>${links}
           </table>
         </td></tr>
       </table>
