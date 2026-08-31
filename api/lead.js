@@ -58,6 +58,17 @@ module.exports = async function handler(req, res) {
     const planRaw = String(body.plan || '').toLowerCase();
     const plan_interest = PLAN_INTEREST.includes(planRaw) ? planRaw : null;
 
+    /* The free-example form posts here too. Same table, same notification, one
+       inbox - what separates them is source, which is checked against a list
+       rather than trusted, so a crafted post cannot invent a category. */
+    const SOURCES = ['enquiry', 'free-preview'];
+    const sourceRaw = String(body.source || 'enquiry');
+    const source = SOURCES.includes(sourceRaw) ? sourceRaw : 'enquiry';
+    const free = source === 'free-preview';
+
+    const handle = clean(body.handle, 200);
+    const requested_domain = clean(body.domain, 253).toLowerCase();
+
     if (!name || !business) return res.status(400).json({ error: 'Tell us your name and business.' });
     if (!looksLikeEmail(email)) return res.status(400).json({ error: 'That email does not look right.' });
 
@@ -90,15 +101,28 @@ module.exports = async function handler(req, res) {
 
     const { data: row, error } = await db.from('leads').insert({
       name, business, email, about: about || null,
-      plan_interest, want_app: Boolean(body.wantApp)
+      plan_interest, want_app: Boolean(body.wantApp),
+      source, handle: handle || null, requested_domain: requested_domain || null
     }).select().single();
     if (error) throw new Error(error.message);
 
     const site = ourSiteUrl();
+
+    /* Two different jobs arrive here, so they read differently in an inbox: an
+       enquiry is a conversation to start, a free example is a piece of work to
+       do. The subject line says which before it is opened. */
     const result = await sendEmail({
       to: adminAddresses(),
-      subject: `New enquiry: ${business}`,
-      text: `${name} at ${business} got in touch.\n\n`
+      subject: free ? `Free example wanted: ${business}` : `New enquiry: ${business}`,
+      text: free
+        ? `${name} at ${business} wants a free example.\n\n`
+          + `Email:   ${email}\n`
+          + `Social:  ${handle || 'not given'}\n`
+          + `Address: ${requested_domain || 'not picked'}\n\n`
+          + `Anything they added:\n${about || '-'}\n\n`
+          + `Nothing is registered - the address above is only what they chose.\n\n`
+          + `Admin: ${site}/admin.html`
+        : `${name} at ${business} got in touch.\n\n`
           + `Email:     ${email}\n`
           + `Interested in: ${plan_interest || 'not said'}\n`
           + `Wants an app: ${body.wantApp ? 'yes' : 'no'}\n\n`

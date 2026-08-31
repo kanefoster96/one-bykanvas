@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Free website example — one</title>
+<meta name="description" content="Send your business name and your Instagram or Facebook, and we will design a real page for your business and send it over. Free, no card.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="Free website example — one">
+<meta property="og:description" content="Send your business name and your Instagram or Facebook, and we will design a real page for your business and send it over. Free, no card.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://kanvas.one/free">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=17">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="one, by Kanvas — home">one.</a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="menu" id="menu" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+
+<main id="main">
+
+<section class="page-hero offer-hero">
+  <div class="wrap center">
+    <p class="hero-pill reveal"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg> Free</p>
+    <h1 class="reveal">See your site<br>before you buy.</h1>
+    <p class="lede reveal">Send us your business name and your Instagram or Facebook.
+       We&rsquo;ll design a real page for your business and send it over. No card, nothing to cancel.</p>
+
+    <ul class="ticks offer-ticks reveal">
+      <li>A real page designed for your business, not a template</li>
+      <li>Your own web address, picked by you and checked as free</li>
+      <li>Yours to keep whether you join or not</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section pt0">
+  <div class="wrap">
+    <form class="offer-form reveal" id="offer" novalidate>
+      <div class="hp" aria-hidden="true">
+        <label for="offer_website">Website</label>
+        <input id="offer_website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label for="business">Business name</label>
+        <input id="business" type="text" autocomplete="organization" required>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" required>
+        <p class="hint">Where we send the design.</p>
+      </div>
+
+      <div class="field">
+        <label for="handle">Instagram or Facebook</label>
+        <input id="handle" type="text" autocomplete="off" placeholder="@yourbusiness"
+               required>
+        <p class="hint">Whichever you use most &mdash; it&rsquo;s where we get your
+           photos, your words and your look.</p>
+      </div>
+
+      <!-- The address picker. Nothing is bought and nothing is held; the copy
+           under it says so, because "picked" is the word people will hear. -->
+      <div class="field full" id="domainField" hidden>
+        <label id="domainLabel">Pick your web address</label>
+        <div id="domainList" class="pick-list"></div>
+        <p class="hint" id="domainNote"></p>
+      </div>
+
+      <button class="btn btn-primary full" id="offerSend" type="submit">Send me my free example</button>
+      <p class="note" id="offerNote" role="status" aria-live="polite"></p>
+
+      <p class="hint offer-wait">Free examples are made by hand, one at a time. When
+         it&rsquo;s busy this can take longer than usual &mdash; we&rsquo;ll tell you if it will.</p>
+    </form>
+
+    <div class="offer-after">
+      <h2>What happens next</h2>
+      <ol class="offer-steps">
+        <li>We look at your Instagram or Facebook and design a page around it.</li>
+        <li>It arrives by email, with the address you picked on it.</li>
+        <li>If you like it, one plan puts it online. If you don&rsquo;t, that&rsquo;s the end of it.</li>
+      </ol>
+
+      <h2>Why it&rsquo;s free</h2>
+      <p>Because describing a website is hard and looking at one is easy. Most people
+         who see theirs want it online, and the ones who don&rsquo;t have cost us an
+         afternoon. That&rsquo;s the whole trick &mdash; there isn&rsquo;t a catch to find.</p>
+
+      <p class="offer-plans">Curious what it costs after? <a href="/plans.html">See the plans</a>
+         &mdash; from £50 a month, cancel with a month&rsquo;s notice.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="foot-logo">one.</p>
+    <p class="foot-by">by Kanvas</p>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="/how-it-works.html">How it works</a><a href="/whats-included.html">What&rsquo;s included</a><a href="/features.html">Features</a><a href="/reviews.html">Reviews</a><a href="/plans.html">Plans</a><a href="/get-started.html">Get started</a>
+    </nav>
+    <nav class="foot-legal-links" aria-label="Legal">
+      <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
+    </nav>
+    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Website build begins once your completed form is received; the 10-day estimate is measured from that date and depends on how many changes are requested. Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. App publication is subject to Apple App Store and Google Play review and approval. Apple and App Store are trademarks of Apple Inc. Google Play is a trademark of Google LLC. Cancel with one month&rsquo;s notice.</p>
+    <p class="foot-copy">&copy; <span id="year">2026</span> Kanvas. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="consent.js?v=1"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="session.js?v=1"></script>
+<script src="script.js?v=8"></script>
+<script src="free.js?v=1"></script>
+<script src="admin-pill.js?v=5"></script>
+</body>
+</html>

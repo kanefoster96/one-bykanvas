@@ -11,6 +11,7 @@
   // One source of truth for the nav. Pages only need an empty #menu element;
   // the header itself stays in the markup so it renders without JavaScript.
   var MENU = [
+    { label: 'Try it free',     href: '/free.html' },
     { label: 'How it works',    href: '/how-it-works.html' },
     { label: "What\u2019s included", href: '/whats-included.html' },
     { label: 'Features',        href: '/features.html' },
