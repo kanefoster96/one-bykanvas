@@ -132,6 +132,11 @@
         }
       }
 
+      /* After the already-registered branch above, so someone coming back to
+         an existing account is not counted as a new one. A no-op unless they
+         accepted cookies, and nothing identifying goes with it. */
+      if (window.oneTrack) window.oneTrack('CompleteRegistration');
+
       say(note, '');
       show(2);
     } catch (err) {
@@ -510,6 +515,10 @@
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');
+
+      if (window.oneTrack) window.oneTrack('InitiateCheckout', {
+        content_category: answers.selected_plan || 'business'
+      });
       location.href = data.url;
     } catch (err) {
       say(note, ONE.friendlyError(err), 'bad');

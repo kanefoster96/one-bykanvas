@@ -23,6 +23,12 @@
   var KEY = 'one.consent';
   var VERSION = 1;                 /* bump to re-ask everyone after a change */
 
+  /* ?cookies=preview shows the pill on any page without a pixel ID, so the
+     design can be checked on a real phone before there is a Meta account.
+     Nothing is stored and nothing is loaded: a preview click must not leave a
+     recorded choice behind that suppresses the real banner later. */
+  var PREVIEW = /(^|[?&])cookies=preview($|&)/.test(location.search);
+
   /* ---------------------------------------------------------------- store */
 
   function read() {
@@ -127,6 +133,7 @@
   }
 
   function choose(choice) {
+    if (PREVIEW) { close(); return; }
     var before = read();
     write(choice);
     close();
@@ -189,7 +196,7 @@
     var els = document.querySelectorAll('[data-consent-open], #cookieSettings');
     for (var i = 0; i < els.length; i++) {
       (function (el) {
-        if (!META_PIXEL_ID) { el.hidden = true; return; }
+        if (!META_PIXEL_ID && !PREVIEW) { el.hidden = true; return; }
         el.hidden = false;
         el.addEventListener('click', function (e) { e.preventDefault(); show(); });
       })(els[i]);
@@ -198,6 +205,7 @@
 
   function boot() {
     wireOpeners();
+    if (PREVIEW) { show(); return; }
     if (!META_PIXEL_ID) return;      /* nothing to ask about yet */
     var choice = read();
     if (choice === 'all') loadPixel();
