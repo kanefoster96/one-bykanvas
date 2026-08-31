@@ -265,7 +265,7 @@ module.exports = async function handler(req, res) {
         ctaText: 'Go to your account',
         ctaHref: `${site}/account.html`,
         ctaNote: 'Nothing else to do for now &mdash; we&rsquo;ll come to you.',
-        footer: 'You&rsquo;re getting this because you started a plan with Kanvas (one.).',
+        footer: 'You&rsquo;re getting this because you started a plan with one, by Kanvas.',
         footerLinks: standardFooter(site)
       })
     });
@@ -312,7 +312,7 @@ module.exports = async function handler(req, res) {
             text: 'Your site and web address are at risk while the plan is inactive. '
                 + 'If you would like to keep them, please get in touch as soon as you can.'
           },
-          footer: 'You&rsquo;re getting this because your plan with Kanvas (one.) has ended.',
+          footer: 'You&rsquo;re getting this because your plan with one, by Kanvas has ended.',
           footerLinks: standardFooter(site)
         })
       });

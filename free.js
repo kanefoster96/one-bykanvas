@@ -155,14 +155,17 @@
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
 
-      form.reset();
-      clearPicker();
-      field.hidden = true;
-      say('Got it. We’ll email your example to ' + mail + '.', 'ok');
-      btn.textContent = 'Sent';
+      /* Handed over rather than kept, so the address never rides in the URL.
+         The confirmation page uses it to say where the email is going, and
+         its presence is also what tells that page a real submission happened
+         rather than somebody arriving on the link. */
+      try {
+        sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail }));
+      } catch (e) { /* private mode: the page just says less */ }
 
-      if (window.oneTrack) window.oneTrack('Lead', { content_category: 'free-preview' });
-      return;                       /* nothing left to re-enable */
+      form.reset();
+      location.assign('/thanks.html');
+      return;                       /* leaving; nothing to re-enable */
     } catch (err) {
       say(err.message || 'Could not send that. Try again.', 'bad');
       btn.disabled = false;

@@ -145,7 +145,7 @@ async function notifyFeatureEmail(db, userId, name, verb) {
       ],
       ctaText: 'See it on your account',
       ctaHref: `${site}/account.html`,
-      footer: 'You&rsquo;re getting this because your site with Kanvas (one.) was changed.'
+      footer: 'You&rsquo;re getting this because your site with one, by Kanvas was changed.'
         + (unsubUrl ? ' <a href="' + unsubUrl + '" style="color:#86868b;">Turn these off</a>.' : ''),
       footerLinks: standardFooter(site)
     })
@@ -187,7 +187,7 @@ async function notifySiteLive(db, userId, businessName, siteUrl) {
       ctaText: 'View your site',
       ctaHref: href,
       ctaNote: 'Ask for a change any time from your account.',
-      footer: 'You&rsquo;re getting this because your site with Kanvas (one.) has gone live.',
+      footer: 'You&rsquo;re getting this because your site with one, by Kanvas has gone live.',
       footerLinks: standardFooter(site)
     })
   });
@@ -582,7 +582,7 @@ module.exports = async function handler(req, res) {
             image: imageUrl ? { src: imageUrl, alt: title } : null,
             ctaText: buttonText && buttonUrl ? buttonText : null,
             ctaHref: buttonText && buttonUrl ? buttonUrl : null,
-            footer: 'You&rsquo;re getting this because you have an account with Kanvas (one.).'
+            footer: 'You&rsquo;re getting this because you have an account with one, by Kanvas.'
               + (unsub ? ' <a href="' + unsub + '" style="color:#86868b;">Unsubscribe</a>.' : ''),
             footerLinks: standardFooter(site)
           })

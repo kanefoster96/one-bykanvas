@@ -22,6 +22,8 @@ const LINE = '#e8e8ed';
 const WARN_BG = '#fdf6e9';
 const WARN_LINE = '#f0e2c4';
 const WARN_INK = '#8a5a17';
+/* The same green the site uses, and for the same reason: included, or free. */
+const GOOD = '#1a7f37';
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -51,7 +53,7 @@ function brand() {
                   </tr>
                 </table>
               </td>
-              <td style="padding-left:11px;font-size:16px;font-weight:600;letter-spacing:-.015em;color:${INK};font-family:${FONT};">Kanvas (one.)</td>
+              <td style="padding-left:11px;font-size:16px;font-weight:600;letter-spacing:-.015em;color:${INK};font-family:${FONT};">by Kanvas</td>
             </tr>
           </table>`;
 }
@@ -87,6 +89,18 @@ function calloutBox(callout) {
           </table>`;
 }
 
+/* What joining gets you, as a ticked list. A text tick rather than an image:
+   an image is the first thing a mail client refuses to load, and a list of
+   benefits with the ticks missing reads as a list of things you do not get. */
+function perkList(perks) {
+  const rows = perks.map((text) => `<tr>
+      <td width="24" valign="top" style="padding:7px 0 0;font-size:15px;line-height:1.5;color:${GOOD};font-family:${FONT};">&#10003;</td>
+      <td valign="top" style="padding:7px 0 0;font-size:15px;line-height:1.5;color:${INK_2};font-family:${FONT};">${text}</td>
+    </tr>`).join('');
+
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:22px 0 6px;">${rows}</table>`;
+}
+
 /* lines and callout.text are raw HTML, not escaped here - callers
  * interpolating a dynamic value (a business name, a domain) must esc() that
  * value themselves first, same rule as every other bit of user-supplied text
@@ -94,7 +108,7 @@ function calloutBox(callout) {
  * escaped here, so callers pass those in raw.
  */
 function html({
-  preheader, heading, lines = [], details = [], image,
+  preheader, heading, lines = [], details = [], image, perks = [],
   ctaText, ctaHref, ctaNote, callout, footer, footerLinks = []
 }) {
   /* What the inbox list shows beside the subject. Without it the client
@@ -107,6 +121,7 @@ function html({
     .join('');
 
   const facts = details.length ? detailCard(details) : '';
+  const good = perks.length ? perkList(perks) : '';
 
   /* Width and height are set on the tag as well as in the style: a mail client
      that has not loaded the image yet still needs to know how much room to
@@ -150,11 +165,11 @@ function html({
         </td></tr>
         <tr><td style="padding:26px 36px 0;">
           <h1 style="margin:0 0 16px;font-size:25px;font-weight:600;letter-spacing:-.025em;line-height:1.2;color:${INK};font-family:${FONT};">${esc(heading)}</h1>
-          ${body}${picture}${facts}${cta}${note}${warn}
+          ${body}${picture}${facts}${good}${cta}${note}${warn}
         </td></tr>
         <tr><td style="padding:30px 36px 34px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid ${LINE};">
-            <tr><td style="padding-top:20px;font-size:12.5px;line-height:1.55;color:${INK_3};font-family:${FONT};">${footer || 'Kanvas (one.)'}</td></tr>${links}
+            <tr><td style="padding-top:20px;font-size:12.5px;line-height:1.55;color:${INK_3};font-family:${FONT};">${footer || 'one, by Kanvas'}</td></tr>${links}
           </table>
         </td></tr>
       </table>
