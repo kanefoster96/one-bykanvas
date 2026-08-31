@@ -499,11 +499,7 @@ module.exports = async function handler(req, res) {
           lines: [
             `Here it is. We designed this for <strong>${esc(lead.business)}</strong> from `
               + `${lead.handle ? 'your ' + esc(lead.handle) : 'what you sent us'}, so it should `
-              + `already look like you.`,
-            /* Phone only, and no mention of a desktop. Naming both invites a
-               comparison nobody asked for; most of their customers will be on
-               a phone anyway, so that is the view worth sending them to. */
-            'Open it on your phone &mdash; that&rsquo;s where most of your customers will look.'
+              + `already look like you.`
           ],
           details: facts,
           ctaText: '🎁 See your website',
