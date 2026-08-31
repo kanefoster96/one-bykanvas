@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cookies — one</title>
-<meta name="description" content="This site uses no analytics, advertising or tracking cookies. Here is exactly what is stored in your browser, and why there is no consent banner.">
+<meta name="description" content="Two items of storage are needed to run the site. Advertising cookies load only if you accept, and you can change your mind at any time.">
 <meta name="theme-color" content="#ffffff">
 <meta property="og:title" content="Cookies — one">
-<meta property="og:description" content="This site uses no analytics, advertising or tracking cookies. Here is exactly what is stored in your browser, and why there is no consent banner.">
+<meta property="og:description" content="Two items of storage are needed to run the site. Advertising cookies load only if you accept, and you can change your mind at any time.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://kanvas.one/cookies">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -34,7 +34,7 @@
 <section class="page-hero">
   <div class="wrap center">
     <h1 class="reveal">Cookies.</h1>
-    <p class="lede reveal">There is no banner on this site, because there is nothing on it that needs your consent.</p>
+    <p class="lede reveal">Two are needed to run the site. The rest only exist if you said yes.</p>
   </div>
 </section>
 
@@ -45,42 +45,47 @@
     <p class="legal-meta">Last updated 31 August 2026.</p>
 
     <div class="legal-key">
-      <p>We do not use analytics, advertising, or tracking cookies. Nothing on this site follows you to another one. The only things stored in your browser are the ones needed to keep you signed in and to remember what you typed into the signup form.</p>
+      <p>Nothing that measures you is stored until you choose <strong>Accept all</strong>. Choose <strong>Essential only</strong> and no advertising cookie is ever set &mdash; the page does not load the code that would set one. You can change your mind at any time, and it takes effect immediately.</p>
+      <p><button class="btn btn-ghost" type="button" id="cookieSettings">Change your cookie choice</button></p>
     </div>
 
-    <h2 id="why">Why there is no cookie banner</h2>
-    <p>UK law &mdash; the Privacy and Electronic Communications Regulations &mdash; requires consent before storing anything in your browser, with one exception: storage that is <strong>strictly necessary</strong> to provide a service you have asked for. Signing you in is strictly necessary. Measuring your behaviour is not.</p>
-    <p>We only do the first, so there is nothing to ask you about. A banner that asked anyway would be theatre.</p>
-    <p>If that ever changes &mdash; if we add analytics, for example &mdash; we will ask for your consent properly before setting anything, and update this page.</p>
-
-    <h2 id="what">What is actually stored</h2>
-    <p>We use your browser&rsquo;s local storage rather than cookies for both of these. Local storage is not sent to our servers with every request the way a cookie is; it stays on your device until it is cleared.</p>
-
-    <h3>Your sign-in</h3>
+    <h2 id="essential">Essential &mdash; always on</h2>
+    <p>These two are what UK law calls strictly necessary: without them the thing you asked for does not work. They cannot be turned off, and consent is not required for them.</p>
+    <p>Both use your browser&rsquo;s local storage rather than a cookie. Local storage is not sent to our servers with every request the way a cookie is; it stays on your device until it is cleared.</p>
     <dl>
       <dt>sb-&hellip;-auth-token</dt>
-      <dd>Set when you log in, so you stay logged in as you move between pages and when you come back later. It holds the token that identifies your session. Removed when you log out. Set by Supabase, which provides our sign-in system. Strictly necessary.</dd>
-    </dl>
-
-    <h3>The signup form</h3>
-    <dl>
+      <dd>Set when you log in, so you stay logged in as you move between pages and when you come back later. It holds the token that identifies your session. Removed when you log out. Set by Supabase, which provides our sign-in system.</dd>
       <dt>one.pending-onboarding</dt>
-      <dd>Holds the business details and preferences you entered while signing up, so they are not lost between confirming your email address and arriving at your account. Deleted as soon as they have been saved to your account. Strictly necessary.</dd>
+      <dd>Holds the business details you entered while signing up, so they survive the gap between confirming your email address and arriving at your account. Deleted as soon as they have been saved.</dd>
+      <dt>one.consent</dt>
+      <dd>Remembers which of the two buttons you pressed, so you are not asked again on every page. Ironically the one thing we have to store in order to respect a refusal.</dd>
     </dl>
 
-    <h2 id="third">Other sites you are sent to</h2>
-    <p>Two parts of the service hand you over to another company&rsquo;s page. Once you are there, that company&rsquo;s own cookies and privacy notice apply, not ours.</p>
-    <ul>
-      <li><strong>Stripe</strong> &mdash; paying, and managing your billing, happens on Stripe&rsquo;s own checkout and portal pages. Stripe sets cookies there, including for fraud prevention. See <a href="https://stripe.com/privacy" rel="noopener">stripe.com/privacy</a>.</li>
-      <li><strong>The App Store and Google Play</strong> &mdash; if you follow a link to an app listing.</li>
-    </ul>
-    <p>We do not embed any third-party scripts, fonts, maps, video players, chat widgets or social buttons on this site. Nothing loads from another company&rsquo;s server while you read these pages.</p>
+    <h2 id="ads">Advertising &mdash; only if you accept</h2>
+    <p>We advertise on Facebook and Instagram. If you accept, we load the <strong>Meta pixel</strong>, which tells Meta that someone who saw one of our ads went on to enquire or sign up. That is what lets us stop paying for ads that do not work.</p>
+    <p>If you choose Essential only, the pixel is not loaded at all. This is worth being precise about: it is not loaded and then told to stay quiet &mdash; the code is never fetched, so there is nothing to set a cookie.</p>
+    <dl>
+      <dt>_fbp</dt>
+      <dd>Set by the Meta pixel, on our domain. A random identifier that lets Meta connect an enquiry back to an ad. Expires after three months.</dd>
+      <dt>_fbc</dt>
+      <dd>Set only if you arrived from a Facebook or Instagram ad. Stores the click identifier from that ad. Expires after three months.</dd>
+    </dl>
+    <p>What we send with those events is deliberately thin: that a page was viewed, that an enquiry was submitted and which plan it mentioned, that an account was created, that a plan was started. We do not pass your name, your email address or a hashed version of either, so Meta cannot match the event to a named person from anything we send.</p>
+    <p>Meta is a separate controller for what it does with this. Its privacy policy is at <a href="https://www.facebook.com/privacy/policy" rel="noopener">facebook.com/privacy/policy</a>.</p>
+
+    <h2 id="none">What we do not do</h2>
+    <p>No analytics. No Google Tag Manager, no session recording, no heatmaps, no A/B testing tools. No embedded fonts, maps, video players, chat widgets or social buttons &mdash; nothing loads from another company&rsquo;s server while you read these pages, except the pixel above, and only with your consent.</p>
+
+    <h2 id="change">Changing your mind</h2>
+    <p>Withdrawing consent has to be as easy as giving it, so it is the same two buttons. Use the button at the top of this page, or <strong>Cookie settings</strong> in the footer of any page.</p>
+    <p>If you switch from Accept all to Essential only, we delete the <code>_fbp</code> and <code>_fbc</code> cookies and reload the page, so the pixel is gone rather than merely idle. Events already sent to Meta before you changed your mind cannot be recalled by us; you can ask Meta directly using the rights in its own policy.</p>
+    <p>You can also clear everything from your browser&rsquo;s settings, usually under privacy, site data or &ldquo;clear browsing data&rdquo;. Blocking storage for this site entirely is fine &mdash; the pages still work, but you will not be able to stay signed in.</p>
+
+    <h2 id="checkout">Other sites you are sent to</h2>
+    <p>Paying, and managing your billing, happens on Stripe&rsquo;s own pages. Stripe sets its own cookies there, including for fraud prevention, and its policy applies rather than ours. See <a href="https://stripe.com/privacy" rel="noopener">stripe.com/privacy</a>.</p>
 
     <h2 id="logs">Server logs</h2>
     <p>Separately from anything stored in your browser, our host keeps short-lived request logs that include IP addresses. That is not cookies or tracking &mdash; it is how a web server is operated and kept secure. It is covered in our <a href="/privacy.html">privacy notice</a>.</p>
-
-    <h2 id="control">Clearing or blocking it</h2>
-    <p>You can clear local storage from your browser&rsquo;s settings, usually under privacy, site data or &ldquo;clear browsing data&rdquo;. Blocking it for this site is fine &mdash; the pages will still work, but you will not be able to stay signed in.</p>
 
     <h2 id="ask">Questions</h2>
     <p>Email <a href="mailto:privacy@kanvas.one">privacy@kanvas.one</a> and we will answer plainly.</p>
@@ -99,13 +104,14 @@
       <a href="/how-it-works.html">How it works</a><a href="/whats-included.html">What&rsquo;s included</a><a href="/features.html">Features</a><a href="/reviews.html">Reviews</a><a href="/plans.html">Plans</a><a href="/get-started.html">Get started</a>
     </nav>
     <nav class="foot-legal-links" aria-label="Legal">
-      <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a>
+      <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
     </nav>
     <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Website build begins once your completed form is received; the 10-day estimate is measured from that date and depends on how many changes are requested. Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. App publication is subject to Apple App Store and Google Play review and approval. Apple and App Store are trademarks of Apple Inc. Google Play is a trademark of Google LLC. Cancel with one month&rsquo;s notice.</p>
     <p class="foot-copy">&copy; <span id="year">2026</span> Kanvas. All rights reserved.</p>
   </div>
 </footer>
 
+<script src="consent.js?v=1"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=1"></script>
 <script src="script.js?v=4"></script>

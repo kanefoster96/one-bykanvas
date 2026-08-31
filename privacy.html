@@ -45,7 +45,7 @@
     <p class="legal-meta">Last updated 31 August 2026.</p>
 
     <div class="legal-key">
-      <p>The short version: we collect what we need to build your site, bill you and email you about it. We do not run analytics, advertising or tracking on this site, and we do not sell or share your details with anyone for their own marketing.</p>
+      <p>The short version: we collect what we need to build your site, bill you and email you about it. We run no analytics at all. The only tracking on this site measures our own ads, it only runs if you accept cookies, and it is never sent your name or email address. We do not sell your details, and we do not share them with anyone for their own marketing.</p>
     </div>
 
     <nav class="legal-toc" aria-label="On this page">
@@ -86,7 +86,8 @@
     <p>Your name, your business name and what you wrote, so we can publish it.</p>
 
     <h3>Automatically</h3>
-    <p>Our hosting provider keeps short-lived server logs, which include IP addresses, for security and to keep the service running. We do not use analytics, advertising or tracking software on this site, and we do not build profiles of visitors. See the <a href="/cookies.html">cookie policy</a> for what is stored in your browser.</p>
+    <p>Our hosting provider keeps short-lived server logs, which include IP addresses, for security and to keep the service running.</p>
+<p>We use no analytics software at all. If &mdash; and only if &mdash; you accept cookies, we load the Meta pixel, which tells Meta that a visit, an enquiry or a signup followed one of our ads. Choose &ldquo;Essential only&rdquo; and that code is never loaded. See the <a href="/cookies.html">cookie policy</a> for exactly what it sets and what we send with it.</p>
 
     <h2 id="why">3. Why, and our lawful basis</h2>
     <dl>
@@ -108,6 +109,9 @@
       <dt>To publish a review you have given us</dt>
       <dd>Basis: your consent, given when you submit it. Ask us and we will take it down.</dd>
 
+      <dt>To measure our advertising</dt>
+      <dd>Knowing which ads lead to an enquiry is what stops us paying for ads that do not work. Basis: your consent, given by choosing &ldquo;Accept all&rdquo; on the cookie pill, and withdrawable at any time from the footer of any page.</dd>
+
       <dt>To keep the service secure and prevent fraud</dt>
       <dd>Basis: our legitimate interest in protecting the service and our customers.</dd>
     </dl>
@@ -119,12 +123,13 @@
     <p>We use Resend to deliver email. They process the message and your address on our behalf and do not use it for anything else.</p>
 
     <h2 id="share">5. Who we share it with</h2>
-    <p>We do not sell your personal data, and we do not share it with anyone for their own marketing. We use the following providers to run the service, each of which processes data on our instructions:</p>
+    <p>We do not sell your personal data, and we do not share it with anyone for their own marketing. We use the following providers to run the service. The first four act only on our instructions; the last is there only if you accept cookies, and decides for itself what it does with what it receives:</p>
     <ul>
       <li><strong>Vercel</strong> &mdash; hosting for this site and its server functions. Sees requests to the site, including IP addresses in short-term logs.</li>
       <li><strong>Supabase</strong> &mdash; the database that holds your account, profile, requests and uploaded files, and the system that signs you in.</li>
       <li><strong>Stripe</strong> &mdash; payments and subscriptions. Your card details go to Stripe directly from their own checkout page and never reach our servers. Stripe is a data controller in its own right for fraud prevention; see stripe.com/privacy.</li>
       <li><strong>Resend</strong> &mdash; sending the emails described above.</li>
+      <li><strong>Meta</strong> (Facebook and Instagram) &mdash; <strong>only if you accept cookies.</strong> Receives that a page was viewed, an enquiry submitted, an account created or a plan started, along with your IP address and the identifier in the cookie it sets. We do not send your name or your email address, in any form. Meta decides for itself what it does with this, so it is a controller in its own right rather than a processor acting on our instructions. See <a href="https://www.facebook.com/privacy/policy" rel="noopener">facebook.com/privacy/policy</a>.</li>
     </ul>
     <p>When you use the web address finder, we send only the name you are checking to the relevant domain registry (Nominet for .uk addresses, the appropriate registry otherwise). No personal data is sent with it.</p>
     <p>We will also disclose data where we are legally required to, or where it is necessary to establish or defend a legal claim. If the business is ever sold or transferred, customer records would transfer with it, and we would tell you first.</p>
@@ -141,6 +146,7 @@
       <li><strong>Billing and accounting records</strong> &mdash; six years from the end of the relevant financial year, because HMRC requires it. This applies even if you ask us to delete everything else.</li>
       <li><strong>Reviews</strong> &mdash; until you ask us to remove them.</li>
       <li><strong>Marketing preferences</strong> &mdash; we keep a record that you unsubscribed indefinitely, so that we do not email you again by mistake.</li>
+      <li><strong>Your cookie choice</strong> &mdash; kept in your own browser, not on our servers, until you clear it or change it.</li>
     </ul>
 
     <h2 id="security">8. How we protect it</h2>
@@ -185,13 +191,14 @@
       <a href="/how-it-works.html">How it works</a><a href="/whats-included.html">What&rsquo;s included</a><a href="/features.html">Features</a><a href="/reviews.html">Reviews</a><a href="/plans.html">Plans</a><a href="/get-started.html">Get started</a>
     </nav>
     <nav class="foot-legal-links" aria-label="Legal">
-      <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a>
+      <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
     </nav>
     <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Website build begins once your completed form is received; the 10-day estimate is measured from that date and depends on how many changes are requested. Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. App publication is subject to Apple App Store and Google Play review and approval. Apple and App Store are trademarks of Apple Inc. Google Play is a trademark of Google LLC. Cancel with one month&rsquo;s notice.</p>
     <p class="foot-copy">&copy; <span id="year">2026</span> Kanvas. All rights reserved.</p>
   </div>
 </footer>
 
+<script src="consent.js?v=1"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=1"></script>
 <script src="script.js?v=4"></script>

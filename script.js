@@ -215,6 +215,12 @@
       note.textContent = 'Thanks — we’ll be in touch within one working day.';
       note.className = 'formnote ok';
       form.reset();
+
+      /* Fires only if they accepted cookies; a no-op otherwise. No name or
+         email goes with it - the plan is all Meta needs to optimise on. */
+      if (window.oneTrack) window.oneTrack('Lead', {
+        content_category: PLAN_KEYS[planEl.selectedIndex] || 'unsure'
+      });
     } catch (err) {
       note.textContent = err.message || 'Could not send that. Try again.';
       note.className = 'formnote bad';
