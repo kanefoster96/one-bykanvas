@@ -374,6 +374,138 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
+    /* ---- is this membership already set to end? -----------------------
+     *
+     * Asked of Stripe rather than kept in a column here. cancel_at_period_end
+     * is the sort of thing that goes stale quietly - changed in the Stripe
+     * dashboard, or a webhook that did not land - and a stale answer here
+     * means the page offers to cancel something already cancelled. One call,
+     * only when a customer is actually opened.
+     */
+    if (action === 'subscriptionState') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+
+      const { data: who, error: whoErr } = await db
+        .from('profiles').select('stripe_subscription_id').eq('id', userId).maybeSingle();
+      if (whoErr) throw new Error(whoErr.message);
+      if (!who || !who.stripe_subscription_id) {
+        return res.status(200).json({ ok: true, subscription: null });
+      }
+
+      const { STRIPE_SECRET_KEY } = process.env;
+      if (!STRIPE_SECRET_KEY) return res.status(200).json({ ok: true, subscription: null });
+
+      const stripe = new Stripe(STRIPE_SECRET_KEY);
+      let sub;
+      try {
+        sub = await stripe.subscriptions.retrieve(who.stripe_subscription_id);
+      } catch (e) {
+        /* A subscription Stripe has forgotten is not an error worth blocking
+           the page for - the rest of the customer's detail is still useful. */
+        console.error('admin: subscription lookup failed:', e && e.message);
+        return res.status(200).json({ ok: true, subscription: null });
+      }
+
+      const endsAt = sub.cancel_at || (sub.items && sub.items.data || [])
+        .reduce((acc, i) => Math.max(acc, i.current_period_end || 0), 0) || null;
+      return res.status(200).json({
+        ok: true,
+        subscription: {
+          status: sub.status,
+          cancelAtPeriodEnd: Boolean(sub.cancel_at_period_end),
+          endsAt: endsAt ? new Date(endsAt * 1000).toISOString() : null
+        }
+      });
+    }
+
+    /* ---- ending a membership ------------------------------------------
+     *
+     * At the period end, never immediately. The terms say a month's notice and
+     * that money already taken is not refunded, so cutting someone off the
+     * moment the button is pressed would take a payment for a month they then
+     * do not get. Stripe keeps billing nothing and stops at the renewal.
+     *
+     * Reversible on purpose. This is one button next to a customer's name, and
+     * the cost of a mis-click should be another click, not a lost customer.
+     */
+    if (action === 'setCancelAtPeriodEnd') {
+      const userId = String(body.userId || '');
+      const cancel = Boolean(body.cancel);
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+
+      const { STRIPE_SECRET_KEY } = process.env;
+      if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe is not configured.' });
+
+      const { data: who, error: whoErr } = await db
+        .from('profiles').select('stripe_subscription_id, subscription_status, business_name')
+        .eq('id', userId).maybeSingle();
+      if (whoErr) throw new Error(whoErr.message);
+      if (!who || !who.stripe_subscription_id) {
+        return res.status(400).json({ error: 'No subscription to change.' });
+      }
+
+      const stripe = new Stripe(STRIPE_SECRET_KEY);
+      let sub;
+      try {
+        sub = await stripe.subscriptions.update(who.stripe_subscription_id,
+          { cancel_at_period_end: cancel });
+      } catch (e) {
+        console.error('admin: cancel toggle failed:', e && e.message);
+        return res.status(400).json({ error: e && e.message ? e.message : 'Stripe refused that.' });
+      }
+
+      /* Stripe is the record; the webhook mirrors it here a moment later. The
+         answer carries the date so the page can say when it actually ends
+         rather than waiting for that round trip. */
+      const endsAt = sub.cancel_at || (sub.items && sub.items.data || [])
+        .reduce((acc, i) => Math.max(acc, i.current_period_end || 0), 0) || null;
+      console.log('admin: %s cancel_at_period_end=%s', userId, cancel);
+      return res.status(200).json({
+        ok: true,
+        cancelAtPeriodEnd: Boolean(sub.cancel_at_period_end),
+        endsAt: endsAt ? new Date(endsAt * 1000).toISOString() : null
+      });
+    }
+
+    /* ---- deleting a contact -------------------------------------------
+     *
+     * Deletes the auth user; the profile, their requests and their features go
+     * with it on the cascade. There is no undo, so the checks are here rather
+     * than only in the browser, where a stale page could ask for something the
+     * database has since changed its mind about.
+     */
+    if (action === 'deleteContact') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which contact?' });
+
+      /* Deleting yourself would lock the only admin out of the admin page. */
+      if (userId === me.id) {
+        return res.status(400).json({ error: 'You cannot delete your own account here.' });
+      }
+
+      const { data: who, error: whoErr } = await db
+        .from('profiles').select('subscription_status, stripe_subscription_id, business_name')
+        .eq('id', userId).maybeSingle();
+      if (whoErr) throw new Error(whoErr.message);
+
+      /* A live subscription outlives the account it belonged to - Stripe does
+         not know the customer is gone and keeps taking the money, with nobody
+         left to email about it. End the plan first, deliberately. */
+      const live = who && ['active', 'trialing', 'past_due', 'unpaid'].includes(who.subscription_status);
+      if (live) {
+        return res.status(400).json({
+          error: 'This account still has a subscription. Cancel it first, or Stripe will keep billing them.'
+        });
+      }
+
+      const { error } = await db.auth.admin.deleteUser(userId);
+      if (error) return res.status(400).json({ error: error.message });
+
+      console.log('admin: deleted contact %s (%s)', userId, (who && who.business_name) || 'no name');
+      return res.status(200).json({ ok: true });
+    }
+
     // ---- write: admin's own notes about a customer - never shown to them ----
     /* ---- marketing: who would get this, and then sending it ------------ */
     if (action === 'broadcastAudience' || action === 'sendBroadcast') {

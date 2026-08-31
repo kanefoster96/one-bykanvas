@@ -538,6 +538,44 @@ body.locked{overflow:hidden}
 .ph-shot i.w{width:70%}
 .ph-copy{margin:0;font-size:11.5px;line-height:1.55;color:var(--ink-2)}
 
+/* ---------- Admin: the irreversible things ---------- */
+/* Set apart rather than dressed up in red. A permanent border of alarm stops
+   being read after the third visit; what actually protects a customer is the
+   second click and the typed name. */
+.danger-panel{
+  border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px 20px;background:var(--bg-grey);
+}
+.danger-panel .hint{margin:0 0 13px}
+.danger-panel .note:empty{margin:0;min-height:0}
+.danger-panel .note{margin:11px 0 0}
+.danger-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.danger-row .linkish{margin:0}
+
+/* Colour arrives only on the click that would actually do it. */
+.btn.danger.is-armed{
+  background:#d93025;border-color:#d93025;color:#fff;
+}
+.btn.danger.is-armed:hover{background:#b3261e;border-color:#b3261e;color:#fff}
+
+.danger-confirm{display:flex;flex-direction:column;gap:9px}
+.danger-confirm .hint{margin:0}
+.danger-input{
+  font-family:var(--font);font-size:16px;color:var(--ink);
+  padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;
+  max-width:320px;width:100%;
+}
+.danger-input:focus{outline:none;border-color:#d93025;box-shadow:0 0 0 3px rgba(217,48,37,.12)}
+
+/* ---------- Honeypot ---------- */
+/* Off-screen rather than display:none or hidden, because the crawlers worth
+   stopping have learned to skip those. tabindex and aria-hidden keep it away
+   from keyboards and screen readers, so nobody real ever meets it. */
+.hp{
+  position:absolute!important;left:-9999px!important;top:auto!important;
+  width:1px!important;height:1px!important;overflow:hidden!important;
+}
+
 /* ---------- Ask us ---------- */
 /* The way out for someone who has a question rather than an intention. It
    goes after the FAQ and beside the plans, because those are the two places

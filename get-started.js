@@ -90,6 +90,12 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) return say(note, 'Enter a valid email address.', 'bad');
     if (pass.length < 8) return say(note, 'Passwords need to be at least 8 characters.', 'bad');
 
+    /* Honeypot, same as the login form: signUp goes straight to Supabase, so
+       this can only be checked here. Stops at step one rather than pretending
+       to advance, since there is nothing further along for a bot to reach. */
+    var hp = document.getElementById('wiz_website');
+    if (hp && hp.value) { say(note, ''); return; }
+
     answers.contact_name = name;
     answers.business_name = biz;
     answers.email = mail;

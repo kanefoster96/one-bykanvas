@@ -11,7 +11,7 @@
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://kanvas.one/">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=14">
+<link rel="stylesheet" href="styles.css?v=15">
 </head>
 <body>
 
@@ -440,6 +440,10 @@
     <h2 class="reveal">Let's build it.</h2>
     <p class="lede reveal">Tell us about your business. We'll come back with a plan and a start date.</p>
     <form class="lead" id="lead" novalidate>
+      <div class="hp" aria-hidden="true">
+        <label for="lead_website">Website</label>
+        <input id="lead_website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
       <div class="field"><label for="name">Your name</label><input id="name" name="name" type="text" autocomplete="name" required></div>
       <div class="field"><label for="business">Business name</label><input id="business" name="business" type="text" autocomplete="organization" required></div>
       <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
@@ -482,7 +486,7 @@
 <script src="consent.js?v=1"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=1"></script>
-<script src="script.js?v=5"></script>
+<script src="script.js?v=6"></script>
 <script src="reviews.js?v=1"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
