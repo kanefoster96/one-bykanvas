@@ -667,15 +667,27 @@
     }
 
     function warn() {
+      /* Nothing ticked: nothing to say. Ticked and covered: a quiet
+         confirmation. Ticked and missing: the orange note, with the plan
+         that has it - and that skipping is fine, upgrades are one click. */
+      if (!email.checked && !seo.checked) {
+        warnEl.hidden = true; warnEl.textContent = ''; return;
+      }
       var has = COVERS[pickedPlan()];
       var missing = [];
       if (email.checked && has.indexOf('email') === -1) missing.push('the business email address');
       if (seo.checked && has.indexOf('seo') === -1) missing.push('monthly SEO updates');
-      if (!missing.length) { warnEl.hidden = true; warnEl.textContent = ''; return; }
+      if (!missing.length) {
+        warnEl.className = 'pick-ok';
+        warnEl.textContent = PLANS[pickedPlan()].label + ' includes everything you ticked.';
+        warnEl.hidden = false;
+        return;
+      }
       var covers = seo.checked ? 'Max' : 'Pro';
+      warnEl.className = 'pick-warn';
       warnEl.textContent = 'Just so you know — ' + PLANS[pickedPlan()].label
         + ' doesn’t include ' + missing.join(' or ') + ' you ticked. '
-        + covers + ' does, and you can move up any time.';
+        + covers + ' does — or carry on without it and upgrade any time.';
       warnEl.hidden = false;
     }
 
@@ -693,10 +705,8 @@
       var note = document.querySelector('.pick-row[data-plan="' + rec + '"] .pick-note');
       if (flag && note && flag.parentNode !== note) note.insertBefore(flag, note.firstChild);
 
-      // Open what they'd be paying for, fold the rest away.
-      document.querySelectorAll('#pick .pick-more').forEach(function (d) {
-        d.open = d.dataset.plan === rec && rec !== 'business';
-      });
+      /* No open/close to do here: the selected row's feature list expands
+         itself - .pick-row.is-on + .pick-feats in the stylesheet. */
 
       warn();
     }
