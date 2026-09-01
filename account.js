@@ -722,7 +722,7 @@ function renderRequests(rows) {
  * list can be built from day one.
  */
 
-var MK_MAX_LIST = 1000;
+var MK_MAX_LIST = 5000;
 var mkAudience = [];
 var mkImageUrl = '';
 
@@ -882,11 +882,11 @@ document.getElementById('mkForm').addEventListener('submit', async function (e) 
     var token = sess.data && sess.data.session && sess.data.session.access_token;
     if (!token) throw new Error('Your session has expired. Log in and try again.');
 
-    var res = await fetch('/api/requests', {
+    var res = await fetch('/api/campaign', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
       body: JSON.stringify({
-        action: 'sendCampaign', subject: subject, message: message,
+        subject: subject, message: message,
         linkUrl: linkUrl, linkText: linkText, imageUrl: mkImageUrl
       })
     });

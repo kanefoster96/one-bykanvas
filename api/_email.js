@@ -110,6 +110,11 @@ async function sendBatch(messages) {
   let sent = 0, failed = 0;
 
   for (let i = 0; i < messages.length; i += BATCH_MAX) {
+    /* Resend allows two requests a second - a big campaign is dozens of
+       chunks, and firing them back to back trades a rate-limit rejection
+       for half a second of patience per chunk. */
+    if (i > 0) await new Promise((r) => setTimeout(r, 600));
+
     /* m.from lets a batch go out as someone else - a Pro customer's campaign
        sends from their own verified domain, not ours. Everything we send
        ourselves leaves m.from unset and keeps the default. */
