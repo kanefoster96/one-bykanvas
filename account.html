@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=30">
+<link rel="stylesheet" href="styles.css?v=31">
 </head>
 <body class="auth-body">
 
@@ -102,6 +102,13 @@
         <label for="reqDetail">What would you like?</label>
         <textarea id="reqDetail" rows="4" maxlength="4000" placeholder="Swap the photo on the homepage for the new shopfront one…"></textarea>
         <p class="hint">Picked one of ours? Add anything specific to your business underneath &mdash; times, prices, wording, whatever matters.</p>
+      </div>
+
+      <!-- The same idea library as the signup form, in case something got
+           missed back then. Tapping a chip drops it into the box above. -->
+      <div class="use-suggest" id="reqSuggest" hidden>
+        <p class="use-suggest-title">Popular features &mdash; tap to add</p>
+        <div class="use-chips" id="reqChips"></div>
       </div>
       <div class="field full">
         <label for="reqFiles">Screenshots (optional)</label>
@@ -285,7 +292,8 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=2"></script>
-<script src="account.js?v=24"></script>
+<script src="feature-ideas.js?v=1"></script>
+<script src="account.js?v=25"></script>
 <script src="admin-pill.js?v=6"></script>
 </body>
 </html>
