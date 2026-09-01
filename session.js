@@ -108,8 +108,17 @@
 
   rememberOffer();
 
+  /* The raw access token, for the one or two lightweight REST calls the
+     marketing pages make themselves (the notification bell's unread count).
+     Faking it locally buys nothing: Supabase verifies it on every request
+     and RLS decides what it can see. */
+  function token() {
+    var s = session();
+    return (s && typeof s.access_token === 'string') ? s.access_token : null;
+  }
+
   window.ONE_SESSION = {
-    email: email, logOut: logOut,
+    email: email, token: token, logOut: logOut,
     offerCode: offerCode, clearOffer: clearOffer
   };
 })();
