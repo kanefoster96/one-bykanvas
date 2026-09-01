@@ -1,21 +1,17 @@
 /* Creates a customer's edit/feature request, and tells us about it.
  *
- * Points are decided here from _plans.js, never trusted from the browser -
- * the same rule the requests table's own check constraint enforces, so a
- * tampered client gets the same answer twice. Going through this endpoint
+ * Requests are included on every plan and cost nothing - what the plan buys
+ * is queue position, and the admin page orders the queue by plan. The kind
+ * is validated against _plans.js rather than trusted, and the row's points
+ * value is kept only because the table's check constraint expects it; no
+ * money is ever derived from it any more. Going through this endpoint
  * rather than a direct client insert is what lets a new request email us;
  * a plain insert would record the row just as well but nobody would know.
- *
- * Always lands as a fresh Request (the table's own default), never
- * pre-accepted - only the admin page accepting it decides whether points
- * cover it or the card on file gets charged, and nothing is built before
- * that happens.
  */
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
-const { shortfallFor } = require('./_billing.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -111,30 +107,24 @@ module.exports = async function handler(req, res) {
     }).select().single();
     if (error) throw new Error(error.message);
 
-    // For the notify email only - what accepting this would come to, not a
-    // decision made here. Nothing is charged or agreed until the admin page
-    // accepts it.
-    const { shortfall } = await shortfallFor(db, user.id, row.id);
-    const amount = shortfall * REQUEST_COST.edit.amount; // £40/point, same rate either kind
-
     const { data: profile } = await db.from('profiles')
-      .select('business_name').eq('id', user.id).maybeSingle();
+      .select('business_name, active_plan').eq('id', user.id).maybeSingle();
     const name = (profile && profile.business_name) || user.email || 'A customer';
+    const QUEUE = { business: 'in turn', pro: 'PRIORITY', max: 'TOP PRIORITY' };
+    const place = QUEUE[profile && profile.active_plan] || 'in turn';
 
     const result = await sendEmail({
       to: adminAddresses(),
       subject: `New ${kind === 'feature' ? 'feature' : 'edit'} request: ${name}`,
-      text: `${name} asked for ${kind === 'feature' ? 'a new feature' : 'an edit'}:\n\n${detail}\n\n`
+      text: `${name} asked for ${kind === 'feature' ? 'a new feature' : 'an edit'} (${place}):\n\n${detail}\n\n`
           + (attachmentPaths.length ? `${attachmentPaths.length} screenshot${attachmentPaths.length === 1 ? '' : 's'} attached - view in admin.\n\n` : '')
-          + (shortfall > 0
-              ? `Would come to £${(amount / 100).toFixed(0)} over their allowance once accepted.\n\n`
-              : 'Covered by their points once accepted.\n\n')
-          + `Accept it from admin: ${ourSiteUrl()}/admin.html`,
+          + `Included in their plan - the queue in admin is already in priority order.\n\n`
+          + `Admin: ${ourSiteUrl()}/admin.html`,
       replyTo: user.email
     });
     console.log('requests: notify email', result);
 
-    return res.status(200).json({ request: row, shortfall, amount });
+    return res.status(200).json({ request: row });
   } catch (err) {
     console.error('requests:', err && err.message);
     return res.status(500).json({ error: 'Something went wrong. Try again.' });

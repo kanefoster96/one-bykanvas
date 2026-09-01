@@ -16,7 +16,6 @@ var app     = document.getElementById('app');
 var note    = document.getElementById('adminNote');
 
 var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
-var PLAN_POINTS = { business: 1, pro: 3, max: 5 };
 var PLAN_PRICE  = { business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
 var STATUS_NAME = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
 /* info is a business-details change the customer made themselves - free, and
@@ -156,12 +155,26 @@ function periodStart(p) {
   return new Date(now.getFullYear(), now.getMonth(), 1);
 }
 
-function pointsUsed(p) {
-  var start = periodStart(p);
-  return state.requests.reduce(function (n, r) {
-    return r.user_id === p.id && r.status !== 'declined' && new Date(r.created_at) >= start
-      ? n + r.points : n;
-  }, 0);
+function openCountFor(userId) {
+  return state.requests.filter(function (r) {
+    return r.user_id === userId
+      && (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress');
+  }).length;
+}
+
+/* How each plan's requests are treated - the thing the plan actually buys. */
+var PLAN_QUEUE = { business: 'in turn', pro: 'priority', max: 'top priority' };
+
+/* Queue rank for sorting: lower goes first. */
+function planRankFor(userId) {
+  var p = state.profiles.filter(function (x) { return x.id === userId; })[0];
+  var order = { max: 0, pro: 1, business: 2 };
+  return p && order[p.active_plan] !== undefined ? order[p.active_plan] : 3;
+}
+
+function planPriorityLabel(userId) {
+  var p = state.profiles.filter(function (x) { return x.id === userId; })[0];
+  return (p && PLAN_QUEUE[p.active_plan]) || 'in turn';
 }
 
 function isCustomer(p) { return !!p.active_plan; }
@@ -215,32 +228,11 @@ function openRequests() {
   });
 }
 
-/* Marks each request .shortfallPoints: how many of its points the plan's
-   allowance did not cover, worked out in the order requests were made. A
-   feature that lands once the allowance is half spent is billed only for the
-   points that ran out, not the whole thing - one point left and a 3-point
-   feature bills 2 points (£80), not the full £120. Declined requests and
-   anything from a previous period are excluded, matching pointsUsed() above,
-   so the two views can never disagree. */
+/* Requests are included on every plan now, so nothing is ever over an
+   allowance. The field survives at zero because openRequests() and the
+   charge pill read it; historic billed rows keep their billed_at record. */
 function markShortfall() {
-  var byUser = {};
-  state.requests.forEach(function (r) { (byUser[r.user_id] = byUser[r.user_id] || []).push(r); });
-
-  Object.keys(byUser).forEach(function (uid) {
-    var p = state.profiles.filter(function (x) { return x.id === uid; })[0];
-    var allowance = p && p.active_plan ? PLAN_POINTS[p.active_plan] : 0;
-    var start = p ? periodStart(p) : new Date(0);
-
-    var used = 0;
-    byUser[uid]
-      .filter(function (r) { return r.status !== 'declined' && new Date(r.created_at) >= start; })
-      .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); })
-      .forEach(function (r) {
-        var covered = Math.max(0, Math.min(r.points, allowance - used));
-        r.shortfallPoints = r.points - covered;
-        used += r.points;
-      });
-  });
+  state.requests.forEach(function (r) { r.shortfallPoints = 0; });
 }
 
 /* ---------------- nav + top-level render ---------------- */
@@ -436,8 +428,12 @@ function renderRequestsSection(open, unbuilt) {
   } else {
     [['info', 'Business details changed'], ['edit', 'Edit requests'], ['feature', 'Feature requests']].forEach(function (pair) {
       var items = open.filter(function (r) { return r.kind === pair[0]; })
-        // Oldest first: the thing waiting longest is the thing to do next.
-        .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+        // Plan priority first - Max, then Pro, then Business - and inside a
+        // plan, oldest first. This IS the queue the terms promise.
+        .sort(function (a, b) {
+          var d = planRankFor(a.user_id) - planRankFor(b.user_id);
+          return d !== 0 ? d : new Date(a.created_at) - new Date(b.created_at);
+        });
       if (!items.length) return;
 
       queueWrap.appendChild(el('h3', 'req-list-title', pair[1]));
@@ -479,8 +475,7 @@ function queueItem(r) {
   /* How long it has been waiting, not the date it landed - in a queue the
      age is the thing that tells you what to pick up next. */
   var meta = el('p', 'queue-meta',
-    kindName(r.kind) + ' · '
-    + (r.points === 0 ? 'free' : r.points + (r.points === 1 ? ' point' : ' points'))
+    kindName(r.kind) + ' · ' + planPriorityLabel(r.user_id)
     + ' · ' + howLong(r.created_at));
   main.appendChild(meta);
 
@@ -505,22 +500,8 @@ function queueItem(r) {
     var target = sel.value;
     var payload = { action: 'setRequestStatus', requestId: r.id, status: target };
 
-    // Accepting is where points get redeemed or the card gets charged for
-    // whatever they don't cover - ask before it happens, prefilled with the
-    // shortfall already worked out above, editable for a discount (or to
-    // waive it) on something that turned out easier than its points suggest.
-    if (target === 'accepted' && r.status === 'new' && r.shortfallPoints > 0) {
-      var suggested = (r.shortfallPoints * POINT_PRICE / 100).toFixed(0);
-      var input = prompt(
-        'Charge the card on file before starting this?\n\n'
-        + 'Amount in pounds (0 for none - to comp it or cover it yourself):',
-        suggested
-      );
-      if (input === null) { sel.value = r.status; return; }
-      var pounds = parseFloat(input);
-      if (isNaN(pounds) || pounds < 0) { say('Enter a valid amount.', 'bad'); sel.value = r.status; return; }
-      payload.amount = Math.round(pounds * 100);
-    }
+    // Requests are included in the plan, so accepting one charges nothing -
+    // it just moves the work into the queue.
 
     sel.disabled = true;
     try {
@@ -665,11 +646,8 @@ function customerListRow(p) {
   var reach = contactLine(p);
   if (reach) card.appendChild(reach);
 
-  var used = pointsUsed(p);
-  var allow = PLAN_POINTS[p.active_plan];
-  var over = used > allow;
-  card.appendChild(el('p', 'cust-points' + (over ? ' is-over' : ''),
-    used + ' of ' + allow + ' points used this month · £' + (lifetimeSpent(p.id) / 100).toFixed(0) + ' spent lifetime'));
+  card.appendChild(el('p', 'cust-points',
+    openCountFor(p.id) + ' open · ' + PLAN_QUEUE[p.active_plan] + ' · £' + (lifetimeSpent(p.id) / 100).toFixed(0) + ' spent lifetime'));
 
   if (p.active_plan === 'max') {
     var due = !seoLoggedThisPeriod(p);
@@ -943,9 +921,8 @@ function customerDetail(p) {
 
   wrap.appendChild(siteEditorRow(p));
 
-  var used = pointsUsed(p);
-  var allow = PLAN_POINTS[p.active_plan];
-  wrap.appendChild(el('p', 'cust-points' + (used > allow ? ' is-over' : ''), used + ' of ' + allow + ' points used this month'));
+  wrap.appendChild(el('p', 'cust-points',
+    openCountFor(p.id) + ' open request' + (openCountFor(p.id) === 1 ? '' : 's') + ' · ' + PLAN_QUEUE[p.active_plan]));
   wrap.appendChild(paymentsPanel(p));
 
   wrap.appendChild(el('h3', 'req-list-title', 'Features on your site'));
@@ -1610,7 +1587,7 @@ function renderPlansSection() {
       row.tabIndex = 0;
       row.setAttribute('role', 'button');
       row.appendChild(el('h3', null, ownerLabel(p)));
-      row.appendChild(el('p', 'cust-sub', pointsUsed(p) + ' of ' + PLAN_POINTS[key] + ' points used this month'));
+      row.appendChild(el('p', 'cust-sub', openCountFor(p.id) + ' open request' + (openCountFor(p.id) === 1 ? '' : 's')));
       function openCustomer() { selectedCustomerId = p.id; activeSection = 'customers'; render(); }
       row.addEventListener('click', openCustomer);
       row.addEventListener('keydown', function (e) { if (e.key === 'Enter') openCustomer(); });

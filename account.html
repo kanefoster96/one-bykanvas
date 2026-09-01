@@ -56,22 +56,10 @@
     </div>
   </section>
 
-  <!-- Points: what this month's plan covers, and what is left of it. -->
+  <!-- Requests: unlimited on every plan, worked through in priority order. -->
   <section class="panel points-panel" id="pointsPanel">
-    <h2 class="panel-title">Requests this month</h2>
-    <div class="points-row">
-      <p class="points-big"><span id="pointsLeft">0</span><span class="points-of" id="pointsOf">of 0 points</span></p>
-      <div class="points-side">
-        <div class="points-bar" id="pointsBar" hidden><i id="pointsFill"></i></div>
-        <p class="points-note" id="pointsNote"></p>
-      </div>
-    </div>
-
-    <!-- Only shown while active_plan hasn't landed yet - every real plan has
-         at least one point now, so allowance is never really zero. -->
-    <div class="points-upsell" id="pointsUpsell" hidden>
-      <p>Setting up your plan&rsquo;s points now &mdash; this will show what you have as soon as it&rsquo;s through.</p>
-    </div>
+    <h2 class="panel-title">Your requests</h2>
+    <p class="points-note" id="pointsNote"></p>
 
     <div class="req-launch" id="reqLaunch">
       <button class="btn btn-primary" id="reqEditBtn" type="button">Edit my site</button>
@@ -95,11 +83,11 @@
       <div class="req-kinds">
         <label class="req-kind">
           <input type="radio" name="kind" value="edit" checked>
-          <span><b>An edit</b><em>1 point &middot; £40</em><small>A photo, some wording, prices, hours</small></span>
+          <span><b>An edit</b><em>Included</em><small>A photo, some wording, prices, hours</small></span>
         </label>
         <label class="req-kind">
           <input type="radio" name="kind" value="feature">
-          <span><b>A new feature</b><em>3 points &middot; £120</em><small>Bookings, payments, a members area, a new page</small></span>
+          <span><b>A new feature</b><em>Included</em><small>Bookings, payments, a members area, a new page</small></span>
         </label>
       </div>
       <p class="hint">Sending this doesn&rsquo;t charge anything &mdash; we&rsquo;ll look it over and accept it first. Nothing is built, and nothing&rsquo;s taken from the card on file, until then.</p>
@@ -243,7 +231,7 @@
 <main class="acct-wrap" id="bizView" hidden>
   <button class="linkish" id="bizBack" type="button">&larr; Back to your account</button>
   <h1 class="biz-title">Your business</h1>
-  <p class="lede left">This is what your site says about you. Save a change here and we&rsquo;ll update your live site to match &mdash; no points, no charge.</p>
+  <p class="lede left">This is what your site says about you. Save a change here and we&rsquo;ll update your live site to match &mdash; free, always.</p>
 
   <form class="panel" id="bizForm" novalidate>
     <h2 class="panel-title">Logo</h2>
@@ -291,7 +279,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=2"></script>
-<script src="account.js?v=19"></script>
+<script src="account.js?v=20"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>
