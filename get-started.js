@@ -162,6 +162,75 @@
   }
 
   /* 2 — what the business does */
+  /* ---- the feature library -------------------------------------------
+   *
+   * Thirty of the most-asked-for things, simple and complex mixed together,
+   * so "name three features" becomes browsing instead of a blank page.
+   * Tapping a chip fills whichever box was last focused; typing in a box
+   * filters the list; a chip already used in another box drops out so the
+   * three answers stay different. Free typing always works.
+   */
+  var FEATURE_IDEAS = [
+    'Contact form', 'Opening hours', 'A menu I can edit myself',
+    'Online bookings', 'Table reservations', 'Online payments',
+    'Order ahead / click and collect', 'Price list', 'Photo gallery',
+    'Customer reviews on my site', 'Map and directions', 'Tap-to-call button',
+    'WhatsApp message button', 'Gift vouchers', 'Deposits to stop no-shows',
+    'Class or session timetable', 'Membership sign-ups', 'Customer log in area',
+    'Live chat', 'Job application form', 'Quote request form',
+    'Newsletter sign-up', 'My Instagram feed on the site', 'Before and after photos',
+    'FAQs section', 'Delivery or service area', 'Special offers banner',
+    'Loyalty stamps or rewards', 'Events calendar', 'Meet the team page'
+  ];
+
+  (function wireFeatureLibrary() {
+    var panel = $('useSuggest');
+    var chipBox = $('useChips');
+    if (!panel || !chipBox) return;
+
+    var inputs = ['use1', 'use2', 'use3'].map(function (id) { return $(id); });
+    var active = inputs[0];
+
+    function values() {
+      return inputs.map(function (i) { return i.value.trim().toLowerCase(); });
+    }
+
+    function paint() {
+      var filter = active.value.trim().toLowerCase();
+      var used = values();
+      chipBox.textContent = '';
+      FEATURE_IDEAS.forEach(function (idea) {
+        var low = idea.toLowerCase();
+        if (used.indexOf(low) !== -1) return;              // already picked
+        if (filter && low.indexOf(filter) === -1) return;  // typing narrows it
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'use-chip';
+        chip.textContent = idea;
+        /* pointerdown beats the input's blur, so the tap never lands on a
+           list that has just repainted under the finger. */
+        chip.addEventListener('pointerdown', function (e) { e.preventDefault(); });
+        chip.addEventListener('click', function () {
+          active.value = idea;
+          /* On to the next empty box, so three taps fills the step. */
+          var next = inputs.filter(function (i) { return !i.value.trim(); })[0];
+          if (next) { active = next; next.focus({ preventScroll: true }); }
+          paint();
+        });
+        chipBox.appendChild(chip);
+      });
+    }
+
+    inputs.forEach(function (input) {
+      input.addEventListener('focus', function () {
+        active = input;
+        panel.hidden = false;
+        paint();
+      });
+      input.addEventListener('input', function () { active = input; paint(); });
+    });
+  })();
+
   function step2() {
     var note = $('note2');
     var type = val('business_type');
