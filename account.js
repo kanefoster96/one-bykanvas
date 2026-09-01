@@ -1243,3 +1243,292 @@ document.getElementById('logout').addEventListener('click', async function () {
   location.href = '/login.html';
 });
 })();
+
+/* ---------------- notifications + live chat ----------------
+ *
+ * Ported from the Kanvas Academy design: one running conversation per
+ * customer, read straight from Supabase under row level security, with a
+ * Realtime subscription for live replies and a slow poll as the fallback.
+ * Notifications are rows the server writes when we do something - accept a
+ * request, finish one, change the site - and read state is one timestamp
+ * on the profile, so unread is simply "newer than when you last looked".
+ */
+(function () {
+  if (!window.ONE || !ONE.ready) return;
+
+  var userId = null;
+  var convo = null;          // this customer's chat_conversations row, or null
+  var chatOpen = false;
+  var pollTimer = null;
+  var renderedIds = {};      // message ids already in the DOM, so realtime + poll never double-paint
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function fmtWhen(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    var days = (Date.now() - d.getTime()) / 86400000;
+    if (days < 1) return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+
+  /* ------------------------------------------------------- notifications */
+
+  async function loadNotifications() {
+    var prof = await ONE.db.from('profiles')
+      .select('notifications_seen_at').eq('id', userId).maybeSingle();
+    var seenAt = prof.data && prof.data.notifications_seen_at
+      ? new Date(prof.data.notifications_seen_at) : new Date(0);
+
+    var q = await ONE.db.from('notifications')
+      .select('id, title, body, href, created_at')
+      .order('created_at', { ascending: false })
+      .limit(30);
+    if (q.error || !q.data || !q.data.length) return;
+
+    var panel = document.getElementById('notifPanel');
+    var list = document.getElementById('notifList');
+    var count = document.getElementById('notifCount');
+    var more = document.getElementById('notifMore');
+    if (!panel || !list) return;
+
+    var unread = 0;
+    var recent = q.data.slice(0, 6);
+    var older = q.data.slice(6);
+
+    function row(n) {
+      var li = el('li', 'notif-item' + (new Date(n.created_at) > seenAt ? ' is-unread' : ''));
+      var top = el('div', 'notif-top');
+      top.appendChild(el('p', 'notif-title', n.title));
+      top.appendChild(el('span', 'notif-when', fmtWhen(n.created_at)));
+      li.appendChild(top);
+      if (n.body) li.appendChild(el('p', 'notif-body', n.body));
+      /* Only links to our own pages or the customer's own site ever get in
+         here (the server writes them), but a bad row still should not become
+         a javascript: link. */
+      if (n.href && /^(\/|https:\/\/)/.test(n.href)) {
+        var a = el('a', null, 'Open →');
+        a.href = n.href;
+        li.appendChild(a);
+      }
+      return li;
+    }
+
+    list.textContent = '';
+    recent.forEach(function (n) {
+      if (new Date(n.created_at) > seenAt) unread++;
+      list.appendChild(row(n));
+    });
+    older.forEach(function (n) { if (new Date(n.created_at) > seenAt) unread++; });
+
+    if (older.length && more) {
+      more.hidden = false;
+      more.addEventListener('click', function () {
+        older.forEach(function (n) { list.appendChild(row(n)); });
+        more.hidden = true;
+      }, { once: true });
+    }
+
+    if (count) { count.textContent = String(unread); count.hidden = unread === 0; }
+    panel.hidden = false;
+
+    /* The highlights survive this render, then the clock moves: next visit
+       starts clean. Stamped after paint so a failed write costs nothing. */
+    if (unread > 0) {
+      ONE.db.from('profiles')
+        .update({ notifications_seen_at: new Date().toISOString() })
+        .eq('id', userId).then(function () {});
+    }
+  }
+
+  /* --------------------------------------------------------------- chat */
+
+  async function fetchConvo() {
+    var q = await ONE.db.from('chat_conversations')
+      .select('id, last_message_at, user_last_read_at')
+      .eq('user_id', userId).maybeSingle();
+    convo = q.data || null;
+    return convo;
+  }
+
+  async function ensureConvo() {
+    if (convo) return convo;
+    await fetchConvo();
+    if (convo) return convo;
+    var ins = await ONE.db.from('chat_conversations')
+      .insert({ user_id: userId }).select().single();
+    if (ins.error) {
+      /* Two tabs racing the first message: the unique(user_id) makes one
+         lose - refetch and carry on with the winner's row. */
+      await fetchConvo();
+      if (!convo) throw new Error(ONE.friendlyError(ins.error));
+      return convo;
+    }
+    convo = Array.isArray(ins.data) ? ins.data[0] : ins.data;
+    return convo;
+  }
+
+  function paintMessage(m) {
+    if (renderedIds[m.id]) return;
+    renderedIds[m.id] = true;
+    var scroll = document.getElementById('chatScroll');
+    var empty = document.getElementById('chatEmpty');
+    if (empty) empty.hidden = true;
+    var b = el('div', 'chat-msg ' + (m.sender === 'customer' ? 'from-me' : 'from-them'), m.body);
+    scroll.appendChild(b);
+    scroll.scrollTop = scroll.scrollHeight;
+  }
+
+  async function loadMessages() {
+    if (!convo) return;
+    var q = await ONE.db.from('chat_messages')
+      .select('id, sender, body, created_at')
+      .eq('conversation_id', convo.id)
+      .order('created_at', { ascending: true })
+      .limit(200);
+    if (!q.error && q.data) q.data.forEach(paintMessage);
+  }
+
+  async function markRead() {
+    if (!convo) return;
+    var dot = document.getElementById('chatFabDot');
+    if (dot) dot.hidden = true;
+    await ONE.db.from('chat_conversations')
+      .update({ user_last_read_at: new Date().toISOString() })
+      .eq('id', convo.id);
+  }
+
+  async function updateBadge() {
+    if (!convo) return;
+    var since = convo.user_last_read_at || '1970-01-01';
+    var q = await ONE.db.from('chat_messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('conversation_id', convo.id)
+      .eq('sender', 'admin')
+      .gt('created_at', since);
+    var dot = document.getElementById('chatFabDot');
+    if (dot) dot.hidden = !(Number.isFinite(q.count) && q.count > 0);
+  }
+
+  function subscribe() {
+    if (!convo || !ONE.db.channel) return;
+    try {
+      ONE.db.channel('chat-' + convo.id)
+        .on('postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'chat_messages',
+            filter: 'conversation_id=eq.' + convo.id },
+          function (payload) {
+            paintMessage(payload.new);
+            if (chatOpen) markRead();
+          })
+        .subscribe();
+    } catch (e) { /* the poll below covers a realtime that will not connect */ }
+  }
+
+  function startPoll() {
+    stopPoll();
+    pollTimer = setInterval(function () {
+      if (chatOpen) loadMessages().then(function () { markRead(); });
+    }, 8000);
+  }
+  function stopPoll() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
+
+  async function openChat() {
+    var panel = document.getElementById('chatPanel');
+    panel.hidden = false;
+    chatOpen = true;
+    document.getElementById('chatInput').focus({ preventScroll: true });
+    if (await fetchConvo()) {
+      await loadMessages();
+      await markRead();
+      subscribe();
+    }
+    startPoll();
+  }
+
+  function closeChat() {
+    document.getElementById('chatPanel').hidden = true;
+    chatOpen = false;
+    stopPoll();
+  }
+
+  async function sendMessage(body) {
+    await ensureConvo();
+    var ins = await ONE.db.from('chat_messages')
+      .insert({ conversation_id: convo.id, sender: 'customer', body: body })
+      .select().single();
+    if (ins.error) throw new Error(ONE.friendlyError(ins.error));
+    paintMessage(Array.isArray(ins.data) ? ins.data[0] : ins.data);
+    ONE.db.from('chat_conversations')
+      .update({ last_message_at: new Date().toISOString() })
+      .eq('id', convo.id).then(function () {});
+
+    /* Ask the server to email us - it throttles to one email per half hour
+       per conversation, and a failure here loses only the nudge. */
+    try {
+      var sess = await ONE.db.auth.getSession();
+      var token = sess.data && sess.data.session && sess.data.session.access_token;
+      if (token) fetch('/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ action: 'chatNudge' })
+      });
+    } catch (e) {}
+  }
+
+  function wireChat() {
+    var fab = document.getElementById('chatFab');
+    var form = document.getElementById('chatForm');
+    var input = document.getElementById('chatInput');
+    if (!fab || !form) return;
+
+    fab.hidden = false;
+    fab.addEventListener('click', function () {
+      (document.getElementById('chatPanel').hidden ? openChat : closeChat)();
+    });
+    document.getElementById('chatClose').addEventListener('click', closeChat);
+
+    input.addEventListener('input', function () {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 110) + 'px';
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        form.dispatchEvent(new Event('submit', { cancelable: true }));
+      }
+    });
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var body = input.value.trim();
+      if (!body) return;
+      var btn = document.getElementById('chatSend');
+      btn.disabled = true;
+      try {
+        await sendMessage(body);
+        input.value = '';
+        input.style.height = 'auto';
+      } catch (err) {
+        alert(err.message || 'Could not send that. Try again.');
+      } finally {
+        btn.disabled = false;
+        input.focus({ preventScroll: true });
+      }
+    });
+  }
+
+  ONE.db.auth.getSession().then(function (res) {
+    var session = res.data && res.data.session;
+    if (!session) return;             // the page guard is already redirecting
+    userId = session.user.id;
+    wireChat();
+    loadNotifications();
+    fetchConvo().then(function () { updateBadge(); });
+  });
+})();

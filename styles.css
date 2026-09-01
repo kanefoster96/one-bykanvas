@@ -1782,3 +1782,96 @@ a.hero-pill:hover .pill-go{opacity:1}
 @media (prefers-reduced-motion:reduce){
   .typebox-text::after{animation:none}
 }
+
+/* ---------- Notifications (account) ---------- */
+.notif-count{
+  display:inline-grid;place-items:center;min-width:22px;height:22px;
+  margin-left:8px;padding:0 6px;border-radius:999px;
+  background:#1a7f37;color:#fff;font-size:12.5px;font-weight:700;
+  vertical-align:2px;
+}
+.notif-list{list-style:none;margin:0;padding:0}
+.notif-item{
+  display:flex;flex-direction:column;gap:2px;
+  padding:12px 2px;border-bottom:1px solid #eee;
+}
+.notif-item:last-child{border-bottom:0}
+.notif-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.notif-title{font-weight:600;font-size:15px}
+.notif-item.is-unread .notif-title::before{
+  content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:#1a7f37;margin-right:8px;vertical-align:2px;
+}
+.notif-when{font-size:12.5px;color:#86868b;white-space:nowrap}
+.notif-body{font-size:14px;color:#515154;margin:0}
+.notif-item a{font-size:13.5px;font-weight:600;color:inherit}
+
+/* ---------- Chat (account) ---------- */
+.chat-fab{
+  position:fixed;right:18px;bottom:18px;z-index:60;
+  width:54px;height:54px;border-radius:50%;border:0;cursor:pointer;
+  background:#1d1d1f;color:#fff;display:grid;place-items:center;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+.chat-fab svg{width:24px;height:24px}
+.chat-fab-dot{
+  position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;
+  background:#1a7f37;border:2.5px solid #fff;
+}
+.chat-panel{
+  position:fixed;right:14px;bottom:84px;z-index:61;
+  width:min(370px,calc(100vw - 28px));height:min(480px,calc(100vh - 120px));
+  display:flex;flex-direction:column;background:#fff;border-radius:18px;
+  border:1px solid #e5e5ea;box-shadow:0 24px 60px rgba(0,0,0,.22);
+  overflow:hidden;
+}
+.chat-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  padding:14px 16px;border-bottom:1px solid #eee;background:#fafafa;
+}
+.chat-title{font-weight:700;font-size:15.5px;margin:0}
+.chat-sub{font-size:12.5px;color:#86868b;margin:2px 0 0}
+.chat-close{
+  border:0;background:none;font-size:26px;line-height:1;color:#86868b;
+  cursor:pointer;padding:0 2px;
+}
+.chat-scroll{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:8px}
+.chat-empty{font-size:13.5px;color:#86868b;text-align:center;margin:auto 12px}
+.chat-msg{
+  max-width:82%;padding:9px 13px;border-radius:16px;
+  font-size:14.5px;line-height:1.45;white-space:pre-wrap;word-break:break-word;
+}
+.chat-msg.from-me{align-self:flex-end;background:#1d1d1f;color:#fff;border-bottom-right-radius:5px}
+.chat-msg.from-them{align-self:flex-start;background:#f2f2f5;color:#1d1d1f;border-bottom-left-radius:5px}
+.chat-day{align-self:center;font-size:11.5px;color:#a6a6ab;margin:6px 0 2px}
+.chat-form{
+  display:flex;align-items:flex-end;gap:8px;
+  padding:10px 12px;border-top:1px solid #eee;background:#fff;
+}
+.chat-form textarea{
+  flex:1;resize:none;border:1.5px solid #e3e3e8;border-radius:14px;
+  padding:9px 12px;font:inherit;font-size:14.5px;max-height:110px;
+}
+.chat-send{
+  flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:0;cursor:pointer;
+  background:#1d1d1f;color:#fff;display:grid;place-items:center;
+}
+.chat-send svg{width:16px;height:16px}
+.chat-send[disabled]{opacity:.5}
+
+/* ---------- Messages (admin) ---------- */
+.msg-row{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:13px 4px;border-bottom:1px solid #eee;cursor:pointer;
+}
+.msg-row-main{min-width:0}
+.msg-row-who{font-weight:600;margin:0}
+.msg-row-last{font-size:13.5px;color:#86868b;margin:2px 0 0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}
+.msg-row-when{font-size:12.5px;color:#86868b;white-space:nowrap}
+.msg-unread-dot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:#1a7f37;margin-right:8px;
+}
+.msg-thread{display:flex;flex-direction:column;gap:8px;margin:14px 0;
+  max-height:52vh;overflow-y:auto;padding:4px 2px}

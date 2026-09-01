@@ -82,6 +82,47 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
+    /* A customer just sent a chat message and is asking the server to let
+       the admin know. Lives here for the same reason clearAttachments does:
+       the function cap. The message itself went straight to Supabase under
+       row level security - this only sends the email, and only when the
+       admin has not already been emailed about this conversation in the
+       last half hour, so a burst of messages is one email, not forty. */
+    if (body.action === 'chatNudge') {
+      const { data: convo, error: cErr } = await db.from('chat_conversations')
+        .select('id, admin_notified_at, last_message_at')
+        .eq('user_id', user.id).maybeSingle();
+      if (cErr) throw new Error(cErr.message);
+      if (!convo) return res.status(404).json({ error: 'No conversation yet.' });
+
+      const last = convo.admin_notified_at ? new Date(convo.admin_notified_at).getTime() : 0;
+      if (Date.now() - last < 30 * 60 * 1000) {
+        return res.status(200).json({ ok: true, emailed: false });
+      }
+
+      /* Stamp first: two tabs racing both send at worst one email each,
+         and a failed send after the stamp costs one nudge, not a loop. */
+      const { error: stampErr } = await db.from('chat_conversations')
+        .update({ admin_notified_at: new Date().toISOString() }).eq('id', convo.id);
+      if (stampErr) throw new Error(stampErr.message);
+
+      const { data: prof } = await db.from('profiles')
+        .select('business_name').eq('id', user.id).maybeSingle();
+      const who = (prof && prof.business_name) || user.email || 'A customer';
+
+      const sent = await sendEmail({
+        to: adminAddresses(),
+        subject: `New chat message from ${who}`.replace(/[\r\n]+/g, ' '),
+        text: `${who} sent you a message in chat.\n\n`
+            + `Read and reply from admin: ${ourSiteUrl()}/admin.html\n\n`
+            + `You won't be emailed again about this conversation for 30 minutes, `
+            + `however many messages arrive.`,
+        replyTo: user.email
+      });
+      console.log('requests: chat nudge email', sent);
+      return res.status(200).json({ ok: true, emailed: true });
+    }
+
     const kind = String(body.kind || '').toLowerCase();
     const detail = String(body.detail || '').trim();
 

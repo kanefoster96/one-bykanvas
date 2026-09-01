@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=24">
+<link rel="stylesheet" href="styles.css?v=25">
 </head>
 <body class="auth-body">
 
@@ -49,6 +49,12 @@
 
   <!-- People who asked for something and have no account yet: the free-example
        queue, and enquiries from the homepage form. -->
+  <section class="panel" id="sectionMessages" hidden>
+    <h2 class="panel-title">Messages</h2>
+    <p class="hint">Live chat with customers. They message from their account page; replies land there instantly.</p>
+    <div id="messagesBody"></div>
+  </section>
+
   <section class="panel" id="sectionEnquiries" hidden>
     <h2 class="panel-title">Enquiries</h2>
     <div id="enquiriesBody"></div>
@@ -152,7 +158,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=2"></script>
-<script src="admin.js?v=22"></script>
+<script src="admin.js?v=23"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>
 </html>
