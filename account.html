@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=33">
+<link rel="stylesheet" href="styles.css?v=34">
 </head>
 <body class="auth-body">
 
@@ -62,53 +62,41 @@
     </div>
   </section>
 
-  <!-- Requests: unlimited on every plan, worked through in priority order. -->
+  <!-- The site's features, live and on the way, with the two request
+       toggles underneath. No sales copy: the pills say what exists, the
+       buttons say what can happen next. Each button expands its own form
+       below and folds it away again when tapped a second time. -->
   <section class="panel points-panel" id="pointsPanel">
-    <h2 class="panel-title">Your requests</h2>
-    <p class="points-note" id="pointsNote"></p>
+    <h2 class="panel-title">Features on your site</h2>
+
+    <ul class="feature-list" id="featureList" hidden></ul>
 
     <div class="req-launch" id="reqLaunch">
-      <button class="btn btn-primary" id="reqEditBtn" type="button">Edit my site</button>
-      <button class="btn btn-ghost" id="reqFeatureBtn" type="button">Add a feature</button>
-    </div>
-
-    <!-- Pick something done before, or write it from scratch. -->
-    <div class="req-picker" id="reqPicker" hidden>
-      <div class="req-tpl-group" id="tplGroupEdit" hidden>
-        <h3 class="req-list-title">Edits</h3>
-        <div class="req-tpl-list" id="tplListEdit"></div>
-      </div>
-      <div class="req-tpl-group" id="tplGroupFeature" hidden>
-        <h3 class="req-list-title">Features</h3>
-        <div class="req-tpl-list" id="tplListFeature"></div>
-      </div>
-      <button class="linkish" id="tplSomethingElse" type="button">Something else</button>
+      <button class="btn btn-ghost req-toggle" id="reqEditBtn" type="button" aria-expanded="false">Edit my site</button>
+      <button class="btn btn-ghost req-toggle" id="reqFeatureBtn" type="button" aria-expanded="false">Add a feature</button>
     </div>
 
     <form class="req-form" id="reqForm" novalidate hidden>
-      <div class="req-kinds">
-        <label class="req-kind">
-          <input type="radio" name="kind" value="edit" checked>
-          <span><b>An edit</b><em>Included</em><small>A photo, some wording, prices, hours</small></span>
-        </label>
-        <label class="req-kind">
-          <input type="radio" name="kind" value="feature">
-          <span><b>A new feature</b><em>Included</em><small>Bookings, payments, a members area, a new page</small></span>
-        </label>
-      </div>
-      <p class="hint">Sending this doesn&rsquo;t charge anything &mdash; we&rsquo;ll look it over and accept it first. Nothing is built, and nothing&rsquo;s taken from the card on file, until then.</p>
       <p class="req-price" id="reqPrice"></p>
+
+      <!-- Saved templates for whichever kind is open; the idea library
+           joins them when the feature toggle is the open one. -->
+      <div class="req-tpl-group" id="tplGroupEdit" hidden>
+        <h3 class="req-list-title">Edits we&rsquo;ve done before</h3>
+        <div class="req-tpl-list" id="tplListEdit"></div>
+      </div>
+      <div class="req-tpl-group" id="tplGroupFeature" hidden>
+        <h3 class="req-list-title">Features we can add</h3>
+        <div class="req-tpl-list" id="tplListFeature"></div>
+      </div>
+      <div class="use-suggest" id="reqSuggest" hidden>
+        <p class="use-suggest-title">Popular features &mdash; tap to pick, or write your own</p>
+        <div class="use-chips" id="reqChips"></div>
+      </div>
+
       <div class="field full">
         <label for="reqDetail">What would you like?</label>
         <textarea id="reqDetail" rows="4" maxlength="4000" placeholder="Swap the photo on the homepage for the new shopfront one…"></textarea>
-        <p class="hint">Picked one of ours? Add anything specific to your business underneath &mdash; times, prices, wording, whatever matters.</p>
-      </div>
-
-      <!-- The same idea library as the signup form, in case something got
-           missed back then. Tapping a chip drops it into the box above. -->
-      <div class="use-suggest" id="reqSuggest" hidden>
-        <p class="use-suggest-title">Popular features &mdash; tap to add</p>
-        <div class="use-chips" id="reqChips"></div>
       </div>
       <div class="field full">
         <label for="reqFiles">Screenshots (optional)</label>
@@ -120,19 +108,13 @@
         <button class="btn btn-primary" id="reqBtn" type="submit">Send request</button>
         <p class="note" id="reqNote" role="status" aria-live="polite"></p>
       </div>
+      <p class="hint">Sending this doesn&rsquo;t charge anything &mdash; we look it over and accept it first.</p>
     </form>
 
     <div class="req-list" id="reqList" hidden>
       <h3 class="req-list-title">Edits in progress</h3>
       <ul id="reqItemsEdit"></ul>
     </div>
-  </section>
-
-  <!-- What the site can do, and what is on the way. One pill per feature,
-       whether it is already live or still being built. -->
-  <section class="panel" id="featuresPanel" hidden>
-    <h2 class="panel-title">Features on your site</h2>
-    <ul class="feature-list" id="featureList"></ul>
   </section>
 
   <!-- Email marketing: Pro and Max only. Their own customer list, and a
@@ -358,7 +340,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=2"></script>
 <script src="feature-ideas.js?v=1"></script>
-<script src="account.js?v=27"></script>
+<script src="account.js?v=28"></script>
 <script src="admin-pill.js?v=6"></script>
 </body>
 </html>

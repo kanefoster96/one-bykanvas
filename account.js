@@ -491,7 +491,6 @@ var FEATURE_NEW_DAYS = 30;
    Deliberately no prices or screenshots here: this is what the site has, not
    what it cost. */
 async function showFeatures() {
-  var panel = document.getElementById('featuresPanel');
   var list = document.getElementById('featureList');
 
   var q = await ONE.db.from('site_features').select('id, name, updated_at').order('updated_at', { ascending: false });
@@ -501,7 +500,7 @@ async function showFeatures() {
     return r.kind === 'feature' && r.status !== 'done' && r.status !== 'declined';
   });
 
-  if (!live.length && !pending.length) { panel.hidden = true; return; }
+  if (!live.length && !pending.length) { list.hidden = true; return; }
 
   function row(name, label, cls) {
     var li = document.createElement('li');
@@ -523,7 +522,7 @@ async function showFeatures() {
       && (Date.now() - new Date(f.updated_at).getTime()) <= FEATURE_NEW_DAYS * 24 * 60 * 60 * 1000;
     list.appendChild(row(f.name, fresh ? 'New' : 'Live', fresh ? 'is-new' : 'is-live'));
   });
-  panel.hidden = false;
+  list.hidden = false;
 }
 
 /* Start of the current billing period. Points reset with the invoice, not the
@@ -573,16 +572,8 @@ async function showPoints(row) {
   pointsState = { plan: plan };
   recentRequests = recent;
 
-  /* No allowance to count any more: every plan includes unlimited requests,
-     and what the plan buys is a place in the queue. Say that, plainly. */
-  var QUEUE_LINE = {
-    business: 'Ask for as many edits and new features as you like \u2014 they\u2019re included. We work through requests one at a time, in turn.',
-    pro: 'Ask for as many edits and new features as you like \u2014 they\u2019re included. On Pro, your requests go ahead of the Business queue.',
-    max: 'Ask for as many edits and new features as you like \u2014 they\u2019re included. On Max, your requests go first.'
-  };
-  document.getElementById('pointsNote').textContent =
-    QUEUE_LINE[plan] || QUEUE_LINE.business;
-
+  /* No blurb about how much they can ask for - the feature pills above the
+     buttons say what the site has, and that is the whole pitch. */
   updatePricePreview();
   renderRequests(recent);
 }
@@ -948,10 +939,10 @@ function renderPicker() {
   groups.forEach(function (g) {
     var items = templates.filter(function (t) { return t.kind === g.kind; });
     g.list.textContent = '';
-    if (!items.length) { g.group.hidden = true; return; }
     items.forEach(function (t) { g.list.appendChild(templateRow(t)); });
-    g.group.hidden = false;
   });
+  // Visibility follows whichever toggle is open, not just what exists.
+  syncTplGroups();
 }
 
 /* One row per saved feature, opening to show what it actually does before
@@ -1007,36 +998,27 @@ function templateRow(t) {
 
 /* Their own words go on top of ours: the description explains the feature,
    and the blank line under it is where they say what they want for their
-   own site. */
+   own site. Templates only show inside their own kind's open form, so the
+   kind is already right - this just fills the box. */
 function pickTemplate(t) {
-  var radio = document.querySelector('input[name="kind"][value="' + t.kind + '"]');
-  if (radio) radio.checked = true;
   var detail = document.getElementById('reqDetail');
   detail.value = t.description ? t.name + ' — ' + t.description + '\n\n' : t.name + '\n\n';
-  openForm();
+  detail.focus();
   // Land the cursor at the end, ready for their own notes.
   detail.setSelectionRange(detail.value.length, detail.value.length);
 }
 
-function openForm() {
-  document.getElementById('reqLaunch').hidden = true;
-  document.getElementById('reqPicker').hidden = true;
-  document.getElementById('reqForm').hidden = false;
-  updatePricePreview();
-  paintReqIdeas();
-  document.getElementById('reqDetail').focus();
-}
-
-/* The same thirty ideas as the signup wizard, under the request box - in
-   case something got missed back then. A tap drops the idea into the box:
-   as the whole request when the box is empty (flipping the kind to
-   feature), on its own line under whatever's written otherwise. Ideas
-   already mentioned in the text stay out of the list. */
+/* The same thirty ideas as the signup wizard, shown only when the feature
+   toggle is the open one - an edit is about what's already there. A tap
+   drops the idea into the box: as the whole request when the box is empty,
+   on its own line under whatever's written otherwise. Ideas already
+   mentioned in the text stay out of the list. */
 function paintReqIdeas() {
   var panel = document.getElementById('reqSuggest');
   var box = document.getElementById('reqChips');
   var ideas = window.FEATURE_IDEAS || [];
   if (!panel || !box || !ideas.length) return;
+  if (reqKind !== 'feature') { panel.hidden = true; return; }
   var detail = document.getElementById('reqDetail');
   var have = detail.value.toLowerCase();
   box.textContent = '';
@@ -1049,10 +1031,6 @@ function paintReqIdeas() {
     chip.addEventListener('click', function () {
       var empty = !detail.value.trim();
       detail.value = empty ? idea + '\n\n' : detail.value.replace(/\s*$/, '\n') + idea + '\n';
-      if (empty) {
-        var radio = document.querySelector('input[name="kind"][value="feature"]');
-        if (radio) { radio.checked = true; updatePricePreview(); }
-      }
       detail.focus();
       detail.setSelectionRange(detail.value.length, detail.value.length);
       paintReqIdeas();
@@ -1064,39 +1042,53 @@ function paintReqIdeas() {
 
 document.getElementById('reqDetail').addEventListener('input', paintReqIdeas);
 
-/* Two doors into the same form, each pre-picking its kind - "edit my site"
-   and "add a feature" are how a customer thinks about it, where a single
-   generic button made them choose the vocabulary first. */
-function openPicker(kind) {
-  var radio = document.querySelector('input[name="kind"][value="' + kind + '"]');
-  if (radio) radio.checked = true;
-  document.getElementById('reqLaunch').hidden = true;
-  document.getElementById('reqPicker').hidden = false;
-  // Only the templates of that kind are worth showing now.
-  document.getElementById('tplGroupEdit').hidden = kind !== 'edit' || !templates.some(function (t) { return t.kind === 'edit'; });
-  document.getElementById('tplGroupFeature').hidden = kind !== 'feature' || !templates.some(function (t) { return t.kind === 'feature'; });
+/* The two buttons are toggles, not doors: tap one and its form expands
+   right below with the templates for that kind (plus the idea library for
+   features); tap it again and it folds away. Tapping the other button
+   switches kinds without losing anything already typed. */
+var reqKind = 'edit';
+
+function toggleReq(kind) {
+  var form = document.getElementById('reqForm');
+  var btns = { edit: document.getElementById('reqEditBtn'), feature: document.getElementById('reqFeatureBtn') };
+
+  if (!form.hidden && reqKind === kind) {
+    form.hidden = true;
+    ['edit', 'feature'].forEach(function (k) {
+      btns[k].classList.remove('is-on');
+      btns[k].setAttribute('aria-expanded', 'false');
+    });
+    return;
+  }
+
+  reqKind = kind;
+  ['edit', 'feature'].forEach(function (k) {
+    btns[k].classList.toggle('is-on', k === kind);
+    btns[k].setAttribute('aria-expanded', String(k === kind));
+  });
+  syncTplGroups();
+  paintReqIdeas();
   updatePricePreview();
+  form.hidden = false;
 }
 
-document.getElementById('reqEditBtn').addEventListener('click', function () { openPicker('edit'); });
-document.getElementById('reqFeatureBtn').addEventListener('click', function () { openPicker('feature'); });
+/* Only the open kind's saved templates are worth showing. */
+function syncTplGroups() {
+  [['edit', 'tplGroupEdit'], ['feature', 'tplGroupFeature']].forEach(function (pair) {
+    var has = templates.some(function (t) { return t.kind === pair[0]; });
+    document.getElementById(pair[1]).hidden = reqKind !== pair[0] || !has;
+  });
+}
 
-document.getElementById('tplSomethingElse').addEventListener('click', function () {
-  document.getElementById('reqDetail').value = '';
-  openForm();
-});
-
-document.querySelectorAll('input[name="kind"]').forEach(function (r) {
-  r.addEventListener('change', updatePricePreview);
-});
+document.getElementById('reqEditBtn').addEventListener('click', function () { toggleReq('edit'); });
+document.getElementById('reqFeatureBtn').addEventListener('click', function () { toggleReq('feature'); });
 
 /* Nothing to price any more - requests are included on every plan - so this
    line's job is now expectation, not cost: what happens after Send. */
 function updatePricePreview() {
   var el = document.getElementById('reqPrice');
   if (!el) return;
-  var kind = (document.querySelector('input[name="kind"]:checked') || {}).value || 'edit';
-  el.textContent = kind === 'feature'
+  el.textContent = reqKind === 'feature'
     ? 'Included in your plan. New features take longer than edits \u2014 we\u2019ll pick it up in your plan\u2019s turn and let you know when it\u2019s being built.'
     : 'Included in your plan. We\u2019ll pick it up in your plan\u2019s turn \u2014 most edits are done quickly.';
   el.className = 'req-price';
@@ -1146,7 +1138,7 @@ document.getElementById('reqForm').addEventListener('submit', async function (e)
   var note = document.getElementById('reqNote');
   var btn  = document.getElementById('reqBtn');
   var detail = document.getElementById('reqDetail').value.trim();
-  var kind = (document.querySelector('input[name="kind"]:checked') || {}).value || 'edit';
+  var kind = reqKind;
 
   if (!detail) { say(note, 'Tell us what you would like changed.', 'bad'); return; }
 
