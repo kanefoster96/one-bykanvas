@@ -1901,3 +1901,12 @@ a.hero-pill:hover .pill-go{opacity:1}
 .mk-when{flex:none;color:#6e6e73;font-size:12.5px}
 .mk-compose{margin-top:8px}
 .mk-history{margin-top:20px}
+
+/* ---------- Request toggles (account page) ---------- */
+#pointsPanel .feature-list{margin:0 0 16px}
+.req-toggle.is-on{background:#1d1d1f;color:#fff;border-color:#1d1d1f}
+.req-form{animation:req-open .28s ease}
+@keyframes req-open{
+  from{opacity:0;transform:translateY(-6px)}
+  to{opacity:1;transform:none}
+}
