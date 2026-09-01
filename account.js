@@ -1336,6 +1336,8 @@ document.getElementById('logout').addEventListener('click', async function () {
 
     if (count) { count.textContent = String(unread); count.hidden = unread === 0; }
     panel.hidden = false;
+    var bellCount = document.getElementById('navBellCount');
+    if (bellCount) { bellCount.textContent = String(unread); bellCount.hidden = unread === 0; }
 
     /* The highlights survive this render, then the clock moves: next visit
        starts clean. Stamped after paint so a failed write costs nothing. */
@@ -1398,6 +1400,8 @@ document.getElementById('logout').addEventListener('click', async function () {
     if (!convo) return;
     var dot = document.getElementById('chatFabDot');
     if (dot) dot.hidden = true;
+    var navDot = document.getElementById('navChatDot');
+    if (navDot) navDot.hidden = true;
     await ONE.db.from('chat_conversations')
       .update({ user_last_read_at: new Date().toISOString() })
       .eq('id', convo.id);
@@ -1411,8 +1415,11 @@ document.getElementById('logout').addEventListener('click', async function () {
       .eq('conversation_id', convo.id)
       .eq('sender', 'admin')
       .gt('created_at', since);
+    var unseen = Number.isFinite(q.count) && q.count > 0;
     var dot = document.getElementById('chatFabDot');
-    if (dot) dot.hidden = !(Number.isFinite(q.count) && q.count > 0);
+    if (dot) dot.hidden = !unseen;
+    var navDot = document.getElementById('navChatDot');
+    if (navDot) navDot.hidden = !unseen;
   }
 
   function subscribe() {
@@ -1488,10 +1495,34 @@ document.getElementById('logout').addEventListener('click', async function () {
     if (!fab || !form) return;
 
     fab.hidden = false;
-    fab.addEventListener('click', function () {
+    function toggleChat() {
       (document.getElementById('chatPanel').hidden ? openChat : closeChat)();
-    });
+    }
+    fab.addEventListener('click', toggleChat);
     document.getElementById('chatClose').addEventListener('click', closeChat);
+
+    var navChat = document.getElementById('navChat');
+    if (navChat) { navChat.hidden = false; navChat.addEventListener('click', toggleChat); }
+
+    /* The bell takes them to What's-new; with nothing there yet it says so
+       instead of silently doing nothing. */
+    var bell = document.getElementById('navBell');
+    if (bell) {
+      bell.hidden = false;
+      bell.addEventListener('click', function () {
+        var panel = document.getElementById('notifPanel');
+        if (panel && !panel.hidden) {
+          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+        var tip = el('div', 'nav-quiet', 'Nothing new yet — we\u2019ll pop things here as they happen.');
+        var at = bell.getBoundingClientRect();
+        tip.style.top = (at.bottom + 8) + 'px';
+        tip.style.right = Math.max(10, window.innerWidth - at.right) + 'px';
+        document.body.appendChild(tip);
+        setTimeout(function () { tip.remove(); }, 2600);
+      });
+    }
 
     input.addEventListener('input', function () {
       input.style.height = 'auto';
