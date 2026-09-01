@@ -1750,3 +1750,35 @@ a.hero-pill:hover .pill-go{opacity:1}
 @media (max-width:640px){
   .rv-grid,.grid-3,.nots{grid-template-columns:1fr}
 }
+
+/* ---------- Typed request demo (homepage showcase) ----------
+   Shaped like the request box a customer will actually use, so the
+   animation is a preview of the product, not just decoration. */
+.typebox{
+  display:flex;align-items:center;gap:12px;
+  width:min(430px,calc(100% - 8px));margin:26px auto 0;
+  padding:13px 13px 13px 22px;
+  background:#fff;border:1.5px solid #e3e3e8;border-radius:999px;
+  box-shadow:0 12px 32px rgba(17,17,17,.07);
+  text-align:left;
+}
+.typebox-text{
+  flex:1;min-width:0;overflow:hidden;white-space:nowrap;
+  font-size:16px;color:#1d1d1f;line-height:1.4;
+}
+/* The caret rides the end of the text, so it needs no layout of its own. */
+.typebox-text::after{
+  content:"";display:inline-block;width:2px;height:1.05em;
+  margin-left:3px;vertical-align:-0.15em;border-radius:1px;
+  background:#1d1d1f;animation:tb-blink 1.06s steps(1,end) infinite;
+}
+.typebox-send{
+  flex:0 0 auto;display:grid;place-items:center;
+  width:38px;height:38px;border-radius:50%;
+  background:#1d1d1f;color:#fff;
+}
+.typebox-send svg{width:17px;height:17px}
+@keyframes tb-blink{0%,55%{opacity:1}56%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .typebox-text::after{animation:none}
+}

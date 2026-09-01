@@ -144,6 +144,68 @@
 
   startMarquee();
 
+  /* ---------- Typed request demo ---------- */
+  // Types example requests into the pill under "If you need it, we'll build
+  // it", holds each one, deletes it and types the next - a preview of how
+  // asking actually works. Decorative (the box is aria-hidden), paused while
+  // off screen, and reduced motion gets the first request standing still.
+  var typeEl = document.getElementById('typeDemo');
+  if (typeEl) (function () {
+    var LINES = [
+      'build a live food menu',
+      'add a log in for customers',
+      'set up online payments',
+      'add a live chat feature'
+    ];
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      typeEl.textContent = LINES[0];
+      return;
+    }
+
+    var line = 0, chars = 0, deleting = false;
+    var visible = true, timer = null;
+
+    function step() {
+      var text = LINES[line];
+      var delay;
+
+      if (!deleting) {
+        chars++;
+        typeEl.textContent = text.slice(0, chars);
+        if (chars === text.length) {
+          deleting = true;
+          delay = 1400;                              // read it
+        } else {
+          delay = 46 + Math.random() * 54;           // human-ish typing
+        }
+      } else {
+        chars--;
+        typeEl.textContent = text.slice(0, chars);
+        if (chars === 0) {
+          deleting = false;
+          line = (line + 1) % LINES.length;
+          delay = 480;                               // breath before the next
+        } else {
+          delay = 26;                                // deleting is quick
+        }
+      }
+
+      timer = setTimeout(function () { if (visible) step(); else timer = null; }, delay);
+    }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+        if (visible && timer === null) step();
+        // timer !== null: the pending tick sees visible and carries on.
+      }, { threshold: 0.1 }).observe(typeEl.parentElement);
+      timer = setTimeout(function () { if (visible) step(); else timer = null; }, 600);
+    } else {
+      step();
+    }
+  })();
+
   /* ---------- Review rail ---------- */
   var rail = document.getElementById('rail');
   if (rail) document.querySelectorAll('.rail-btn').forEach(function (btn) {
@@ -215,7 +277,6 @@
           email: document.getElementById('email').value.trim(),
           plan: pickedPlan,
           about: document.getElementById('about').value.trim(),
-          wantApp: document.getElementById('wantapp').checked,
           website: (document.getElementById('lead_extra') || {}).value || '',
           elapsed: Date.now() - formShownAt
         })
