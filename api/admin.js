@@ -681,6 +681,58 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    /* ---- clearing a plan Stripe knows nothing about --------------------
+     *
+     * A profile can claim a plan live-mode Stripe has never heard of: a
+     * test-mode signup, a hand-edited row, a webhook that wrote and was
+     * never followed. That account is stuck - nothing to cancel, and the
+     * claimed status blocks deletion. This clears the claim, but only
+     * after asking Stripe: if the subscription is genuinely live it
+     * refuses and points at the cancel flow instead.
+     */
+    if (action === 'clearLocalPlan') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+
+      const { data: who, error: whoErr } = await db
+        .from('profiles').select('stripe_subscription_id, subscription_status, active_plan, business_name')
+        .eq('id', userId).maybeSingle();
+      if (whoErr) throw new Error(whoErr.message);
+      if (!who) return res.status(404).json({ error: 'No such customer.' });
+
+      if (who.stripe_subscription_id) {
+        const { STRIPE_SECRET_KEY } = process.env;
+        if (STRIPE_SECRET_KEY) {
+          try {
+            const sub = await new Stripe(STRIPE_SECRET_KEY)
+              .subscriptions.retrieve(who.stripe_subscription_id);
+            if (['active', 'trialing', 'past_due', 'unpaid'].includes(sub.status)) {
+              return res.status(400).json({
+                error: 'Stripe says this subscription is live (' + sub.status + ') - end the membership instead of clearing it.'
+              });
+            }
+          } catch (e) {
+            /* Forgotten by Stripe is exactly the case this exists for - but
+               only when Stripe says so. A lookup that merely failed could
+               be hiding a live subscription, so it refuses rather than
+               clearing on a guess. */
+            console.log('admin: clearLocalPlan, Stripe lookup:', e && e.message);
+            if (!e || (e.code !== 'resource_missing' && e.statusCode !== 404)) {
+              return res.status(502).json({ error: 'Could not reach Stripe to check - try again in a moment.' });
+            }
+          }
+        }
+      }
+
+      const { error } = await db.from('profiles').update({
+        subscription_status: 'canceled', active_plan: null, stripe_subscription_id: null
+      }).eq('id', userId);
+      if (error) throw new Error(error.message);
+
+      console.log('admin: cleared dead plan for %s (%s)', userId, who.business_name || 'no name');
+      return res.status(200).json({ ok: true });
+    }
+
     /* ---- deleting a contact -------------------------------------------
      *
      * Deletes the auth user; the profile, their requests and their features go
@@ -706,12 +758,15 @@ module.exports = async function handler(req, res) {
          not know the customer is gone and keeps taking the money, with nobody
          left to email about it. End the plan first, deliberately.
 
-         Asked of Stripe when there is a subscription to ask about, because the
-         mirrored column is the one this file elsewhere refuses to trust: a
-         webhook that never landed leaves it saying canceled while the billing
-         runs on, and this is the one place that mistake cannot be undone. */
+         Stripe's answer wins in BOTH directions. The mirrored column lies
+         both ways: a webhook that never landed leaves it saying canceled
+         while the billing runs on, and a test-mode or hand-edited profile
+         says active for a subscription live-mode Stripe has never heard of -
+         which used to make the account undeletable with nothing to cancel.
+         A profile with no subscription id at all has nothing Stripe could
+         be billing, whatever its status claims. */
       let live = who && ['active', 'trialing', 'past_due', 'unpaid'].includes(who.subscription_status);
-      if (who && who.stripe_subscription_id && !live) {
+      if (who && who.stripe_subscription_id) {
         const { STRIPE_SECRET_KEY } = process.env;
         if (STRIPE_SECRET_KEY) {
           try {
@@ -719,8 +774,12 @@ module.exports = async function handler(req, res) {
               .subscriptions.retrieve(who.stripe_subscription_id);
             live = ['active', 'trialing', 'past_due', 'unpaid'].includes(sub.status);
           } catch (e) {
-            /* A subscription Stripe has genuinely forgotten is not live. */
+            /* Only a subscription Stripe CONFIRMS it does not have counts as
+               dead - a lookup that merely failed (outage, bad key) keeps the
+               mirrored answer, because guessing wrong here deletes someone
+               who is still being billed. */
             console.log('admin: delete pre-check, Stripe lookup:', e && e.message);
+            if (e && (e.code === 'resource_missing' || e.statusCode === 404)) live = false;
           }
         }
       }
