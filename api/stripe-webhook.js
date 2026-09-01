@@ -228,14 +228,18 @@ module.exports = async function handler(req, res) {
 
     const planName = PLAN_NAME[patch.active_plan] || 'your';
     const plan = PLANS[patch.active_plan];
-    const points = plan ? plan.points : null;
+    const QUEUE_LINE = {
+      business: 'Unlimited, done in turn',
+      pro: 'Unlimited, with priority',
+      max: 'Unlimited, top priority'
+    };
     const site = ourSiteUrl();
     const who2 = p && p.business_name ? ', ' + p.business_name : '';
     const started = new Date().toLocaleDateString('en-GB',
       { day: 'numeric', month: 'long', year: 'numeric' });
 
     /* The three things someone actually wants confirmed after paying: which
-       plan they are on, what it gets them each month, and from when. */
+       plan they are on, what it gets them, and from when. */
     const facts = [{ label: 'Plan', value: `one — ${planName}` }];
     if (plan) {
       facts.push({
@@ -244,7 +248,7 @@ module.exports = async function handler(req, res) {
       });
       facts.push({
         label: 'Changes included',
-        value: `${points} point${points === 1 ? '' : 's'} a month`
+        value: QUEUE_LINE[patch.active_plan] || 'Unlimited'
       });
     }
     facts.push({ label: 'Started', value: started });
@@ -257,7 +261,7 @@ module.exports = async function handler(req, res) {
           + (plan
               ? `Plan:             one - ${planName}\n`
                 + `Monthly:          £${(plan.amount / 100).toFixed(0)}\n`
-                + `Changes included: ${points} point${points === 1 ? '' : 's'} a month\n`
+                + `Changes included: ${QUEUE_LINE[patch.active_plan] || 'Unlimited'}\n`
                 + `Started:          ${started}\n\n`
               : '')
           + `We'll be in touch as we start building your site. In the meantime, you can see `
@@ -317,7 +321,7 @@ module.exports = async function handler(req, res) {
           heading: 'Your plan has ended.',
           lines: [
             whyHtml,
-            'Reactivating puts everything back as it was &mdash; your site, your web address and the changes you have left this month.'
+            'Reactivating puts everything back as it was &mdash; your site, your web address and your place in the queue.'
           ],
           details: [
             { label: 'Business', value: name },

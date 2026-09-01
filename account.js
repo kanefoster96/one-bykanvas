@@ -403,9 +403,10 @@ document.getElementById('bizForm').addEventListener('submit', async function (e)
 
 /* ---------------- identity, site, points ---------------- */
 
-/* Points per plan. api/_plans.js carries the same numbers for the server side;
-   change both. An edit costs one point, a feature three. */
-var PLAN_POINTS = { business: 1, pro: 3, max: 5 };
+/* Which plans exist. Requests are unlimited on all of them; the plan decides
+   queue position, not allowance. Kept as a map so entitledPlan() can tell a
+   real plan from junk in the column. */
+var PLAN_POINTS = { business: 1, pro: 3, max: 5 }; // values legacy, keys authoritative
 var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
 var COST        = { edit: 1, feature: 3 };
 
@@ -561,48 +562,25 @@ async function showPoints(row) {
   document.getElementById('pointsPanel').hidden = !live;
   if (!live) return;
 
-  var allowance = plan ? PLAN_POINTS[plan] : 0;
-  var start = periodStart(row);
-
-  var used = 0;
   var recent = [];
   var q = await ONE.db.from('requests')
     .select('id, kind, points, detail, status, created_at, billed_at, billed_amount, attachment_paths')
     .order('created_at', { ascending: false })
     .limit(40);
+  if (!q.error && q.data) recent = q.data;
 
-  if (!q.error && q.data) {
-    recent = q.data;
-    q.data.forEach(function (r) {
-      if (r.status !== 'declined' && new Date(r.created_at) >= start) used += r.points;
-    });
-  }
-
-  pointsState = { allowance: allowance, used: used, plan: plan };
+  pointsState = { plan: plan };
   recentRequests = recent;
 
-  var left = Math.max(0, allowance - used);
-  document.getElementById('pointsLeft').textContent = String(left);
-  document.getElementById('pointsOf').textContent = 'of ' + allowance + (allowance === 1 ? ' point' : ' points');
-
-  var bar = document.getElementById('pointsBar');
-  var note = document.getElementById('pointsNote');
-  var upsell = document.getElementById('pointsUpsell');
-
-  if (allowance > 0) {
-    bar.hidden = false;
-    document.getElementById('pointsFill').style.width = Math.round((left / allowance) * 100) + '%';
-    upsell.hidden = true;
-    note.textContent = left === 0
-      ? 'You have used this month\u2019s points. Anything else is charged at the normal rate \u2014 \u00a340 an edit, \u00a3120 a feature \u2014 once we accept the request, before we start.'
-      : 'An edit costs 1 point, a new feature 3. Points reset each month and do not roll over.';
-  } else {
-    bar.hidden = true;
-    upsell.hidden = false;
-    note.textContent = used > 0
-      ? String(used) + (used === 1 ? ' point' : ' points') + ' asked for this month \u2014 charged to the card on file once we accept the request, before we start.'
-      : '';
-  }
+  /* No allowance to count any more: every plan includes unlimited requests,
+     and what the plan buys is a place in the queue. Say that, plainly. */
+  var QUEUE_LINE = {
+    business: 'Ask for as many edits and new features as you like \u2014 they\u2019re included. We work through requests one at a time, in turn.',
+    pro: 'Ask for as many edits and new features as you like \u2014 they\u2019re included. On Pro, your requests go ahead of the Business queue.',
+    max: 'Ask for as many edits and new features as you like \u2014 they\u2019re included. On Max, your requests go first.'
+  };
+  document.getElementById('pointsNote').textContent =
+    QUEUE_LINE[plan] || QUEUE_LINE.business;
 
   updatePricePreview();
   renderRequests(recent);
@@ -650,7 +628,7 @@ function requestRow(r) {
   cost.className = 'req-cost';
   cost.textContent = r.billed_at
     ? 'Charged £' + (r.billed_amount / 100).toFixed(0)
-    : r.points + (r.points === 1 ? ' pt' : ' pts');
+    : (r.kind === 'feature' ? 'Feature' : r.kind === 'info' ? 'Details' : 'Edit');
 
   var state = document.createElement('span');
   state.className = 'req-state' + (r.status === 'done' ? ' is-done' : '');
@@ -855,32 +833,16 @@ document.querySelectorAll('input[name="kind"]').forEach(function (r) {
   r.addEventListener('change', updatePricePreview);
 });
 
-/* What this specific request would actually cost right now - the points
-   left this month, not the flat per-kind rate - so the price shown is the
-   true one, the same shortfall math the server itself will check. Seeing
-   this before sending is what lets sending it count as agreeing to it. */
+/* Nothing to price any more - requests are included on every plan - so this
+   line's job is now expectation, not cost: what happens after Send. */
 function updatePricePreview() {
   var el = document.getElementById('reqPrice');
   if (!el) return;
   var kind = (document.querySelector('input[name="kind"]:checked') || {}).value || 'edit';
-  var cost = COST[kind];
-  var remaining = Math.max(0, pointsState.allowance - pointsState.used);
-  var covered = Math.min(cost, remaining);
-  var shortfall = cost - covered;
-
-  if (shortfall <= 0) {
-    el.textContent = 'Uses ' + cost + (cost === 1 ? ' point' : ' points')
-      + ' \u2014 you will have ' + (remaining - covered) + ' left this month.';
-    el.className = 'req-price';
-  } else if (covered > 0) {
-    el.textContent = 'Uses your last ' + covered + (covered === 1 ? ' point' : ' points')
-      + ', plus \u00a3' + (shortfall * 40) + ' on the card on file if we accept it, before we start.';
-    el.className = 'req-price is-charge';
-  } else {
-    el.textContent = 'No points left this month \u2014 \u00a3' + (shortfall * 40)
-      + ' on the card on file if we accept it, before we start.';
-    el.className = 'req-price is-charge';
-  }
+  el.textContent = kind === 'feature'
+    ? 'Included in your plan. New features take longer than edits \u2014 we\u2019ll pick it up in your plan\u2019s turn and let you know when it\u2019s being built.'
+    : 'Included in your plan. We\u2019ll pick it up in your plan\u2019s turn \u2014 most edits are done quickly.';
+  el.className = 'req-price';
 }
 
 var MAX_ATTACHMENTS = 6;
@@ -956,11 +918,7 @@ document.getElementById('reqForm').addEventListener('submit', async function (e)
     var data = await res.json().catch(function () { return {}; });
     if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
 
-    /* Nothing is charged or redeemed yet - accepting it is what does that,
-       from the admin side, before any work starts. */
-    say(note, data.shortfall > 0
-      ? 'Sent \u2014 if we accept it, \u00a3' + (data.amount / 100).toFixed(0) + ' will be charged to your card on file before we start.'
-      : 'Sent \u2014 we\u2019ll take a look and accept it shortly.', 'ok');
+    say(note, 'Sent \u2014 it\u2019s in the queue, and we\u2019ll let you know when it\u2019s being worked on.', 'ok');
 
     document.getElementById('reqDetail').value = '';
     filesInput.value = '';
@@ -1012,10 +970,13 @@ function showBilling(row) {
     if (!current || chosen === current) { move.hidden = true; return; }
 
     var up = ORDER.indexOf(chosen) > ORDER.indexOf(current);
-    var pts = PLAN_POINTS[chosen];
+    var PERK = {
+      business: 'requests done in turn',
+      pro: 'priority requests and business email',
+      max: 'top priority, email and monthly SEO work'
+    };
     var head = (up ? 'Upgrading' : 'Downgrading') + ' from ' + PLAN_NAME[current] +
-      ' to ' + PLAN_NAME[chosen] + ' \u2014 ' +
-      (pts ? pts + (pts === 1 ? ' point' : ' points') + ' a month' : 'no points included') + '.';
+      ' to ' + PLAN_NAME[chosen] + ' \u2014 ' + (PERK[chosen] || '') + '.';
 
     move.hidden = false;
     move.textContent = head + (up

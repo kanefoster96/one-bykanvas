@@ -1,12 +1,11 @@
-/* Single source of truth for what each plan costs and what it includes, shared
-   by the checkout endpoint, the webhook and the account page. Prices are in
-   pence.
+/* Single source of truth for what each plan costs, shared by the checkout
+   endpoint, the webhook and the account page. Prices are in pence.
 
-   Points are how work is rationed after launch: an edit costs one, a feature
-   three. Pricing them by effort rather than by count is what stops a month's
-   allowance being spent entirely on features.
-
-   account.js carries the same POINTS numbers for display. Change both. */
+   Requests are unlimited on every plan; what a plan buys is queue position
+   (Max first, then Pro, then Business) plus its extras. The points numbers
+   below are legacy: the requests table's check constraint still expects a
+   points value on each row, so inserts keep writing one, but no money or
+   allowance is derived from it anywhere any more. */
 const PLANS = {
   business: { label: 'one — Business', amount: 5000,  points: 1 },
   pro:      { label: 'one — Pro',      amount: 12000, points: 3 },
