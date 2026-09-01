@@ -1806,85 +1806,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .notif-body{font-size:14px;color:#515154;margin:0}
 .notif-item a{font-size:13.5px;font-weight:600;color:inherit}
 
-/* ---------- Chat (account) ---------- */
-.chat-fab{
-  position:fixed;right:18px;bottom:18px;z-index:120;
-  width:54px;height:54px;border-radius:50%;border:0;cursor:pointer;
-  background:#1d1d1f;color:#fff;display:grid;place-items:center;
-  box-shadow:0 3px 10px rgba(0,0,0,.14);
-}
-.chat-fab svg{width:24px;height:24px}
-.chat-fab-dot{
-  position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;
-  background:#1a7f37;border:2.5px solid #fff;
-}
-.chat-panel{
-  position:fixed;right:14px;bottom:84px;z-index:130;
-  width:min(370px,calc(100vw - 28px));height:min(480px,calc(100vh - 120px));
-  display:flex;flex-direction:column;background:#fff;border-radius:18px;
-  border:1px solid #e5e5ea;box-shadow:0 24px 60px rgba(0,0,0,.22);
-  overflow:hidden;
-}
-.chat-head{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
-  padding:14px 16px;border-bottom:1px solid #eee;background:#fafafa;
-}
-.chat-title{font-weight:700;font-size:15.5px;margin:0}
-.chat-sub{font-size:12.5px;color:#86868b;margin:2px 0 0}
-.chat-close{
-  border:0;background:none;font-size:26px;line-height:1;color:#86868b;
-  cursor:pointer;padding:0 2px;
-}
-.chat-scroll{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:8px}
-.chat-empty{font-size:13.5px;color:#86868b;text-align:center;margin:auto 12px}
-.chat-msg{
-  max-width:82%;padding:9px 13px;border-radius:16px;
-  font-size:14.5px;line-height:1.45;white-space:pre-wrap;word-break:break-word;
-}
-.chat-msg.from-me{align-self:flex-end;background:#1d1d1f;color:#fff;border-bottom-right-radius:5px}
-.chat-msg.from-them{align-self:flex-start;background:#f2f2f5;color:#1d1d1f;border-bottom-left-radius:5px}
-.chat-day{align-self:center;font-size:11.5px;color:#a6a6ab;margin:6px 0 2px}
-.chat-form{
-  display:flex;align-items:flex-end;gap:8px;
-  padding:10px 12px;border-top:1px solid #eee;background:#fff;
-}
-.chat-form textarea{
-  flex:1;resize:none;border:1.5px solid #e3e3e8;border-radius:14px;
-  padding:9px 12px;font:inherit;font-size:16px;max-height:110px;
-}
-@media (max-width:640px){
-  .chat-panel{
-    top:0;left:0;right:0;bottom:0;
-    width:100%;height:100dvh;border-radius:0;border:0;
-  }
-  .chat-head{padding-top:calc(14px + env(safe-area-inset-top))}
-  .chat-form{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
-}
-.chat-send{
-  flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:0;cursor:pointer;
-  background:#1d1d1f;color:#fff;display:grid;place-items:center;
-}
-.chat-send svg{width:16px;height:16px}
-.chat-send[disabled]{opacity:.5}
-
-/* ---------- Messages (admin) ---------- */
-.msg-row{
-  display:flex;justify-content:space-between;align-items:center;gap:12px;
-  padding:13px 4px;border-bottom:1px solid #eee;cursor:pointer;
-}
-.msg-row-main{min-width:0}
-.msg-row-who{font-weight:600;margin:0}
-.msg-row-last{font-size:13.5px;color:#86868b;margin:2px 0 0;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}
-.msg-row-when{font-size:12.5px;color:#86868b;white-space:nowrap}
-.msg-unread-dot{
-  display:inline-block;width:8px;height:8px;border-radius:50%;
-  background:#1a7f37;margin-right:8px;
-}
-.msg-thread{display:flex;flex-direction:column;gap:8px;margin:14px 0;
-  max-height:52vh;overflow-y:auto;padding:4px 2px}
-
-/* ---------- Header bell + chat (account) ---------- */
+/* ---------- Header bell (account) ---------- */
 .nav-icon{
   position:relative;display:grid;place-items:center;
   width:38px;height:38px;margin-left:6px;border-radius:50%;
@@ -1897,10 +1819,6 @@ a.hero-pill:hover .pill-go{opacity:1}
   display:grid;place-items:center;min-width:17px;height:17px;padding:0 4px;
   border-radius:999px;background:#1a7f37;color:#fff;
   font-size:11px;font-weight:700;border:2px solid #fff;
-}
-.nav-dot-mini{
-  position:absolute;top:5px;right:5px;width:10px;height:10px;border-radius:50%;
-  background:#1a7f37;border:2px solid #fff;
 }
 /* A one-line answer when the bell has nothing to show. */
 .nav-quiet{

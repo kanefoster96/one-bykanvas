@@ -7,23 +7,18 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=27">
+<link rel="stylesheet" href="styles.css?v=28">
 </head>
 <body class="auth-body">
 
 <header class="nav">
   <div class="nav-inner">
     <a class="logo" href="/" aria-label="one, by Kanvas — home">one.</a>
-    <!-- Bell and chat, shown once the account has loaded. The pills that
-         admin-pill.js appends land after these, so the order reads
-         bell · chat · Account. -->
+    <!-- The bell, shown once the account has loaded; the pill that
+         admin-pill.js appends lands after it. -->
     <button class="nav-icon" id="navBell" type="button" hidden aria-label="Notifications">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg>
       <span class="nav-count" id="navBellCount" hidden>0</span>
-    </button>
-    <button class="nav-icon" id="navChat" type="button" hidden aria-label="Messages">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.3 8.9 8.9 0 0 1-3.9-.9L3 20l1.2-4.4a8 8 0 0 1-1.2-4.1A8.38 8.38 0 0 1 11.5 3.2 8.38 8.38 0 0 1 21 11.5z"/></svg>
-      <span class="nav-dot-mini" id="navChatDot" hidden></span>
     </button>
   </div>
 </header>
@@ -297,40 +292,12 @@
 
 <div class="acct-loading" id="loading"><p>Loading your account…</p></div>
 
-<!-- Live chat with us. One running conversation per customer, straight to
-     Supabase under row level security - the same design as the Academy's
-     member chat, with one admin instead of a coach team. Shown only once
-     the account has loaded and there is a session. -->
-<button class="chat-fab" id="chatFab" type="button" hidden aria-label="Message us">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.3 8.9 8.9 0 0 1-3.9-.9L3 20l1.2-4.4a8 8 0 0 1-1.2-4.1A8.38 8.38 0 0 1 11.5 3.2 8.38 8.38 0 0 1 21 11.5z"/></svg>
-  <span class="chat-fab-dot" id="chatFabDot" hidden></span>
-</button>
-
-<div class="chat-panel" id="chatPanel" hidden role="dialog" aria-label="Chat with one">
-  <div class="chat-head">
-    <div>
-      <p class="chat-title">Message us</p>
-      <p class="chat-sub">A real person replies &mdash; usually the same working day.</p>
-    </div>
-    <button class="chat-close" id="chatClose" type="button" aria-label="Close chat">&times;</button>
-  </div>
-  <div class="chat-scroll" id="chatScroll" aria-live="polite">
-    <p class="chat-empty" id="chatEmpty">Ask us anything about your site &mdash; it lands straight with us.</p>
-  </div>
-  <form class="chat-form" id="chatForm">
-    <textarea id="chatInput" rows="1" maxlength="4000" placeholder="Write a message…" aria-label="Your message"></textarea>
-    <button class="chat-send" id="chatSend" type="submit" aria-label="Send">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></svg>
-    </button>
-  </form>
-</div>
-
 <script src="vendor/supabase.js?v=1"></script>
 <script src="consent.js?v=2"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=2"></script>
-<script src="account.js?v=22"></script>
+<script src="account.js?v=23"></script>
 <script src="admin-pill.js?v=6"></script>
 </body>
 </html>

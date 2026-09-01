@@ -35,14 +35,12 @@ var ICONS = {
   payments:  '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
   templates: '<rect x="7.5" y="7.5" width="13" height="13" rx="2.5"/><path d="M16.5 7.5v-2a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/>',
   marketing: '<path d="M3 7.5 12 13l9-5.5"/><rect x="3" y="5" width="18" height="14" rx="2.5"/>',
-  messages: '<path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.3 8.9 8.9 0 0 1-3.9-.9L3 20l1.2-4.4a8 8 0 0 1-1.2-4.1A8.38 8.38 0 0 1 11.5 3.2 8.38 8.38 0 0 1 21 11.5z"/>',
   enquiries: '<rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/>'
 };
 
 var SECTIONS = [
   { key: 'requests',  label: 'Requests' },
   { key: 'enquiries', label: 'Enquiries' },
-  { key: 'messages',  label: 'Messages' },
   { key: 'customers', label: 'Customers' },
   { key: 'contacts',  label: 'Contacts' },
   { key: 'plans',     label: 'Plans' },
@@ -93,7 +91,6 @@ async function load() {
   render();
   loading.hidden = true;
   app.hidden = false;
-  loadChat(true);
 }
 
 function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
@@ -277,7 +274,7 @@ function renderMenu(counts) {
 }
 
 var SECTION_IDS = {
-  requests: 'sectionRequests', enquiries: 'sectionEnquiries', messages: 'sectionMessages',
+  requests: 'sectionRequests', enquiries: 'sectionEnquiries',
   customers: 'sectionCustomers', contacts: 'sectionContacts',
   plans: 'sectionPlans', payments: 'sectionPayments', templates: 'sectionTemplates',
   marketing: 'sectionMarketing'
@@ -299,7 +296,6 @@ function render() {
   nav.hidden = !onMenu;
   if (onMenu) renderMenu({
     requests: open.length + unbuilt.length,
-    messages: chatState.unread,
     customers: pendingSeo.length
   });
 
@@ -317,7 +313,6 @@ function render() {
   if (activeSection === 'requests') renderRequestsSection(open, unbuilt);
   else if (activeSection === 'enquiries') renderEnquiriesSection();
   else if (activeSection === 'customers') renderCustomersSection();
-  else if (activeSection === 'messages') renderMessagesSection();
   else if (activeSection === 'contacts') renderContactsSection();
   else if (activeSection === 'plans') renderPlansSection();
   else if (activeSection === 'payments') renderPaymentsSection();
@@ -2058,202 +2053,5 @@ function wireMarketing() {
 /* Bound once, at load: the marketing section's controls live in the page from
    the start, hidden, so there is nothing to re-bind when it opens. */
 if (document.getElementById('bcSend')) wireMarketing();
-
-
-/* ---------------- Messages: live chat with customers ----------------
- *
- * Ported from the Kanvas Academy coach inbox, sized for one admin. Reads and
- * writes go straight to Supabase under the chat tables' row level security -
- * the admin policy is this account's email - so none of it costs a serverless
- * function. A slow poll keeps the list honest while the section is open.
- */
-var chatState = { loaded: false, loading: false, convos: [], lastMsg: {}, unread: 0 };
-var selectedConvoId = null;
-var chatPollTimer = null;
-var chatThreadIds = {};
-
-function chatNameFor(userId) {
-  var p = state.profiles.filter(function (x) { return x.id === userId; })[0];
-  return (p && (p.business_name || p.contact_name)) || 'A customer';
-}
-
-async function loadChat(quiet) {
-  if (chatState.loading) return;
-  chatState.loading = true;
-  try {
-    var cq = await ONE.db.from('chat_conversations')
-      .select('id, user_id, last_message_at, admin_last_read_at')
-      .order('last_message_at', { ascending: false })
-      .limit(100);
-    if (cq.error) throw new Error(cq.error.message);
-    chatState.convos = cq.data || [];
-
-    /* Last line and unread count per conversation, one query for the lot. */
-    chatState.lastMsg = {};
-    chatState.unread = 0;
-    if (chatState.convos.length) {
-      var ids = chatState.convos.map(function (c) { return c.id; });
-      var mq = await ONE.db.from('chat_messages')
-        .select('conversation_id, sender, body, created_at')
-        .in('conversation_id', ids)
-        .order('created_at', { ascending: false })
-        .limit(400);
-      if (!mq.error && mq.data) {
-        chatState.convos.forEach(function (c) {
-          var mine = mq.data.filter(function (m) { return m.conversation_id === c.id; });
-          chatState.lastMsg[c.id] = mine[0] || null;
-          var since = c.admin_last_read_at ? new Date(c.admin_last_read_at) : new Date(0);
-          var unseen = mine.some(function (m) {
-            return m.sender === 'customer' && new Date(m.created_at) > since;
-          });
-          c.hasUnread = unseen;
-          if (unseen) chatState.unread++;
-        });
-      }
-    }
-    chatState.loaded = true;
-  } catch (err) {
-    if (!quiet) say(err.message, 'bad');
-  }
-  chatState.loading = false;
-  /* Repaint whatever is on screen so badges stay true, but never yank the
-     admin off a thread mid-reply. */
-  if (activeSection === null || activeSection === 'messages') render();
-}
-
-function renderMessagesSection() {
-  var wrap = document.getElementById('messagesBody');
-  wrap.textContent = '';
-
-  if (chatPollTimer) clearTimeout(chatPollTimer);
-  chatPollTimer = setTimeout(function () {
-    if (activeSection === 'messages') loadChat(true);
-  }, 8000);
-
-  if (!chatState.loaded) { wrap.appendChild(el('p', 'site-none', 'Loading…')); return; }
-
-  var convo = selectedConvoId && chatState.convos.filter(function (c) { return c.id === selectedConvoId; })[0];
-  if (convo) { wrap.appendChild(chatThreadView(convo)); return; }
-  selectedConvoId = null;
-
-  if (!chatState.convos.length) {
-    wrap.appendChild(el('p', 'site-none', 'No conversations yet. Customers can message you from their account page.'));
-    return;
-  }
-
-  chatState.convos.forEach(function (c) {
-    var row = el('div', 'msg-row');
-    row.tabIndex = 0;
-    row.setAttribute('role', 'button');
-
-    var main = el('div', 'msg-row-main');
-    var who = el('p', 'msg-row-who');
-    if (c.hasUnread) who.appendChild(el('span', 'msg-unread-dot'));
-    who.appendChild(document.createTextNode(chatNameFor(c.user_id)));
-    main.appendChild(who);
-    var last = chatState.lastMsg[c.id];
-    main.appendChild(el('p', 'msg-row-last',
-      last ? (last.sender === 'admin' ? 'You: ' : '') + last.body : 'No messages yet'));
-    row.appendChild(main);
-    row.appendChild(el('span', 'msg-row-when', when(c.last_message_at)));
-
-    function open() { selectedConvoId = c.id; chatThreadIds = {}; render(); }
-    row.addEventListener('click', open);
-    row.addEventListener('keydown', function (e) { if (e.key === 'Enter') open(); });
-    wrap.appendChild(row);
-  });
-}
-
-function chatThreadView(convo) {
-  var wrap = el('div');
-
-  var back = el('button', 'linkish', '← All conversations');
-  back.type = 'button';
-  back.addEventListener('click', function () { selectedConvoId = null; render(); });
-  wrap.appendChild(back);
-
-  wrap.appendChild(el('h3', 'req-list-title', chatNameFor(convo.user_id)));
-
-  var thread = el('div', 'msg-thread');
-  thread.id = 'msgThread';
-  wrap.appendChild(thread);
-
-  var form = el('form', 'chat-form');
-  var input = el('textarea');
-  input.rows = 1;
-  input.maxLength = 4000;
-  input.placeholder = 'Reply…';
-  input.setAttribute('aria-label', 'Your reply');
-  var send = el('button', 'chat-send');
-  send.type = 'submit';
-  send.setAttribute('aria-label', 'Send');
-  send.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></svg>';
-  form.appendChild(input);
-  form.appendChild(send);
-  wrap.appendChild(form);
-
-  function paint(m) {
-    if (chatThreadIds[m.id]) return;
-    chatThreadIds[m.id] = true;
-    var b = el('div', 'chat-msg ' + (m.sender === 'admin' ? 'from-me' : 'from-them'), m.body);
-    thread.appendChild(b);
-    thread.scrollTop = thread.scrollHeight;
-  }
-
-  async function loadThread() {
-    var q = await ONE.db.from('chat_messages')
-      .select('id, sender, body, created_at')
-      .eq('conversation_id', convo.id)
-      .order('created_at', { ascending: true })
-      .limit(300);
-    if (!q.error && q.data) q.data.forEach(paint);
-    /* Reading it is what clears the unread dot, both here and on the
-       customer's picture of whether we have seen their message. */
-    ONE.db.from('chat_conversations')
-      .update({ admin_last_read_at: new Date().toISOString() })
-      .eq('id', convo.id).then(function () {});
-    convo.hasUnread = false;
-  }
-  loadThread();
-
-  input.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      form.dispatchEvent(new Event('submit', { cancelable: true }));
-    }
-  });
-
-  form.addEventListener('submit', async function (e) {
-    e.preventDefault();
-    var body = input.value.trim();
-    if (!body) return;
-    send.disabled = true;
-    try {
-      var ins = await ONE.db.from('chat_messages')
-        .insert({ conversation_id: convo.id, sender: 'admin', body: body })
-        .select().single();
-      if (ins.error) throw new Error(ins.error.message);
-      paint(Array.isArray(ins.data) ? ins.data[0] : ins.data);
-      input.value = '';
-      var now = new Date().toISOString();
-      ONE.db.from('chat_conversations')
-        .update({ last_message_at: now, admin_last_read_at: now })
-        .eq('id', convo.id).then(function () {});
-    } catch (err) {
-      say(err.message, 'bad');
-    } finally {
-      send.disabled = false;
-      input.focus({ preventScroll: true });
-    }
-  });
-
-  /* Poll the open thread a little faster than the list. */
-  (function tick() {
-    if (activeSection !== 'messages' || selectedConvoId !== convo.id) return;
-    setTimeout(function () { loadThread().then(tick); }, 6000);
-  })();
-
-  return wrap;
-}
 
 })();

@@ -1244,23 +1244,19 @@ document.getElementById('logout').addEventListener('click', async function () {
 });
 })();
 
-/* ---------------- notifications + live chat ----------------
+/* ---------------- notifications ----------------
  *
- * Ported from the Kanvas Academy design: one running conversation per
- * customer, read straight from Supabase under row level security, with a
- * Realtime subscription for live replies and a slow poll as the fallback.
- * Notifications are rows the server writes when we do something - accept a
- * request, finish one, change the site - and read state is one timestamp
- * on the profile, so unread is simply "newer than when you last looked".
+ * Rows the server writes when we do something - accept a request, finish
+ * one, change the site - listed in the What's-new panel with unread
+ * highlighting from one notifications_seen_at timestamp on the profile.
+ * The header bell carries the unread count and scrolls the panel into
+ * view. (Live chat lived here too and was removed for now - PR #84 has it
+ * whole if it comes back.)
  */
 (function () {
   if (!window.ONE || !ONE.ready) return;
 
   var userId = null;
-  var convo = null;          // this customer's chat_conversations row, or null
-  var chatOpen = false;
-  var pollTimer = null;
-  var renderedIds = {};      // message ids already in the DOM, so realtime + poll never double-paint
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -1276,8 +1272,6 @@ document.getElementById('logout').addEventListener('click', async function () {
     if (days < 1) return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
     return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   }
-
-  /* ------------------------------------------------------- notifications */
 
   async function loadNotifications() {
     var prof = await ONE.db.from('profiles')
@@ -1312,7 +1306,7 @@ document.getElementById('logout').addEventListener('click', async function () {
          here (the server writes them), but a bad row still should not become
          a javascript: link. */
       if (n.href && /^(\/|https:\/\/)/.test(n.href)) {
-        var a = el('a', null, 'Open →');
+        var a = el('a', null, 'Open \u2192');
         a.href = n.href;
         li.appendChild(a);
       }
@@ -1348,209 +1342,24 @@ document.getElementById('logout').addEventListener('click', async function () {
     }
   }
 
-  /* --------------------------------------------------------------- chat */
-
-  async function fetchConvo() {
-    var q = await ONE.db.from('chat_conversations')
-      .select('id, last_message_at, user_last_read_at')
-      .eq('user_id', userId).maybeSingle();
-    convo = q.data || null;
-    return convo;
-  }
-
-  async function ensureConvo() {
-    if (convo) return convo;
-    await fetchConvo();
-    if (convo) return convo;
-    var ins = await ONE.db.from('chat_conversations')
-      .insert({ user_id: userId }).select().single();
-    if (ins.error) {
-      /* Two tabs racing the first message: the unique(user_id) makes one
-         lose - refetch and carry on with the winner's row. */
-      await fetchConvo();
-      if (!convo) throw new Error(ONE.friendlyError(ins.error));
-      return convo;
-    }
-    convo = Array.isArray(ins.data) ? ins.data[0] : ins.data;
-    return convo;
-  }
-
-  function paintMessage(m) {
-    if (renderedIds[m.id]) return;
-    renderedIds[m.id] = true;
-    var scroll = document.getElementById('chatScroll');
-    var empty = document.getElementById('chatEmpty');
-    if (empty) empty.hidden = true;
-    var b = el('div', 'chat-msg ' + (m.sender === 'customer' ? 'from-me' : 'from-them'), m.body);
-    scroll.appendChild(b);
-    scroll.scrollTop = scroll.scrollHeight;
-  }
-
-  async function loadMessages() {
-    if (!convo) return;
-    var q = await ONE.db.from('chat_messages')
-      .select('id, sender, body, created_at')
-      .eq('conversation_id', convo.id)
-      .order('created_at', { ascending: true })
-      .limit(200);
-    if (!q.error && q.data) q.data.forEach(paintMessage);
-  }
-
-  async function markRead() {
-    if (!convo) return;
-    var dot = document.getElementById('chatFabDot');
-    if (dot) dot.hidden = true;
-    var navDot = document.getElementById('navChatDot');
-    if (navDot) navDot.hidden = true;
-    await ONE.db.from('chat_conversations')
-      .update({ user_last_read_at: new Date().toISOString() })
-      .eq('id', convo.id);
-  }
-
-  async function updateBadge() {
-    if (!convo) return;
-    var since = convo.user_last_read_at || '1970-01-01';
-    var q = await ONE.db.from('chat_messages')
-      .select('id', { count: 'exact', head: true })
-      .eq('conversation_id', convo.id)
-      .eq('sender', 'admin')
-      .gt('created_at', since);
-    var unseen = Number.isFinite(q.count) && q.count > 0;
-    var dot = document.getElementById('chatFabDot');
-    if (dot) dot.hidden = !unseen;
-    var navDot = document.getElementById('navChatDot');
-    if (navDot) navDot.hidden = !unseen;
-  }
-
-  function subscribe() {
-    if (!convo || !ONE.db.channel) return;
-    try {
-      ONE.db.channel('chat-' + convo.id)
-        .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'chat_messages',
-            filter: 'conversation_id=eq.' + convo.id },
-          function (payload) {
-            paintMessage(payload.new);
-            if (chatOpen) markRead();
-          })
-        .subscribe();
-    } catch (e) { /* the poll below covers a realtime that will not connect */ }
-  }
-
-  function startPoll() {
-    stopPoll();
-    pollTimer = setInterval(function () {
-      if (chatOpen) loadMessages().then(function () { markRead(); });
-    }, 8000);
-  }
-  function stopPoll() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
-
-  async function openChat() {
-    var panel = document.getElementById('chatPanel');
-    panel.hidden = false;
-    chatOpen = true;
-    document.getElementById('chatInput').focus({ preventScroll: true });
-    if (await fetchConvo()) {
-      await loadMessages();
-      await markRead();
-      subscribe();
-    }
-    startPoll();
-  }
-
-  function closeChat() {
-    document.getElementById('chatPanel').hidden = true;
-    chatOpen = false;
-    stopPoll();
-  }
-
-  async function sendMessage(body) {
-    await ensureConvo();
-    var ins = await ONE.db.from('chat_messages')
-      .insert({ conversation_id: convo.id, sender: 'customer', body: body })
-      .select().single();
-    if (ins.error) throw new Error(ONE.friendlyError(ins.error));
-    paintMessage(Array.isArray(ins.data) ? ins.data[0] : ins.data);
-    ONE.db.from('chat_conversations')
-      .update({ last_message_at: new Date().toISOString() })
-      .eq('id', convo.id).then(function () {});
-
-    /* Ask the server to email us - it throttles to one email per half hour
-       per conversation, and a failure here loses only the nudge. */
-    try {
-      var sess = await ONE.db.auth.getSession();
-      var token = sess.data && sess.data.session && sess.data.session.access_token;
-      if (token) fetch('/api/requests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ action: 'chatNudge' })
-      });
-    } catch (e) {}
-  }
-
-  function wireChat() {
-    var fab = document.getElementById('chatFab');
-    var form = document.getElementById('chatForm');
-    var input = document.getElementById('chatInput');
-    if (!fab || !form) return;
-
-    fab.hidden = false;
-    function toggleChat() {
-      (document.getElementById('chatPanel').hidden ? openChat : closeChat)();
-    }
-    fab.addEventListener('click', toggleChat);
-    document.getElementById('chatClose').addEventListener('click', closeChat);
-
-    var navChat = document.getElementById('navChat');
-    if (navChat) { navChat.hidden = false; navChat.addEventListener('click', toggleChat); }
-
+  function wireBell() {
+    var bell = document.getElementById('navBell');
+    if (!bell) return;
+    bell.hidden = false;
     /* The bell takes them to What's-new; with nothing there yet it says so
        instead of silently doing nothing. */
-    var bell = document.getElementById('navBell');
-    if (bell) {
-      bell.hidden = false;
-      bell.addEventListener('click', function () {
-        var panel = document.getElementById('notifPanel');
-        if (panel && !panel.hidden) {
-          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          return;
-        }
-        var tip = el('div', 'nav-quiet', 'Nothing new yet — we\u2019ll pop things here as they happen.');
-        var at = bell.getBoundingClientRect();
-        tip.style.top = (at.bottom + 8) + 'px';
-        tip.style.right = Math.max(10, window.innerWidth - at.right) + 'px';
-        document.body.appendChild(tip);
-        setTimeout(function () { tip.remove(); }, 2600);
-      });
-    }
-
-    input.addEventListener('input', function () {
-      input.style.height = 'auto';
-      input.style.height = Math.min(input.scrollHeight, 110) + 'px';
-    });
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        form.dispatchEvent(new Event('submit', { cancelable: true }));
+    bell.addEventListener('click', function () {
+      var panel = document.getElementById('notifPanel');
+      if (panel && !panel.hidden) {
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
       }
-    });
-
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      var body = input.value.trim();
-      if (!body) return;
-      var btn = document.getElementById('chatSend');
-      btn.disabled = true;
-      try {
-        await sendMessage(body);
-        input.value = '';
-        input.style.height = 'auto';
-      } catch (err) {
-        alert(err.message || 'Could not send that. Try again.');
-      } finally {
-        btn.disabled = false;
-        input.focus({ preventScroll: true });
-      }
+      var tip = el('div', 'nav-quiet', 'Nothing new yet \u2014 we\u2019ll pop things here as they happen.');
+      var at = bell.getBoundingClientRect();
+      tip.style.top = (at.bottom + 8) + 'px';
+      tip.style.right = Math.max(10, window.innerWidth - at.right) + 'px';
+      document.body.appendChild(tip);
+      setTimeout(function () { tip.remove(); }, 2600);
     });
   }
 
@@ -1558,8 +1367,7 @@ document.getElementById('logout').addEventListener('click', async function () {
     var session = res.data && res.data.session;
     if (!session) return;             // the page guard is already redirecting
     userId = session.user.id;
-    wireChat();
+    wireBell();
     loadNotifications();
-    fetchConvo().then(function () { updateBadge(); });
   });
 })();
