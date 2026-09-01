@@ -47,17 +47,18 @@ module.exports = async function handler(req, res) {
     });
 
     /* Deleting a request's screenshots lives here rather than in an endpoint
-       of its own. It is the same table, the same owner check and the same
-       authentication, and Vercel's plan allows a fixed number of functions -
-       spending one on a single action nobody calls twice a month is what
-       stopped a deploy going out.
+       of its own: same table, same owner check, same authentication, and an
+       action called a few times a month does not earn a file. (The function
+       cap that once forced this arrangement is gone - this one just has no
+       reason to move.)
 
        It goes through the server at all because the customer has no UPDATE
        grant on requests, and because the storage delete and the column clear
        have to happen together rather than leaving one without the other. */
-    /* A Pro customer's marketing blast lives here for the same reason as
-       clearAttachments below: same authentication, and the function budget
-       is spent. The work itself is in _campaign.js. */
+    /* Campaigns moved to their own route (/api/campaign) when the plan's
+       function cap was lifted - it has the five-minute budget a big send
+       needs. This alias stays for anyone sitting on a cached account page
+       from before the move; same auth, same code, shorter clock. */
     if (body.action === 'sendCampaign') {
       const out = await sendCampaign(db, user, body);
       return res.status(out.status).json(out.body);

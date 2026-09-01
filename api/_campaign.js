@@ -16,7 +16,11 @@ const { tokenFor, unsubscribeHeaders } = require('./_unsubscribe.js');
 const { notifyAdmin } = require('./_notify.js');
 const { ourSiteUrl } = require('./_env.js');
 
-const MAX_RECIPIENTS = 1000;   // a function has seconds to live, not minutes
+/* Sized for the Pro plan's five-minute function budget (vercel.json), with
+   Resend's batches paced at two a second by _email.js. The cap is about one
+   send staying one function call - a genuinely bigger list is a conversation,
+   not a bigger loop. */
+const MAX_RECIPIENTS = 5000;
 const GAP_MINUTES = 15;        // between sends: double-clicks, not a quota
 
 const FONT = "-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',Helvetica,Arial,sans-serif";
@@ -119,7 +123,7 @@ async function sendCampaign(db, user, body) {
   if (audErr) throw new Error(audErr.message);
   if (!aud || !aud.length) return bad('Add some customers to your list first.');
   if (aud.length > MAX_RECIPIENTS) {
-    return bad('Lists over ' + MAX_RECIPIENTS + ' need to go out in stages - email us and we’ll run it for you.');
+    return bad('Lists over ' + MAX_RECIPIENTS + ' need a word with us first - email us and we’ll run it for you.');
   }
 
   const businessName = (p.business_name || 'Your business').replace(/[<>"]/g, '').slice(0, 80);
