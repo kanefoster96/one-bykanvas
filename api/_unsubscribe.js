@@ -22,11 +22,13 @@ function secret() {
   return process.env.UNSUBSCRIBE_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 }
 
-/* Two things a customer can turn off, and they are not the same thing:
-   'notify' is updates about their own site, 'marketing' is us selling to them.
-   The scope rides inside the signature so a link for one cannot be edited into
-   a link for the other. */
-const SCOPES = { notify: 'notify_optout', marketing: 'marketing_optin' };
+/* Three things a link can turn off, and they are not the same thing:
+   'notify' is updates about a customer's own site, 'marketing' is us selling
+   to them, and 'list' is a business's OWN marketing to one of their audience
+   rows - there the id in the token is an audience row id, not a user id.
+   The scope rides inside the signature so a link for one cannot be edited
+   into a link for the other. */
+const SCOPES = { notify: 'notify_optout', marketing: 'marketing_optin', list: null };
 
 function sign(payload) {
   return crypto.createHmac('sha256', secret()).update('unsub:' + payload).digest('base64url');
@@ -34,7 +36,7 @@ function sign(payload) {
 
 function tokenFor(userId, scope) {
   if (!userId || !secret()) return null;
-  const use = SCOPES[scope] ? scope : 'notify';
+  const use = (scope in SCOPES) ? scope : 'notify';
   /* A bare id with no scope is a link from before there were two - it still
      means notifications, so old links keep working. */
   const payload = use === 'notify' ? String(userId) : use + '.' + String(userId);
@@ -55,7 +57,7 @@ function readToken(token) {
   const split = payload.indexOf('.');
   const scope = split > 0 ? payload.slice(0, split) : 'notify';
   const userId = split > 0 ? payload.slice(split + 1) : payload;
-  if (!SCOPES[scope]) return null;
+  if (!(scope in SCOPES)) return null;
   if (!/^[0-9a-f-]{36}$/i.test(userId)) return null;
 
   const given = Buffer.from(raw.slice(dot + 1));

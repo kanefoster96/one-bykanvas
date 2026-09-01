@@ -256,7 +256,7 @@ module.exports = async function handler(req, res) {
         .select('id, business_name, contact_name, phone, business_type, active_plan, selected_plan, ' +
                 'subscription_status, current_period_end, points_reset_at, site_url, site_status, requested_domain, domain_owned, ' +
                 'address, service_area, opening_hours, services, site_goals, site_uses, existing_links, ' +
-                'admin_notes, created_at, stripe_customer_id, stripe_subscription_id')
+                'admin_notes, created_at, stripe_customer_id, stripe_subscription_id, campaign_from')
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw new Error(error.message);
@@ -383,6 +383,40 @@ module.exports = async function handler(req, res) {
       if (siteStatus === 'live' && before && before.site_status !== 'live') {
         await notifySiteLive(db, userId, before.business_name, siteUrl);
         await notify(db, userId, 'Your site is live', 'It\u2019s up at ' + siteUrl + '.', siteUrl);
+      }
+
+      return res.status(200).json({ ok: true });
+    }
+
+    /* ---- write: the address a Pro customer's campaigns send from ------
+     *
+     * Setting this is what switches email marketing on for them: the send
+     * endpoint refuses until it is here. It is set from this page rather
+     * than by the customer because it only works once their domain is
+     * verified with the email provider - a manual job on our side - and a
+     * wrong value is a deliverability problem on a domain we look after.
+     */
+    if (action === 'setCampaignFrom') {
+      const userId = String(body.userId || '');
+      const fromAddr = String(body.fromAddress || '').trim().toLowerCase();
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      if (fromAddr && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fromAddr)) {
+        return res.status(400).json({ error: 'That does not look like an email address.' });
+      }
+
+      const { data: before, error: beforeErr } = await db.from('profiles')
+        .select('campaign_from, business_name').eq('id', userId).maybeSingle();
+      if (beforeErr) throw new Error(beforeErr.message);
+
+      const { error } = await db.from('profiles')
+        .update({ campaign_from: fromAddr || null }).eq('id', userId);
+      if (error) throw new Error(error.message);
+
+      // Told once, when it first goes from off to on - not on every edit.
+      if (fromAddr && before && !before.campaign_from) {
+        await notify(db, userId, 'Email marketing is ready',
+          'Your campaigns now send from ' + fromAddr + '. Build your customer list and send your first one from your account page.',
+          '/account.html');
       }
 
       return res.status(200).json({ ok: true });

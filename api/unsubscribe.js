@@ -13,7 +13,7 @@ const { readToken } = require('./_unsubscribe.js');
 
 const FONT = "-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',Helvetica,Arial,sans-serif";
 
-function page({ heading, body, form, token, marketing }) {
+function page({ heading, body, form, token, marketing, list }) {
   return `<!doctype html>
 <html lang="en-GB">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,16 +29,19 @@ function page({ heading, body, form, token, marketing }) {
         <button type="submit" style="width:100%;padding:15px 24px;border:0;border-radius:980px;background:#1d1d1f;color:#fff;font-family:inherit;font-size:15.5px;font-weight:600;cursor:pointer;">Turn these emails off</button>
       </form>` : ''}
       <p style="margin:26px 0 0;font-size:13.5px;line-height:1.55;color:#86868b;">
-        ${marketing
+        ${list
+          ? 'This stops marketing emails from this business, sent through our '
+            + 'platform. If you deal with them another way, that carries on as normal.'
+          : marketing
           ? 'This only covers marketing. Anything about your plan, a payment or '
             + 'your own website still comes through, because that is your account.'
           : 'This only covers optional updates about your site. Anything about your '
             + 'plan or a payment still comes through, because it is about your account.'}
       </p>
     </div>
-    <p style="text-align:center;margin:18px 0 0;font-size:13px;color:#86868b;">
+    ${list ? '' : `<p style="text-align:center;margin:18px 0 0;font-size:13px;color:#86868b;">
       <a href="/account.html" style="color:#86868b;">Your account</a>
-    </p>
+    </p>`}
   </div>
 </body>
 </html>`;
@@ -83,16 +86,20 @@ module.exports = async function handler(req, res) {
   }
 
   const marketing = claim.scope === 'marketing';
+  const list = claim.scope === 'list';
 
   if (req.method === 'GET') {
     return html(res, 200, page({
-      heading: marketing ? 'Turn off these emails?' : 'Turn off site updates?',
-      body: marketing
+      heading: (marketing || list) ? 'Turn off these emails?' : 'Turn off site updates?',
+      body: list
+        ? 'You will stop getting offers and news from this business by email.'
+        : marketing
         ? 'You will stop getting tips, offers and news about what we have added.'
         : 'You will stop getting emails telling you when something new has '
         + 'been added or improved on your site.',
       form: true,
       marketing: marketing,
+      list: list,
       token: String(token).replace(/"/g, '&quot;')
     }));
   }
@@ -112,6 +119,23 @@ module.exports = async function handler(req, res) {
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false }
     });
+    if (list) {
+      /* An audience row, not a profile: the recipient of a business's own
+         marketing. The row stays (deleting it would let the same address be
+         re-added and re-mailed); the timestamp is what the send excludes. */
+      const { error } = await db.from('audience')
+        .update({ unsubscribed_at: new Date().toISOString() })
+        .eq('id', claim.userId);
+      if (error) throw new Error(error.message);
+
+      console.log('unsubscribe: audience row %s opted out', claim.userId);
+      return html(res, 200, page({
+        heading: 'Done',
+        body: 'You will not get marketing emails from this business again.',
+        list: true
+      }));
+    }
+
     /* marketing_optin is a yes and notify_optout is a no, so which value
        means "stop" depends on which of the two this link is for. */
     const patch = {};

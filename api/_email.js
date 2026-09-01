@@ -110,8 +110,11 @@ async function sendBatch(messages) {
   let sent = 0, failed = 0;
 
   for (let i = 0; i < messages.length; i += BATCH_MAX) {
+    /* m.from lets a batch go out as someone else - a Pro customer's campaign
+       sends from their own verified domain, not ours. Everything we send
+       ourselves leaves m.from unset and keeps the default. */
     const chunk = messages.slice(i, i + BATCH_MAX).map((m) => ({
-      from: sender(),
+      from: m.from || sender(),
       to: Array.isArray(m.to) ? m.to : [m.to],
       subject: m.subject,
       text: m.text,

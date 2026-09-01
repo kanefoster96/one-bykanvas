@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=31">
+<link rel="stylesheet" href="styles.css?v=32">
 </head>
 <body class="auth-body">
 
@@ -133,6 +133,71 @@
   <section class="panel" id="featuresPanel" hidden>
     <h2 class="panel-title">Features on your site</h2>
     <ul class="feature-list" id="featureList"></ul>
+  </section>
+
+  <!-- Email marketing: Pro and Max only. Their own customer list, and a
+       composer that blasts it from their own domain. Hidden on Business -
+       the plans page does the selling, not this one. -->
+  <section class="panel" id="marketingPanel" hidden>
+    <h2 class="panel-title">Email marketing</h2>
+    <p class="points-note" id="mkStatus"></p>
+
+    <h3 class="req-list-title">Your customer list</h3>
+    <p class="mk-count" id="mkCount"></p>
+    <div class="field full">
+      <label for="mkAdd">Add customers</label>
+      <textarea id="mkAdd" rows="2" placeholder="jane@example.com, sam@example.com&hellip;"></textarea>
+      <p class="hint">Email addresses, separated by commas or new lines. Add a name if you like: Jane &lt;jane@example.com&gt;</p>
+    </div>
+    <label class="mail-pref" id="mkConsent">
+      <input type="checkbox" id="mkConsentBox">
+      <span>These people gave me their email address and are happy to hear from me.</span>
+    </label>
+    <div class="req-send">
+      <button class="btn btn-ghost" id="mkAddBtn" type="button">Add to list</button>
+      <p class="note" id="mkAddNote" role="status" aria-live="polite"></p>
+    </div>
+    <details class="mk-list-wrap" id="mkListWrap" hidden>
+      <summary id="mkListSummary">See the list</summary>
+      <ul class="mk-list" id="mkList"></ul>
+    </details>
+
+    <form class="mk-compose" id="mkForm" novalidate hidden>
+      <h3 class="req-list-title">Send an email</h3>
+      <div class="field full">
+        <label for="mkSubject">Subject</label>
+        <input id="mkSubject" type="text" maxlength="120" placeholder="This week&rsquo;s specials">
+      </div>
+      <div class="field full">
+        <label for="mkMessage">Message</label>
+        <textarea id="mkMessage" rows="6" maxlength="2500" placeholder="Tell your customers what&rsquo;s new&hellip;"></textarea>
+      </div>
+      <div class="field full">
+        <label for="mkImage">Picture at the top (optional)</label>
+        <input id="mkImage" type="file" accept="image/png,image/jpeg,image/webp">
+        <p class="note" id="mkImageNote" role="status" aria-live="polite"></p>
+      </div>
+      <div class="field full">
+        <label for="mkLink">Link to something (optional)</label>
+        <input id="mkLink" type="url" placeholder="https://yourbusiness.co.uk/offers">
+      </div>
+      <div class="field full" id="mkLinkTextField" hidden>
+        <label for="mkLinkText">Button text</label>
+        <input id="mkLinkText" type="text" maxlength="40" placeholder="Take a look">
+      </div>
+      <div class="req-send">
+        <button class="btn btn-primary" id="mkSendBtn" type="submit">Send</button>
+        <p class="note" id="mkNote" role="status" aria-live="polite"></p>
+      </div>
+      <p class="hint">Every email says who it&rsquo;s from and carries its own unsubscribe
+         link automatically &mdash; that&rsquo;s the law on marketing email, and it keeps
+         your sending address trusted.</p>
+    </form>
+
+    <div class="mk-history" id="mkHistory" hidden>
+      <h3 class="req-list-title">Past sends</h3>
+      <ul class="mk-past" id="mkHistoryList"></ul>
+    </div>
   </section>
 
   <!-- Billing -->
@@ -293,7 +358,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=2"></script>
 <script src="feature-ideas.js?v=1"></script>
-<script src="account.js?v=25"></script>
+<script src="account.js?v=26"></script>
 <script src="admin-pill.js?v=6"></script>
 </body>
 </html>
