@@ -91,6 +91,25 @@ async function load() {
   render();
   loading.hidden = true;
   app.hidden = false;
+  showBellCount();
+}
+
+/* Unread count for the header bell. Row level security already scopes the
+   query to what this signed-in admin may see, and the seen timestamp lives
+   on their own profile row - the same mechanics as a customer's bell. */
+async function showBellCount() {
+  try {
+    var me = (await ONE.db.auth.getSession()).data.session.user.id;
+    var prof = await ONE.db.from('profiles')
+      .select('notifications_seen_at').eq('id', me).maybeSingle();
+    var seenAt = (prof.data && prof.data.notifications_seen_at) || '1970-01-01';
+    var q = await ONE.db.from('notifications')
+      .select('id', { count: 'exact', head: true })
+      .gt('created_at', seenAt);
+    var n = q && Number.isFinite(q.count) ? q.count : 0;
+    var badge = document.getElementById('navBellCount');
+    if (badge && n > 0) { badge.textContent = String(n); badge.hidden = false; }
+  } catch (e) { /* a bell that cannot count stays quiet */ }
 }
 
 function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }

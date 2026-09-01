@@ -12,6 +12,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
+const { notifyAdmin } = require('./_notify.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -123,6 +124,9 @@ module.exports = async function handler(req, res) {
       replyTo: user.email
     });
     console.log('requests: notify email', result);
+
+    await notifyAdmin(db, 'New ' + (kind === 'feature' ? 'feature' : 'edit') + ' request',
+      name + ' (' + place.toLowerCase() + '): ' + detail.slice(0, 140));
 
     return res.status(200).json({ request: row });
   } catch (err) {
