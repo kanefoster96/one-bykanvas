@@ -17,7 +17,7 @@
 {"@context":"https://schema.org","@type":"WebSite","name":"Kanvas One","alternateName":["one","one by Kanvas","kanvas.one"],"url":"https://kanvas.one/"}
 </script>
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=23">
+<link rel="stylesheet" href="styles.css?v=24">
 </head>
 <body>
 
@@ -165,6 +165,14 @@
   <div class="wrap center">
     <h2 class="reveal">If you need it,<br>we'll build it.</h2>
     <p class="lede reveal">Ask for anything. It gets made and added to your site.</p>
+
+    <!-- A request being typed, as the customer would type it. Decorative:
+         the lede above already says the same thing in words, so screen
+         readers skip the animation rather than hearing it letter by letter. -->
+    <div class="typebox reveal" aria-hidden="true">
+      <span class="typebox-text" id="typeDemo"></span>
+      <span class="typebox-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></svg></span>
+    </div>
   </div>
 
   <!-- Rows scroll in alternating directions. Duplicated to fill the screen by
@@ -310,93 +318,6 @@
   <p class="wrap center micro reveal">Business already includes one point a month, which covers most sites without you needing to think about it. Beyond that, an edit is £40 and a new feature is £120 &mdash; or move up to Pro or Max for more points each month: an edit costs one point, a feature three. Everything you ask for in the original build is included whatever its size, and any live tool we set up for you, like a menu or your prices, is always free to change. Change plan any time.</p>
 </section>
 
-<!-- ============ APP ============ -->
-<section id="app" class="section app">
-  <div class="wrap app-grid">
-    <div class="app-copy reveal">
-      <p class="eyebrow">Add-on</p>
-      <h2>And an app,<br>if you want one.</h2>
-      <p class="lede left">Your business in your customers' pocket. Built alongside your site.</p>
-      <p class="lede left">Pricing depends on what you'd use it for, so get in touch and we'll talk through whether it's a fit and what it costs.</p>
-
-      <!-- Platform marks, not store download badges. Apple's and Google's terms
-           reserve the "Download on the App Store" / "Get it on Google Play"
-           badges for links to a live listing, which this page does not have.
-           Both marks are monochrome for the same reason: an approximated
-           four-colour Google logo would be redrawing their trademark, and it
-           would put the only saturated colour in the section next to a
-           monochrome Apple mark. -->
-      <div class="stores">
-        <span class="store">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.7c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.15-2.8.85-3.5.85s-1.8-.83-3-.81c-1.5.02-2.9.9-3.7 2.27-1.6 2.75-.4 6.8 1.1 9 .75 1.1 1.6 2.3 2.8 2.26 1.1-.05 1.6-.73 2.9-.73s1.75.73 2.95.7c1.2-.02 2-1.1 2.75-2.2.87-1.26 1.22-2.48 1.24-2.55-.03-.01-2.37-.91-2.4-3.6zM14.2 5.9c.62-.75 1.04-1.8.93-2.85-.9.04-1.98.6-2.62 1.35-.57.66-1.07 1.72-.94 2.74 1 .08 2.01-.51 2.63-1.24z"/></svg>
-          <b>App Store</b>
-        </span>
-        <span class="store">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.5 4.2C4.5 3.2 5.6 2.6 6.5 3.1L18.9 10.9C19.8 11.4 19.8 12.6 18.9 13.1L6.5 20.9C5.6 21.4 4.5 20.8 4.5 19.8Z"/></svg>
-          <b>Google Play</b>
-        </span>
-      </div>
-      <p class="stores-note">Published to both stores &mdash; we handle the submission and see it through review.</p>
-
-      <ul class="ticks">
-        <li>iPhone and Android, on both stores</li>
-        <li>Bug fixes handled for you</li>
-        <li>One improvement request every month</li>
-        <li>Ordering, bookings, loyalty — whatever fits your business</li>
-      </ul>
-      <a class="btn btn-primary" href="/get-started.html">Talk about an app</a>
-    </div>
-
-    <div class="app-art reveal" aria-hidden="true">
-      <div class="phone">
-        <div class="notch"></div>
-        <!-- Shaped like a store listing so the add-on reads as a finished
-             thing rather than an idea. Everything factual in it is either
-             true of what we would build or left blank on purpose: there is
-             no star rating, because inventing one would be inventing other
-             people's opinions. -->
-        <div class="phone-screen listing">
-          <div class="ph-nav"><span class="ph-chev">&#8249;</span><span class="ph-share"></span></div>
-
-          <div class="ph-head">
-            <div class="ph-icon">one.</div>
-            <div class="ph-headtext">
-              <p class="ph-name">one.</p>
-              <p class="ph-sub">Your business, in their pocket</p>
-              <p class="ph-get"><span>GET</span></p>
-            </div>
-          </div>
-
-          <div class="ph-meta">
-            <div><b>AGE</b><span>4+</span></div>
-            <div><b>CATEGORY</b><span>Business</span></div>
-            <div><b>DEVELOPER</b><span>Kanvas</span></div>
-          </div>
-
-          <p class="ph-section">Preview</p>
-          <div class="ph-shots">
-            <div class="ph-shot">
-              <span class="ph-shot-hero"></span>
-              <i></i><i class="w"></i>
-            </div>
-            <div class="ph-shot">
-              <span class="ph-shot-bar"></span>
-              <i></i><i class="w"></i><i></i>
-            </div>
-            <div class="ph-shot">
-              <span class="ph-shot-bar"></span>
-              <i></i>
-            </div>
-          </div>
-
-          <p class="ph-section">What it does</p>
-          <p class="ph-copy">Your menu, bookings, offers and updates &mdash; in one
-             tap, under your own name on the home screen.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ============ FAQ ============ -->
 <section id="faq" class="section grey">
@@ -462,7 +383,6 @@
         </select>
       </div>
       <div class="field full"><label for="about">What should the site do?</label><textarea id="about" name="about" rows="4" placeholder="Bookings, a menu customers can see, somewhere to show our work…"></textarea></div>
-      <div class="field full"><label class="check"><input type="checkbox" id="wantapp" name="wantapp"> I'm interested in the app add-on</label></div>
       <button class="btn btn-primary full" type="submit">Send</button>
       <p class="formnote" id="formnote" role="status"></p>
     </form>
@@ -482,7 +402,7 @@
     <nav class="foot-legal-links" aria-label="Legal">
       <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
     </nav>
-    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Website build begins once your completed form is received; the 10-day estimate is measured from that date and depends on how many changes are requested. Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. App publication is subject to Apple App Store and Google Play review and approval. Apple and App Store are trademarks of Apple Inc. Google Play is a trademark of Google LLC. Cancel anytime &mdash; no further payments are taken.</p>
+    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Website build begins once your completed form is received; the 10-day estimate is measured from that date and depends on how many changes are requested. Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. Cancel anytime &mdash; no further payments are taken.</p>
     <p class="foot-copy">© <span id="year">2026</span> Kanvas. All rights reserved.</p>
   </div>
 </footer>
@@ -492,7 +412,7 @@
 <script src="consent.js?v=2"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=2"></script>
-<script src="script.js?v=10"></script>
+<script src="script.js?v=11"></script>
 <script src="reviews.js?v=2"></script>
 <script src="admin-pill.js?v=5"></script>
 </body>

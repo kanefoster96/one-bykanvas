@@ -131,8 +131,7 @@ module.exports = async function handler(req, res) {
           + `Admin: ${site}/admin.html`
         : `${name} at ${business} got in touch.\n\n`
           + `Email:     ${email}\n`
-          + `Interested in: ${plan_interest || 'not said'}\n`
-          + `Wants an app: ${body.wantApp ? 'yes' : 'no'}\n\n`
+          + `Interested in: ${plan_interest || 'not said'}\n\n`
           + `What they said:\n${about || '-'}\n\n`
           + `Admin: ${site}/admin.html`,
       replyTo: email
