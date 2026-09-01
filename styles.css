@@ -1883,3 +1883,28 @@ a.hero-pill:hover .pill-go{opacity:1}
 }
 .msg-thread{display:flex;flex-direction:column;gap:8px;margin:14px 0;
   max-height:52vh;overflow-y:auto;padding:4px 2px}
+
+/* ---------- Header bell + chat (account) ---------- */
+.nav-icon{
+  position:relative;display:grid;place-items:center;
+  width:38px;height:38px;margin-left:6px;border-radius:50%;
+  border:0;background:none;color:var(--ink);cursor:pointer;
+}
+.nav-icon:hover{background:#f2f2f5}
+.nav-icon svg{width:21px;height:21px}
+.nav-count{
+  position:absolute;top:1px;right:-1px;
+  display:grid;place-items:center;min-width:17px;height:17px;padding:0 4px;
+  border-radius:999px;background:#1a7f37;color:#fff;
+  font-size:11px;font-weight:700;border:2px solid #fff;
+}
+.nav-dot-mini{
+  position:absolute;top:5px;right:5px;width:10px;height:10px;border-radius:50%;
+  background:#1a7f37;border:2px solid #fff;
+}
+/* A one-line answer when the bell has nothing to show. */
+.nav-quiet{
+  position:fixed;z-index:130;background:#1d1d1f;color:#fff;
+  font-size:13px;padding:7px 12px;border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,.18);
+}
