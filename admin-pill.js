@@ -38,9 +38,13 @@
     var email = window.ONE_SESSION.email();
     if (!email) return;
 
-    pill(bar, 'accountPill', 'admin-pill', '/account.html', 'Account');
+    /* The admin gets one pill, not two: Admin is where their day happens,
+       and /account.html stays a typed-in URL for the rare visit. Everyone
+       else gets Account. */
     if (ADMINS.indexOf(email) !== -1) {
       pill(bar, 'adminPill', 'admin-pill', '/admin.html', 'Admin');
+    } else {
+      pill(bar, 'accountPill', 'admin-pill', '/account.html', 'Account');
     }
   }
 
