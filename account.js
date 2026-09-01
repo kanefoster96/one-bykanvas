@@ -490,6 +490,14 @@ var FEATURE_NEW_DAYS = 30;
    requests, so a customer can see a feature they asked for before it exists.
    Deliberately no prices or screenshots here: this is what the site has, not
    what it cost. */
+/* A request's first line is the feature's name; anything after it is the
+   customer's notes. The admin side splits the same way when a finished
+   feature lands on the site_features list. */
+function featureName(detail) {
+  return String(detail || '').split('\n')[0].trim();
+}
+var siteFeatureNames = [];
+
 async function showFeatures() {
   var list = document.getElementById('featureList');
 
@@ -499,6 +507,16 @@ async function showFeatures() {
   var pending = (recentRequests || []).filter(function (r) {
     return r.kind === 'feature' && r.status !== 'done' && r.status !== 'declined';
   });
+  // The one being built sits above the ones still waiting their turn.
+  pending.sort(function (a, b) {
+    return (b.status === 'in_progress') - (a.status === 'in_progress');
+  });
+
+  /* Both halves of the list feed the idea library's exclusions: no point
+     offering a feature the site already has or has already asked for. The
+     first line of a request is its name; anything after is their notes. */
+  siteFeatureNames = pending.map(function (r) { return featureName(r.detail).toLowerCase(); })
+    .concat(live.map(function (f) { return String(f.name).toLowerCase(); }));
 
   if (!live.length && !pending.length) { list.hidden = true; return; }
 
@@ -515,7 +533,7 @@ async function showFeatures() {
 
   list.textContent = '';
   pending.forEach(function (r) {
-    list.appendChild(row(r.detail, r.status === 'in_progress' ? 'In build' : 'Requested', 'is-pending'));
+    list.appendChild(row(featureName(r.detail), r.status === 'in_progress' ? 'In build' : 'Requested', 'is-pending'));
   });
   live.forEach(function (f) {
     var fresh = !isNaN(new Date(f.updated_at))
@@ -1010,34 +1028,63 @@ function pickTemplate(t) {
 
 /* The same thirty ideas as the signup wizard, shown only when the feature
    toggle is the open one - an edit is about what's already there. A tap
-   drops the idea into the box: as the whole request when the box is empty,
-   on its own line under whatever's written otherwise. Ideas already
-   mentioned in the text stay out of the list. */
+   turns the idea into a picked pill above the box; each pill is sent as
+   its own request, so each feature can be tracked to In build and Live
+   individually. Ideas already picked, already on the site, already asked
+   for, or already mentioned in the text stay out of the list. */
+var pickedFeatures = [];
+
 function paintReqIdeas() {
   var panel = document.getElementById('reqSuggest');
   var box = document.getElementById('reqChips');
   var ideas = window.FEATURE_IDEAS || [];
   if (!panel || !box || !ideas.length) return;
-  if (reqKind !== 'feature') { panel.hidden = true; return; }
-  var detail = document.getElementById('reqDetail');
-  var have = detail.value.toLowerCase();
+  if (reqKind !== 'feature') { panel.hidden = true; renderPicked(); return; }
+  var have = document.getElementById('reqDetail').value.toLowerCase();
+  var picked = pickedFeatures.map(function (f) { return f.toLowerCase(); });
   box.textContent = '';
   ideas.forEach(function (idea) {
-    if (have.indexOf(idea.toLowerCase()) !== -1) return;
+    var low = idea.toLowerCase();
+    if (picked.indexOf(low) !== -1) return;
+    if (siteFeatureNames.indexOf(low) !== -1) return;
+    if (have.indexOf(low) !== -1) return;
     var chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'use-chip';
     chip.textContent = idea;
     chip.addEventListener('click', function () {
-      var empty = !detail.value.trim();
-      detail.value = empty ? idea + '\n\n' : detail.value.replace(/\s*$/, '\n') + idea + '\n';
-      detail.focus();
-      detail.setSelectionRange(detail.value.length, detail.value.length);
+      pickedFeatures.push(idea);
+      renderPicked();
       paintReqIdeas();
     });
     box.appendChild(chip);
   });
   panel.hidden = false;
+  renderPicked();
+}
+
+/* What they've picked so far - solid pills, each with an x. Tapping one
+   sends it back to the library. */
+function renderPicked() {
+  var wrap = document.getElementById('reqPicked');
+  if (!wrap) return;
+  wrap.textContent = '';
+  if (reqKind !== 'feature' || !pickedFeatures.length) { wrap.hidden = true; return; }
+  pickedFeatures.forEach(function (name, i) {
+    var pill = document.createElement('button');
+    pill.type = 'button';
+    pill.className = 'req-pick-pill';
+    pill.setAttribute('aria-label', 'Remove ' + name);
+    pill.appendChild(document.createTextNode(name + ' '));
+    pill.appendChild(el('i', null, '×'));
+    pill.addEventListener('click', function () {
+      pickedFeatures.splice(i, 1);
+      renderPicked();
+      paintReqIdeas();
+    });
+    wrap.appendChild(pill);
+  });
+  wrap.hidden = false;
 }
 
 document.getElementById('reqDetail').addEventListener('input', paintReqIdeas);
@@ -1066,6 +1113,11 @@ function toggleReq(kind) {
     btns[k].classList.toggle('is-on', k === kind);
     btns[k].setAttribute('aria-expanded', String(k === kind));
   });
+  // The box's job changes with the kind: an edit is described in it; a
+  // feature is usually picked above, with the box for the specifics.
+  document.getElementById('reqDetailLabel').textContent = kind === 'feature'
+    ? 'Details, or a feature we haven’t listed'
+    : 'What would you like?';
   syncTplGroups();
   paintReqIdeas();
   updatePricePreview();
@@ -1139,8 +1191,14 @@ document.getElementById('reqForm').addEventListener('submit', async function (e)
   var btn  = document.getElementById('reqBtn');
   var detail = document.getElementById('reqDetail').value.trim();
   var kind = reqKind;
+  var features = kind === 'feature' ? pickedFeatures.slice(0, 10) : [];
 
-  if (!detail) { say(note, 'Tell us what you would like changed.', 'bad'); return; }
+  if (!detail && !features.length) {
+    say(note, kind === 'feature'
+      ? 'Pick a feature above, or tell us what you’d like.'
+      : 'Tell us what you would like changed.', 'bad');
+    return;
+  }
 
   btn.disabled = true;
   say(note, 'Sending\u2026');
@@ -1162,19 +1220,25 @@ document.getElementById('reqForm').addEventListener('submit', async function (e)
     var res = await fetch('/api/requests', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ kind: kind, detail: detail, attachmentPaths: attachmentPaths })
+      body: JSON.stringify({ kind: kind, detail: detail, features: features, attachmentPaths: attachmentPaths })
     });
     var data = await res.json().catch(function () { return {}; });
     if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
 
-    say(note, 'Sent \u2014 it\u2019s in the queue, and we\u2019ll let you know when it\u2019s being worked on.', 'ok');
+    say(note, features.length > 1
+      ? 'Sent \u2014 all ' + features.length + ' are in the queue, each tracked on its own above.'
+      : 'Sent \u2014 it\u2019s in the queue, and we\u2019ll let you know when it\u2019s being worked on.', 'ok');
 
+    pickedFeatures = [];
     document.getElementById('reqDetail').value = '';
     filesInput.value = '';
     say(document.getElementById('reqFilesNote'), '');
     var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
     await showPoints(fresh.data);
     await showFeatures();
+    // The pills they sent are in the feature list now; clear the picks and
+    // let the library drop what was just asked for.
+    paintReqIdeas();
   } catch (err) {
     say(note, ONE.friendlyError(err), 'bad');
   } finally {
