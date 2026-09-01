@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#1d1d1f"/>
+  <rect width="64" height="64" rx="14" fill="#ffffff"/>
   <!-- The full stop is drawn, not typed: the period in Helvetica and Arial
        is a square, so a favicon relying on the font shows a square dot on
        any machine without SF. textLength pins the word's width so the dot
        always lands in the same place whatever font the browser substitutes. -->
   <text x="10" y="41" textLength="36" lengthAdjust="spacingAndGlyphs"
         font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif"
-        font-size="27" font-weight="600" fill="#ffffff">one</text>
-  <circle cx="50" cy="39" r="2.5" fill="#ffffff"/>
+        font-size="27" font-weight="600" fill="#1d1d1f">one</text>
+  <circle cx="50" cy="39" r="2.5" fill="#1d1d1f"/>
 </svg>
