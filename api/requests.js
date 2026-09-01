@@ -99,8 +99,23 @@ module.exports = async function handler(req, res) {
     if (!Object.prototype.hasOwnProperty.call(REQUEST_COST, kind)) {
       return res.status(400).json({ error: 'Unknown request kind.' });
     }
-    if (!detail || detail.length > 4000) {
+
+    /* Feature picks from the account page's library arrive as names, one
+       request row each - that is what lets each one be tracked to In build
+       and Live on its own. The note in the box rides along under every
+       name (first line = the feature, the rest = their words), so the
+       admin sees the context wherever they open it. */
+    const features = kind === 'feature' && Array.isArray(body.features)
+      ? body.features.map((f) => String(f).trim().replace(/\n/g, ' ')).filter(Boolean).slice(0, 10)
+      : [];
+    if (features.some((f) => f.length > 80)) {
+      return res.status(400).json({ error: 'Feature names should be short - put the detail in the notes box.' });
+    }
+    if (!features.length && (!detail || detail.length > 4000)) {
       return res.status(400).json({ error: 'Tell us what you would like changed.' });
+    }
+    if (detail.length > 4000) {
+      return res.status(400).json({ error: 'Keep the notes under 4,000 characters.' });
     }
 
     /* Only paths the caller could actually have uploaded - storage itself
@@ -112,11 +127,26 @@ module.exports = async function handler(req, res) {
       ? body.attachmentPaths.map(String).filter((p) => p.startsWith(user.id + '/')).slice(0, 6)
       : [];
 
-    const { data: row, error } = await db.from('requests').insert({
-      user_id: user.id, kind: kind, points: REQUEST_COST[kind].points, detail: detail,
-      attachment_paths: attachmentPaths.length ? attachmentPaths : null
-    }).select().single();
-    if (error) throw new Error(error.message);
+    let rows;
+    if (features.length) {
+      // One row per picked feature; the screenshots ride on the first so
+      // clearing them later touches storage exactly once.
+      const inserts = features.map((featName, i) => ({
+        user_id: user.id, kind: kind, points: REQUEST_COST[kind].points,
+        detail: featName + (detail ? '\n\n' + detail : ''),
+        attachment_paths: i === 0 && attachmentPaths.length ? attachmentPaths : null
+      }));
+      const { data, error } = await db.from('requests').insert(inserts).select();
+      if (error) throw new Error(error.message);
+      rows = data || [];
+    } else {
+      const { data: row, error } = await db.from('requests').insert({
+        user_id: user.id, kind: kind, points: REQUEST_COST[kind].points, detail: detail,
+        attachment_paths: attachmentPaths.length ? attachmentPaths : null
+      }).select().single();
+      if (error) throw new Error(error.message);
+      rows = [row];
+    }
 
     const { data: profile } = await db.from('profiles')
       .select('business_name, active_plan').eq('id', user.id).maybeSingle();
@@ -124,10 +154,17 @@ module.exports = async function handler(req, res) {
     const QUEUE = { business: 'in turn', pro: 'PRIORITY', max: 'TOP PRIORITY' };
     const place = QUEUE[profile && profile.active_plan] || 'in turn';
 
+    const asked = features.length
+      ? (features.length === 1 ? 'a new feature' : features.length + ' new features')
+      : (kind === 'feature' ? 'a new feature' : 'an edit');
+    const bodyText = features.length
+      ? '- ' + features.join('\n- ') + (detail ? '\n\nNotes: ' + detail : '')
+      : detail;
+
     const result = await sendEmail({
       to: adminAddresses(),
       subject: `New ${kind === 'feature' ? 'feature' : 'edit'} request: ${name}`,
-      text: `${name} asked for ${kind === 'feature' ? 'a new feature' : 'an edit'} (${place}):\n\n${detail}\n\n`
+      text: `${name} asked for ${asked} (${place}):\n\n${bodyText}\n\n`
           + (attachmentPaths.length ? `${attachmentPaths.length} screenshot${attachmentPaths.length === 1 ? '' : 's'} attached - view in admin.\n\n` : '')
           + `Included in their plan - the queue in admin is already in priority order.\n\n`
           + `Admin: ${ourSiteUrl()}/admin.html`,
@@ -135,10 +172,12 @@ module.exports = async function handler(req, res) {
     });
     console.log('requests: notify email', result);
 
-    await notifyAdmin(db, 'New ' + (kind === 'feature' ? 'feature' : 'edit') + ' request',
-      name + ' (' + place.toLowerCase() + '): ' + detail.slice(0, 140));
+    await notifyAdmin(db, 'New ' + (kind === 'feature' ? 'feature' : 'edit') + ' request'
+      + (rows.length > 1 ? 's' : ''),
+      name + ' (' + place.toLowerCase() + '): '
+      + (features.length ? features.join(', ').slice(0, 140) : detail.slice(0, 140)));
 
-    return res.status(200).json({ request: row });
+    return res.status(200).json({ request: rows[0], count: rows.length });
   } catch (err) {
     console.error('requests:', err && err.message);
     return res.status(500).json({ error: 'Something went wrong. Try again.' });

@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=34">
+<link rel="stylesheet" href="styles.css?v=35">
 </head>
 <body class="auth-body">
 
@@ -94,8 +94,12 @@
         <div class="use-chips" id="reqChips"></div>
       </div>
 
+      <!-- What they've picked so far - each pill becomes its own request,
+           so each feature can be tracked to In build and Live on its own. -->
+      <div class="req-picked" id="reqPicked" hidden></div>
+
       <div class="field full">
-        <label for="reqDetail">What would you like?</label>
+        <label for="reqDetail" id="reqDetailLabel">What would you like?</label>
         <textarea id="reqDetail" rows="4" maxlength="4000" placeholder="Swap the photo on the homepage for the new shopfront one…"></textarea>
       </div>
       <div class="field full">
@@ -340,7 +344,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=2"></script>
 <script src="feature-ideas.js?v=1"></script>
-<script src="account.js?v=28"></script>
+<script src="account.js?v=29"></script>
 <script src="admin-pill.js?v=6"></script>
 </body>
 </html>

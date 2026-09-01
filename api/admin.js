@@ -984,7 +984,8 @@ module.exports = async function handler(req, res) {
       /* Tell them in the app the moment their request moves. The wording is
          the customer's view of each status, not our internal names. */
       if (status !== reqRow.status) {
-        const what = String(reqRow.detail || '').slice(0, 80);
+        // First line only: a feature request's name, without the notes.
+        const what = String(reqRow.detail || '').split('\n')[0].slice(0, 80);
         const TELL = {
           accepted:    ['Request accepted', 'We\u2019ve accepted \u201c' + what + '\u201d \u2014 it\u2019s in the queue.'],
           in_progress: ['Being worked on', '\u201c' + what + '\u201d is being built now.'],
@@ -997,12 +998,27 @@ module.exports = async function handler(req, res) {
       // Turned live just now - a finished feature becomes something their
       // site has, added to the same list a feature can also be added to by
       // hand, and told about the same way. Edits don't get one: nothing new
-      // to list.
+      // to list. The name is the request's first line - picks from the
+      // library arrive as "name\n\nnotes", and the notes are not a name.
       if (status === 'done' && reqRow.status !== 'done' && reqRow.kind === 'feature') {
-        const { error: featErr } = await db.from('site_features')
-          .insert({ user_id: reqRow.user_id, name: String(reqRow.detail).slice(0, 200) });
-        if (featErr) throw new Error(featErr.message);
-        await notifyFeatureEmail(db, reqRow.user_id, reqRow.detail, 'added');
+        const featName = String(reqRow.detail).split('\n')[0].trim().slice(0, 200);
+
+        // Already on their list (added by hand, or a re-request)? Refresh
+        // its NEW pill rather than growing a duplicate row.
+        const { data: existing, error: exErr } = await db.from('site_features')
+          .select('id').eq('user_id', reqRow.user_id).ilike('name', featName).limit(1);
+        if (exErr) throw new Error(exErr.message);
+
+        if (existing && existing.length) {
+          const { error: updErr } = await db.from('site_features')
+            .update({ updated_at: new Date().toISOString() }).eq('id', existing[0].id);
+          if (updErr) throw new Error(updErr.message);
+        } else {
+          const { error: featErr } = await db.from('site_features')
+            .insert({ user_id: reqRow.user_id, name: featName });
+          if (featErr) throw new Error(featErr.message);
+        }
+        await notifyFeatureEmail(db, reqRow.user_id, featName, 'added');
       }
 
       return res.status(200).json({ ok: true, amount });
