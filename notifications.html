@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What&rsquo;s new — one</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=29">
+</head>
+<body class="auth-body">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="one, by Kanvas — home">one.</a>
+  </div>
+</header>
+
+<main class="acct-wrap" id="app" hidden>
+  <section class="panel">
+    <h2 class="panel-title">What&rsquo;s new</h2>
+    <p class="hint">Everything we&rsquo;ve done on your site &mdash; requests moving, features landing, work logged. Newest first.</p>
+    <ul class="notif-list" id="notifList"></ul>
+    <p class="site-none" id="notifEmpty" hidden>Nothing yet &mdash; we&rsquo;ll pop things here as they happen.</p>
+  </section>
+  <p class="acct-back"><a class="linkish" href="/account.html">&larr; Back to your account</a></p>
+</main>
+
+<div class="acct-loading" id="loading"><p>Loading&hellip;</p></div>
+
+<script src="vendor/supabase.js?v=1"></script>
+<script src="consent.js?v=2"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="supabase-client.js?v=1"></script>
+<script src="session.js?v=2"></script>
+<script src="notifications.js?v=1"></script>
+<script src="admin-pill.js?v=6"></script>
+</body>
+</html>

@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=28">
+<link rel="stylesheet" href="styles.css?v=29">
 </head>
 <body class="auth-body">
 
@@ -16,10 +16,10 @@
     <a class="logo" href="/" aria-label="one, by Kanvas — home">one.</a>
     <!-- The bell, shown once the account has loaded; the pill that
          admin-pill.js appends lands after it. -->
-    <button class="nav-icon" id="navBell" type="button" hidden aria-label="Notifications">
+    <a class="nav-icon" id="navBell" href="/notifications.html" hidden aria-label="Notifications">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg>
       <span class="nav-count" id="navBellCount" hidden>0</span>
-    </button>
+    </a>
   </div>
 </header>
 
@@ -60,18 +60,6 @@
       </div>
       <span class="site-pill" id="sitePill" hidden><i></i><span id="sitePillText">Live</span></span>
     </div>
-  </section>
-
-  <!-- Notifications: what we did since they last looked - accepted requests,
-       finished work, site changes. Rows come from the notifications table;
-       read state is one timestamp on the profile. Hidden until there is at
-       least one row, so a brand-new account is not shown an empty box. -->
-  <section class="panel" id="notifPanel" hidden>
-    <h2 class="panel-title">What&rsquo;s new
-      <span class="notif-count" id="notifCount" hidden>0</span>
-    </h2>
-    <ul class="notif-list" id="notifList"></ul>
-    <button class="linkish" id="notifMore" type="button" hidden>Show older</button>
   </section>
 
   <!-- Requests: unlimited on every plan, worked through in priority order. -->
@@ -297,7 +285,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=2"></script>
-<script src="account.js?v=23"></script>
+<script src="account.js?v=24"></script>
 <script src="admin-pill.js?v=6"></script>
 </body>
 </html>

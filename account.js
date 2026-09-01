@@ -1244,130 +1244,36 @@ document.getElementById('logout').addEventListener('click', async function () {
 });
 })();
 
-/* ---------------- notifications ----------------
+/* ---------------- notifications badge ----------------
  *
- * Rows the server writes when we do something - accept a request, finish
- * one, change the site - listed in the What's-new panel with unread
- * highlighting from one notifications_seen_at timestamp on the profile.
- * The header bell carries the unread count and scrolls the panel into
- * view. (Live chat lived here too and was removed for now - PR #84 has it
- * whole if it comes back.)
+ * The list itself lives on /notifications.html now; the account page only
+ * counts what is unread and puts the number on the bell, which is a plain
+ * link to the page. Reading happens there, so nothing is stamped here.
  */
 (function () {
   if (!window.ONE || !ONE.ready) return;
 
-  var userId = null;
-
-  function el(tag, cls, text) {
-    var n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text != null) n.textContent = text;
-    return n;
-  }
-
-  function fmtWhen(iso) {
-    var d = new Date(iso);
-    if (isNaN(d)) return '';
-    var days = (Date.now() - d.getTime()) / 86400000;
-    if (days < 1) return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-  }
-
-  async function loadNotifications() {
-    var prof = await ONE.db.from('profiles')
-      .select('notifications_seen_at').eq('id', userId).maybeSingle();
-    var seenAt = prof.data && prof.data.notifications_seen_at
-      ? new Date(prof.data.notifications_seen_at) : new Date(0);
-
-    var q = await ONE.db.from('notifications')
-      .select('id, title, body, href, created_at')
-      .order('created_at', { ascending: false })
-      .limit(30);
-    if (q.error || !q.data || !q.data.length) return;
-
-    var panel = document.getElementById('notifPanel');
-    var list = document.getElementById('notifList');
-    var count = document.getElementById('notifCount');
-    var more = document.getElementById('notifMore');
-    if (!panel || !list) return;
-
-    var unread = 0;
-    var recent = q.data.slice(0, 6);
-    var older = q.data.slice(6);
-
-    function row(n) {
-      var li = el('li', 'notif-item' + (new Date(n.created_at) > seenAt ? ' is-unread' : ''));
-      var top = el('div', 'notif-top');
-      top.appendChild(el('p', 'notif-title', n.title));
-      top.appendChild(el('span', 'notif-when', fmtWhen(n.created_at)));
-      li.appendChild(top);
-      if (n.body) li.appendChild(el('p', 'notif-body', n.body));
-      /* Only links to our own pages or the customer's own site ever get in
-         here (the server writes them), but a bad row still should not become
-         a javascript: link. */
-      if (n.href && /^(\/|https:\/\/)/.test(n.href)) {
-        var a = el('a', null, 'Open \u2192');
-        a.href = n.href;
-        li.appendChild(a);
-      }
-      return li;
-    }
-
-    list.textContent = '';
-    recent.forEach(function (n) {
-      if (new Date(n.created_at) > seenAt) unread++;
-      list.appendChild(row(n));
-    });
-    older.forEach(function (n) { if (new Date(n.created_at) > seenAt) unread++; });
-
-    if (older.length && more) {
-      more.hidden = false;
-      more.addEventListener('click', function () {
-        older.forEach(function (n) { list.appendChild(row(n)); });
-        more.hidden = true;
-      }, { once: true });
-    }
-
-    if (count) { count.textContent = String(unread); count.hidden = unread === 0; }
-    panel.hidden = false;
-    var bellCount = document.getElementById('navBellCount');
-    if (bellCount) { bellCount.textContent = String(unread); bellCount.hidden = unread === 0; }
-
-    /* The highlights survive this render, then the clock moves: next visit
-       starts clean. Stamped after paint so a failed write costs nothing. */
-    if (unread > 0) {
-      ONE.db.from('profiles')
-        .update({ notifications_seen_at: new Date().toISOString() })
-        .eq('id', userId).then(function () {});
-    }
-  }
-
-  function wireBell() {
-    var bell = document.getElementById('navBell');
-    if (!bell) return;
-    bell.hidden = false;
-    /* The bell takes them to What's-new; with nothing there yet it says so
-       instead of silently doing nothing. */
-    bell.addEventListener('click', function () {
-      var panel = document.getElementById('notifPanel');
-      if (panel && !panel.hidden) {
-        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        return;
-      }
-      var tip = el('div', 'nav-quiet', 'Nothing new yet \u2014 we\u2019ll pop things here as they happen.');
-      var at = bell.getBoundingClientRect();
-      tip.style.top = (at.bottom + 8) + 'px';
-      tip.style.right = Math.max(10, window.innerWidth - at.right) + 'px';
-      document.body.appendChild(tip);
-      setTimeout(function () { tip.remove(); }, 2600);
-    });
-  }
-
   ONE.db.auth.getSession().then(function (res) {
     var session = res.data && res.data.session;
     if (!session) return;             // the page guard is already redirecting
-    userId = session.user.id;
-    wireBell();
-    loadNotifications();
+    var userId = session.user.id;
+
+    var bell = document.getElementById('navBell');
+    if (bell) bell.hidden = false;
+
+    ONE.db.from('profiles')
+      .select('notifications_seen_at').eq('id', userId).maybeSingle()
+      .then(function (prof) {
+        var seenAt = prof.data && prof.data.notifications_seen_at
+          ? prof.data.notifications_seen_at : '1970-01-01';
+        return ONE.db.from('notifications')
+          .select('id', { count: 'exact', head: true })
+          .gt('created_at', seenAt);
+      })
+      .then(function (q) {
+        var n = q && Number.isFinite(q.count) ? q.count : 0;
+        var badge = document.getElementById('navBellCount');
+        if (badge && n > 0) { badge.textContent = String(n); badge.hidden = false; }
+      });
   });
 })();
