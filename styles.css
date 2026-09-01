@@ -1495,7 +1495,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .points-upsell strong{color:var(--ink);font-weight:600}
 .points-upsell-more{margin-top:9px!important}
 
-.req-launch{margin-top:24px;padding-top:22px;border-top:1px solid var(--line-soft)}
+.req-launch{margin-top:18px;padding-top:18px;border-top:1px solid var(--line-soft)}
 .req-picker{margin-top:24px;padding-top:22px;border-top:1px solid var(--line-soft)}
 .req-tpl-group{margin-bottom:18px}
 /* Each saved feature opens to say what it does, so nobody has to guess from
@@ -1524,7 +1524,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .tpl-desc{margin:0 0 14px;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
 .tpl-pick{height:40px;padding:0 18px;font-size:14px}
 
-.req-form{margin-top:24px;padding-top:22px;border-top:1px solid var(--line-soft)}
+.req-form{margin-top:16px;padding-top:16px;border-top:1px solid var(--line-soft)}
 .req-kinds{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
 .req-kind{display:block;cursor:pointer}
 .req-kind input{position:absolute;opacity:0;width:0;height:0}
@@ -1548,11 +1548,12 @@ a.hero-pill:hover .pill-go{opacity:1}
 .req-form .field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
 .req-form label{font-size:13.5px;font-weight:500;color:var(--ink-2)}
 .req-send{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.req-form>.hint{margin:10px 0 0}
 .req-send .note{margin:0}
-.req-price{margin:0 0 16px;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.req-price{margin:0 0 14px;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
 .req-price.is-charge{color:var(--ink);font-weight:600}
 
-.req-list{margin-top:26px;padding-top:22px;border-top:1px solid var(--line-soft)}
+.req-list{margin-top:20px;padding-top:18px;border-top:1px solid var(--line-soft)}
 #completedPanel .req-list{margin-top:0;padding-top:0;border-top:0}
 .req-list-title{margin:0 0 14px;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
 .req-list ul{list-style:none;margin:0;padding:0}
