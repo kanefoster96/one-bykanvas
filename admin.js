@@ -811,8 +811,83 @@ function featureEditor(p) {
   form.appendChild(input);
   form.appendChild(add);
   wrap.appendChild(form);
+  wrap.appendChild(ideaChips(p, input));
 
   return wrap;
+}
+
+/* The same idea library the wizard and every account page show, as
+   tap-to-fill chips - typing is for the ones the library doesn't have.
+   Ideas already on this customer's site drop out. Custom ideas (the ones
+   added from here, held in feature_ideas) carry an x that removes them
+   from the library everywhere; the thirty starters are baked in and stay. */
+function ideaChips(p, input) {
+  var box = el('div', 'use-suggest');
+  box.appendChild(el('p', 'use-suggest-title', 'Tap to fill — the library customers see'));
+  var chips = el('div', 'use-chips');
+  box.appendChild(chips);
+
+  function paint() {
+    chips.textContent = '';
+    var mine = featuresFor(p.id).map(function (f) { return String(f.name).toLowerCase(); });
+    var customById = {};
+    (window.FEATURE_IDEAS_CUSTOM || []).forEach(function (r) { customById[r.name.toLowerCase()] = r.id; });
+
+    (window.FEATURE_IDEAS || []).forEach(function (idea) {
+      var low = idea.toLowerCase();
+      if (mine.indexOf(low) !== -1) return;
+      var chip = el('button', 'use-chip', idea);
+      chip.type = 'button';
+      chip.addEventListener('click', function () { input.value = idea; input.focus(); });
+
+      var customId = customById[low];
+      if (customId) {
+        var x = el('span', 'idea-rm', '×');
+        x.setAttribute('role', 'button');
+        x.setAttribute('aria-label', 'Remove ' + idea + ' from the library');
+        x.addEventListener('click', async function (e) {
+          e.stopPropagation();
+          if (!confirm('Remove "' + idea + '" from the ideas library everywhere?')) return;
+          try {
+            await api({ action: 'removeFeatureIdea', ideaId: customId });
+            window.FEATURE_IDEAS = window.FEATURE_IDEAS.filter(function (n) { return n !== idea; });
+            window.FEATURE_IDEAS_CUSTOM = window.FEATURE_IDEAS_CUSTOM.filter(function (r) { return r.id !== customId; });
+            say('Removed from the library.', 'ok');
+            paint();
+          } catch (err) { say(err.message, 'bad'); }
+        });
+        chip.appendChild(x);
+      }
+      chips.appendChild(chip);
+    });
+  }
+
+  /* Grows the shared library from whatever is typed above - it shows in
+     the wizard and on every account page from the next load. */
+  var grow = el('button', 'linkish idea-grow', 'Add what’s typed to the ideas library');
+  grow.type = 'button';
+  grow.addEventListener('click', async function () {
+    var val = input.value.trim().replace(/\s+/g, ' ');
+    if (!val) return say('Type the idea first.', 'bad');
+    var dupe = (window.FEATURE_IDEAS || []).some(function (n) { return n.toLowerCase() === val.toLowerCase(); });
+    if (dupe) return say('That one is already in the library.', 'bad');
+    grow.disabled = true;
+    try {
+      var res = await api({ action: 'addFeatureIdea', name: val });
+      window.FEATURE_IDEAS.push(res.idea.name);
+      window.FEATURE_IDEAS_CUSTOM.push(res.idea);
+      say('In the library — it now shows in the wizard and on every account.', 'ok');
+      paint();
+    } catch (err) { say(err.message, 'bad'); }
+    grow.disabled = false;
+  });
+  box.appendChild(grow);
+
+  // The custom ideas load async on this page like everywhere else; redraw
+  // once when they land, if this editor painted first.
+  document.addEventListener('one:ideas-loaded', paint, { once: true });
+  paint();
+  return box;
 }
 
 /* Tucked behind a click rather than shown inline next to the feature list -

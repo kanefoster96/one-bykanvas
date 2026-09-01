@@ -900,6 +900,36 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
+    // ---- write: grow or prune the shared ideas library -------------------
+    //      Additions show everywhere the library does: the signup wizard,
+    //      every customer's request form, and this admin's own editor. The
+    //      thirty starters live in feature-ideas.js and can't be removed
+    //      from here - only rows this table holds can. --------------------
+    if (action === 'addFeatureIdea') {
+      const name = String(body.name || '').trim().replace(/\s+/g, ' ').slice(0, 80);
+      if (name.length < 2) return res.status(400).json({ error: 'Name the idea.' });
+
+      const { data: existing, error: exErr } = await db.from('feature_ideas')
+        .select('id').ilike('name', name).limit(1);
+      if (exErr) throw new Error(exErr.message);
+      if (existing && existing.length) {
+        return res.status(400).json({ error: 'That one is already in the library.' });
+      }
+
+      const { data, error } = await db.from('feature_ideas')
+        .insert({ name }).select().single();
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true, idea: data });
+    }
+
+    if (action === 'removeFeatureIdea') {
+      const id = String(body.ideaId || '');
+      if (!id) return res.status(400).json({ error: 'Which idea?' });
+      const { error } = await db.from('feature_ideas').delete().eq('id', id);
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true });
+    }
+
     // ---- write: log a Max customer's SEO update for this billing period ----
     if (action === 'logSeoUpdate') {
       const userId = String(body.userId || '');

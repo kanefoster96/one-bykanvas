@@ -1921,3 +1921,12 @@ a.hero-pill:hover .pill-go{opacity:1}
 }
 .req-pick-pill i{font-style:normal;opacity:.6;font-size:15px}
 .req-pick-pill:hover i{opacity:1}
+
+/* ---------- Ideas library controls (admin feature editor) ---------- */
+.idea-rm{
+  display:inline-grid;place-items:center;margin-left:7px;
+  width:16px;height:16px;border-radius:50%;
+  background:#ececf0;color:#6e6e73;font-size:12px;line-height:1;
+}
+.use-chip:hover .idea-rm{background:#e0e0e5;color:#1d1d1f}
+.idea-grow{display:block;margin-top:10px;font-size:13px}
