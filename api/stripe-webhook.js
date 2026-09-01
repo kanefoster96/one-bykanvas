@@ -10,6 +10,7 @@ const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { PLANS } = require('./_plans.js');
+const { notify, notifyAdmin } = require('./_notify.js');
 
 const PLAN_NAME = { business: 'Business', pro: 'Pro', max: 'Max' }; // must match admin.js/account.js
 
@@ -213,8 +214,19 @@ module.exports = async function handler(req, res) {
     if (isLive(sub.status) && !wasLive) {
       await announceNewCustomer(id, patch);
       await welcomeCustomer(id, patch);
+      await notify(admin, id, 'Welcome to one 👋',
+        'Your plan is active and your build is in the queue. Everything lives here from now on.',
+        '/account.html');
+      await notifyAdmin(admin, 'New customer joined',
+        'A new ' + (patch.active_plan || '') + ' plan just went live. Their build is now owed.');
     }
-    if (sub.status === 'canceled' && !alreadyCanceled) await announceCancellation(id, sub);
+    if (sub.status === 'canceled' && !alreadyCanceled) {
+      await announceCancellation(id, sub);
+      await notify(admin, id, 'Your plan has ended',
+        'Reactivate any time from your account - your site and address can come back as they were.',
+        '/account.html');
+      await notifyAdmin(admin, 'A plan ended', 'Check their domain and site from admin.');
+    }
   }
 
   /* The first thing a customer sees once their card is actually charged -
@@ -418,6 +430,12 @@ module.exports = async function handler(req, res) {
       })
     });
     console.log('webhook: payment failed email', result);
+
+    await notify(admin, p.id, 'We couldn\u2019t take payment',
+      'Your card was declined - updating it from your account fixes it straight away.',
+      '/account.html');
+    await notifyAdmin(admin, 'A payment failed',
+      'Stripe will retry over the next week; their plan pauses if it keeps failing.');
   }
 
   /* Everything worth knowing to start the build, in one message. Without this

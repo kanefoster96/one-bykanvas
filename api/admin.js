@@ -19,6 +19,7 @@ const { html: emailHtml, standardFooter, esc } = require('./_email_template.js')
 const { unsubscribeHeaders, unsubscribeUrl, optedOut } = require('./_unsubscribe.js');
 const { shortfallFor } = require('./_billing.js');
 const { lookup: domainLookup } = require('./domains.js');
+const { notify } = require('./_notify.js');
 
 const DEFAULT_ADMINS = ['kane@kanvas.one'];
 
@@ -113,21 +114,6 @@ const AUDIENCES = ['all', 'customers', 'contacts'].concat(Object.keys(PLANS));
    effort, same reasoning as everywhere else email is sent here: the change
    itself already took effect, so a failed send delays them finding out
    rather than blocking anything. */
-/* One in-app notification row. Written here with the service role because
-   the notifications table deliberately has no insert policy - only the
-   server may say "your request was accepted". Best effort, same as every
-   email here: the action it reports has already happened, and a missed
-   notification must not fail it. */
-async function notify(db, userId, title, body, href) {
-  const { error } = await db.from('notifications').insert({
-    user_id: userId,
-    title: String(title).slice(0, 120),
-    body: body ? String(body).slice(0, 500) : null,
-    href: href || null
-  });
-  if (error) console.error('admin: notification not written:', error.message);
-}
-
 async function notifyFeatureEmail(db, userId, name, verb) {
   /* The one customer email that is genuinely optional - it carries an
      unsubscribe header, so it has to actually stop when someone uses it.

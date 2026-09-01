@@ -15,6 +15,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
+const { notifyAdmin } = require('./_notify.js');
 
 const PLAN_INTEREST = ['business', 'pro', 'max', 'unsure'];
 
@@ -137,6 +138,12 @@ module.exports = async function handler(req, res) {
       replyTo: email
     });
     console.log('lead: notify email', result);
+
+    await notifyAdmin(db,
+      free ? 'Free example wanted' : 'New enquiry',
+      business + (free
+        ? (requested_domain ? ' \u2014 wants ' + requested_domain : '')
+        : (plan_interest ? ' \u2014 interested in ' + plan_interest : '')));
 
     /* And a word back to them, for a free example only. An enquiry gets a
        reply from a person, which is better than an automated one; a free

@@ -14,6 +14,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
+const { notifyAdmin } = require('./_notify.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -116,6 +117,9 @@ module.exports = async function handler(req, res) {
       replyTo: user.email
     });
     console.log('business-updated: notify email', result);
+
+    await notifyAdmin(db, 'Business details changed',
+      name + ' updated their details - their live site may need the same change.');
 
     return res.status(200).json({ ok: true });
   } catch (err) {

@@ -78,9 +78,12 @@
     /* Stamped after paint, so a failed write costs nothing and the
        highlights are on screen for this whole visit. */
     if (unread > 0) {
+      /* Upsert rather than update: the admin account may never have gone
+         through onboarding, so its profile row might not exist yet. */
       ONE.db.from('profiles')
-        .update({ notifications_seen_at: new Date().toISOString() })
-        .eq('id', userId).then(function () {});
+        .upsert({ id: userId, notifications_seen_at: new Date().toISOString() },
+                { onConflict: 'id' })
+        .then(function () {});
     }
   }
 
