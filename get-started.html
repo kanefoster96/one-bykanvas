@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=32">
+<link rel="stylesheet" href="styles.css?v=33">
 </head>
 <body class="auth-body">
 
@@ -137,6 +137,20 @@
           <p>Nothing is bought yet. We register whichever address you settle on when your site is ready, and it&rsquo;s included in your plan &mdash; you never pay for it separately.</p>
         </div>
 
+        <!-- Two small ticks, so the next step can open on the plan that
+             covers what they want. -->
+        <div class="wants-mini">
+          <p class="wants-mini-title">While we&rsquo;re here &mdash; would you like any of these?</p>
+          <label class="want-mini">
+            <input type="checkbox" id="wantEmail">
+            <span>A business email address &mdash; you@yourbusiness.co.uk &mdash; plus email marketing to your customers</span>
+          </label>
+          <label class="want-mini">
+            <input type="checkbox" id="wantSeo">
+            <span>My Google ranking worked on monthly &mdash; SEO updates for Google and AI search</span>
+          </label>
+        </div>
+
         <p class="note" id="noteDomain" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
         <ul class="assure">
@@ -149,22 +163,11 @@
 
       <section class="wiz-step" data-step="4" aria-label="Choose a plan" hidden>
         <h1>Pick your plan.</h1>
-        <p class="wiz-sub">Business covers everything you need to be online. The two ticks below are the only reasons to go higher.</p>
+        <p class="wiz-sub">Business covers everything you need to be online &mdash; the higher plans add email and monthly SEO.</p>
 
-        <!-- The two things Business doesn't do. Ticking one moves the
-             Recommended flag to the right plan; picking a plan without a
-             ticked want earns the orange note under the list. -->
-        <div class="wants" id="wants">
-          <label class="want-row">
-            <input type="checkbox" id="wantEmail">
-            <span><b>I&rsquo;d like a business email address</b><em>you@yourbusiness.co.uk instead of a gmail &mdash; plus email marketing to your customers</em></span>
-          </label>
-          <label class="want-row">
-            <input type="checkbox" id="wantSeo">
-            <span><b>I&rsquo;d like my ranking worked on monthly</b><em>SEO updates, so more people find you on Google and AI search</em></span>
-          </label>
-        </div>
-
+        <!-- Tapping a plan expands its full list right under it; the ticks
+             from the last step pre-select the plan that covers them, and the
+             note under the list says when a choice misses a ticked want. -->
         <div class="pick" id="pick">
           <label class="pick-row is-on" data-plan="business">
             <input type="radio" name="plan" value="business" checked>
@@ -173,8 +176,7 @@
               <span class="pick-note"><b class="pick-flag">Recommended</b>Everything you need to be online.</span>
             </span>
           </label>
-          <details class="pick-more" data-plan="business">
-            <summary>What's included</summary>
+          <div class="pick-feats" data-plan="business">
             <ul class="ticks">
               <li>Built and online within 10 days</li>
               <li>Domain, hosting and SSL included</li>
@@ -182,7 +184,7 @@
               <li>Ongoing support</li>
               <li>Unlimited edits and new features, done in turn</li>
             </ul>
-          </details>
+          </div>
 
           <label class="pick-row" data-plan="pro">
             <input type="radio" name="plan" value="pro">
@@ -191,15 +193,14 @@
               <span class="pick-note">Your changes done sooner, plus email.</span>
             </span>
           </label>
-          <details class="pick-more" data-plan="pro">
-            <summary>What's included</summary>
+          <div class="pick-feats" data-plan="pro">
             <ul class="ticks">
               <li>Everything in Business</li>
               <li>Priority &mdash; your requests go ahead of the Business queue</li>
               <li>Business email &mdash; you@yourbusiness.co.uk, on Google Workspace</li>
               <li>Email marketing &mdash; send offers and news to your customer list, as often as you like</li>
             </ul>
-          </details>
+          </div>
 
           <label class="pick-row" data-plan="max">
             <input type="radio" name="plan" value="max">
@@ -208,14 +209,13 @@
               <span class="pick-note">If you want your ranking worked on monthly.</span>
             </span>
           </label>
-          <details class="pick-more" data-plan="max">
-            <summary>What's included</summary>
+          <div class="pick-feats" data-plan="max">
             <ul class="ticks">
               <li>Everything in Pro</li>
               <li>SEO improvements every month</li>
               <li>Top priority &mdash; first in the queue</li>
             </ul>
-          </details>
+          </div>
         </div>
 
         <p class="pick-warn" id="planSteer" role="status" aria-live="polite" hidden></p>
@@ -319,7 +319,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=2"></script>
 <script src="feature-ideas.js?v=1"></script>
-<script src="get-started.js?v=8"></script>
+<script src="get-started.js?v=9"></script>
 <script src="admin-pill.js?v=6"></script>
 </body>
 </html>
