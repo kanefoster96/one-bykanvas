@@ -464,7 +464,7 @@ function newBuildCard(p) {
   names.appendChild(el('p', 'cust-sub',
     [p.contact_name, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
   head.appendChild(names);
-  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan]));
+  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan] || 'No plan'));
   card.appendChild(head);
 
   card.appendChild(onboardingLines(p));
@@ -667,7 +667,7 @@ function contactLine(p) {
 /* The chip is the truth about money: a live plan by name, a picked-but-unpaid
    plan marked as such, or no plan at all. */
 function planChip(p) {
-  if (p.active_plan) return el('span', 'plan-chip', PLAN_NAME[p.active_plan]);
+  if (p.active_plan) return el('span', 'plan-chip', PLAN_NAME[p.active_plan] || 'No plan');
   return el('span', 'plan-chip is-none',
     p.selected_plan ? PLAN_NAME[p.selected_plan] + ' (unpaid)' : 'No plan');
 }
@@ -702,7 +702,7 @@ function customerListRow(p) {
   names.appendChild(el('p', 'cust-sub',
     [p.contact_name, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
   head.appendChild(names);
-  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan]));
+  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan] || 'No plan'));
   card.appendChild(head);
 
   var reach = contactLine(p);
@@ -1048,7 +1048,7 @@ function customerDetail(p) {
   names.appendChild(el('p', 'cust-sub',
     [p.contact_name, p.business_type].filter(Boolean).join(' \u00b7 ') || 'No details yet'));
   head.appendChild(names);
-  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan]));
+  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan] || 'No plan'));
   wrap.appendChild(head);
 
   var reach = contactLine(p);
@@ -1380,12 +1380,57 @@ function renderEnquiriesSection() {
  * Two clicks to cancel. "End membership" sitting one stray tap from a
  * customer's plan is how a plan gets ended by accident.
  */
+/* Whether the profile row still claims a plan - the thing that blocks
+   deletion and paints the plan badge, true or not. */
+function claimsPlan(p) {
+  return ['active', 'trialing', 'past_due', 'unpaid'].indexOf(p.subscription_status) !== -1
+    || Boolean(p.active_plan);
+}
+
+/* The way out of a stuck account: the profile says there's a plan, Stripe
+   has nothing live to cancel. Clearing drops the claim (the server asks
+   Stripe first and refuses if it's genuinely live), which removes the plan
+   badge and lets the account be deleted from Contacts. */
+function clearPlanRow(p) {
+  var box = el('div');
+  box.appendChild(el('p', 'hint', 'Stripe has no live subscription for this account, but their '
+    + 'profile still claims a plan — usually a test signup or a record that never finished. '
+    + 'Nothing is being billed. Clearing it removes the plan badge and lets the account be '
+    + 'deleted from Contacts.'));
+
+  var note = el('p', 'note');
+  var b = el('button', 'btn btn-ghost admin-save danger', 'Clear the plan from this account');
+  b.type = 'button';
+  b.addEventListener('click', async function () {
+    if (!window.confirm('Clear the plan claim from ' + (p.business_name || 'this account')
+      + '? Stripe is checked first — a genuinely live subscription refuses.')) return;
+    b.disabled = true;
+    try {
+      await api({ action: 'clearLocalPlan', userId: p.id });
+      p.subscription_status = 'canceled';
+      p.active_plan = null;
+      p.stripe_subscription_id = null;
+      say('Plan cleared — they can now be deleted from Contacts.', 'ok');
+      render();
+    } catch (err) {
+      note.textContent = err.message;
+      note.className = 'note bad';
+      b.disabled = false;
+    }
+  });
+  box.appendChild(b);
+  box.appendChild(note);
+  return box;
+}
+
 function billingPanel(p) {
   var wrap = el('div', 'danger-panel');
   var note = el('p', 'note');
 
   if (!p.stripe_subscription_id) {
-    wrap.appendChild(el('p', 'hint', 'No subscription on this account.'));
+    wrap.appendChild(claimsPlan(p)
+      ? clearPlanRow(p)
+      : el('p', 'hint', 'No subscription on this account.'));
     return wrap;
   }
 
@@ -1407,7 +1452,12 @@ function billingPanel(p) {
 
     var sub = out && out.subscription;
     body.textContent = '';
-    if (!sub) return fail('Stripe has no live subscription for this account.');
+    if (!sub) {
+      // Nothing to cancel; if the profile still claims a plan, offer the
+      // way out instead of a dead end.
+      if (claimsPlan(p)) { body.appendChild(clearPlanRow(p)); return; }
+      return fail('Stripe has no live subscription for this account.');
+    }
 
     var ends = sub.endsAt ? when(sub.endsAt) : 'their next payment date';
 
@@ -1517,6 +1567,32 @@ function deletePanel(p) {
     wrap.appendChild(el('p', 'hint', 'This account has a live subscription. End the membership '
       + 'on their customer page first \u2014 deleting them here would leave Stripe billing a '
       + 'person who no longer exists.'));
+
+    /* Unless the "live subscription" is a claim Stripe doesn't share - a
+       test signup, say. One click asks Stripe and clears the claim if it
+       agrees there's nothing there; a genuinely live one refuses. */
+    var fix = el('button', 'linkish', 'Think it\u2019s a dead test plan? Check with Stripe and clear it');
+    fix.type = 'button';
+    fix.addEventListener('click', async function () {
+      // window. explicitly: this panel has a local variable named confirm.
+      if (!window.confirm('Ask Stripe about ' + (p.business_name || 'this account')
+        + ' and clear the plan claim if nothing is live?')) return;
+      fix.disabled = true;
+      try {
+        await api({ action: 'clearLocalPlan', userId: p.id });
+        p.subscription_status = 'canceled';
+        p.active_plan = null;
+        p.stripe_subscription_id = null;
+        say('Plan cleared \u2014 delete is available below now.', 'ok');
+        render();
+      } catch (err) {
+        note.textContent = err.message;
+        note.className = 'note bad';
+        fix.disabled = false;
+      }
+    });
+    wrap.appendChild(fix);
+    wrap.appendChild(note);
     return wrap;
   }
 
