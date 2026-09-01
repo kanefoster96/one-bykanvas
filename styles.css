@@ -1850,3 +1850,23 @@ a.hero-pill:hover .pill-go{opacity:1}
 }
 .use-chip:hover{border-color:#1d1d1f}
 .use-chip:active{background:#1d1d1f;color:#fff}
+
+/* ---------- Plan wants + steer notice (wizard step 4) ---------- */
+.wants{display:grid;gap:8px;margin:0 0 16px}
+.want-row{
+  display:flex;gap:11px;align-items:flex-start;cursor:pointer;
+  border:1.5px solid #e0e0e5;border-radius:14px;padding:12px 14px;
+  background:#fff;transition:border-color .15s ease;
+}
+.want-row:has(input:checked){border-color:#1d1d1f}
+.want-row input{
+  width:19px;height:19px;margin:2px 0 0;flex:none;
+  accent-color:#1d1d1f;cursor:pointer;
+}
+.want-row b{display:block;font-size:14.5px;line-height:1.35}
+.want-row em{font-style:normal;display:block;color:#6e6e73;font-size:13px;line-height:1.4;margin-top:1px}
+.pick-warn{
+  margin:12px 2px 0;padding:11px 14px;
+  background:#fff7ed;border:1px solid #f9caa2;border-radius:12px;
+  color:#b45309;font-size:13.5px;line-height:1.5;
+}

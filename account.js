@@ -804,8 +804,46 @@ function openForm() {
   document.getElementById('reqPicker').hidden = true;
   document.getElementById('reqForm').hidden = false;
   updatePricePreview();
+  paintReqIdeas();
   document.getElementById('reqDetail').focus();
 }
+
+/* The same thirty ideas as the signup wizard, under the request box - in
+   case something got missed back then. A tap drops the idea into the box:
+   as the whole request when the box is empty (flipping the kind to
+   feature), on its own line under whatever's written otherwise. Ideas
+   already mentioned in the text stay out of the list. */
+function paintReqIdeas() {
+  var panel = document.getElementById('reqSuggest');
+  var box = document.getElementById('reqChips');
+  var ideas = window.FEATURE_IDEAS || [];
+  if (!panel || !box || !ideas.length) return;
+  var detail = document.getElementById('reqDetail');
+  var have = detail.value.toLowerCase();
+  box.textContent = '';
+  ideas.forEach(function (idea) {
+    if (have.indexOf(idea.toLowerCase()) !== -1) return;
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'use-chip';
+    chip.textContent = idea;
+    chip.addEventListener('click', function () {
+      var empty = !detail.value.trim();
+      detail.value = empty ? idea + '\n\n' : detail.value.replace(/\s*$/, '\n') + idea + '\n';
+      if (empty) {
+        var radio = document.querySelector('input[name="kind"][value="feature"]');
+        if (radio) { radio.checked = true; updatePricePreview(); }
+      }
+      detail.focus();
+      detail.setSelectionRange(detail.value.length, detail.value.length);
+      paintReqIdeas();
+    });
+    box.appendChild(chip);
+  });
+  panel.hidden = false;
+}
+
+document.getElementById('reqDetail').addEventListener('input', paintReqIdeas);
 
 /* Two doors into the same form, each pre-picking its kind - "edit my site"
    and "add a feature" are how a customer thinks about it, where a single

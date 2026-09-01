@@ -170,18 +170,7 @@
    * filters the list; a chip already used in another box drops out so the
    * three answers stay different. Free typing always works.
    */
-  var FEATURE_IDEAS = [
-    'Contact form', 'Opening hours', 'A menu I can edit myself',
-    'Online bookings', 'Table reservations', 'Online payments',
-    'Order ahead / click and collect', 'Price list', 'Photo gallery',
-    'Customer reviews on my site', 'Map and directions', 'Tap-to-call button',
-    'WhatsApp message button', 'Gift vouchers', 'Deposits to stop no-shows',
-    'Class or session timetable', 'Membership sign-ups', 'Customer log in area',
-    'Live chat', 'Job application form', 'Quote request form',
-    'Newsletter sign-up', 'My Instagram feed on the site', 'Before and after photos',
-    'FAQs section', 'Delivery or service area', 'Special offers banner',
-    'Loyalty stamps or rewards', 'Events calendar', 'Meet the team page'
-  ];
+  var FEATURE_IDEAS = window.FEATURE_IDEAS || [];
 
   (function wireFeatureLibrary() {
     var panel = $('useSuggest');
@@ -659,6 +648,63 @@
       if (pick) row.classList.toggle('is-on', pick.checked);
     });
   });
+
+  /* The two wants above the plans. Ticking one selects the cheapest plan
+   * that covers everything ticked, moves the Recommended flag there and
+   * opens its included list. They can still pick any plan afterwards -
+   * choosing one that misses a ticked want just gets the orange note, so
+   * nobody lands on Business expecting an inbox we never set up.
+   */
+  (function wirePlanSteer() {
+    var email = $('wantEmail'), seo = $('wantSeo'), warnEl = $('planSteer');
+    if (!email || !seo || !warnEl) return;
+
+    var COVERS = { business: [], pro: ['email'], max: ['email', 'seo'] };
+
+    function pickedPlan() {
+      var chosen = document.querySelector('input[name="plan"]:checked');
+      return chosen ? chosen.value : 'business';
+    }
+
+    function warn() {
+      var has = COVERS[pickedPlan()];
+      var missing = [];
+      if (email.checked && has.indexOf('email') === -1) missing.push('the business email address');
+      if (seo.checked && has.indexOf('seo') === -1) missing.push('monthly SEO updates');
+      if (!missing.length) { warnEl.hidden = true; warnEl.textContent = ''; return; }
+      var covers = seo.checked ? 'Max' : 'Pro';
+      warnEl.textContent = 'Just so you know — ' + PLANS[pickedPlan()].label
+        + ' doesn’t include ' + missing.join(' or ') + ' you ticked. '
+        + covers + ' does, and you can move up any time.';
+      warnEl.hidden = false;
+    }
+
+    function steer() {
+      var rec = seo.checked ? 'max' : email.checked ? 'pro' : 'business';
+
+      var radio = document.querySelector('input[name="plan"][value="' + rec + '"]');
+      if (radio) radio.checked = true;
+      document.querySelectorAll('#pick .pick-row').forEach(function (row) {
+        var input = row.querySelector('input');
+        if (input) row.classList.toggle('is-on', input.checked);
+      });
+
+      var flag = document.querySelector('#pick .pick-flag');
+      var note = document.querySelector('.pick-row[data-plan="' + rec + '"] .pick-note');
+      if (flag && note && flag.parentNode !== note) note.insertBefore(flag, note.firstChild);
+
+      // Open what they'd be paying for, fold the rest away.
+      document.querySelectorAll('#pick .pick-more').forEach(function (d) {
+        d.open = d.dataset.plan === rec && rec !== 'business';
+      });
+
+      warn();
+    }
+
+    email.addEventListener('change', steer);
+    seo.addEventListener('change', steer);
+    document.getElementById('pick').addEventListener('change', warn);
+  })();
 
   show(1);
 })();
