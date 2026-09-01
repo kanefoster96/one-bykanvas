@@ -151,11 +151,18 @@
   // off screen, and reduced motion gets the first request standing still.
   var typeEl = document.getElementById('typeDemo');
   if (typeEl) (function () {
+    /* Deliberately a mix of big and small: a whole feature next to a
+       ten-second edit teaches that both are things you just ask for. */
     var LINES = [
       'build a live food menu',
+      'update my opening hours',
       'add a log in for customers',
+      'take deposits for bookings',
       'set up online payments',
-      'add a live chat feature'
+      "add this week's specials",
+      'add a live chat feature',
+      'show off my 5-star reviews',
+      'add a gift voucher shop'
     ];
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
