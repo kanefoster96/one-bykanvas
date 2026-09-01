@@ -113,6 +113,21 @@ const AUDIENCES = ['all', 'customers', 'contacts'].concat(Object.keys(PLANS));
    effort, same reasoning as everywhere else email is sent here: the change
    itself already took effect, so a failed send delays them finding out
    rather than blocking anything. */
+/* One in-app notification row. Written here with the service role because
+   the notifications table deliberately has no insert policy - only the
+   server may say "your request was accepted". Best effort, same as every
+   email here: the action it reports has already happened, and a missed
+   notification must not fail it. */
+async function notify(db, userId, title, body, href) {
+  const { error } = await db.from('notifications').insert({
+    user_id: userId,
+    title: String(title).slice(0, 120),
+    body: body ? String(body).slice(0, 500) : null,
+    href: href || null
+  });
+  if (error) console.error('admin: notification not written:', error.message);
+}
+
 async function notifyFeatureEmail(db, userId, name, verb) {
   /* The one customer email that is genuinely optional - it carries an
      unsubscribe header, so it has to actually stop when someone uses it.
@@ -381,6 +396,7 @@ module.exports = async function handler(req, res) {
       // form - re-saving an already-live address should not re-announce it.
       if (siteStatus === 'live' && before && before.site_status !== 'live') {
         await notifySiteLive(db, userId, before.business_name, siteUrl);
+        await notify(db, userId, 'Your site is live', 'It\u2019s up at ' + siteUrl + '.', siteUrl);
       }
 
       return res.status(200).json({ ok: true });
@@ -835,6 +851,7 @@ module.exports = async function handler(req, res) {
       if (error) throw new Error(error.message);
 
       await notifyFeatureEmail(db, userId, name, 'added');
+      await notify(db, userId, 'New on your site', name + ' has been added to your site.', '/account.html');
       return res.status(200).json({ ok: true, feature: data });
     }
 
@@ -850,6 +867,7 @@ module.exports = async function handler(req, res) {
       if (!data) return res.status(404).json({ error: 'Feature not found.' });
 
       await notifyFeatureEmail(db, data.user_id, data.name, 'updated');
+      await notify(db, data.user_id, 'Updated on your site', data.name + ' has been reworked.', '/account.html');
       return res.status(200).json({ ok: true, feature: data });
     }
 
@@ -871,6 +889,7 @@ module.exports = async function handler(req, res) {
       const { data, error } = await db.from('seo_updates')
         .insert({ user_id: userId, note }).select().single();
       if (error) throw new Error(error.message);
+      await notify(db, userId, 'SEO work done', note.slice(0, 200), '/account.html');
       return res.status(200).json({ ok: true, entry: data });
     }
 
@@ -941,6 +960,19 @@ module.exports = async function handler(req, res) {
 
       const { error } = await db.from('requests').update({ status: status }).eq('id', id);
       if (error) throw new Error(error.message);
+
+      /* Tell them in the app the moment their request moves. The wording is
+         the customer's view of each status, not our internal names. */
+      if (status !== reqRow.status) {
+        const what = String(reqRow.detail || '').slice(0, 80);
+        const TELL = {
+          accepted:    ['Request accepted', 'We\u2019ve accepted \u201c' + what + '\u201d \u2014 it\u2019s in the queue.'],
+          in_progress: ['Being worked on', '\u201c' + what + '\u201d is being built now.'],
+          done:        ['Request done', '\u201c' + what + '\u201d is live on your site.'],
+          declined:    ['Request declined', 'We couldn\u2019t take on \u201c' + what + '\u201d \u2014 message us and we\u2019ll explain.']
+        };
+        if (TELL[status]) await notify(db, reqRow.user_id, TELL[status][0], TELL[status][1], '/account.html');
+      }
 
       // Turned live just now - a finished feature becomes something their
       // site has, added to the same list a feature can also be added to by
