@@ -1829,3 +1829,24 @@ a.hero-pill:hover .pill-go{opacity:1}
 
 /* Back link under the What's-new page */
 .acct-back{margin:18px 4px}
+
+/* ---------- Feature library (wizard step 2) ---------- */
+.use-suggest{
+  margin:4px 0 14px;padding:12px 12px 10px;
+  background:#f7f7f9;border:1px solid #ececf0;border-radius:14px;
+}
+.use-suggest-title{
+  margin:0 0 9px;font-size:12.5px;font-weight:600;color:#86868b;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.use-chips{
+  display:flex;flex-wrap:wrap;gap:7px;
+  max-height:172px;overflow-y:auto;
+}
+.use-chip{
+  border:1.5px solid #e0e0e5;background:#fff;color:#1d1d1f;
+  border-radius:999px;padding:7px 13px;font-size:13.5px;line-height:1.2;
+  cursor:pointer;
+}
+.use-chip:hover{border-color:#1d1d1f}
+.use-chip:active{background:#1d1d1f;color:#fff}
