@@ -216,7 +216,7 @@ function html({
         </td></tr>
         <tr><td style="padding:30px 36px 34px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid ${LINE};">
-            <tr><td style="padding-top:20px;font-size:12.5px;line-height:1.55;color:${INK_3};font-family:${FONT};">${footer || 'one, by Kanvas'}</td></tr>${links}
+            <tr><td style="padding-top:20px;font-size:12.5px;line-height:1.55;color:${INK_3};font-family:${FONT};">${footer || 'Kanvas One'}</td></tr>${links}
           </table>
         </td></tr>
       </table>
