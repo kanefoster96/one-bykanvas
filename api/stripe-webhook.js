@@ -214,7 +214,7 @@ module.exports = async function handler(req, res) {
     if (isLive(sub.status) && !wasLive) {
       await announceNewCustomer(id, patch);
       await welcomeCustomer(id, patch);
-      await notify(admin, id, 'Welcome to one 👋',
+      await notify(admin, id, 'Welcome to Kanvas One 👋',
         'Your plan is active and your build is in the queue. Everything lives here from now on.',
         '/account.html');
       await notifyAdmin(admin, 'New customer joined',
@@ -252,7 +252,7 @@ module.exports = async function handler(req, res) {
 
     /* The three things someone actually wants confirmed after paying: which
        plan they are on, what it gets them, and from when. */
-    const facts = [{ label: 'Plan', value: `one — ${planName}` }];
+    const facts = [{ label: 'Plan', value: `Kanvas One — ${planName}` }];
     if (plan) {
       facts.push({
         label: 'Monthly',
@@ -267,8 +267,8 @@ module.exports = async function handler(req, res) {
 
     const result = await sendEmail({
       to: email,
-      subject: "You're all set — welcome to one",
-      text: `Welcome to one${who2} 👋\n\n`
+      subject: "You're all set — welcome to Kanvas One",
+      text: `Welcome to Kanvas One${who2} 👋\n\n`
           + `Your ${planName} plan is now active - thanks for signing up.\n\n`
           + (plan
               ? `Plan:             one - ${planName}\n`
@@ -281,7 +281,7 @@ module.exports = async function handler(req, res) {
           + `Your account: ${site}/account.html`,
       html: emailHtml({
         preheader: `Your ${planName} plan is active. Here's what happens next.`,
-        heading: `Welcome to one${who2} 👋`,
+        heading: `Welcome to Kanvas One${who2} 👋`,
         lines: [
           `Your <strong>${esc(planName)}</strong> plan is now active &mdash; thanks for signing up.`,
           `We&rsquo;ll be in touch shortly as we start building your site. Everything lives in your account from here: your plan, the changes you ask for, and your site once it&rsquo;s live.`
@@ -290,7 +290,7 @@ module.exports = async function handler(req, res) {
         ctaText: 'Go to your account',
         ctaHref: `${site}/account.html`,
         ctaNote: 'Nothing else to do for now &mdash; we&rsquo;ll come to you.',
-        footer: 'You&rsquo;re getting this because you started a plan with one, by Kanvas.',
+        footer: 'You&rsquo;re getting this because you started a plan with Kanvas One.',
         footerLinks: standardFooter(site)
       })
     });
@@ -317,8 +317,8 @@ module.exports = async function handler(req, res) {
 
     if (email) {
       const why = requested
-        ? `As you asked, your one plan has now ended.`
-        : `We weren't able to take payment after several attempts, so your one plan has now ended.`;
+        ? `As you asked, your Kanvas One plan has now ended.`
+        : `We weren't able to take payment after several attempts, so your Kanvas One plan has now ended.`;
       const whyHtml = requested
         ? 'As you asked, your plan has now ended. Thanks for being with us.'
         : 'We weren’t able to take payment after several attempts, so your plan has now ended.';
@@ -347,7 +347,7 @@ module.exports = async function handler(req, res) {
             text: 'Your site and web address are at risk while the plan is inactive. '
                 + 'If you would like to keep them, please get in touch as soon as you can.'
           },
-          footer: 'You&rsquo;re getting this because your plan with one, by Kanvas has ended.',
+          footer: 'You&rsquo;re getting this because your plan with Kanvas One has ended.',
           footerLinks: standardFooter(site)
         })
       });
@@ -400,7 +400,7 @@ module.exports = async function handler(req, res) {
     const result = await sendEmail({
       to: email,
       subject: "We couldn't take payment for your plan",
-      text: `We tried to charge the card on file for your one plan and it didn't go through.\n\n`
+      text: `We tried to charge the card on file for your Kanvas One plan and it didn't go through.\n\n`
           + `Amount due:     ${amountDue}\n`
           + `Retrying until: ${retryUntil}\n\n`
           + `We'll automatically retry over the next 7 days - to make sure it goes through, you can `
@@ -425,7 +425,7 @@ module.exports = async function handler(req, res) {
           text: 'If payment keeps failing we’ll be in touch, and your plan may be paused '
               + 'until it’s settled — which would put your site and web address at risk.'
         },
-        footer: 'You&rsquo;re getting this because a payment for your one plan was declined.',
+        footer: 'You&rsquo;re getting this because a payment for your Kanvas One plan was declined.',
         footerLinks: standardFooter(site)
       })
     });

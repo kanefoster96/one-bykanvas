@@ -17,7 +17,7 @@ function page({ heading, body, form, token, marketing, list }) {
   return `<!doctype html>
 <html lang="en-GB">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Email settings — one</title><meta name="robots" content="noindex"></head>
+<title>Email settings — Kanvas One</title><meta name="robots" content="noindex"></head>
 <body style="margin:0;background:#f5f5f7;font-family:${FONT};">
   <div style="max-width:460px;margin:0 auto;padding:64px 20px;">
     <div style="background:#fff;border-radius:20px;padding:34px 32px;">

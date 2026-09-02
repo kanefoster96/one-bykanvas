@@ -7,9 +7,9 @@
    points value on each row, so inserts keep writing one, but no money or
    allowance is derived from it anywhere any more. */
 const PLANS = {
-  business: { label: 'one — Business', amount: 5000,  points: 1 },
-  pro:      { label: 'one — Pro',      amount: 12000, points: 3 },
-  max:      { label: 'one — Max',      amount: 25000, points: 5 }
+  business: { label: 'Kanvas One — Business', amount: 5000,  points: 1 },
+  pro:      { label: 'Kanvas One — Pro',      amount: 12000, points: 3 },
+  max:      { label: 'Kanvas One — Max',      amount: 25000, points: 5 }
 };
 
 /* What a request costs, and what it would cost paid for on its own. */

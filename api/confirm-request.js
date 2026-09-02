@@ -11,7 +11,7 @@ const { sendEmail, adminAddresses } = require('./_email.js');
 function page(title, body) {
   return '<!DOCTYPE html><html lang="en-GB"><head><meta charset="utf-8">'
     + '<meta name="viewport" content="width=device-width, initial-scale=1">'
-    + '<title>' + title + ' — one</title></head>'
+    + '<title>' + title + ' — Kanvas One</title></head>'
     + '<body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:480px;'
     + 'margin:96px auto;padding:0 24px;color:#1d1d1f;text-align:center">'
     + '<h1 style="font-size:22px;margin-bottom:12px">' + title + '</h1>'

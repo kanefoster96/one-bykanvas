@@ -24,7 +24,7 @@ const CONFIRM_URL = '{{ .ConfirmationURL }}';
 const files = {
   'confirm-signup.html': html({
     preheader: 'Confirm your email address to finish setting up your account.',
-    heading: 'Welcome to one 👋',
+    heading: 'Welcome to Kanvas One 👋',
     lines: [
       'You&rsquo;re one click away. Confirm your email address and your account is ready to go.',
       'Once you&rsquo;re in you can choose a plan, tell us about your business, and we&rsquo;ll start building.'
@@ -32,7 +32,7 @@ const files = {
     ctaText: 'Confirm your email',
     ctaHref: CONFIRM_URL,
     ctaNote: 'This link expires in 24 hours.',
-    footer: 'You&rsquo;re getting this because someone signed up to one, by Kanvas with this '
+    footer: 'You&rsquo;re getting this because someone signed up to Kanvas One with this '
           + 'address. If it wasn&rsquo;t you, ignore this email &mdash; no account is created '
           + 'until the link above is clicked.',
     footerLinks: standardFooter(SITE)
@@ -42,7 +42,7 @@ const files = {
     preheader: 'Choose a new password for your account.',
     heading: 'Reset your password',
     lines: [
-      'Click below to choose a new password for your one account.'
+      'Click below to choose a new password for your Kanvas One account.'
     ],
     ctaText: 'Choose a new password',
     ctaHref: CONFIRM_URL,
