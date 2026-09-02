@@ -100,7 +100,18 @@
         }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-    items.forEach(function (el) { io.observe(el); });
+    items.forEach(function (el) {
+      /* A block taller than the screen can never have 12% of itself visible,
+         so the observer never fires and the whole thing stays invisible -
+         which is how the terms and privacy pages went blank on phones.
+         Anything that big just shows; the entrance animation only ever
+         made sense for card-sized pieces. */
+      if (el.getBoundingClientRect().height > window.innerHeight * 0.9) {
+        el.classList.add('in');
+        return;
+      }
+      io.observe(el);
+    });
   } else {
     items.forEach(function (el) { el.classList.add('in'); });
   }
