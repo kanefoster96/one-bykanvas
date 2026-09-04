@@ -147,6 +147,10 @@ body.locked{overflow:hidden}
 .btn-primary:hover{background:var(--blue-dark)}
 .btn-ghost{border-color:var(--blue);color:var(--blue);background:#fff}
 .btn-ghost:hover{background:var(--blue);color:#fff}
+/* The free-build offer as a full-size button: same soft green as the hero
+   pill, so "free" reads the same wherever it appears. */
+.btn-free{background:var(--good-soft);color:var(--good);gap:8px}
+.btn-free:hover{background:var(--good);color:#fff}
 .btn.full{width:100%}
 
 .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px}
