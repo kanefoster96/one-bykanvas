@@ -7,6 +7,40 @@
   // mid-page instead of at the top.
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
+  /* ---------- Hero: the last word types itself ---------- */
+  // "Websites built for trades." — the trade holds for a moment, deletes
+  // quickly and retypes as another kind of business. The markup ships with
+  // "trades" already in place, so without JavaScript (or with reduced motion
+  // switched on) the line still reads as a finished sentence. The hero is
+  // centred text, so the line recenters itself as letters come and go.
+  (function () {
+    var word = document.getElementById('heroTrade');
+    if (!word) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var TRADES = ['trades', 'salons', 'cafés', 'gyms', 'barbers', 'cleaners',
+                  'florists', 'tutors', 'coaches', 'startups'];
+    var i = 0;
+
+    function type(text, at) {
+      word.textContent = text.slice(0, at);
+      if (at < text.length) setTimeout(function () { type(text, at + 1); }, 75);
+      else setTimeout(erase, 1400);
+    }
+    function erase() {
+      var t = word.textContent;
+      if (t.length) {
+        word.textContent = t.slice(0, -1);
+        setTimeout(erase, 35);
+      } else {
+        i = (i + 1) % TRADES.length;
+        setTimeout(function () { type(TRADES[i], 0); }, 260);
+      }
+    }
+    // The first word is already on the page; let it sit, then start cycling.
+    setTimeout(erase, 1600);
+  })();
+
   /* ---------- Menu ---------- */
   // One source of truth for the nav. Pages only need an empty #menu element;
   // the header itself stays in the markup so it renders without JavaScript.
