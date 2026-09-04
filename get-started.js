@@ -692,7 +692,7 @@
     }
 
     function steer() {
-      var rec = (seo.checked || email.checked) ? 'max' : 'business';
+      var rec = 'max';
 
       var radio = document.querySelector('input[name="plan"][value="' + rec + '"]');
       if (radio) radio.checked = true;
