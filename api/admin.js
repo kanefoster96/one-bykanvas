@@ -13,7 +13,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const Stripe = require('stripe');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
-const { REQUEST_COST, PLANS } = require('./_plans.js');
+const { REQUEST_COST, PLANS, PREVIEW_OFFER } = require('./_plans.js');
 const { sendEmail, sendBatch } = require('./_email.js');
 const { html: emailHtml, standardFooter, esc } = require('./_email_template.js');
 const { unsubscribeHeaders, unsubscribeUrl, optedOut } = require('./_unsubscribe.js');
@@ -27,7 +27,6 @@ const DEFAULT_ADMINS = ['kane@kanvas.one'];
    in Stripe - checkout already accepts codes, so nothing here has to apply it;
    the customer types it and Stripe does the rest. Changing the discount means
    changing it in Stripe, not here: this is only the word we print. */
-const PREVIEW_OFFER = { code: 'WELCOME26' };
 
 function adminList() {
   const fromEnv = (process.env.ADMIN_EMAILS || '')
@@ -988,7 +987,7 @@ module.exports = async function handler(req, res) {
             footer: standardFooter()
           })
         });
-        if (!sent.ok) console.error('admin: monthly update email failed:', sent.error);
+        if (sent !== 'sent') console.error('admin: monthly update email:', sent);
       }
       return res.status(200).json({ ok: true, entry: data });
     }
