@@ -79,7 +79,7 @@ module.exports = async function handler(req, res) {
     const plan = String(body.plan || '').toLowerCase();
     const apply = body.action === 'apply';
 
-    if (!Object.prototype.hasOwnProperty.call(PLANS, plan)) {
+    if (!Object.prototype.hasOwnProperty.call(PLANS, plan) || plan === 'pro') {
       return res.status(400).json({ error: 'Unknown plan.' });
     }
 

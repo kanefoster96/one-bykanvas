@@ -1,9 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
-  "functions": {
-    "api/campaign.js": { "maxDuration": 300 }
-  },
   "headers": [
     {
       "source": "/(.*)",

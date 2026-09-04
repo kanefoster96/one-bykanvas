@@ -366,6 +366,21 @@ module.exports = async function handler(req, res) {
     console.log('webhook: cancellation admin email', adminResult);
   }
 
+  /* A Max renewal is the cue for that month's SEO and improvement work,
+     so it lands in admin notifications rather than relying on memory. The
+     first invoice is skipped - "New customer joined" already covers it. */
+  async function announceMaxRenewal(invoice) {
+    if (invoice.billing_reason !== 'subscription_cycle') return;
+    const customerId = typeof invoice.customer === 'string' ? invoice.customer : (invoice.customer && invoice.customer.id);
+    if (!customerId) return;
+    const { data: p } = await admin.from('profiles')
+      .select('id, business_name, active_plan').eq('stripe_customer_id', customerId).maybeSingle();
+    if (!p || p.active_plan !== 'max') return;
+    await notifyAdmin(admin, 'Max plan renewed',
+      (p.business_name || 'A Max customer')
+      + " paid for another month. Their SEO update is due - do the work, write it up in their SEO updates box and it emails them the report.");
+  }
+
   /* Only the first failed attempt in a billing cycle - Smart Retries tries
      again automatically over the days that follow, and a fresh email for
      every one of those attempts would be noise, not news. */
@@ -510,6 +525,7 @@ module.exports = async function handler(req, res) {
       case 'invoice.paid': {
         const subId = subscriptionIdOf(event.data.object);
         if (subId) await writeSubscription(await stripe.subscriptions.retrieve(subId));
+        await announceMaxRenewal(event.data.object);
         break;
       }
 

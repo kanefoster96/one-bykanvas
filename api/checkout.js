@@ -37,6 +37,11 @@ module.exports = async function handler(req, res) {
     if (!Object.prototype.hasOwnProperty.call(PLANS, plan)) {
       return res.status(400).json({ error: 'Unknown plan.' });
     }
+    /* pro stays in PLANS so old subscriptions resolve, but it is legacy -
+       nothing sells it any more, including a hand-crafted request. */
+    if (plan === 'pro') {
+      return res.status(400).json({ error: 'That plan is no longer sold.' });
+    }
 
     // ---- who is asking? -------------------------------------------------
     const auth = req.headers.authorization || '';
