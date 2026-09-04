@@ -385,49 +385,6 @@ function siteEditorRow(p) {
   return row;
 }
 
-/* The sending address for a Pro customer's campaigns. Saving it flips the
-   feature on (and tells them), so the hint spells out the order: verify the
-   domain in Resend first, then put the address here. Clearing it turns the
-   feature back off. */
-function campaignFromRow(p) {
-  var row = el('div', 'cust-site');
-
-  var addr = el('input', 'admin-input');
-  addr.type = 'email';
-  addr.value = p.campaign_from || '';
-  addr.placeholder = 'hello@' + ((p.site_url || '').replace(/^https?:\/\//, '').replace(/\/.*$/, '') || 'their-domain.co.uk');
-  addr.setAttribute('aria-label', 'Campaign sending address for ' + (p.business_name || 'this customer'));
-
-  var save = el('button', 'btn btn-ghost admin-save', 'Save');
-  save.type = 'button';
-  save.addEventListener('click', async function () {
-    save.disabled = true;
-    var was = save.textContent;
-    save.textContent = 'Saving…';
-    try {
-      await api({ action: 'setCampaignFrom', userId: p.id, fromAddress: addr.value });
-      p.campaign_from = addr.value.trim().toLowerCase() || null;
-      say('Saved.', 'ok');
-      render();
-    } catch (err) { say(err.message, 'bad'); }
-    save.disabled = false;
-    save.textContent = was;
-  });
-
-  row.appendChild(addr);
-  row.appendChild(save);
-
-  var hint = el('div', 'cust-detail-note');
-  hint.appendChild(el('p', 'cust-sub', p.campaign_from
-    ? 'Live - their campaigns send from this address. Clear it and save to switch the feature off.'
-    : 'Not set - their campaigns are off. Verify their domain in Resend first, then save the address here; they get a notification when it goes live.'));
-
-  var out = el('div', null);
-  out.appendChild(row);
-  out.appendChild(hint);
-  return out;
-}
-
 /* What they told us in the onboarding wizard - shown as reference on both a
    fresh build card and a customer/contact's own detail page. */
 function onboardingLines(p) {
@@ -786,6 +743,8 @@ function featureEditor(p) {
     wrap.appendChild(list);
   }
 
+  wrap.appendChild(el('p', 'cust-sub', 'Write up what was improved this month. Logging it emails the customer the note as their monthly report and drops it in their notifications.'));
+
   var form = el('div', 'feature-add');
   var input = el('input', 'admin-input');
   input.type = 'text';
@@ -968,12 +927,14 @@ function seoLogPanel(p) {
   var due = !seoLoggedThisPeriod(p);
   wrap.appendChild(el('p', 'cust-points' + (due ? ' is-over' : ''), due ? 'Due this month.' : 'Logged this month.'));
 
+  wrap.appendChild(el('p', 'cust-sub', 'Write up what was improved this month. Logging it emails the customer the note as their monthly report and drops it in their notifications.'));
+
   var form = el('div', 'feature-add');
   var input = document.createElement('textarea');
   input.className = 'admin-input notes-textarea';
   input.rows = 2;
   input.placeholder = 'What did you actually change? e.g. Updated meta descriptions, added alt text to gallery photos';
-  var log = el('button', 'btn btn-ghost admin-save', 'Log update');
+  var log = el('button', 'btn btn-ghost admin-save', 'Log & send');
   log.type = 'button';
   log.addEventListener('click', async function () {
     var text = input.value.trim();
@@ -982,7 +943,7 @@ function seoLogPanel(p) {
     try {
       var res = await api({ action: 'logSeoUpdate', userId: p.id, note: text });
       state.seoUpdates.unshift(res.entry);
-      say('Logged.', 'ok');
+      say('Logged, and emailed to the customer.', 'ok');
       render();
     } catch (err) {
       say(err.message, 'bad');
@@ -1068,14 +1029,6 @@ function customerDetail(p) {
   if (p.active_plan === 'max') {
     wrap.appendChild(el('h3', 'req-list-title', 'SEO updates'));
     wrap.appendChild(seoLogPanel(p));
-  }
-
-  /* Any plan: the address their marketing campaigns send from. Saving an
-     address here is what turns the feature on for them - do it only after
-     their domain is verified with Resend. */
-  if (p.active_plan === 'business' || p.active_plan === 'pro' || p.active_plan === 'max') {
-    wrap.appendChild(el('h3', 'req-list-title', 'Email marketing'));
-    wrap.appendChild(campaignFromRow(p));
   }
 
   var onboarding = onboardingLines(p);

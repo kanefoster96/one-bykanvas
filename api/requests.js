@@ -13,7 +13,6 @@ const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { notifyAdmin } = require('./_notify.js');
-const { sendCampaign } = require('./_campaign.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -55,15 +54,6 @@ module.exports = async function handler(req, res) {
        It goes through the server at all because the customer has no UPDATE
        grant on requests, and because the storage delete and the column clear
        have to happen together rather than leaving one without the other. */
-    /* Campaigns moved to their own route (/api/campaign) when the plan's
-       function cap was lifted - it has the five-minute budget a big send
-       needs. This alias stays for anyone sitting on a cached account page
-       from before the move; same auth, same code, shorter clock. */
-    if (body.action === 'sendCampaign') {
-      const out = await sendCampaign(db, user, body);
-      return res.status(out.status).json(out.body);
-    }
-
     if (body.action === 'clearAttachments') {
       const requestId = String(body.requestId || '');
       if (!requestId) return res.status(400).json({ error: 'Which request?' });

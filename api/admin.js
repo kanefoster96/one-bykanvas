@@ -388,40 +388,6 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    /* ---- write: the address a Pro customer's campaigns send from ------
-     *
-     * Setting this is what switches email marketing on for them: the send
-     * endpoint refuses until it is here. It is set from this page rather
-     * than by the customer because it only works once their domain is
-     * verified with the email provider - a manual job on our side - and a
-     * wrong value is a deliverability problem on a domain we look after.
-     */
-    if (action === 'setCampaignFrom') {
-      const userId = String(body.userId || '');
-      const fromAddr = String(body.fromAddress || '').trim().toLowerCase();
-      if (!userId) return res.status(400).json({ error: 'Which customer?' });
-      if (fromAddr && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fromAddr)) {
-        return res.status(400).json({ error: 'That does not look like an email address.' });
-      }
-
-      const { data: before, error: beforeErr } = await db.from('profiles')
-        .select('campaign_from, business_name').eq('id', userId).maybeSingle();
-      if (beforeErr) throw new Error(beforeErr.message);
-
-      const { error } = await db.from('profiles')
-        .update({ campaign_from: fromAddr || null }).eq('id', userId);
-      if (error) throw new Error(error.message);
-
-      // Told once, when it first goes from off to on - not on every edit.
-      if (fromAddr && before && !before.campaign_from) {
-        await notify(db, userId, 'Email marketing is ready',
-          'Your campaigns now send from ' + fromAddr + '. Build your customer list and send your first one from your account page.',
-          '/account.html');
-      }
-
-      return res.status(200).json({ ok: true });
-    }
-
     /* ---- is this membership already set to end? -----------------------
      *
      * Asked of Stripe rather than kept in a column here. cancel_at_period_end
@@ -998,7 +964,32 @@ module.exports = async function handler(req, res) {
       const { data, error } = await db.from('seo_updates')
         .insert({ user_id: userId, note }).select().single();
       if (error) throw new Error(error.message);
-      await notify(db, userId, 'SEO work done', note.slice(0, 200), '/account.html');
+      await notify(db, userId, 'Your monthly update', note.slice(0, 200), '/account.html');
+
+      /* The note is the paid deliverable on Max, so it goes to their inbox
+         too - a report of work done, not optional marketing, so it sends
+         without the notify opt-out gate and carries no unsubscribe link. */
+      const { data: who } = await db.auth.admin.getUserById(userId);
+      const customerEmail = who && who.user && who.user.email;
+      if (customerEmail) {
+        const site = ourSiteUrl();
+        const sent = await sendEmail({
+          to: customerEmail,
+          subject: 'Your monthly update - what we improved on your site',
+          text: 'This month we worked on your site. Here is what changed:\n\n'
+              + note + '\n\nYour account: ' + site + '/account.html',
+          html: emailHtml({
+            preheader: 'What we improved on your site this month.',
+            heading: 'Your monthly update',
+            lines: ['This month we worked on your site. Here is what changed:']
+              .concat(note.split(/\n+/).map((l) => esc(l))),
+            ctaText: 'See your site',
+            ctaHref: site + '/account.html',
+            footer: standardFooter()
+          })
+        });
+        if (!sent.ok) console.error('admin: monthly update email failed:', sent.error);
+      }
       return res.status(200).json({ ok: true, entry: data });
     }
 
