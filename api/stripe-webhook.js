@@ -212,6 +212,7 @@ module.exports = async function handler(req, res) {
        recorded, and a mail problem must not fail the event and have Stripe
        retry it. */
     if (isLive(sub.status) && !wasLive) {
+      await rewardReferrer(id, patch);
       await announceNewCustomer(id, patch);
       await welcomeCustomer(id, patch);
       await notify(admin, id, 'Welcome to Kanvas One 👋',
@@ -379,6 +380,89 @@ module.exports = async function handler(req, res) {
     await notifyAdmin(admin, 'Max plan renewed',
       (p.business_name || 'A Max customer')
       + " paid for another month. Their SEO update is due - do the work, write it up in their SEO updates box and it emails them the report.");
+  }
+
+  /* The referral payoff. When a referred customer's plan first goes live,
+     the referrer's next month is credited in Stripe - a negative balance
+     transaction that comes off their next invoice automatically, worth one
+     month of THEIR plan. The stamp goes on the referred customer's row
+     first, with a null-guard in the filter, so a retried webhook can never
+     credit twice. Anything that stops the credit itself is told to the
+     admin rather than swallowed - a promised free month must not vanish
+     into a log. */
+  async function rewardReferrer(newUserId, patch) {
+    const { data: p } = await admin.from('profiles')
+      .select('referred_by, referral_rewarded_at, business_name')
+      .eq('id', newUserId).maybeSingle();
+    if (!p || !p.referred_by || p.referral_rewarded_at) return;
+    if (p.referred_by === newUserId) return;
+
+    const { error: stampErr } = await admin.from('profiles')
+      .update({ referral_rewarded_at: new Date().toISOString() })
+      .eq('id', newUserId).is('referral_rewarded_at', null);
+    if (stampErr) {
+      console.error('webhook: referral stamp failed:', stampErr.message);
+      return;
+    }
+
+    const newName = p.business_name || 'A business you referred';
+    const { data: ref } = await admin.from('profiles')
+      .select('id, stripe_customer_id, active_plan, business_name')
+      .eq('id', p.referred_by).maybeSingle();
+
+    if (!ref || !ref.stripe_customer_id) {
+      await notifyAdmin(admin, 'Referral needs a hand',
+        newName + ' joined with a referral code, but the referrer has no Stripe customer to credit. Sort it by hand.');
+      return;
+    }
+
+    const planKey = Object.prototype.hasOwnProperty.call(PLANS, ref.active_plan) ? ref.active_plan : 'business';
+    const amount = PLANS[planKey].amount;
+    try {
+      await stripe.customers.createBalanceTransaction(ref.stripe_customer_id, {
+        amount: -amount,
+        currency: 'gbp',
+        description: 'Referral: ' + newName + ' joined with their code - next month on us'
+      });
+    } catch (err) {
+      console.error('webhook: referral credit failed:', err && err.message);
+      await notifyAdmin(admin, 'Referral needs a hand',
+        'Crediting the referrer for ' + newName + ' failed (' + ((err && err.message) || 'unknown') + '). Sort it by hand.');
+      return;
+    }
+
+    await notify(admin, ref.id, 'Your next month is free 🎉',
+      newName + ' joined with your code. The credit is already on your account and comes off your next payment by itself.',
+      '/account.html');
+
+    const { data: who } = await admin.auth.admin.getUserById(ref.id);
+    const refEmail = who && who.user && who.user.email;
+    if (refEmail) {
+      const site = ourSiteUrl();
+      await sendEmail({
+        to: refEmail,
+        subject: 'Your next month is free 🎉',
+        text: newName + ' joined Kanvas One with your referral code, so your next month is on us.\n\n'
+            + 'Nothing to do - the credit is already on your account and comes off your next payment by itself.\n\n'
+            + 'Your code is on your account page whenever you want to use it again: ' + site + '/account.html',
+        html: emailHtml({
+          preheader: newName + ' joined with your code - next month is on us.',
+          heading: 'Your next month is free 🎉',
+          lines: [
+            '<strong>' + esc(newName) + '</strong> joined Kanvas One with your referral code, so your next month is on us.',
+            'Nothing to do &mdash; the credit is already on your account and comes off your next payment by itself.',
+            'There&rsquo;s no limit, by the way. Every business that joins with your code is another month free.'
+          ],
+          ctaText: 'Get your code again',
+          ctaHref: site + '/account.html',
+          footer: 'You&rsquo;re getting this because a business joined Kanvas One with your referral code.',
+          footerLinks: standardFooter(site)
+        })
+      });
+    }
+
+    await notifyAdmin(admin, 'Referral credited',
+      (ref.business_name || 'A customer') + ' got a free month: ' + newName + ' joined with their code.');
   }
 
   /* Only the first failed attempt in a billing cycle - Smart Retries tries

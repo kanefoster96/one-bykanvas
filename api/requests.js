@@ -54,6 +54,43 @@ module.exports = async function handler(req, res) {
        It goes through the server at all because the customer has no UPDATE
        grant on requests, and because the storage delete and the column clear
        have to happen together rather than leaving one without the other. */
+    /* ---- the customer's own referral code, minted on first ask -------
+     *
+     * Server-side because the code must be unique and is the thing money
+     * hangs off. Readable prefix from the business name, short unambiguous
+     * suffix; the unique index arbitrates races and collisions.
+     */
+    if (body.action === 'getReferralCode') {
+      const { data: p, error: pErr } = await db.from('profiles')
+        .select('referral_code, business_name').eq('id', user.id).maybeSingle();
+      if (pErr) throw new Error(pErr.message);
+
+      let code = p && p.referral_code;
+      if (!code) {
+        const ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+        const prefix = String((p && p.business_name) || 'ONE')
+          .toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4) || 'ONE';
+        for (let attempt = 0; attempt < 4 && !code; attempt++) {
+          let suffix = '';
+          for (let i = 0; i < 4; i++) suffix += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+          const candidate = attempt < 3 ? `${prefix}-${suffix}` : `REF-${suffix}${ALPHABET[Math.floor(Math.random() * ALPHABET.length)]}`;
+          const { error: mintErr } = await db.from('profiles')
+            .update({ referral_code: candidate }).eq('id', user.id).is('referral_code', null);
+          if (mintErr) { console.error('requests: mint clash, retrying:', mintErr.message); continue; }
+          const { data: after } = await db.from('profiles')
+            .select('referral_code').eq('id', user.id).maybeSingle();
+          code = after && after.referral_code;
+        }
+        if (!code) return res.status(500).json({ error: 'Could not make a code just now. Try again.' });
+      }
+
+      const site = ourSiteUrl();
+      return res.status(200).json({
+        code,
+        link: `${site}/get-started.html?ref=${encodeURIComponent(code)}`
+      });
+    }
+
     if (body.action === 'clearAttachments') {
       const requestId = String(body.requestId || '');
       if (!requestId) return res.status(400).json({ error: 'Which request?' });

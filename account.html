@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=45">
+<link rel="stylesheet" href="styles.css?v=46">
 </head>
 <body class="auth-body">
 
@@ -66,6 +66,21 @@
        toggles underneath. No sales copy: the pills say what exists, the
        buttons say what can happen next. Each button expands its own form
        below and folds it away again when tapped a second time. -->
+  <!-- Referral: their own code, minted server-side on first view. Shown to
+       any paying customer; the reward lands automatically when a business
+       that used the code goes live. -->
+  <section class="panel" id="referralPanel" hidden>
+    <h2 class="panel-title">Refer a business, get a month free</h2>
+    <p class="panel-sub">Know another business that needs a site? Give them your code
+       or link. When their site goes live on a paid plan, your next month is free
+       &mdash; automatically, every time.</p>
+    <div class="ref-row">
+      <code id="refCodeShow">&hellip;</code>
+      <button class="btn btn-ghost" id="refCopy" type="button">Copy link</button>
+    </div>
+    <p class="hint" id="refHint">They enter it at checkout &mdash; or your link fills it in for them.</p>
+  </section>
+
   <section class="panel points-panel" id="pointsPanel">
     <h2 class="panel-title">Features on your site</h2>
 
@@ -278,7 +293,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="account.js?v=31"></script>
+<script src="account.js?v=32"></script>
 <script src="admin-pill.js?v=7"></script>
 </body>
 </html>

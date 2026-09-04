@@ -104,7 +104,7 @@ module.exports = async function handler(req, res) {
     }
     const { data: profile } = await admin
       .from('profiles')
-      .select('stripe_customer_id, business_name, subscription_status')
+      .select('stripe_customer_id, business_name, subscription_status, referred_by')
       .eq('id', user.id)
       .maybeSingle();
 
@@ -117,6 +117,36 @@ module.exports = async function handler(req, res) {
     }
 
     const stripe = new Stripe(STRIPE_SECRET_KEY);
+
+    /* ---- referral code, if they brought one -----------------------------
+     *
+     * Validated now, at the moment a typo can still be fixed, and stamped on
+     * the buyer's profile before Stripe opens. The reward itself waits for
+     * the webhook: it is granted when this subscription first goes live, so
+     * an abandoned checkout earns nobody anything. First code wins - a
+     * retried checkout cannot swap referrers.
+     */
+    const refCode = String(body.referralCode || '').trim().toUpperCase();
+    if (refCode) {
+      if (!/^[A-Z0-9-]{4,20}$/.test(refCode)) {
+        return res.status(400).json({ error: "That referral code doesn't look right - check it or leave it blank." });
+      }
+      const { data: referrer, error: refErr } = await admin.from('profiles')
+        .select('id').ilike('referral_code', refCode).maybeSingle();
+      if (refErr) throw new Error(refErr.message);
+      if (!referrer) {
+        return res.status(400).json({ error: "That referral code doesn't look right - check it or leave it blank." });
+      }
+      if (referrer.id === user.id) {
+        return res.status(400).json({ error: 'You cannot refer yourself - share your code with another business instead.' });
+      }
+      if (!(profile && profile.referred_by)) {
+        const { error: stampErr } = await admin.from('profiles')
+          .upsert({ id: user.id, referred_by: referrer.id, referred_by_code: refCode }, { onConflict: 'id' });
+        if (stampErr) throw new Error(stampErr.message);
+      }
+    }
+
     let customerId = profile && profile.stripe_customer_id;
 
     if (!customerId) {

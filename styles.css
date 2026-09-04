@@ -192,6 +192,16 @@ body.locked{overflow:hidden}
 @keyframes caret-blink{0%,100%{opacity:1}50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.type-caret{display:none}}
 
+/* ---------- Referral panel ---------- */
+.panel-sub{margin:-12px 0 18px;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.ref-row{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.ref-row code{
+  flex:1 1 180px;display:flex;align-items:center;justify-content:center;
+  font-family:inherit;font-size:17px;font-weight:700;letter-spacing:.06em;
+  background:var(--good-soft);color:var(--good);border-radius:12px;padding:12px 18px;
+}
+.ref-row .btn{flex:0 0 auto}
+
 /* ---------- The See-It-First Promise ---------- */
 /* The guarantee, named. Everything in it is already true (free example
    first, no setup fees, cancel any month) - this just says it out loud. */
