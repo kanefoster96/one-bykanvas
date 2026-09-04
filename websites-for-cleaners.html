@@ -20,7 +20,7 @@
 {"@context":"https://schema.org","@type":"Service","name":"Websites for Cleaners","serviceType":"Website design and management","provider":{"@type":"Organization","name":"Kanvas One","url":"https://kanvas.one/"},"areaServed":"GB","url":"https://kanvas.one/websites-for-cleaners","description":"Websites for cleaning businesses. Quote forms, service areas, reviews and recurring bookings — built for you, from £50 a month, no setup fees."}
 </script>
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=42">
+<link rel="stylesheet" href="styles.css?v=43">
 </head>
 <body>
 
@@ -42,8 +42,17 @@
 
 <section class="page-hero">
   <div class="wrap center">
+    <a class="hero-pill hero-pill-link reveal" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">Websites for cleaners.</h1>
     <p class="lede reveal">Cleaning is bought on trust. A proper site with reviews and clear prices wins jobs a leaflet never will.</p>
+
+    <!-- A request being typed, as this trade would type it. Decorative: the
+         copy around it says the same things, so screen readers skip the
+         animation rather than hearing it letter by letter. -->
+    <div class="typebox reveal" aria-hidden="true">
+      <span class="typebox-text" id="typeDemo" data-lines="[&quot;add a quote form&quot;,&quot;show my before and afters&quot;,&quot;set up weekly bookings&quot;,&quot;list the areas I cover&quot;,&quot;add my reviews&quot;]"></span>
+      <span class="typebox-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></svg></span>
+    </div>
   </div>
 </section>
 
@@ -52,31 +61,61 @@
     <h2 class="reveal">What your site can do.</h2>
     <p class="lede reveal">Everything below is built for you and included in the plan &mdash; ask for it and it gets made.</p>
   </div>
-  <div class="wrap grid grid-3 reveal">
-    <article class="card"><div class="card-text">
-      <h3>Quotes while you clean</h3>
-      <p>A form that asks the right questions &mdash; rooms, frequency, oven or not &mdash; so quoting takes minutes, not visits.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>Trust on the page</h3>
-      <p>Insured, DBS-checked, years trading &mdash; said clearly, where nervous first-time customers look for it.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>Reviews doing the selling</h3>
-      <p>Your Google reviews on your own site. In this trade, they are the deciding factor.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>Regular slots, booked once</h3>
-      <p>Weekly and fortnightly cleans set up as repeat bookings &mdash; a steady round, not one-offs.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>The areas you cover</h3>
-      <p>Postcodes and towns listed plainly, so enquiries come from streets you actually drive to.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>Before and after galleries</h3>
-      <p>End-of-tenancy transformations sell deep cleans better than any wording.</p>
-    </div></article>
+  <div class="wrap grid reveal">
+    <article class="card">
+      <div class="ico ico-blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M9 9h6M9 13h6M9 17h3.5"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>Quotes while you clean</h3>
+        <p>A form that asks the right questions &mdash; rooms, frequency, oven or not &mdash; so quoting takes minutes, not visits.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8 3.5v6c0 5-3.6 8.6-8 10-4.4-1.4-8-5-8-10v-6z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>Trust on the page</h3>
+        <p>Insured, DBS-checked, years trading &mdash; said clearly, where nervous first-time customers look for it.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-purple">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4l2.5 5.4 5.9.6-4.4 4 1.2 5.8L12 16.2l-5.2 3 1.2-5.8-4.4-4 5.9-.6z"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>Reviews doing the selling</h3>
+        <p>Your Google reviews on your own site. In this trade, they are the deciding factor.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 14-5"/><path d="M18 3v4h-4"/><path d="M20 12a8 8 0 0 1-14 5"/><path d="M6 21v-4h4"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>Regular slots, booked once</h3>
+        <p>Weekly and fortnightly cleans set up as repeat bookings &mdash; a steady round, not one-offs.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-pink">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>The areas you cover</h3>
+        <p>Postcodes and towns listed plainly, so enquiries come from streets you actually drive to.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-grey">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.6"/><path d="M3 16.5l5-4.5 4 3.5 3.5-3 5.5 4.5"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>Before and after galleries</h3>
+        <p>End-of-tenancy transformations sell deep cleans better than any wording.</p>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -86,18 +125,27 @@
     <p class="lede reveal">Tell us your services, prices and areas. We write the pages and build the quote form, and you&rsquo;re online within 10 days.</p>
   </div>
   <div class="wrap grid grid-3 reveal">
-    <article class="card"><div class="card-text">
-      <h3>1. Tell us about the business</h3>
-      <p>Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>2. We build it for you</h3>
-      <p>Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>3. Online within 10 days</h3>
-      <p>Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.</p>
-    </div></article>
+    <article class="card">
+      <div class="ico ico-blue"><span class="step-n">1</span></div>
+      <div class="card-text">
+        <h3>Tell us about the business</h3>
+        <p>Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-purple"><span class="step-n">2</span></div>
+      <div class="card-text">
+        <h3>We build it for you</h3>
+        <p>Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-green"><span class="step-n">3</span></div>
+      <div class="card-text">
+        <h3>Online within 10 days</h3>
+        <p>Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.</p>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -137,7 +185,7 @@
 <script src="consent.js?v=2"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="script.js?v=16"></script>
+<script src="script.js?v=17"></script>
 <script src="admin-pill.js?v=7"></script>
 </body>
 </html>

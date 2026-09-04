@@ -20,7 +20,7 @@
 {"@context":"https://schema.org","@type":"Service","name":"Websites for Florists","serviceType":"Website design and management","provider":{"@type":"Organization","name":"Kanvas One","url":"https://kanvas.one/"},"areaServed":"GB","url":"https://kanvas.one/websites-for-florists","description":"Websites for florists. Online orders, occasion pages, delivery areas and wedding enquiries — built for you, from £50 a month, no setup fees."}
 </script>
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=42">
+<link rel="stylesheet" href="styles.css?v=43">
 </head>
 <body>
 
@@ -42,8 +42,17 @@
 
 <section class="page-hero">
   <div class="wrap center">
+    <a class="hero-pill hero-pill-link reveal" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">Websites for florists.</h1>
     <p class="lede reveal">Flowers are bought in a hurry and by occasion. Your site should catch both &mdash; and take the payment.</p>
+
+    <!-- A request being typed, as this trade would type it. Decorative: the
+         copy around it says the same things, so screen readers skip the
+         animation rather than hearing it letter by letter. -->
+    <div class="typebox reveal" aria-hidden="true">
+      <span class="typebox-text" id="typeDemo" data-lines="[&quot;sell bouquets online&quot;,&quot;add a Mother's Day page&quot;,&quot;show my arrangements&quot;,&quot;take wedding enquiries&quot;,&quot;set my delivery areas&quot;]"></span>
+      <span class="typebox-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></svg></span>
+    </div>
   </div>
 </section>
 
@@ -52,31 +61,61 @@
     <h2 class="reveal">What your site can do.</h2>
     <p class="lede reveal">Everything below is built for you and included in the plan &mdash; ask for it and it gets made.</p>
   </div>
-  <div class="wrap grid grid-3 reveal">
-    <article class="card"><div class="card-text">
-      <h3>Orders paid online</h3>
-      <p>Bouquets ordered and paid on your site &mdash; not lost to the relay sites taking a cut.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>A page per occasion</h3>
-      <p>Birthdays, sympathy, anniversaries, Mother&rsquo;s Day &mdash; pages that show up when people search in a hurry.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>Your arrangements, not stock photos</h3>
-      <p>Galleries of your own work &mdash; the style that makes someone choose your shop.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>Delivery areas and cut-offs</h3>
-      <p>Where you deliver and by when &mdash; clear before checkout, so every order is one you can fulfil.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>Wedding and event enquiries</h3>
-      <p>A proper enquiry form for the big jobs &mdash; dates, venues, budgets &mdash; straight to your inbox.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>Seasonal changes in seconds</h3>
-      <p>Swap the collection for Valentine&rsquo;s or Christmas from your phone.</p>
-    </div></article>
+  <div class="wrap grid reveal">
+    <article class="card">
+      <div class="ico ico-blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 10h19M6.5 15h3"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>Orders paid online</h3>
+        <p>Bouquets ordered and paid on your site &mdash; not lost to the relay sites taking a cut.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>A page per occasion</h3>
+        <p>Birthdays, sympathy, anniversaries, Mother&rsquo;s Day &mdash; pages that show up when people search in a hurry.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-purple">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.6"/><path d="M3 16.5l5-4.5 4 3.5 3.5-3 5.5 4.5"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>Your arrangements, not stock photos</h3>
+        <p>Galleries of your own work &mdash; the style that makes someone choose your shop.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>Delivery areas and cut-offs</h3>
+        <p>Where you deliver and by when &mdash; clear before checkout, so every order is one you can fulfil.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-pink">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M3.5 7.5L12 13l8.5-5.5"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>Wedding and event enquiries</h3>
+        <p>A proper enquiry form for the big jobs &mdash; dates, venues, budgets &mdash; straight to your inbox.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-grey">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L20 8l-4-4L4 16z"/><path d="M14.5 5.5l4 4"/></svg>
+      </div>
+      <div class="card-text">
+        <h3>Seasonal changes in seconds</h3>
+        <p>Swap the collection for Valentine&rsquo;s or Christmas from your phone.</p>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -86,18 +125,27 @@
     <p class="lede reveal">Send photos of your arrangements and your price ranges. We build the shop pages and order flow, and you&rsquo;re online within 10 days.</p>
   </div>
   <div class="wrap grid grid-3 reveal">
-    <article class="card"><div class="card-text">
-      <h3>1. Tell us about the business</h3>
-      <p>Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>2. We build it for you</h3>
-      <p>Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>3. Online within 10 days</h3>
-      <p>Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.</p>
-    </div></article>
+    <article class="card">
+      <div class="ico ico-blue"><span class="step-n">1</span></div>
+      <div class="card-text">
+        <h3>Tell us about the business</h3>
+        <p>Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-purple"><span class="step-n">2</span></div>
+      <div class="card-text">
+        <h3>We build it for you</h3>
+        <p>Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-green"><span class="step-n">3</span></div>
+      <div class="card-text">
+        <h3>Online within 10 days</h3>
+        <p>Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.</p>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -137,7 +185,7 @@
 <script src="consent.js?v=2"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="script.js?v=16"></script>
+<script src="script.js?v=17"></script>
 <script src="admin-pill.js?v=7"></script>
 </body>
 </html>
