@@ -7,12 +7,14 @@
   // mid-page instead of at the top.
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-  /* ---------- Hero: the last word types itself ---------- */
-  // "Websites built for trades." — the trade holds for a moment, deletes
-  // quickly and retypes as another kind of business. The markup ships with
-  // "trades" already in place, so without JavaScript (or with reduced motion
-  // switched on) the line still reads as a finished sentence. The hero is
-  // centred text, so the line recenters itself as letters come and go.
+  /* ---------- Hero: the last word decodes itself ---------- */
+  // "Websites built for trades." — every couple of seconds the trade is
+  // replaced by a run of code symbols the length of the next word, which
+  // then resolve into real letters one by one, left to right, like source
+  // turning into a site. The markup ships with "trades" already in place,
+  // so without JavaScript (or with reduced motion switched on) the line
+  // still reads as a finished sentence. The hero is centred text, so the
+  // line recenters itself as the word changes shape.
   (function () {
     var word = document.getElementById('heroTrade');
     if (!word) return;
@@ -20,25 +22,42 @@
 
     var TRADES = ['trades', 'salons', 'cafés', 'gyms', 'barbers', 'cleaners',
                   'florists', 'tutors', 'coaches', 'startups'];
+    var GLYPHS = '{}<>/*#$%&=+;:_|~!?';
     var i = 0;
 
-    function type(text, at) {
-      word.textContent = text.slice(0, at);
-      if (at < text.length) setTimeout(function () { type(text, at + 1); }, 75);
-      else setTimeout(erase, 1400);
+    function glyph() {
+      return GLYPHS.charAt(Math.floor(Math.random() * GLYPHS.length));
     }
-    function erase() {
-      var t = word.textContent;
-      if (t.length) {
-        word.textContent = t.slice(0, -1);
-        setTimeout(erase, 35);
-      } else {
-        i = (i + 1) % TRADES.length;
-        setTimeout(function () { type(TRADES[i], 0); }, 260);
-      }
+
+    function decode(text) {
+      var locked = 0;
+      var tick = 0;
+      var timer = setInterval(function () {
+        tick++;
+        // Pure symbols for the first ~350ms so the "code" reads as code,
+        // then a letter locks into place every other tick. Positions that
+        // have not locked yet keep shuffling, so the tail stays alive.
+        if (tick > 7 && tick % 2 === 0) locked++;
+        var out = '';
+        for (var p = 0; p < text.length; p++) {
+          out += p < locked ? text.charAt(p) : glyph();
+        }
+        word.textContent = out;
+        if (locked >= text.length) {
+          clearInterval(timer);
+          word.textContent = text;
+          setTimeout(next, 2000);
+        }
+      }, 50);
     }
+
+    function next() {
+      i = (i + 1) % TRADES.length;
+      decode(TRADES[i]);
+    }
+
     // The first word is already on the page; let it sit, then start cycling.
-    setTimeout(erase, 1600);
+    setTimeout(next, 2000);
   })();
 
   /* ---------- Menu ---------- */
