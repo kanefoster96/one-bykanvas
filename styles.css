@@ -192,6 +192,20 @@ body.locked{overflow:hidden}
 @keyframes caret-blink{0%,100%{opacity:1}50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.type-caret{display:none}}
 
+/* ---------- Referral page ---------- */
+.ref-card{
+  max-width:520px;margin:0 auto 52px;background:#fff;border:1px solid var(--line-soft);
+  border-radius:var(--radius-lg);padding:34px 30px;box-shadow:0 12px 40px rgba(0,0,0,.06);
+}
+.ref-card-label{margin:0 0 10px;font-size:12.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.ref-card code{
+  display:block;font-family:inherit;font-size:clamp(26px,6vw,34px);font-weight:700;
+  letter-spacing:.08em;color:var(--good);background:var(--good-soft);
+  border-radius:14px;padding:16px 10px;
+}
+.ref-card .cta-row{margin-top:22px}
+.ref-card .micro{margin-top:14px}
+
 /* ---------- Referral panel ---------- */
 .panel-sub{margin:-12px 0 18px;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
 .ref-row{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
@@ -1873,6 +1887,9 @@ a.hero-pill:hover .pill-go{opacity:1}
 }
 .nav-icon:hover{background:#f2f2f5}
 .nav-icon svg{width:21px;height:21px}
+.nav-gift{background:var(--good-soft);color:var(--good)}
+.nav-gift:hover{background:var(--good);color:#fff}
+.nav-gift svg{width:19px;height:19px}
 .nav-count{
   position:absolute;top:1px;right:-1px;
   display:grid;place-items:center;min-width:17px;height:17px;padding:0 4px;

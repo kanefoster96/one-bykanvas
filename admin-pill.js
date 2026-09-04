@@ -22,6 +22,30 @@
 
   var ADMINS = ['kane@kanvas.one'];
 
+  var GIFT_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"'
+    + ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    + '<rect x="3" y="8" width="18" height="4.2" rx="1"/>'
+    + '<path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/>'
+    + '<path d="M12 8v13"/>'
+    + '<path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/>'
+    + '<path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>';
+
+  /* The referral page's front door: a green gift, deliberately unexplained -
+     curiosity does the marketing. Only for the signed in; the admin does not
+     need to refer himself. */
+  function gift(bar, beforeEl) {
+    if (document.getElementById('navGift')) return;
+    if (/referral/.test(location.pathname)) return;
+
+    var a = document.createElement('a');
+    a.id = 'navGift';
+    a.className = 'nav-icon nav-gift';
+    a.href = '/referral.html';
+    a.setAttribute('aria-label', 'Refer a business, get a month free');
+    a.innerHTML = GIFT_SVG;
+    bar.insertBefore(a, beforeEl || null);
+  }
+
   var BELL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"'
     + ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
     + '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/>'
@@ -110,8 +134,12 @@
       pill(bar, 'accountPill', 'admin-pill', '/account.html', 'Account');
     }
 
-    // The bell sits just left of whichever pill was added.
+    // The bell sits just left of whichever pill was added; the customer's
+    // gift sits left of the bell.
     bell(bar, document.getElementById('adminPill') || document.getElementById('accountPill'));
+    if (ADMINS.indexOf(email) === -1) {
+      gift(bar, document.getElementById('navBell'));
+    }
   }
 
   if (document.readyState === 'loading') {
