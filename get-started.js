@@ -9,6 +9,28 @@
 (function () {
   'use strict';
 
+  /* A referral link (?ref=CODE) can land on any visit before the one where
+     they pay, so it is stashed the same way the offer code is. */
+  var REF_KEY = 'one-ref';
+  try {
+    var refParam = new URLSearchParams(location.search).get('ref');
+    if (refParam) localStorage.setItem(REF_KEY, refParam.toUpperCase().slice(0, 20));
+  } catch (e) {}
+  function referralCode() {
+    var typed = document.getElementById('refCode');
+    if (typed && typed.value.trim()) return typed.value.trim().toUpperCase();
+    try { return localStorage.getItem(REF_KEY) || ''; } catch (e) { return ''; }
+  }
+
+  (function () {
+    var el = document.getElementById('refCode');
+    if (!el) return;
+    try {
+      var stashed = localStorage.getItem(REF_KEY);
+      if (stashed && !el.value) el.value = stashed;
+    } catch (e) {}
+  })();
+
   function offerCode() {
     return (window.ONE_SESSION && window.ONE_SESSION.offerCode &&
             window.ONE_SESSION.offerCode()) || '';
@@ -593,11 +615,13 @@
         /* Carried from the link in their email, if they came from one, so the
            discount is already on the page they pay from. */
         body: JSON.stringify(token
-          ? { plan: answers.selected_plan || 'business', offer: offerCode() }
+          ? { plan: answers.selected_plan || 'business', offer: offerCode(),
+              referralCode: referralCode() }
           : { plan: answers.selected_plan || 'business',
               pendingUserId: answers.pendingUserId,
               email: answers.email,
-              offer: offerCode() })
+              offer: offerCode(),
+              referralCode: referralCode() })
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');

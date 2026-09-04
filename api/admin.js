@@ -177,7 +177,8 @@ async function notifySiteLive(db, userId, businessName, siteUrl) {
     text: `${businessName || 'Your site'} is live at ${shown}.\n\n`
         + `Have a look, and let us know if there's anything you'd like changed.\n\n`
         + `One favour: know another business that could use a site like yours? `
-        + `Reply with an intro - when they go live, you BOTH get a month free.\n\n`
+        + `Your referral code is on your account page - give it to them, and when `
+        + `their site goes live your next month is free.\n\n`
         + (process.env.REVIEW_URL
             ? `And if you've got 60 seconds, a review helps us more than you'd think: ${process.env.REVIEW_URL}\n\n`
             : '')
@@ -193,7 +194,8 @@ async function notifySiteLive(db, userId, businessName, siteUrl) {
         /* The referral ask lands at the happiest moment there is. Honoured
            by hand: a month's credit on both accounts in Stripe. */
         `One favour: know another business that could use a site like yours? `
-          + `Reply with an intro &mdash; when they go live, you <strong>both</strong> get a month free.`
+          + `Your referral code is on <a href="${site}/account.html">your account page</a> &mdash; `
+          + `give it to them, and when their site goes live your <strong>next month is free</strong>.`
       ].concat(process.env.REVIEW_URL
         ? [`And if you&rsquo;ve got 60 seconds, `
            + `<a href="${process.env.REVIEW_URL}">a quick review</a> helps us more than you&rsquo;d think.`]

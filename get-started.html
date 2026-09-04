@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=45">
+<link rel="stylesheet" href="styles.css?v=46">
 </head>
 <body class="auth-body">
 
@@ -244,6 +244,9 @@
           <div class="sumrow" id="sumOfferRow" hidden><span>Offer</span><b class="sum-free" id="sumOffer">—</b></div>
         </div>
 
+        <div class="field"><label for="refCode">Referral code (optional)</label>
+          <input id="refCode" type="text" autocomplete="off" autocapitalize="characters" placeholder="Got one from another business? It goes here"></div>
+
         <p class="note" id="note4" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full" id="payAction" type="button">Set up payment</button>
         <!-- Shown while their address is still unconfirmed: the next thing to do
@@ -304,7 +307,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=11"></script>
+<script src="get-started.js?v=12"></script>
 <script src="admin-pill.js?v=7"></script>
 </body>
 </html>

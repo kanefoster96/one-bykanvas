@@ -121,6 +121,7 @@ async function start() {
   showIdentity(profile.data);
   showSite(profile.data);
   showBilling(profile.data);
+  showReferral(profile.data);
   await showPoints(profile.data);
   await showFeatures();
   await loadTemplates();
@@ -717,6 +718,53 @@ function renderRequests(rows) {
   if (!active.length) { wrap.hidden = true; return; }
   active.forEach(function (r) { list.appendChild(requestRow(r)); });
   wrap.hidden = false;
+}
+
+/* ---------------- referral: their code, and the copy button ---------------- */
+/*
+ * The code is minted server-side on first ask (it has to be unique - money
+ * hangs off it), then shown with a one-tap copy of the share link. Only a
+ * paying customer sees the panel: the reward is a skipped payment, which
+ * only means something when there are payments.
+ */
+async function showReferral(row) {
+  var panel = document.getElementById('referralPanel');
+  if (!panel) return;
+
+  var live = row && (row.subscription_status === 'active' || row.subscription_status === 'trialing');
+  if (!live) { panel.hidden = true; return; }
+
+  try {
+    var res = await fetch('/api/requests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + window.ONE_SESSION.token() },
+      body: JSON.stringify({ action: 'getReferralCode' })
+    });
+    var data = await res.json();
+    if (!res.ok || !data.code) throw new Error(data.error || 'No code');
+
+    document.getElementById('refCodeShow').textContent = data.code;
+    panel.hidden = false;
+
+    var btn = document.getElementById('refCopy');
+    btn.addEventListener('click', function () {
+      var done = function () {
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = 'Copy link'; }, 1800);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(data.link).then(done, function () {});
+      } else {
+        var hint = document.getElementById('refHint');
+        hint.textContent = data.link;
+        done();
+      }
+    });
+  } catch (e) {
+    /* No code, no panel - the page works fine without it. */
+    console.log('referral panel skipped:', e && e.message);
+    panel.hidden = true;
+  }
 }
 
 /* ---------------- request picker: templates, price preview ---------------- */
