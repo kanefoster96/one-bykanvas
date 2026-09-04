@@ -312,11 +312,11 @@
       return;
     }
 
-    /* The plan <select> shows prices ("Pro — £120/month"); the endpoint wants
+    /* The plan <select> shows prices ("Max — £250/month"); the endpoint wants
        the plan key. Read the option's position rather than parsing its text,
        so a price change never quietly stops this matching. */
     var planEl = document.getElementById('plan');
-    var PLAN_KEYS = ['business', 'pro', 'max', 'unsure'];
+    var PLAN_KEYS = ['business', 'max', 'unsure'];
     /* Read once, before form.reset() puts the select back to its first
        option - the tracking call below runs after the reset. */
     var pickedPlan = PLAN_KEYS[planEl.selectedIndex] || 'unsure';

@@ -720,7 +720,7 @@ function renderRequests(rows) {
   wrap.hidden = false;
 }
 
-/* ---------------- email marketing: Pro and Max ---------------- */
+/* ---------------- email marketing: every active plan ---------------- */
 /*
  * Their own customer list and a composer that emails everyone on it, from an
  * address at their own domain. The list is read and written straight from
@@ -740,7 +740,7 @@ async function showMarketing(row) {
   if (!panel) return;
 
   var plan = row && row.active_plan;
-  var live = (plan === 'pro' || plan === 'max')
+  var live = (plan === 'business' || plan === 'pro' || plan === 'max')
     && (row.subscription_status === 'active' || row.subscription_status === 'trialing');
   if (!live) { panel.hidden = true; return; }
 
@@ -1285,8 +1285,8 @@ function showBilling(row) {
     var up = ORDER.indexOf(chosen) > ORDER.indexOf(current);
     var PERK = {
       business: 'requests done in turn',
-      pro: 'priority requests and business email',
-      max: 'top priority, email and monthly SEO work'
+      pro: 'priority requests and business email',   // legacy, no longer sold
+      max: 'top priority, business email, and SEO work every month'
     };
     var head = (up ? 'Upgrading' : 'Downgrading') + ' from ' + PLAN_NAME[current] +
       ' to ' + PLAN_NAME[chosen] + ' \u2014 ' + (PERK[chosen] || '') + '.';

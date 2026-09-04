@@ -2,7 +2,9 @@
    endpoint, the webhook and the account page. Prices are in pence.
 
    Requests are unlimited on every plan; what a plan buys is queue position
-   (Max first, then Pro, then Business) plus its extras. The points numbers
+   (Max first, then Business) plus its extras. Pro is legacy - no longer
+   sold anywhere, kept here so an existing Pro subscription still resolves
+   to its price and label. The points numbers
    below are legacy: the requests table's check constraint still expects a
    points value on each row, so inserts keep writing one, but no money or
    allowance is derived from it anywhere any more. */

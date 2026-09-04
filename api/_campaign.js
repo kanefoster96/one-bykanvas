@@ -1,4 +1,4 @@
-/* A Pro customer's own marketing blast.
+/* A customer's own marketing blast.
  *
  * They write a subject, a message, maybe an image and a link; we send it to
  * everyone on their audience list, from an address at their own domain. Their
@@ -76,8 +76,10 @@ async function sendCampaign(db, user, body) {
   if (pErr) throw new Error(pErr.message);
   if (!p) return { status: 403, body: { error: 'No account found.' } };
 
-  if (p.active_plan !== 'pro' && p.active_plan !== 'max') {
-    return { status: 403, body: { error: 'Email marketing comes with Pro and Max.' } };
+  /* Every current plan includes marketing (pro is a legacy plan no longer
+     sold, kept recognised so an old subscription keeps working). */
+  if (p.active_plan !== 'business' && p.active_plan !== 'pro' && p.active_plan !== 'max') {
+    return { status: 403, body: { error: 'Email marketing comes with an active plan.' } };
   }
   if (p.subscription_status !== 'active' && p.subscription_status !== 'trialing') {
     return { status: 403, body: { error: 'Your plan is not active right now.' } };
