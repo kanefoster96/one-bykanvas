@@ -166,22 +166,22 @@ const INDUSTRIES = [
     freeLede: 'We design a real page for your tutoring before you pay anything. Full marks or you owe nothing.'
   },
   {
-    slug: 'dog-groomers',
-    link: 'Dog groomers',
-    title: 'Dog groomers',
-    h1: 'Websites for dog groomers.',
-    lede: 'Owners trust you with the dog. A site with your work, your prices and easy booking earns that trust before the first visit.',
-    desc: 'Websites for dog groomers and pet services. Online booking, price lists by size and breed, galleries and reminders — built for you, from £50 a month, no setup fees.',
+    slug: 'photographers',
+    link: 'Photographers',
+    title: 'Photographers',
+    h1: 'Websites for photographers.',
+    lede: 'Your portfolio is your pitch. A site that shows it beautifully &mdash; and books the shoot while they&rsquo;re impressed.',
+    desc: 'Websites for photographers. Portfolio galleries, enquiry forms, client galleries and booking deposits — built for you, from £50 a month, no setup fees.',
     features: [
-      ['Appointments booked online', 'Owners book a slot without playing phone tag while you&rsquo;ve got clippers in hand.'],
-      ['Prices by size and breed', 'A clear price list &mdash; puppy trim to full groom, cockapoo to newfoundland &mdash; that you edit yourself.'],
-      ['Before and after gallery', 'The transformations from your phone, selling your grooming better than words ever will.'],
-      ['New client details upfront', 'Vaccination, temperament and coat condition asked at booking &mdash; no surprises on the table.'],
-      ['Regulars kept regular', 'Six-weekly rebooking made easy, and email reminders when a groom is due.'],
-      ['Found by local owners', 'Set up so "dog groomer near me" finds you, with your reviews alongside.']
+      ['Galleries that do your work justice', 'Weddings, portraits, products &mdash; fast-loading galleries where the photos do the talking.'],
+      ['Enquiries with the date attached', 'The form asks the date, venue and what they&rsquo;re after &mdash; so you reply already knowing if you&rsquo;re free.'],
+      ['Deposits that hold the date', 'A booking fee paid online when they book &mdash; the date is yours and theirs, in writing.'],
+      ['Client galleries behind a login', 'Deliver each shoot in a private gallery your client logs in to view, download and share.'],
+      ['Packages you edit yourself', 'Your packages and prices laid out clearly &mdash; change them from your phone between seasons.'],
+      ['Found for what you shoot', 'A page per genre, so "wedding photographer near me" finds the wedding work, not the whole archive.']
     ],
-    buildNote: 'Send your price list and your best befores-and-afters. We build the site and booking, and you&rsquo;re online within 10 days.',
-    freeLede: 'We design a real page for your grooming business before you pay anything. If it&rsquo;s not best in show, you owe nothing.'
+    buildNote: 'Send us your best shots and your packages. We build the galleries and the enquiry flow, and you&rsquo;re online within 10 days.',
+    freeLede: 'We design a real page around your photos before you pay anything. If it&rsquo;s not picture perfect, you owe nothing.'
   },
   {
     slug: 'gardeners',
