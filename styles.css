@@ -409,7 +409,11 @@ body.locked{overflow:hidden}
 .rail-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
 
 /* ---------- Plans ---------- */
-.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:clamp(42px,6vw,62px);align-items:start}
+/* Two cards since Pro retired: capped columns, centred as a pair. */
+.plans{
+  display:grid;grid-template-columns:repeat(2,minmax(0,400px));justify-content:center;
+  gap:22px;margin-top:clamp(42px,6vw,62px);align-items:start;
+}
 .plan{
   border:1px solid var(--line-soft);border-radius:var(--radius-lg);padding:36px 30px 34px;background:#fff;
   position:relative;transition:transform .35s var(--ease),box-shadow .35s var(--ease);

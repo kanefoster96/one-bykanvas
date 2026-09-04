@@ -659,7 +659,7 @@
     var email = $('wantEmail'), seo = $('wantSeo'), warnEl = $('planSteer');
     if (!email || !seo || !warnEl) return;
 
-    var COVERS = { business: [], pro: ['email'], max: ['email', 'seo'] };
+    var COVERS = { business: [], max: ['email', 'seo'] };
 
     function pickedPlan() {
       var chosen = document.querySelector('input[name="plan"]:checked');
@@ -683,7 +683,7 @@
         warnEl.hidden = false;
         return;
       }
-      var covers = seo.checked ? 'Max' : 'Pro';
+      var covers = 'Max';
       warnEl.className = 'pick-warn';
       warnEl.textContent = 'Just so you know — ' + PLANS[pickedPlan()].label
         + ' doesn’t include ' + missing.join(' or ') + ' you ticked. '
@@ -692,7 +692,7 @@
     }
 
     function steer() {
-      var rec = seo.checked ? 'max' : email.checked ? 'pro' : 'business';
+      var rec = (seo.checked || email.checked) ? 'max' : 'business';
 
       var radio = document.querySelector('input[name="plan"][value="' + rec + '"]');
       if (radio) radio.checked = true;

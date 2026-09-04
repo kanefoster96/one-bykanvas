@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=43">
+<link rel="stylesheet" href="styles.css?v=44">
 </head>
 <body class="auth-body">
 
@@ -121,9 +121,9 @@
     </div>
   </section>
 
-  <!-- Email marketing: Pro and Max only. Their own customer list, and a
-       composer that blasts it from their own domain. Hidden on Business -
-       the plans page does the selling, not this one. -->
+  <!-- Email marketing: included on every plan. Their own customer list, and
+       a composer that blasts it from their own domain once the sending
+       address is set up. -->
   <section class="panel" id="marketingPanel" hidden>
     <h2 class="panel-title">Email marketing</h2>
     <p class="points-note" id="mkStatus"></p>
@@ -201,7 +201,6 @@
         <span>Plan</span>
         <select id="planChoice">
           <option value="business">Business — £50/month</option>
-          <option value="pro">Pro — £120/month</option>
           <option value="max">Max — £250/month</option>
         </select>
       </label>
@@ -344,7 +343,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="account.js?v=29"></script>
+<script src="account.js?v=30"></script>
 <script src="admin-pill.js?v=7"></script>
 </body>
 </html>

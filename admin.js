@@ -1070,10 +1070,10 @@ function customerDetail(p) {
     wrap.appendChild(seoLogPanel(p));
   }
 
-  /* Pro and Max: the address their marketing campaigns send from. Saving an
+  /* Any plan: the address their marketing campaigns send from. Saving an
      address here is what turns the feature on for them - do it only after
      their domain is verified with Resend. */
-  if (p.active_plan === 'pro' || p.active_plan === 'max') {
+  if (p.active_plan === 'business' || p.active_plan === 'pro' || p.active_plan === 'max') {
     wrap.appendChild(el('h3', 'req-list-title', 'Email marketing'));
     wrap.appendChild(campaignFromRow(p));
   }
