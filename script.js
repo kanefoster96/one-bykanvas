@@ -8,7 +8,7 @@
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
   /* ---------- Hero: the last word types itself ---------- */
-  // "Websites built for trades." — the trade holds for a moment, deletes
+  // "Websites for trades." — the trade holds for a moment, deletes
   // quickly and retypes as another kind of business. The markup ships with
   // "trades" already in place, so without JavaScript (or with reduced motion
   // switched on) the line still reads as a finished sentence. The hero is
