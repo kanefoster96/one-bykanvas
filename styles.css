@@ -334,6 +334,8 @@ body.locked{overflow:hidden}
 .ico-orange{background:#e8730c}
 .ico-pink{background:#d63384}
 .ico-grey{background:#4a4a4f}
+/* A step number sitting in an .ico square, on the industry pages. */
+.ico .step-n{font-size:18px;font-weight:700;letter-spacing:-.02em}
 
 /* ---------- Showcase marquee ---------- */
 .showcase{padding:clamp(72px,10vw,116px) 0;background:linear-gradient(180deg,#fff 0%,#fbfbfd 100%);overflow:hidden}

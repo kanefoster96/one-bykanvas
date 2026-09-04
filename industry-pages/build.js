@@ -17,12 +17,38 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 42;
-const SCRIPT_V = 16;
+const CSS_V = 43;
+const SCRIPT_V = 17;
+
+/* The same visual language as the homepage cards: a solid colour square with
+   a simple white line icon. Keys are referenced per-feature by each industry's
+   `icons` array (positional, one per feature). */
+const ICONS = {
+  doc: '<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M9 9h6M9 13h6M9 17h3.5"/>',
+  photo: '<rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.6"/><path d="M3 16.5l5-4.5 4 3.5 3.5-3 5.5 4.5"/>',
+  star: '<path d="M12 3.4l2.5 5.4 5.9.6-4.4 4 1.2 5.8L12 16.2l-5.2 3 1.2-5.8-4.4-4 5.9-.6z"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/>',
+  card: '<rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 10h19M6.5 15h3"/>',
+  calendar: '<rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  repeat: '<path d="M4 12a8 8 0 0 1 14-5"/><path d="M18 3v4h-4"/><path d="M20 12a8 8 0 0 1-14 5"/><path d="M6 21v-4h4"/>',
+  layers: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+  person: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.7 3.6-5.6 7-5.6s6.1 1.9 7 5.6"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/>',
+  shield: '<path d="M12 2.5l8 3.5v6c0 5-3.6 8.6-8 10-4.4-1.4-8-5-8-10v-6z"/><path d="M9 12l2.2 2.2L15.5 10"/>',
+  pencil: '<path d="M4 20h4L20 8l-4-4L4 16z"/><path d="M14.5 5.5l4 4"/>',
+  tag: '<path d="M12.6 3.5l7.9 7.9a2 2 0 0 1 0 2.8l-5.3 5.3a2 2 0 0 1-2.8 0L4.5 11.6V4.5h7.1z"/><circle cx="8.7" cy="8.7" r="1.4"/>',
+  mail: '<rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M3.5 7.5L12 13l8.5-5.5"/>',
+  gift: '<rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/>'
+};
+
+const ICO_COLORS = ['ico-blue', 'ico-green', 'ico-purple', 'ico-orange', 'ico-pink', 'ico-grey'];
 
 const INDUSTRIES = [
   {
     slug: 'trades',
+    icons: ['doc','photo','star','layers','pin','card'],
+    lines: ["add a quote form with photos","show off my finished jobs","take deposits online","add my Google reviews","list the areas I cover"],
     link: 'Trades',
     title: 'Trades',
     h1: 'Websites for trades.',
@@ -41,6 +67,8 @@ const INDUSTRIES = [
   },
   {
     slug: 'salons',
+    icons: ['calendar','tag','photo','gift','card','mail'],
+    lines: ["add online booking","update my price list","sell gift vouchers","take deposits for appointments","email my clients an offer"],
     link: 'Salons',
     title: 'Salons',
     h1: 'Websites for salons.',
@@ -59,6 +87,8 @@ const INDUSTRIES = [
   },
   {
     slug: 'barbers',
+    icons: ['calendar','tag','clock','photo','search','repeat'],
+    lines: ["let clients book a chair","update my price board","change my opening hours","show my latest cuts","add a loyalty card"],
     link: 'Barbers',
     title: 'Barbers',
     h1: 'Websites for barbers.',
@@ -77,6 +107,8 @@ const INDUSTRIES = [
   },
   {
     slug: 'cafes',
+    icons: ['pencil','card','calendar','clock','photo','search'],
+    lines: ["build a live food menu","add order ahead","take table bookings","update my opening hours","add this week's specials"],
     link: 'Caf&eacute;s',
     title: 'Caf&eacute;s &amp; restaurants',
     h1: 'Websites for caf&eacute;s.',
@@ -95,6 +127,8 @@ const INDUSTRIES = [
   },
   {
     slug: 'gyms',
+    icons: ['calendar','person','card','layers','photo','search'],
+    lines: ["add a class timetable","set up memberships","add a members area","take payments monthly","show member results"],
     link: 'Gyms',
     title: 'Gyms &amp; personal trainers',
     h1: 'Websites for gyms.',
@@ -113,6 +147,8 @@ const INDUSTRIES = [
   },
   {
     slug: 'cleaners',
+    icons: ['doc','shield','star','repeat','pin','photo'],
+    lines: ["add a quote form","show my before and afters","set up weekly bookings","list the areas I cover","add my reviews"],
     link: 'Cleaners',
     title: 'Cleaners',
     h1: 'Websites for cleaners.',
@@ -131,6 +167,8 @@ const INDUSTRIES = [
   },
   {
     slug: 'florists',
+    icons: ['card','layers','photo','pin','mail','pencil'],
+    lines: ["sell bouquets online","add a Mother's Day page","show my arrangements","take wedding enquiries","set my delivery areas"],
     link: 'Florists',
     title: 'Florists',
     h1: 'Websites for florists.',
@@ -149,6 +187,8 @@ const INDUSTRIES = [
   },
   {
     slug: 'tutors',
+    icons: ['layers','card','star','shield','calendar','search'],
+    lines: ["add a page for GCSE maths","take lesson payments online","show my results","add a waiting list","update my timetable"],
     link: 'Tutors',
     title: 'Tutors',
     h1: 'Websites for tutors.',
@@ -167,6 +207,8 @@ const INDUSTRIES = [
   },
   {
     slug: 'photographers',
+    icons: ['photo','calendar','card','person','tag','search'],
+    lines: ["add my wedding gallery","take booking deposits","add client logins","update my packages","add an enquiry form"],
     link: 'Photographers',
     title: 'Photographers',
     h1: 'Websites for photographers.',
@@ -185,6 +227,8 @@ const INDUSTRIES = [
   },
   {
     slug: 'gardeners',
+    icons: ['photo','doc','layers','calendar','pin','card'],
+    lines: ["show my landscaping projects","add a quote form with photos","promote autumn hedge cuts","list the areas I cover","take deposits online"],
     link: 'Gardeners',
     title: 'Gardeners &amp; landscapers',
     h1: 'Websites for gardeners.',
@@ -213,11 +257,16 @@ function linkStrip(exceptSlug) {
     .join('');
 }
 
-function card([h, p]) {
-  return `    <article class="card"><div class="card-text">
-      <h3>${h}</h3>
-      <p>${p}</p>
-    </div></article>`;
+function card([h, p], iconKey, color) {
+  return `    <article class="card">
+      <div class="ico ${color}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[iconKey]}</svg>
+      </div>
+      <div class="card-text">
+        <h3>${h}</h3>
+        <p>${p}</p>
+      </div>
+    </article>`;
 }
 
 function page(b) {
@@ -276,8 +325,17 @@ ${JSON.stringify({
 
 <section class="page-hero">
   <div class="wrap center">
+    <a class="hero-pill hero-pill-link reveal" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">${b.h1}</h1>
     <p class="lede reveal">${b.lede}</p>
+
+    <!-- A request being typed, as this trade would type it. Decorative: the
+         copy around it says the same things, so screen readers skip the
+         animation rather than hearing it letter by letter. -->
+    <div class="typebox reveal" aria-hidden="true">
+      <span class="typebox-text" id="typeDemo" data-lines="${JSON.stringify(b.lines).replace(/"/g, '&quot;')}"></span>
+      <span class="typebox-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></svg></span>
+    </div>
   </div>
 </section>
 
@@ -286,8 +344,8 @@ ${JSON.stringify({
     <h2 class="reveal">What your site can do.</h2>
     <p class="lede reveal">Everything below is built for you and included in the plan &mdash; ask for it and it gets made.</p>
   </div>
-  <div class="wrap grid grid-3 reveal">
-${b.features.map(card).join('\n')}
+  <div class="wrap grid reveal">
+${b.features.map((f, i) => card(f, b.icons[i], ICO_COLORS[i % ICO_COLORS.length])).join('\n')}
   </div>
 </section>
 
@@ -297,18 +355,27 @@ ${b.features.map(card).join('\n')}
     <p class="lede reveal">${b.buildNote}</p>
   </div>
   <div class="wrap grid grid-3 reveal">
-    <article class="card"><div class="card-text">
-      <h3>1. Tell us about the business</h3>
-      <p>Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>2. We build it for you</h3>
-      <p>Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.</p>
-    </div></article>
-    <article class="card"><div class="card-text">
-      <h3>3. Online within 10 days</h3>
-      <p>Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.</p>
-    </div></article>
+    <article class="card">
+      <div class="ico ico-blue"><span class="step-n">1</span></div>
+      <div class="card-text">
+        <h3>Tell us about the business</h3>
+        <p>Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-purple"><span class="step-n">2</span></div>
+      <div class="card-text">
+        <h3>We build it for you</h3>
+        <p>Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="ico ico-green"><span class="step-n">3</span></div>
+      <div class="card-text">
+        <h3>Online within 10 days</h3>
+        <p>Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.</p>
+      </div>
+    </article>
   </div>
 </section>
 

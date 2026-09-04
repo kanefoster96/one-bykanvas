@@ -210,6 +210,13 @@
       'add a gift voucher shop'
     ];
 
+    /* Industry pages carry their own trade-specific requests in a data
+       attribute; the list above is the default for the homepage. */
+    try {
+      var custom = JSON.parse(typeEl.getAttribute('data-lines') || 'null');
+      if (custom && custom.length) LINES = custom;
+    } catch (e) { /* malformed attribute: keep the defaults */ }
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       typeEl.textContent = LINES[0];
       return;
