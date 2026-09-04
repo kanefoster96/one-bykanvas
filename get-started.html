@@ -169,11 +169,11 @@
              from the last step pre-select the plan that covers them, and the
              note under the list says when a choice misses a ticked want. -->
         <div class="pick" id="pick">
-          <label class="pick-row" data-plan="max">
-            <input type="radio" name="plan" value="max">
+          <label class="pick-row is-on" data-plan="max">
+            <input type="radio" name="plan" value="max" checked>
             <span class="pick-main">
               <span class="pick-head"><b>Max</b><em>£250<span>/mo</span></em></span>
-              <span class="pick-note">Growth mode &mdash; improved monthly, without you asking.</span>
+              <span class="pick-note"><b class="pick-flag">Recommended</b>Growth mode &mdash; improved monthly, without you asking.</span>
             </span>
           </label>
           <div class="pick-feats" data-plan="max">
@@ -185,11 +185,11 @@
             </ul>
           </div>
 
-          <label class="pick-row is-on" data-plan="business">
-            <input type="radio" name="plan" value="business" checked>
+          <label class="pick-row" data-plan="business">
+            <input type="radio" name="plan" value="business">
             <span class="pick-main">
               <span class="pick-head"><b>Business</b><em>£50<span>/mo</span></em></span>
-              <span class="pick-note"><b class="pick-flag">Recommended</b>Everything you need to be online.</span>
+              <span class="pick-note">Everything you need to be online.</span>
             </span>
           </label>
           <div class="pick-feats" data-plan="business">
@@ -305,7 +305,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=10"></script>
+<script src="get-started.js?v=11"></script>
 <script src="admin-pill.js?v=7"></script>
 </body>
 </html>
