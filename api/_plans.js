@@ -20,4 +20,8 @@ const REQUEST_COST = {
   feature: { points: 3, amount: 12000 }
 };
 
-module.exports = { PLANS, REQUEST_COST };
+/* The code new leads are offered (created in Stripe: 50% off, 3 months).
+   Shared by the your-site-is-ready email and the follow-up emails. */
+const PREVIEW_OFFER = { code: 'WELCOME26' };
+
+module.exports = { PLANS, REQUEST_COST, PREVIEW_OFFER };
