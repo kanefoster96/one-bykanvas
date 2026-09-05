@@ -50,10 +50,36 @@
   var answers = {};
 
   var PLANS = {
-    business: { label: 'Business', price: '£50' },
+    business: { label: 'Business', price: '£50', yearly: '£500' },
     pro:      { label: 'Pro',      price: '£120' },
-    max:      { label: 'Max',      price: '£250' }
+    max:      { label: 'Max',      price: '£250', yearly: '£2,500' }
   };
+
+  /* Monthly or annual, shared with the plans page through the same stash;
+     script.js owns the toggle buttons, this file owns the wizard's prices. */
+  function billingMode() {
+    try { return localStorage.getItem('one-billing') === 'annual' ? 'annual' : 'monthly'; }
+    catch (e) { return 'monthly'; }
+  }
+  function paintBilling() {
+    var mode = billingMode();
+    document.querySelectorAll('.bill-opt').forEach(function (b) {
+      b.classList.toggle('is-on', b.dataset.bill === mode);
+    });
+    document.querySelectorAll('.pick-head em[data-y]').forEach(function (em) {
+      var parts = (mode === 'annual' ? em.dataset.y : em.dataset.m).split('|');
+      em.innerHTML = parts[0] + '<span>' + parts[1] + '</span>';
+    });
+  }
+  /* This page does not load script.js, so the toggle is handled here in
+     full: stash the choice, light the button, repaint the prices. */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.bill-opt');
+    if (!btn) return;
+    try { localStorage.setItem('one-billing', btn.dataset.bill); } catch (e2) {}
+    paintBilling();
+  });
+  paintBilling();
 
   function $(id) { return document.getElementById(id); }
   function val(id) { var el = $(id); return el ? el.value.trim() : ''; }
@@ -450,10 +476,11 @@
     var chosen = document.querySelector('input[name="plan"]:checked');
     answers.selected_plan = chosen ? chosen.value : 'business';
     var plan = PLANS[answers.selected_plan];
-    $('sumPlan').textContent = plan.label;
-    $('sumPrice').textContent = plan.price;
+    var annual = billingMode() === 'annual' && plan.yearly;
+    $('sumPlan').textContent = plan.label + (annual ? ' — Annual (2 months free)' : '');
+    $('sumPrice').textContent = annual ? plan.yearly + '/year' : plan.price + '/month';
     $('sumEmail').textContent = answers.email || '—';
-    $('sumDue').textContent = plan.price;
+    $('sumDue').textContent = annual ? plan.yearly : plan.price;
 
     /* If they arrived with a code, say so before the price - a discount they
        cannot see is a discount they think never happened. Stripe applies it
@@ -461,7 +488,9 @@
     var offer = (window.ONE_SESSION && window.ONE_SESSION.offerCode
                  && window.ONE_SESSION.offerCode()) || '';
     if ($('sumOfferRow')) {
-      $('sumOfferRow').hidden = !offer;
+      /* Promo codes are monthly-only (WELCOME26 on one yearly invoice would
+         halve the year) - never promise one next to an annual price. */
+      $('sumOfferRow').hidden = !offer || !!annual;
       if (offer) $('sumOffer').textContent = offer + ' applied at checkout';
     }
 
@@ -616,11 +645,12 @@
            discount is already on the page they pay from. */
         body: JSON.stringify(token
           ? { plan: answers.selected_plan || 'business', offer: offerCode(),
-              referralCode: referralCode() }
+              billing: billingMode(), referralCode: referralCode() }
           : { plan: answers.selected_plan || 'business',
               pendingUserId: answers.pendingUserId,
               email: answers.email,
               offer: offerCode(),
+              billing: billingMode(),
               referralCode: referralCode() })
       });
       var data = await res.json().catch(function () { return {}; });

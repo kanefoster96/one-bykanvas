@@ -165,13 +165,13 @@
 
     var text = document.createElement('p');
     text.className = 'consent-text';
-    text.innerHTML = 'We use cookies to measure our ads. ' +
-      '<a href="/cookies.html">Details</a>';
+    /* Same label as the Academy site's pill: the link IS the explanation. */
+    text.innerHTML = '<a href="/cookies.html">Cookie preferences</a>';
 
     var actions = document.createElement('div');
     actions.className = 'consent-actions';
 
-    [['Essential only', 'essential'], ['Accept all', 'all']].forEach(function (b) {
+    [['Decline', 'essential'], ['Accept', 'all']].forEach(function (b) {
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'consent-btn' + (b[1] === 'all' ? ' consent-btn-yes' : '');

@@ -192,6 +192,26 @@ body.locked{overflow:hidden}
 @keyframes caret-blink{0%,100%{opacity:1}50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.type-caret{display:none}}
 
+/* ---------- Admin funnel line ---------- */
+.funnel-line{margin:6px 0 0;font-size:14px;font-weight:500;color:var(--ink-3)}
+
+/* ---------- Monthly/annual toggle ---------- */
+.bill-toggle{
+  display:inline-flex;gap:4px;margin-top:26px;padding:4px;border-radius:980px;
+  background:#f2f2f5;border:1px solid var(--line-soft);
+}
+.bill-opt{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font);font-size:14px;font-weight:600;letter-spacing:-.01em;
+  padding:8px 18px;border-radius:980px;border:0;background:none;color:var(--ink-2);cursor:pointer;
+  transition:background .2s var(--ease),color .2s var(--ease);
+}
+.bill-opt.is-on{background:#fff;color:var(--ink);box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.bill-save{
+  font-size:11px;font-weight:700;letter-spacing:.02em;
+  background:var(--good-soft);color:var(--good);border-radius:980px;padding:3px 8px;
+}
+
 /* ---------- Referral page ---------- */
 .ref-card{
   max-width:520px;margin:0 auto 52px;background:#fff;border:1px solid var(--line-soft);

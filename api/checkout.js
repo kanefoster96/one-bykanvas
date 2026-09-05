@@ -177,7 +177,13 @@ module.exports = async function handler(req, res) {
        that resolved, it is applied for them; without one, the box on the
        payment page stays available for anyone typing it by hand. */
     let discounts = null;
-    const wanted = String(body.offer || '').trim().toUpperCase();
+    /* Annual is ten months' money for twelve. The WELCOME26 promotion is
+       "50% off, 3 months" - on a subscription with one yearly invoice that
+       coupon halves the whole year, so codes are monthly-only: ignored here
+       and the code box withheld on the Stripe page for annual sessions. */
+    const annual = String(body.billing || '').toLowerCase() === 'annual'
+      && Number.isFinite(PLANS[plan].yearly);
+    const wanted = annual ? '' : String(body.offer || '').trim().toUpperCase();
     if (wanted && /^[A-Z0-9._-]{3,40}$/.test(wanted)) {
       try {
         const found = await stripe.promotionCodes.list({ code: wanted, active: true, limit: 1 });
@@ -198,16 +204,16 @@ module.exports = async function handler(req, res) {
         quantity: 1,
         price_data: {
           currency: 'gbp',
-          unit_amount: PLANS[plan].amount,
-          recurring: { interval: 'month' },
-          product_data: { name: PLANS[plan].label }
+          unit_amount: annual ? PLANS[plan].yearly : PLANS[plan].amount,
+          recurring: { interval: annual ? 'year' : 'month' },
+          product_data: { name: PLANS[plan].label + (annual ? ' — Annual (2 months free)' : '') }
         }
       }],
       subscription_data: { metadata: { supabase_user_id: user.id, plan } },
       metadata: { supabase_user_id: user.id, plan },
       success_url: `${origin}/account.html?checkout=success`,
       cancel_url: `${origin}/account.html?checkout=cancelled`,
-      ...(discounts ? { discounts } : { allow_promotion_codes: true })
+      ...(discounts ? { discounts } : annual ? {} : { allow_promotion_codes: true })
     });
 
     return res.status(200).json({ url: session.url });

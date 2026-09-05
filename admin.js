@@ -83,6 +83,17 @@ async function api(payload) {
 async function load() {
   try {
     state = await api({ action: 'list' });
+
+    /* Three numbers, one glance: which stage of the funnel leaks. Fails
+       quietly - the dashboard matters more than the strip. */
+    api({ action: 'funnelStats' }).then(function (f) {
+      var line = document.getElementById('funnelLine');
+      if (!line) return;
+      line.textContent = 'This month: ' + f.leads + ' lead' + (f.leads === 1 ? '' : 's')
+        + ' → ' + f.sent + ' example' + (f.sent === 1 ? '' : 's') + ' sent'
+        + ' → ' + f.joined + ' joined';
+      line.hidden = false;
+    }).catch(function () {});
   } catch (err) {
     loading.innerHTML = '<p>' + esc(err.message) + '</p>';
     return;

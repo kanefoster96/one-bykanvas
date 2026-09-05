@@ -452,6 +452,29 @@ module.exports = async function handler(req, res) {
      * rather than in the main list because they are nobody's dashboard: this
      * is a work queue, opened when there is work to do.
      */
+    /* ---- read: this month's funnel, three numbers ---------------------
+     * Leads in, examples out, customers joined - enough to see which stage
+     * leaks without opening three tables. Calendar month, server time.
+     */
+    if (action === 'funnelStats') {
+      const monthStart = new Date();
+      monthStart.setUTCDate(1); monthStart.setUTCHours(0, 0, 0, 0);
+      const iso = monthStart.toISOString();
+
+      const [leads, sent, joined] = await Promise.all([
+        db.from('leads').select('id', { count: 'exact', head: true }).gte('created_at', iso),
+        db.from('leads').select('id', { count: 'exact', head: true }).gte('preview_sent_at', iso),
+        db.from('profiles').select('id', { count: 'exact', head: true })
+          .gte('created_at', iso).in('subscription_status', ['active', 'trialing'])
+      ]);
+      if (leads.error) throw new Error(leads.error.message);
+      if (sent.error) throw new Error(sent.error.message);
+      if (joined.error) throw new Error(joined.error.message);
+      return res.status(200).json({
+        leads: leads.count || 0, sent: sent.count || 0, joined: joined.count || 0
+      });
+    }
+
     if (action === 'listLeads') {
       const COLS = 'id, name, business, email, about, plan_interest, want_app, '
                  + 'source, handle, requested_domain, preview_url, preview_sent_at, created_at';
