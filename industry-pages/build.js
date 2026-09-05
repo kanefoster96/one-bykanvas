@@ -17,8 +17,8 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 47;
-const SCRIPT_V = 18;
+const CSS_V = 48;
+const SCRIPT_V = 19;
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -412,7 +412,7 @@ ${b.features.map((f, i) => card(f, b.icons[i], ICO_COLORS[i % ICO_COLORS.length]
   </div>
 </footer>
 
-<script src="consent.js?v=2"></script>
+<script src="consent.js?v=3"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>

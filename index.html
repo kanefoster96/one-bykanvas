@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebSite","name":"Kanvas One","alternateName":["one","one by Kanvas","kanvas.one"],"url":"https://kanvas.one/"}
 </script>
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=47">
+<link rel="stylesheet" href="styles.css?v=48">
 </head>
 <body>
 
@@ -258,11 +258,18 @@
     <p class="lede reveal">We make your changes on every plan. Business is all most businesses ever need &mdash; Max puts your site on growth mode, improved every month without you asking.</p>
   </div>
 
+  <div class="wrap center">
+    <div class="bill-toggle reveal" role="group" aria-label="Billing period">
+      <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
+      <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free</span></button>
+    </div>
+  </div>
+
   <div class="wrap plans reveal">
     <article class="plan featured">
       <div class="badge">Best value</div>
       <h3>Max</h3>
-      <p class="price"><span class="cur">£</span>250<span class="per">/month</span></p>
+      <p class="price" data-m="250" data-y="2,500"><span class="cur">£</span>250<span class="per">/month</span></p>
       <p class="plan-note">Your site on growth mode &mdash; improved every month without you asking.</p>
       <a class="btn btn-primary full" href="/get-started.html">Choose Max</a>
       <ul class="ticks">
@@ -276,7 +283,7 @@
     <article class="plan">
       <div class="badge">Most popular</div>
       <h3>Business</h3>
-      <p class="price"><span class="cur">£</span>50<span class="per">/month</span></p>
+      <p class="price" data-m="50" data-y="500"><span class="cur">£</span>50<span class="per">/month</span></p>
       <p class="plan-note">Everything you need to run your business online — and the plan most businesses stay on.</p>
       <p class="plan-free">No setup fees</p>
       <a class="btn btn-ghost full" href="/get-started.html">Choose Business</a>
@@ -424,10 +431,10 @@
 
 <!-- Forwards an auth link that fell back to the Site URL. Must run first. -->
 <script src="auth-landing.js?v=1"></script>
-<script src="consent.js?v=2"></script>
+<script src="consent.js?v=3"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="script.js?v=18"></script>
+<script src="script.js?v=19"></script>
 <script src="reviews.js?v=2"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>

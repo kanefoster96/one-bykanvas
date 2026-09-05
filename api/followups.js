@@ -32,6 +32,10 @@ const F1_AFTER = 3 * DAY;
 const F1_UNTIL = 9 * DAY;
 const F2_AFTER = 10 * DAY;
 const F2_UNTIL = 30 * DAY;
+/* Win-back: one email, a month after a plan ends, while the six-month
+   restart window (terms §8.4) is still comfortably open. */
+const WB_AFTER = 30 * DAY;
+const WB_UNTIL = 60 * DAY;
 
 function offerBox(site) {
   return {
@@ -196,12 +200,71 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    if (sentF1 + sentF2 > 0) {
-      await notifyAdmin(db, 'Follow-ups sent',
-        `${sentF1} "what did you think" and ${sentF2} final follow-ups went out to free-example leads.`);
+    /* ---- win-back: cancelled customers, one nudge ever ---------------- */
+    let sentWb = 0;
+    const { data: gone, error: wbErr } = await db.from('profiles')
+      .select('id, business_name, canceled_at, winback_sent_at, subscription_status')
+      .eq('subscription_status', 'canceled')
+      .not('canceled_at', 'is', null)
+      .is('winback_sent_at', null)
+      .limit(100);
+    if (wbErr) console.error('followups: winback query failed:', wbErr.message);
+
+    for (const p of gone || []) {
+      const age = now - new Date(p.canceled_at).getTime();
+      if (age < WB_AFTER || age > WB_UNTIL) continue;
+
+      const { error: wbStamp } = await db.from('profiles')
+        .update({ winback_sent_at: new Date().toISOString() })
+        .eq('id', p.id).is('winback_sent_at', null);
+      if (wbStamp) { console.error('followups: winback stamp failed:', wbStamp.message); continue; }
+
+      const { data: who } = await db.auth.admin.getUserById(p.id);
+      const email = who && who.user && who.user.email;
+      if (!email) continue;
+
+      const name = p.business_name || 'your business';
+      const outcome = await sendEmail({
+        to: email,
+        subject: 'Your site is exactly as you left it',
+        text: `When you left, we kept everything: the site we built for ${name}, `
+            + `your features, your content. It all restarts exactly where it stopped - `
+            + `usually back online within days.
+
+`
+            + `Restart from your account: ${site}/account.html
+
+`
+            + `We hold a build for six months after a plan ends, then it is deleted `
+            + `for good. This is the only nudge we'll send - if now isn't the time, `
+            + `no hard feelings.
+`,
+        html: emailHtml({
+          preheader: 'Everything is kept - restart where you left off.',
+          heading: 'Your site is waiting',
+          lines: [
+            `When you left, we kept everything: the site we built for <strong>${esc(name)}</strong>, `
+              + `your features, your content. Restart and it picks up exactly where it stopped `
+              + `&mdash; usually back online within days.`,
+            'We hold a build for six months after a plan ends, then it is deleted for good.',
+            'This is the only nudge we&rsquo;ll send &mdash; if now isn&rsquo;t the time, no hard feelings.'
+          ],
+          ctaText: 'Restart my site',
+          ctaHref: `${site}/account.html`,
+          footer: 'You&rsquo;re getting this because your Kanvas One plan ended about a month ago. No more emails follow.',
+          footerLinks: standardFooter(site)
+        })
+      });
+      console.log('followups: winback to %s -> %s', email, outcome);
+      if (outcome === 'sent') sentWb++;
     }
 
-    return res.status(200).json({ ok: true, followup1: sentF1, followup2: sentF2 });
+    if (sentF1 + sentF2 + sentWb > 0) {
+      await notifyAdmin(db, 'Follow-ups sent',
+        `${sentF1} "what did you think", ${sentF2} final follow-ups, and ${sentWb} win-backs went out.`);
+    }
+
+    return res.status(200).json({ ok: true, followup1: sentF1, followup2: sentF2, winback: sentWb });
   } catch (err) {
     console.error('followups:', err && err.message);
     return res.status(500).json({ error: 'Something went wrong.' });

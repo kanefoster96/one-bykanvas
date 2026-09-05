@@ -41,6 +41,43 @@
     setTimeout(erase, 1600);
   })();
 
+  /* ---------- Monthly / annual billing toggle ---------- */
+  // Annual is ten months' money for twelve - "2 months free", never "-17%".
+  // The choice is stashed so the wizard's payment step opens on the same
+  // billing the plans page was showing when they decided.
+  (function () {
+    var toggles = document.querySelectorAll('.bill-toggle');
+    if (!toggles.length) return;
+
+    var KEY = 'one-billing';
+    function current() {
+      try { return localStorage.getItem(KEY) === 'annual' ? 'annual' : 'monthly'; }
+      catch (e) { return 'monthly'; }
+    }
+
+    function apply(mode) {
+      document.querySelectorAll('.bill-opt').forEach(function (b) {
+        b.classList.toggle('is-on', b.dataset.bill === mode);
+      });
+      document.querySelectorAll('.price[data-y]').forEach(function (p) {
+        var amount = mode === 'annual' ? p.dataset.y : p.dataset.m;
+        var per = mode === 'annual' ? '/year' : '/month';
+        p.innerHTML = '<span class="cur">£</span>' + amount + '<span class="per">' + per + '</span>';
+      });
+    }
+
+    toggles.forEach(function (t) {
+      t.addEventListener('click', function (e) {
+        var btn = e.target.closest('.bill-opt');
+        if (!btn) return;
+        try { localStorage.setItem(KEY, btn.dataset.bill); } catch (e2) {}
+        apply(btn.dataset.bill);
+      });
+    });
+
+    apply(current());
+  })();
+
   /* ---------- Menu ---------- */
   // One source of truth for the nav. Pages only need an empty #menu element;
   // the header itself stays in the markup so it renders without JavaScript.

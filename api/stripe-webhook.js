@@ -212,6 +212,11 @@ module.exports = async function handler(req, res) {
        recorded, and a mail problem must not fail the event and have Stripe
        retry it. */
     if (isLive(sub.status) && !wasLive) {
+      /* Coming (back) alive resets the win-back clock, so a future cancel
+         gets its own nudge instead of inheriting an old stamp. */
+      await admin.from('profiles')
+        .update({ canceled_at: null, winback_sent_at: null }).eq('id', id)
+        .then(({ error }) => { if (error) console.error('webhook: winback reset failed:', error.message); });
       await rewardReferrer(id, patch);
       await announceNewCustomer(id, patch);
       await welcomeCustomer(id, patch);
@@ -222,6 +227,10 @@ module.exports = async function handler(req, res) {
         'A new ' + (patch.active_plan || '') + ' plan just went live. Their build is now owed.');
     }
     if (sub.status === 'canceled' && !alreadyCanceled) {
+      /* The win-back clock starts here; /api/followups reads it daily. */
+      await admin.from('profiles')
+        .update({ canceled_at: new Date().toISOString() }).eq('id', id)
+        .then(({ error }) => { if (error) console.error('webhook: canceled_at stamp failed:', error.message); });
       await announceCancellation(id, sub);
       await notify(admin, id, 'Your plan has ended',
         'Reactivate any time from your account - your site and address can come back as they were.',

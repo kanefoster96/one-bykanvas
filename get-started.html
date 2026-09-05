@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=47">
+<link rel="stylesheet" href="styles.css?v=48">
 </head>
 <body class="auth-body">
 
@@ -168,11 +168,16 @@
         <!-- Tapping a plan expands its full list right under it; the ticks
              from the last step pre-select the plan that covers them, and the
              note under the list says when a choice misses a ticked want. -->
+        <div class="bill-toggle bill-toggle-wiz" role="group" aria-label="Billing period">
+          <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
+          <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free</span></button>
+        </div>
+
         <div class="pick" id="pick">
           <label class="pick-row is-on" data-plan="max">
             <input type="radio" name="plan" value="max" checked>
             <span class="pick-main">
-              <span class="pick-head"><b>Max</b><em>£250<span>/mo</span></em></span>
+              <span class="pick-head"><b>Max</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
               <span class="pick-note"><b class="pick-flag">Recommended</b>Growth mode &mdash; improved monthly, without you asking.</span>
             </span>
           </label>
@@ -188,7 +193,7 @@
           <label class="pick-row" data-plan="business">
             <input type="radio" name="plan" value="business">
             <span class="pick-main">
-              <span class="pick-head"><b>Business</b><em>£50<span>/mo</span></em></span>
+              <span class="pick-head"><b>Business</b><em data-m="£50|/mo" data-y="£500|/yr">£50<span>/mo</span></em></span>
               <span class="pick-note">Everything you need to be online.</span>
             </span>
           </label>
@@ -302,12 +307,12 @@
 </main>
 
 <script src="vendor/supabase.js?v=1"></script>
-<script src="consent.js?v=2"></script>
+<script src="consent.js?v=3"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=12"></script>
+<script src="get-started.js?v=13"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
