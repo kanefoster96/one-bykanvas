@@ -245,6 +245,10 @@ body.locked{overflow:hidden}
   font-size:15px;line-height:1.6;color:var(--ink-2);
 }
 .promise strong{display:block;margin-bottom:5px;font-size:16px;color:var(--good)}
+.promise .promise-cta{
+  display:inline-block;margin-top:10px;font-weight:600;color:var(--good);
+  text-decoration:underline;text-underline-offset:3px;
+}
 
 /* A promo code said in passing: the code itself reads as a thing to tap. */
 .promo-line{margin:18px auto 0;max-width:560px;text-align:center;font-size:14.5px;color:var(--ink-2)}
