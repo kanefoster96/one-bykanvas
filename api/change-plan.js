@@ -25,13 +25,23 @@ const { PLANS } = require('./_plans.js');
 
 const ORDER = ['business', 'pro', 'max'];
 
-function priceDataFor(plan) {
+/* The new price keeps the customer's existing billing interval: an annual
+   subscriber moving Business -> Max stays annual, and Stripe prorates
+   within the year (the unused chunk of £500 credits against £2,500 for the
+   remaining months). Without this, a plan change would silently convert an
+   annual customer to monthly billing. */
+function priceDataFor(plan, interval) {
+  const annual = interval === 'year' && Number.isFinite(PLANS[plan].yearly);
   return {
     currency: 'gbp',
-    unit_amount: PLANS[plan].amount,
-    recurring: { interval: 'month' },
-    product_data: { name: PLANS[plan].label }
+    unit_amount: annual ? PLANS[plan].yearly : PLANS[plan].amount,
+    recurring: { interval: annual ? 'year' : 'month' },
+    product_data: { name: PLANS[plan].label + (annual ? ' — Annual (2 months free)' : '') }
   };
+}
+
+function intervalOf(item) {
+  return (item && item.price && item.price.recurring && item.price.recurring.interval) || 'month';
 }
 
 /* What Stripe would bill right now for the change, in pence. Best effort:
@@ -43,7 +53,7 @@ async function previewAmount(stripe, sub, item, plan) {
     customer: typeof sub.customer === 'string' ? sub.customer : sub.customer.id,
     subscription: sub.id,
     subscription_details: {
-      items: [{ id: item.id, price_data: priceDataFor(plan), quantity: 1 }],
+      items: [{ id: item.id, price_data: priceDataFor(plan, intervalOf(item)), quantity: 1 }],
       proration_behavior: 'always_invoice'
     }
   };
@@ -144,7 +154,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const items = [{ id: item.id, price_data: priceDataFor(plan), quantity: 1 }];
+    const items = [{ id: item.id, price_data: priceDataFor(plan, intervalOf(item)), quantity: 1 }];
     const metadata = Object.assign({}, sub.metadata, { plan, supabase_user_id: user.id });
 
     if (upgrading) {
