@@ -104,7 +104,7 @@ module.exports = async function handler(req, res) {
     }
     const { data: profile } = await admin
       .from('profiles')
-      .select('stripe_customer_id, business_name, subscription_status, referred_by')
+      .select('stripe_customer_id, business_name, subscription_status, referred_by, partner_id')
       .eq('id', user.id)
       .maybeSingle();
 
@@ -188,7 +188,23 @@ module.exports = async function handler(req, res) {
       try {
         const found = await stripe.promotionCodes.list({ code: wanted, active: true, limit: 1 });
         const promo = found && found.data && found.data[0];
-        if (promo) discounts = [{ promotion_code: promo.id }];
+        if (promo) {
+          discounts = [{ promotion_code: promo.id }];
+          /* A code that belongs to a partner attributes the customer to
+             them - once, first partner wins - so the webhook can pay £12
+             per invoice. Only a code Stripe actually applied counts:
+             "payments made using their code" means the discount ran. */
+          try {
+            const { data: partner } = await admin.from('partners')
+              .select('id').ilike('code', wanted).maybeSingle();
+            if (partner && !(profile && profile.partner_id)) {
+              await admin.from('profiles')
+                .upsert({ id: user.id, partner_id: partner.id, partner_code: wanted }, { onConflict: 'id' });
+            }
+          } catch (e) {
+            console.error('checkout: partner stamp failed:', e && e.message);
+          }
+        }
         else console.log('checkout: offer %s did not resolve', wanted);
       } catch (e) {
         /* A lookup that fails is not a reason to block a sale. */

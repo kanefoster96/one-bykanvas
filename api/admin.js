@@ -475,6 +475,92 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    /* ---- partners: the ledger the Partners tab reads -------------------
+     *
+     * Aggregated here rather than in the browser so the tab is one call:
+     * per partner - lifetime earned, paid out, balance, distinct customers,
+     * this calendar month, and the last three months for the trend line.
+     */
+    if (action === 'listPartners') {
+      const [ps, pays, outs] = await Promise.all([
+        db.from('partners').select('id, name, contact, code, rate_pence, created_at')
+          .order('created_at', { ascending: true }),
+        db.from('partner_payments').select('partner_id, user_id, amount_pence, created_at').limit(5000),
+        db.from('partner_payouts').select('partner_id, amount_pence, created_at').limit(5000)
+      ]);
+      if (ps.error) throw new Error(ps.error.message);
+      if (pays.error) throw new Error(pays.error.message);
+      if (outs.error) throw new Error(outs.error.message);
+
+      const monthKey = (d) => { const t = new Date(d); return t.getUTCFullYear() + '-' + (t.getUTCMonth() + 1); };
+      const nowKey = monthKey(new Date());
+
+      const partners = (ps.data || []).map((partner) => {
+        const mine = (pays.data || []).filter((r) => r.partner_id === partner.id);
+        const earned = mine.reduce((s, r) => s + r.amount_pence, 0);
+        const paid = (outs.data || []).filter((r) => r.partner_id === partner.id)
+          .reduce((s, r) => s + r.amount_pence, 0);
+        const months = {};
+        mine.forEach((r) => { const k = monthKey(r.created_at); months[k] = (months[k] || 0) + r.amount_pence; });
+        return {
+          id: partner.id, name: partner.name, contact: partner.contact,
+          code: partner.code, rate_pence: partner.rate_pence,
+          earned, paid, balance: earned - paid,
+          thisMonth: months[nowKey] || 0,
+          customers: new Set(mine.map((r) => r.user_id)).size,
+          months
+        };
+      });
+      return res.status(200).json({ partners });
+    }
+
+    if (action === 'addPartner') {
+      const name = String(body.name || '').trim().slice(0, 100);
+      const contact = String(body.contact || '').trim().slice(0, 200);
+      const code = String(body.code || '').trim().toUpperCase();
+      if (!name) return res.status(400).json({ error: 'Give the partner a name.' });
+      if (!/^[A-Z0-9-]{3,30}$/.test(code)) {
+        return res.status(400).json({ error: 'Codes are 3-30 letters, numbers or dashes.' });
+      }
+      const { data, error } = await db.from('partners')
+        .insert({ name, contact: contact || null, code }).select().single();
+      if (error) {
+        if (/duplicate|unique/i.test(error.message)) {
+          return res.status(400).json({ error: 'That code is already taken.' });
+        }
+        throw new Error(error.message);
+      }
+      return res.status(200).json({ ok: true, partner: data });
+    }
+
+    if (action === 'removePartner') {
+      const id = String(body.partnerId || '');
+      if (!id) return res.status(400).json({ error: 'Which partner?' });
+      const { error } = await db.from('partners').delete().eq('id', id);
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true });
+    }
+
+    /* Marking paid moves the whole outstanding balance into the payouts
+       ledger, computed here rather than trusted from the browser. */
+    if (action === 'markPartnerPaid') {
+      const id = String(body.partnerId || '');
+      if (!id) return res.status(400).json({ error: 'Which partner?' });
+      const [pays, outs] = await Promise.all([
+        db.from('partner_payments').select('amount_pence').eq('partner_id', id).limit(5000),
+        db.from('partner_payouts').select('amount_pence').eq('partner_id', id).limit(5000)
+      ]);
+      if (pays.error) throw new Error(pays.error.message);
+      if (outs.error) throw new Error(outs.error.message);
+      const balance = (pays.data || []).reduce((s, r) => s + r.amount_pence, 0)
+        - (outs.data || []).reduce((s, r) => s + r.amount_pence, 0);
+      if (balance <= 0) return res.status(400).json({ error: 'Nothing owed right now.' });
+      const { error } = await db.from('partner_payouts')
+        .insert({ partner_id: id, amount_pence: balance });
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true, paid: balance });
+    }
+
     if (action === 'listLeads') {
       const COLS = 'id, name, business, email, about, plan_interest, want_app, '
                  + 'source, handle, requested_domain, preview_url, preview_sent_at, created_at';

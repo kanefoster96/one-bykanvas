@@ -474,6 +474,45 @@ module.exports = async function handler(req, res) {
       (ref.business_name || 'A customer') + ' got a free month: ' + newName + ' joined with their code.');
   }
 
+  /* The partner ledger. Every paid invoice from a partner-attributed
+     customer records that partner's per-payment rate (£12 by default),
+     capped at the customer's first 12 payments - the deal is a year, not
+     forever. unique(invoice_id) makes a retried webhook a no-op. */
+  async function recordPartnerPayment(invoice) {
+    if (!invoice || !invoice.id || !(invoice.amount_paid > 0)) return;
+    const customerId = typeof invoice.customer === 'string' ? invoice.customer : (invoice.customer && invoice.customer.id);
+    if (!customerId) return;
+
+    const { data: p } = await admin.from('profiles')
+      .select('id, partner_id, business_name').eq('stripe_customer_id', customerId).maybeSingle();
+    if (!p || !p.partner_id) return;
+
+    const { count } = await admin.from('partner_payments')
+      .select('id', { count: 'exact', head: true }).eq('user_id', p.id);
+    if (Number.isFinite(count) && count >= 12) return;
+
+    const { data: partner } = await admin.from('partners')
+      .select('id, name, rate_pence').eq('id', p.partner_id).maybeSingle();
+    if (!partner) return;
+
+    const rate = partner.rate_pence || 1200;
+    const { error } = await admin.from('partner_payments').insert({
+      partner_id: partner.id, user_id: p.id, invoice_id: invoice.id, amount_pence: rate
+    });
+    if (error) {
+      if (!/duplicate|unique/i.test(error.message)) {
+        console.error('webhook: partner payment record failed:', error.message);
+      }
+      return;
+    }
+
+    if ((count || 0) === 0) {
+      await notifyAdmin(admin, 'Partner referral paying',
+        (p.business_name || 'A customer') + "'s first payment landed - "
+        + partner.name + ' starts earning £' + (rate / 100).toFixed(0) + ' a month for their first year.');
+    }
+  }
+
   /* Only the first failed attempt in a billing cycle - Smart Retries tries
      again automatically over the days that follow, and a fresh email for
      every one of those attempts would be noise, not news. */
@@ -619,6 +658,7 @@ module.exports = async function handler(req, res) {
         const subId = subscriptionIdOf(event.data.object);
         if (subId) await writeSubscription(await stripe.subscriptions.retrieve(subId));
         await announceMaxRenewal(event.data.object);
+        await recordPartnerPayment(event.data.object);
         break;
       }
 

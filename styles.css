@@ -192,6 +192,13 @@ body.locked{overflow:hidden}
 @keyframes caret-blink{0%,100%{opacity:1}50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.type-caret{display:none}}
 
+/* ---------- Partner code chip ---------- */
+.partner-code{
+  font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:.04em;
+  background:var(--good-soft);color:var(--good);border-radius:8px;padding:2px 8px;
+  vertical-align:1px;
+}
+
 /* ---------- Admin funnel line ---------- */
 .funnel-line{margin:6px 0 0;font-size:14px;font-weight:500;color:var(--ink-3)}
 
