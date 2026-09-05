@@ -1819,8 +1819,9 @@ function renderPartnersSection() {
   wrap.textContent = '';
 
   wrap.appendChild(el('p', 'hint', 'Each partner has a code (create the matching promotion code in '
-    + 'Stripe first - e.g. 25% off, 12 months). When a customer joins with it, every one of their '
-    + 'first 12 payments adds £12 here automatically. Pay what is owed, tap Mark paid, done.'));
+    + 'Stripe first - e.g. 25% off, 12 months). When a customer joins with it - through the link '
+    + 'or typed at checkout - every one of their first 12 payments adds £12 here automatically. '
+    + 'Pay what is owed, tap Mark paid, done.'));
 
   // ---- add form --------------------------------------------------------
   var form = el('div', 'feature-add');
