@@ -474,6 +474,36 @@ module.exports = async function handler(req, res) {
       (ref.business_name || 'A customer') + ' got a free month: ' + newName + ' joined with their code.');
   }
 
+  /* A partner code typed straight into Stripe's checkout box never passes
+     through our site, so the profile carries no partner stamp. The invoice
+     knows which promotion code discounted it: on first sight of an
+     unattributed customer with a discount, ask Stripe for the code and
+     stamp them (first partner wins, same as checkout). One extra call, and
+     only for the rare invoice that is both discounted and unstamped. */
+  async function attributeFromInvoice(p, invoice) {
+    const had = Array.isArray(invoice.discounts) ? invoice.discounts : (invoice.discount ? [invoice.discount] : []);
+    if (!had.length) return null;
+    try {
+      const full = await stripe.invoices.retrieve(invoice.id, { expand: ['discounts.promotion_code'] });
+      for (const d of (full.discounts || [])) {
+        let promo = d && d.promotion_code;
+        if (typeof promo === 'string') promo = await stripe.promotionCodes.retrieve(promo);
+        const code = promo && promo.code;
+        if (!code) continue;
+        const { data: partner } = await admin.from('partners')
+          .select('id, code').ilike('code', code).maybeSingle();
+        if (!partner) continue;
+        await admin.from('profiles')
+          .update({ partner_id: partner.id, partner_code: partner.code })
+          .eq('id', p.id).is('partner_id', null);
+        return partner.id;
+      }
+    } catch (e) {
+      console.error('webhook: partner attribution from invoice failed:', e && e.message);
+    }
+    return null;
+  }
+
   /* The partner ledger. Every paid invoice from a partner-attributed
      customer records that partner's per-payment rate (£12 by default),
      capped at the customer's first 12 payments - the deal is a year, not
@@ -485,14 +515,17 @@ module.exports = async function handler(req, res) {
 
     const { data: p } = await admin.from('profiles')
       .select('id, partner_id, business_name').eq('stripe_customer_id', customerId).maybeSingle();
-    if (!p || !p.partner_id) return;
+    if (!p) return;
+
+    const partnerId = p.partner_id || await attributeFromInvoice(p, invoice);
+    if (!partnerId) return;
 
     const { count } = await admin.from('partner_payments')
       .select('id', { count: 'exact', head: true }).eq('user_id', p.id);
     if (Number.isFinite(count) && count >= 12) return;
 
     const { data: partner } = await admin.from('partners')
-      .select('id, name, rate_pence').eq('id', p.partner_id).maybeSingle();
+      .select('id, name, rate_pence').eq('id', partnerId).maybeSingle();
     if (!partner) return;
 
     const rate = partner.rate_pence || 1200;
