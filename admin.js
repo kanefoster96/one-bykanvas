@@ -35,6 +35,7 @@ var ICONS = {
   payments:  '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
   templates: '<rect x="7.5" y="7.5" width="13" height="13" rx="2.5"/><path d="M16.5 7.5v-2a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/>',
   marketing: '<path d="M3 7.5 12 13l9-5.5"/><rect x="3" y="5" width="18" height="14" rx="2.5"/>',
+  partners:  '<circle cx="12" cy="12" r="8.5"/><path d="M9 15 15 9"/><circle cx="9.4" cy="9.4" r="1.1" fill="currentColor" stroke="none"/><circle cx="14.6" cy="14.6" r="1.1" fill="currentColor" stroke="none"/>',
   enquiries: '<rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/>'
 };
 
@@ -45,6 +46,7 @@ var SECTIONS = [
   { key: 'contacts',  label: 'Contacts' },
   { key: 'plans',     label: 'Plans' },
   { key: 'payments',  label: 'Payments' },
+  { key: 'partners',  label: 'Partners' },
   { key: 'templates', label: 'Templates' },
   { key: 'marketing', label: 'Marketing' }
 ];
@@ -275,6 +277,7 @@ function switchSection(key) {
   /* The audience counts are asked for when the section opens rather than at
      boot: they are a server round trip nobody needs until they are looking. */
   if (key === 'marketing') loadAudiences();
+  if (key === 'partners') loadPartners();
 }
 
 /* The Wix-style home: one row per area - icon, label, a count badge where
@@ -306,8 +309,8 @@ function renderMenu(counts) {
 var SECTION_IDS = {
   requests: 'sectionRequests', enquiries: 'sectionEnquiries',
   customers: 'sectionCustomers', contacts: 'sectionContacts',
-  plans: 'sectionPlans', payments: 'sectionPayments', templates: 'sectionTemplates',
-  marketing: 'sectionMarketing'
+  plans: 'sectionPlans', payments: 'sectionPayments', partners: 'sectionPartners',
+  templates: 'sectionTemplates', marketing: 'sectionMarketing'
 };
 
 function render() {
@@ -346,6 +349,7 @@ function render() {
   else if (activeSection === 'contacts') renderContactsSection();
   else if (activeSection === 'plans') renderPlansSection();
   else if (activeSection === 'payments') renderPaymentsSection();
+  else if (activeSection === 'partners') renderPartnersSection();
   else if (activeSection === 'templates') renderTemplatesSection();
 }
 
@@ -1782,6 +1786,127 @@ function renderPlansSection() {
 }
 
 /* ---------------- Payments: revenue summary + charge history ---------------- */
+
+/* ---------------- partners: codes, earnings, payouts ---------------- */
+/*
+ * One card per partner: their code (with the share link a tap away), what
+ * this month has added, what is owed, and a Mark-paid button that moves
+ * the balance into the payouts ledger. Earnings arrive by themselves - the
+ * webhook adds the partner's rate for each referred customer's payment.
+ */
+var partnersState = null;
+
+async function loadPartners() {
+  partnersState = null;
+  render();
+  try {
+    var res = await api({ action: 'listPartners' });
+    partnersState = res.partners || [];
+  } catch (err) {
+    partnersState = [];
+    say(err.message, 'bad');
+  }
+  render();
+}
+
+function money(pence) {
+  var pounds = pence / 100;
+  return '£' + (pounds % 1 === 0 ? pounds.toFixed(0) : pounds.toFixed(2));
+}
+
+function renderPartnersSection() {
+  var wrap = document.getElementById('partnersBody');
+  wrap.textContent = '';
+
+  wrap.appendChild(el('p', 'hint', 'Each partner has a code (create the matching promotion code in '
+    + 'Stripe first - e.g. 25% off, 12 months). When a customer joins with it, every one of their '
+    + 'first 12 payments adds £12 here automatically. Pay what is owed, tap Mark paid, done.'));
+
+  // ---- add form --------------------------------------------------------
+  var form = el('div', 'feature-add');
+  var nameIn = el('input', 'admin-input'); nameIn.placeholder = 'Partner name';
+  var contactIn = el('input', 'admin-input'); contactIn.placeholder = 'Contact (email or @instagram)';
+  var codeIn = el('input', 'admin-input'); codeIn.placeholder = 'CODE25';
+  codeIn.style.textTransform = 'uppercase';
+  var addBtn = el('button', 'btn btn-ghost admin-save', 'Add partner');
+  addBtn.type = 'button';
+  addBtn.addEventListener('click', async function () {
+    addBtn.disabled = true;
+    try {
+      await api({ action: 'addPartner', name: nameIn.value, contact: contactIn.value, code: codeIn.value });
+      say('Partner added.', 'ok');
+      await loadPartners();
+    } catch (err) { say(err.message, 'bad'); }
+    addBtn.disabled = false;
+  });
+  form.appendChild(nameIn); form.appendChild(contactIn); form.appendChild(codeIn); form.appendChild(addBtn);
+  wrap.appendChild(form);
+
+  if (partnersState === null) { wrap.appendChild(el('p', 'site-none', 'Loading…')); return; }
+  if (!partnersState.length) { wrap.appendChild(el('p', 'site-none', 'No partners yet.')); return; }
+
+  var list = el('ul', 'queue');
+  partnersState.forEach(function (p) {
+    var li = el('li', 'queue-item');
+    var main = el('div', 'queue-main');
+
+    var head = el('p', 'queue-what');
+    head.appendChild(document.createTextNode(p.name + ' '));
+    var codeChip = el('code', 'partner-code', p.code);
+    head.appendChild(codeChip);
+    main.appendChild(head);
+
+    if (p.contact) main.appendChild(el('p', 'queue-meta', p.contact));
+    main.appendChild(el('p', 'queue-meta',
+      'This month ' + money(p.thisMonth) + ' · Owed ' + money(p.balance)
+      + ' · ' + p.customers + ' customer' + (p.customers === 1 ? '' : 's')
+      + ' · Lifetime ' + money(p.earned)));
+
+    var actions = el('div', 'queue-actions');
+
+    var copy = el('button', 'btn btn-ghost admin-save', 'Copy link');
+    copy.type = 'button';
+    copy.addEventListener('click', function () {
+      var link = 'https://kanvas.one/plans.html?offer=' + encodeURIComponent(p.code);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(function () { say('Link copied.', 'ok'); }, function () {});
+      } else { window.prompt('Copy the link:', link); }
+    });
+    actions.appendChild(copy);
+
+    var pay = el('button', 'btn btn-ghost admin-save', 'Mark ' + money(p.balance) + ' paid');
+    pay.type = 'button';
+    pay.disabled = p.balance <= 0;
+    pay.addEventListener('click', async function () {
+      if (!window.confirm('Mark ' + money(p.balance) + ' as paid to ' + p.name
+        + '? Do the bank transfer first - this just records it.')) return;
+      pay.disabled = true;
+      try {
+        await api({ action: 'markPartnerPaid', partnerId: p.id });
+        say('Recorded.', 'ok');
+        await loadPartners();
+      } catch (err) { say(err.message, 'bad'); pay.disabled = false; }
+    });
+    actions.appendChild(pay);
+
+    var rm = el('button', 'btn btn-ghost admin-save', 'Remove');
+    rm.type = 'button';
+    rm.addEventListener('click', async function () {
+      if (!window.confirm('Remove ' + p.name + '? Their whole earnings history goes with them.')) return;
+      try {
+        await api({ action: 'removePartner', partnerId: p.id });
+        say('Removed.', 'ok');
+        await loadPartners();
+      } catch (err) { say(err.message, 'bad'); }
+    });
+    actions.appendChild(rm);
+
+    li.appendChild(main);
+    li.appendChild(actions);
+    list.appendChild(li);
+  });
+  wrap.appendChild(list);
+}
 
 function renderPaymentsSection() {
   var wrap = document.getElementById('paymentsBody');
