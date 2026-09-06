@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://kanvas.one/plans">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=51">
+<link rel="stylesheet" href="styles.css?v=52">
 </head>
 <body>
 
@@ -86,12 +86,57 @@
     </article>
   </div>
 
+  <!-- The free example, asked for one thing at a time. Only the business
+       name shows at first; the Instagram field appears once that is typed,
+       and the email with its send arrow once that is. Same endpoint and
+       same thank-you page as /free.html - this is the short front door,
+       that is the full one with the address picker. -->
+  <div class="wrap center">
+    <form class="free-mini reveal" id="miniFree" novalidate>
+      <p class="hero-pill"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free</p>
+      <h3>See your site before you pay.</h3>
+      <p class="lede">Tell us your business name and we&rsquo;ll design a real page for it, then email it over. Free, and no card.</p>
+
+      <div class="hp" aria-hidden="true">
+        <label for="mini_extra">Leave this empty</label>
+        <input id="mini_extra" name="mini_extra" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="mini-step" id="miniStep1">
+        <label for="miniBusiness">Your business name</label>
+        <input id="miniBusiness" type="text" autocomplete="organization" placeholder="e.g. Fade Room Barbers" enterkeyhint="next">
+      </div>
+
+      <div class="mini-step" id="miniStep2" hidden>
+        <label for="miniHandle">Your Instagram or Facebook</label>
+        <div class="mini-at">
+          <span aria-hidden="true">@</span>
+          <input id="miniHandle" type="text" autocomplete="off" placeholder="yourbusiness" enterkeyhint="next">
+        </div>
+        <p class="hint">It&rsquo;s where we get your photos and your look.</p>
+      </div>
+
+      <div class="mini-step" id="miniStep3" hidden>
+        <label for="miniEmail">Where should we send it?</label>
+        <div class="mini-row">
+          <input id="miniEmail" type="email" autocomplete="email" placeholder="you@example.com" enterkeyhint="send">
+          <button class="mini-go" id="miniSend" type="submit" aria-label="Send my free example">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <p class="note" id="miniNote" role="status" aria-live="polite"></p>
+      <p class="mini-alt">Already decided? <a href="/get-started.html">Get started &rsaquo;</a></p>
+    </form>
+  </div>
+
   <div class="wrap">
     <p class="promise reveal"><strong>The See-It-First Promise</strong>
     You see a real page for your business, free, before you pay a penny. Once
     you join there are no setup fees and you can cancel any month &mdash;
     you&rsquo;re never locked in.<br>
-    <a class="promise-cta" href="/free.html">Get your free example page &rsaquo;</a></p>
+    <a class="promise-cta" href="#miniFree">Get your free example page &rsaquo;</a></p>
   </div>
 
   <!-- Why Max exists, said plainly. The rest of the plans differ by how much
@@ -222,7 +267,7 @@
 <script src="consent.js?v=3"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="script.js?v=20"></script>
+<script src="script.js?v=21"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>

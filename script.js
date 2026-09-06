@@ -435,8 +435,12 @@
       business.classList.remove('err');
       if (filled(business)) show(step2);
     });
+    /* The @ is painted in front of the box, so one typed as well is
+       dropped rather than doubled - "@@shop" is what autocorrect and habit
+       produce otherwise. */
     handle.addEventListener('input', function () {
       handle.classList.remove('err');
+      if (/^@/.test(handle.value)) handle.value = handle.value.replace(/^@+/, '');
       if (filled(handle)) show(step3);
     });
     email.addEventListener('input', function () { email.classList.remove('err'); });
@@ -458,7 +462,7 @@
     mini.addEventListener('submit', async function (e) {
       e.preventDefault();
       var biz  = business.value.trim();
-      var soc  = handle.value.trim();
+      var soc  = '@' + handle.value.trim().replace(/^@+/, '');
       var mail = email.value.trim();
 
       if (!filled(business)) { show(step2); business.classList.add('err'); business.focus(); return say('Tell us your business name.', 'bad'); }
