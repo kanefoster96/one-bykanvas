@@ -203,20 +203,39 @@ body.locked{overflow:hidden}
 .funnel-line{margin:6px 0 0;font-size:14px;font-weight:500;color:var(--ink-3)}
 
 /* ---------- Monthly/annual toggle ---------- */
+/* One white knob that slides between the two options. It is the track's
+   ::before, placed from --knob-x/--knob-w which the scripts measure off the
+   chosen button, so the buttons keep their natural widths and only the knob
+   travels. Until measured (or without JS) the chosen button is simply lit. */
 .bill-toggle{
-  display:inline-flex;gap:4px;margin-top:26px;padding:4px;border-radius:980px;
+  position:relative;display:inline-flex;gap:4px;margin-top:26px;padding:4px;border-radius:980px;
   background:#f2f2f5;border:1px solid var(--line-soft);
 }
+.bill-toggle::before{
+  content:"";position:absolute;top:4px;bottom:4px;left:var(--knob-x,4px);width:var(--knob-w,0px);
+  border-radius:980px;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.08);opacity:0;
+}
+.bill-toggle.has-knob::before{
+  opacity:1;transition:left .32s cubic-bezier(.4,0,.2,1),width .32s cubic-bezier(.4,0,.2,1);
+}
 .bill-opt{
-  display:inline-flex;align-items:center;gap:8px;
+  position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;
   font-family:var(--font);font-size:14px;font-weight:600;letter-spacing:-.01em;
   padding:8px 18px;border-radius:980px;border:0;background:none;color:var(--ink-2);cursor:pointer;
-  transition:background .2s var(--ease),color .2s var(--ease);
+  transition:color .2s var(--ease);
 }
-.bill-opt.is-on{background:#fff;color:var(--ink);box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.bill-opt.is-on{color:var(--ink)}
+.bill-toggle:not(.has-knob) .bill-opt.is-on{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.08)}
+@media (prefers-reduced-motion:reduce){.bill-toggle.has-knob::before{transition:none}}
 .bill-save{
-  font-size:11px;font-weight:700;letter-spacing:.02em;
+  font-size:11px;font-weight:700;letter-spacing:.02em;white-space:nowrap;
   background:var(--good-soft);color:var(--good);border-radius:980px;padding:3px 8px;
+}
+/* Small phones: the wizard's toggle has less room, so trim the padding
+   rather than let the badge break onto two lines. */
+@media (max-width:380px){
+  .bill-opt{padding:8px 12px;gap:6px}
+  .bill-save{font-size:10.5px;padding:3px 7px}
 }
 
 /* ---------- Referral page ---------- */

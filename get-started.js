@@ -70,6 +70,29 @@
       var parts = (mode === 'annual' ? em.dataset.y : em.dataset.m).split('|');
       em.innerHTML = parts[0] + '<span>' + parts[1] + '</span>';
     });
+    paintKnob();
+  }
+
+  /* The sliding knob: measure the lit button and hand its place to the
+     CSS. A toggle that is not on screen yet (the wizard's plan step)
+     measures 0 and is skipped; the ResizeObserver catches it when it
+     appears, and any reflow - fonts landing, a rotation - after that. */
+  function paintKnob() {
+    document.querySelectorAll('.bill-toggle').forEach(function (t) {
+      var on = t.querySelector('.bill-opt.is-on');
+      if (!on || !on.offsetWidth) return;
+      t.style.setProperty('--knob-x', on.offsetLeft + 'px');
+      t.style.setProperty('--knob-w', on.offsetWidth + 'px');
+      if (!t.classList.contains('has-knob')) {
+        requestAnimationFrame(function () { t.classList.add('has-knob'); });
+      }
+    });
+  }
+  window.addEventListener('resize', paintKnob);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(paintKnob);
+  if ('ResizeObserver' in window) {
+    var ro = new ResizeObserver(paintKnob);
+    document.querySelectorAll('.bill-toggle').forEach(function (t) { ro.observe(t); });
   }
   /* This page does not load script.js, so the toggle is handled here in
      full: stash the choice, light the button, repaint the prices. */
