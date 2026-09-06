@@ -397,6 +397,105 @@
   });
 
 
+  /* ---------- Homepage free example, one field at a time ----------
+   *
+   * Three boxes, shown one after another: the Instagram field appears once a
+   * business name is typed, the email once the handle is. Nothing is ever
+   * hidden again - a step that vanished while someone was mid-thought would
+   * feel broken. Enter in an earlier box moves on rather than submitting.
+   * Posts to the same /api/lead as free.html and lands on the same thanks
+   * page, so a lead from here is indistinguishable in the admin.
+   */
+  var mini = document.getElementById('miniFree');
+  if (mini) (function () {
+    var business = document.getElementById('miniBusiness');
+    var handle   = document.getElementById('miniHandle');
+    var email    = document.getElementById('miniEmail');
+    var step2    = document.getElementById('miniStep2');
+    var step3    = document.getElementById('miniStep3');
+    var send     = document.getElementById('miniSend');
+    var note     = document.getElementById('miniNote');
+    var hp       = document.getElementById('mini_extra');
+    var shownAt  = Date.now();
+
+    function say(msg, kind) {
+      note.textContent = msg || '';
+      note.className = 'note' + (kind ? ' ' + kind : '');
+    }
+
+    function show(step) {
+      if (!step.hidden) return;
+      step.hidden = false;
+      step.classList.add('in');
+    }
+
+    var filled = function (el) { return el.value.trim().length >= 2; };
+
+    business.addEventListener('input', function () {
+      business.classList.remove('err');
+      if (filled(business)) show(step2);
+    });
+    handle.addEventListener('input', function () {
+      handle.classList.remove('err');
+      if (filled(handle)) show(step3);
+    });
+    email.addEventListener('input', function () { email.classList.remove('err'); });
+
+    /* Enter on a box that is not the last one: reveal the next (typing
+       already did, normally) and move into it. */
+    function nextOn(el, step, target) {
+      el.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        if (!filled(el)) { el.classList.add('err'); return; }
+        show(step);
+        target.focus();
+      });
+    }
+    nextOn(business, step2, handle);
+    nextOn(handle, step3, email);
+
+    mini.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var biz  = business.value.trim();
+      var soc  = handle.value.trim();
+      var mail = email.value.trim();
+
+      if (!filled(business)) { show(step2); business.classList.add('err'); business.focus(); return say('Tell us your business name.', 'bad'); }
+      if (!filled(handle))   { show(step3); handle.classList.add('err'); handle.focus(); return say('Add your Instagram or Facebook.', 'bad'); }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { email.classList.add('err'); email.focus(); return say('Enter a valid email address.', 'bad'); }
+
+      send.disabled = true;
+      say('Sending\u2026');
+      try {
+        var res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source: 'free-preview',
+            name: biz,
+            business: biz,
+            email: mail,
+            handle: soc,
+            website: hp ? hp.value : '',
+            elapsed: Date.now() - shownAt
+          })
+        });
+        var data = await res.json().catch(function () { return {}; });
+        if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
+
+        try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail })); } catch (err) { /* private mode */ }
+        mini.reset();
+        location.assign('/thanks.html');
+        return;
+      } catch (err) {
+        say(err.message || 'Could not send that. Try again.', 'bad');
+        send.disabled = false;
+      }
+    });
+  })();
+
+
   /* ---------- Hero clips ----------
    *
    * The frame shows still screenshots by default. Name a clip here and it
