@@ -691,7 +691,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 /* ---- Homepage free example, one field at a time ----
    The later steps start hidden and fade in as the one before is filled, so
    the first thing anyone sees is a single box asking for a name. */
-.free-mini{max-width:480px;margin:34px auto 0;text-align:center}
+.free-mini{max-width:480px;margin:clamp(56px,9vw,88px) auto 0;text-align:center}
 .free-mini .hero-pill{margin-bottom:14px}
 .free-mini h3{font-size:clamp(24px,3.6vw,30px);letter-spacing:-.025em;margin:0}
 .free-mini .lede{margin:10px auto 22px;font-size:clamp(16px,2vw,18px)}
@@ -719,9 +719,13 @@ a.hero-pill:hover .pill-go{opacity:1}
 .mini-go svg{width:22px;height:22px}
 .mini-go:hover{transform:translateX(2px)}
 .mini-go:disabled{opacity:.55;cursor:default;transform:none}
+/* The first box waits a beat after the section scrolls in, then fades up.
+   opacity rather than hidden, so the space is already there and nothing
+   below it moves when it arrives. */
+.mini-step.wait{opacity:0}
 .mini-step.in{animation:mini-in .38s var(--ease) both}
 @keyframes mini-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.mini-step.in{animation:none}}
+@media (prefers-reduced-motion:reduce){.mini-step.in{animation:none}.mini-step.wait{opacity:1}}
 .free-mini .note{text-align:center}
 .mini-alt{margin:20px 0 0;font-size:14px;color:var(--ink-3)}
 .mini-alt a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
