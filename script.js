@@ -431,6 +431,27 @@
 
     var filled = function (el) { return el.value.trim().length >= 2; };
 
+    /* The pitch lands first, then the box: a second after the form scrolls
+       into view the name field fades up. Focusing it early (tab, autofill)
+       brings it in at once - nobody types into something they can't see. */
+    var step1 = document.getElementById('miniStep1');
+    function arrive() {
+      if (!step1.classList.contains('wait')) return;
+      step1.classList.remove('wait');
+      step1.classList.add('in');
+    }
+    business.addEventListener('focus', arrive);
+    if ('IntersectionObserver' in window) {
+      var watch = new IntersectionObserver(function (entries) {
+        if (!entries.some(function (en) { return en.isIntersecting; })) return;
+        watch.disconnect();
+        setTimeout(arrive, 1000);
+      }, { threshold: 0.2 });
+      watch.observe(mini);
+    } else {
+      arrive();
+    }
+
     business.addEventListener('input', function () {
       business.classList.remove('err');
       if (filled(business)) show(step2);
