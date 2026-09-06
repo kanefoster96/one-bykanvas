@@ -72,17 +72,19 @@ variable is already in both files and fills itself in - nothing to edit there.
 
 ### 4. Allowlist where the links land
 
-This is the step that silently breaks things if it is skipped. Both flows ask
-Supabase to send the customer to `/account.html` afterwards
-(`emailRedirectTo` in `auth.js` and `get-started.js`, `redirectTo` in the
-forgot-password handler). An address that is not on the allowlist is ignored,
-and the customer is dropped somewhere else with no error to explain it.
+This is the step that silently breaks things if it is skipped. Signup asks
+Supabase to send the customer to `/account.html` afterwards (`emailRedirectTo`
+in `auth.js` and `get-started.js`); forgot-password sends them to `/reset.html`
+(`redirectTo` in the login page's handler). An address that is not on the
+allowlist is ignored, and the customer is dropped somewhere else with no error
+to explain it.
 
 Supabase Dashboard → **Authentication** → **URL Configuration**:
 
 - **Site URL**: `https://kanvas.one`
-- **Redirect URLs**: add `https://kanvas.one/account.html`, plus the Vercel
-  preview domain if you test signups there.
+- **Redirect URLs**: add `https://kanvas.one/account.html` and
+  `https://kanvas.one/reset.html`, plus the Vercel preview domain if you test
+  signups there.
 
 ### 5. Test both, with a real address
 
