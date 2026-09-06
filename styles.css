@@ -706,6 +706,10 @@ a.hero-pill:hover .pill-go{opacity:1}
 .mini-step input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13)}
 .mini-step input.err{border-color:#d93025}
 .mini-row{display:flex;gap:8px;align-items:center}
+.mini-at{position:relative}
+.mini-at span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--ink-2);pointer-events:none}
+.mini-at input{padding-left:33px}
+.free-mini{scroll-margin-top:90px}
 .mini-row input{flex:1;min-width:0}
 .mini-go{
   flex:0 0 50px;width:50px;height:50px;border-radius:999px;border:0;cursor:pointer;
