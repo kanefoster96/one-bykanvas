@@ -688,6 +688,40 @@ a.hero-pill:hover .pill-go{opacity:1}
 .offer-form .note:empty{margin:0;min-height:0}
 .offer-wait{margin:0;color:var(--ink-3);line-height:1.55}
 
+/* ---- Homepage free example, one field at a time ----
+   The later steps start hidden and fade in as the one before is filled, so
+   the first thing anyone sees is a single box asking for a name. */
+.free-mini{max-width:480px;margin:34px auto 0;text-align:center}
+.free-mini .hero-pill{margin-bottom:14px}
+.free-mini h3{font-size:clamp(24px,3.6vw,30px);letter-spacing:-.025em;margin:0}
+.free-mini .lede{margin:10px auto 22px;font-size:clamp(16px,2vw,18px)}
+.mini-step{display:flex;flex-direction:column;gap:7px;margin-top:14px;text-align:left}
+.mini-step label{font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.mini-step .hint{margin:0}
+.mini-step input{
+  font-family:var(--font);font-size:16px;color:var(--ink);width:100%;
+  padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#fff;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
+}
+.mini-step input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13)}
+.mini-step input.err{border-color:#d93025}
+.mini-row{display:flex;gap:8px;align-items:center}
+.mini-row input{flex:1;min-width:0}
+.mini-go{
+  flex:0 0 50px;width:50px;height:50px;border-radius:999px;border:0;cursor:pointer;
+  background:var(--good);color:#fff;display:grid;place-items:center;
+  transition:transform .2s var(--ease),opacity .2s var(--ease);
+}
+.mini-go svg{width:22px;height:22px}
+.mini-go:hover{transform:translateX(2px)}
+.mini-go:disabled{opacity:.55;cursor:default;transform:none}
+.mini-step.in{animation:mini-in .38s var(--ease) both}
+@keyframes mini-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.mini-step.in{animation:none}}
+.free-mini .note{text-align:center}
+.mini-alt{margin:20px 0 0;font-size:14px;color:var(--ink-3)}
+.mini-alt a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+
 .pick-list{display:grid;gap:9px}
 
 .offer-after{max-width:520px;margin:clamp(40px,6vw,60px) auto 0}
