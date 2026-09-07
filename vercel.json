@@ -2,7 +2,22 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "crons": [
-    { "path": "/api/followups", "schedule": "0 9 * * *" }
+    {
+      "path": "/api/followups",
+      "schedule": "0 9 * * *"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/websites-for-cafes",
+      "destination": "/websites-for-coffee-shops",
+      "permanent": true
+    },
+    {
+      "source": "/websites-for-florists",
+      "destination": "/",
+      "permanent": true
+    }
   ],
   "headers": [
     {
