@@ -385,6 +385,10 @@ body.locked{overflow:hidden}
   .device-screen{
     position:relative;aspect-ratio:556/1134;
     background:url("assets/iphone-frame.webp") center/100% 100% no-repeat;
+    /* Runs off the bottom of the hero, the way the browser window does on
+       wide screens: the section clips it, so the phone reads as sitting in
+       the page rather than floating above it. */
+    margin-bottom:-41%;
   }
   .device-shots{
     position:absolute;left:5.2%;top:2.2%;right:5.2%;bottom:2.2%;width:auto;aspect-ratio:auto;
@@ -396,10 +400,12 @@ body.locked{overflow:hidden}
   }
   .shots-wide{display:none}
   .shots-phone{display:block}
-  /* Edge to edge across the glass, top-aligned; the shots are shorter than
-     the display, so each carries its own bottom colour inline and the page
-     simply continues. Cover-cropping the sides cut words in half. */
-  .shots-phone img{object-fit:contain;object-position:top center}
+  /* Edge to edge across the glass, starting just under the island (the
+     padding), so a site's header buttons are never hidden behind it. Each
+     shot carries its own page colour inline, which fills the strip above
+     and the space below - the shots are shorter than the display - so the
+     page simply continues. Cover-cropping the sides cut words in half. */
+  .shots-phone img{object-fit:contain;object-position:top center;box-sizing:border-box;padding-top:14.5%}
   /* The frame is a third the width here, so the beat comes back down with it. */
   .build-star{width:25px;height:25px}
   .build-word{font-size:14px}
