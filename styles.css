@@ -301,10 +301,10 @@ body.locked{overflow:hidden}
 .fiveyear-sum a{display:inline-block;margin-top:6px;font-weight:600;color:var(--good);text-decoration:underline;text-underline-offset:3px}
 @media (max-width:600px){.fiveyear-cols{grid-template-columns:1fr}}
 
-/* The hero's comparison link and the popup it opens. */
-.fineprint-sep{margin:0 6px;color:var(--line)}
-.cmp-open{white-space:nowrap}
-@media (max-width:480px){.fineprint-sep{display:none}.cmp-open{display:block;margin-top:6px}}
+/* The comparison link under the phone, and the popup it opens. */
+.cmp-strip{padding:clamp(22px,4vw,34px) 22px 0;text-align:center;font-size:14.5px}
+.cmp-open{color:var(--ink-2);font-weight:500;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.cmp-open:hover{color:var(--ink)}
 .cmp-dialog{
   width:min(820px,calc(100% - 28px));max-height:calc(100dvh - 40px);margin:auto;padding:0;
   border:0;border-radius:var(--radius-lg);background:#fff;color:var(--ink);
