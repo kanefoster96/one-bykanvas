@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebSite","name":"Kanvas One","alternateName":["one","one by Kanvas","kanvas.one"],"url":"https://kanvas.one/"}
 </script>
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=59">
+<link rel="stylesheet" href="styles.css?v=60">
 </head>
 <body>
 
@@ -55,7 +55,9 @@
       <a class="btn btn-primary" href="#start">Contact us</a>
       <a class="btn btn-ghost" href="/get-started.html">Get started &rsaquo;</a>
     </div>
-    <p class="fineprint reveal">From £50 a month. <a href="/plans.html">See all plans</a></p>
+    <p class="fineprint reveal">From £50 a month. <a href="/plans.html">See all plans</a>
+       <span class="fineprint-sep" aria-hidden="true">&middot;</span>
+       <a href="#fiveyear" id="cmpOpen" class="cmp-open">Kanvas One vs a traditional website &rsaquo;</a></p>
   </div>
   <div class="hero-art reveal" aria-hidden="true">
     <div class="device">
@@ -381,7 +383,7 @@
        the sum that makes the £50 obvious. Sits right under the promise,
        where the price is being weighed. -->
   <div class="wrap">
-    <div class="fiveyear reveal">
+    <div class="fiveyear reveal" id="fiveyear">
       <p class="fiveyear-tag">The five-year maths</p>
       <h3>A website that never goes out of date.</h3>
       <p class="fiveyear-lede">A traditional website is &pound;3,000 or more up front, then &pound;100 to &pound;200
@@ -392,6 +394,7 @@
           <ul>
             <li>&pound;3,000+ before you see a thing</li>
             <li>&pound;100 to &pound;200 for every change</li>
+            <li>Hosting, database and email on top &mdash; &pound;20 to &pound;40 a month</li>
             <li>Looks dated by year five</li>
             <li>Your problem when it breaks</li>
             <li>Stuck with it once it&rsquo;s paid for</li>
@@ -402,19 +405,32 @@
           <ul>
             <li>See a real page free, then &pound;50 a month</li>
             <li>Every change included, forever</li>
+            <li>Hosting, database and email all included</li>
             <li>Never stands still &mdash; it grows with you</li>
             <li>Fixed, updated and looked after</li>
             <li>Cancel any month</li>
           </ul>
         </div>
       </div>
-      <p class="fiveyear-sum"><strong>Five years of Kanvas One is &pound;3,000.</strong> That&rsquo;s the day-one price of a
-         traditional site &mdash; and yours never stood still.
+      <p class="fiveyear-sum"><strong>Five years of Kanvas One is &pound;3,000.</strong> A traditional site costs that
+         before its hosting, before a single change, and before the rebuild &mdash; and yours never stood still.
          <a href="#miniFree">Get your free example page &rsaquo;</a></p>
     </div>
   </div>
 </section>
 
+
+<!-- The comparison as a popup, opened from the hero link. Empty until
+     opened: script.js clones the five-year card into it, so the copy lives
+     once. Without JavaScript the hero link simply scrolls to the card. -->
+<dialog class="cmp-dialog" id="cmpDialog" aria-label="Kanvas One compared with a traditional website">
+  <button class="cmp-close" type="button" data-close aria-label="Close">&times;</button>
+  <div class="cmp-dialog-body"></div>
+  <div class="cmp-dialog-actions">
+    <a class="btn btn-primary" href="/get-started.html">Get started &rsaquo;</a>
+    <button class="btn btn-ghost" type="button" data-close>Keep browsing</button>
+  </div>
+</dialog>
 
 <!-- ============ FAQ ============ -->
 <section id="faq" class="section grey">
@@ -519,7 +535,7 @@
 <script src="consent.js?v=3"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="script.js?v=23"></script>
+<script src="script.js?v=24"></script>
 <script src="reviews.js?v=2"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>

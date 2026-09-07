@@ -301,6 +301,32 @@ body.locked{overflow:hidden}
 .fiveyear-sum a{display:inline-block;margin-top:6px;font-weight:600;color:var(--good);text-decoration:underline;text-underline-offset:3px}
 @media (max-width:600px){.fiveyear-cols{grid-template-columns:1fr}}
 
+/* The hero's comparison link and the popup it opens. */
+.fineprint-sep{margin:0 6px;color:var(--line)}
+.cmp-open{white-space:nowrap}
+@media (max-width:480px){.fineprint-sep{display:none}.cmp-open{display:block;margin-top:6px}}
+.cmp-dialog{
+  width:min(820px,calc(100% - 28px));max-height:calc(100dvh - 40px);margin:auto;padding:0;
+  border:0;border-radius:var(--radius-lg);background:#fff;color:var(--ink);
+  box-shadow:0 30px 80px rgba(0,0,0,.25);overflow:auto;overscroll-behavior:contain;
+}
+.cmp-dialog::backdrop{background:rgba(29,29,31,.45);backdrop-filter:blur(3px)}
+.cmp-dialog[open]{animation:cmp-in .28s var(--ease) both}
+@keyframes cmp-in{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.cmp-dialog[open]{animation:none}}
+.cmp-close{
+  position:sticky;top:10px;float:right;margin:10px 10px 0 0;width:38px;height:38px;border:0;border-radius:50%;
+  background:var(--bg-grey);color:var(--ink-2);font-size:24px;line-height:1;cursor:pointer;z-index:2;
+}
+.cmp-close:hover{background:#e6e6eb;color:var(--ink)}
+.cmp-dialog .fiveyear{margin:0;border:0;box-shadow:none;padding-top:clamp(20px,3vw,30px)}
+.cmp-dialog .fiveyear-sum a{display:none}   /* the actions below do that job */
+.cmp-dialog-actions{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+  padding:0 clamp(24px,4vw,36px) clamp(24px,4vw,36px);
+}
+body.dialog-open{overflow:hidden}
+
 /* A promo code said in passing: the code itself reads as a thing to tap. */
 .promo-line{margin:18px auto 0;max-width:560px;text-align:center;font-size:14.5px;color:var(--ink-2)}
 .promo-line code{
