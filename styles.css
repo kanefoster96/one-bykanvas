@@ -326,6 +326,7 @@ body.locked{overflow:hidden}
   object-fit:cover;object-position:top center;
 }
 .shots-phone{display:none}
+.ios-bars{display:none}
 
 /* Four seconds a site whichever set is running: 0.3s in, two seconds held,
    0.3s out, then the build beat fills the rest before the next arrives. Sites
@@ -406,6 +407,38 @@ body.locked{overflow:hidden}
      and the space below - the shots are shorter than the display - so the
      page simply continues. Cover-cropping the sides cut words in half. */
   .shots-phone img{object-fit:contain;object-position:top center;box-sizing:border-box;padding-top:14.5%}
+  /* The status bar lives in that padding strip, either side of the island.
+     Sized in container units so it scales with the phone. */
+  .device-shots{container-type:size}
+  .ios-bars{display:block}
+  .ios-bar{
+    position:absolute;z-index:2;left:0;right:0;top:0;height:14.5cqw;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 8.5cqw 0 14cqw;
+    font-family:-apple-system,BlinkMacSystemFont,var(--font);font-size:4.6cqw;font-weight:600;letter-spacing:-.01em;
+    color:#000;
+  }
+  .ios-bar[data-tone="light"]{color:#fff}
+  .ios-right{display:flex;align-items:center;gap:1.4cqw}
+  .ios-sig{width:4.6cqw;height:3.2cqw;fill:currentColor}
+  .ios-net{font-size:4.3cqw;font-weight:600}
+  /* The battery: a filled pill in the text colour with "100" cut out of it
+     in the site colour, and the little nub on the right. */
+  .ios-batt{
+    position:relative;display:inline-block;width:6.8cqw;height:3.4cqw;margin-right:1cqw;
+    border-radius:1cqw;background:currentColor;
+  }
+  .ios-batt::before{
+    content:"100";position:absolute;inset:0;display:grid;place-items:center;
+    font-size:2.5cqw;line-height:1;font-weight:700;letter-spacing:-.02em;color:var(--bg,#fff);
+  }
+  .ios-batt::after{
+    content:"";position:absolute;right:-1cqw;top:50%;transform:translateY(-50%);
+    width:.7cqw;height:1.5cqw;border-radius:0 .7cqw .7cqw 0;background:currentColor;opacity:.45;
+  }
+  .ios-bars > *{animation:shotCycle3 12s linear infinite both}
+  .ios-bars > *:nth-child(2){animation-delay:4s}
+  .ios-bars > *:nth-child(3){animation-delay:8s}
   /* The frame is a third the width here, so the beat comes back down with it. */
   .build-star{width:25px;height:25px}
   .build-word{font-size:14px}
@@ -432,8 +465,8 @@ body.locked{overflow:hidden}
 @keyframes buildWord{0%,33.32%{opacity:1}33.33%,100%{opacity:0}}
 @keyframes buildDot{0%,100%{opacity:.2}40%{opacity:1}}
 @media (prefers-reduced-motion:reduce){
-  .shots > *{animation:none;opacity:0}
-  .shots > *:first-child{opacity:1}
+  .shots > *,.ios-bars > *{animation:none;opacity:0}
+  .shots > *:first-child,.ios-bars > *:first-child{opacity:1}
   .device-build{display:none}
 }
 
