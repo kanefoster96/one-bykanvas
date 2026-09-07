@@ -505,10 +505,12 @@ module.exports = async function handler(req, res) {
   }
 
   /* The partner ledger. Every paid invoice from a partner-attributed
-     customer records the partner's share of it - 25% of what was paid by
-     default, or a flat rate_pence for a partner promised one - capped at
-     the customer's first 12 payments: the deal is a year, not forever.
-     unique(invoice_id) makes a retried webhook a no-op. */
+     customer records the partner's share: 25% of the PLAN price - the
+     invoice subtotal, before the customer's own discount - so it is
+     £12.50 a payment on Business whatever they paid; or a flat rate_pence
+     for a partner promised one. Capped at the customer's first 12
+     payments: the deal is a year, not forever. unique(invoice_id) makes a
+     retried webhook a no-op. */
   async function recordPartnerPayment(invoice) {
     if (!invoice || !invoice.id || !(invoice.amount_paid > 0)) return;
     const customerId = typeof invoice.customer === 'string' ? invoice.customer : (invoice.customer && invoice.customer.id);
@@ -530,7 +532,8 @@ module.exports = async function handler(req, res) {
     if (!partner) return;
 
     const pct = Number(partner.rate_percent);
-    const rate = pct > 0 ? Math.round(invoice.amount_paid * pct / 100) : (partner.rate_pence || 1200);
+    const planPrice = invoice.subtotal > 0 ? invoice.subtotal : invoice.amount_paid;
+    const rate = pct > 0 ? Math.round(planPrice * pct / 100) : (partner.rate_pence || 1200);
     const { error } = await admin.from('partner_payments').insert({
       partner_id: partner.id, user_id: p.id, invoice_id: invoice.id, amount_pence: rate
     });
