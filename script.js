@@ -544,6 +544,38 @@
   })();
 
 
+  /* ---------- The comparison popup ----------
+   *
+   * The hero's "vs a traditional website" link opens the five-year card in a
+   * dialog rather than sending people to the bottom of the page. The card is
+   * cloned from the plans section the first time, so the copy lives once;
+   * a browser without <dialog> keeps the link as a plain jump to the card.
+   */
+  var cmpOpen = document.getElementById('cmpOpen');
+  var cmpDlg = document.getElementById('cmpDialog');
+  if (cmpOpen && cmpDlg && typeof cmpDlg.showModal === 'function') {
+    cmpOpen.addEventListener('click', function (e) {
+      e.preventDefault();
+      var body = cmpDlg.querySelector('.cmp-dialog-body');
+      var src = document.getElementById('fiveyear');
+      if (src && !body.children.length) {
+        var card = src.cloneNode(true);
+        card.removeAttribute('id');
+        card.classList.remove('reveal');
+        body.appendChild(card);
+      }
+      cmpDlg.showModal();
+      document.body.classList.add('dialog-open');
+    });
+    cmpDlg.addEventListener('close', function () { document.body.classList.remove('dialog-open'); });
+    cmpDlg.addEventListener('click', function (e) {
+      if (e.target === cmpDlg) { cmpDlg.close(); return; }     // the backdrop
+      if (e.target.closest('[data-close]')) { cmpDlg.close(); return; }
+      var a = e.target.closest('a[href^="#"]');
+      if (a) cmpDlg.close();                                    // an in-page link: close, then let it jump
+    });
+  }
+
   /* ---------- Hero clips ----------
    *
    * The frame shows still screenshots by default. Name a clip here and it
