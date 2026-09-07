@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebSite","name":"Kanvas One","alternateName":["one","one by Kanvas","kanvas.one"],"url":"https://kanvas.one/"}
 </script>
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=57">
+<link rel="stylesheet" href="styles.css?v=58">
 </head>
 <body>
 
@@ -78,6 +78,15 @@
             <img src="assets/IMG_5313.jpeg" alt="" style="background:#fcfcfa" width="1290" height="2061" loading="lazy" decoding="async">
             <img src="assets/IMG_5314.jpeg" alt="" style="background:#0a0a0a" width="1290" height="2286" loading="lazy" decoding="async">
             <img src="assets/IMG_5315.jpeg" alt="" style="background:#08080a" width="1290" height="1928" loading="lazy" decoding="async">
+          </div>
+          <!-- The iOS status bar for the phone frame: one per phone shot,
+               cycling on the same clock as the shots so the text stays
+               black on a light site and white on a dark one. Desktop hides
+               it - a browser window has no status bar. -->
+          <div class="ios-bars" aria-hidden="true">
+            <div class="ios-bar" data-tone="dark" style="--bg:#fcfcfa"><span class="ios-time">12:00</span><span class="ios-right"><svg class="ios-sig" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="ios-net">5G</span><span class="ios-batt"></span></span></div>
+            <div class="ios-bar" data-tone="light" style="--bg:#0a0a0a"><span class="ios-time">12:00</span><span class="ios-right"><svg class="ios-sig" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="ios-net">5G</span><span class="ios-batt"></span></span></div>
+            <div class="ios-bar" data-tone="light" style="--bg:#08080a"><span class="ios-time">12:00</span><span class="ios-right"><svg class="ios-sig" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="ios-net">5G</span><span class="ios-batt"></span></span></div>
           </div>
           <div class="device-build">
             <svg class="build-star" viewBox="0 0 24 24" aria-hidden="true">
