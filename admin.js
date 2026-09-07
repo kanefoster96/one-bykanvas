@@ -1208,7 +1208,7 @@ function previewSender(row) {
   row2.appendChild(btn);
   wrap.appendChild(row2);
   wrap.appendChild(el('p', 'hint', 'They get the design on the button, and '
-    + 'WELCOME26 for 50% off their first three months.'));
+    + 'WELCOME26 for 50% off their first month.'));
   wrap.appendChild(note);
   wrap.appendChild(badgeSnippet(row));
   return wrap;
@@ -1819,8 +1819,8 @@ function renderPartnersSection() {
   wrap.textContent = '';
 
   wrap.appendChild(el('p', 'hint', 'Each partner has a code (create the matching promotion code in '
-    + 'Stripe first - e.g. 25% off, 12 months). When a customer joins with it - through the link '
-    + 'or typed at checkout - every one of their first 12 payments adds £12 here automatically. '
+    + 'Stripe first - 25% off, repeating for 6 months). When a customer joins with it - through the link '
+    + 'or typed at checkout - 25% of each of their first 12 payments lands here automatically. '
     + 'Pay what is owed, tap Mark paid, done.'));
 
   // ---- add form --------------------------------------------------------

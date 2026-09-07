@@ -177,9 +177,9 @@ module.exports = async function handler(req, res) {
        that resolved, it is applied for them; without one, the box on the
        payment page stays available for anyone typing it by hand. */
     let discounts = null;
-    /* Annual is ten months' money for twelve. The WELCOME26 promotion is
-       "50% off, 3 months" - on a subscription with one yearly invoice that
-       coupon halves the whole year, so codes are monthly-only: ignored here
+    /* Annual is ten months' money for twelve. WELCOME26 is "50% off the
+       first invoice" - on a subscription whose one invoice is the whole
+       year that halves the year, so codes are monthly-only: ignored here
        and the code box withheld on the Stripe page for annual sessions. */
     const annual = String(body.billing || '').toLowerCase() === 'annual'
       && Number.isFinite(PLANS[plan].yearly);

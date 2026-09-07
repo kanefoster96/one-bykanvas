@@ -6,7 +6,7 @@
  *           data-domain="theirname.co.uk" defer></script>
  *
  * It says the address is still free and that joining puts the site live at
- * half price for three months. That is the whole job: somebody looking at
+ * half price for the first month. That is the whole job: somebody looking at
  * their own business on their own phone is the best moment there will be to
  * ask, and there is nothing else on the page that asks.
  *
@@ -111,8 +111,8 @@
 
     var deal = document.createElement('span');
     deal.textContent = freeDomain
-      ? '50% off your first three months'
-      : 'Join today for 50% off your first three months';
+      ? '50% off your first month'
+      : 'Join today for 50% off your first month';
     css(deal, { color: 'rgba(255,255,255,.82)', whiteSpace: 'nowrap',
                 overflow: 'hidden', textOverflow: 'ellipsis' });
     text.appendChild(deal);
