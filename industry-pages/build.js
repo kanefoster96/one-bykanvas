@@ -106,24 +106,24 @@ const INDUSTRIES = [
     freeLede: 'We design a real page for your shop before you pay anything. Don&rsquo;t rate it? You owe nothing.'
   },
   {
-    slug: 'cafes',
+    slug: 'coffee-shops',
     icons: ['pencil','card','calendar','clock','photo','search'],
-    lines: ["build a live food menu","add order ahead","take table bookings","update my opening hours","add this week's specials"],
-    link: 'Caf&eacute;s',
-    title: 'Caf&eacute;s &amp; restaurants',
-    h1: 'Websites for caf&eacute;s.',
-    lede: 'Caf&eacute;s and restaurants live and die by "are they open, what&rsquo;s on the menu?" Your site answers both, always.',
-    desc: 'Websites for cafés and restaurants. Editable menus, opening hours, order ahead and table bookings — built for you, from £50 a month, no setup fees.',
+    lines: ["build a live drinks menu","add order ahead","add a loyalty card","update my opening hours","add this week's specials"],
+    link: 'Coffee shops',
+    title: 'Coffee shops',
+    h1: 'Websites for coffee shops.',
+    lede: 'Coffee shops live and die by "are they open, what&rsquo;s on?" Your site answers both, always &mdash; and takes the order before they&rsquo;re through the door.',
+    desc: 'Websites for coffee shops. Editable menus, opening hours, order ahead and loyalty cards — built for you, from £50 a month, no setup fees.',
     features: [
-      ['A menu you edit', 'Change a dish or a price from behind the counter &mdash; customers see it instantly. Mark things sold out in one tap.'],
-      ['Order ahead', 'Coffee and lunch orders placed and paid before they arrive &mdash; shorter queues, bigger tickets.'],
-      ['Table bookings', 'Tables booked from the site, with deposits for big groups if you want them.'],
-      ['Hours that are always right', 'Holiday hours changed once, correct everywhere &mdash; no more "are you open?" calls.'],
-      ['Photos that sell the room', 'The food, the counter, the corner table in the window &mdash; the reasons people cross the street.'],
-      ['Found by hungry people', 'Set up so "breakfast near me" finds you, on Google and in AI chats.']
+      ['A menu you edit', 'Change a drink, a bake or a price from behind the counter &mdash; customers see it instantly. Mark things sold out in one tap.'],
+      ['Order ahead', 'Coffees and lunches ordered and paid before they arrive &mdash; shorter queues at eight in the morning, bigger tickets all day.'],
+      ['Loyalty that lives on their phone', 'A digital stamp card &mdash; the tenth coffee free, no cardboard to lose. Reasons to walk past the chain.'],
+      ['Hours that are always right', 'Holiday hours changed once, correct everywhere &mdash; no more "are you open?" messages.'],
+      ['Photos that sell the room', 'The pour, the counter, the seat in the window &mdash; the reasons people cross the street.'],
+      ['Found by people nearby', 'Set up so "coffee near me" finds you, on Google Maps and in AI chats.']
     ],
-    buildNote: 'Send your menu and some photos. We build the site and the editable menu, and you&rsquo;re online within 10 days &mdash; you keep the counter running.',
-    freeLede: 'We design a real page for your caf&eacute; before you pay anything. Not hungry for it? You owe nothing.'
+    buildNote: 'Send your menu and some photos. We build the site and the editable menu, and you&rsquo;re online within 10 days &mdash; you keep the machine running.',
+    freeLede: 'We design a real page for your coffee shop before you pay anything. Not your cup? You owe nothing.'
   },
   {
     slug: 'gyms',
@@ -164,26 +164,6 @@ const INDUSTRIES = [
     ],
     buildNote: 'Tell us your services, prices and areas. We write the pages and build the quote form, and you&rsquo;re online within 10 days.',
     freeLede: 'We design a real page for your cleaning business before you pay anything. Not spotless? You owe nothing.'
-  },
-  {
-    slug: 'florists',
-    icons: ['card','layers','photo','pin','mail','pencil'],
-    lines: ["sell bouquets online","add a Mother's Day page","show my arrangements","take wedding enquiries","set my delivery areas"],
-    link: 'Florists',
-    title: 'Florists',
-    h1: 'Websites for florists.',
-    lede: 'Flowers are bought in a hurry and by occasion. Your site should catch both &mdash; and take the payment.',
-    desc: 'Websites for florists. Online orders, occasion pages, delivery areas and wedding enquiries — built for you, from £50 a month, no setup fees.',
-    features: [
-      ['Orders paid online', 'Bouquets ordered and paid on your site &mdash; not lost to the relay sites taking a cut.'],
-      ['A page per occasion', 'Birthdays, sympathy, anniversaries, Mother&rsquo;s Day &mdash; pages that show up when people search in a hurry.'],
-      ['Your arrangements, not stock photos', 'Galleries of your own work &mdash; the style that makes someone choose your shop.'],
-      ['Delivery areas and cut-offs', 'Where you deliver and by when &mdash; clear before checkout, so every order is one you can fulfil.'],
-      ['Wedding and event enquiries', 'A proper enquiry form for the big jobs &mdash; dates, venues, budgets &mdash; straight to your inbox.'],
-      ['Seasonal changes in seconds', 'Swap the collection for Valentine&rsquo;s or Christmas from your phone.']
-    ],
-    buildNote: 'Send photos of your arrangements and your price ranges. We build the shop pages and order flow, and you&rsquo;re online within 10 days.',
-    freeLede: 'We design a real page for your florist before you pay anything. If it doesn&rsquo;t bloom, you owe nothing.'
   },
   {
     slug: 'tutors',
