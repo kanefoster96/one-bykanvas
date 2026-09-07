@@ -2030,6 +2030,28 @@ a.hero-pill:hover .pill-go{opacity:1}
 .acct-back{margin:18px 4px}
 
 /* ---------- Feature library (wizard step 2) ---------- */
+/* The wizard's feature comboboxes: a list that drops from the box, scrolls,
+   and narrows as they type. The chevron is decorative for the mouse; on a
+   phone the list opens the moment the box is tapped. */
+.combo{position:relative}
+.combo input{padding-right:44px!important}
+.combo-toggle{
+  position:absolute;right:6px;top:6px;width:36px;height:36px;border:0;border-radius:10px;
+  background:none;color:var(--ink-3);display:grid;place-items:center;cursor:pointer;
+}
+.combo-toggle svg{width:18px;height:18px}
+.combo-toggle:hover{color:var(--ink)}
+.combo input[aria-expanded="true"] ~ .combo-toggle svg{transform:rotate(180deg)}
+.combo-list{
+  position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;margin:0;padding:6px;list-style:none;
+  max-height:248px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.12);
+}
+.combo-opt{padding:10px 12px;border-radius:9px;font-size:15px;line-height:1.3;color:var(--ink);cursor:pointer}
+.combo-opt b{font-weight:600}
+.combo-opt:hover,.combo-opt.is-hi{background:#f2f2f5}
+.combo-own{padding:8px 12px 6px;font-size:12.5px;color:var(--ink-3)}
+
 .use-suggest{
   margin:4px 0 14px;padding:12px 12px 10px;
   background:#f7f7f9;border:1px solid #ececf0;border-radius:14px;

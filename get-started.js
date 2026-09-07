@@ -233,62 +233,132 @@
   }
 
   /* 2 — what the business does */
-  /* ---- the feature library -------------------------------------------
+  /* ---- the feature library, as a dropdown ------------------------------
    *
-   * Thirty of the most-asked-for things, simple and complex mixed together,
-   * so "name three features" becomes browsing instead of a blank page.
-   * Tapping a chip fills whichever box was last focused; typing in a box
-   * filters the list; a chip already used in another box drops out so the
-   * three answers stay different. Free typing always works.
+   * Each of the three boxes is a combobox: typing is always accepted as
+   * their own answer, and the list underneath (the shared feature library)
+   * narrows to what they have typed, with the matched part in bold. Tap or
+   * arrow-and-Enter picks one and moves on to the next empty box; Escape
+   * closes. An idea already in another box drops out of the list so the
+   * three answers stay different. Ideas the admin adds arrive late and
+   * just appear, since the list is read at paint time.
    */
-  var FEATURE_IDEAS = window.FEATURE_IDEAS || [];
-
-  (function wireFeatureLibrary() {
-    var panel = $('useSuggest');
-    var chipBox = $('useChips');
-    if (!panel || !chipBox) return;
-
+  (function wireFeatureCombo() {
     var inputs = ['use1', 'use2', 'use3'].map(function (id) { return $(id); });
-    var active = inputs[0];
+    if (inputs.some(function (i) { return !i; })) return;
+    var lists = inputs.map(function (i) { return i.parentNode.querySelector('.combo-list'); });
+    var open = null;      // index of the box whose list is showing
+    var hi = -1;          // highlighted option in it
 
-    function values() {
-      return inputs.map(function (i) { return i.value.trim().toLowerCase(); });
-    }
+    function ideas() { return window.FEATURE_IDEAS || []; }
+    function values() { return inputs.map(function (i) { return i.value.trim().toLowerCase(); }); }
+    function escapeHtml(t) { return t.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
-    function paint() {
-      var filter = active.value.trim().toLowerCase();
+    function matches(n) {
+      var filter = inputs[n].value.trim().toLowerCase();
       var used = values();
-      chipBox.textContent = '';
-      FEATURE_IDEAS.forEach(function (idea) {
+      return ideas().filter(function (idea) {
         var low = idea.toLowerCase();
-        if (used.indexOf(low) !== -1) return;              // already picked
-        if (filter && low.indexOf(filter) === -1) return;  // typing narrows it
-        var chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'use-chip';
-        chip.textContent = idea;
-        /* pointerdown beats the input's blur, so the tap never lands on a
-           list that has just repainted under the finger. */
-        chip.addEventListener('pointerdown', function (e) { e.preventDefault(); });
-        chip.addEventListener('click', function () {
-          active.value = idea;
-          /* On to the next empty box, so three taps fills the step. */
-          var next = inputs.filter(function (i) { return !i.value.trim(); })[0];
-          if (next) { active = next; next.focus({ preventScroll: true }); }
-          paint();
-        });
-        chipBox.appendChild(chip);
+        if (low === filter) return false;                        // already exactly this
+        if (used.indexOf(low) !== -1 && used[n] !== low) return false; // in another box
+        return !filter || low.indexOf(filter) !== -1;
       });
     }
 
-    inputs.forEach(function (input) {
-      input.addEventListener('focus', function () {
-        active = input;
-        panel.hidden = false;
-        paint();
+    function paint(n) {
+      var list = lists[n], filter = inputs[n].value.trim();
+      var found = matches(n);
+      list.textContent = '';
+      hi = -1;
+      if (!found.length) {
+        var none = document.createElement('li');
+        none.className = 'combo-own';
+        none.textContent = filter ? 'Nothing like that in the list — your own words are perfect.' : 'Type what you need.';
+        list.appendChild(none);
+      }
+      found.forEach(function (idea, k) {
+        var li = document.createElement('li');
+        li.className = 'combo-opt';
+        li.setAttribute('role', 'option');
+        li.id = 'useOpt' + n + '_' + k;
+        if (filter) {
+          var at = idea.toLowerCase().indexOf(filter.toLowerCase());
+          li.innerHTML = escapeHtml(idea.slice(0, at)) + '<b>' + escapeHtml(idea.slice(at, at + filter.length)) + '</b>' + escapeHtml(idea.slice(at + filter.length));
+        } else {
+          li.textContent = idea;
+        }
+        /* pointerdown beats the input's blur, so the tap never lands on a
+           list that has just closed under the finger. */
+        li.addEventListener('pointerdown', function (e) { e.preventDefault(); });
+        li.addEventListener('click', function () { pick(n, idea); });
+        list.appendChild(li);
       });
-      input.addEventListener('input', function () { active = input; paint(); });
+      if (found.length && filter) {
+        var own = document.createElement('li');
+        own.className = 'combo-own';
+        own.textContent = 'Or keep typing your own.';
+        list.appendChild(own);
+      }
+    }
+
+    function show(n) {
+      if (open !== null && open !== n) hide();
+      open = n;
+      paint(n);
+      lists[n].hidden = false;
+      inputs[n].setAttribute('aria-expanded', 'true');
+    }
+    function hide() {
+      if (open === null) return;
+      lists[open].hidden = true;
+      inputs[open].setAttribute('aria-expanded', 'false');
+      inputs[open].removeAttribute('aria-activedescendant');
+      open = null; hi = -1;
+    }
+    function pick(n, idea) {
+      inputs[n].value = idea;
+      hide();
+      var next = inputs.filter(function (i) { return !i.value.trim(); })[0];
+      if (next) next.focus({ preventScroll: true });
+    }
+    function highlight(n, k) {
+      var opts = lists[n].querySelectorAll('.combo-opt');
+      if (!opts.length) return;
+      hi = (k + opts.length) % opts.length;
+      opts.forEach(function (o, i) { o.classList.toggle('is-hi', i === hi); });
+      inputs[n].setAttribute('aria-activedescendant', opts[hi].id);
+      opts[hi].scrollIntoView({ block: 'nearest' });
+    }
+
+    inputs.forEach(function (input, n) {
+      input.addEventListener('focus', function () { show(n); });
+      input.addEventListener('click', function () { if (open !== n) show(n); });
+      input.addEventListener('input', function () { show(n); });
+      input.addEventListener('blur', function () { setTimeout(function () { if (open === n && document.activeElement !== input) hide(); }, 120); });
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (open !== n) show(n); highlight(n, hi + 1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); if (open === n) highlight(n, hi - 1); }
+        else if (e.key === 'Escape') { if (open === n) { e.preventDefault(); hide(); } }
+        else if (e.key === 'Enter') {
+          e.preventDefault();
+          var opts = open === n ? lists[n].querySelectorAll('.combo-opt') : [];
+          if (hi >= 0 && opts[hi]) { pick(n, opts[hi].textContent); return; }
+          /* Their own words: keep them and move on. */
+          hide();
+          var next = inputs.slice(n + 1).filter(function (i) { return !i.value.trim(); })[0];
+          if (next) next.focus({ preventScroll: true }); else input.blur();
+        }
+      });
+      var toggle = input.parentNode.querySelector('.combo-toggle');
+      if (toggle) {
+        toggle.addEventListener('pointerdown', function (e) { e.preventDefault(); });
+        toggle.addEventListener('click', function () {
+          if (open === n) { hide(); input.blur(); return; }
+          input.focus({ preventScroll: true }); show(n);
+        });
+      }
     });
+    document.addEventListener('one:ideas-loaded', function () { if (open !== null) paint(open); });
   })();
 
   function step2() {
