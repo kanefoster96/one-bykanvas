@@ -1820,7 +1820,8 @@ function renderPartnersSection() {
 
   wrap.appendChild(el('p', 'hint', 'Each partner has a code (create the matching promotion code in '
     + 'Stripe first - 25% off, repeating for 6 months). When a customer joins with it - through the link '
-    + 'or typed at checkout - 25% of each of their first 12 payments lands here automatically. '
+    + 'or typed at checkout - 25% of the plan price lands here for each of their first 12 payments '
+    + '(£12.50 a month on Business), whatever discount the customer has. '
     + 'Pay what is owed, tap Mark paid, done.'));
 
   // ---- add form --------------------------------------------------------
