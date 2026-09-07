@@ -276,6 +276,31 @@ body.locked{overflow:hidden}
   text-decoration:underline;text-underline-offset:3px;
 }
 
+/* The five-year maths card: a traditional site's real cost beside ours. */
+.fiveyear{
+  max-width:760px;margin:clamp(36px,5vw,56px) auto 0;padding:clamp(24px,4vw,36px);
+  background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg);
+  box-shadow:0 12px 40px rgba(0,0,0,.05);text-align:center;
+}
+.fiveyear-tag{margin:0 0 8px;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--good)}
+.fiveyear h3{margin:0;font-size:clamp(24px,3.6vw,32px);letter-spacing:-.025em;text-wrap:balance}
+.fiveyear-lede{margin:10px auto 0;max-width:52ch;font-size:15.5px;line-height:1.55;color:var(--ink-2);text-wrap:pretty}
+.fiveyear-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;text-align:left}
+.fy-col{border-radius:16px;padding:18px 20px}
+.fy-them{background:var(--bg-grey);color:var(--ink-2)}
+.fy-us{background:var(--good-soft);color:var(--ink)}
+.fy-col h4{margin:0 0 10px;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+.fy-us h4{color:var(--good)}
+.fy-col ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:15px;line-height:1.4}
+.fy-col li{display:flex;gap:9px;align-items:flex-start}
+.fy-col li::before{flex:0 0 auto;font-weight:700;line-height:1.4}
+.fy-them li::before{content:"\00d7";color:var(--ink-3)}
+.fy-us li::before{content:"\2713";color:var(--good)}
+.fiveyear-sum{margin:22px auto 0;max-width:56ch;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
+.fiveyear-sum strong{color:var(--ink)}
+.fiveyear-sum a{display:inline-block;margin-top:6px;font-weight:600;color:var(--good);text-decoration:underline;text-underline-offset:3px}
+@media (max-width:600px){.fiveyear-cols{grid-template-columns:1fr}}
+
 /* A promo code said in passing: the code itself reads as a thing to tap. */
 .promo-line{margin:18px auto 0;max-width:560px;text-align:center;font-size:14.5px;color:var(--ink-2)}
 .promo-line code{
