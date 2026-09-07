@@ -505,9 +505,10 @@ module.exports = async function handler(req, res) {
   }
 
   /* The partner ledger. Every paid invoice from a partner-attributed
-     customer records that partner's per-payment rate (£12 by default),
-     capped at the customer's first 12 payments - the deal is a year, not
-     forever. unique(invoice_id) makes a retried webhook a no-op. */
+     customer records the partner's share of it - 25% of what was paid by
+     default, or a flat rate_pence for a partner promised one - capped at
+     the customer's first 12 payments: the deal is a year, not forever.
+     unique(invoice_id) makes a retried webhook a no-op. */
   async function recordPartnerPayment(invoice) {
     if (!invoice || !invoice.id || !(invoice.amount_paid > 0)) return;
     const customerId = typeof invoice.customer === 'string' ? invoice.customer : (invoice.customer && invoice.customer.id);
@@ -525,10 +526,11 @@ module.exports = async function handler(req, res) {
     if (Number.isFinite(count) && count >= 12) return;
 
     const { data: partner } = await admin.from('partners')
-      .select('id, name, rate_pence').eq('id', partnerId).maybeSingle();
+      .select('id, name, rate_percent, rate_pence').eq('id', partnerId).maybeSingle();
     if (!partner) return;
 
-    const rate = partner.rate_pence || 1200;
+    const pct = Number(partner.rate_percent);
+    const rate = pct > 0 ? Math.round(invoice.amount_paid * pct / 100) : (partner.rate_pence || 1200);
     const { error } = await admin.from('partner_payments').insert({
       partner_id: partner.id, user_id: p.id, invoice_id: invoice.id, amount_pence: rate
     });
@@ -542,7 +544,7 @@ module.exports = async function handler(req, res) {
     if ((count || 0) === 0) {
       await notifyAdmin(admin, 'Partner referral paying',
         (p.business_name || 'A customer') + "'s first payment landed - "
-        + partner.name + ' starts earning £' + (rate / 100).toFixed(0) + ' a month for their first year.');
+        + partner.name + ' earns £' + (rate / 100).toFixed(2) + ' on it, and the same share of every payment for their first year.');
     }
   }
 

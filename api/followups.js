@@ -42,7 +42,7 @@ function offerBox(site) {
     code: PREVIEW_OFFER.code,
     href: `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}`,
     text: '<strong>Ready to put it live?</strong><br>'
-        + 'Tap the code for 50% off your first three months.',
+        + 'Tap the code for 50% off your first month.',
     note: 'It comes with you &mdash; nothing to copy, and it is already '
         + 'on the bill when you pay. Works on any plan.'
   };
@@ -76,7 +76,7 @@ function whatDidYouThink(lead, site) {
         + `Changes are free, and we'd rather get it right than guess.\n\n`
         + `And if you liked it, it can be your real site this week: live on your own web `
         + `address, looked after for you, from GBP 50 a month with no setup fees.\n\n`
-        + `50% off your first three months with ${PREVIEW_OFFER.code}, on any plan:\n`
+        + `50% off your first month with ${PREVIEW_OFFER.code}, on any plan:\n`
         + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n\n`
         + `Get started: ${site}/get-started.html\n`
   };
@@ -112,7 +112,7 @@ function beforeWeTidyUp(lead, site) {
         + `If you want it to become your real site, now's the moment: join and we put it `
         + `live on your own web address, usually within days, and keep building on it from `
         + `there. Anything you'd change, we change - that's included.\n\n`
-        + `50% off your first three months with ${PREVIEW_OFFER.code}, on any plan:\n`
+        + `50% off your first month with ${PREVIEW_OFFER.code}, on any plan:\n`
         + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n\n`
         + `Get started: ${site}/get-started.html\n\n`
         + `Not for you? No hard feelings - this is the last email about it, and nothing `

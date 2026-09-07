@@ -483,7 +483,7 @@ module.exports = async function handler(req, res) {
      */
     if (action === 'listPartners') {
       const [ps, pays, outs] = await Promise.all([
-        db.from('partners').select('id, name, contact, code, rate_pence, created_at')
+        db.from('partners').select('id, name, contact, code, rate_percent, rate_pence, created_at')
           .order('created_at', { ascending: true }),
         db.from('partner_payments').select('partner_id, user_id, amount_pence, created_at').limit(5000),
         db.from('partner_payouts').select('partner_id, amount_pence, created_at').limit(5000)
@@ -504,7 +504,7 @@ module.exports = async function handler(req, res) {
         mine.forEach((r) => { const k = monthKey(r.created_at); months[k] = (months[k] || 0) + r.amount_pence; });
         return {
           id: partner.id, name: partner.name, contact: partner.contact,
-          code: partner.code, rate_pence: partner.rate_pence,
+          code: partner.code, rate_percent: partner.rate_percent, rate_pence: partner.rate_pence,
           earned, paid, balance: earned - paid,
           thisMonth: months[nowKey] || 0,
           customers: new Set(mine.map((r) => r.user_id)).size,
@@ -674,7 +674,7 @@ module.exports = async function handler(req, res) {
             code: PREVIEW_OFFER.code,
             href: `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}`,
             text: '<strong>Want it online, properly?</strong><br>'
-                + 'Tap the code for 50% off your first three months.',
+                + 'Tap the code for 50% off your first month.',
             note: 'It comes with you &mdash; nothing to copy, and it is already '
                 + 'on the bill when you pay. Works on any plan.'
           },
@@ -693,7 +693,7 @@ module.exports = async function handler(req, res) {
                 ? `${lead.requested_domain} has been registered by somebody else since you `
                   + `asked. Join and we'll find you a good one that is free.\n\n`
                 : '')
-            + `Want it online properly? 50% off your first three months with `
+            + `Want it online properly? 50% off your first month with `
             + `${PREVIEW_OFFER.code}, on any plan:\n`
             + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`
             + perks.map((t) => '- ' + t).join('\n') + '\n\n'
