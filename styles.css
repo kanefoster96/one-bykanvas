@@ -302,9 +302,8 @@ body.locked{overflow:hidden}
 @media (max-width:600px){.fiveyear-cols{grid-template-columns:1fr}}
 
 /* The comparison link under the phone, and the popup it opens. */
-.cmp-strip{padding:clamp(22px,4vw,34px) 22px 0;text-align:center;font-size:14.5px}
-.cmp-open{color:var(--ink-2);font-weight:500;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
-.cmp-open:hover{color:var(--ink)}
+.cmp-strip{padding:clamp(38px,7vw,60px) 22px 0;text-align:center}
+.cmp-open{white-space:nowrap}
 .cmp-dialog{
   width:min(820px,calc(100% - 28px));max-height:calc(100dvh - 40px);margin:auto;padding:0;
   border:0;border-radius:var(--radius-lg);background:#fff;color:var(--ink);
