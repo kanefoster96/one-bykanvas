@@ -576,6 +576,22 @@
     });
   }
 
+  /* ---------- Sticky Try-it-free (trade pages) ----------
+   * Appears once the hero has scrolled away, and steps aside while the
+   * closing offer is on screen so it never covers the same button twice. */
+  var sticky = document.getElementById('stickyCta');
+  if (sticky && 'IntersectionObserver' in window) {
+    var heroOut = false, endIn = false;
+    var paintSticky = function () {
+      sticky.hidden = !(heroOut && !endIn);
+      document.body.classList.toggle('has-sticky', !sticky.hidden);
+    };
+    var heroEl = document.querySelector('.page-hero');
+    var endEl = document.querySelector('.cta-end');
+    if (heroEl) new IntersectionObserver(function (es) { heroOut = !es[0].isIntersecting; paintSticky(); }, { threshold: 0 }).observe(heroEl);
+    if (endEl) new IntersectionObserver(function (es) { endIn = es[0].isIntersecting; paintSticky(); }, { threshold: 0.15 }).observe(endEl);
+  }
+
   /* ---------- Hero clips ----------
    *
    * The frame shows still screenshots by default. Name a clip here and it
