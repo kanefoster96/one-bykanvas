@@ -40,10 +40,21 @@
   var picked = null;        // catalogue item chosen, if any
   var current = null;       // the open request in the detail view
   var plan = null;          // active_plan from their profile
+  var profile = null;       // points_reset_at / current_period_end, for Starter's window
   var STARTER_CHANGES = 1;
 
+  /* Starter's window runs payment to payment, not month to month: it
+     starts when the last payment was taken (points_reset_at) and the next
+     change comes with the next one (current_period_end). */
+  function windowStart() {
+    var stamped = profile && profile.points_reset_at ? new Date(profile.points_reset_at) : null;
+    if (stamped && !isNaN(stamped)) return stamped;
+    var end = profile && profile.current_period_end ? new Date(profile.current_period_end) : null;
+    if (end && !isNaN(end)) { var s = new Date(end); s.setMonth(s.getMonth() - 1); return s; }
+    var start = new Date(); start.setDate(1); start.setHours(0, 0, 0, 0); return start;
+  }
   function changesThisMonth() {
-    var start = new Date(); start.setDate(1); start.setHours(0, 0, 0, 0);
+    var start = windowStart();
     return requests.filter(function (r) { return r.kind === 'edit' && new Date(r.created_at) >= start; }).length;
   }
 
@@ -207,9 +218,10 @@
     var left = document.getElementById('starterLeft');
     if (plan === 'starter') {
       var n = STARTER_CHANGES - changesThisMonth();
-      var next = new Date(); next.setDate(1); next.setMonth(next.getMonth() + 1);
+      var end = profile && profile.current_period_end ? new Date(profile.current_period_end) : null;
+      var when = end && !isNaN(end) ? ' on ' + end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
       left.textContent = (n > 0 ? 'Your one change this month is ready to use.' : 'That\u2019s your change for this month.')
-        + ' The next one starts on ' + next.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + '.';
+        + ' The next one comes with your next payment' + when + '.';
       left.hidden = false;
     } else {
       left.hidden = true;
@@ -506,8 +518,9 @@
       return;
     }
     user = res.data.session.user;
-    var prof = await ONE.db.from('profiles').select('active_plan').eq('id', user.id).maybeSingle();
-    plan = (prof.data && prof.data.active_plan) || null;
+    var prof = await ONE.db.from('profiles').select('active_plan, points_reset_at, current_period_end').eq('id', user.id).maybeSingle();
+    profile = prof.data || null;
+    plan = (profile && profile.active_plan) || null;
     await loadList();
     await route();
     loading.hidden = true;
