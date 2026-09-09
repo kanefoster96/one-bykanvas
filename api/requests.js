@@ -12,6 +12,8 @@ const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { cleanBody, cleanAttachments, addNote } = require('./_requests.js');
 
+const STARTER_MONTHLY_CHANGES = 1;
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -152,6 +154,22 @@ module.exports = async function handler(req, res) {
     if (!title) title = cleaned.body.split('\n')[0].trim().slice(0, 80);
 
     const attachmentPaths = cleanAttachments(body.attachmentPaths, user.id, false);
+
+    /* Starter: one change a month to what is already on the site. A
+       feature ask is not a change - it is the start of a Business
+       conversation - so only edits count, by calendar month. */
+    if (kind === 'edit') {
+      const { data: prof } = await db.from('profiles').select('active_plan').eq('id', user.id).maybeSingle();
+      if (prof && prof.active_plan === 'starter') {
+        const monthStart = new Date(); monthStart.setUTCDate(1); monthStart.setUTCHours(0, 0, 0, 0);
+        const { count } = await db.from('requests')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id).eq('kind', 'edit').gte('created_at', monthStart.toISOString());
+        if ((count || 0) >= STARTER_MONTHLY_CHANGES) {
+          return res.status(400).json({ error: 'That\u2019s your change for this month. The next one starts on the 1st, or Business has unlimited changes.' });
+        }
+      }
+    }
 
     const { data: row, error } = await db.from('requests').insert({
       user_id: user.id, kind: kind, points: REQUEST_COST[kind].points,

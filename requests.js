@@ -40,6 +40,12 @@
   var picked = null;        // catalogue item chosen, if any
   var current = null;       // the open request in the detail view
   var plan = null;          // active_plan from their profile
+  var STARTER_CHANGES = 1;
+
+  function changesThisMonth() {
+    var start = new Date(); start.setDate(1); start.setHours(0, 0, 0, 0);
+    return requests.filter(function (r) { return r.kind === 'edit' && new Date(r.created_at) >= start; }).length;
+  }
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -196,15 +202,23 @@
     var open = requests.filter(function (r) { return !isDone(r); });
     var done = requests.filter(isDone);
 
-    /* Starter has no request box: the gate says why, and what Business is. */
-    var starter = plan === 'starter';
-    document.getElementById('starterGate').hidden = !starter;
-    document.querySelector('.req-new-btn').hidden = starter;
+    /* Starter: one change a month, counted here so the list says whether
+       it is used. Feature asks are not changes and do not count. */
+    var left = document.getElementById('starterLeft');
+    if (plan === 'starter') {
+      var n = STARTER_CHANGES - changesThisMonth();
+      var next = new Date(); next.setDate(1); next.setMonth(next.getMonth() + 1);
+      left.textContent = (n > 0 ? 'Your one change this month is ready to use.' : 'That\u2019s your change for this month.')
+        + ' The next one starts on ' + next.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + '.';
+      left.hidden = false;
+    } else {
+      left.hidden = true;
+    }
 
     var openWrap = document.getElementById('openCards');
     openWrap.textContent = '';
     open.forEach(function (r) { openWrap.appendChild(card(r)); });
-    document.getElementById('reqEmpty').hidden = !!(open.length || done.length) || starter;
+    document.getElementById('reqEmpty').hidden = !!(open.length || done.length);
 
     var doneWrap = document.getElementById('doneWrap');
     var doneCards = document.getElementById('doneCards');
@@ -255,6 +269,8 @@
 
     var body = document.getElementById('newBody');
     document.getElementById('picked').hidden = true;
+    document.getElementById('starterEditNote').hidden = !(plan === 'starter' && mode === 'edit');
+    document.getElementById('starterFeatureNote').hidden = !(plan === 'starter' && mode === 'feature');
     if (mode === 'feature') {
       renderCatalogue();
       document.getElementById('catalogue').hidden = false;
@@ -465,13 +481,10 @@
   async function route() {
     var h = location.hash.replace(/^#/, '');
     try {
-      if ((h === 'new' || h === 'new/feature' || h === 'new/edit') && plan === 'starter') {
-        location.hash = '';
-        return;
-      }
       if (h === 'new' || h === 'new/feature' || h === 'new/edit') {
         show('viewNew');
-        setMode(h === 'new/edit' ? 'edit' : 'feature');
+        // Starter lands on the box: changes are the plan, features are the conversation.
+        setMode(h === 'new/edit' || (h === 'new' && plan === 'starter') ? 'edit' : 'feature');
       } else if (h.indexOf('r/') === 0) {
         show('viewDetail');
         await openThread(h.slice(2));

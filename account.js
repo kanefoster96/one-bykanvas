@@ -670,7 +670,7 @@ function showBilling(row) {
 
     var up = ORDER.indexOf(chosen) > ORDER.indexOf(current);
     var PERK = {
-      starter: 'a one page site with changes once a month by email. No bookings, forms, chat, customer records or automated emails',
+      starter: 'your live site with one change a month. Bookings, forms, chat and customer records are part of Business',
       business: 'unlimited changes made by us, plus bookings, forms, chat, customer records and automated emails',
       pro: 'priority requests and business email',   // legacy, no longer sold
       max: 'top priority, business email, and SEO work every month'

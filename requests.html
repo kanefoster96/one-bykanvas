@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=67">
+<link rel="stylesheet" href="styles.css?v=68">
 </head>
 <body class="auth-body">
 
@@ -31,14 +31,7 @@
     </div>
     <p class="hint req-lede">Anything you want changed or added on your site. We reply here.</p>
 
-    <!-- Starter: changes are once a month by email, and the features are a
-         Business thing. Said at the moment they come looking for them. -->
-    <div class="panel starter-gate" id="starterGate" hidden>
-      <p class="starter-gate-title">On Starter, changes are once a month by email.</p>
-      <p>Email <a href="mailto:hello@kanvas.one?subject=Change%20to%20my%20site">hello@kanvas.one</a> with what you&rsquo;d like and we&rsquo;ll make it in the next monthly round.</p>
-      <p>Want it done in a chat, as often as you like, with bookings, forms, live chat and your customers on file? Move up to Business. Same site, plus the lot, &pound;25 more a month.</p>
-      <a class="btn btn-primary" href="/account.html#billingPanel">Move up to Business</a>
-    </div>
+    <p class="starter-left" id="starterLeft" hidden></p>
 
     <div class="req-cards" id="openCards"></div>
     <p class="req-empty" id="reqEmpty" hidden>Nothing here yet. Want something changed or added? Tap <a href="#new">New request</a>.</p>
@@ -61,6 +54,11 @@
       <button class="req-mode" id="modeEdit" type="button" role="tab" data-mode="edit">Change something</button>
     </div>
 
+    <!-- Starter: what the monthly change covers, said warmly, with the
+         way out for anyone unsure. Features get their own line above the
+         catalogue. -->
+    <p class="starter-note" id="starterEditNote" hidden>On Starter you get <strong>one change a month</strong> to what&rsquo;s already on your site: photos, wording, phone numbers, email addresses, opening hours, prices and links. Not sure if yours counts? Send it anyway and we&rsquo;ll let you know whether we can make it, or whether it&rsquo;s a Business thing.</p>
+    <p class="starter-note" id="starterFeatureNote" hidden>These are part of Business, &pound;25 more a month, and your site comes with you. Pick one and we&rsquo;ll tell you what it would look like on your site. No pressure.</p>
     <div class="cat-list" id="catalogue" hidden></div>
 
     <form class="panel req-compose" id="newForm" novalidate hidden>
@@ -122,7 +120,7 @@
 <script src="session.js?v=3"></script>
 <script src="request-catalogue.js?v=1"></script>
 <script src="requests-badge.js?v=1"></script>
-<script src="requests.js?v=2"></script>
+<script src="requests.js?v=3"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
