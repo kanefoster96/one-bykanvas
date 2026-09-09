@@ -592,18 +592,6 @@
     if (endEl) new IntersectionObserver(function (es) { endIn = es[0].isIntersecting; paintSticky(); }, { threshold: 0.15 }).observe(endEl);
   }
 
-  /* Plans page, side by side table on a phone: the pills pick a column. */
-  var cmpTabs = document.querySelectorAll('.cmp-tab');
-  var cmpTable = document.querySelector('table.cmp');
-  if (cmpTabs.length && cmpTable) {
-    cmpTabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        cmpTabs.forEach(function (t) { t.classList.toggle('is-on', t === tab); t.setAttribute('aria-selected', String(t === tab)); });
-        cmpTable.className = 'cmp show-' + tab.dataset.col;
-      });
-    });
-  }
-
   /* ---------- Hero clips ----------
    *
    * The frame shows still screenshots by default. Name a clip here and it
