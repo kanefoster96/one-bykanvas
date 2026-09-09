@@ -20,6 +20,7 @@ const { unsubscribeHeaders, unsubscribeUrl, optedOut } = require('./_unsubscribe
 const { shortfallFor } = require('./_billing.js');
 const { lookup: domainLookup } = require('./domains.js');
 const { notify } = require('./_notify.js');
+const { STATUSES: REQUEST_STATUSES, cleanAttachments, addNote } = require('./_requests.js');
 
 const DEFAULT_ADMINS = ['kane@kanvas.one'];
 
@@ -294,7 +295,7 @@ module.exports = async function handler(req, res) {
 
       const { data: reqs, error: reqError } = await db
         .from('requests')
-        .select('id, user_id, kind, points, detail, status, created_at, billed_at, billed_amount, confirm_token, attachment_paths')
+        .select('id, user_id, kind, points, title, detail, status, created_at, done_at, last_note_at, last_note_by, billed_at, billed_amount, confirm_token, attachment_paths')
         .order('created_at', { ascending: false })
         .limit(500);
       if (reqError) throw new Error(reqError.message);
@@ -365,6 +366,172 @@ module.exports = async function handler(req, res) {
         profiles: profiles || [], requests: shaped, templates: templates || [],
         seoUpdates: seoUpdates || [], siteFeatures: siteFeatures || []
       });
+    }
+
+    // ---- Requests: the inbox, one thread, and writing into it ----------
+
+    /* Every request with the newest note under it - what the inbox rows
+       show. One query for the requests, one for their notes, joined here;
+       the note list is newest-first so the first seen per request is the
+       latest. Private notes count as activity for us but are never the
+       snippet a customer would recognise, so they are skipped for the
+       snippet and kept for the timestamp. */
+    if (action === 'requestsInbox') {
+      const { data: reqs, error: reqErr } = await db.from('requests')
+        .select('id, user_id, kind, title, detail, status, created_at, done_at, last_note_at, last_note_by, customer_seen_at')
+        .order('last_note_at', { ascending: false, nullsFirst: false })
+        .limit(500);
+      if (reqErr) throw new Error(reqErr.message);
+
+      const ids = (reqs || []).map((r) => r.id);
+      const latest = {};
+      if (ids.length) {
+        const { data: notes, error: nErr } = await db.from('request_notes')
+          .select('request_id, author, body, private, created_at')
+          .in('request_id', ids)
+          .order('created_at', { ascending: false })
+          .limit(3000);
+        if (nErr) throw new Error(nErr.message);
+        (notes || []).forEach((n) => {
+          if (!latest[n.request_id] && !n.private) latest[n.request_id] = n;
+        });
+      }
+
+      const userIds = Array.from(new Set((reqs || []).map((r) => r.user_id)));
+      let names = {};
+      if (userIds.length) {
+        const { data: profs, error: pErr } = await db.from('profiles')
+          .select('id, business_name, contact_name, site_url').in('id', userIds);
+        if (pErr) throw new Error(pErr.message);
+        (profs || []).forEach((p) => { names[p.id] = p; });
+      }
+
+      const rows = (reqs || []).map((r) => {
+        const p = names[r.user_id] || {};
+        const n = latest[r.id];
+        return {
+          id: r.id, user_id: r.user_id, kind: r.kind, status: r.status,
+          title: r.title || String(r.detail || '').split('\n')[0].slice(0, 120),
+          created_at: r.created_at, done_at: r.done_at,
+          last_note_at: r.last_note_at || r.created_at, last_note_by: r.last_note_by || 'customer',
+          business_name: p.business_name || null, contact_name: p.contact_name || null,
+          site_url: p.site_url || null,
+          latest: n ? { author: n.author, body: String(n.body).split('\n')[0].slice(0, 140), created_at: n.created_at } : null
+        };
+      });
+      return res.status(200).json({ requests: rows });
+    }
+
+    /* The whole conversation, private notes included, with the customer's
+       details at the top and a signed link for every attachment. */
+    if (action === 'requestThread') {
+      const id = String(body.requestId || '');
+      if (!id) return res.status(400).json({ error: 'Which request?' });
+      const { data: reqRow, error: rErr } = await db.from('requests').select('*').eq('id', id).maybeSingle();
+      if (rErr) throw new Error(rErr.message);
+      if (!reqRow) return res.status(404).json({ error: 'Request not found.' });
+
+      const { data: notes, error: nErr } = await db.from('request_notes')
+        .select('id, author, body, private, attachment_paths, created_at')
+        .eq('request_id', id).order('created_at', { ascending: true }).limit(500);
+      if (nErr) throw new Error(nErr.message);
+
+      const paths = (notes || []).flatMap((n) => n.attachment_paths || []);
+      const signed = {};
+      if (paths.length) {
+        const { data: list, error: sErr } = await db.storage
+          .from('request-attachments').createSignedUrls(paths, 3600);
+        if (sErr) throw new Error(sErr.message);
+        (list || []).forEach((x) => { if (x.signedUrl) signed[x.path] = x.signedUrl; });
+      }
+      (notes || []).forEach((n) => {
+        n.attachments = (n.attachment_paths || []).map((p) => ({ path: p, url: signed[p] })).filter((a) => a.url);
+        delete n.attachment_paths;
+      });
+
+      const { data: prof } = await db.from('profiles')
+        .select('id, business_name, contact_name, site_url, site_status').eq('id', reqRow.user_id).maybeSingle();
+      let email = null;
+      try {
+        const { data: u } = await db.auth.admin.getUserById(reqRow.user_id);
+        email = u && u.user && u.user.email;
+      } catch (e) { /* the thread still shows without it */ }
+
+      return res.status(200).json({
+        request: {
+          id: reqRow.id, user_id: reqRow.user_id, kind: reqRow.kind, status: reqRow.status,
+          title: reqRow.title || String(reqRow.detail || '').split('\n')[0].slice(0, 120),
+          created_at: reqRow.created_at, done_at: reqRow.done_at,
+          last_note_at: reqRow.last_note_at, last_note_by: reqRow.last_note_by
+        },
+        customer: Object.assign({ email }, prof || {}),
+        notes: notes || []
+      });
+    }
+
+    /* A note from us. Public notes move the status (our pick, else
+       Waiting on customer) and queue the email; a private note does
+       neither. Marking done goes through here too, so the closing note and
+       the Done are one action and one email. A finished feature also joins
+       the customer's "features on your site" list, same as before. */
+    if (action === 'addRequestNote') {
+      const id = String(body.requestId || '');
+      if (!id) return res.status(400).json({ error: 'Which request?' });
+      const text = String(body.body == null ? '' : body.body).replace(/\r\n/g, '\n').trim();
+      if (!text) return res.status(400).json({ error: 'Write the note first.' });
+      if (text.length > 4000) return res.status(400).json({ error: 'Keep it under 4,000 characters.' });
+      const isPrivate = !!body.isPrivate;
+      const status = body.markDone ? 'done' : String(body.status || '');
+      if (!isPrivate && status && !REQUEST_STATUSES.includes(status)) {
+        return res.status(400).json({ error: 'Unknown status.' });
+      }
+
+      const { data: reqRow, error: rErr } = await db.from('requests').select('*').eq('id', id).maybeSingle();
+      if (rErr) throw new Error(rErr.message);
+      if (!reqRow) return res.status(404).json({ error: 'Request not found.' });
+
+      const out = await addNote(db, reqRow, {
+        author: 'admin', body: text, isPrivate,
+        status: status || undefined,
+        attachmentPaths: cleanAttachments(body.attachmentPaths, reqRow.user_id, true)
+      });
+
+      if (!isPrivate && out.request.status === 'done' && reqRow.status !== 'done' && reqRow.kind === 'feature') {
+        const featName = String(out.request.title || reqRow.detail).split('\n')[0].trim().slice(0, 200);
+        const { data: existing } = await db.from('site_features')
+          .select('id').eq('user_id', reqRow.user_id).ilike('name', featName).limit(1);
+        if (existing && existing.length) {
+          await db.from('site_features').update({ updated_at: new Date().toISOString() }).eq('id', existing[0].id);
+        } else {
+          await db.from('site_features').insert({ user_id: reqRow.user_id, name: featName });
+        }
+      }
+
+      return res.status(200).json({ ok: true, note: out.note, request: out.request });
+    }
+
+    /* A status change on its own: Open or Being built. Waiting on customer
+       and Done need words - a status alone tells them nothing - so those
+       come through addRequestNote. */
+    if (action === 'setRequestState') {
+      const id = String(body.requestId || '');
+      const status = String(body.status || '');
+      if (!id) return res.status(400).json({ error: 'Which request?' });
+      if (status !== 'new' && status !== 'in_progress') {
+        return res.status(400).json({ error: 'Add a note for that one, so they know what is happening.' });
+      }
+      const { data: reqRow, error: rErr } = await db.from('requests').select('id, user_id, title, status').eq('id', id).maybeSingle();
+      if (rErr) throw new Error(rErr.message);
+      if (!reqRow) return res.status(404).json({ error: 'Request not found.' });
+
+      const { data: updated, error: uErr } = await db.from('requests')
+        .update({ status, done_at: null }).eq('id', id).select().single();
+      if (uErr) throw new Error(uErr.message);
+      if (status === 'in_progress' && reqRow.status !== 'in_progress') {
+        await notify(db, reqRow.user_id, 'Being built: ' + (reqRow.title || 'your request'),
+          'We’re on it now.', '/requests.html#r/' + id);
+      }
+      return res.status(200).json({ ok: true, request: updated });
     }
 
     // ---- write: the site address and whether it is live ----------------

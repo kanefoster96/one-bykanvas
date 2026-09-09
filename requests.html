@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Requests — Kanvas One</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=65">
+</head>
+<body class="auth-body">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one.</a>
+    <a class="nav-icon" id="navReq" href="/requests.html" aria-label="Requests">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg>
+      <span class="nav-count" id="navReqCount" hidden>0</span>
+    </a>
+  </div>
+</header>
+
+<main class="acct-wrap req-wrap" id="app" hidden>
+
+  <!-- ============ the list ============ -->
+  <section id="viewList" hidden>
+    <div class="req-top">
+      <h1 class="req-h1">Requests</h1>
+      <a class="btn btn-primary req-new-btn" href="#new">New request</a>
+    </div>
+    <p class="hint req-lede">Anything you want changed or added on your site. We reply here.</p>
+
+    <div class="req-cards" id="openCards"></div>
+    <p class="req-empty" id="reqEmpty" hidden>Nothing here yet. Want something changed or added? Tap <a href="#new">New request</a>.</p>
+
+    <details class="req-done-wrap" id="doneWrap" hidden>
+      <summary>Done <span class="req-done-count" id="doneCount"></span></summary>
+      <div class="req-cards" id="doneCards"></div>
+    </details>
+
+    <p class="acct-back"><a class="linkish" href="/account.html">&larr; Back to your account</a></p>
+  </section>
+
+  <!-- ============ new request ============ -->
+  <section id="viewNew" hidden>
+    <p class="req-crumb"><a class="linkish" href="#">&larr; All requests</a></p>
+    <h1 class="req-h1">New request</h1>
+
+    <div class="req-modes" role="tablist" aria-label="What kind of request">
+      <button class="req-mode" id="modeFeature" type="button" role="tab" data-mode="feature">Add a feature</button>
+      <button class="req-mode" id="modeEdit" type="button" role="tab" data-mode="edit">Change something</button>
+    </div>
+
+    <div class="cat-list" id="catalogue" hidden></div>
+
+    <form class="panel req-compose" id="newForm" novalidate hidden>
+      <div class="cat-picked" id="picked" hidden>
+        <span id="pickedTitle"></span>
+        <button class="linkish" id="pickedChange" type="button">Change</button>
+      </div>
+      <div class="field full">
+        <label for="newBody" id="newLabel">What would you like?</label>
+        <textarea id="newBody" rows="4" maxlength="4000" placeholder="Swap the photo on the homepage for the new shopfront one."></textarea>
+      </div>
+      <div class="field full">
+        <label class="attach-btn" for="newFiles">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.5l-8.5 8.5a5.5 5.5 0 0 1-7.8-7.8l9-9a3.5 3.5 0 0 1 5 5l-9 9a1.5 1.5 0 0 1-2.1-2.1l8.3-8.3"/></svg>
+          Add photos
+        </label>
+        <input id="newFiles" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" multiple hidden>
+        <p class="note" id="newFilesNote" role="status" aria-live="polite"></p>
+      </div>
+      <div class="req-send">
+        <button class="btn btn-primary" id="newBtn" type="submit">Send request</button>
+        <p class="note" id="newNote" role="status" aria-live="polite"></p>
+      </div>
+      <p class="hint">A sentence is plenty. We&rsquo;ll start building from what&rsquo;s already on your site and message you here if we need anything.</p>
+    </form>
+  </section>
+
+  <!-- ============ one request ============ -->
+  <section id="viewDetail" hidden>
+    <p class="req-crumb"><a class="linkish" href="#">&larr; All requests</a></p>
+    <div class="req-detail-head">
+      <h1 class="req-h1" id="dTitle"></h1>
+      <span class="req-state" id="dStatus"></span>
+    </div>
+
+    <div class="thread" id="thread"></div>
+    <p class="req-done-line" id="doneLine" hidden>Not quite right? Reply here and we&rsquo;ll sort it.</p>
+
+    <form class="reply-bar" id="replyForm" novalidate>
+      <label class="attach-btn attach-icon" for="replyFiles" aria-label="Add photos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.5l-8.5 8.5a5.5 5.5 0 0 1-7.8-7.8l9-9a3.5 3.5 0 0 1 5 5l-9 9a1.5 1.5 0 0 1-2.1-2.1l8.3-8.3"/></svg>
+        <span class="attach-count" id="replyFilesCount" hidden></span>
+      </label>
+      <input id="replyFiles" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" multiple hidden>
+      <textarea id="replyBody" rows="1" maxlength="4000" placeholder="Write a reply" aria-label="Your reply"></textarea>
+      <button class="btn btn-primary reply-btn" id="replyBtn" type="submit">Reply</button>
+    </form>
+    <p class="note" id="replyNote" role="status" aria-live="polite"></p>
+  </section>
+
+</main>
+
+<div class="acct-loading" id="loading"><p>Loading&hellip;</p></div>
+
+<script src="vendor/supabase.js?v=1"></script>
+<script src="consent.js?v=3"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="supabase-client.js?v=1"></script>
+<script src="session.js?v=3"></script>
+<script src="request-catalogue.js?v=1"></script>
+<script src="requests-badge.js?v=1"></script>
+<script src="requests.js?v=1"></script>
+<script src="admin-pill.js?v=8"></script>
+</body>
+</html>

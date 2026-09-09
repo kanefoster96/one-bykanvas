@@ -20,10 +20,18 @@ var mode     = 'login';
 
 ONE.requireConfig(note);
 
+/* Where to go once signed in. A link in one of our emails lands here with
+   ?next=/requests.html#r/<id>; only a path on this site is honoured, so the
+   parameter cannot send anyone elsewhere. */
+function afterLogin() {
+  var next = new URLSearchParams(location.search).get('next') || '';
+  return /^\/(?!\/)/.test(next) ? next : '/account.html';
+}
+
 /* If a session already exists, there is nothing to log into. */
 if (ONE.ready) {
   ONE.db.auth.getSession().then(function (res) {
-    if (res.data.session) location.replace('/account.html');
+    if (res.data.session) location.replace(afterLogin());
   });
 }
 
@@ -155,7 +163,7 @@ form.addEventListener('submit', async function (e) {
     } else {
       var signIn = await ONE.db.auth.signInWithPassword({ email: email, password: pass });
       if (signIn.error) throw signIn.error;
-      location.href = '/account.html';
+      location.href = afterLogin();
     }
   } catch (err) {
     say(ONE.friendlyError(err), 'bad');

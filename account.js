@@ -124,7 +124,6 @@ async function start() {
   showReferral(profile.data);
   await showPoints(profile.data);
   await showFeatures();
-  await loadTemplates();
 
   var loginEmail = document.getElementById('loginEmail');
   if (loginEmail) loginEmail.value = user.email || '';
@@ -409,7 +408,6 @@ document.getElementById('bizForm').addEventListener('submit', async function (e)
    real plan from junk in the column. */
 var PLAN_POINTS = { business: 1, pro: 3, max: 5 }; // values legacy, keys authoritative
 var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
-var COST        = { edit: 1, feature: 3 };
 
 /* The plan we ration points from is active_plan, written only by the Stripe
    webhook. selected_plan is whatever the customer last picked and they can
@@ -496,6 +494,7 @@ var FEATURE_NEW_DAYS = 30;
 function featureName(detail) {
   return String(detail || '').split('\n')[0].trim();
 }
+function requestTitle(r) { return r.title || featureName(r.detail); }
 var siteFeatureNames = [];
 
 async function showFeatures() {
@@ -515,7 +514,7 @@ async function showFeatures() {
   /* Both halves of the list feed the idea library's exclusions: no point
      offering a feature the site already has or has already asked for. The
      first line of a request is its name; anything after is their notes. */
-  siteFeatureNames = pending.map(function (r) { return featureName(r.detail).toLowerCase(); })
+  siteFeatureNames = pending.map(function (r) { return requestTitle(r).toLowerCase(); })
     .concat(live.map(function (f) { return String(f.name).toLowerCase(); }));
 
   if (!live.length && !pending.length) { list.hidden = true; return; }
@@ -533,7 +532,7 @@ async function showFeatures() {
 
   list.textContent = '';
   pending.forEach(function (r) {
-    list.appendChild(row(featureName(r.detail), r.status === 'in_progress' ? 'In build' : 'Requested', 'is-pending'));
+    list.appendChild(row(requestTitle(r), r.status === 'in_progress' ? 'Being built' : 'Requested', 'is-pending'));
   });
   live.forEach(function (f) {
     var fresh = !isNaN(new Date(f.updated_at))
@@ -566,158 +565,24 @@ function periodStart(row) {
   return new Date(now.getFullYear(), now.getMonth(), 1);
 }
 
-var pointsState = { allowance: 0, used: 0, plan: null };
 /* The last fetch of their requests, shared with showFeatures() so it can show
    a feature that is asked for but not built yet without refetching. */
 var recentRequests = [];
 
 async function showPoints(row) {
-  var plan = entitledPlan(row);
-
-  /* Until there is a subscription there is nothing to charge a request to, so
-     the panel stays out of the way rather than offering work we cannot bill. */
+  /* Until there is a subscription the panel stays out of the way: nothing
+     to add a feature to yet. */
   var live = row && (row.subscription_status === 'active' || row.subscription_status === 'trialing');
   document.getElementById('pointsPanel').hidden = !live;
   if (!live) return;
 
   var recent = [];
   var q = await ONE.db.from('requests')
-    .select('id, kind, points, detail, status, created_at, billed_at, billed_amount, attachment_paths')
+    .select('id, kind, title, detail, status, created_at')
     .order('created_at', { ascending: false })
     .limit(40);
   if (!q.error && q.data) recent = q.data;
-
-  pointsState = { plan: plan };
   recentRequests = recent;
-
-  /* No blurb about how much they can ask for - the feature pills above the
-     buttons say what the site has, and that is the whole pitch. */
-  updatePricePreview();
-  renderRequests(recent);
-}
-
-var STATUS_TEXT_LABEL = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
-
-function requestRow(r) {
-  var li = document.createElement('li');
-
-  var what = document.createElement('span');
-  what.className = 'req-what';
-  what.textContent = r.detail;
-  var when = document.createElement('span');
-  when.className = 'req-when';
-  when.textContent = new Date(r.created_at).toLocaleDateString('en-GB',
-    { day: 'numeric', month: 'short', year: 'numeric' });
-  what.appendChild(when);
-
-  if (r.attachment_paths && r.attachment_paths.length) {
-    var viewLink = document.createElement('a');
-    viewLink.className = 'req-confirm';
-    viewLink.href = '#';
-    viewLink.textContent = 'View ' + r.attachment_paths.length
-      + (r.attachment_paths.length === 1 ? ' screenshot' : ' screenshots');
-    viewLink.addEventListener('click', function (e) {
-      e.preventDefault();
-      viewAttachments(r.attachment_paths, viewLink);
-    });
-    what.appendChild(viewLink);
-
-    // The point of a screenshot is to show us something before the work
-    // happens - once the site is live it has done its job.
-    if (r.status === 'done') {
-      var clearBtn = document.createElement('button');
-      clearBtn.type = 'button';
-      clearBtn.className = 'linkish req-confirm';
-      clearBtn.textContent = 'Clear screenshots';
-      clearBtn.addEventListener('click', function () { clearAttachments(r.id, clearBtn); });
-      what.appendChild(clearBtn);
-    }
-  }
-
-  var cost = document.createElement('span');
-  cost.className = 'req-cost';
-  cost.textContent = r.billed_at
-    ? 'Charged £' + (r.billed_amount / 100).toFixed(0)
-    : (r.kind === 'feature' ? 'Feature' : r.kind === 'info' ? 'Details' : 'Edit');
-
-  var state = document.createElement('span');
-  state.className = 'req-state' + (r.status === 'done' ? ' is-done' : '');
-  state.textContent = STATUS_TEXT_LABEL[r.status] || r.status;
-
-  li.appendChild(what);
-  li.appendChild(cost);
-  li.appendChild(state);
-  return li;
-}
-
-/* Signed on demand rather than up front, since most requests are never
-   opened again - no point paying for a round trip nobody asked for. Our own
-   session can sign these itself; the storage policy already scopes reads to
-   our own folder. */
-async function viewAttachments(paths, linkEl) {
-  linkEl.textContent = 'Loading…';
-  try {
-    var q = await ONE.db.storage.from('request-attachments').createSignedUrls(paths, 3600);
-    if (q.error) throw q.error;
-    var frag = document.createDocumentFragment();
-    (q.data || []).forEach(function (s, i) {
-      if (i) frag.appendChild(document.createTextNode(' · '));
-      var a = document.createElement('a');
-      a.href = s.signedUrl;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.className = 'req-confirm';
-      a.textContent = 'Screenshot' + (paths.length > 1 ? ' ' + (i + 1) : '');
-      frag.appendChild(a);
-    });
-    linkEl.replaceWith(frag);
-  } catch (err) {
-    linkEl.textContent = 'Could not load screenshots.';
-  }
-}
-
-async function clearAttachments(requestId, btn) {
-  if (!confirm('Delete the screenshots for this request? This frees storage and cannot be undone.')) return;
-  btn.disabled = true;
-  try {
-    var sess = await ONE.db.auth.getSession();
-    var token = sess.data && sess.data.session && sess.data.session.access_token;
-    if (!token) throw new Error('Your session has expired. Log in and try again.');
-
-    var res = await fetch('/api/requests', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ action: 'clearAttachments', requestId: requestId })
-    });
-    var data = await res.json().catch(function () { return {}; });
-    if (!res.ok) throw new Error(data.error || 'Could not clear those. Try again.');
-
-    var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
-    await showPoints(fresh.data);
-    await showFeatures();
-  } catch (err) {
-    alert(ONE.friendlyError(err));
-    btn.disabled = false;
-  }
-}
-
-/* Edits still moving. Features are not here - they have their own panel,
-   where a requested one sits alongside the ones already live. */
-function renderRequests(rows) {
-  var wrap = document.getElementById('reqList');
-  var list = document.getElementById('reqItemsEdit');
-  var active = rows.filter(function (r) {
-    if (r.kind !== 'edit' || r.status === 'declined') return false;
-    /* A finished edit drops out of the list, unless its screenshots are still
-       sitting in storage - that is the only place they can clear them. */
-    if (r.status === 'done') return (r.attachment_paths || []).length > 0;
-    return true;
-  }).slice(0, 6);
-
-  list.textContent = '';
-  if (!active.length) { wrap.hidden = true; return; }
-  active.forEach(function (r) { list.appendChild(requestRow(r)); });
-  wrap.hidden = false;
 }
 
 /* ---------------- referral: their code, and the copy button ---------------- */
@@ -766,314 +631,6 @@ async function showReferral(row) {
     panel.hidden = true;
   }
 }
-
-/* ---------------- request picker: templates, price preview ---------------- */
-
-var templates = [];
-
-async function loadTemplates() {
-  if (!ONE.ready) return;
-  var q = await ONE.db.from('templates').select('id, kind, name, description').eq('active', true);
-  templates = (!q.error && q.data) || [];
-  renderPicker();
-}
-
-function renderPicker() {
-  var groups = [
-    { kind: 'edit',    group: document.getElementById('tplGroupEdit'),    list: document.getElementById('tplListEdit') },
-    { kind: 'feature', group: document.getElementById('tplGroupFeature'), list: document.getElementById('tplListFeature') }
-  ];
-  groups.forEach(function (g) {
-    var items = templates.filter(function (t) { return t.kind === g.kind; });
-    g.list.textContent = '';
-    items.forEach(function (t) { g.list.appendChild(templateRow(t)); });
-  });
-  // Visibility follows whichever toggle is open, not just what exists.
-  syncTplGroups();
-}
-
-/* One row per saved feature, opening to show what it actually does before
-   anyone asks for it - the name alone ("Online ordering") rarely settles
-   whether it is the thing they have in mind. */
-function templateRow(t) {
-  var row = document.createElement('div');
-  row.className = 'tpl-row';
-
-  /* Two things on the row, not one: the name picks it straight away, the
-     arrow beside it only opens the description. Someone who already knows
-     what they want never has to expand anything to ask for it. */
-  var head = document.createElement('div');
-  head.className = 'tpl-head';
-
-  var name = document.createElement('button');
-  name.type = 'button';
-  name.className = 'tpl-name';
-  name.textContent = t.name;
-  name.addEventListener('click', function () { pickTemplate(t); });
-  head.appendChild(name);
-
-  var body = document.createElement('div');
-  body.className = 'tpl-body';
-  body.hidden = true;
-  if (t.description) body.appendChild(el('p', 'tpl-desc', t.description));
-
-  var pick = document.createElement('button');
-  pick.type = 'button';
-  pick.className = 'btn btn-ghost tpl-pick';
-  pick.textContent = t.kind === 'feature' ? 'Request this feature' : 'Request this edit';
-  pick.addEventListener('click', function () { pickTemplate(t); });
-  body.appendChild(pick);
-
-  var toggle = document.createElement('button');
-  toggle.type = 'button';
-  toggle.className = 'tpl-toggle';
-  toggle.setAttribute('aria-expanded', 'false');
-  toggle.setAttribute('aria-label', 'What ' + t.name + ' does');
-  toggle.appendChild(el('span', 'tpl-chevron', '\u203a'));
-  toggle.addEventListener('click', function () {
-    var open = body.hidden;
-    body.hidden = !open;
-    toggle.setAttribute('aria-expanded', String(open));
-    toggle.classList.toggle('is-open', open);
-  });
-  head.appendChild(toggle);
-
-  row.appendChild(head);
-  row.appendChild(body);
-  return row;
-}
-
-/* Their own words go on top of ours: the description explains the feature,
-   and the blank line under it is where they say what they want for their
-   own site. Templates only show inside their own kind's open form, so the
-   kind is already right - this just fills the box. */
-function pickTemplate(t) {
-  var detail = document.getElementById('reqDetail');
-  detail.value = t.description ? t.name + ' — ' + t.description + '\n\n' : t.name + '\n\n';
-  detail.focus();
-  // Land the cursor at the end, ready for their own notes.
-  detail.setSelectionRange(detail.value.length, detail.value.length);
-}
-
-/* The same thirty ideas as the signup wizard, shown only when the feature
-   toggle is the open one - an edit is about what's already there. A tap
-   turns the idea into a picked pill above the box; each pill is sent as
-   its own request, so each feature can be tracked to In build and Live
-   individually. Ideas already picked, already on the site, already asked
-   for, or already mentioned in the text stay out of the list. */
-var pickedFeatures = [];
-
-function paintReqIdeas() {
-  var panel = document.getElementById('reqSuggest');
-  var box = document.getElementById('reqChips');
-  var ideas = window.FEATURE_IDEAS || [];
-  if (!panel || !box || !ideas.length) return;
-  if (reqKind !== 'feature') { panel.hidden = true; renderPicked(); return; }
-  var have = document.getElementById('reqDetail').value.toLowerCase();
-  var picked = pickedFeatures.map(function (f) { return f.toLowerCase(); });
-  box.textContent = '';
-  ideas.forEach(function (idea) {
-    var low = idea.toLowerCase();
-    if (picked.indexOf(low) !== -1) return;
-    if (siteFeatureNames.indexOf(low) !== -1) return;
-    if (have.indexOf(low) !== -1) return;
-    var chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'use-chip';
-    chip.textContent = idea;
-    chip.addEventListener('click', function () {
-      pickedFeatures.push(idea);
-      renderPicked();
-      paintReqIdeas();
-    });
-    box.appendChild(chip);
-  });
-  panel.hidden = false;
-  renderPicked();
-}
-
-/* What they've picked so far - solid pills, each with an x. Tapping one
-   sends it back to the library. */
-function renderPicked() {
-  var wrap = document.getElementById('reqPicked');
-  if (!wrap) return;
-  wrap.textContent = '';
-  if (reqKind !== 'feature' || !pickedFeatures.length) { wrap.hidden = true; return; }
-  pickedFeatures.forEach(function (name, i) {
-    var pill = document.createElement('button');
-    pill.type = 'button';
-    pill.className = 'req-pick-pill';
-    pill.setAttribute('aria-label', 'Remove ' + name);
-    pill.appendChild(document.createTextNode(name + ' '));
-    pill.appendChild(el('i', null, '×'));
-    pill.addEventListener('click', function () {
-      pickedFeatures.splice(i, 1);
-      renderPicked();
-      paintReqIdeas();
-    });
-    wrap.appendChild(pill);
-  });
-  wrap.hidden = false;
-}
-
-document.getElementById('reqDetail').addEventListener('input', paintReqIdeas);
-
-/* The two buttons are toggles, not doors: tap one and its form expands
-   right below with the templates for that kind (plus the idea library for
-   features); tap it again and it folds away. Tapping the other button
-   switches kinds without losing anything already typed. */
-var reqKind = 'edit';
-
-function toggleReq(kind) {
-  var form = document.getElementById('reqForm');
-  var btns = { edit: document.getElementById('reqEditBtn'), feature: document.getElementById('reqFeatureBtn') };
-
-  if (!form.hidden && reqKind === kind) {
-    form.hidden = true;
-    ['edit', 'feature'].forEach(function (k) {
-      btns[k].classList.remove('is-on');
-      btns[k].setAttribute('aria-expanded', 'false');
-    });
-    return;
-  }
-
-  reqKind = kind;
-  ['edit', 'feature'].forEach(function (k) {
-    btns[k].classList.toggle('is-on', k === kind);
-    btns[k].setAttribute('aria-expanded', String(k === kind));
-  });
-  // The box's job changes with the kind: an edit is described in it; a
-  // feature is usually picked above, with the box for the specifics.
-  document.getElementById('reqDetailLabel').textContent = kind === 'feature'
-    ? 'Details, or a feature we haven’t listed'
-    : 'What would you like?';
-  syncTplGroups();
-  paintReqIdeas();
-  updatePricePreview();
-  form.hidden = false;
-}
-
-/* Only the open kind's saved templates are worth showing. */
-function syncTplGroups() {
-  [['edit', 'tplGroupEdit'], ['feature', 'tplGroupFeature']].forEach(function (pair) {
-    var has = templates.some(function (t) { return t.kind === pair[0]; });
-    document.getElementById(pair[1]).hidden = reqKind !== pair[0] || !has;
-  });
-}
-
-document.getElementById('reqEditBtn').addEventListener('click', function () { toggleReq('edit'); });
-document.getElementById('reqFeatureBtn').addEventListener('click', function () { toggleReq('feature'); });
-
-/* Nothing to price any more - requests are included on every plan - so this
-   line's job is now expectation, not cost: what happens after Send. */
-function updatePricePreview() {
-  var el = document.getElementById('reqPrice');
-  if (!el) return;
-  el.textContent = reqKind === 'feature'
-    ? 'Included in your plan. New features take longer than edits \u2014 we\u2019ll pick it up in your plan\u2019s turn and let you know when it\u2019s being built.'
-    : 'Included in your plan. We\u2019ll pick it up in your plan\u2019s turn \u2014 most edits are done quickly.';
-  el.className = 'req-price';
-}
-
-var MAX_ATTACHMENTS = 6;
-var MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024;
-
-document.getElementById('reqFiles').addEventListener('change', function (e) {
-  var note = document.getElementById('reqFilesNote');
-  var files = Array.prototype.slice.call(e.target.files || []);
-  if (files.length > MAX_ATTACHMENTS) {
-    say(note, 'Up to ' + MAX_ATTACHMENTS + ' screenshots — pick fewer and try again.', 'bad');
-    e.target.value = '';
-    return;
-  }
-  var tooBig = files.filter(function (f) { return f.size > MAX_ATTACHMENT_SIZE; });
-  if (tooBig.length) {
-    say(note, tooBig[0].name + ' is over 5 MB — try a smaller one.', 'bad');
-    e.target.value = '';
-    return;
-  }
-  say(note, files.length ? files.length + (files.length === 1 ? ' file' : ' files') + ' selected.' : '');
-});
-
-/* Uploaded straight to storage from here, same as the logo does - the
-   points cost and admin email only happen once /api/requests has the
-   resulting paths, so a failed upload never leaves half a request behind. */
-async function uploadAttachments(files, userId) {
-  var batch = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
-    : String(Date.now()) + Math.random().toString(36).slice(2);
-  var paths = [];
-  for (var i = 0; i < files.length; i++) {
-    var file = files[i];
-    var ext = (file.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
-    var path = userId + '/' + batch + '-' + i + '.' + ext;
-    var up = await ONE.db.storage.from('request-attachments')
-      .upload(path, file, { contentType: file.type });
-    if (up.error) throw new Error('Could not upload ' + file.name + ': ' + ONE.friendlyError(up.error));
-    paths.push(path);
-  }
-  return paths;
-}
-
-document.getElementById('reqForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  var note = document.getElementById('reqNote');
-  var btn  = document.getElementById('reqBtn');
-  var detail = document.getElementById('reqDetail').value.trim();
-  var kind = reqKind;
-  var features = kind === 'feature' ? pickedFeatures.slice(0, 10) : [];
-
-  if (!detail && !features.length) {
-    say(note, kind === 'feature'
-      ? 'Pick a feature above, or tell us what you’d like.'
-      : 'Tell us what you would like changed.', 'bad');
-    return;
-  }
-
-  btn.disabled = true;
-  say(note, 'Sending\u2026');
-
-  try {
-    var sess = await ONE.db.auth.getSession();
-    var token = sess.data && sess.data.session && sess.data.session.access_token;
-    if (!token) throw new Error('Your session has expired. Log in and try again.');
-
-    var filesInput = document.getElementById('reqFiles');
-    var files = Array.prototype.slice.call(filesInput.files || []);
-    var attachmentPaths = [];
-    if (files.length) {
-      say(note, 'Uploading screenshots\u2026');
-      attachmentPaths = await uploadAttachments(files, user.id);
-      say(note, 'Sending\u2026');
-    }
-
-    var res = await fetch('/api/requests', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ kind: kind, detail: detail, features: features, attachmentPaths: attachmentPaths })
-    });
-    var data = await res.json().catch(function () { return {}; });
-    if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
-
-    say(note, features.length > 1
-      ? 'Sent \u2014 all ' + features.length + ' are in the queue, each tracked on its own above.'
-      : 'Sent \u2014 it\u2019s in the queue, and we\u2019ll let you know when it\u2019s being worked on.', 'ok');
-
-    pickedFeatures = [];
-    document.getElementById('reqDetail').value = '';
-    filesInput.value = '';
-    say(document.getElementById('reqFilesNote'), '');
-    var fresh = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
-    await showPoints(fresh.data);
-    await showFeatures();
-    // The pills they sent are in the feature list now; clear the picks and
-    // let the library drop what was just asked for.
-    paintReqIdeas();
-  } catch (err) {
-    say(note, ONE.friendlyError(err), 'bad');
-  } finally {
-    btn.disabled = false;
-  }
-});
 
 /* ---------------- billing ---------------- */
 var STATUS_TEXT = {
