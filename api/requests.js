@@ -11,6 +11,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
 const { cleanBody, cleanAttachments, addNote } = require('./_requests.js');
+const { pointsWindowStart } = require('./_billing.js');
 
 const STARTER_MONTHLY_CHANGES = 1;
 
@@ -155,18 +156,21 @@ module.exports = async function handler(req, res) {
 
     const attachmentPaths = cleanAttachments(body.attachmentPaths, user.id, false);
 
-    /* Starter: one change a month to what is already on the site. A
-       feature ask is not a change - it is the start of a Business
-       conversation - so only edits count, by calendar month. */
+    /* Starter: one change per billing month to what is already on the
+       site. The window starts when the payment is taken - points_reset_at,
+       which the webhook moves at every renewal - so it always resets to one,
+       used or not. A feature ask is not a change; it is the start of a
+       Business conversation, so only edits count. */
     if (kind === 'edit') {
-      const { data: prof } = await db.from('profiles').select('active_plan').eq('id', user.id).maybeSingle();
+      const { data: prof } = await db.from('profiles')
+        .select('active_plan, points_reset_at, current_period_end').eq('id', user.id).maybeSingle();
       if (prof && prof.active_plan === 'starter') {
-        const monthStart = new Date(); monthStart.setUTCDate(1); monthStart.setUTCHours(0, 0, 0, 0);
+        const since = pointsWindowStart(prof).toISOString();
         const { count } = await db.from('requests')
           .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id).eq('kind', 'edit').gte('created_at', monthStart.toISOString());
+          .eq('user_id', user.id).eq('kind', 'edit').gte('created_at', since);
         if ((count || 0) >= STARTER_MONTHLY_CHANGES) {
-          return res.status(400).json({ error: 'That\u2019s your change for this month. The next one starts on the 1st, or Business has unlimited changes.' });
+          return res.status(400).json({ error: 'That\u2019s your change for this month. The next one comes with your next payment, or Business has unlimited changes.' });
         }
       }
     }
