@@ -4,6 +4,8 @@ Allow: /
 # Account pages are per-customer, nothing for a crawler to index.
 Disallow: /account.html
 Disallow: /admin.html
+Disallow: /requests.html
+Disallow: /notifications.html
 Disallow: /login.html
 Disallow: /api/
 

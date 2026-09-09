@@ -1,18 +1,16 @@
-/* Creates a customer's edit/feature request, and tells us about it.
+/* The customer's side of Requests: a new request, or a reply on one.
  *
- * Requests are included on every plan and cost nothing - what the plan buys
- * is queue position, and the admin page orders the queue by plan. The kind
- * is validated against _plans.js rather than trusted, and the row's points
+ * Requests are included on every plan and cost nothing. The kind is
+ * validated against _plans.js rather than trusted, and the row's points
  * value is kept only because the table's check constraint expects it; no
- * money is ever derived from it any more. Going through this endpoint
- * rather than a direct client insert is what lets a new request email us;
- * a plain insert would record the row just as well but nobody would know.
+ * money is ever derived from it. Everything goes through here rather than
+ * a direct insert because a note also moves the status, stamps whose turn
+ * it is and queues the email - see _requests.js.
  */
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
-const { sendEmail, adminAddresses } = require('./_email.js');
-const { notifyAdmin } = require('./_notify.js');
+const { cleanBody, cleanAttachments, addNote } = require('./_requests.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -120,91 +118,53 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    const kind = String(body.kind || '').toLowerCase();
-    const detail = String(body.detail || '').trim();
+    /* ---- a reply on one of their own threads ------------------------- */
+    if (body.action === 'reply') {
+      const requestId = String(body.requestId || '');
+      if (!requestId) return res.status(400).json({ error: 'Which request?' });
+      const { data: reqRow, error: reqErr } = await db.from('requests')
+        .select('*').eq('id', requestId).maybeSingle();
+      if (reqErr) throw new Error(reqErr.message);
+      if (!reqRow || reqRow.user_id !== user.id) {
+        return res.status(404).json({ error: 'Request not found.' });
+      }
+      const cleaned = cleanBody(body.body);
+      if (cleaned.error) return res.status(400).json({ error: cleaned.error });
 
-    if (!Object.prototype.hasOwnProperty.call(REQUEST_COST, kind)) {
+      const out = await addNote(db, reqRow, {
+        author: 'customer', body: cleaned.body,
+        attachmentPaths: cleanAttachments(body.attachmentPaths, user.id, false)
+      });
+      return res.status(200).json({ ok: true, note: out.note, request: out.request });
+    }
+
+    /* ---- a new request: the header row, then its first note ------------ */
+    const kind = String(body.kind || '').toLowerCase();
+    if (!Object.prototype.hasOwnProperty.call(REQUEST_COST, kind) || kind === 'info') {
       return res.status(400).json({ error: 'Unknown request kind.' });
     }
+    const cleaned = cleanBody(body.body != null ? body.body : body.detail);
+    if (cleaned.error) return res.status(400).json({ error: cleaned.error });
 
-    /* Feature picks from the account page's library arrive as names, one
-       request row each - that is what lets each one be tracked to In build
-       and Live on its own. The note in the box rides along under every
-       name (first line = the feature, the rest = their words), so the
-       admin sees the context wherever they open it. */
-    const features = kind === 'feature' && Array.isArray(body.features)
-      ? body.features.map((f) => String(f).trim().replace(/\n/g, ' ')).filter(Boolean).slice(0, 10)
-      : [];
-    if (features.some((f) => f.length > 80)) {
-      return res.status(400).json({ error: 'Feature names should be short - put the detail in the notes box.' });
-    }
-    if (!features.length && (!detail || detail.length > 4000)) {
-      return res.status(400).json({ error: 'Tell us what you would like changed.' });
-    }
-    if (detail.length > 4000) {
-      return res.status(400).json({ error: 'Keep the notes under 4,000 characters.' });
-    }
+    /* The title is the catalogue pick, or the first line of what they
+       wrote - short, because it is the subject of every email about it. */
+    let title = String(body.title || '').replace(/\s+/g, ' ').trim().slice(0, 120);
+    if (!title) title = cleaned.body.split('\n')[0].trim().slice(0, 80);
 
-    /* Only paths the caller could actually have uploaded - storage itself
-       only lets a path starting with the caller's own id be written, so
-       anything else here is either a mistake or someone trying to reference
-       a file that is not theirs. Capped, same reason the avatar upload caps
-       file size: this is a screenshot attachment, not a file store. */
-    const attachmentPaths = Array.isArray(body.attachmentPaths)
-      ? body.attachmentPaths.map(String).filter((p) => p.startsWith(user.id + '/')).slice(0, 6)
-      : [];
+    const attachmentPaths = cleanAttachments(body.attachmentPaths, user.id, false);
 
-    let rows;
-    if (features.length) {
-      // One row per picked feature; the screenshots ride on the first so
-      // clearing them later touches storage exactly once.
-      const inserts = features.map((featName, i) => ({
-        user_id: user.id, kind: kind, points: REQUEST_COST[kind].points,
-        detail: featName + (detail ? '\n\n' + detail : ''),
-        attachment_paths: i === 0 && attachmentPaths.length ? attachmentPaths : null
-      }));
-      const { data, error } = await db.from('requests').insert(inserts).select();
-      if (error) throw new Error(error.message);
-      rows = data || [];
-    } else {
-      const { data: row, error } = await db.from('requests').insert({
-        user_id: user.id, kind: kind, points: REQUEST_COST[kind].points, detail: detail,
-        attachment_paths: attachmentPaths.length ? attachmentPaths : null
-      }).select().single();
-      if (error) throw new Error(error.message);
-      rows = [row];
-    }
+    const { data: row, error } = await db.from('requests').insert({
+      user_id: user.id, kind: kind, points: REQUEST_COST[kind].points,
+      title: title, detail: cleaned.body,
+      attachment_paths: attachmentPaths.length ? attachmentPaths : null
+    }).select().single();
+    if (error) throw new Error(error.message);
 
-    const { data: profile } = await db.from('profiles')
-      .select('business_name, active_plan').eq('id', user.id).maybeSingle();
-    const name = (profile && profile.business_name) || user.email || 'A customer';
-    const QUEUE = { business: 'in turn', pro: 'PRIORITY', max: 'TOP PRIORITY' };
-    const place = QUEUE[profile && profile.active_plan] || 'in turn';
-
-    const asked = features.length
-      ? (features.length === 1 ? 'a new feature' : features.length + ' new features')
-      : (kind === 'feature' ? 'a new feature' : 'an edit');
-    const bodyText = features.length
-      ? '- ' + features.join('\n- ') + (detail ? '\n\nNotes: ' + detail : '')
-      : detail;
-
-    const result = await sendEmail({
-      to: adminAddresses(),
-      subject: `New ${kind === 'feature' ? 'feature' : 'edit'} request: ${name}`,
-      text: `${name} asked for ${asked} (${place}):\n\n${bodyText}\n\n`
-          + (attachmentPaths.length ? `${attachmentPaths.length} screenshot${attachmentPaths.length === 1 ? '' : 's'} attached - view in admin.\n\n` : '')
-          + `Included in their plan - the queue in admin is already in priority order.\n\n`
-          + `Admin: ${ourSiteUrl()}/admin.html`,
-      replyTo: user.email
+    const out = await addNote(db, row, {
+      author: 'customer', body: cleaned.body, attachmentPaths: attachmentPaths, first: true
     });
-    console.log('requests: notify email', result);
 
-    await notifyAdmin(db, 'New ' + (kind === 'feature' ? 'feature' : 'edit') + ' request'
-      + (rows.length > 1 ? 's' : ''),
-      name + ' (' + place.toLowerCase() + '): '
-      + (features.length ? features.join(', ').slice(0, 140) : detail.slice(0, 140)));
-
-    return res.status(200).json({ request: rows[0], count: rows.length });
+    return res.status(200).json({ request: out.request, count: 1 });
   } catch (err) {
     console.error('requests:', err && err.message);
     return res.status(500).json({ error: 'Something went wrong. Try again.' });

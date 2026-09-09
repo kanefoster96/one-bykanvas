@@ -17,13 +17,19 @@ var note    = document.getElementById('adminNote');
 
 var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
 var PLAN_PRICE  = { business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
-var STATUS_NAME = { new: 'Request', accepted: 'Accepted', in_progress: 'In build', done: 'Live', declined: 'Declined' };
+var STATUS_NAME = { new: 'Open', accepted: 'Open', waiting: 'Waiting on customer', in_progress: 'In progress', done: 'Done', declined: 'Done' };
 /* info is a business-details change the customer made themselves - free, and
    raised by api/business-updated.js rather than asked for. */
 var KIND_NAME = { edit: 'Edit', feature: 'Feature', info: 'Business info' };
 function kindName(k) { return KIND_NAME[k] || 'Edit'; }
 
 var state = { profiles: [], requests: [], templates: [], seoUpdates: [], siteFeatures: [] };
+/* The Requests inbox: every thread with its newest note, from requestsInbox. */
+var inbox = [];
+var inboxFilter = 'all';
+var inboxSearch = '';
+var openRequestId = null;   // a thread is open in the Requests section
+var thread = null;          // that thread's data, from requestThread
 
 /* Simple line icons, stroke-only, matching the site's weight. Drawn inline
    rather than fetched so the menu never waits on anything. */
@@ -84,7 +90,9 @@ async function api(payload) {
 
 async function load() {
   try {
-    state = await api({ action: 'list' });
+    var both = await Promise.all([api({ action: 'list' }), api({ action: 'requestsInbox' })]);
+    state = both[0];
+    inbox = both[1].requests || [];
 
     /* Three numbers, one glance: which stage of the funnel leaks. Fails
        quietly - the dashboard matters more than the strip. */
@@ -105,6 +113,7 @@ async function load() {
   loading.hidden = true;
   app.hidden = false;
   showBellCount();
+  openFromHash();
 }
 
 /* Unread count for the header bell. Row level security already scopes the
@@ -190,7 +199,7 @@ function periodStart(p) {
 function openCountFor(userId) {
   return state.requests.filter(function (r) {
     return r.user_id === userId
-      && (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress');
+      && (r.status === 'new' || r.status === 'accepted' || r.status === 'waiting' || r.status === 'in_progress');
   }).length;
 }
 
@@ -255,8 +264,7 @@ function pendingSeoCustomers() {
    it only leaves the queue once billed_at is set. */
 function openRequests() {
   return state.requests.filter(function (r) {
-    if (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress') return true;
-    return r.status === 'done' && r.shortfallPoints > 0 && !r.billed_at;
+    return r.status === 'new' || r.status === 'accepted' || r.status === 'waiting' || r.status === 'in_progress';
   });
 }
 
@@ -271,6 +279,9 @@ function markShortfall() {
 
 function switchSection(key) {
   activeSection = key;
+  openRequestId = null;
+  thread = null;
+  if (/^#r\//.test(location.hash)) history.replaceState(null, '', location.pathname);
   selectedCustomerId = null;
   selectedContactId = null;
   render();
@@ -328,7 +339,7 @@ function render() {
   var nav = document.getElementById('adminNav');
   nav.hidden = !onMenu;
   if (onMenu) renderMenu({
-    requests: open.length + unbuilt.length,
+    requests: inbox.filter(waitingOnMe).length + unbuilt.length,
     customers: pendingSeo.length
   });
 
@@ -447,36 +458,416 @@ function newBuildCard(p) {
   return card;
 }
 
+/* ---------------- Requests: inbox + thread ---------------- */
+/*
+ * Every customer's requests in one list, whoever's turn it is first, then
+ * one thread at a time: the same chat the customer sees plus our private
+ * notes, a status picker and the note box. Reads come from requestsInbox
+ * and requestThread; every write is a note (addRequestNote) or a bare
+ * status change (setRequestState) - the server decides what each means.
+ */
+
+function waitingOnMe(r) { return r.last_note_by === 'customer' && r.status !== 'done' && r.status !== 'declined'; }
+function isDoneReq(r) { return r.status === 'done' || r.status === 'declined'; }
+
+/* Sort bucket: what needs me first, then what I'm on, then their turn, then done. */
+function inboxRank(r) {
+  if (waitingOnMe(r)) return 0;
+  if (r.status === 'in_progress') return 1;
+  if (isDoneReq(r)) return 3;
+  return 2;
+}
+var INBOX_GROUPS = ['Waiting on me', 'In progress', 'Waiting on customer', 'Done'];
+var INBOX_CHIPS = [
+  ['all', 'All'], ['mine', 'Waiting on me'], ['in_progress', 'In progress'],
+  ['waiting', 'Waiting on customer'], ['done', 'Done']
+];
+
+function inboxMatches(r) {
+  if (inboxFilter === 'mine' && !waitingOnMe(r)) return false;
+  if (inboxFilter === 'in_progress' && r.status !== 'in_progress') return false;
+  if (inboxFilter === 'waiting' && (inboxRank(r) !== 2)) return false;
+  if (inboxFilter === 'done' && !isDoneReq(r)) return false;
+  if (inboxSearch) {
+    var hay = ((r.business_name || '') + ' ' + (r.contact_name || '') + ' ' + (r.title || '')).toLowerCase();
+    if (hay.indexOf(inboxSearch) === -1) return false;
+  }
+  return true;
+}
+
+/* "2 hours ago" - the inbox reads by staleness. Full date in the title. */
+function agoShort(iso) {
+  var d = new Date(iso);
+  if (isNaN(d)) return '';
+  var s = (Date.now() - d.getTime()) / 1000;
+  if (s < 60) return 'just now';
+  var m = Math.floor(s / 60);
+  if (m < 60) return m + 'm ago';
+  var h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  var days = Math.floor(h / 24);
+  if (days === 1) return 'yesterday';
+  if (days < 7) return days + ' days ago';
+  return when(iso);
+}
+function fullWhen(iso) {
+  var d = new Date(iso);
+  return isNaN(d) ? '' : d.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function agoEl(iso, cls) {
+  var t = el('time', cls, agoShort(iso));
+  t.title = fullWhen(iso);
+  t.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var full = t.dataset.full === '1';
+    t.textContent = full ? agoShort(iso) : fullWhen(iso);
+    t.dataset.full = full ? '0' : '1';
+  });
+  return t;
+}
+
+async function reloadInbox() {
+  try {
+    var res = await api({ action: 'requestsInbox' });
+    inbox = res.requests || [];
+  } catch (err) { say(err.message, 'bad'); }
+}
+
 function renderRequestsSection(open, unbuilt) {
   var newWrap = document.getElementById('newBuilds');
   newWrap.textContent = '';
+  var queueWrap = document.getElementById('queue');
+  queueWrap.textContent = '';
+
+  if (openRequestId) { renderThread(queueWrap); return; }
+
   if (unbuilt.length) {
     newWrap.appendChild(el('h3', 'req-list-title', 'New customer builds'));
     unbuilt.forEach(function (p) { newWrap.appendChild(newBuildCard(p)); });
   }
-
-  var queueWrap = document.getElementById('queue');
-  queueWrap.textContent = '';
-  if (!open.length) {
-    queueWrap.appendChild(el('p', 'site-none', 'No open edit or feature requests.'));
-  } else {
-    [['info', 'Business details changed'], ['edit', 'Edit requests'], ['feature', 'Feature requests']].forEach(function (pair) {
-      var items = open.filter(function (r) { return r.kind === pair[0]; })
-        // Plan priority first - Max, then Pro, then Business - and inside a
-        // plan, oldest first. This IS the queue the terms promise.
-        .sort(function (a, b) {
-          var d = planRankFor(a.user_id) - planRankFor(b.user_id);
-          return d !== 0 ? d : new Date(a.created_at) - new Date(b.created_at);
-        });
-      if (!items.length) return;
-
-      queueWrap.appendChild(el('h3', 'req-list-title', pair[1]));
-      var list = el('ul', 'queue');
-      items.forEach(function (r) { list.appendChild(queueItem(r)); });
-      queueWrap.appendChild(list);
-    });
-  }
+  renderInbox(queueWrap);
 }
+
+function renderInbox(wrap) {
+  var tools = el('div', 'inbox-tools');
+  var search = el('input', 'inbox-search');
+  search.type = 'search';
+  search.placeholder = 'Search customer or title';
+  search.value = inboxSearch;
+  search.addEventListener('input', function () {
+    inboxSearch = search.value.trim().toLowerCase();
+    paintInboxRows(rowsWrap);
+  });
+  tools.appendChild(search);
+  var chips = el('div', 'chip-row');
+  INBOX_CHIPS.forEach(function (c) {
+    var b = el('button', 'filter-chip' + (inboxFilter === c[0] ? ' is-on' : ''), c[1]);
+    b.type = 'button';
+    b.addEventListener('click', function () {
+      inboxFilter = c[0];
+      Array.prototype.forEach.call(chips.children, function (x) { x.classList.toggle('is-on', x === b); });
+      paintInboxRows(rowsWrap);
+    });
+    chips.appendChild(b);
+  });
+  tools.appendChild(chips);
+  wrap.appendChild(tools);
+
+  var rowsWrap = el('div');
+  wrap.appendChild(rowsWrap);
+  paintInboxRows(rowsWrap);
+}
+
+function paintInboxRows(rowsWrap) {
+  rowsWrap.textContent = '';
+  var rows = inbox.filter(inboxMatches).slice().sort(function (a, b) {
+    var d = inboxRank(a) - inboxRank(b);
+    return d !== 0 ? d : new Date(b.last_note_at) - new Date(a.last_note_at);
+  });
+  if (!rows.length) {
+    rowsWrap.appendChild(el('p', 'site-none', inbox.length ? 'Nothing matches.' : 'No requests yet.'));
+    return;
+  }
+
+  var byRank = [[], [], [], []];
+  rows.forEach(function (r) { byRank[inboxRank(r)].push(r); });
+
+  byRank.forEach(function (group, rank) {
+    if (!group.length) return;
+    var isDone = rank === 3;
+    var container;
+    if (isDone && inboxFilter !== 'done') {
+      var det = el('details', 'req-done-wrap');
+      var sum = el('summary', null, 'Done ');
+      sum.appendChild(el('span', 'req-done-count', '(' + group.length + ')'));
+      det.appendChild(sum);
+      rowsWrap.appendChild(det);
+      container = det;
+    } else {
+      rowsWrap.appendChild(el('p', 'inbox-group', INBOX_GROUPS[rank]));
+      container = rowsWrap;
+    }
+    group.forEach(function (r) { container.appendChild(inboxRow(r)); });
+  });
+}
+
+function inboxRow(r) {
+  var row = el('button', 'inbox-row' + (waitingOnMe(r) ? ' is-mine' : ''));
+  row.type = 'button';
+  var main = el('div', 'inbox-main');
+  main.appendChild(el('p', 'inbox-who', r.business_name || r.contact_name || 'A customer'));
+  main.appendChild(el('p', 'inbox-title', r.title));
+  if (r.latest) {
+    main.appendChild(el('p', 'inbox-snippet', (r.latest.author === 'admin' ? 'You: ' : '') + r.latest.body));
+  }
+  row.appendChild(main);
+  var side = el('div', 'inbox-side');
+  side.appendChild(el('span', 'req-state' + (isDoneReq(r) ? ' is-done' : r.status === 'in_progress' ? ' is-building' : r.status === 'waiting' ? ' is-waiting' : ''), STATUS_NAME[r.status] || 'Open'));
+  side.appendChild(agoEl(r.last_note_at, 'inbox-when'));
+  row.appendChild(side);
+  row.addEventListener('click', function () { openThread(r.id); });
+  return row;
+}
+
+async function openThread(id) {
+  openRequestId = id;
+  thread = null;
+  activeSection = 'requests';
+  if (location.hash !== '#r/' + id) history.replaceState(null, '', '#r/' + id);
+  render();
+  try {
+    thread = await api({ action: 'requestThread', requestId: id });
+  } catch (err) {
+    say(err.message, 'bad');
+    openRequestId = null;
+  }
+  render();
+}
+
+function closeThread() {
+  openRequestId = null;
+  thread = null;
+  if (/^#r\//.test(location.hash)) history.replaceState(null, '', location.pathname);
+  render();
+}
+
+/* One message, either side. Ours on the right here (we are "you" on this
+   screen); a private one is grey with a lock, and only ever seen here. */
+function adminBubble(n, isClosing) {
+  var wrap = el('div', 'msg ' + (n.author === 'admin' ? 'from-kane' : 'from-you') + (n.private ? ' is-private' : ''));
+  var head = el('div', 'msg-who');
+  if (n.private) {
+    head.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+    head.appendChild(document.createTextNode(' Private note'));
+  } else {
+    head.appendChild(document.createTextNode(n.author === 'admin' ? 'You' : (thread && thread.customer && (thread.customer.contact_name || thread.customer.business_name)) || 'Customer'));
+  }
+  if (isClosing) head.appendChild(el('span', 'msg-done', 'Done'));
+  wrap.appendChild(head);
+
+  var box = el('div', 'msg-body');
+  String(n.body).split(/\n{2,}/).forEach(function (p) {
+    var para = el('p');
+    p.split('\n').forEach(function (line, i) {
+      if (i) para.appendChild(document.createElement('br'));
+      para.appendChild(document.createTextNode(line));
+    });
+    box.appendChild(para);
+  });
+  if (n.attachments && n.attachments.length) {
+    var files = el('div', 'msg-files');
+    n.attachments.forEach(function (f, i) {
+      var a = el('a', 'msg-file');
+      a.href = f.url; a.target = '_blank'; a.rel = 'noopener';
+      if (/\.pdf$/i.test(f.path)) { a.textContent = 'PDF ' + (i + 1); }
+      else { var img = document.createElement('img'); img.src = f.url; img.alt = 'Photo ' + (i + 1); img.loading = 'lazy'; a.appendChild(img); }
+      files.appendChild(a);
+    });
+    box.appendChild(files);
+  }
+  wrap.appendChild(box);
+  wrap.appendChild(agoEl(n.created_at, 'msg-when'));
+  return wrap;
+}
+
+var ADMIN_MAX_FILES = 5;
+var ADMIN_MAX_BYTES = 10 * 1024 * 1024;
+
+async function uploadNoteFiles(files, userId, requestId) {
+  var batch = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now());
+  var paths = [];
+  for (var i = 0; i < files.length; i++) {
+    var f = files[i];
+    var ext = (f.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    var path = userId + '/admin/' + requestId + '/' + batch + '-' + i + '.' + ext;
+    var up = await ONE.db.storage.from('request-attachments').upload(path, f, { contentType: f.type });
+    if (up.error) throw new Error('Could not upload ' + f.name + ': ' + up.error.message);
+    paths.push(path);
+  }
+  return paths;
+}
+
+function renderThread(wrap) {
+  var back = el('button', 'linkish', '← All requests');
+  back.type = 'button';
+  back.style.marginTop = '0';
+  back.addEventListener('click', closeThread);
+  wrap.appendChild(back);
+
+  if (!thread) { wrap.appendChild(el('p', 'site-none', 'Loading…')); return; }
+  var r = thread.request;
+  var cust = thread.customer || {};
+  var notes = thread.notes || [];
+
+  var box = el('div', 'admin-thread');
+  var head = el('div', 'req-detail-head');
+  head.style.marginTop = '14px';
+  head.appendChild(el('h3', 'req-h1', r.title));
+  head.appendChild(el('span', 'req-state' + (isDoneReq(r) ? ' is-done' : r.status === 'in_progress' ? ' is-building' : r.status === 'waiting' ? ' is-waiting' : ''), STATUS_NAME[r.status] || 'Open'));
+  box.appendChild(head);
+
+  var custLine = el('p', 'thread-cust');
+  custLine.appendChild(el('span', null, cust.business_name || cust.contact_name || 'Customer'));
+  if (cust.email) { var m = el('a', null, cust.email); m.href = 'mailto:' + cust.email; custLine.appendChild(m); }
+  if (cust.site_url) { var su = el('a', null, cust.site_url.replace(/^https?:\/\//, '')); su.href = cust.site_url; su.target = '_blank'; su.rel = 'noopener'; custLine.appendChild(su); }
+  var settings = el('a', null, 'Customer settings');
+  settings.href = '#';
+  settings.addEventListener('click', function (e) {
+    e.preventDefault();
+    openRequestId = null; thread = null;
+    history.replaceState(null, '', location.pathname);
+    activeSection = 'customers';
+    selectedCustomerId = r.user_id;
+    render();
+  });
+  custLine.appendChild(settings);
+  custLine.appendChild(el('span', null, kindName(r.kind) + ' · asked ' + agoShort(r.created_at)));
+  box.appendChild(custLine);
+
+  // The chat.
+  var th = el('div', 'thread');
+  var lastAdmin = null;
+  notes.forEach(function (n) { if (n.author === 'admin' && !n.private) lastAdmin = n; });
+  notes.forEach(function (n) { th.appendChild(adminBubble(n, isDoneReq(r) && n === lastAdmin)); });
+  if (!notes.length) th.appendChild(el('p', 'site-none', 'No messages yet.'));
+  box.appendChild(th);
+
+  // Status on its own - Open and In progress can change silently; the
+  // other two need words, so they go through the note box.
+  var tools = el('div', 'note-tools');
+  var sel = el('select', 'admin-select');
+  [['new', 'Open'], ['waiting', 'Waiting on customer'], ['in_progress', 'In progress'], ['done', 'Done']].forEach(function (pair) {
+    var o = el('option', null, pair[1]);
+    o.value = pair[0];
+    if (pair[0] === r.status || (r.status === 'declined' && pair[0] === 'done') || (r.status === 'accepted' && pair[0] === 'new')) o.selected = true;
+    sel.appendChild(o);
+  });
+  tools.appendChild(el('label', 'check', 'Status'));
+  tools.appendChild(sel);
+  box.appendChild(tools);
+
+  var noteBox = el('div', 'note-box');
+  var ta = el('textarea', 'notes-textarea');
+  ta.rows = 4;
+  ta.maxLength = 4000;
+  ta.placeholder = 'Write to ' + (cust.contact_name ? cust.contact_name.split(' ')[0] : 'them') + '. Plain words, no exclamation marks.';
+  noteBox.appendChild(ta);
+
+  var row2 = el('div', 'note-tools');
+  var fileLabel = el('label', 'attach-btn');
+  fileLabel.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.5l-8.5 8.5a5.5 5.5 0 0 1-7.8-7.8l9-9a3.5 3.5 0 0 1 5 5l-9 9a1.5 1.5 0 0 1-2.1-2.1l8.3-8.3"/></svg> Add photos';
+  var fileInput = document.createElement('input');
+  fileInput.type = 'file'; fileInput.multiple = true; fileInput.hidden = true;
+  fileInput.accept = 'image/png,image/jpeg,image/webp,application/pdf';
+  fileLabel.appendChild(fileInput);
+  var fileNote = el('span', 'hint', '');
+  fileInput.addEventListener('change', function () {
+    var files = Array.prototype.slice.call(fileInput.files || []);
+    if (files.length > ADMIN_MAX_FILES) { fileNote.textContent = 'Up to five.'; fileInput.value = ''; return; }
+    if (files.some(function (f) { return f.size > ADMIN_MAX_BYTES; })) { fileNote.textContent = 'Under 10 MB each.'; fileInput.value = ''; return; }
+    fileNote.textContent = files.length ? files.length + (files.length === 1 ? ' file' : ' files') : '';
+  });
+  row2.appendChild(fileLabel);
+  row2.appendChild(fileNote);
+
+  var priv = el('label', 'check');
+  var privBox = document.createElement('input');
+  privBox.type = 'checkbox';
+  priv.appendChild(privBox);
+  priv.appendChild(document.createTextNode('Private note (only you see it, no email)'));
+  row2.appendChild(priv);
+  noteBox.appendChild(row2);
+
+  var actions = el('div', 'note-actions');
+  var send = el('button', 'btn btn-primary', 'Send note');
+  send.type = 'button';
+  var sendDone = el('button', 'btn btn-ghost', 'Mark done and send note');
+  sendDone.type = 'button';
+  actions.appendChild(send);
+  actions.appendChild(sendDone);
+  noteBox.appendChild(actions);
+  box.appendChild(noteBox);
+  wrap.appendChild(box);
+
+  async function submitNote(markDone) {
+    var text = ta.value.trim();
+    if (!text) { say('Write the note first.', 'bad'); ta.focus(); return; }
+    var isPrivate = privBox.checked;
+    send.disabled = sendDone.disabled = true;
+    try {
+      var files = Array.prototype.slice.call(fileInput.files || []);
+      var paths = files.length ? await uploadNoteFiles(files, r.user_id, r.id) : [];
+      await api({
+        action: 'addRequestNote', requestId: r.id, body: text, isPrivate: isPrivate,
+        markDone: !!markDone && !isPrivate,
+        status: !isPrivate && !markDone && sel.value !== r.status ? sel.value : undefined,
+        attachmentPaths: paths
+      });
+      say(isPrivate ? 'Private note saved.' : markDone ? 'Done. They’ll get an email shortly.' : 'Sent. They’ll get an email shortly.', 'ok');
+      await reloadInbox();
+      await openThread(r.id);
+    } catch (err) {
+      say(err.message, 'bad');
+      send.disabled = sendDone.disabled = false;
+    }
+  }
+  send.addEventListener('click', function () { submitNote(false); });
+  sendDone.addEventListener('click', function () { submitNote(true); });
+
+  sel.addEventListener('change', async function () {
+    var target = sel.value;
+    if (target === 'waiting' || target === 'done') {
+      // A status alone tells them nothing - it goes out with the note.
+      if (!ta.value.trim()) {
+        say(target === 'done' ? 'Write them a closing note, then use “Mark done and send note”.'
+          : 'Write them the question, then Send note - it will go out as Waiting on customer.', 'bad');
+        ta.focus();
+        sel.value = r.status === 'declined' ? 'done' : (r.status === 'accepted' ? 'new' : r.status);
+        return;
+      }
+      submitNote(target === 'done');
+      return;
+    }
+    sel.disabled = true;
+    try {
+      await api({ action: 'setRequestState', requestId: r.id, status: target });
+      say('Updated.', 'ok');
+      await reloadInbox();
+      await openThread(r.id);
+    } catch (err) {
+      say(err.message, 'bad');
+      sel.value = r.status;
+      sel.disabled = false;
+    }
+  });
+}
+
+/* A link from an email lands on #r/<id>: open that thread straight away. */
+function openFromHash() {
+  var m = /^#r\/([\w-]{1,64})$/.exec(location.hash || '');
+  if (m && m[1] !== openRequestId) openThread(m[1]);
+}
+window.addEventListener('hashchange', openFromHash);
 
 /* Signed links straight to storage - generated once, server-side, in the
    list response, since our own session has no read access to a customer's
@@ -494,122 +885,6 @@ function attachmentLinks(r) {
     p.appendChild(a);
   });
   return p;
-}
-
-/* One item of the queue: the status picker every request gets, plus a
-   Charge card button that only appears once it is done, fell outside the
-   month's points, and nobody has charged it yet. */
-function queueItem(r) {
-  var owner = state.profiles.filter(function (p) { return p.id === r.user_id; })[0];
-  var li = el('li', 'queue-item');
-
-  var main = el('div', 'queue-main');
-  main.appendChild(el('p', 'queue-who', ownerLabel(owner)));
-  main.appendChild(el('p', 'queue-what', r.detail));
-  /* How long it has been waiting, not the date it landed - in a queue the
-     age is the thing that tells you what to pick up next. */
-  var meta = el('p', 'queue-meta',
-    kindName(r.kind) + ' · ' + planPriorityLabel(r.user_id)
-    + ' · ' + howLong(r.created_at));
-  main.appendChild(meta);
-
-  // The money flag, given its own pill so it cannot be skim-read past.
-  if (r.shortfallPoints > 0) {
-    main.appendChild(el('span', 'over-pill',
-      r.shortfallPoints + (r.shortfallPoints === 1 ? ' point' : ' points') + ' over allowance'));
-  }
-  var links = attachmentLinks(r);
-  if (links) main.appendChild(links);
-  li.appendChild(main);
-
-  var actions = el('div', 'queue-actions');
-  var sel = el('select', 'admin-select');
-  ['new', 'accepted', 'in_progress', 'done', 'declined'].forEach(function (s) {
-    var o = el('option', null, STATUS_NAME[s]);
-    o.value = s;
-    if (s === r.status) o.selected = true;
-    sel.appendChild(o);
-  });
-  sel.addEventListener('change', async function () {
-    var target = sel.value;
-    var payload = { action: 'setRequestStatus', requestId: r.id, status: target };
-
-    // Requests are included in the plan, so accepting one charges nothing -
-    // it just moves the work into the queue.
-
-    sel.disabled = true;
-    try {
-      var res = await api(payload);
-      r.status = target;
-      if (res.amount > 0) {
-        r.billed_at = new Date().toISOString();
-        r.billed_amount = res.amount;
-      }
-      say(res.amount > 0 ? 'Accepted — charged £' + (res.amount / 100).toFixed(0) + '.' : 'Updated.', 'ok');
-      render();
-    } catch (err) {
-      say(err.message, 'bad');
-      sel.value = r.status;
-    }
-    sel.disabled = false;
-  });
-  actions.appendChild(sel);
-
-  // Booked as one thing, turned out to be the other. Only offered before the
-  // job is finished - once billed or done, the price is settled. Whether it
-  // needs charging for is decided fresh next time it is accepted - not here.
-  if (r.kind !== 'info' && (r.status === 'new' || r.status === 'accepted' || r.status === 'in_progress')) {
-    var toKind = r.kind === 'feature' ? 'edit' : 'feature';
-    var reclass = el('button', 'linkish queue-reclass',
-      'Mark as ' + toKind + ' instead');
-    reclass.type = 'button';
-    reclass.addEventListener('click', async function () {
-      if (!confirm('Reclassify this as ' + (toKind === 'feature' ? 'a feature (3 points)' : 'an edit (1 point)') + '?')) return;
-      reclass.disabled = true;
-      try {
-        var res = await api({ action: 'reclassifyRequest', requestId: r.id, kind: toKind });
-        say(res.shortfall > 0
-          ? 'Reclassified — £' + (res.amount / 100).toFixed(0) + ' over allowance. '
-            + 'Back to Request - accept it again to charge or redeem for the new price.'
-          : 'Reclassified.', 'ok');
-        await load(); // kind can move it between the Edit/Feature lists, so reload rather than patch in place
-      } catch (err) {
-        say(err.message, 'bad');
-        reclass.disabled = false;
-      }
-    });
-    actions.appendChild(reclass);
-  }
-
-  if (r.status === 'done' && r.shortfallPoints > 0) {
-    if (r.billed_at) {
-      actions.appendChild(el('p', 'queue-billed', 'Charged £' + (r.billed_amount / 100).toFixed(0) + ' · ' + when(r.billed_at)));
-    } else {
-      var charge = el('button', 'btn btn-ghost admin-charge',
-        'Charge card — £' + (r.shortfallPoints * POINT_PRICE / 100).toFixed(0));
-      charge.type = 'button';
-      charge.addEventListener('click', async function () {
-        charge.disabled = true;
-        var was = charge.textContent;
-        charge.textContent = 'Charging…';
-        try {
-          var res = await api({ action: 'chargeRequest', requestId: r.id });
-          r.billed_at = new Date().toISOString();
-          r.billed_amount = res.amount;
-          say('Charged.', 'ok');
-          render();
-        } catch (err) {
-          say(err.message, 'bad');
-          charge.disabled = false;
-          charge.textContent = was;
-        }
-      });
-      actions.appendChild(charge);
-    }
-  }
-
-  li.appendChild(actions);
-  return li;
 }
 
 var POINT_PRICE = 4000; // pence per point — £40 either way in api/_plans.js REQUEST_COST

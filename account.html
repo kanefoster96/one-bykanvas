@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=64">
+<link rel="stylesheet" href="styles.css?v=65">
 </head>
 <body class="auth-body">
 
@@ -16,6 +16,10 @@
     <a class="logo" href="/" aria-label="Kanvas One — home">one.</a>
     <!-- The bell, shown once the account has loaded; the pill that
          admin-pill.js appends lands after it. -->
+    <a class="nav-icon" id="navReq" href="/requests.html" hidden aria-label="Requests">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg>
+      <span class="nav-count" id="navReqCount" hidden>0</span>
+    </a>
     <a class="nav-icon" id="navBell" href="/notifications.html" hidden aria-label="Notifications">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg>
       <span class="nav-count" id="navBellCount" hidden>0</span>
@@ -89,53 +93,10 @@
     <ul class="feature-list" id="featureList" hidden></ul>
 
     <div class="req-launch" id="reqLaunch">
-      <button class="btn btn-ghost req-toggle" id="reqEditBtn" type="button" aria-expanded="false">Edit my site</button>
-      <button class="btn btn-ghost req-toggle" id="reqFeatureBtn" type="button" aria-expanded="false">Add a feature</button>
+      <a class="btn btn-ghost req-toggle" href="/requests.html#new/edit">Edit my site</a>
+      <a class="btn btn-ghost req-toggle" href="/requests.html#new/feature">Add a feature</a>
     </div>
-
-    <form class="req-form" id="reqForm" novalidate hidden>
-      <p class="req-price" id="reqPrice"></p>
-
-      <!-- Saved templates for whichever kind is open; the idea library
-           joins them when the feature toggle is the open one. -->
-      <div class="req-tpl-group" id="tplGroupEdit" hidden>
-        <h3 class="req-list-title">Edits we&rsquo;ve done before</h3>
-        <div class="req-tpl-list" id="tplListEdit"></div>
-      </div>
-      <div class="req-tpl-group" id="tplGroupFeature" hidden>
-        <h3 class="req-list-title">Features we can add</h3>
-        <div class="req-tpl-list" id="tplListFeature"></div>
-      </div>
-      <div class="use-suggest" id="reqSuggest" hidden>
-        <p class="use-suggest-title">Popular features &mdash; tap to pick, or write your own</p>
-        <div class="use-chips" id="reqChips"></div>
-      </div>
-
-      <!-- What they've picked so far - each pill becomes its own request,
-           so each feature can be tracked to In build and Live on its own. -->
-      <div class="req-picked" id="reqPicked" hidden></div>
-
-      <div class="field full">
-        <label for="reqDetail" id="reqDetailLabel">What would you like?</label>
-        <textarea id="reqDetail" rows="4" maxlength="4000" placeholder="Swap the photo on the homepage for the new shopfront one…"></textarea>
-      </div>
-      <div class="field full">
-        <label for="reqFiles">Screenshots (optional)</label>
-        <input id="reqFiles" type="file" accept="image/png,image/jpeg,image/webp" multiple>
-        <p class="hint">Up to 6, 5&nbsp;MB each &mdash; the part to change, or a feature from another site to copy.</p>
-        <p class="note" id="reqFilesNote" role="status" aria-live="polite"></p>
-      </div>
-      <div class="req-send">
-        <button class="btn btn-primary" id="reqBtn" type="submit">Send request</button>
-        <p class="note" id="reqNote" role="status" aria-live="polite"></p>
-      </div>
-      <p class="hint">Sending this doesn&rsquo;t charge anything &mdash; we look it over and accept it first.</p>
-    </form>
-
-    <div class="req-list" id="reqList" hidden>
-      <h3 class="req-list-title">Edits in progress</h3>
-      <ul id="reqItemsEdit"></ul>
-    </div>
+    <p class="hint req-launch-hint">Anything you ask for lands in <a href="/requests.html">Requests</a>, where we reply to you.</p>
   </section>
 
   <!-- Billing -->
@@ -294,8 +255,8 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="feature-ideas.js?v=2"></script>
-<script src="account.js?v=32"></script>
+<script src="requests-badge.js?v=1"></script>
+<script src="account.js?v=33"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
