@@ -246,7 +246,7 @@ ${b.rich ? `${b.promise ? `    <div class="promise reveal">
       <p class="promise-name">${b.promise.name}</p>
       <ul class="promise-lines">${b.promise.lines.map((l) => `<li>${l}</li>`).join('')}</ul>
     </div>
-` : ''}    <p class="micro reveal price-line">From &pound;50 a month. No setup fees. Cancel anytime.</p>
+` : ''}    <p class="micro reveal price-line">From &pound;25 a month. No setup fees. Cancel anytime.</p>
 ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join('\n')}
     <div class="cta-row reveal">
       <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
@@ -256,7 +256,7 @@ ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join
       <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free</a>
       <a class="btn btn-ghost" href="/get-started.html">Get started &rsaquo;</a>
     </div>
-    <p class="micro reveal">From &pound;50 a month. No setup fees. Cancel anytime. <a href="/plans.html">See all plans</a></p>
+    <p class="micro reveal">From &pound;25 a month. No setup fees. Cancel anytime. <a href="/plans.html">See all plans</a></p>
     <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email us</a> and a real person will answer &mdash; usually the same working day.</p>
 `}    <nav class="ind-links reveal" aria-label="Websites for other business types">
       <span>We also build for:</span>${linkStrip(b.slug)}

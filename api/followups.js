@@ -61,7 +61,7 @@ function whatDidYouThink(lead, site) {
         'Be honest &mdash; did it look like you? If something is off, just reply '
           + 'and say so. Changes are free, and we&rsquo;d rather get it right than guess.',
         'And if you liked it, it can be your real site this week: live on your own '
-          + 'web address, looked after for you, from &pound;50 a month with no setup fees.'
+          + 'web address, looked after for you, from &pound;25 a month with no setup fees.'
       ],
       offer: offerBox(site),
       ctaText: 'Make it my real site',
