@@ -16,7 +16,7 @@
  *   pricingExtra  the price anchored to one job they already do.
  *   faq       the objections we hear, answered straight.
  *
- * Prices and claims here are the real ones: £50 a month, no VAT, live in
+ * Prices and claims here are the real ones: from £25 a month, no VAT, live in
  * 10 days, cancel anytime, the domain is theirs. Nothing is promised that
  * we do not do.
  */
@@ -79,10 +79,10 @@ module.exports = [
     title: 'Trades',
     h1: 'Websites for trades that win the next job.',
     lede: 'Found on Google in the towns you cover. Callouts booked and paid through your site. Reviews asked for after every job. Built for you, live in 10 days.',
-    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;50 a month, no VAT.',
+    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. You send photos from your phone. We do the rest.',
-    desc: 'Websites for plumbers, electricians, builders and roofers. Found on Google locally, callouts booked and paid online, reviews asked for automatically. Built for you, live in 10 days, from £50 a month, no VAT.',
+    desc: 'Websites for plumbers, electricians, builders and roofers. Found on Google locally, callouts booked and paid online, reviews asked for automatically. Built for you, live in 10 days, from £25 a month, no VAT.',
     features: features({
       live: 'Click to call and WhatsApp on every page, and your trade badges where people look for them.',
       google: 'A page for every service and every town you cover, written for the searches people actually type.',
@@ -99,7 +99,7 @@ module.exports = [
     stepsLine: 'Unlimited edits included. Message us from your phone and it&rsquo;s changed.',
     maxPitch: { heading: MAX_HEADING, text: 'Google keeps changing and your competitors keep adding pages. The trades who keep working on their site are the ones who stay on page one for &ldquo;electrician Cramlington&rdquo;. Business gets you there at launch. Max keeps you there, with new pages, reviews and updates every month.' },
     promise: PROMISE,
-    pricingExtra: ['One callout a month covers it. Less than &pound;12 a week, no VAT.'],
+    pricingExtra: ['Business, with everything above, is &pound;50. One callout a month covers it. Less than &pound;12 a week, no VAT.'],
     faq: [
       ['I get all my work from word of mouth. Why do I need a site?', 'Word of mouth ends with a Google search. When someone is given your name, they look you up before they ring. If there is nothing there, or an out of date Facebook page, some of them ring the next name on the list. Your site is where the recommendation lands.'],
       ['I&rsquo;ve already got a Facebook page.', 'Keep it. Facebook shows your posts to a fraction of your followers and does not appear when someone searches &ldquo;plumber Blyth&rdquo;. Your site does, and it takes the booking while you are on a job.'],
@@ -118,10 +118,10 @@ module.exports = [
     title: 'Salons',
     h1: 'Websites for salons that fill the diary.',
     lede: 'Found by clients nearby on Google. Appointments booked and paid through your site, day or night. Reviews asked for after every visit. Built for you, live in 10 days.',
-    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;50 a month, no VAT.',
+    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Send your price list and your best photos. We do the rest.',
-    desc: 'Websites for hair and beauty salons. Found on Google nearby, appointments booked and paid online, reviews asked for automatically. Built for you, live in 10 days, from £50 a month, no VAT.',
+    desc: 'Websites for hair and beauty salons. Found on Google nearby, appointments booked and paid online, reviews asked for automatically. Built for you, live in 10 days, from £25 a month, no VAT.',
     features: features({
       live: 'Your treatment menu and prices, your stylists, and the photos winning you clients on Instagram.',
       google: 'A page for every treatment, written for what people search: &ldquo;balayage Morpeth&rdquo;, &ldquo;gel nails near me&rdquo;.',
@@ -138,7 +138,7 @@ module.exports = [
     stepsLine: 'Unlimited edits included. Message us from your phone and it&rsquo;s changed.',
     maxPitch: { heading: MAX_HEADING, text: 'Every salon in town is on Google. The ones that keep adding pages, reviews and photos are the ones that stay top for &ldquo;hairdresser near me&rdquo;. Business gets you there at launch. Max keeps you there, month after month.' },
     promise: PROMISE,
-    pricingExtra: ['One colour appointment a month covers it. Less than &pound;12 a week, no VAT.'],
+    pricingExtra: ['Business, with everything above, is &pound;50. One colour appointment a month covers it. Less than &pound;12 a week, no VAT.'],
     faq: [
       ['I already take bookings on Instagram and Facebook.', 'Keep them. Instagram shows your posts to a fraction of your followers and does not appear when someone searches &ldquo;hairdresser near me&rdquo;. Your site does, and it takes the booking while you are with a client.'],
       ['I use a booking app already. Will this replace it?', 'It can, or the site can link to the one you have. Either way, your clients book from your own site, where Google sends them.'],
@@ -157,10 +157,10 @@ module.exports = [
     title: 'Barbers',
     h1: 'Websites for barbers that keep the chair full.',
     lede: 'Found on Google Maps by people looking for a barber right now. A chair booked and paid through your site. Reviews asked for after every cut. Built for you, live in 10 days.',
-    heroNote: 'See your free example page first. If you don&rsquo;t rate it, you owe nothing. From &pound;50 a month, no VAT.',
+    heroNote: 'See your free example page first. If you don&rsquo;t rate it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Send your price list, your hours and a dozen photos. We do the rest.',
-    desc: 'Websites for barbershops. Found on Google Maps, a chair booked and paid online, reviews asked for automatically. Built for you, live in 10 days, from £50 a month, no VAT.',
+    desc: 'Websites for barbershops. Found on Google Maps, a chair booked and paid online, reviews asked for automatically. Built for you, live in 10 days, from £25 a month, no VAT.',
     features: features({
       live: 'Your price board, your hours, your barbers, and the fades and beards from your Instagram.',
       google: 'Set up so &ldquo;barber near me&rdquo; finds your shop first, with your hours and prices right there in the result.',
@@ -177,7 +177,7 @@ module.exports = [
     stepsLine: 'Unlimited edits included. Message us from your phone and it&rsquo;s changed.',
     maxPitch: { heading: MAX_HEADING, text: 'There are six barbers within a mile of you and all of them are on Google. The one that keeps adding reviews, photos and pages stays top for &ldquo;barber near me&rdquo;. Business gets you there at launch. Max keeps you there.' },
     promise: PROMISE,
-    pricingExtra: ['Three cuts a month covers it. Less than &pound;12 a week, no VAT.'],
+    pricingExtra: ['Business, with everything above, is &pound;50. Three cuts a month covers it. Less than &pound;12 a week, no VAT.'],
     faq: [
       ['I&rsquo;m walk-in only. Do I need bookings?', 'No. Plenty of shops keep it walk-in and use the site for hours, prices, photos and Google. Bookings are there if you want them.'],
       ['I&rsquo;ve got Instagram. Isn&rsquo;t that enough?', 'Instagram is where your work gets seen. Google is where people looking for a barber right now find one. The site gives you both: your feed on the page and your shop in the map results.'],
@@ -196,10 +196,10 @@ module.exports = [
     title: 'Coffee shops',
     h1: 'Websites for coffee shops that bring people back.',
     lede: '&ldquo;Are they open, what&rsquo;s on?&rdquo; answered on Google before they ask. Orders paid through your site. Reviews asked for automatically. Built for you, live in 10 days.',
-    heroNote: 'See your free example page first. If it&rsquo;s not your cup, you owe nothing. From &pound;50 a month, no VAT.',
+    heroNote: 'See your free example page first. If it&rsquo;s not your cup, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Send your menu and some photos. We do the rest.',
-    desc: 'Websites for coffee shops. Found on Google nearby, menu and hours always right, orders paid online, reviews asked for automatically. Built for you, live in 10 days, from £50 a month, no VAT.',
+    desc: 'Websites for coffee shops. Found on Google nearby, menu and hours always right, orders paid online, reviews asked for automatically. Built for you, live in 10 days, from £25 a month, no VAT.',
     features: features({
       live: 'Your menu, your hours, holiday hours changed once and right everywhere, and the photos that sell the room.',
       google: 'Set up so &ldquo;coffee near me&rdquo; finds you first, with your hours and photos in the result.',
@@ -216,7 +216,7 @@ module.exports = [
     stepsLine: 'Unlimited edits included. Message us from your phone and it&rsquo;s changed.',
     maxPitch: { heading: MAX_HEADING, text: 'Every visitor to town searches &ldquo;coffee near me&rdquo; and picks from the top three. Business gets you into the running at launch. Max keeps adding reviews, photos and pages so you stay there through every season.' },
     promise: PROMISE,
-    pricingExtra: ['Fifteen flat whites a month covers it. Less than &pound;12 a week, no VAT.'],
+    pricingExtra: ['Business, with everything above, is &pound;50. Fifteen flat whites a month covers it. Less than &pound;12 a week, no VAT.'],
     faq: [
       ['People find us on Instagram. Do we need a site?', 'Your regulars do. The people who have just parked up and typed &ldquo;coffee near me&rdquo; don&rsquo;t. Google shows them a site with hours, a menu and reviews. The site puts you in that list, with your Instagram feed on it.'],
       ['Can I change the menu myself?', 'Yes, from your dashboard, or message us and we do it.'],
@@ -235,10 +235,10 @@ module.exports = [
     title: 'Gyms &amp; personal trainers',
     h1: 'Websites for gyms that sign members up.',
     lede: 'Found on Google by people looking for a gym or a trainer nearby. Memberships and sessions paid through your site. Reviews asked for automatically. Built for you, live in 10 days.',
-    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;50 a month, no VAT.',
+    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Tell us your classes and prices. We do the rest.',
-    desc: 'Websites for gyms and personal trainers. Found on Google nearby, memberships and sessions paid online, reviews asked for automatically. Built for you, live in 10 days, from £50 a month, no VAT.',
+    desc: 'Websites for gyms and personal trainers. Found on Google nearby, memberships and sessions paid online, reviews asked for automatically. Built for you, live in 10 days, from £25 a month, no VAT.',
     features: features({
       live: 'Your classes, your prices, your trainers, and the before and after photos that sell the first session.',
       google: 'Set up so &ldquo;gym near me&rdquo; and &ldquo;personal trainer near me&rdquo; find you first, with your reviews in the result.',
@@ -255,7 +255,7 @@ module.exports = [
     stepsLine: 'Unlimited edits included. Message us from your phone and it&rsquo;s changed.',
     maxPitch: { heading: MAX_HEADING, text: 'January is decided in December. The gyms that keep adding pages, reviews and results are the ones people find when the resolutions start. Business gets you ranking at launch. Max keeps you climbing every month.' },
     promise: PROMISE,
-    pricingExtra: ['One membership a month covers it. Less than &pound;12 a week, no VAT.'],
+    pricingExtra: ['Business, with everything above, is &pound;50. One membership a month covers it. Less than &pound;12 a week, no VAT.'],
     faq: [
       ['I use a gym app for memberships already.', 'Keep it if it works. The site can link to it, or take memberships itself with no per-member fees. Either way, new members find you on Google and sign up from your own site.'],
       ['I&rsquo;m a personal trainer, not a gym. Is this for me?', 'Yes. Sessions booked and paid online, a page that ranks for &ldquo;personal trainer near me&rdquo;, and your clients in one place. Same price.'],
@@ -274,10 +274,10 @@ module.exports = [
     title: 'Cleaners',
     h1: 'Websites for cleaners that win the regular round.',
     lede: 'Found on Google in the areas you cover. Cleans booked and paid through your site. Reviews asked for after every visit, where nervous first timers look. Built for you, live in 10 days.',
-    heroNote: 'See your free example page first. If it&rsquo;s not spotless, you owe nothing. From &pound;50 a month, no VAT.',
+    heroNote: 'See your free example page first. If it&rsquo;s not spotless, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Tell us your services, prices and areas. We do the rest.',
-    desc: 'Websites for cleaning businesses. Found on Google in your areas, cleans booked and paid online, reviews asked for automatically. Built for you, live in 10 days, from £50 a month, no VAT.',
+    desc: 'Websites for cleaning businesses. Found on Google in your areas, cleans booked and paid online, reviews asked for automatically. Built for you, live in 10 days, from £25 a month, no VAT.',
     features: features({
       live: 'Your services and prices, the areas you cover, insured and DBS checked said clearly, and before and after photos.',
       google: 'A page for every service and every town on your round, written for &ldquo;cleaner Ashington&rdquo; and &ldquo;end of tenancy clean near me&rdquo;.',
@@ -294,7 +294,7 @@ module.exports = [
     stepsLine: 'Unlimited edits included. Message us from your phone and it&rsquo;s changed.',
     maxPitch: { heading: MAX_HEADING, text: 'The cleaners at the top for &ldquo;cleaner near me&rdquo; are not the best cleaners. They are the ones whose sites keep growing: new areas, new reviews, new pages. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
-    pricingExtra: ['One regular clean a month covers it. Less than &pound;12 a week, no VAT.'],
+    pricingExtra: ['Business, with everything above, is &pound;50. One regular clean a month covers it. Less than &pound;12 a week, no VAT.'],
     faq: [
       ['My work comes from Facebook groups and recommendations.', 'Keep doing that. When someone is recommended you, they look you up before they message. A site with reviews, insurance and clear prices turns that look into a booking. A Facebook page with three photos often doesn&rsquo;t.'],
       ['Can I list prices without giving a fixed quote?', 'Yes. A price guide by property size, with a form for the exact quote.'],
@@ -313,10 +313,10 @@ module.exports = [
     title: 'Tutors',
     h1: 'Websites for tutors that parents choose.',
     lede: 'Found on Google by parents searching for your subject in your town. Lessons booked and paid through your site. Reviews asked for at the end of term. Built for you, live in 10 days.',
-    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;50 a month, no VAT.',
+    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Tell us your subjects, levels and rates. We do the rest.',
-    desc: 'Websites for tutors and tuition centres. Found on Google locally, lessons booked and paid online, reviews asked for automatically. Built for you, live in 10 days, from £50 a month, no VAT.',
+    desc: 'Websites for tutors and tuition centres. Found on Google locally, lessons booked and paid online, reviews asked for automatically. Built for you, live in 10 days, from £25 a month, no VAT.',
     features: features({
       live: 'Your subjects and levels, your rates, DBS and qualifications where parents check, and your results.',
       google: 'A page per subject and level, so &ldquo;maths tutor near me&rdquo; and &ldquo;11+ tutor Gosforth&rdquo; find you first.',
@@ -333,7 +333,7 @@ module.exports = [
     stepsLine: 'Unlimited edits included. Message us from your phone and it&rsquo;s changed.',
     maxPitch: { heading: MAX_HEADING, text: 'September and January are decided on Google. The tutors who keep adding subject pages, reviews and results are the ones parents find first. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
-    pricingExtra: ['One lesson a month covers it. Less than &pound;12 a week, no VAT.'],
+    pricingExtra: ['Business, with everything above, is &pound;50. One lesson a month covers it. Less than &pound;12 a week, no VAT.'],
     faq: [
       ['I&rsquo;m on a tutoring directory already.', 'Keep it. Directories rank you next to fifty others and take a cut. Your own site ranks for your subject in your town, and every enquiry is yours.'],
       ['I&rsquo;m fully booked. Why would I need a site?', 'To stay that way. A waiting list fills September in July, and a page that ranks means you choose the students rather than the other way round.'],
@@ -352,10 +352,10 @@ module.exports = [
     title: 'Photographers',
     h1: 'Websites for photographers that book the shoot.',
     lede: 'Found on Google for the kind of photography they are searching for. Shoots booked and deposits paid through your site. Reviews asked for after every gallery. Built for you, live in 10 days.',
-    heroNote: 'See your free example page first. If it&rsquo;s not picture perfect, you owe nothing. From &pound;50 a month, no VAT.',
+    heroNote: 'See your free example page first. If it&rsquo;s not picture perfect, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Send your best shots and your packages. We do the rest.',
-    desc: 'Websites for photographers. Found on Google for your genre, shoots booked and deposits paid online, reviews asked for automatically. Built for you, live in 10 days, from £50 a month, no VAT.',
+    desc: 'Websites for photographers. Found on Google for your genre, shoots booked and deposits paid online, reviews asked for automatically. Built for you, live in 10 days, from £25 a month, no VAT.',
     features: features({
       live: 'Galleries that do your work justice, your packages and prices, and a page for each kind of shoot.',
       google: 'A page per genre, so &ldquo;wedding photographer near me&rdquo; finds the wedding work and &ldquo;newborn photographer Newcastle&rdquo; finds the newborns.',
@@ -372,7 +372,7 @@ module.exports = [
     stepsLine: 'Unlimited edits included. Message us from your phone and it&rsquo;s changed.',
     maxPitch: { heading: MAX_HEADING, text: 'Couples book photographers a year out, from a Google search they do once. The photographers who keep adding galleries, venue pages and reviews are the ones in that search. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
-    pricingExtra: ['A fraction of one booking covers the year. Less than &pound;12 a week, no VAT.'],
+    pricingExtra: ['Business, with everything above, is &pound;50. A fraction of one booking covers the year. Less than &pound;12 a week, no VAT.'],
     faq: [
       ['My Instagram is my portfolio. Do I need a site?', 'Instagram shows your work to people who already follow you. Google shows it to the couple searching &ldquo;wedding photographer&rdquo; in your town this week. The site gives you both, with your feed on it.'],
       ['I already have a website on a portfolio platform.', 'Then you know the pain: templates, upsells, nothing ranking. This one is built around your work, ranks for your genres, and someone else keeps it updated.'],
@@ -391,10 +391,10 @@ module.exports = [
     title: 'Gardeners &amp; landscapers',
     h1: 'Websites for gardeners that land the bigger jobs.',
     lede: 'Found on Google in the villages you cover. Jobs quoted, booked and paid through your site. Reviews asked for after every job. Built for you, live in 10 days.',
-    heroNote: 'See your free example page first. If it doesn&rsquo;t grow on you, you owe nothing. From &pound;50 a month, no VAT.',
+    heroNote: 'See your free example page first. If it doesn&rsquo;t grow on you, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Send job photos and a list of services. We do the rest.',
-    desc: 'Websites for gardeners and landscapers. Found on Google in your areas, jobs quoted and paid online, reviews asked for automatically. Built for you, live in 10 days, from £50 a month, no VAT.',
+    desc: 'Websites for gardeners and landscapers. Found on Google in your areas, jobs quoted and paid online, reviews asked for automatically. Built for you, live in 10 days, from £25 a month, no VAT.',
     features: features({
       live: 'Your services and prices, the areas you cover, and finished gardens shown start to finish.',
       google: 'A page for every service and every village on your patch, written for &ldquo;landscaper Ponteland&rdquo; and &ldquo;hedge cutting near me&rdquo;.',
@@ -411,7 +411,7 @@ module.exports = [
     stepsLine: 'Unlimited edits included. Message us from your phone and it&rsquo;s changed.',
     maxPitch: { heading: MAX_HEADING, text: 'Spring is decided in February, when everyone searches &ldquo;landscaper near me&rdquo; at once. The gardeners who keep adding projects, pages and reviews are the ones that search finds. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
-    pricingExtra: ['One lawn cut a week covers it. Less than &pound;12 a week, no VAT.'],
+    pricingExtra: ['Business, with everything above, is &pound;50. One lawn cut a week covers it. Less than &pound;12 a week, no VAT.'],
     faq: [
       ['I get plenty of work from Facebook and word of mouth.', 'The small jobs, yes. The patio and the makeover are researched on Google first, and the person doing the researching picks from sites with galleries and reviews. That is the job the site wins you.'],
       ['I&rsquo;m out on jobs all day. Who updates it?', 'We do. Send the photos from your phone and a line about the job, and they are on the site. Unlimited changes are included.'],

@@ -203,7 +203,7 @@ module.exports = async function handler(req, res) {
           perks: perks,
           ctaText: 'See the plans',
           ctaHref: `${site}/plans.html`,
-          ctaNote: 'From £50 a month. Cancel anytime.',
+          ctaNote: 'From £25 a month. Cancel anytime.',
           footer: 'You&rsquo;re getting this because you asked for a free example at '
                 + 'kanvas.one. No account has been created and nothing has been charged.',
           footerLinks: standardFooter(site)
