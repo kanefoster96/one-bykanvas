@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://kanvas.one/plans">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=68">
+<link rel="stylesheet" href="styles.css?v=69">
 </head>
 <body>
 
@@ -226,29 +226,36 @@
   <div class="wrap center">
     <h2 class="reveal">Side by side.</h2>
   </div>
+  <!-- On a phone the table is one plan at a time: these pills pick which.
+       Business is the one lit by default, the same as everywhere else. -->
+  <div class="wrap center cmp-tabs reveal" role="tablist" aria-label="Pick a plan to compare">
+    <button type="button" class="cmp-tab" data-col="2" role="tab" aria-selected="false">Starter <span>&pound;25</span></button>
+    <button type="button" class="cmp-tab is-on" data-col="3" role="tab" aria-selected="true">Business <span>&pound;50</span></button>
+    <button type="button" class="cmp-tab" data-col="4" role="tab" aria-selected="false">Max <span>&pound;250</span></button>
+  </div>
   <div class="wrap cmp-wrap reveal">
-    <table class="cmp">
+    <table class="cmp show-3">
       <caption class="sr-only">Comparison of the Starter, Business and Max plans</caption>
       <thead>
-        <tr><td></td><th scope="col">Starter<span>£25</span></th><th scope="col">Business<span>£50</span></th><th scope="col">Max<span>£250</span></th></tr>
+        <tr><td></td><th scope="col">Starter<span>£25 a month</span></th><th scope="col" class="cmp-hot">Business<span>£50 a month</span><em>Most popular</em></th><th scope="col">Max<span>£250 a month</span></th></tr>
       </thead>
       <tbody>
-        <tr><th scope="row">Website built and launched</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
-        <tr><th scope="row">Online within 10 days</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
-        <tr><th scope="row">Setup fee</th><td><span class="free">£0</span></td><td><span class="free">£0</span></td><td><span class="free">£0</span></td></tr>
-        <tr><th scope="row">Your own web address</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
-        <tr><th scope="row">Hosting and security</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
-        <tr><th scope="row">Every feature you ask for in the build</th><td>The essentials</td><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
-        <tr><th scope="row">Edit your own menus, prices and hours</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
-        <tr><th scope="row">Support from a real person</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
-        <tr><th scope="row">Edits and new features after launch</th><td>One change a month</td><td>Unlimited</td><td>Unlimited</td></tr>
-        <tr><th scope="row">Your place in the queue</th><td>In turn</td><td>In turn</td><td>First</td></tr>
-        <tr><th scope="row">Business email at your own address</th><td><span class="tick-n" aria-label="Not included">&mdash;</span></td><td><span class="tick-n" aria-label="Not included">&mdash;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
-        <tr><th scope="row">SEO improvements every month</th><td><span class="tick-n" aria-label="Not included">&mdash;</span></td><td><span class="tick-n" aria-label="Not included">&mdash;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
+        <tr><th scope="row">Website built and launched</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td class="cmp-hot"><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
+        <tr><th scope="row">Online within 10 days</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td class="cmp-hot"><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
+        <tr><th scope="row">Setup fee</th><td><span class="free">£0</span></td><td class="cmp-hot"><span class="free">£0</span></td><td><span class="free">£0</span></td></tr>
+        <tr><th scope="row">Your own web address</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td class="cmp-hot"><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
+        <tr><th scope="row">Hosting and security</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td class="cmp-hot"><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
+        <tr><th scope="row">Every feature you ask for in the build</th><td>The essentials</td><td class="cmp-hot"><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
+        <tr><th scope="row">Edit your own menus, prices and hours</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td class="cmp-hot"><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
+        <tr><th scope="row">Support from a real person</th><td><span class="tick-y" aria-label="Included">&#10003;</span></td><td class="cmp-hot"><span class="tick-y" aria-label="Included">&#10003;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
+        <tr><th scope="row">Edits and new features after launch</th><td>One change a month</td><td class="cmp-hot">Unlimited</td><td>Unlimited</td></tr>
+        <tr><th scope="row">Your place in the queue</th><td>In turn</td><td class="cmp-hot">In turn</td><td>First</td></tr>
+        <tr><th scope="row">Business email at your own address</th><td><span class="tick-n" aria-label="Not included">&mdash;</span></td><td class="cmp-hot"><span class="tick-n" aria-label="Not included">&mdash;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
+        <tr><th scope="row">SEO improvements every month</th><td><span class="tick-n" aria-label="Not included">&mdash;</span></td><td class="cmp-hot"><span class="tick-n" aria-label="Not included">&mdash;</span></td><td><span class="tick-y" aria-label="Included">&#10003;</span></td></tr>
       </tbody>
     </table>
   </div>
-  <p class="wrap center micro reveal">Change plan any time &mdash; up or down &mdash; from your next monthly payment.</p>
+  <p class="wrap center micro reveal">Change plan any time, up or down. Your site comes with you.</p>
 </section>
 
 <section class="section app">
@@ -327,7 +334,7 @@
 <script src="consent.js?v=3"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="script.js?v=25"></script>
+<script src="script.js?v=26"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
