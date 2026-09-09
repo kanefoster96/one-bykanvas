@@ -12,7 +12,7 @@ const { html: emailHtml, esc, standardFooter } = require('./_email_template.js')
 const { PLANS } = require('./_plans.js');
 const { notify, notifyAdmin } = require('./_notify.js');
 
-const PLAN_NAME = { business: 'Business', pro: 'Pro', max: 'Max' }; // must match admin.js/account.js
+const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' }; // must match admin.js/account.js
 
 // Keep Vercel from parsing the body so the signature can be verified.
 module.exports.config = { api: { bodyParser: false } };
@@ -251,6 +251,7 @@ module.exports = async function handler(req, res) {
     const planName = PLAN_NAME[patch.active_plan] || 'your';
     const plan = PLANS[patch.active_plan];
     const QUEUE_LINE = {
+      starter: 'Once a month, by email',
       business: 'Unlimited, done in turn',
       pro: 'Unlimited, with priority',
       max: 'Unlimited, top priority'

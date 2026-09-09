@@ -23,7 +23,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { missingEnv } = require('./_env.js');
 const { PLANS } = require('./_plans.js');
 
-const ORDER = ['business', 'pro', 'max'];
+const ORDER = ['starter', 'business', 'pro', 'max'];
 
 /* The new price keeps the customer's existing billing interval: an annual
    subscriber moving Business -> Max stays annual, and Stripe prorates

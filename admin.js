@@ -15,8 +15,8 @@ var loading = document.getElementById('loading');
 var app     = document.getElementById('app');
 var note    = document.getElementById('adminNote');
 
-var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
-var PLAN_PRICE  = { business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
+var PLAN_NAME   = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' };
+var PLAN_PRICE  = { starter: 2500, business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
 var STATUS_NAME = { new: 'Open', accepted: 'Open', waiting: 'Waiting on customer', in_progress: 'In progress', done: 'Done', declined: 'Done' };
 /* info is a business-details change the customer made themselves - free, and
    raised by api/business-updated.js rather than asked for. */
@@ -204,13 +204,13 @@ function openCountFor(userId) {
 }
 
 /* How each plan's requests are treated - the thing the plan actually buys. */
-var PLAN_QUEUE = { business: 'in turn', pro: 'priority', max: 'top priority' };
+var PLAN_QUEUE = { starter: 'monthly, by email', business: 'in turn', pro: 'priority', max: 'top priority' };
 
 /* Queue rank for sorting: lower goes first. */
 function planRankFor(userId) {
   var p = state.profiles.filter(function (x) { return x.id === userId; })[0];
-  var order = { max: 0, pro: 1, business: 2 };
-  return p && order[p.active_plan] !== undefined ? order[p.active_plan] : 3;
+  var order = { max: 0, pro: 1, business: 2, starter: 3 };
+  return p && order[p.active_plan] !== undefined ? order[p.active_plan] : 4;
 }
 
 function planPriorityLabel(userId) {
@@ -743,6 +743,14 @@ function renderThread(wrap) {
   custLine.appendChild(settings);
   custLine.appendChild(el('span', null, kindName(r.kind) + ' · asked ' + agoShort(r.created_at)));
   box.appendChild(custLine);
+  /* The upsell moment: a Starter customer asking for a Business thing.
+     Said here, where the reply gets written, rather than remembered. */
+  if (cust.active_plan === 'starter') {
+    var up = el('p', 'starter-note');
+    up.appendChild(el('strong', null, 'Starter customer. '));
+    up.appendChild(document.createTextNode('Forms, chat, bookings, customer records and automated emails are Business things. If this asks for one, offer the switch: same site plus the feature, £25 more a month.'));
+    box.appendChild(up);
+  }
 
   // The chat.
   var th = el('div', 'thread');
@@ -2511,7 +2519,7 @@ function renderTemplatesSection() {
  */
 var AUDIENCE_LABEL = {
   all: 'Everyone', customers: 'Paying customers', contacts: 'Contacts (no plan yet)',
-  business: 'Business plan', pro: 'Pro plan', max: 'Max plan'
+  starter: 'Starter plan', business: 'Business plan', pro: 'Pro plan', max: 'Max plan'
 };
 var bcImageUrl = null;
 

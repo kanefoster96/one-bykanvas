@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=66">
+<link rel="stylesheet" href="styles.css?v=67">
 </head>
 <body class="auth-body">
 
@@ -190,11 +190,11 @@
         </div>
 
         <div class="pick" id="pick">
-          <label class="pick-row is-on" data-plan="max">
-            <input type="radio" name="plan" value="max" checked>
+          <label class="pick-row" data-plan="max">
+            <input type="radio" name="plan" value="max">
             <span class="pick-main">
               <span class="pick-head"><b>Max</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
-              <span class="pick-note"><b class="pick-flag">Recommended</b>Growth mode &mdash; improved monthly, without you asking.</span>
+              <span class="pick-note">Growth mode &mdash; improved monthly, without you asking.</span>
             </span>
           </label>
           <div class="pick-feats" data-plan="max">
@@ -206,11 +206,11 @@
             </ul>
           </div>
 
-          <label class="pick-row" data-plan="business">
-            <input type="radio" name="plan" value="business">
+          <label class="pick-row is-on" data-plan="business">
+            <input type="radio" name="plan" value="business" checked>
             <span class="pick-main">
               <span class="pick-head"><b>Business</b><em data-m="£50|/mo" data-y="£500|/yr">£50<span>/mo</span></em></span>
-              <span class="pick-note">Everything you need to be online.</span>
+              <span class="pick-note"><b class="pick-flag">Most popular</b>Everything you need to be online.</span>
             </span>
           </label>
           <div class="pick-feats" data-plan="business">
@@ -220,6 +220,24 @@
               <li>Everything you ask for in the build, however big</li>
               <li>Ongoing support</li>
               <li>Unlimited edits and new features, made by us</li>
+            </ul>
+          </div>
+
+          <!-- Only shown to someone who chose Starter on the plans page:
+               it is never offered here first. -->
+          <label class="pick-row" data-plan="starter" id="pickStarter" hidden>
+            <input type="radio" name="plan" value="starter">
+            <span class="pick-main">
+              <span class="pick-head"><b>Starter</b><em data-m="£25|/mo" data-y="£250|/yr">£25<span>/mo</span></em></span>
+              <span class="pick-note">A one page site to be found. Move up any time, your site comes with you.</span>
+            </span>
+          </label>
+          <div class="pick-feats" data-plan="starter">
+            <ul class="ticks">
+              <li>A one page site, built for you</li>
+              <li>Domain, hosting and SSL included</li>
+              <li>Changes once a month, by email</li>
+              <li class="cross">No bookings, forms, chat, customer records or automated emails</li>
             </ul>
           </div>
         </div>
@@ -328,7 +346,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=16"></script>
+<script src="get-started.js?v=17"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
