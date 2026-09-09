@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 65;
+const CSS_V = 66;
 const SCRIPT_V = 25;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -44,215 +44,7 @@ const ICONS = {
 
 const ICO_COLORS = ['ico-blue', 'ico-green', 'ico-purple', 'ico-orange', 'ico-pink', 'ico-grey'];
 
-const INDUSTRIES = [
-  {
-    slug: 'trades',
-    rich: true,
-    icons: ['mail','calendar','clock','person','repeat','star','card','search','photo'],
-    lines: ["confirm callouts by email","take a callout fee up front","keep every customer on file","add a WhatsApp button","add a page for every town I cover"],
-    link: 'Trades',
-    title: 'Trades',
-    h1: 'Websites for trades.',
-    lede: 'Callouts confirmed and paid by email. Every customer on file. Found on Google in the towns you cover.',
-    heroNote: 'Free example page first. Only pay if you love it. From &pound;50 a month, no VAT.',
-    trust: ['No VAT', 'No setup fees', 'Live in 10 days', 'Cancel anytime'],
-    trustLine: 'Everything below is optional. We set it up the way you already work.',
-    desc: 'A website for plumbers, electricians, builders and roofers. Callouts confirmed and paid by email, every customer on file, found on Google locally. Live in 10 days, from £50 a month, no VAT.',
-    features: [
-      ['Callouts confirmed by email', 'Customer rings or WhatsApps you. You take their name and email, add the callout in your dashboard, and they get a confirmation email straight away. Charge a callout fee? The email has a pay link and the booking confirms when they pay.'],
-      ['Take bookings online', 'Customers pick a service and a time window that suits you, from their phone, at 11pm if they like. Morning or afternoon slots, a limit per day, a deposit if you want one. Every booking lands in your dashboard and your calendar.'],
-      ['Never miss a job', 'Click to call and WhatsApp buttons on every page, a quote form that takes photos of the problem, and a live chat that keeps their email if they leave. Every enquiry is saved with their details, so nothing gets lost in your call log.'],
-      ['Every customer in one place', 'Every enquiry, booking, payment and note sits against the customer. Search by name, street or job, see what you did and when, and email them from your dashboard.'],
-      ['Follow up the next service', 'Boiler service, annual check, gutters before winter. Set a reminder when you finish the job and the customer gets a friendly email when it&rsquo;s due, with a link to book you again.'],
-      ['Reviews on autopilot', 'A day after each job, the customer gets a text or email asking for a Google review. The best ones show on your site automatically. More reviews, higher on Google, more calls.'],
-      ['Payments your way', 'Fee upfront, on the day, built into the final price, or no fee at all. Card payments through Stripe, or cash and bank transfer if you prefer. You choose in your dashboard and change it any time.'],
-      ['Found first on Google locally', 'A page for every service and every town you cover, written for the searches people actually type. Your Google Business Profile linked and kept up to date, so you show up in the map results too.'],
-      ['Show off your work', 'Galleries of finished jobs and before and after photos, straight from your phone. Send us the pictures and they go on the site, so customers see the standard before they ring.']
-    ],
-    also: ['Trade badges (Gas Safe, NICEIC)', 'Google reviews on your site', 'Quote requests with photos', 'Google Calendar link', 'Team pages for bigger firms', 'Emergency callout banner', 'Areas covered map'],
-    buildNote: 'Send us the photos on your phone and a list of what you do. We write the pages, sort the web address and have you online within 10 days &mdash; no evenings lost to a website builder.',
-    steps: [
-      ['Tell us your trade, your patch and how you like to work', 'Five minutes of questions &mdash; what you do, where you cover, how customers book and pay. That&rsquo;s your part done.'],
-      ['We build it for you', 'Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.'],
-      ['Live in 10 days, then we keep it updated', 'It stays ours to look after: unlimited changes and new features, made for you whenever you ask.']
-    ],
-    stepsLine: 'Unlimited edits included. Message us and it&rsquo;s changed.',
-    maxPitch: {
-      heading: 'Want to show up higher every month?',
-      text: 'Google keeps changing and your competitors keep adding pages. The trades who keep working on their site are the ones who stay on page one for &ldquo;electrician Cramlington&rdquo;. Business gets you there at launch; Max keeps you there.'
-    },
-    pricingExtra: ['Less than &pound;12 a week. No VAT added.', 'Cancel anytime &mdash; your site goes offline and your domain is yours to keep.'],
-    faq: [
-      ['Do I have to charge a callout fee?', 'No. If you do, pick upfront, on the day, or built into the price, and change it whenever you like.'],
-      ['Do I have to take card payments?', 'No. Cash and bank transfer work too.'],
-      ['Can customers still just ring or WhatsApp me?', 'Yes. That is how most trades use it. The site handles the confirmation and the paperwork.'],
-      ['Do I need Max?', 'Only if you want to climb Google every month. Business already includes local SEO at launch.'],
-      ['What happens if I cancel?', 'Your site goes offline, there is no exit fee, and your domain transfers to you free.']
-    ],
-    endLine: 'Got a question? Email <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20trade">hello@kanvas.one</a> and a real person replies.',
-    freeLede: 'We design a real page for your trade business before you pay anything. If you don&rsquo;t like it, you owe nothing.'
-  },
-  {
-    slug: 'salons',
-    icons: ['calendar','tag','photo','gift','card','mail'],
-    lines: ["add online booking","update my price list","sell gift vouchers","take deposits for appointments","email my clients an offer"],
-    link: 'Salons',
-    title: 'Salons',
-    h1: 'Websites for salons.',
-    lede: 'Hair and beauty clients check you out online before they book. Give them something worth finding.',
-    desc: 'Websites for hair and beauty salons. Online booking, editable price lists, gift vouchers and galleries — built for you, from £50 a month, no setup fees.',
-    features: [
-      ['Online booking', 'Clients book while you&rsquo;re mid-appointment, not by leaving a voicemail you have to return.'],
-      ['A price list you edit', 'Change a price or add a treatment from your phone &mdash; live in seconds, no calls to a web person.'],
-      ['Your work, front and centre', 'Galleries of colour, cuts and nails &mdash; the same photos winning you clients on Instagram, on a site you own.'],
-      ['Gift vouchers', 'Sold online, paid upfront &mdash; revenue in December for appointments in February.'],
-      ['Deposits that stop no-shows', 'A small deposit at booking, and your quiet Tuesday stops being a no-show Tuesday.'],
-      ['Offers to your client list', 'Email your regulars when there&rsquo;s a cancellation slot or a seasonal offer to fill.']
-    ],
-    buildNote: 'Tell us your treatments and prices and send your best photos. We build the site, the booking and the price list, and you&rsquo;re online within 10 days.',
-    freeLede: 'We design a real page for your salon before you pay anything. If you don&rsquo;t love it, you owe nothing.'
-  },
-  {
-    slug: 'barbers',
-    icons: ['calendar','tag','clock','photo','search','repeat'],
-    lines: ["let clients book a chair","update my price board","change my opening hours","show my latest cuts","add a loyalty card"],
-    link: 'Barbers',
-    title: 'Barbers',
-    h1: 'Websites for barbers.',
-    lede: 'Walk-ins find you on Google Maps. A site turns them into bookings before they&rsquo;ve walked anywhere.',
-    desc: 'Websites for barbershops. Online booking, price boards, opening hours and photo walls — built for you, from £50 a month, no setup fees.',
-    features: [
-      ['Book a chair online', 'Clients pick a barber and a time. The queue outside is optional now.'],
-      ['A price board you control', 'Skin fade up a pound? Change it from your phone &mdash; the site updates instantly.'],
-      ['Opening hours people trust', 'Bank holidays, early closes, that week you&rsquo;re away &mdash; always right, everywhere it&rsquo;s shown.'],
-      ['A photo wall of your cuts', 'The fades and beards from your Instagram, working for you on Google too.'],
-      ['Found on Maps and search', 'Set up so "barber near me" finds your shop, with your hours and your reviews.'],
-      ['Loyalty for regulars', 'A tenth-cut-free counter or member perks &mdash; reasons to come back to your chair.']
-    ],
-    buildNote: 'Send your price list, your hours and a dozen photos. We do the rest and you&rsquo;re online within 10 days &mdash; usually sooner.',
-    freeLede: 'We design a real page for your shop before you pay anything. Don&rsquo;t rate it? You owe nothing.'
-  },
-  {
-    slug: 'coffee-shops',
-    icons: ['pencil','card','calendar','clock','photo','search'],
-    lines: ["build a live drinks menu","add order ahead","add a loyalty card","update my opening hours","add this week's specials"],
-    link: 'Coffee shops',
-    title: 'Coffee shops',
-    h1: 'Websites for coffee shops.',
-    lede: 'Coffee shops live and die by "are they open, what&rsquo;s on?" Your site answers both, always &mdash; and takes the order before they&rsquo;re through the door.',
-    desc: 'Websites for coffee shops. Editable menus, opening hours, order ahead and loyalty cards — built for you, from £50 a month, no setup fees.',
-    features: [
-      ['A menu you edit', 'Change a drink, a bake or a price from behind the counter &mdash; customers see it instantly. Mark things sold out in one tap.'],
-      ['Order ahead', 'Coffees and lunches ordered and paid before they arrive &mdash; shorter queues at eight in the morning, bigger tickets all day.'],
-      ['Loyalty that lives on their phone', 'A digital stamp card &mdash; the tenth coffee free, no cardboard to lose. Reasons to walk past the chain.'],
-      ['Hours that are always right', 'Holiday hours changed once, correct everywhere &mdash; no more "are you open?" messages.'],
-      ['Photos that sell the room', 'The pour, the counter, the seat in the window &mdash; the reasons people cross the street.'],
-      ['Found by people nearby', 'Set up so "coffee near me" finds you, on Google Maps and in AI chats.']
-    ],
-    buildNote: 'Send your menu and some photos. We build the site and the editable menu, and you&rsquo;re online within 10 days &mdash; you keep the machine running.',
-    freeLede: 'We design a real page for your coffee shop before you pay anything. Not your cup? You owe nothing.'
-  },
-  {
-    slug: 'gyms',
-    icons: ['calendar','person','card','layers','photo','search'],
-    lines: ["add a class timetable","set up memberships","add a members area","take payments monthly","show member results"],
-    link: 'Gyms',
-    title: 'Gyms &amp; personal trainers',
-    h1: 'Websites for gyms.',
-    lede: 'Gyms and personal trainers sell commitment. A site with timetables, memberships and sign-ups makes committing easy.',
-    desc: 'Websites for gyms and personal trainers. Class timetables, memberships with logins, online sign-ups and programmes — built for you, from £50 a month, no setup fees.',
-    features: [
-      ['Class timetables you edit', 'Change the spin slot from your phone. Members always see this week&rsquo;s real timetable.'],
-      ['Memberships with logins', 'Members sign up, pay and log in on your site &mdash; the setup big chains have, at your gym.'],
-      ['Payments collected monthly', 'Membership money arrives on its own. You coach; the site does the collecting.'],
-      ['Programmes behind a login', 'Training plans and content only your members can see &mdash; worth the membership on its own.'],
-      ['Transformations that convert', 'Before-and-after galleries and member stories &mdash; the proof that sells the first session.'],
-      ['New members from search', 'Set up so "gym near me" and "personal trainer near me" find you first.']
-    ],
-    buildNote: 'Tell us your classes, prices and how memberships work. We build the site, timetable and member logins, and you&rsquo;re online within 10 days.',
-    freeLede: 'We design a real page for your gym before you pay anything. No commitment &mdash; that part comes later.'
-  },
-  {
-    slug: 'cleaners',
-    icons: ['doc','shield','star','repeat','pin','photo'],
-    lines: ["add a quote form","show my before and afters","set up weekly bookings","list the areas I cover","add my reviews"],
-    link: 'Cleaners',
-    title: 'Cleaners',
-    h1: 'Websites for cleaners.',
-    lede: 'Cleaning is bought on trust. A proper site with reviews and clear prices wins jobs a leaflet never will.',
-    desc: 'Websites for cleaning businesses. Quote forms, service areas, reviews and recurring bookings — built for you, from £50 a month, no setup fees.',
-    features: [
-      ['Quotes while you clean', 'A form that asks the right questions &mdash; rooms, frequency, oven or not &mdash; so quoting takes minutes, not visits.'],
-      ['Trust on the page', 'Insured, DBS-checked, years trading &mdash; said clearly, where nervous first-time customers look for it.'],
-      ['Reviews doing the selling', 'Your Google reviews on your own site. In this trade, they are the deciding factor.'],
-      ['Regular slots, booked once', 'Weekly and fortnightly cleans set up as repeat bookings &mdash; a steady round, not one-offs.'],
-      ['The areas you cover', 'Postcodes and towns listed plainly, so enquiries come from streets you actually drive to.'],
-      ['Before and after galleries', 'End-of-tenancy transformations sell deep cleans better than any wording.']
-    ],
-    buildNote: 'Tell us your services, prices and areas. We write the pages and build the quote form, and you&rsquo;re online within 10 days.',
-    freeLede: 'We design a real page for your cleaning business before you pay anything. Not spotless? You owe nothing.'
-  },
-  {
-    slug: 'tutors',
-    icons: ['layers','card','star','shield','calendar','search'],
-    lines: ["add a page for GCSE maths","take lesson payments online","show my results","add a waiting list","update my timetable"],
-    link: 'Tutors',
-    title: 'Tutors',
-    h1: 'Websites for tutors.',
-    lede: 'Parents research tutors carefully. A proper site with subjects, results and a real booking flow settles the choice.',
-    desc: 'Websites for tutors and tuition centres. Subject pages, lesson bookings, online payments and testimonials — built for you, from £50 a month, no setup fees.',
-    features: [
-      ['A page per subject and level', 'GCSE maths, A-level physics, 11+ &mdash; each with its own page, found by the parents searching for exactly that.'],
-      ['Lessons booked and paid', 'Blocks of lessons paid online upfront &mdash; no chasing bank transfers between sessions.'],
-      ['Results and testimonials', 'Grades improved and parent quotes, presented properly &mdash; your track record is the product.'],
-      ['Trust, stated clearly', 'DBS checked, qualifications, exam boards covered &mdash; the checklist parents run through, answered on the page.'],
-      ['Your timetable, current', 'Show which slots are free this term. When you&rsquo;re full, the site takes a waiting list.'],
-      ['Found by local parents', 'Set up so "maths tutor near me" finds you, on Google and in AI chats.']
-    ],
-    buildNote: 'Tell us your subjects, levels and rates. We write the pages and set up bookings, and you&rsquo;re online within 10 days.',
-    freeLede: 'We design a real page for your tutoring before you pay anything. Full marks or you owe nothing.'
-  },
-  {
-    slug: 'photographers',
-    icons: ['photo','calendar','card','person','tag','search'],
-    lines: ["add my wedding gallery","take booking deposits","add client logins","update my packages","add an enquiry form"],
-    link: 'Photographers',
-    title: 'Photographers',
-    h1: 'Websites for photographers.',
-    lede: 'Your portfolio is your pitch. A site that shows it beautifully &mdash; and books the shoot while they&rsquo;re impressed.',
-    desc: 'Websites for photographers. Portfolio galleries, enquiry forms, client galleries and booking deposits — built for you, from £50 a month, no setup fees.',
-    features: [
-      ['Galleries that do your work justice', 'Weddings, portraits, products &mdash; fast-loading galleries where the photos do the talking.'],
-      ['Enquiries with the date attached', 'The form asks the date, venue and what they&rsquo;re after &mdash; so you reply already knowing if you&rsquo;re free.'],
-      ['Deposits that hold the date', 'A booking fee paid online when they book &mdash; the date is yours and theirs, in writing.'],
-      ['Client galleries behind a login', 'Deliver each shoot in a private gallery your client logs in to view, download and share.'],
-      ['Packages you edit yourself', 'Your packages and prices laid out clearly &mdash; change them from your phone between seasons.'],
-      ['Found for what you shoot', 'A page per genre, so "wedding photographer near me" finds the wedding work, not the whole archive.']
-    ],
-    buildNote: 'Send us your best shots and your packages. We build the galleries and the enquiry flow, and you&rsquo;re online within 10 days.',
-    freeLede: 'We design a real page around your photos before you pay anything. If it&rsquo;s not picture perfect, you owe nothing.'
-  },
-  {
-    slug: 'gardeners',
-    icons: ['photo','doc','layers','calendar','pin','card'],
-    lines: ["show my landscaping projects","add a quote form with photos","promote autumn hedge cuts","list the areas I cover","take deposits online"],
-    link: 'Gardeners',
-    title: 'Gardeners &amp; landscapers',
-    h1: 'Websites for gardeners.',
-    lede: 'Gardeners and landscapers sell what the finished job looks like. Your site is where the finished jobs live.',
-    desc: 'Websites for gardeners and landscapers. Project galleries, quote forms, seasonal services and covered areas — built for you, from £50 a month, no setup fees.',
-    features: [
-      ['Project galleries', 'Decking, patios, full makeovers &mdash; shown start to finish. The garden sells the next garden.'],
-      ['Quotes with photos attached', 'Customers send photos of the garden with the enquiry, so you price accurately before you visit.'],
-      ['A page per service', 'Lawn care, hedges, landscaping, clearances &mdash; each found by the person searching for it.'],
-      ['Seasonal work, promoted in season', 'Push hedge cuts in autumn and garden makeovers in spring &mdash; the site keeps up with the calendar.'],
-      ['The areas you cover', 'Villages and postcodes listed, so the jobs that come in are on your patch.'],
-      ['Deposits for the big jobs', 'Landscaping booked with a deposit paid online &mdash; committed customers, protected diary.']
-    ],
-    buildNote: 'Send job photos and a list of services. We write the pages and build the quote form, and you&rsquo;re online within 10 days.',
-    freeLede: 'We design a real page for your gardening business before you pay anything. If it doesn&rsquo;t grow on you, you owe nothing.'
-  }
-];
+const INDUSTRIES = require('./industries.js');
 
 /* The cross-link strip: every industry page links the other nine, and the
    homepage links all ten, so each page is reachable by crawl, not only by
@@ -389,7 +181,7 @@ ${b.trust ? `    <ul class="assure trust reveal">${b.trust.map((t) => `<li>${t}<
 ${b.features.map((f, i) => card(f, b.icons[i], ICO_COLORS[i % ICO_COLORS.length])).join('\n')}
   </div>
 ${b.also ? `  <div class="wrap center also reveal">
-    <p class="also-title">Also included, if you want them</p>
+    <p class="also-title">${b.alsoTitle || 'Also included, if you want them'}</p>
     <div class="also-pills">${b.also.map((t) => `<span class="use-chip">${t}</span>`).join('')}</div>
     <div class="cta-row">
       <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
@@ -449,8 +241,12 @@ ${b.faq.map(([q, a]) => `    <details>
 ` : ''}<section class="section grey cta-end">
   <div class="wrap center">
     <h2 class="reveal">See yours free, first.</h2>
-    <p class="lede reveal">${b.freeLede}</p>
-${b.rich ? `    <p class="micro reveal">From &pound;50 a month. No setup fees. Cancel anytime.</p>
+    <p class="lede reveal">${b.promise ? 'No pressure and no contract. Here&rsquo;s our side of the deal, in writing.' : b.freeLede}</p>
+${b.rich ? `${b.promise ? `    <div class="promise reveal">
+      <p class="promise-name">${b.promise.name}</p>
+      <ul class="promise-lines">${b.promise.lines.map((l) => `<li>${l}</li>`).join('')}</ul>
+    </div>
+` : ''}    <p class="micro reveal price-line">From &pound;50 a month. No setup fees. Cancel anytime.</p>
 ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join('\n')}
     <div class="cta-row reveal">
       <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
