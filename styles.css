@@ -326,6 +326,28 @@ body.locked{overflow:hidden}
 }
 body.dialog-open{overflow:hidden}
 
+/* Trade page extras: hero note, trust strip, "also included" pills, the
+   sticky Try-it-free on phones. */
+.hero-note{margin-top:14px}
+.assure.trust{margin:26px 0 8px}
+.trust-line{margin-top:0}
+.also{margin-top:clamp(28px,4vw,40px)}
+.also-title{margin:0 0 12px;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+.also-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.also-pills .use-chip{cursor:default}
+.also .cta-row{margin-top:26px}
+.steps-line{margin-top:22px}
+.sticky-cta{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;justify-content:center;
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line-soft);
+}
+.sticky-cta .btn{width:100%;max-width:420px;justify-content:center}
+@media (max-width:600px){
+  .sticky-cta:not([hidden]){display:flex}
+  body.has-sticky{padding-bottom:74px}
+}
+
 /* A promo code said in passing: the code itself reads as a thing to tap. */
 .promo-line{margin:18px auto 0;max-width:560px;text-align:center;font-size:14.5px;color:var(--ink-2)}
 .promo-line code{

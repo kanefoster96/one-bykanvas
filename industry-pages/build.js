@@ -17,8 +17,8 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 63;
-const SCRIPT_V = 24;
+const CSS_V = 64;
+const SCRIPT_V = 25;
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -47,22 +47,49 @@ const ICO_COLORS = ['ico-blue', 'ico-green', 'ico-purple', 'ico-orange', 'ico-pi
 const INDUSTRIES = [
   {
     slug: 'trades',
-    icons: ['doc','photo','star','layers','pin','card'],
-    lines: ["add a quote form with photos","show off my finished jobs","take deposits online","add my Google reviews","list the areas I cover"],
+    rich: true,
+    icons: ['mail','calendar','clock','person','repeat','star','card','search','photo'],
+    lines: ["confirm callouts by email","take a callout fee up front","keep every customer on file","add a WhatsApp button","add a page for every town I cover"],
     link: 'Trades',
     title: 'Trades',
     h1: 'Websites for trades.',
-    lede: 'Builders, plumbers, electricians, roofers &mdash; a site that wins you the job while you&rsquo;re out on one.',
-    desc: 'Websites for builders, plumbers, electricians and other trades. Quote forms, job photo galleries and reviews — built for you, from £50 a month, no setup fees.',
+    lede: 'Callouts confirmed and paid by email. Every customer on file. Found on Google in the towns you cover.',
+    heroNote: 'Free example page first. Only pay if you love it. From &pound;50 a month, no VAT.',
+    trust: ['No VAT', 'No setup fees', 'Live in 10 days', 'Cancel anytime'],
+    trustLine: 'Everything below is optional. We set it up the way you already work.',
+    desc: 'A website for plumbers, electricians, builders and roofers. Callouts confirmed and paid by email, every customer on file, found on Google locally. Live in 10 days, from £50 a month, no VAT.',
     features: [
-      ['Quote requests with photos', 'Customers describe the job and attach photos before you call back &mdash; so you quote once, properly.'],
-      ['Galleries of finished jobs', 'Your best work, on your own site. The photos on your phone are the reason people pick you.'],
-      ['Reviews where people look', 'Your Google reviews shown on the site, so the trust you&rsquo;ve earned does the selling.'],
-      ['A page for every service', 'Bathrooms, rewires, flat roofs &mdash; a page per job type, so you show up when people search for it.'],
-      ['The areas you cover', 'Say exactly where you work, so the calls you get are ones you can actually take.'],
-      ['Deposits taken online', 'Take a deposit when the job is booked &mdash; fewer cancelled Saturdays.']
+      ['Callouts confirmed by email', 'Customer rings or WhatsApps you. You take their name and email, add the callout in your dashboard, and they get a confirmation email straight away. Charge a callout fee? The email has a pay link and the booking confirms when they pay.'],
+      ['Take bookings online', 'Customers pick a service and a time window that suits you, from their phone, at 11pm if they like. Morning or afternoon slots, a limit per day, a deposit if you want one. Every booking lands in your dashboard and your calendar.'],
+      ['Never miss a job', 'Click to call and WhatsApp buttons on every page, a quote form that takes photos of the problem, and a live chat that keeps their email if they leave. Every enquiry is saved with their details, so nothing gets lost in your call log.'],
+      ['Every customer in one place', 'Every enquiry, booking, payment and note sits against the customer. Search by name, street or job, see what you did and when, and email them from your dashboard.'],
+      ['Follow up the next service', 'Boiler service, annual check, gutters before winter. Set a reminder when you finish the job and the customer gets a friendly email when it&rsquo;s due, with a link to book you again.'],
+      ['Reviews on autopilot', 'A day after each job, the customer gets a text or email asking for a Google review. The best ones show on your site automatically. More reviews, higher on Google, more calls.'],
+      ['Payments your way', 'Fee upfront, on the day, built into the final price, or no fee at all. Card payments through Stripe, or cash and bank transfer if you prefer. You choose in your dashboard and change it any time.'],
+      ['Found first on Google locally', 'A page for every service and every town you cover, written for the searches people actually type. Your Google Business Profile linked and kept up to date, so you show up in the map results too.'],
+      ['Show off your work', 'Galleries of finished jobs and before and after photos, straight from your phone. Send us the pictures and they go on the site, so customers see the standard before they ring.']
     ],
+    also: ['Trade badges (Gas Safe, NICEIC)', 'Google reviews on your site', 'Quote requests with photos', 'Google Calendar link', 'Team pages for bigger firms', 'Emergency callout banner', 'Areas covered map'],
     buildNote: 'Send us the photos on your phone and a list of what you do. We write the pages, sort the web address and have you online within 10 days &mdash; no evenings lost to a website builder.',
+    steps: [
+      ['Tell us your trade, your patch and how you like to work', 'Five minutes of questions &mdash; what you do, where you cover, how customers book and pay. That&rsquo;s your part done.'],
+      ['We build it for you', 'Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.'],
+      ['Live in 10 days, then we keep it updated', 'It stays ours to look after: unlimited changes and new features, made for you whenever you ask.']
+    ],
+    stepsLine: 'Unlimited edits included. Message us and it&rsquo;s changed.',
+    maxPitch: {
+      heading: 'Want to show up higher every month?',
+      text: 'Google keeps changing and your competitors keep adding pages. The trades who keep working on their site are the ones who stay on page one for &ldquo;electrician Cramlington&rdquo;. Business gets you there at launch; Max keeps you there.'
+    },
+    pricingExtra: ['Less than &pound;12 a week. No VAT added.', 'Cancel anytime &mdash; your site goes offline and your domain is yours to keep.'],
+    faq: [
+      ['Do I have to charge a callout fee?', 'No. If you do, pick upfront, on the day, or built into the price, and change it whenever you like.'],
+      ['Do I have to take card payments?', 'No. Cash and bank transfer work too.'],
+      ['Can customers still just ring or WhatsApp me?', 'Yes. That is how most trades use it. The site handles the confirmation and the paperwork.'],
+      ['Do I need Max?', 'Only if you want to climb Google every month. Business already includes local SEO at launch.'],
+      ['What happens if I cancel?', 'Your site goes offline, there is no exit fee, and your domain transfers to you free.']
+    ],
+    endLine: 'Got a question? Email <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20trade">hello@kanvas.one</a> and a real person replies.',
     freeLede: 'We design a real page for your trade business before you pay anything. If you don&rsquo;t like it, you owe nothing.'
   },
   {
@@ -249,6 +276,30 @@ function card([h, p], iconKey, color) {
     </article>`;
 }
 
+const DEFAULT_STEPS = [
+  ['Tell us about the business', 'Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.'],
+  ['We build it for you', 'Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.'],
+  ['Online within 10 days', 'Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.']
+];
+const STEP_COLORS = ['ico-blue', 'ico-purple', 'ico-green'];
+
+function stepCards(b) {
+  return (b.steps || DEFAULT_STEPS).map(([h, p], i) => `    <article class="card">
+      <div class="ico ${STEP_COLORS[i]}"><span class="step-n">${i + 1}</span></div>
+      <div class="card-text">
+        <h3>${h}</h3>
+        <p>${p}</p>
+      </div>
+    </article>`).join('\n');
+}
+
+/* Entities out, for the structured data Google reads as plain text. */
+function plain(html) {
+  return html.replace(/<[^>]+>/g, '').replace(/&rsquo;/g, '\u2019').replace(/&lsquo;/g, '\u2018')
+    .replace(/&ldquo;/g, '\u201c').replace(/&rdquo;/g, '\u201d').replace(/&mdash;/g, '\u2014')
+    .replace(/&pound;/g, '\u00a3').replace(/&amp;/g, '&').replace(/&eacute;/g, '\u00e9');
+}
+
 function page(b) {
   const url = `https://kanvas.one/websites-for-${b.slug}`;
   const plainTitle = b.title.replace(/&amp;/g, '&').replace(/&eacute;/g, 'é');
@@ -282,7 +333,14 @@ ${JSON.stringify({
   description: b.desc
 })}
 </script>
-<link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
+${b.faq ? `<script type="application/ld+json">
+${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: b.faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
+})}
+</script>
+` : ''}<link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css?v=${CSS_V}">
 </head>
 <body>
@@ -308,7 +366,8 @@ ${JSON.stringify({
     <a class="hero-pill hero-pill-link reveal" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">${b.h1}</h1>
     <p class="lede reveal">${b.lede}</p>
-
+${b.heroNote ? `    <p class="micro reveal hero-note">${b.heroNote}</p>
+` : ''}
     <!-- A request being typed, as this trade would type it. Decorative: the
          copy around it says the same things, so screen readers skip the
          animation rather than hearing it letter by letter. -->
@@ -316,7 +375,9 @@ ${JSON.stringify({
       <span class="typebox-text" id="typeDemo" data-lines="${JSON.stringify(b.lines).replace(/"/g, '&quot;')}"></span>
       <span class="typebox-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></svg></span>
     </div>
-  </div>
+${b.trust ? `    <ul class="assure trust reveal">${b.trust.map((t) => `<li>${t}</li>`).join('')}</ul>
+    <p class="micro reveal trust-line">${b.trustLine}</p>
+` : ''}  </div>
 </section>
 
 <section class="section pt0">
@@ -327,7 +388,14 @@ ${JSON.stringify({
   <div class="wrap grid reveal">
 ${b.features.map((f, i) => card(f, b.icons[i], ICO_COLORS[i % ICO_COLORS.length])).join('\n')}
   </div>
-</section>
+${b.also ? `  <div class="wrap center also reveal">
+    <p class="also-title">Also included, if you want them</p>
+    <div class="also-pills">${b.also.map((t) => `<span class="use-chip">${t}</span>`).join('')}</div>
+    <div class="cta-row">
+      <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
+    </div>
+  </div>
+` : ''}</section>
 
 <section class="section grey">
   <div class="wrap center">
@@ -335,41 +403,66 @@ ${b.features.map((f, i) => card(f, b.icons[i], ICO_COLORS[i % ICO_COLORS.length]
     <p class="lede reveal">${b.buildNote}</p>
   </div>
   <div class="wrap grid grid-3 reveal">
-    <article class="card">
-      <div class="ico ico-blue"><span class="step-n">1</span></div>
-      <div class="card-text">
-        <h3>Tell us about the business</h3>
-        <p>Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.</p>
-      </div>
+${stepCards(b)}
+  </div>
+${b.stepsLine ? `  <div class="wrap center reveal">
+    <p class="micro steps-line">${b.stepsLine}</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="/get-started.html">Get started &rsaquo;</a>
+    </div>
+  </div>
+` : ''}</section>
+
+${b.maxPitch ? `<section class="section">
+  <div class="wrap center">
+    <h2 class="reveal">${b.maxPitch.heading}</h2>
+    <p class="lede reveal">${b.maxPitch.text}</p>
+  </div>
+  <div class="wrap plans reveal">
+    <article class="plan">
+      <div class="badge">Most popular</div>
+      <h3>Business</h3>
+      <p class="price"><span class="cur">&pound;</span>50<span class="per">/month</span></p>
+      <p class="plan-note">Everything above, with local SEO built in at launch.</p>
+      <a class="btn btn-primary full" href="/get-started.html">Get started &rsaquo;</a>
     </article>
-    <article class="card">
-      <div class="ico ico-purple"><span class="step-n">2</span></div>
-      <div class="card-text">
-        <h3>We build it for you</h3>
-        <p>Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.</p>
-      </div>
-    </article>
-    <article class="card">
-      <div class="ico ico-green"><span class="step-n">3</span></div>
-      <div class="card-text">
-        <h3>Online within 10 days</h3>
-        <p>Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.</p>
-      </div>
+    <article class="plan featured">
+      <div class="badge">Optional</div>
+      <h3>Max</h3>
+      <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
+      <p class="plan-note">Everything in Business, plus we work on your Google ranking every month &mdash; new service and area pages, refreshed content, and a short monthly note on what changed. Add or drop it any time.</p>
+      <a class="btn btn-ghost full" href="/plans.html#max">Learn more about Max &rsaquo;</a>
     </article>
   </div>
 </section>
-
-<section class="section grey cta-end">
+` : ''}${b.faq ? `<section class="section grey">
+  <div class="wrap center">
+    <h2 class="reveal">Questions.</h2>
+  </div>
+  <div class="wrap faq reveal">
+${b.faq.map(([q, a]) => `    <details>
+      <summary>${q}</summary>
+      <div class="ans"><p>${a}</p></div>
+    </details>`).join('\n')}
+  </div>
+</section>
+` : ''}<section class="section grey cta-end">
   <div class="wrap center">
     <h2 class="reveal">See yours free, first.</h2>
     <p class="lede reveal">${b.freeLede}</p>
+${b.rich ? `    <p class="micro reveal">From &pound;50 a month. No setup fees. Cancel anytime.</p>
+${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join('\n')}
     <div class="cta-row reveal">
-      <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free</a>
+      <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
+    </div>
+    <p class="ask reveal">${b.endLine}</p>
+` : `    <div class="cta-row reveal">
+      <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free</a>
       <a class="btn btn-ghost" href="/get-started.html">Get started &rsaquo;</a>
     </div>
     <p class="micro reveal">From &pound;50 a month. No setup fees. Cancel anytime. <a href="/plans.html">See all plans</a></p>
     <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email us</a> and a real person will answer &mdash; usually the same working day.</p>
-    <nav class="ind-links reveal" aria-label="Websites for other business types">
+`}    <nav class="ind-links reveal" aria-label="Websites for other business types">
       <span>We also build for:</span>${linkStrip(b.slug)}
     </nav>
   </div>
@@ -377,7 +470,12 @@ ${b.features.map((f, i) => card(f, b.icons[i], ICO_COLORS[i % ICO_COLORS.length]
 
 </main>
 
-<footer class="foot">
+${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the hero has
+     gone, and steps aside when the closing offer is on screen. -->
+<div class="sticky-cta" id="stickyCta" hidden>
+  <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
+</div>
+` : ''}<footer class="foot">
   <div class="wrap">
     <p class="foot-logo">one.</p>
     <p class="foot-by">by Kanvas</p>
