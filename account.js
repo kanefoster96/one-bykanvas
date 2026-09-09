@@ -406,8 +406,8 @@ document.getElementById('bizForm').addEventListener('submit', async function (e)
 /* Which plans exist. Requests are unlimited on all of them; the plan decides
    queue position, not allowance. Kept as a map so entitledPlan() can tell a
    real plan from junk in the column. */
-var PLAN_POINTS = { business: 1, pro: 3, max: 5 }; // values legacy, keys authoritative
-var PLAN_NAME   = { business: 'Business', pro: 'Pro', max: 'Max' };
+var PLAN_POINTS = { starter: 1, business: 1, pro: 3, max: 5 }; // values legacy, keys authoritative
+var PLAN_NAME   = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' };
 
 /* The plan we ration points from is active_plan, written only by the Stripe
    webhook. selected_plan is whatever the customer last picked and they can
@@ -644,7 +644,7 @@ var STATUS_TEXT = {
   paused:             ['Paused', 'Your subscription is paused.']
 };
 
-var PLAN_LABEL = { business: 'Business — £50/month', pro: 'Pro — £120/month', max: 'Max — £250/month' };
+var PLAN_LABEL = { starter: 'Starter — £25/month', business: 'Business — £50/month', pro: 'Pro — £120/month', max: 'Max — £250/month' };
 
 function showBilling(row) {
   var badge = document.getElementById('billBadge');
@@ -660,7 +660,7 @@ function showBilling(row) {
   /* Say what the change will actually do, and what it costs, before they
      commit. The old wording promised "takes effect from your next payment" in
      both directions, which was never true of an upgrade. */
-  var ORDER = ['business', 'pro', 'max'];
+  var ORDER = ['starter', 'business', 'pro', 'max'];
   var previewSeq = 0;
 
   function describeMove() {
@@ -670,7 +670,8 @@ function showBilling(row) {
 
     var up = ORDER.indexOf(chosen) > ORDER.indexOf(current);
     var PERK = {
-      business: 'requests done in turn',
+      starter: 'a one page site with changes once a month by email. No bookings, forms, chat, customer records or automated emails',
+      business: 'unlimited changes made by us, plus bookings, forms, chat, customer records and automated emails',
       pro: 'priority requests and business email',   // legacy, no longer sold
       max: 'top priority, business email, and SEO work every month'
     };

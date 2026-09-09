@@ -450,7 +450,7 @@ module.exports = async function handler(req, res) {
       });
 
       const { data: prof } = await db.from('profiles')
-        .select('id, business_name, contact_name, site_url, site_status').eq('id', reqRow.user_id).maybeSingle();
+        .select('id, business_name, contact_name, site_url, site_status, active_plan').eq('id', reqRow.user_id).maybeSingle();
       let email = null;
       try {
         const { data: u } = await db.auth.admin.getUserById(reqRow.user_id);

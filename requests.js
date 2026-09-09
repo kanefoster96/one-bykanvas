@@ -39,6 +39,7 @@
   var mode = 'feature';     // new-request mode
   var picked = null;        // catalogue item chosen, if any
   var current = null;       // the open request in the detail view
+  var plan = null;          // active_plan from their profile
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -195,10 +196,15 @@
     var open = requests.filter(function (r) { return !isDone(r); });
     var done = requests.filter(isDone);
 
+    /* Starter has no request box: the gate says why, and what Business is. */
+    var starter = plan === 'starter';
+    document.getElementById('starterGate').hidden = !starter;
+    document.querySelector('.req-new-btn').hidden = starter;
+
     var openWrap = document.getElementById('openCards');
     openWrap.textContent = '';
     open.forEach(function (r) { openWrap.appendChild(card(r)); });
-    document.getElementById('reqEmpty').hidden = !!(open.length || done.length);
+    document.getElementById('reqEmpty').hidden = !!(open.length || done.length) || starter;
 
     var doneWrap = document.getElementById('doneWrap');
     var doneCards = document.getElementById('doneCards');
@@ -459,6 +465,10 @@
   async function route() {
     var h = location.hash.replace(/^#/, '');
     try {
+      if ((h === 'new' || h === 'new/feature' || h === 'new/edit') && plan === 'starter') {
+        location.hash = '';
+        return;
+      }
       if (h === 'new' || h === 'new/feature' || h === 'new/edit') {
         show('viewNew');
         setMode(h === 'new/edit' ? 'edit' : 'feature');
@@ -483,6 +493,8 @@
       return;
     }
     user = res.data.session.user;
+    var prof = await ONE.db.from('profiles').select('active_plan').eq('id', user.id).maybeSingle();
+    plan = (prof.data && prof.data.active_plan) || null;
     await loadList();
     await route();
     loading.hidden = true;

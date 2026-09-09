@@ -16,6 +16,21 @@
     var refParam = new URLSearchParams(location.search).get('ref');
     if (refParam) localStorage.setItem(REF_KEY, refParam.toUpperCase().slice(0, 20));
   } catch (e) {}
+  /* ?plan= from the plans page. Starter is only ever shown this way - it
+     lives on the plans page, not in the wizard's first impression. */
+  (function preselectPlan() {
+    var want = new URLSearchParams(location.search).get('plan');
+    if (['starter', 'business', 'max'].indexOf(want) === -1) return;
+    if (want === 'starter') { var row = document.getElementById('pickStarter'); if (row) row.hidden = false; }
+    var radio = document.querySelector('input[name="plan"][value="' + want + '"]');
+    if (!radio) return;
+    radio.checked = true;
+    document.querySelectorAll('#pick .pick-row').forEach(function (r) {
+      var input = r.querySelector('input');
+      if (input) r.classList.toggle('is-on', input.checked);
+    });
+  })();
+
   function referralCode() {
     var typed = document.getElementById('refCode');
     if (typed && typed.value.trim()) return typed.value.trim().toUpperCase();
@@ -50,6 +65,7 @@
   var answers = {};
 
   var PLANS = {
+    starter:  { label: 'Starter',  price: '£25', yearly: '£250' },
     business: { label: 'Business', price: '£50', yearly: '£500' },
     pro:      { label: 'Pro',      price: '£120' },
     max:      { label: 'Max',      price: '£250', yearly: '£2,500' }
@@ -839,7 +855,7 @@
     var email = $('wantEmail'), seo = $('wantSeo'), warnEl = $('planSteer');
     if (!email || !seo || !warnEl) return;
 
-    var COVERS = { business: [], max: ['email', 'seo'] };
+    var COVERS = { starter: [], business: [], max: ['email', 'seo'] };
 
     function pickedPlan() {
       var chosen = document.querySelector('input[name="plan"]:checked');
@@ -872,7 +888,7 @@
     }
 
     function steer() {
-      var rec = 'max';
+      var rec = (email.checked || seo.checked) ? 'max' : 'business';
 
       var radio = document.querySelector('input[name="plan"][value="' + rec + '"]');
       if (radio) radio.checked = true;
@@ -884,6 +900,7 @@
       var flag = document.querySelector('#pick .pick-flag');
       var note = document.querySelector('.pick-row[data-plan="' + rec + '"] .pick-note');
       if (flag && note && flag.parentNode !== note) note.insertBefore(flag, note.firstChild);
+      if (flag) flag.textContent = rec === 'max' ? 'Recommended' : 'Most popular';
 
       /* No open/close to do here: the selected row's feature list expands
          itself - .pick-row.is-on + .pick-feats in the stylesheet. */
