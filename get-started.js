@@ -214,6 +214,29 @@
           say(note, 'There is already an account with that email. Log in instead and you '
                   + 'can pick up from your account page.', 'bad');
           return;
+        } else if (back.error && /not confirmed/i.test(back.error.message || '')) {
+          /* An account with this address exists but its link was never
+             clicked, so the id signUp just handed us is a decoy and the
+             payment step would dead-end. A stale one is cleared server-side
+             and the signup redone for real; a fresh one means the link is
+             in their inbox right now. */
+          var reset = await fetch('/api/signup-reset', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: mail })
+          }).then(function (r) { return r.json(); }).catch(function () { return {}; });
+          if (reset && reset.reset) {
+            var again = await ONE.db.auth.signUp({
+              email: mail, password: pass,
+              options: { emailRedirectTo: location.origin + '/account.html', data: { business_name: biz, contact_name: name } }
+            });
+            if (again.error) throw again.error;
+            answers.pendingUserId = (again.data.user && again.data.user.id) || null;
+            answers.hasSession = Boolean(again.data.session);
+          } else {
+            say(note, 'This email already has an account waiting to be confirmed. Tap the link in '
+                    + 'your inbox, then log in and pick up from your account page.', 'bad');
+            return;
+          }
         }
       }
 
@@ -715,6 +738,7 @@
     // Save first: leaving for Stripe means this page goes away.
     try { await saveAnswers(); } catch (e) {}
 
+    var res = null;
     try {
       var token = await accessToken();
       if (!token && !answers.pendingUserId) {
@@ -731,7 +755,7 @@
       var headers = { 'Content-Type': 'application/json' };
       if (token) headers.Authorization = 'Bearer ' + token;
 
-      var res = await fetch('/api/checkout', {
+      res = await fetch('/api/checkout', {
         method: 'POST',
         headers: headers,
         /* Carried from the link in their email, if they came from one, so the
@@ -755,6 +779,15 @@
       location.href = data.url;
     } catch (err) {
       say(note, ONE.friendlyError(err), 'bad');
+      /* A refusal to take payment without a session is fixed by logging
+         in, so the way there sits right under the message. */
+      if (res && res.status === 401) {
+        note.appendChild(document.createTextNode(' '));
+        var go = document.createElement('a');
+        go.href = '/login.html';
+        go.textContent = 'Log in';
+        note.appendChild(go);
+      }
       btn.disabled = false;
       btn.textContent = 'Set up payment';
     }
