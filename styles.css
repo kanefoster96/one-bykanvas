@@ -1338,6 +1338,11 @@ a.hero-pill:hover .pill-go{opacity:1}
 .wiz-foot a{color:var(--ink);text-decoration:underline}
 
 /* plan picker */
+/* The wizard's plan step: air between the billing toggle and the cards,
+   and the Recommended flag on its own line above its description. */
+.bill-toggle-wiz{margin:8px 0 16px}
+.pick-note{display:block}
+.pick-note .pick-flag{display:table;margin:2px 0 7px}
 .pick{margin-bottom:14px}
 .pick-row{
   display:flex;gap:13px;align-items:flex-start;cursor:pointer;
