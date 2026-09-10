@@ -118,7 +118,7 @@
     });
     window.scrollTo(0, 0);
     if (tab === 'Analytics') loadAnalytics();
-    if (tab === 'Dashboard') renderDashboard();
+    if (tab === 'Dashboard') { var p = pendingPath; pendingPath = null; renderDashboard(p); }
     if (tab === 'Support') loadRequests();
   }
 
@@ -142,28 +142,45 @@
 
   /* -------------------------------------------------------- dashboard -- */
 
-  /* Signed-in opening of the dashboard inside the app is the next piece
-     (a one-time handoff token minted by the server). Until it is agreed
-     and built, this tab shows where the dashboard is and opens it in the
-     browser. The iframe is already here for the handoff to use. */
-  function renderDashboard() {
+  /* The customer's own dashboard, inside the tab, signed in. The app asks
+     the server for a one-time handoff URL (a magic-link token minted for
+     this user, carried in the fragment) and points the frame at it;
+     kanvas-handoff.js on the dashboard turns it into a session there.
+     Handed off once per app session, then the frame is left alone; a deep
+     link with a path hands off again at that path. */
+  var framedAt = null;    // the path the frame was last handed off to
+  var pendingPath = null; // a deep link waiting for the tab to show
+
+  function renderDashboard(path) {
     var stub = $('dashStub');
+    var frame = $('dashFrame');
     var open = $('dashOpen');
     var hint = $('dashHint');
-    var url = site && site.dashboard_url;
+    var wrap = $('tabDashboard');
     $('dashTitle').textContent = site && site.name ? site.name : 'Your dashboard';
-    if (!site) { hint.textContent = 'We have not started your site yet. It appears here the moment we do.'; open.hidden = true; return; }
-    if (!url) {
-      hint.textContent = site.status === 'live'
-        ? 'Your dashboard is being connected to the app. Until then it opens in your browser as usual.'
+    if (!site || !site.dashboard_url) {
+      wrap.classList.remove('is-framed');
+      frame.hidden = true; stub.hidden = false; open.hidden = true;
+      hint.textContent = !site ? 'We have not started your site yet. It appears here the moment we do.'
+        : site.status === 'live' ? 'Your dashboard is being connected to the app. Until then it opens in your browser as usual.'
         : 'Your site is being built. Your dashboard appears here once it is live.';
-      open.hidden = true;
       return;
     }
-    hint.textContent = 'Customers, jobs, bookings and everything else on your site are managed in your dashboard.';
-    open.hidden = false;
-    open.href = url;
-    stub.hidden = false;
+    if (framedAt !== null && !path) return; // already showing, leave it be
+    var target = path || '/';
+    api({ action: 'dashboard', site_id: site.site_id, path: target }).then(function (res) {
+      framedAt = target;
+      wrap.classList.add('is-framed');
+      stub.hidden = true;
+      frame.hidden = false;
+      frame.src = res.url;
+    }).catch(function (err) {
+      // No handoff: say so and offer the browser, where they log in as usual.
+      wrap.classList.remove('is-framed');
+      frame.hidden = true; stub.hidden = false;
+      hint.textContent = 'Could not open your dashboard here just now (' + err.message + '). It still opens in your browser.';
+      open.hidden = false; open.href = site.dashboard_url;
+    });
   }
 
   /* Where a notification points. Chat opens natively; everything else is
@@ -173,10 +190,8 @@
     if (link && link.kind === 'chat') { showTab('Chat'); return; }
     if (link && link.kind === 'support' && link.id) { location.hash = 'r/' + link.id; showTab('Support'); return; }
     if (n.href && /^\/requests\.html#(r\/.+)$/.test(n.href)) { location.hash = RegExp.$1; showTab('Support'); return; }
-    var url = null;
-    if (link && link.path && site && site.dashboard_url) url = site.dashboard_url + link.path;
-    else if (n.href && /^https:\/\//.test(n.href)) url = n.href;
-    if (url) { showTab('Dashboard'); openExternal(url); return; }
+    if (link && link.path && site && site.dashboard_url) { pendingPath = link.path; showTab('Dashboard'); return; }
+    if (n.href && /^https:\/\//.test(n.href)) { showTab('Dashboard'); openExternal(n.href); return; }
     showTab('Dashboard');
   }
 
@@ -189,6 +204,7 @@
   $('dashOpen').addEventListener('click', function (e) {
     if (native) { e.preventDefault(); openExternal(this.href); }
   });
+  $('dashFrame').setAttribute('allow', 'clipboard-write; camera; microphone; geolocation');
 
   /* -------------------------------------------------------- analytics -- */
 

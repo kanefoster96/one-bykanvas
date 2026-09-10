@@ -6,9 +6,12 @@
  * site is whose. Reads that the browser could do itself under row level
  * security still come through here so the app has one door and one shape.
  *
- * The dashboard handoff (opening the customer's own dashboard inside the
- * app, already signed in) is deliberately not here yet: it is designed
- * and agreed first, then added as one action.
+ * The dashboard handoff: the app opens the customer's own dashboard, on
+ * its own domain, already signed in. The app never hands its session
+ * over. It asks here for a single-use magic-link token minted for the
+ * caller, carries it to the dashboard in the URL fragment (never sent to
+ * a server, never logged), and kanvas-handoff.js on the dashboard swaps
+ * it for a session of its own. See `dashboard` below.
  */
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, adminEmails } = require('./_env.js');
@@ -123,6 +126,14 @@ async function events(db, caller, siteId) {
   return data || [];
 }
 
+/* A place inside the dashboard: a path only, so a deep link can never
+   point the frame somewhere else. Anything odd becomes the front door. */
+function cleanPath(p) {
+  const s = String(p || '/').trim();
+  if (!/^\/(?!\/)[^\s#]*$/.test(s) || /[<>"'\\]/.test(s) || /^\/\S*:\/\//.test(s)) return '/';
+  return s.slice(0, 300);
+}
+
 /* ---------------------------------------------------------- handler -- */
 
 module.exports = async function handler(req, res) {
@@ -158,6 +169,18 @@ module.exports = async function handler(req, res) {
 
     if (action === 'events') return res.status(200).json({ events: await events(db, caller, body.site_id) });
 
+    if (action === 'dashboard') {
+      const site = await siteFor({ db }, caller, body.site_id);
+      if (!site.dashboard_url) return res.status(400).json({ error: 'This site has no dashboard connected yet.' });
+      const path = cleanPath(body.path);
+      // Minted for the caller, never for the site's owner on their behalf:
+      // the admin arrives in a dashboard as themselves, and RLS there decides.
+      const { data, error } = await db.auth.admin.generateLink({ type: 'magiclink', email: caller.email });
+      const hashed = data && data.properties && data.properties.hashed_token;
+      if (error || !hashed) throw new Error('handoff: ' + ((error && error.message) || 'no token'));
+      return res.status(200).json({ url: site.dashboard_url.replace(/\/+$/, '') + path + '#kanvas_handoff=' + encodeURIComponent(hashed) });
+    }
+
     if (action === 'seen') {
       await db.from('profiles').update({ notifications_seen_at: new Date().toISOString() }).eq('id', user.id);
       return res.status(200).json({ ok: true });
@@ -190,3 +213,4 @@ module.exports = async function handler(req, res) {
 };
 
 module.exports.summarise = summarise;
+module.exports.cleanPath = cleanPath;
