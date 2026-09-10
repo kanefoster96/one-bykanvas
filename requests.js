@@ -111,7 +111,7 @@
   }
 
   async function post(payload) {
-    var res = await fetch('/api/requests', {
+    var res = await fetch((window.ONE_API_BASE || '') + '/api/requests', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (await token()) },
       body: JSON.stringify(payload)

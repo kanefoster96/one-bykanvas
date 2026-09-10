@@ -1581,6 +1581,17 @@ a.hero-pill:hover .pill-go{opacity:1}
 .cust-want strong{color:var(--ink);font-weight:600}
 .cust-points.is-over{color:#b3261e;font-weight:600}
 .cust-site{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.app-config{margin-top:22px;padding-top:18px;border-top:1px solid var(--line-soft)}
+.app-config .cust-site{margin-top:0;align-items:center}
+.app-config-label{font-size:13.5px;font-weight:500;color:var(--ink-2);min-width:80px}
+.app-config-mods{display:flex;flex-wrap:wrap;gap:8px 18px;margin:14px 0}
+.app-config-mod{font-size:14px;display:inline-flex;align-items:center;gap:4px}
+.app-config-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 14px;margin:8px 0 14px}
+.app-config-field{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--ink-2)}
+.app-config-field .admin-input{min-width:0;width:100%}
+.app-config-links{margin:6px 0 14px}
+.app-config-links summary{cursor:pointer;font-size:14px;font-weight:500}
+.app-config-links .hint{margin:8px 0 4px}
 
 .admin-input,.admin-select{
   font-family:var(--font);font-size:15px;color:var(--ink);

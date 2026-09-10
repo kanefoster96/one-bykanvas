@@ -891,4 +891,4 @@ async function serve(req, res, given) {
   res.status(200).json(Array.isArray(body) ? answers : answers[0]);
 }
 
-module.exports = { serve, ctxFor, resolveCaller, callTool, toolsFor, handleMessage, readOnly, TOKEN_PREFIX, sha };
+module.exports = { serve, ctxFor, resolveCaller, callTool, toolsFor, handleMessage, readOnly, TOKEN_PREFIX, sha, sitesFor, siteFor, isUuid };
