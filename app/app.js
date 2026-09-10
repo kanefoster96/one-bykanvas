@@ -54,8 +54,10 @@
     return t;
   }
 
-  async function api(payload) {
-    var res = await fetch(BASE + '/api/app', {
+  function api(payload) { return apiTo('/api/app', payload); }
+
+  async function apiTo(path, payload) {
+    var res = await fetch(BASE + path, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (await token()) },
       body: JSON.stringify(payload)
@@ -141,6 +143,24 @@
 
   function hasModule(m) { return !!(site && (site.modules || []).indexOf(m) >= 0); }
 
+  /* The admin sees every site; a picker in the header says which one the
+     tabs are about. Everything cached per site is dropped on a switch. */
+  function selectSite(id) {
+    var next = (me.sites || []).filter(function (s) { return s.site_id === id; })[0];
+    if (!next || (site && site.site_id === id)) return;
+    site = next;
+    anCache = {};
+    framedAt = null; pendingPath = null;
+    $('dashFrame').src = 'about:blank';
+    convs = []; openConv = null; pendingConv = null;
+    if (chatChannel) { try { ONE.db.removeChannel(chatChannel); } catch (e) {} chatChannel = null; }
+    $('navChat').hidden = !hasModule('chat');
+    var badge = $('navChatCount'); if (badge) badge.hidden = true;
+    if (hasModule('chat')) { listenChat(); loadChats(); }
+    showTab(tab === 'Chat' && !hasModule('chat') ? 'Analytics' : tab);
+  }
+  $('sitePick').addEventListener('change', function () { selectSite(this.value); });
+
   /* -------------------------------------------------------- dashboard -- */
 
   /* The customer's own dashboard, inside the tab, signed in. The app asks
@@ -191,6 +211,7 @@
     if (link && link.kind === 'chat') { pendingConv = link.id || null; showTab('Chat'); return; }
     if (link && link.kind === 'support' && link.id) { location.hash = 'r/' + link.id; showTab('Support'); return; }
     if (n.href && /^\/requests\.html#(r\/.+)$/.test(n.href)) { location.hash = RegExp.$1; showTab('Support'); return; }
+    if (n.href && /^\/admin\.html#r\/(.+)$/.test(n.href)) { pendingRequest = RegExp.$1; showTab('Support'); return; }
     if (link && link.path && site && site.dashboard_url) { pendingPath = link.path; showTab('Dashboard'); return; }
     if (n.href && /^https:\/\//.test(n.href)) { showTab('Dashboard'); openExternal(n.href); return; }
     showTab('Dashboard');
@@ -490,7 +511,116 @@
 
   /* The Requests feature, from the same file the website uses. Loaded
      once, after login, because it starts itself and needs a session. */
+  var pendingRequest = null; // an admin thread waiting for the tab
+  var adminRows = [];
+  var adminOpenId = null;
+  var STATUS_WORD = { new: 'Open', waiting: 'Waiting on them', in_progress: 'Being built', done: 'Done', declined: 'Declined' };
+  var STATUS_CLASS = { waiting: 'is-waiting', in_progress: 'is-building', done: 'is-done', declined: 'is-done' };
+
+  function adminCard(r) {
+    var waiting = r.last_note_by === 'customer' && r.status !== 'done' && r.status !== 'declined';
+    var a = el('a', 'req-card' + (waiting ? ' is-unread' : ''));
+    a.href = '#';
+    a.addEventListener('click', function (e) { e.preventDefault(); openAdminThread(r.id); });
+    var top = el('div', 'req-card-top');
+    var t = el('div');
+    t.appendChild(el('span', 'oa-req-biz', r.business_name || r.contact_name || 'Customer'));
+    t.appendChild(el('h3', 'req-card-title', r.title));
+    top.appendChild(t);
+    top.appendChild(el('span', 'req-state ' + (STATUS_CLASS[r.status] || ''), STATUS_WORD[r.status] || 'Open'));
+    a.appendChild(top);
+    var line = el('p', 'req-card-line');
+    if (r.latest) {
+      line.appendChild(el('span', 'req-card-snippet', r.latest.body));
+      line.appendChild(el('span', 'req-card-meta' + (waiting ? ' oa-req-wait' : ''), (r.latest.author === 'admin' ? 'You' : 'Them') + ', ' + ago(r.latest.created_at) + (waiting ? ' · waiting on you' : '')));
+    }
+    a.appendChild(line);
+    return a;
+  }
+
+  async function loadAdminInbox() {
+    $('adminThread').hidden = true;
+    $('adminInbox').hidden = false;
+    try {
+      var res = await apiTo('/api/admin', { action: 'requestsInbox' });
+      adminRows = res.requests || [];
+    } catch (err) { $('adminEmpty').hidden = false; $('adminEmpty').textContent = 'Could not load requests: ' + err.message; return; }
+    var open = adminRows.filter(function (r) { return r.status !== 'done' && r.status !== 'declined'; });
+    var done = adminRows.filter(function (r) { return r.status === 'done' || r.status === 'declined'; });
+    var openBox = $('adminOpen'); openBox.innerHTML = '';
+    open.forEach(function (r) { openBox.appendChild(adminCard(r)); });
+    $('adminEmpty').hidden = open.length > 0;
+    var doneBox = $('adminDone'); doneBox.innerHTML = '';
+    done.forEach(function (r) { doneBox.appendChild(adminCard(r)); });
+    $('adminDoneWrap').hidden = done.length === 0;
+    $('adminDoneCount').textContent = String(done.length);
+    var waiting = open.filter(function (r) { return r.last_note_by === 'customer'; }).length;
+    var badge = $('navReqCount'); badge.textContent = String(waiting); badge.hidden = waiting === 0;
+    if (pendingRequest) { var id = pendingRequest; pendingRequest = null; openAdminThread(id); }
+  }
+
+  function noteBubble(n) {
+    var wrap = el('div', 'msg ' + (n.author === 'admin' ? 'from-owner' : 'from-visitor') + (n.private ? ' is-private' : ''));
+    wrap.appendChild(el('div', 'msg-who', n.author === 'admin' ? (n.private ? 'Private note' : 'You') : 'Them'));
+    var box = el('div', 'msg-body');
+    String(n.body).split(/\n{2,}/).forEach(function (p) {
+      var para = el('p');
+      p.split('\n').forEach(function (line, i) { if (i) para.appendChild(document.createElement('br')); para.appendChild(document.createTextNode(line)); });
+      box.appendChild(para);
+    });
+    if (n.attachments && n.attachments.length) {
+      var files = el('div', 'msg-files');
+      n.attachments.forEach(function (f, i) { var a = el('a', 'msg-file', 'Photo ' + (i + 1)); a.href = f.url; a.target = '_blank'; a.rel = 'noopener'; files.appendChild(a); });
+      box.appendChild(files);
+    }
+    wrap.appendChild(box);
+    wrap.appendChild(el('div', 'msg-when', ago(n.created_at)));
+    return wrap;
+  }
+
+  async function openAdminThread(id) {
+    $('adminInbox').hidden = true;
+    $('adminThread').hidden = false;
+    $('aThread').innerHTML = '';
+    say($('aNote'), '');
+    adminOpenId = id;
+    try {
+      var t = await apiTo('/api/admin', { action: 'requestThread', requestId: id });
+      $('aTitle').textContent = t.request.title || 'Request';
+      $('aStatus').textContent = STATUS_WORD[t.request.status] || 'Open';
+      $('aStatus').className = 'req-state ' + (STATUS_CLASS[t.request.status] || '');
+      var c = t.customer || {};
+      $('aWho').textContent = [c.business_name, c.contact_name, c.email].filter(Boolean).join(' · ');
+      var box = $('aThread');
+      (t.notes || []).forEach(function (n) { box.appendChild(noteBubble(n)); });
+      window.scrollTo(0, document.body.scrollHeight);
+    } catch (err) { say($('aNote'), err.message, 'bad'); }
+  }
+  $('adminBack').addEventListener('click', loadAdminInbox);
+  $('aBody').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(120, this.scrollHeight) + 'px'; });
+  $('aForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!adminOpenId) return;
+    var ta = $('aBody');
+    var text = ta.value.trim();
+    if (!text) return;
+    var mode = (document.querySelector('input[name="aMode"]:checked') || {}).value || 'waiting';
+    var payload = { action: 'addRequestNote', requestId: adminOpenId, body: text };
+    if (mode === 'private') payload.isPrivate = true; else payload.status = mode;
+    $('aSend').disabled = true;
+    try {
+      var r = await apiTo('/api/admin', payload);
+      ta.value = ''; ta.style.height = 'auto';
+      $('aThread').appendChild(noteBubble(Object.assign({ author: 'admin', private: mode === 'private' }, r.note)));
+      if (r.request) { $('aStatus').textContent = STATUS_WORD[r.request.status] || 'Open'; $('aStatus').className = 'req-state ' + (STATUS_CLASS[r.request.status] || ''); }
+      say($('aNote'), mode === 'private' ? 'Noted, just for you.' : 'Sent. They get it on their phone and by email.', 'ok');
+      window.scrollTo(0, document.body.scrollHeight);
+    } catch (err) { say($('aNote'), err.message, 'bad'); }
+    $('aSend').disabled = false;
+  });
+
   function loadRequests() {
+    if (me && me.user && me.user.is_admin) { if (pendingRequest || $('adminThread').hidden) loadAdminInbox(); return; }
     if (requestsLoaded) { if (ONE.refreshRequestBadge) ONE.refreshRequestBadge(); return; }
     requestsLoaded = true;
     var base = native ? BASE + '/' : '../';
@@ -597,6 +727,14 @@
     }
     site = (me.sites && me.sites[0]) || null;
     $('siteName').textContent = site ? site.name : '';
+    if (me.sites && me.sites.length > 1) {
+      var pick = $('sitePick');
+      pick.innerHTML = '';
+      me.sites.forEach(function (s) { var o = el('option', null, s.name || s.url || 'Site'); o.value = s.site_id; pick.appendChild(o); });
+      pick.value = site.site_id;
+      pick.hidden = false;
+      $('siteName').hidden = true;
+    }
     $('accountEmail').textContent = me.user.email || '';
     $('navChat').hidden = !hasModule('chat');
     $('bellDot').hidden = !(me.unread && me.unread.notifications > 0);

@@ -46,6 +46,7 @@
     <div class="oa-head-site">
       <span class="oa-brand">one.</span>
       <span class="oa-site-name" id="siteName"></span>
+      <select class="oa-site-pick" id="sitePick" aria-label="Which site" hidden></select>
     </div>
     <div class="oa-head-actions">
       <button class="oa-icon-btn" id="bellBtn" type="button" aria-label="Activity">
@@ -156,6 +157,38 @@
 
   <!-- ---- Support (the Requests feature, unchanged) ---- -->
   <section class="oa-tab req-wrap" id="tabSupport" hidden>
+
+    <!-- The admin's side: every customer's requests, through /api/admin. -->
+    <section id="adminInbox" hidden>
+      <div class="req-top"><h1 class="req-h1">Requests</h1></div>
+      <p class="hint req-lede">Everything customers have asked for, newest first. Ones waiting on you are marked.</p>
+      <div class="req-cards" id="adminOpen"></div>
+      <p class="req-empty" id="adminEmpty" hidden>Nothing open. Enjoy it.</p>
+      <details class="req-done-wrap" id="adminDoneWrap" hidden>
+        <summary>Done <span class="req-done-count" id="adminDoneCount"></span></summary>
+        <div class="req-cards" id="adminDone"></div>
+      </details>
+    </section>
+    <section id="adminThread" hidden>
+      <p class="req-crumb"><button class="linkish" id="adminBack" type="button">&larr; All requests</button></p>
+      <div class="req-detail-head">
+        <h1 class="req-h1" id="aTitle"></h1>
+        <span class="req-state" id="aStatus"></span>
+      </div>
+      <p class="hint" id="aWho"></p>
+      <div class="thread" id="aThread"></div>
+      <form class="reply-bar oa-reply" id="aForm" novalidate>
+        <textarea id="aBody" rows="1" maxlength="4000" placeholder="Write a reply" aria-label="Your reply"></textarea>
+        <button class="btn btn-primary reply-btn" id="aSend" type="submit">Send</button>
+      </form>
+      <div class="oa-admin-opts">
+        <label><input type="radio" name="aMode" value="waiting" checked> Reply</label>
+        <label><input type="radio" name="aMode" value="in_progress"> Being built</label>
+        <label><input type="radio" name="aMode" value="done"> Done</label>
+        <label><input type="radio" name="aMode" value="private"> Private note</label>
+      </div>
+      <p class="note" id="aNote" role="status" aria-live="polite"></p>
+    </section>
 
     <section id="viewList" hidden>
       <div class="req-top">
