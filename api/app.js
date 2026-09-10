@@ -14,7 +14,7 @@
  * it for a session of its own. See `dashboard` below.
  */
 const { createClient } = require('@supabase/supabase-js');
-const { missingEnv, adminEmails } = require('./_env.js');
+const { missingEnv, adminEmails, ourSiteUrl } = require('./_env.js');
 const { sitesFor, siteFor, isUuid } = require('./_mcp.js');
 const { cleanBody, isOnline, addMessage } = require('./_chat.js');
 const { sendEmail } = require('./_email.js');
@@ -88,8 +88,21 @@ async function analytics(db, site, daysIn) {
 
 /* ---------------------------------------------------------------- me -- */
 
+/* The admin uses the app like a customer does, on their own site too:
+   kanvas.one's chat and visitors. The row is made on first sight, with
+   the admin's user id as its id, like every other site. */
+async function ownSiteForAdmin(db, caller) {
+  const { data: mine } = await db.from('sites').select('id').eq('owner_id', caller.user_id).limit(1);
+  if (mine && mine.length) return;
+  const { error } = await db.from('sites').insert({ id: caller.user_id, owner_id: caller.user_id, name: 'Kanvas One', url: ourSiteUrl(), status: 'live', modules: ['chat'] });
+  if (error) console.error('app: could not make the admin site row:', error.message);
+}
+
 async function me(db, caller) {
-  const sites = await sitesFor({ db }, caller);
+  if (caller.is_admin) await ownSiteForAdmin(db, caller);
+  let sites = await sitesFor({ db }, caller);
+  // Their own first, then everyone else's by name.
+  sites = sites.slice().sort((a, b) => (a.owner_id === caller.user_id ? -1 : b.owner_id === caller.user_id ? 1 : String(a.name).localeCompare(String(b.name))));
   const ids = sites.map((s) => s.site_id);
   const config = {};
   if (ids.length) {
@@ -107,8 +120,15 @@ async function me(db, caller) {
   nq = caller.is_admin ? nq.eq('for_admin', true) : nq.eq('user_id', caller.user_id);
   const { data: fresh } = await nq;
 
-  const { data: reqs } = await db.from('requests').select('id, last_note_at, customer_seen_at, last_note_by').eq('user_id', caller.user_id).eq('last_note_by', 'admin').limit(200);
-  const requestsUnread = (reqs || []).filter((r) => !r.customer_seen_at || new Date(r.customer_seen_at) < new Date(r.last_note_at)).length;
+  let requestsUnread = 0;
+  if (caller.is_admin) {
+    // Waiting on Kane: the customer spoke last and it is not finished.
+    const { data: reqs } = await db.from('requests').select('id, status, last_note_by').eq('last_note_by', 'customer').limit(500);
+    requestsUnread = (reqs || []).filter((r) => r.status !== 'done' && r.status !== 'declined').length;
+  } else {
+    const { data: reqs } = await db.from('requests').select('id, last_note_at, customer_seen_at, last_note_by').eq('user_id', caller.user_id).eq('last_note_by', 'admin').limit(200);
+    requestsUnread = (reqs || []).filter((r) => !r.customer_seen_at || new Date(r.customer_seen_at) < new Date(r.last_note_at)).length;
+  }
 
   return {
     user: { id: caller.user_id, email: caller.email, is_admin: caller.is_admin, plan: (prof && prof.active_plan) || null },
