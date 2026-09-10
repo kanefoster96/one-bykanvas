@@ -31,4 +31,13 @@ function ourSiteUrl() {
   return (raw || 'https://kanvas.one').replace(/\/+$/, '');
 }
 
-module.exports = { missingEnv, ourSiteUrl };
+/* Who counts as the admin. ADMIN_EMAILS (comma separated) overrides the
+   default. Shared by api/admin.js and the MCP server so the two never
+   disagree about who is in charge. */
+function adminEmails() {
+  const fromEnv = String(process.env.ADMIN_EMAILS || '')
+    .split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
+  return fromEnv.length ? fromEnv : ['kane@kanvas.one'];
+}
+
+module.exports = { missingEnv, ourSiteUrl, adminEmails };

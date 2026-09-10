@@ -99,11 +99,15 @@ async function addNote(db, request, { author, body, attachmentPaths, status, isP
 
 /* Every request with the newest public note under it: the admin inbox and
    the MCP inbox_list tool. */
-async function listInbox(db) {
-  const { data: reqs, error: reqErr } = await db.from('requests')
-    .select('id, user_id, kind, title, detail, status, created_at, done_at, last_note_at, last_note_by, customer_seen_at')
+async function listInbox(db, siteId) {
+  let q = db.from('requests')
+    .select('id, user_id, site_id, kind, title, detail, status, created_at, done_at, last_note_at, last_note_by, customer_seen_at')
     .order('last_note_at', { ascending: false, nullsFirst: false })
     .limit(500);
+  /* Scoped at the query, not after: a site's caller never receives another
+     site's rows to filter out. */
+  if (siteId) q = q.eq('site_id', siteId);
+  const { data: reqs, error: reqErr } = await q;
   if (reqErr) throw new Error(reqErr.message);
 
   const ids = (reqs || []).map((r) => r.id);
@@ -133,7 +137,7 @@ async function listInbox(db) {
     const p = names[r.user_id] || {};
     const n = latest[r.id];
     return {
-      id: r.id, user_id: r.user_id, kind: r.kind, status: r.status,
+      id: r.id, user_id: r.user_id, site_id: r.site_id, kind: r.kind, status: r.status,
       title: r.title || String(r.detail || '').split('\n')[0].slice(0, 120),
       created_at: r.created_at, done_at: r.done_at,
       last_note_at: r.last_note_at || r.created_at, last_note_by: r.last_note_by || 'customer',
@@ -180,7 +184,7 @@ async function getThread(db, id) {
 
   return {
     request: {
-      id: reqRow.id, user_id: reqRow.user_id, kind: reqRow.kind, status: reqRow.status,
+      id: reqRow.id, user_id: reqRow.user_id, site_id: reqRow.site_id, kind: reqRow.kind, status: reqRow.status,
       title: reqRow.title || String(reqRow.detail || '').split('\n')[0].slice(0, 120),
       created_at: reqRow.created_at, done_at: reqRow.done_at,
       last_note_at: reqRow.last_note_at, last_note_by: reqRow.last_note_by
@@ -190,7 +194,21 @@ async function getThread(db, id) {
   };
 }
 
+/* The site a customer's request belongs to. One site per customer today,
+   with the profile's id as the site id; made on first sight for an account
+   that predates the sites table, so a request never lacks a site. */
+async function siteForUser(db, userId) {
+  const { data: mine } = await db.from('sites').select('id').eq('owner_id', userId).order('created_at', { ascending: true }).limit(1);
+  if (mine && mine.length) return mine[0].id;
+  const { data: p } = await db.from('profiles').select('business_name, site_url, site_status').eq('id', userId).maybeSingle();
+  const { data: made, error } = await db.from('sites')
+    .insert({ id: userId, owner_id: userId, name: (p && p.business_name) || '', url: (p && p.site_url) || null, status: (p && p.site_status) || 'building' })
+    .select('id').single();
+  if (error) { console.error('requests: could not make a site row:', error.message); return null; }
+  return made.id;
+}
+
 module.exports = {
   STATUSES, CUSTOMER_LABEL, MAX_ATTACHMENTS, BODY_MIN, BODY_MAX,
-  cleanBody, cleanAttachments, addNote, listInbox, getThread
+  cleanBody, cleanAttachments, addNote, listInbox, getThread, siteForUser
 };

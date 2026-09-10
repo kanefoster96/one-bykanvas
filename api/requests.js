@@ -10,7 +10,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
-const { cleanBody, cleanAttachments, addNote } = require('./_requests.js');
+const { cleanBody, cleanAttachments, addNote, siteForUser } = require('./_requests.js');
 const { pointsWindowStart } = require('./_billing.js');
 
 const STARTER_MONTHLY_CHANGES = 1;
@@ -175,8 +175,9 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    const siteId = await siteForUser(db, user.id);
     const { data: row, error } = await db.from('requests').insert({
-      user_id: user.id, kind: kind, points: REQUEST_COST[kind].points,
+      user_id: user.id, site_id: siteId, kind: kind, points: REQUEST_COST[kind].points,
       title: title, detail: cleaned.body,
       attachment_paths: attachmentPaths.length ? attachmentPaths : null
     }).select().single();

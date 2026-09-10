@@ -122,6 +122,7 @@ async function start() {
   showSite(profile.data);
   showBilling(profile.data);
   showReferral(profile.data);
+  showClaude(profile.data);
   await showPoints(profile.data);
   await showFeatures();
 
@@ -630,6 +631,84 @@ async function showReferral(row) {
     console.log('referral panel skipped:', e && e.message);
     panel.hidden = true;
   }
+}
+
+/* ---------------- Connect Claude ---------------- */
+/*
+ * A personal token for the MCP server. Minted on the server, shown once
+ * here, listed by label afterwards with a Revoke. Paying customers only:
+ * it talks about a plan and requests, which a free account has none of.
+ */
+async function claudeApi(payload) {
+  var res = await fetch('/api/mcp-tokens', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + window.ONE_SESSION.token() },
+    body: JSON.stringify(payload)
+  });
+  var data = await res.json().catch(function () { return {}; });
+  if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+  return data;
+}
+
+async function showClaude(row) {
+  var panel = document.getElementById('claudePanel');
+  if (!panel) return;
+  var live = row && (row.subscription_status === 'active' || row.subscription_status === 'trialing');
+  if (!live) { panel.hidden = true; return; }
+  panel.hidden = false;
+
+  var list = document.getElementById('claudeList');
+  var note = document.getElementById('claudeNote');
+
+  async function paintList() {
+    list.textContent = '';
+    try {
+      var data = await claudeApi({ action: 'list' });
+      (data.tokens || []).forEach(function (t) {
+        var li = el('li', 'claude-item');
+        var main = el('div', 'claude-item-main');
+        main.appendChild(el('strong', null, t.label));
+        main.appendChild(el('span', 'hint', 'Connected ' + new Date(t.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+          + (t.last_used_at ? ', last used ' + new Date(t.last_used_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ', not used yet')));
+        li.appendChild(main);
+        var rm = el('button', 'linkish', 'Revoke');
+        rm.type = 'button';
+        rm.addEventListener('click', async function () {
+          if (!confirm('Disconnect ' + t.label + '? Claude will stop being able to see your site until you connect again.')) return;
+          rm.disabled = true;
+          try { await claudeApi({ action: 'revoke', id: t.id }); await paintList(); }
+          catch (e) { say(note, ONE.friendlyError(e), 'bad'); rm.disabled = false; }
+        });
+        li.appendChild(rm);
+        list.appendChild(li);
+      });
+    } catch (e) { say(note, ONE.friendlyError(e), 'bad'); }
+  }
+
+  document.getElementById('claudeConnect').addEventListener('click', async function () {
+    var btn = this;
+    btn.disabled = true;
+    say(note, 'Making your link\u2026');
+    try {
+      var data = await claudeApi({ action: 'create', label: 'Claude' });
+      var box = document.getElementById('claudeNew');
+      document.getElementById('claudeUrl').textContent = data.url;
+      box.hidden = false;
+      say(note, '');
+      await paintList();
+    } catch (e) { say(note, ONE.friendlyError(e), 'bad'); }
+    btn.disabled = false;
+  });
+
+  document.getElementById('claudeCopy').addEventListener('click', function () {
+    var url = document.getElementById('claudeUrl').textContent;
+    var btn = this;
+    var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () {});
+    else done();
+  });
+
+  await paintList();
 }
 
 /* ---------------- billing ---------------- */
