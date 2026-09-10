@@ -100,12 +100,13 @@ admin token changes in Vercel.
 
 ## The One app
 
-`app/` is the customer's phone app: notifications, live chat (coming) and
+`app/` is the customer's phone app: notifications, live chat and
 analytics for their site, with their own dashboard opened inside it and the
 Requests feature as the Support tab. It runs at `/app/` and, through
 Capacitor, as the native iOS and Android app. `beacon.js` is the one-line
 analytics tag every site gets; `api/beacon.js` stores the views, `api/app.js`
-serves the app, `api/_notify.js` words every event with the site's own labels
+serves the app, `chat.js` and `api/chat.js` are the live chat widget and its
+endpoint, `api/_notify.js` words every event with the site's own labels
 and `api/_push.js` sends it to their phone. Setup and the native build are in
 `app/README.md`.
 
