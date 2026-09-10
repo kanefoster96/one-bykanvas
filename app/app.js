@@ -120,6 +120,7 @@
     if (tab === 'Analytics') loadAnalytics();
     if (tab === 'Dashboard') { var p = pendingPath; pendingPath = null; renderDashboard(p); }
     if (tab === 'Support') loadRequests();
+    if (tab === 'Chat') { if (openConv && !pendingConv) schedulePoll(); else { openConv = null; $('chatThread').hidden = true; $('chatList').hidden = false; loadChats(); } }
   }
 
   document.querySelectorAll('.oa-nav-btn').forEach(function (b) {
@@ -187,7 +188,7 @@
      a place in the dashboard. */
   function openLink(n) {
     var link = n.deep_link || null;
-    if (link && link.kind === 'chat') { showTab('Chat'); return; }
+    if (link && link.kind === 'chat') { pendingConv = link.id || null; showTab('Chat'); return; }
     if (link && link.kind === 'support' && link.id) { location.hash = 'r/' + link.id; showTab('Support'); return; }
     if (n.href && /^\/requests\.html#(r\/.+)$/.test(n.href)) { location.hash = RegExp.$1; showTab('Support'); return; }
     if (link && link.path && site && site.dashboard_url) { pendingPath = link.path; showTab('Dashboard'); return; }
@@ -302,6 +303,187 @@
     dk.style.width = (total ? (d.devices.desktop / total) * 100 : 0) + '%';
     bar.appendChild(ph); bar.appendChild(dk);
     $('anDevicesNote').textContent = total ? Math.round((d.devices.phone / total) * 100) + '% on a phone, ' + Math.round((d.devices.desktop / total) * 100) + '% on a desktop.' : 'No visitors yet.';
+  }
+
+  /* ------------------------------------------------------------- chat -- */
+
+  var convs = [];
+  var openConv = null;     // the conversation on screen
+  var chatTimer = null;
+  var chatChannel = null;
+  var pendingConv = null;  // a deep link waiting for the tab
+
+  function initials(name) {
+    var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '?';
+    return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+  }
+
+  function renderConvs() {
+    var ul = $('convList');
+    ul.innerHTML = '';
+    $('convEmpty').hidden = convs.length > 0;
+    convs.forEach(function (c) {
+      var li = el('li', (c.unread ? 'is-unread' : '') + (c.status === 'closed' ? ' is-closed' : ''));
+      var av = el('span', 'oa-conv-avatar', initials(c.name || 'Visitor'));
+      if (c.online) av.appendChild(el('span', 'oa-online'));
+      li.appendChild(av);
+      var body = el('div', 'oa-conv-body');
+      var top = el('div', 'oa-conv-top');
+      top.appendChild(el('p', 'oa-conv-name', c.name || 'Visitor' + (c.page ? ' on ' + c.page : '')));
+      top.appendChild(el('span', 'oa-conv-when', ago(c.last_at)));
+      body.appendChild(top);
+      body.appendChild(el('p', 'oa-conv-preview', (c.last_by === 'owner' ? 'You: ' : '') + (c.preview || '')));
+      li.appendChild(body);
+      li.addEventListener('click', function () { openThread(c.id); });
+      ul.appendChild(li);
+    });
+  }
+
+  async function loadChats() {
+    if (!site) return;
+    try {
+      var res = await api({ action: 'chat_list', site_id: site.site_id });
+      convs = res.conversations || [];
+      renderConvs();
+      var n = convs.filter(function (c) { return c.unread; }).length;
+      var badge = $('navChatCount');
+      if (badge) { badge.textContent = String(n); badge.hidden = n === 0; }
+    } catch (err) { $('convEmpty').hidden = false; $('convEmpty').textContent = 'Could not load your chats: ' + err.message; }
+    if (pendingConv) { var id = pendingConv; pendingConv = null; openThread(id); }
+  }
+
+  function chatBubble(m) {
+    var wrap = el('div', 'msg ' + (m.author === 'owner' ? 'from-owner' : 'from-visitor'));
+    wrap.dataset.id = m.id;
+    var head = el('div', 'msg-who', m.author === 'owner' ? 'You' + (m.emailed ? ' · also emailed' : '') : (openConv && openConv.name) || 'Visitor');
+    wrap.appendChild(head);
+    var box = el('div', 'msg-body');
+    String(m.body).split(/\n{2,}/).forEach(function (p) {
+      var para = el('p');
+      p.split('\n').forEach(function (line, i) { if (i) para.appendChild(document.createElement('br')); para.appendChild(document.createTextNode(line)); });
+      box.appendChild(para);
+    });
+    wrap.appendChild(box);
+    wrap.appendChild(el('div', 'msg-when', ago(m.at)));
+    return wrap;
+  }
+
+  function renderConvHead(c) {
+    $('convName').textContent = c.name || 'Visitor';
+    var bits = [];
+    if (c.online) bits.push('On your site now'); else bits.push('Last seen ' + ago(c.last_at));
+    if (c.page) bits.push('from ' + c.page);
+    if (c.status === 'closed') bits.push('closed');
+    if (c.blocked) bits.push('blocked');
+    $('convMeta').textContent = bits.join(' · ');
+    var call = $('convCall'), mail = $('convMail');
+    call.hidden = !c.phone; if (c.phone) call.href = 'tel:' + String(c.phone).replace(/[^\d+]/g, '');
+    mail.hidden = !c.email; if (c.email) mail.href = 'mailto:' + c.email;
+    $('convClose').textContent = c.status === 'closed' ? 'Reopen conversation' : 'Close conversation';
+    $('convBlock').textContent = c.blocked ? 'Unblock this visitor' : 'Block this visitor';
+    // Gone but reachable: say so, and default the reply to go by email too.
+    var off = $('chatOffline'), emailToo = $('chatEmailToo');
+    if (!c.online && c.email) { off.hidden = false; off.textContent = 'They’ve left the site. Your reply goes to ' + c.email + ' as well.'; emailToo.hidden = false; $('chatEmailBox').checked = true; }
+    else if (!c.online && c.phone) { off.hidden = false; off.textContent = 'They’ve left the site. They left a number, so a call might be quickest.'; emailToo.hidden = true; }
+    else if (c.email) { off.hidden = true; emailToo.hidden = false; $('chatEmailBox').checked = false; }
+    else { off.hidden = true; emailToo.hidden = true; }
+    $('chatForm').hidden = !!c.blocked;
+  }
+
+  async function openThread(id) {
+    $('chatList').hidden = true;
+    $('chatThread').hidden = false;
+    $('convMenu').hidden = true;
+    $('chatMsgs').innerHTML = '';
+    say($('chatNote'), '');
+    try {
+      var res = await api({ action: 'chat_get', site_id: site.site_id, conversation_id: id });
+      openConv = res.conversation;
+      renderConvHead(openConv);
+      var box = $('chatMsgs');
+      res.messages.forEach(function (m) { box.appendChild(chatBubble(m)); });
+      window.scrollTo(0, document.body.scrollHeight);
+      convs.forEach(function (c) { if (c.id === id) c.unread = false; });
+    } catch (err) { say($('chatNote'), err.message, 'bad'); }
+    schedulePoll();
+  }
+
+  function closeThread() {
+    openConv = null;
+    $('chatThread').hidden = true;
+    $('chatList').hidden = false;
+    loadChats();
+  }
+  $('chatBack').addEventListener('click', closeThread);
+  $('convMore').addEventListener('click', function () { $('convMenu').hidden = !$('convMenu').hidden; });
+  $('convClose').addEventListener('click', async function () {
+    if (!openConv) return;
+    try { var r = await api({ action: 'chat_set', site_id: site.site_id, conversation_id: openConv.id, status: openConv.status === 'closed' ? 'open' : 'closed' }); openConv = r.conversation; renderConvHead(openConv); $('convMenu').hidden = true; }
+    catch (err) { say($('chatNote'), err.message, 'bad'); }
+  });
+  $('convBlock').addEventListener('click', async function () {
+    if (!openConv) return;
+    if (!openConv.blocked && !confirm('Block this visitor? They will not be able to message you again from this chat.')) return;
+    try { var r = await api({ action: 'chat_set', site_id: site.site_id, conversation_id: openConv.id, blocked: !openConv.blocked }); openConv = r.conversation; renderConvHead(openConv); $('convMenu').hidden = true; }
+    catch (err) { say($('chatNote'), err.message, 'bad'); }
+  });
+
+  $('chatBody').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(120, this.scrollHeight) + 'px'; });
+  $('chatForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!openConv) return;
+    var ta = $('chatBody');
+    var text = ta.value.trim();
+    if (!text) return;
+    var btn = $('chatSend');
+    btn.disabled = true;
+    try {
+      var via = $('chatEmailToo').hidden ? undefined : ($('chatEmailBox').checked ? 'email' : 'chat');
+      var r = await api({ action: 'chat_reply', site_id: site.site_id, conversation_id: openConv.id, body: text, via: via });
+      ta.value = ''; ta.style.height = 'auto';
+      $('chatMsgs').appendChild(chatBubble(r.message));
+      openConv = r.conversation;
+      say($('chatNote'), r.delivered.indexOf('email') >= 0 ? 'Sent, and emailed to them.' : 'Sent.', 'ok');
+      window.scrollTo(0, document.body.scrollHeight);
+    } catch (err) { say($('chatNote'), err.message, 'bad'); }
+    btn.disabled = false;
+  });
+
+  /* New messages arrive two ways: Supabase Realtime on this site's
+     messages when it is up, and a slow poll regardless. */
+  function onNewMessage(m) {
+    if (openConv && m.conversation_id === openConv.id) {
+      if (!$('chatMsgs').querySelector('[data-id="' + m.id + '"]')) {
+        $('chatMsgs').appendChild(chatBubble({ id: m.id, author: m.author, body: m.body, at: m.created_at }));
+        window.scrollTo(0, document.body.scrollHeight);
+      }
+      if (m.author === 'visitor') api({ action: 'chat_get', site_id: site.site_id, conversation_id: openConv.id }).then(function (r) { openConv = r.conversation; renderConvHead(openConv); }).catch(function () {});
+    } else if (tab === 'Chat') loadChats();
+    else if (m.author === 'visitor') { var b = $('navChatCount'); if (b) { b.textContent = String((Number(b.textContent) || 0) + 1); b.hidden = false; } }
+  }
+  function listenChat() {
+    if (chatChannel || !site || !hasModule('chat') || !ONE.db.channel) return;
+    try {
+      chatChannel = ONE.db.channel('site-messages-' + site.site_id)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: 'site_id=eq.' + site.site_id }, function (payload) { if (payload && payload.new) onNewMessage(payload.new); })
+        .subscribe();
+    } catch (e) { chatChannel = null; }
+  }
+  function schedulePoll() {
+    clearTimeout(chatTimer);
+    if (!hasModule('chat')) return;
+    chatTimer = setTimeout(async function () {
+      try {
+        if (openConv) {
+          var r = await api({ action: 'chat_get', site_id: site.site_id, conversation_id: openConv.id });
+          openConv = r.conversation; renderConvHead(openConv);
+          var box = $('chatMsgs');
+          r.messages.forEach(function (m) { if (!box.querySelector('[data-id="' + m.id + '"]')) box.appendChild(chatBubble(m)); });
+        } else if (tab === 'Chat') await loadChats();
+      } catch (e) { /* next tick */ }
+      schedulePoll();
+    }, openConv ? 8000 : 20000);
   }
 
   /* ---------------------------------------------------------- support -- */
@@ -429,6 +611,7 @@
     var h = location.hash.replace(/^#/, '');
     showTab(/^(new|r\/)/.test(h) ? 'Support' : 'Analytics');
     setupPush();
+    if (hasModule('chat')) { listenChat(); loadChats(); schedulePoll(); }
   }
 
   boot();

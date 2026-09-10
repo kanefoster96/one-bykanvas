@@ -119,11 +119,39 @@
 
   <!-- ---- Chat ---- -->
   <section class="oa-tab" id="tabChat" hidden>
-    <div class="oa-tab-head"><h2>Chat</h2></div>
-    <div class="oa-card oa-soon">
-      <p class="oa-card-title">Live chat from your site</p>
-      <p class="hint">Conversations from your site land here. Reply while they&rsquo;re still on the page, or by email or phone if they left one.</p>
-    </div>
+    <section id="chatList">
+      <div class="oa-tab-head"><h2>Chat</h2></div>
+      <p class="hint oa-chat-lede">Messages from people on your site. Reply here while they&rsquo;re still on the page, or by email or phone if they left one.</p>
+      <ul class="oa-convs" id="convList"></ul>
+      <p class="oa-empty" id="convEmpty" hidden>No conversations yet. The chat button is live on your site; the first message lands here and on your phone.</p>
+    </section>
+
+    <section id="chatThread" hidden>
+      <p class="req-crumb"><button class="linkish" id="chatBack" type="button">&larr; All conversations</button></p>
+      <div class="oa-conv-head">
+        <div class="oa-conv-who">
+          <h2 id="convName"></h2>
+          <p class="hint" id="convMeta"></p>
+        </div>
+        <div class="oa-conv-actions">
+          <a class="oa-chip" id="convCall" href="#" hidden>Call</a>
+          <a class="oa-chip" id="convMail" href="#" hidden>Email</a>
+          <button class="oa-chip" id="convMore" type="button" aria-label="More">&hellip;</button>
+        </div>
+      </div>
+      <div class="oa-conv-menu" id="convMenu" hidden>
+        <button class="linkish" id="convClose" type="button">Close conversation</button>
+        <button class="linkish" id="convBlock" type="button">Block this visitor</button>
+      </div>
+      <div class="thread oa-thread" id="chatMsgs"></div>
+      <p class="hint oa-offline" id="chatOffline" hidden></p>
+      <form class="reply-bar oa-reply" id="chatForm" novalidate>
+        <textarea id="chatBody" rows="1" maxlength="2000" placeholder="Write a reply" aria-label="Your reply"></textarea>
+        <button class="btn btn-primary reply-btn" id="chatSend" type="submit">Send</button>
+      </form>
+      <label class="oa-email-too" id="chatEmailToo" hidden><input type="checkbox" id="chatEmailBox"> <span>Also send by email</span></label>
+      <p class="note" id="chatNote" role="status" aria-live="polite"></p>
+    </section>
   </section>
 
   <!-- ---- Support (the Requests feature, unchanged) ---- -->
@@ -217,6 +245,7 @@
     <button class="oa-nav-btn" type="button" data-tab="Chat" id="navChat" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg>
       <span>Chat</span>
+      <span class="nav-count oa-nav-count" id="navChatCount" hidden>0</span>
     </button>
     <button class="oa-nav-btn" type="button" data-tab="Support" id="navReq">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>

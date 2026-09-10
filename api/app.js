@@ -16,6 +16,9 @@
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, adminEmails } = require('./_env.js');
 const { sitesFor, siteFor, isUuid } = require('./_mcp.js');
+const { cleanBody, isOnline, addMessage } = require('./_chat.js');
+const { sendEmail } = require('./_email.js');
+const { html: emailHtml, esc } = require('./_email_template.js');
 
 const DAY = 86400000;
 const MAX_ROWS = 50000;
@@ -126,6 +129,81 @@ async function events(db, caller, siteId) {
   return data || [];
 }
 
+/* -------------------------------------------------------------- chat -- */
+
+function convOut(c, now) {
+  return {
+    id: c.id, name: c.visitor_name, email: c.visitor_email, phone: c.visitor_phone, page: c.page,
+    status: c.status, blocked: !!c.blocked_at, online: isOnline(c, now),
+    last_at: c.last_message_at, last_by: c.last_message_by, preview: c.last_message_preview,
+    unread: c.last_message_by === 'visitor' && (!c.owner_seen_at || new Date(c.owner_seen_at) < new Date(c.last_message_at)),
+    created_at: c.created_at
+  };
+}
+
+async function conversationIn(db, site, id) {
+  if (!isUuid(id)) { const e = new Error('Which conversation?'); e.shown = true; throw e; }
+  const { data } = await db.from('conversations').select('*').eq('id', id).maybeSingle();
+  if (!data || data.site_id !== site.id) { const e = new Error('Permission denied: that conversation is not on this site.'); e.shown = true; e.code = 'PERMISSION_DENIED'; throw e; }
+  return data;
+}
+
+async function chatList(db, site) {
+  const { data, error } = await db.from('conversations').select('*').eq('site_id', site.id).order('last_message_at', { ascending: false }).limit(100);
+  if (error) throw new Error(error.message);
+  const now = Date.now();
+  return (data || []).map((c) => convOut(c, now));
+}
+
+async function chatGet(db, site, id) {
+  const conv = await conversationIn(db, site, id);
+  const { data: msgs } = await db.from('messages').select('id, author, body, emailed_at, created_at').eq('conversation_id', conv.id).order('created_at', { ascending: true }).limit(300);
+  const now = new Date().toISOString();
+  if (conv.last_message_by === 'visitor') await db.from('conversations').update({ owner_seen_at: now }).eq('id', conv.id);
+  return { conversation: convOut(conv), messages: (msgs || []).map((m) => ({ id: m.id, author: m.author, body: m.body, emailed: !!m.emailed_at, at: m.created_at })) };
+}
+
+/* The owner's reply lands in the thread. It also goes by email when the
+   owner asks, or when the visitor has gone and left an address: a reply
+   nobody is there to read is a reply lost. */
+async function chatReply(db, site, id, bodyIn, via) {
+  const conv = await conversationIn(db, site, id);
+  const text = cleanBody(bodyIn);
+  if (text.length < 1) { const e = new Error('Write a reply first.'); e.shown = true; throw e; }
+  if (conv.blocked_at) { const e = new Error('This visitor is blocked. Unblock them to reply.'); e.shown = true; throw e; }
+  const made = await addMessage(db, conv, 'owner', text);
+  const delivered = ['chat'];
+  const wantsEmail = via === 'email' || (via !== 'chat' && !isOnline(conv) && !!conv.visitor_email);
+  if (wantsEmail && conv.visitor_email) {
+    const business = site.name || site.profile.business_name || 'us';
+    const { data: recent } = await db.from('messages').select('author, body, created_at').eq('conversation_id', conv.id).order('created_at', { ascending: false }).limit(6);
+    const thread = (recent || []).reverse().filter((m) => m.id !== made.message.id);
+    const lines = [esc(text).replace(/\n/g, '<br>')];
+    if (thread.length) lines.push('<span style="color:#86868b;font-size:13px;">Earlier:</span><br>' + thread.map((m) => '<b>' + (m.author === 'owner' ? esc(business) : esc(conv.visitor_name || 'You')) + ':</b> ' + esc(m.body).replace(/\n/g, ' ')).join('<br>'));
+    const result = await sendEmail({
+      to: conv.visitor_email,
+      subject: 'Reply from ' + business,
+      replyTo: site.email || undefined,
+      text: text + (thread.length ? '\n\nEarlier:\n' + thread.map((m) => (m.author === 'owner' ? business : conv.visitor_name || 'You') + ': ' + m.body).join('\n') : '') + '\n\nReply to this email to carry on.',
+      html: emailHtml({ preheader: text.slice(0, 90), heading: 'A reply from ' + business, lines, footer: 'You messaged ' + business + ' on their website. Reply to this email to carry on the conversation.' }),
+      headers: { 'Auto-Submitted': 'no' }
+    });
+    if (result === 'sent') { delivered.push('email'); await db.from('messages').update({ emailed_at: new Date().toISOString() }).eq('id', made.message.id); }
+  }
+  return { message: { id: made.message.id, author: 'owner', body: text, emailed: delivered.includes('email'), at: made.message.created_at }, delivered, conversation: convOut(made.conversation) };
+}
+
+async function chatSet(db, site, id, patchIn) {
+  const conv = await conversationIn(db, site, id);
+  const patch = {};
+  if (patchIn.status === 'open' || patchIn.status === 'closed') patch.status = patchIn.status;
+  if (typeof patchIn.blocked === 'boolean') patch.blocked_at = patchIn.blocked ? new Date().toISOString() : null;
+  if (!Object.keys(patch).length) return convOut(conv);
+  const { data, error } = await db.from('conversations').update(patch).eq('id', conv.id).select().single();
+  if (error) throw new Error(error.message);
+  return convOut(data);
+}
+
 /* A place inside the dashboard: a path only, so a deep link can never
    point the frame somewhere else. Anything odd becomes the front door. */
 function cleanPath(p) {
@@ -168,6 +246,11 @@ module.exports = async function handler(req, res) {
     }
 
     if (action === 'events') return res.status(200).json({ events: await events(db, caller, body.site_id) });
+
+    if (action === 'chat_list') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json({ conversations: await chatList(db, site) }); }
+    if (action === 'chat_get') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await chatGet(db, site, body.conversation_id)); }
+    if (action === 'chat_reply') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await chatReply(db, site, body.conversation_id, body.body, body.via)); }
+    if (action === 'chat_set') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json({ conversation: await chatSet(db, site, body.conversation_id, body) }); }
 
     if (action === 'dashboard') {
       const site = await siteFor({ db }, caller, body.site_id);

@@ -22,6 +22,26 @@ Then on the admin page, under the customer, **One app**: the dashboard
 address, which modules the site has, what they call things (job / order /
 booking / client) and where records live in the dashboard.
 
+## Live chat
+
+Sites with the chat module get one more line:
+
+```html
+<script src="https://kanvas.one/chat.js" data-site="<site id>" data-name="Rowan &amp; Fig" defer></script>
+```
+
+A button in the corner, a panel, and the owner gets it on their phone. The
+visitor holds a random token for their thread in localStorage and nothing
+else. `api/chat.js` is the visitor's door (start, send, poll, details), rate
+limited per thread; `api/app.js` (`chat_*`) is the owner's. A reply always
+lands in the thread; it also goes by email (Resend, reply-to the owner) when
+the owner ticks "also send by email", or when the visitor has left the site
+and left an address. A phone number becomes a Call button. Owners can close
+a conversation or block a visitor. The app hears new messages through
+Supabase Realtime on the site's `messages` rows, with a slow poll as backup.
+Optional attributes: `data-color` for the button, `data-greeting` for the
+first line.
+
 ## The dashboard inside the app
 
 Every dashboard we build gets two things:
