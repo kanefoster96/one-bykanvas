@@ -97,7 +97,100 @@ async function addNote(db, request, { author, body, attachmentPaths, status, isP
   return { note, request: updated };
 }
 
+/* Every request with the newest public note under it: the admin inbox and
+   the MCP inbox_list tool. */
+async function listInbox(db) {
+  const { data: reqs, error: reqErr } = await db.from('requests')
+    .select('id, user_id, kind, title, detail, status, created_at, done_at, last_note_at, last_note_by, customer_seen_at')
+    .order('last_note_at', { ascending: false, nullsFirst: false })
+    .limit(500);
+  if (reqErr) throw new Error(reqErr.message);
+
+  const ids = (reqs || []).map((r) => r.id);
+  const latest = {};
+  if (ids.length) {
+    const { data: notes, error: nErr } = await db.from('request_notes')
+      .select('request_id, author, body, private, created_at')
+      .in('request_id', ids)
+      .order('created_at', { ascending: false })
+      .limit(3000);
+    if (nErr) throw new Error(nErr.message);
+    (notes || []).forEach((n) => {
+      if (!latest[n.request_id] && !n.private) latest[n.request_id] = n;
+    });
+  }
+
+  const userIds = Array.from(new Set((reqs || []).map((r) => r.user_id)));
+  let names = {};
+  if (userIds.length) {
+    const { data: profs, error: pErr } = await db.from('profiles')
+      .select('id, business_name, contact_name, site_url').in('id', userIds);
+    if (pErr) throw new Error(pErr.message);
+    (profs || []).forEach((p) => { names[p.id] = p; });
+  }
+
+  const rows = (reqs || []).map((r) => {
+    const p = names[r.user_id] || {};
+    const n = latest[r.id];
+    return {
+      id: r.id, user_id: r.user_id, kind: r.kind, status: r.status,
+      title: r.title || String(r.detail || '').split('\n')[0].slice(0, 120),
+      created_at: r.created_at, done_at: r.done_at,
+      last_note_at: r.last_note_at || r.created_at, last_note_by: r.last_note_by || 'customer',
+      business_name: p.business_name || null, contact_name: p.contact_name || null,
+      site_url: p.site_url || null,
+      latest: n ? { author: n.author, body: String(n.body).split('\n')[0].slice(0, 140), created_at: n.created_at } : null
+    };
+  });
+  return rows;
+}
+
+/* The whole conversation, private notes included, with the customer and
+   a signed link for every attachment. Null when there is no such request. */
+async function getThread(db, id) {
+  const { data: reqRow, error: rErr } = await db.from('requests').select('*').eq('id', id).maybeSingle();
+  if (rErr) throw new Error(rErr.message);
+  if (!reqRow) return null;
+
+  const { data: notes, error: nErr } = await db.from('request_notes')
+    .select('id, author, body, private, attachment_paths, created_at')
+    .eq('request_id', id).order('created_at', { ascending: true }).limit(500);
+  if (nErr) throw new Error(nErr.message);
+
+  const paths = (notes || []).flatMap((n) => n.attachment_paths || []);
+  const signed = {};
+  if (paths.length) {
+    const { data: list, error: sErr } = await db.storage
+      .from('request-attachments').createSignedUrls(paths, 3600);
+    if (sErr) throw new Error(sErr.message);
+    (list || []).forEach((x) => { if (x.signedUrl) signed[x.path] = x.signedUrl; });
+  }
+  (notes || []).forEach((n) => {
+    n.attachments = (n.attachment_paths || []).map((p) => ({ path: p, url: signed[p] })).filter((a) => a.url);
+    delete n.attachment_paths;
+  });
+
+  const { data: prof } = await db.from('profiles')
+    .select('id, business_name, contact_name, site_url, site_status, active_plan').eq('id', reqRow.user_id).maybeSingle();
+  let email = null;
+  try {
+    const { data: u } = await db.auth.admin.getUserById(reqRow.user_id);
+    email = u && u.user && u.user.email;
+  } catch (e) { /* the thread still shows without it */ }
+
+  return {
+    request: {
+      id: reqRow.id, user_id: reqRow.user_id, kind: reqRow.kind, status: reqRow.status,
+      title: reqRow.title || String(reqRow.detail || '').split('\n')[0].slice(0, 120),
+      created_at: reqRow.created_at, done_at: reqRow.done_at,
+      last_note_at: reqRow.last_note_at, last_note_by: reqRow.last_note_by
+    },
+    customer: Object.assign({ email }, prof || {}),
+    notes: notes || []
+  };
+}
+
 module.exports = {
   STATUSES, CUSTOMER_LABEL, MAX_ATTACHMENTS, BODY_MIN, BODY_MAX,
-  cleanBody, cleanAttachments, addNote
+  cleanBody, cleanAttachments, addNote, listInbox, getThread
 };

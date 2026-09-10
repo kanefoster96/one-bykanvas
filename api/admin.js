@@ -20,7 +20,9 @@ const { unsubscribeHeaders, unsubscribeUrl, optedOut } = require('./_unsubscribe
 const { shortfallFor } = require('./_billing.js');
 const { lookup: domainLookup } = require('./domains.js');
 const { notify } = require('./_notify.js');
-const { STATUSES: REQUEST_STATUSES, cleanAttachments, addNote } = require('./_requests.js');
+const { notifySiteLive } = require('./_site_live.js');
+const { sendLeadPreview } = require('./_previews.js');
+const { STATUSES: REQUEST_STATUSES, cleanAttachments, addNote, listInbox, getThread } = require('./_requests.js');
 
 const DEFAULT_ADMINS = ['kane@kanvas.one'];
 
@@ -159,61 +161,6 @@ async function notifyFeatureEmail(db, userId, name, verb) {
     })
   });
   console.log('admin: feature notify email', result);
-}
-
-/* The moment a build actually finishes - the one email in this whole system
- * a customer has been waiting the longest for. */
-async function notifySiteLive(db, userId, businessName, siteUrl) {
-  const { data: who } = await db.auth.admin.getUserById(userId);
-  const customerEmail = who && who.user && who.user.email;
-  if (!customerEmail) return;
-
-  const href = /^https?:\/\//i.test(siteUrl) ? siteUrl : 'https://' + siteUrl;
-  const shown = href.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-  const site = ourSiteUrl();
-
-  const result = await sendEmail({
-    to: customerEmail,
-    subject: 'Your site is live',
-    text: `${businessName || 'Your site'} is live at ${shown}.\n\n`
-        + `Have a look, and let us know if there's anything you'd like changed.\n\n`
-        + `One favour: know another business that could use a site like yours? `
-        + `Your referral code is on your account page - give it to them, and when `
-        + `their site goes live your next month is free.\n\n`
-        + (process.env.REVIEW_URL
-            ? `And if you've got 60 seconds, a review helps us more than you'd think: ${process.env.REVIEW_URL}\n\n`
-            : '')
-        + `Manage your account: ${site}/account.html`,
-    html: emailHtml({
-      /* heading is escaped inside the shell, so the raw name goes in here -
-         escaping it twice turned an ampersand into &amp;amp; on the page. */
-      preheader: `${shown} is live. Have a look and tell us what you think.`,
-      heading: `${businessName || 'Your site'} is live 🎉`,
-      lines: [
-        `It&rsquo;s built, it&rsquo;s online, and it&rsquo;s yours.`,
-        `Have a look through, and let us know if there&rsquo;s anything you&rsquo;d like changed &mdash; that&rsquo;s what your monthly changes are for.`,
-        /* The referral ask lands at the happiest moment there is. Honoured
-           by hand: a month's credit on both accounts in Stripe. */
-        `One favour: know another business that could use a site like yours? `
-          + `Your referral code is on <a href="${site}/account.html">your account page</a> &mdash; `
-          + `give it to them, and when their site goes live your <strong>next month is free</strong>.`
-      ].concat(process.env.REVIEW_URL
-        ? [`And if you&rsquo;ve got 60 seconds, `
-           + `<a href="${process.env.REVIEW_URL}">a quick review</a> helps us more than you&rsquo;d think.`]
-        : []),
-      details: [
-        { label: 'Business', value: businessName || '—' },
-        { label: 'Web address', value: shown },
-        { label: 'Status', value: 'Live' }
-      ],
-      ctaText: 'View your site',
-      ctaHref: href,
-      ctaNote: 'Ask for a change any time from your account.',
-      footer: 'You&rsquo;re getting this because your site with Kanvas One has gone live.',
-      footerLinks: standardFooter(site)
-    })
-  });
-  console.log('admin: site live email', result);
 }
 
 module.exports = async function handler(req, res) {
@@ -377,96 +324,15 @@ module.exports = async function handler(req, res) {
        snippet a customer would recognise, so they are skipped for the
        snippet and kept for the timestamp. */
     if (action === 'requestsInbox') {
-      const { data: reqs, error: reqErr } = await db.from('requests')
-        .select('id, user_id, kind, title, detail, status, created_at, done_at, last_note_at, last_note_by, customer_seen_at')
-        .order('last_note_at', { ascending: false, nullsFirst: false })
-        .limit(500);
-      if (reqErr) throw new Error(reqErr.message);
-
-      const ids = (reqs || []).map((r) => r.id);
-      const latest = {};
-      if (ids.length) {
-        const { data: notes, error: nErr } = await db.from('request_notes')
-          .select('request_id, author, body, private, created_at')
-          .in('request_id', ids)
-          .order('created_at', { ascending: false })
-          .limit(3000);
-        if (nErr) throw new Error(nErr.message);
-        (notes || []).forEach((n) => {
-          if (!latest[n.request_id] && !n.private) latest[n.request_id] = n;
-        });
-      }
-
-      const userIds = Array.from(new Set((reqs || []).map((r) => r.user_id)));
-      let names = {};
-      if (userIds.length) {
-        const { data: profs, error: pErr } = await db.from('profiles')
-          .select('id, business_name, contact_name, site_url').in('id', userIds);
-        if (pErr) throw new Error(pErr.message);
-        (profs || []).forEach((p) => { names[p.id] = p; });
-      }
-
-      const rows = (reqs || []).map((r) => {
-        const p = names[r.user_id] || {};
-        const n = latest[r.id];
-        return {
-          id: r.id, user_id: r.user_id, kind: r.kind, status: r.status,
-          title: r.title || String(r.detail || '').split('\n')[0].slice(0, 120),
-          created_at: r.created_at, done_at: r.done_at,
-          last_note_at: r.last_note_at || r.created_at, last_note_by: r.last_note_by || 'customer',
-          business_name: p.business_name || null, contact_name: p.contact_name || null,
-          site_url: p.site_url || null,
-          latest: n ? { author: n.author, body: String(n.body).split('\n')[0].slice(0, 140), created_at: n.created_at } : null
-        };
-      });
-      return res.status(200).json({ requests: rows });
+      return res.status(200).json({ requests: await listInbox(db) });
     }
 
-    /* The whole conversation, private notes included, with the customer's
-       details at the top and a signed link for every attachment. */
     if (action === 'requestThread') {
       const id = String(body.requestId || '');
       if (!id) return res.status(400).json({ error: 'Which request?' });
-      const { data: reqRow, error: rErr } = await db.from('requests').select('*').eq('id', id).maybeSingle();
-      if (rErr) throw new Error(rErr.message);
-      if (!reqRow) return res.status(404).json({ error: 'Request not found.' });
-
-      const { data: notes, error: nErr } = await db.from('request_notes')
-        .select('id, author, body, private, attachment_paths, created_at')
-        .eq('request_id', id).order('created_at', { ascending: true }).limit(500);
-      if (nErr) throw new Error(nErr.message);
-
-      const paths = (notes || []).flatMap((n) => n.attachment_paths || []);
-      const signed = {};
-      if (paths.length) {
-        const { data: list, error: sErr } = await db.storage
-          .from('request-attachments').createSignedUrls(paths, 3600);
-        if (sErr) throw new Error(sErr.message);
-        (list || []).forEach((x) => { if (x.signedUrl) signed[x.path] = x.signedUrl; });
-      }
-      (notes || []).forEach((n) => {
-        n.attachments = (n.attachment_paths || []).map((p) => ({ path: p, url: signed[p] })).filter((a) => a.url);
-        delete n.attachment_paths;
-      });
-
-      const { data: prof } = await db.from('profiles')
-        .select('id, business_name, contact_name, site_url, site_status, active_plan').eq('id', reqRow.user_id).maybeSingle();
-      let email = null;
-      try {
-        const { data: u } = await db.auth.admin.getUserById(reqRow.user_id);
-        email = u && u.user && u.user.email;
-      } catch (e) { /* the thread still shows without it */ }
-
-      return res.status(200).json({
-        request: {
-          id: reqRow.id, user_id: reqRow.user_id, kind: reqRow.kind, status: reqRow.status,
-          title: reqRow.title || String(reqRow.detail || '').split('\n')[0].slice(0, 120),
-          created_at: reqRow.created_at, done_at: reqRow.done_at,
-          last_note_at: reqRow.last_note_at, last_note_by: reqRow.last_note_by
-        },
-        customer: Object.assign({ email }, prof || {}),
-        notes: notes || []
-      });
+      const thread = await getThread(db, id);
+      if (!thread) return res.status(404).json({ error: 'Request not found.' });
+      return res.status(200).json(thread);
     }
 
     /* A note from us. Public notes move the status (our pick, else
@@ -765,125 +631,9 @@ module.exports = async function handler(req, res) {
       const id = String(body.leadId || '');
       const url = String(body.url || '').trim();
       if (!id) return res.status(400).json({ error: 'Which one?' });
-      if (!/^https:\/\/[^\s]+\.[^\s]{2,}/i.test(url)) {
-        return res.status(400).json({ error: 'That needs to be a full https:// address.' });
-      }
-
-      const { data: lead, error: leadErr } = await db
-        .from('leads').select('*').eq('id', id).maybeSingle();
-      if (leadErr) throw new Error(leadErr.message);
-      if (!lead) return res.status(404).json({ error: 'That request is gone.' });
-
-      /* Sending twice reads as not knowing what you are doing, so it takes a
-         deliberate second ask rather than a second click. */
-      if (lead.preview_sent_at && !body.again) {
-        return res.status(409).json({
-          error: 'This one was already sent ' + new Date(lead.preview_sent_at).toDateString()
-               + '. Send it again only if you meant to.'
-        });
-      }
-
-      const site = ourSiteUrl();
-      const facts = [{ label: 'Business', value: lead.business }];
-
-      /* Asked again, not assumed. They picked this days ago and nothing was
-         reserved, so "still available" has to be checked at the moment we say
-         it - and when the registries cannot be reached, it says nothing at all
-         rather than guessing in either direction. */
-      let domainState = 'unknown';
-      if (lead.requested_domain) {
-        try {
-          domainState = await domainLookup(lead.requested_domain);
-        } catch (e) {
-          console.error('admin: domain re-check failed:', e && e.message);
-        }
-        facts.push({
-          label: 'Address',
-          value: lead.requested_domain,
-          tag: domainState === 'free'  ? { text: 'Still available' }
-             : domainState === 'taken' ? { text: 'Now taken', tone: 'warn' }
-             : null
-        });
-      }
-
-      const perks = [
-        'Nothing technical to set up. We put it live for you.',
-        'No time lost. We build and look after it while you get on with the job.',
-        'If anything breaks, we fix it. Included, and it never costs you a point.',
-        'Your web address and hosting are in the monthly price, with nothing else to buy.'
-      ];
-
-      const sent = await sendEmail({
-        to: lead.email,
-        subject: `Your website is ready to look at, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
-        html: emailHtml({
-          preheader: 'Here it is - the free one-page example you asked for.',
-          heading: 'Your website is ready 🎁',
-          lines: [
-            `Here it is. We designed this for <strong>${esc(lead.business)}</strong> from `
-              + `${lead.handle ? 'your ' + esc(lead.handle) : 'what you sent us'}, so it should `
-              + `already look like you.`
-          ].concat(domainState === 'taken'
-            ? [`One thing: <strong>${esc(lead.requested_domain)}</strong> has been `
-               + `registered by somebody else since you asked. Join and we&rsquo;ll find `
-               + `you a good one that is free.`]
-            : []),
-          details: facts,
-          ctaText: '🎁 See your website',
-          ctaHref: url,
-          /* The address bar will not say their name, and an unexplained one
-             looks like a mistake. Said under the button, where they are about
-             to see it. */
-          ctaNote: lead.requested_domain && domainState !== 'taken'
-            ? `This opens on a temporary address. ${esc(lead.requested_domain)} is yours when you join.`
-            : 'This opens on a temporary address while it&rsquo;s an example.',
-          offer: {
-            code: PREVIEW_OFFER.code,
-            href: `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}`,
-            text: '<strong>Want it online, properly?</strong><br>'
-                + 'Tap the code for 50% off your first month.',
-            note: 'It comes with you &mdash; nothing to copy, and it is already '
-                + 'on the bill when you pay. Works on any plan.'
-          },
-          perks: perks,
-          footer: 'You&rsquo;re getting this because you asked us for a free example at '
-                + 'kanvas.one. No account has been created and nothing has been charged.',
-          footerLinks: standardFooter(site)
-        }),
-        text: `Here it is - the free example we made for ${lead.business}.\n\n`
-            + `${url}\n\n`
-            + (lead.requested_domain && domainState !== 'taken'
-                ? `This opens on a temporary address. ${lead.requested_domain} is yours `
-                  + `when you join${domainState === 'free' ? ' - it is still available' : ''}.\n\n`
-                : `This opens on a temporary address while it's an example.\n\n`)
-            + (domainState === 'taken'
-                ? `${lead.requested_domain} has been registered by somebody else since you `
-                  + `asked. Join and we'll find you a good one that is free.\n\n`
-                : '')
-            + `Want it online properly? 50% off your first month with `
-            + `${PREVIEW_OFFER.code}, on any plan:\n`
-            + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`
-            + perks.map((t) => '- ' + t).join('\n') + '\n\n'
-            + `See the plans: ${site}/plans.html\n`
-      });
-
-      /* sendEmail answers 'sent', 'skipped' or 'failed', and only the first
-         may mark this done: stamping a failed send would show "Sent" in the
-         queue while the customer waits for an email that never went. */
-      if (sent !== 'sent') {
-        console.error('admin: preview email for %s did not send: %s', id, sent);
-        return res.status(502).json({
-          error: 'The email did not send (' + sent + '). Nothing was marked, so you can try again.'
-        });
-      }
-
-      const { error: markErr } = await db.from('leads')
-        .update({ preview_url: url, preview_sent_at: new Date().toISOString() })
-        .eq('id', id);
-      if (markErr) throw new Error(markErr.message);
-
-      console.log('admin: preview sent for %s', id);
-      return res.status(200).json({ ok: true, sentAt: new Date().toISOString() });
+      const out = await sendLeadPreview(db, id, url, { again: !!body.again });
+      if (out.error) return res.status(out.status || 400).json({ error: out.error });
+      return res.status(200).json({ ok: true, sentAt: out.sentAt });
     }
 
     /* ---- ending a membership ------------------------------------------
