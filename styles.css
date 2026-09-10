@@ -2503,3 +2503,15 @@ a.hero-pill:hover .pill-go{opacity:1}
 .starter-note{margin:16px 0 0;padding:14px 16px;border-radius:14px;background:#fff;border:1px solid var(--line-soft);font-size:14.5px;line-height:1.55;color:var(--ink-2)}
 .starter-note strong{color:var(--ink)}
 .plan-up{margin:18px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-3)}
+
+/* Connect Claude, on the account page */
+.claude-new{margin:14px 0 18px;padding:14px 16px;border-radius:14px;background:var(--bg-grey)}
+.claude-new .hint{margin:0 0 10px;line-height:1.5}
+.claude-new .ref-row{margin:0 0 10px}
+.claude-url{display:block;flex:1;min-width:0;overflow-wrap:anywhere;font-size:12.5px;line-height:1.5}
+.claude-list{list-style:none;margin:0 0 6px;padding:0}
+.claude-item{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+.claude-item:last-child{border-bottom:0}
+.claude-item-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.claude-item-main strong{font-size:15px;font-weight:600}
+.claude-item .linkish{margin:0;flex:0 0 auto;font-size:13.5px}

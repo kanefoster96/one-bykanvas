@@ -47,27 +47,53 @@ build command, output directory `.`.
 Annual is ten months' money for twelve. Prices live in `api/_plans.js` and
 nowhere else. Pro is legacy and no longer sold.
 
-## Admin from a Claude chat (MCP)
+## Kanvas One from a Claude chat (MCP)
 
-`api/mcp.js` is an MCP server for the admin side: inbox and edit requests,
-customers, memberships, payments and refunds, leads, partners. Read tools
-answer straight away. Every write tool returns a plain-English preview and
-a `confirmation_id`; nothing sends, charges, refunds or changes a plan until
-`confirm(confirmation_id)` is called, within ten minutes, once. Everything
-confirmed is written to `mcp_actions`, and `actions_recent` reads it back.
+`api/mcp.js` is a multi-tenant MCP server. A call is resolved to a Kanvas One
+user account, then `list_sites` says which sites that account may talk about:
+a customer sees the sites they own, the admin sees every site. Every other
+site tool takes a `site_id` and the server checks, on every call, that the
+site belongs to the caller before reading or writing anything. A site that is
+not theirs is a permission error. Queries are scoped to that site; with
+`SUPABASE_JWT_SECRET` set, a customer's reads also run through a client signed
+as them, so row level security enforces the same thing in the database.
+
+Read tools answer straight away. Every write tool returns a plain-English
+preview and a `confirmation_id`; nothing sends, charges, refunds or changes a
+plan until `confirm(confirmation_id)` is called, within ten minutes, once, by
+the user who previewed it. Everything confirmed is written to `mcp_actions`.
+
+Customers get: `list_sites`, `site_summary`, `inbox_list`, `request_get`,
+`orders_list`, `membership_get`, `actions_recent`, and with confirm
+`request_reply`, `request_new`, `membership_change_plan`, `membership_cancel`.
+The admin gets all of those on any site, plus `summary`, `customers_list`,
+`memberships_list`, `leads_list`, `partners_list`, and with confirm
+`request_set_status`, `refund`, `email_send`, `customer_note`, `site_set`,
+`lead_send_preview`, `partner_mark_paid`.
+
+Three kinds of token are accepted, in the `Authorization: Bearer` header or as
+`/api/mcp/<token>` in the path:
+
+- a personal token (`k1_...`) minted from the account page's "Connect Claude"
+  card (`api/mcp-tokens.js`), stored only as a hash, revocable there;
+- a Supabase session access token, which is how an in-app assistant will call
+  the same `callTool` with the signed-in user;
+- `MCP_ADMIN_TOKEN`, the admin's standing token.
 
 Setup, once:
 
-1. Run `supabase/migrations/0033_mcp_actions.sql`.
-2. In Vercel, add `MCP_ADMIN_TOKEN` (a long random secret, 32+ characters)
-   and `MCP_READ_ONLY=true`. Writes stay refused until it is exactly `false`.
+1. Run `supabase/migrations/0033_mcp_actions.sql` and `0034_sites_and_mcp_tokens.sql`.
+2. In Vercel, add `MCP_ADMIN_TOKEN` (a long random secret, 32+ characters) and
+   `MCP_READ_ONLY=true`. Writes stay refused until it is exactly `false`.
+   Optionally add `SUPABASE_JWT_SECRET` (the project's JWT secret) so customer
+   reads go through row level security.
 
 Connect:
 
 - Claude Code:
-  `claude mcp add kanvas --transport http https://kanvas.one/api/mcp --header "Authorization: Bearer $MCP_ADMIN_TOKEN"`
+  `claude mcp add kanvas --transport http https://kanvas.one/api/mcp --header "Authorization: Bearer <token>"`
 - claude.ai and Cowork: Settings → Connectors → Add custom connector →
   `https://kanvas.one/api/mcp/<token>`
 
-The token URL is a password. Never share it or paste it into a chat; if it
-leaks, change `MCP_ADMIN_TOKEN` in Vercel and the old one stops working.
+A token URL is a password. Customers revoke theirs from the account page; the
+admin token changes in Vercel.

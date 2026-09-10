@@ -12,7 +12,7 @@
  */
 const { createClient } = require('@supabase/supabase-js');
 const Stripe = require('stripe');
-const { missingEnv, ourSiteUrl } = require('./_env.js');
+const { missingEnv, ourSiteUrl, adminEmails } = require('./_env.js');
 const { REQUEST_COST, PLANS, PREVIEW_OFFER } = require('./_plans.js');
 const { sendEmail, sendBatch } = require('./_email.js');
 const { html: emailHtml, standardFooter, esc } = require('./_email_template.js');
@@ -31,11 +31,7 @@ const DEFAULT_ADMINS = ['kane@kanvas.one'];
    the customer types it and Stripe does the rest. Changing the discount means
    changing it in Stripe, not here: this is only the word we print. */
 
-function adminList() {
-  const fromEnv = (process.env.ADMIN_EMAILS || '')
-    .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-  return fromEnv.length ? fromEnv : DEFAULT_ADMINS;
-}
+function adminList() { return adminEmails(); }
 
 /* Charges the card on file off-session, for a shortfall already worked out
  * by the caller. Shared by accepting a request (the normal path - before any
