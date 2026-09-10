@@ -22,6 +22,28 @@ Then on the admin page, under the customer, **One app**: the dashboard
 address, which modules the site has, what they call things (job / order /
 booking / client) and where records live in the dashboard.
 
+## The dashboard inside the app
+
+Every dashboard we build gets two things:
+
+1. This line before the dashboard's own scripts:
+   ```html
+   <script src="https://kanvas.one/kanvas-handoff.js" data-url="https://<ref>.supabase.co" data-key="<publishable key>"></script>
+   ```
+2. A header that lets the app frame it, in the dashboard's `vercel.json`:
+   ```json
+   { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://kanvas.one capacitor://localhost https://localhost" }
+   ```
+
+How it works: the app asks `api/app.js` (`dashboard`) for a handoff URL. The
+server checks the site is theirs, mints a single-use magic-link token for the
+signed-in user with Supabase's admin `generateLink` (no email is sent), and
+returns the dashboard address with the token in the URL fragment. The frame
+loads it; `kanvas-handoff.js` swaps the token for a session on the dashboard's
+own origin with `verifyOtp`, strips the fragment and reloads. The app's own
+session never leaves the app, the token never reaches a server log, and it
+cannot be used twice. Every deep link is the same handoff at a different path.
+
 ## Server setup, once
 
 1. Run `supabase/migrations/0035_one_app.sql`.
