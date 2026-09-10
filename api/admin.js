@@ -396,6 +396,46 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true, request: updated });
     }
 
+    // ---- read: the One app config for one customer ---------------------
+    if (action === 'appConfig') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      const { data } = await db.from('sites').select('id, dashboard_url, modules, labels, deep_links').eq('id', userId).maybeSingle();
+      return res.status(200).json({ config: data || { id: userId, dashboard_url: null, modules: [], labels: {}, deep_links: {} } });
+    }
+
+    // ---- write: how the One app sees this site -------------------------
+    // Where their dashboard is, which app features they have, and what
+    // they call things. Lives on the sites row (id = profile id).
+    if (action === 'setAppConfig') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      const dashboard = body.dashboardUrl == null ? null : String(body.dashboardUrl).trim().replace(/\/+$/, '');
+      if (dashboard && !/^https:\/\/[^\s]+\.[^\s]{2,}/i.test(dashboard)) return res.status(400).json({ error: 'The dashboard needs a full https:// address.' });
+      const ALLOWED = ['chat', 'payments', 'bookings', 'reviews'];
+      const modules = (Array.isArray(body.modules) ? body.modules : []).map(String).filter((m) => ALLOWED.includes(m));
+      const labels = {};
+      Object.keys(body.labels && typeof body.labels === 'object' ? body.labels : {}).forEach((k) => {
+        const v = String(body.labels[k] || '').trim().toLowerCase().slice(0, 30);
+        if (['money_in', 'work', 'booking', 'person', 'review'].includes(k) && v) labels[k] = v;
+      });
+      const deepLinks = {};
+      Object.keys(body.deepLinks && typeof body.deepLinks === 'object' ? body.deepLinks : {}).forEach((k) => {
+        const v = String(body.deepLinks[k] || '').trim().slice(0, 200);
+        if (/^[a-z_]{1,30}$/.test(k) && /^\//.test(v)) deepLinks[k] = v;
+      });
+      const { data: existing } = await db.from('sites').select('id').eq('id', userId).maybeSingle();
+      if (!existing) {
+        const { data: prof } = await db.from('profiles').select('business_name, site_url, site_status').eq('id', userId).maybeSingle();
+        if (!prof) return res.status(404).json({ error: 'No such customer.' });
+        const { error: mkErr } = await db.from('sites').insert({ id: userId, owner_id: userId, name: prof.business_name || '', url: prof.site_url || null, status: prof.site_status || 'building' });
+        if (mkErr) throw new Error(mkErr.message);
+      }
+      const { error } = await db.from('sites').update({ dashboard_url: dashboard || null, modules, labels, deep_links: deepLinks }).eq('id', userId);
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true, modules, labels, deep_links: deepLinks });
+    }
+
     // ---- write: the site address and whether it is live ----------------
     if (action === 'setSite') {
       const userId = String(body.userId || '');

@@ -1,0 +1,14 @@
+{
+  "appId": "one.kanvas.app",
+  "appName": "One",
+  "webDir": "app-dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "CapacitorHttp": { "enabled": true },
+    "PushNotifications": { "presentationOptions": ["badge", "sound", "alert"] },
+    "SplashScreen": { "launchShowDuration": 0 }
+  },
+  "ios": { "contentInset": "always" }
+}

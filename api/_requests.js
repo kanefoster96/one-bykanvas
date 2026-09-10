@@ -89,9 +89,11 @@ async function addNote(db, request, { author, body, attachmentPaths, status, isP
     const heading = to === 'done' ? 'Done: ' + title
       : to === 'waiting' ? 'A quick question about ' + title
       : 'Update on ' + title;
-    await notify(db, request.user_id, heading, body.slice(0, 200), href);
+    await notify(db, request.user_id, heading, body.slice(0, 200), href,
+      { siteId: request.site_id || null, kind: 'support', deepLink: { kind: 'support', id: request.id } });
   } else {
-    await notifyAdmin(db, (first ? 'New request: ' : 'Reply on ') + title, body.slice(0, 200), '/admin.html#r/' + request.id);
+    await notifyAdmin(db, (first ? 'New request: ' : 'Reply on ') + title, body.slice(0, 200), '/admin.html#r/' + request.id,
+      { siteId: request.site_id || null, kind: 'support', deepLink: { kind: 'support', id: request.id } });
   }
 
   return { note, request: updated };

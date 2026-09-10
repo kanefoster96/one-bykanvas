@@ -411,6 +411,94 @@ function siteEditorRow(p) {
   return row;
 }
 
+/* ---------------- the One app: dashboard, modules, labels ---------------- */
+
+/* What the customer's phone app knows about their site. Loaded on open,
+   saved as one row: where their dashboard lives, which app features the
+   site has, and what the business calls things, so a notification says
+   "New order" to a cafe and "New job" to a plumber. */
+function appConfigRow(p) {
+  var wrap = el('div', 'app-config');
+  wrap.appendChild(el('h3', 'req-list-title', 'One app'));
+  var status = el('p', 'hint', 'Loading…');
+  wrap.appendChild(status);
+
+  var MODULES = [['chat', 'Live chat'], ['payments', 'Payments'], ['bookings', 'Bookings'], ['reviews', 'Reviews']];
+  var LABELS = [['work', 'A piece of work is a…', 'job'], ['person', 'A new person is a…', 'customer'], ['booking', 'A booking is a…', 'booking'], ['money_in', 'A payment is a…', 'payment']];
+  var LINKS = [['payment', 'Payment / order', '/orders/{id}'], ['customer', 'Customer', '/customers/{id}'], ['booking', 'Booking', '/bookings/{id}'], ['work', 'Job', '/jobs/{id}'], ['review', 'Review', '/reviews/{id}']];
+
+  api({ action: 'appConfig', userId: p.id }).then(function (res) {
+    var c = res.config || {};
+    status.remove();
+
+    var url = el('input', 'admin-input');
+    url.type = 'url';
+    url.value = c.dashboard_url || '';
+    url.placeholder = 'https://their-site.co.uk/admin';
+    url.setAttribute('aria-label', 'Dashboard address');
+    var urlRow = el('div', 'cust-site');
+    urlRow.appendChild(el('label', 'app-config-label', 'Dashboard'));
+    urlRow.appendChild(url);
+    wrap.appendChild(urlRow);
+
+    var mods = el('div', 'app-config-mods');
+    var modInputs = {};
+    MODULES.forEach(function (m) {
+      var lab = el('label', 'app-config-mod');
+      var cb = el('input'); cb.type = 'checkbox'; cb.value = m[0]; cb.checked = (c.modules || []).indexOf(m[0]) >= 0;
+      modInputs[m[0]] = cb;
+      lab.appendChild(cb); lab.appendChild(document.createTextNode(' ' + m[1]));
+      mods.appendChild(lab);
+    });
+    wrap.appendChild(mods);
+
+    var labelInputs = {};
+    var labGrid = el('div', 'app-config-grid');
+    LABELS.forEach(function (l) {
+      var f = el('label', 'app-config-field');
+      f.appendChild(el('span', null, l[1]));
+      var i = el('input', 'admin-input'); i.type = 'text'; i.placeholder = l[2]; i.value = (c.labels || {})[l[0]] || '';
+      labelInputs[l[0]] = i; f.appendChild(i); labGrid.appendChild(f);
+    });
+    wrap.appendChild(labGrid);
+
+    var linkInputs = {};
+    var det = el('details', 'app-config-links');
+    det.appendChild(el('summary', null, 'Where records live in the dashboard'));
+    det.appendChild(el('p', 'hint', 'Paths under the dashboard address, with {id} for the record. A notification opens the dashboard right there.'));
+    var linkGrid = el('div', 'app-config-grid');
+    LINKS.forEach(function (l) {
+      var f = el('label', 'app-config-field');
+      f.appendChild(el('span', null, l[1]));
+      var i = el('input', 'admin-input'); i.type = 'text'; i.placeholder = l[2]; i.value = (c.deep_links || {})[l[0]] || '';
+      linkInputs[l[0]] = i; f.appendChild(i); linkGrid.appendChild(f);
+    });
+    det.appendChild(linkGrid);
+    wrap.appendChild(det);
+
+    var save = el('button', 'btn btn-ghost admin-save', 'Save app settings');
+    save.type = 'button';
+    save.addEventListener('click', async function () {
+      save.disabled = true;
+      var was = save.textContent;
+      save.textContent = 'Saving…';
+      try {
+        var labels = {}, links = {}, modules = [];
+        Object.keys(labelInputs).forEach(function (k) { if (labelInputs[k].value.trim()) labels[k] = labelInputs[k].value.trim(); });
+        Object.keys(linkInputs).forEach(function (k) { if (linkInputs[k].value.trim()) links[k] = linkInputs[k].value.trim(); });
+        Object.keys(modInputs).forEach(function (k) { if (modInputs[k].checked) modules.push(k); });
+        await api({ action: 'setAppConfig', userId: p.id, dashboardUrl: url.value, modules: modules, labels: labels, deepLinks: links });
+        say('Saved.', 'ok');
+      } catch (err) { say(err.message, 'bad'); }
+      save.disabled = false;
+      save.textContent = was;
+    });
+    wrap.appendChild(save);
+  }).catch(function (err) { status.textContent = 'Could not load the app settings: ' + err.message; });
+
+  return wrap;
+}
+
 /* What they told us in the onboarding wizard - shown as reference on both a
    fresh build card and a customer/contact's own detail page. */
 function onboardingLines(p) {
@@ -1316,6 +1404,7 @@ function customerDetail(p) {
     + (p.last_sign_in_at ? ' · last signed in ' + when(p.last_sign_in_at) : '')));
 
   wrap.appendChild(siteEditorRow(p));
+  wrap.appendChild(appConfigRow(p));
 
   wrap.appendChild(el('p', 'cust-points',
     openCountFor(p.id) + ' open request' + (openCountFor(p.id) === 1 ? '' : 's') + ' · ' + PLAN_QUEUE[p.active_plan]));
