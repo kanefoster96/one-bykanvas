@@ -55,11 +55,15 @@
       catch (e) { return 'monthly'; }
     }
 
-    function apply(mode) {
-      document.querySelectorAll('.bill-opt').forEach(function (b) {
+    /* A toggle inside a plan card flips that card alone, so the three can
+       be compared side by side on different billing; the page-wide apply
+       on load still puts every card on the remembered choice. */
+    function apply(mode, scope) {
+      var root = scope || document;
+      root.querySelectorAll('.bill-opt').forEach(function (b) {
         b.classList.toggle('is-on', b.dataset.bill === mode);
       });
-      document.querySelectorAll('.price[data-y]').forEach(function (p) {
+      root.querySelectorAll('.price[data-y]').forEach(function (p) {
         var amount = mode === 'annual' ? p.dataset.y : p.dataset.m;
         var per = mode === 'annual' ? '/year' : '/month';
         p.innerHTML = '<span class="cur">£</span>' + amount + '<span class="per">' + per + '</span>';
@@ -94,7 +98,7 @@
         var btn = e.target.closest('.bill-opt');
         if (!btn) return;
         try { localStorage.setItem(KEY, btn.dataset.bill); } catch (e2) {}
-        apply(btn.dataset.bill);
+        apply(btn.dataset.bill, t.closest('.plan') || document);
       });
     });
 

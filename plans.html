@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://kanvas.one/plans">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=73">
+<link rel="stylesheet" href="styles.css?v=74">
 </head>
 <body>
 
@@ -45,18 +45,15 @@
 </section>
 
 <section class="section pt0">
-  <div class="wrap center">
-    <div class="bill-toggle reveal" role="group" aria-label="Billing period">
-      <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
-      <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free</span></button>
-    </div>
-  </div>
-
   <div class="wrap plans three reveal">
     <article class="plan featured" id="max">
       <div class="badge">Best value</div>
       <h3>Max</h3>
       <p class="price" data-m="250" data-y="2,500"><span class="cur">£</span>250<span class="per">/month</span></p>
+      <div class="bill-toggle bill-toggle-card" role="group" aria-label="Billing period for Max">
+        <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
+        <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free</span></button>
+      </div>
       <p class="plan-note">Your site on growth mode &mdash; improved every month, and no missed call goes unanswered.</p>
       <a class="btn btn-primary full" href="/get-started.html">Choose Max</a>
       <ul class="ticks">
@@ -72,6 +69,10 @@
       <div class="badge">Most popular</div>
       <h3>Business</h3>
       <p class="price" data-m="50" data-y="500"><span class="cur">£</span>50<span class="per">/month</span></p>
+      <div class="bill-toggle bill-toggle-card" role="group" aria-label="Billing period for Business">
+        <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
+        <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free</span></button>
+      </div>
       <p class="plan-note">Everything you need to run your business online &mdash; including unlimited changes, made by us.</p>
       <p class="plan-free">No setup fees</p>
       <a class="btn btn-ghost full" href="/get-started.html">Choose Business</a>
@@ -92,6 +93,10 @@
     <article class="plan plan-starter" id="starter">
       <h3>Starter</h3>
       <p class="price" data-m="25" data-y="250"><span class="cur">&pound;</span>25<span class="per">/month</span></p>
+      <div class="bill-toggle bill-toggle-card" role="group" aria-label="Billing period for Starter">
+        <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
+        <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free</span></button>
+      </div>
       <p class="plan-note">A proper website that gets you found on Google, with your own web address included. If you want customers to find your details, see your work and get in touch, this is for you.</p>
       <p class="plan-free">No setup fees</p>
       <a class="btn btn-ghost full" href="/get-started.html?plan=starter">Choose Starter</a>
@@ -323,7 +328,7 @@
 <script src="consent.js?v=3"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="script.js?v=27"></script>
+<script src="script.js?v=28"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
