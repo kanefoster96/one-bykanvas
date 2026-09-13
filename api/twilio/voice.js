@@ -14,6 +14,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('../_env.js');
 const { configured, params, validSignature, twiml, xmlEscape, sendSms } = require('../_twilio.js');
 const { event } = require('../_notify.js');
+const { threadFor, addMessage } = require('../_chat.js');
 
 const RING_SECONDS = 20;
 const DEFAULT_TEXT = 'Sorry we missed your call. This is {business}. We’ll call you back shortly. If it’s quicker, reply here{book}.';
@@ -64,7 +65,16 @@ module.exports = async function handler(req, res) {
     if (onMax && textable(from)) texted = await sendSms({ from: site.phone_number, to: from, body: textFor(site, business) });
     else if (!onMax) console.log('twilio voice: text-back is a Max feature; site', site.id, 'is on', prof && prof.active_plan);
     await db.from('call_log').insert({ site_id: site.id, kind: 'missed', from_number: from || null, texted_at: texted === 'sent' ? new Date().toISOString() : null });
-    await event(db, site.id, 'missed_call', { number: from, texted: texted === 'sent', record: 'call' });
+    // The missed call lives in the caller's text thread, so calling or
+    // texting them back is one tap from the notification.
+    let conv = null;
+    if (textable(from)) {
+      try {
+        conv = await threadFor(db, site, 'sms', from);
+        await addMessage(db, conv, 'system', texted === 'sent' ? 'Missed call. We texted them that you\u2019ll call back.' : 'Missed call.');
+      } catch (e) { console.error('twilio voice: thread:', e.message); }
+    }
+    await event(db, site.id, 'missed_call', { number: from, texted: texted === 'sent', record: conv ? 'chat' : 'call', id: conv ? conv.id : undefined });
     return twiml(res, texted === 'sent'
       ? '<Say>Sorry we could not get to the phone. We have sent you a text and will call you back shortly.</Say><Hangup/>'
       : '<Say>Sorry we could not get to the phone. Please try again shortly.</Say><Hangup/>');
