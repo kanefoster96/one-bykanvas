@@ -71,7 +71,12 @@ const TEMPLATES = {
     title: 'New ' + L.review + (d.stars ? ': ' + '★'.repeat(Math.max(1, Math.min(5, Number(d.stars)))) : '') + (d.name ? ' from ' + d.name : ''),
     body: trim(d.text, 140) || 'Tap to read it'
   }),
-  support: (d) => ({ title: d.title || 'Update on your request', body: trim(d.body, 200) })
+  support: (d) => ({ title: d.title || 'Update on your request', body: trim(d.body, 200) }),
+  missed_call: (d) => ({
+    title: 'Missed call' + (d.number ? ' from ' + d.number : ''),
+    body: d.texted ? 'They\u2019ve been texted that you\u2019ll call back. Call them when you can.' : 'Call them back when you can.'
+  }),
+  sms: (d) => ({ title: 'Text from ' + (d.number || 'a customer'), body: trim(d.text, 140) || 'Tap to read it' })
 };
 
 function wording(kind, data, siteLabels) {

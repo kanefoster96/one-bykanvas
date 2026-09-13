@@ -476,6 +476,18 @@ function appConfigRow(p) {
     det.appendChild(linkGrid);
     wrap.appendChild(det);
 
+    var phones = el('div', 'app-config-grid');
+    var phoneIn = el('input', 'admin-input'); phoneIn.type = 'tel'; phoneIn.placeholder = '+44 20 3000 0000'; phoneIn.value = c.phone_number || '';
+    var fwdIn = el('input', 'admin-input'); fwdIn.type = 'tel'; fwdIn.placeholder = '+44 7700 900123'; fwdIn.value = c.forward_to || '';
+    var f1 = el('label', 'app-config-field'); f1.appendChild(el('span', null, 'Site phone number (Twilio, Max only)')); f1.appendChild(phoneIn);
+    var f2 = el('label', 'app-config-field'); f2.appendChild(el('span', null, 'Rings through to')); f2.appendChild(fwdIn);
+    phones.appendChild(f1); phones.appendChild(f2);
+    wrap.appendChild(el('h3', 'req-list-title', 'Missed calls answered by text'));
+    wrap.appendChild(phones);
+    var textIn = el('textarea', 'admin-input'); textIn.rows = 2; textIn.placeholder = 'Sorry we missed your call. This is {business}. We\u2019ll call you back shortly. If it\u2019s quicker, reply here{book}.'; textIn.value = c.missed_call_text || '';
+    var f3 = el('label', 'app-config-field'); f3.appendChild(el('span', null, 'The text they get (blank for the standard one; {business}, {url} and {book} fill in)')); f3.appendChild(textIn);
+    wrap.appendChild(f3);
+
     var save = el('button', 'btn btn-ghost admin-save', 'Save app settings');
     save.type = 'button';
     save.addEventListener('click', async function () {
@@ -487,7 +499,7 @@ function appConfigRow(p) {
         Object.keys(labelInputs).forEach(function (k) { if (labelInputs[k].value.trim()) labels[k] = labelInputs[k].value.trim(); });
         Object.keys(linkInputs).forEach(function (k) { if (linkInputs[k].value.trim()) links[k] = linkInputs[k].value.trim(); });
         Object.keys(modInputs).forEach(function (k) { if (modInputs[k].checked) modules.push(k); });
-        await api({ action: 'setAppConfig', userId: p.id, dashboardUrl: url.value, modules: modules, labels: labels, deepLinks: links });
+        await api({ action: 'setAppConfig', userId: p.id, dashboardUrl: url.value, modules: modules, labels: labels, deepLinks: links, phoneNumber: phoneIn.value, forwardTo: fwdIn.value, missedCallText: textIn.value });
         say('Saved.', 'ok');
       } catch (err) { say(err.message, 'bad'); }
       save.disabled = false;
