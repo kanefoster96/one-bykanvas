@@ -231,8 +231,14 @@ body.locked{overflow:hidden}
   font-size:11px;font-weight:700;letter-spacing:.02em;white-space:nowrap;
   background:var(--good-soft);color:var(--good);border-radius:980px;padding:3px 8px;
 }
-/* Inside a plan card: smaller, sits under the price, one per card. */
-.plan .bill-toggle-card{margin:14px 0 0;padding:3px}
+/* Desktop, cards side by side: one toggle above them flips all three.
+   Phone, cards stacked: a toggle in each card, so any two can be compared
+   on different billing without scrolling back up. */
+.plan .bill-toggle-card{display:none;margin:14px 0 0;padding:3px}
+@media (max-width:600px){
+  .bill-toggle-page{display:none}
+  .plan .bill-toggle-card{display:inline-flex}
+}
 .plan .bill-toggle-card .bill-opt{font-size:12.5px;padding:6px 12px;gap:6px}
 .plan .bill-toggle-card .bill-save{font-size:10px;padding:2px 6px}
 .plan .bill-toggle-card + .plan-note{margin-top:14px}
