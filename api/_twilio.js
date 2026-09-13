@@ -61,6 +61,23 @@ async function sendSms({ from, to, body }, fetchFn) {
   } catch (err) { console.error('twilio:', err.message); return 'failed'; }
 }
 
+/* Rings `to` and, when answered, runs the TwiML at `url`. */
+async function placeCall({ from, to, url }, fetchFn) {
+  const sid = process.env.TWILIO_ACCOUNT_SID, token = process.env.TWILIO_AUTH_TOKEN;
+  const f = fetchFn || (typeof fetch === 'function' ? fetch : null);
+  if (!sid || !token || !f || !from || !to || !url) return { ok: false, error: 'Calling is not configured.' };
+  try {
+    const res = await f('https://api.twilio.com/2010-04-01/Accounts/' + encodeURIComponent(sid) + '/Calls.json', {
+      method: 'POST',
+      headers: { Authorization: 'Basic ' + Buffer.from(sid + ':' + token).toString('base64'), 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ From: from, To: to, Url: url, Timeout: '25' }).toString()
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) return { ok: false, error: data.message || ('Twilio said no (' + res.status + ').') };
+    return { ok: true, sid: data.sid };
+  } catch (err) { return { ok: false, error: err.message }; }
+}
+
 /* E.164 or nothing. "07700 900123" becomes +447700900123. */
 function e164(s, defaultCountry) {
   let d = String(s || '').replace(/[^\d+]/g, '');
@@ -72,4 +89,4 @@ function e164(s, defaultCountry) {
   return /^\+\d{8,15}$/.test(d) ? d : null;
 }
 
-module.exports = { configured, params, validSignature, expectedSignature, twiml, xmlEscape, sendSms, e164 };
+module.exports = { configured, params, validSignature, expectedSignature, twiml, xmlEscape, sendSms, placeCall, e164 };

@@ -65,6 +65,32 @@ and the mobile it rings through to, and optionally the wording of the text.
 The text-back only fires for customers on Max; the forwarding works either
 way. Every webhook is checked against Twilio's signature first.
 
+### Texts, WhatsApp and calling back
+
+A text to the site's number becomes a thread in the Chat tab, keyed by the
+sender's number, marked **Text**. A missed call opens that same thread with
+a "Missed call" note, so the notification lands the owner on a screen with
+**Call**, **Call as business** and a reply box. Replies on a Text thread go
+out as texts from the site's number. If the owner has no app installed
+yet, inbound texts are forwarded to their mobile instead.
+
+**Call as business** asks Twilio to ring the owner's mobile first and, when
+they answer, dials the customer showing the site's number (`api/app.js`
+`call_back` → `api/twilio/bridge.js`). Both legs are charged.
+
+**WhatsApp**: in Twilio go to Messaging → Senders → WhatsApp senders and
+register the site's number as a WhatsApp sender (Meta verifies the
+business; a number on the API cannot also be used in the WhatsApp app on a
+phone). Point its webhook at the same `https://kanvas.one/api/twilio/sms`.
+Messages arrive as **WhatsApp** threads with the sender's WhatsApp name, and
+replies go back on WhatsApp. Meta allows free-form replies for 24 hours
+after the customer's last message; after that Twilio refuses and the app
+says to send a text instead.
+
+Number types: UK 01/02 numbers in Twilio are voice only. UK 07 numbers do
+voice and texts, so use an 07 number as the site's number, or pair a
+landline number for calls with an 07 number for texts.
+
 ## Enquiries answered straight away
 
 A contact form on a site posts to `api/enquiry.js`:

@@ -20,12 +20,30 @@ function cleanPhone(s) { const p = String(s || '').replace(/[^\d+ ()-]/g, '').tr
 function preview(body) { return String(body || '').replace(/\s+/g, ' ').trim().slice(0, 120); }
 function isOnline(conv, now) { return !!(conv && conv.visitor_online_at && (now || Date.now()) - new Date(conv.visitor_online_at).getTime() < ONLINE_WINDOW); }
 
-/* Adds a message and moves the conversation's summary with it. */
+/* The thread for a phone number on a channel (sms | whatsapp), made on
+   first sight. Every text from that number is one conversation. */
+async function threadFor(db, site, channel, phone, extra) {
+  const { data: found } = await db.from('conversations').select('*').eq('site_id', site.id).eq('channel', channel).eq('visitor_phone', phone).maybeSingle();
+  if (found) return found;
+  const row = Object.assign({ site_id: site.id, channel, visitor_phone: phone, visitor_token_hash: 'x:' + channel + ':' + sha(site.id + ':' + phone), visitor_online_at: null }, extra || {});
+  const { data: made, error } = await db.from('conversations').insert(row).select().single();
+  if (error) {
+    // Two texts at once: the other one made it first.
+    const { data: again } = await db.from('conversations').select('*').eq('site_id', site.id).eq('channel', channel).eq('visitor_phone', phone).maybeSingle();
+    if (again) return again;
+    throw new Error(error.message);
+  }
+  return made;
+}
+
+/* Adds a message and moves the conversation's summary with it. A system
+   note ("Missed call") does not reopen or mark anything unread. */
 async function addMessage(db, conv, author, body) {
   const now = new Date().toISOString();
   const { data: msg, error } = await db.from('messages').insert({ conversation_id: conv.id, site_id: conv.site_id, author, body }).select().single();
   if (error) throw new Error(error.message);
-  const patch = { last_message_at: now, last_message_by: author, last_message_preview: preview(body), status: 'open' };
+  const patch = { last_message_at: now, last_message_by: author, last_message_preview: preview(body) };
+  if (author !== 'system') patch.status = 'open';
   if (author === 'owner') patch.owner_seen_at = now;
   const { data: updated, error: upErr } = await db.from('conversations').update(patch).eq('id', conv.id).select().single();
   if (upErr) throw new Error(upErr.message);
@@ -51,4 +69,4 @@ async function tellOwner(db, conv, body) {
   return true;
 }
 
-module.exports = { sha, cleanBody, cleanName, cleanEmail, cleanPhone, preview, isOnline, addMessage, overLimit, tellOwner, MAX_BODY, PER_MINUTE, ONLINE_WINDOW };
+module.exports = { sha, threadFor, cleanBody, cleanName, cleanEmail, cleanPhone, preview, isOnline, addMessage, overLimit, tellOwner, MAX_BODY, PER_MINUTE, ONLINE_WINDOW };

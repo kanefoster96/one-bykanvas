@@ -351,7 +351,9 @@
       li.appendChild(av);
       var body = el('div', 'oa-conv-body');
       var top = el('div', 'oa-conv-top');
-      top.appendChild(el('p', 'oa-conv-name', c.name || 'Visitor' + (c.page ? ' on ' + c.page : '')));
+      var nm = el('p', 'oa-conv-name', c.name || (c.channel !== 'web' && c.phone) || 'Visitor' + (c.page ? ' on ' + c.page : ''));
+      if (c.channel && c.channel !== 'web') nm.appendChild(el('span', 'oa-chan is-' + c.channel, c.channel === 'whatsapp' ? 'WhatsApp' : 'Text'));
+      top.appendChild(nm);
       top.appendChild(el('span', 'oa-conv-when', ago(c.last_at)));
       body.appendChild(top);
       body.appendChild(el('p', 'oa-conv-preview', (c.last_by === 'owner' ? 'You: ' : '') + (c.preview || '')));
@@ -375,9 +377,9 @@
   }
 
   function chatBubble(m) {
-    var wrap = el('div', 'msg ' + (m.author === 'owner' ? 'from-owner' : 'from-visitor'));
+    var wrap = el('div', 'msg ' + (m.author === 'owner' ? 'from-owner' : m.author === 'system' ? 'from-system' : 'from-visitor'));
     wrap.dataset.id = m.id;
-    var head = el('div', 'msg-who', m.author === 'owner' ? 'You' + (m.emailed ? ' · also emailed' : '') : (openConv && openConv.name) || 'Visitor');
+    var head = el('div', 'msg-who', m.author === 'owner' ? 'You' + (m.emailed ? ' · also emailed' : '') : (openConv && (openConv.name || openConv.phone)) || 'Visitor');
     wrap.appendChild(head);
     var box = el('div', 'msg-body');
     String(m.body).split(/\n{2,}/).forEach(function (p) {
@@ -391,21 +393,27 @@
   }
 
   function renderConvHead(c) {
-    $('convName').textContent = c.name || 'Visitor';
+    var chan = c.channel || 'web';
+    $('convName').textContent = c.name || (chan !== 'web' && c.phone) || 'Visitor';
     var bits = [];
-    if (c.online) bits.push('On your site now'); else bits.push('Last seen ' + ago(c.last_at));
+    if (chan === 'whatsapp') bits.push('WhatsApp');
+    else if (chan === 'sms') bits.push('Text message' + (c.name && c.phone ? ' · ' + c.phone : ''));
+    else if (c.online) bits.push('On your site now'); else bits.push('Last seen ' + ago(c.last_at));
     if (c.page) bits.push('from ' + c.page);
     if (c.status === 'closed') bits.push('closed');
     if (c.blocked) bits.push('blocked');
     $('convMeta').textContent = bits.join(' · ');
     var call = $('convCall'), mail = $('convMail');
     call.hidden = !c.phone; if (c.phone) call.href = 'tel:' + String(c.phone).replace(/[^\d+]/g, '');
+    $('convCallBiz').hidden = !(c.phone && site && site.phone_number);
     mail.hidden = !c.email; if (c.email) mail.href = 'mailto:' + c.email;
     $('convClose').textContent = c.status === 'closed' ? 'Reopen conversation' : 'Close conversation';
     $('convBlock').textContent = c.blocked ? 'Unblock this visitor' : 'Block this visitor';
     // Gone but reachable: say so, and default the reply to go by email too.
     var off = $('chatOffline'), emailToo = $('chatEmailToo');
-    if (!c.online && c.email) { off.hidden = false; off.textContent = 'They’ve left the site. Your reply goes to ' + c.email + ' as well.'; emailToo.hidden = false; $('chatEmailBox').checked = true; }
+    $('chatBody').placeholder = chan === 'whatsapp' ? 'Reply on WhatsApp' : chan === 'sms' ? 'Reply by text' : 'Write a reply';
+    if (chan !== 'web') { off.hidden = true; emailToo.hidden = true; }
+    else if (!c.online && c.email) { off.hidden = false; off.textContent = 'They’ve left the site. Your reply goes to ' + c.email + ' as well.'; emailToo.hidden = false; $('chatEmailBox').checked = true; }
     else if (!c.online && c.phone) { off.hidden = false; off.textContent = 'They’ve left the site. They left a number, so a call might be quickest.'; emailToo.hidden = true; }
     else if (c.email) { off.hidden = true; emailToo.hidden = false; $('chatEmailBox').checked = false; }
     else { off.hidden = true; emailToo.hidden = true; }
@@ -450,6 +458,14 @@
     catch (err) { say($('chatNote'), err.message, 'bad'); }
   });
 
+  $('convCallBiz').addEventListener('click', async function () {
+    if (!openConv) return;
+    var b = this; b.disabled = true;
+    say($('chatNote'), 'Ringing your phone first, then connecting them…');
+    try { await api({ action: 'call_back', site_id: site.site_id, conversation_id: openConv.id }); say($('chatNote'), 'Answer your phone and you\u2019ll be connected. They see your business number.', 'ok'); }
+    catch (err) { say($('chatNote'), err.message, 'bad'); }
+    b.disabled = false;
+  });
   $('chatBody').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(120, this.scrollHeight) + 'px'; });
   $('chatForm').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -465,7 +481,7 @@
       ta.value = ''; ta.style.height = 'auto';
       $('chatMsgs').appendChild(chatBubble(r.message));
       openConv = r.conversation;
-      say($('chatNote'), r.delivered.indexOf('email') >= 0 ? 'Sent, and emailed to them.' : 'Sent.', 'ok');
+      say($('chatNote'), r.delivered.indexOf('email') >= 0 ? 'Sent, and emailed to them.' : r.delivered[0] === 'sms' ? 'Sent by text.' : r.delivered[0] === 'whatsapp' ? 'Sent on WhatsApp.' : 'Sent.', 'ok');
       window.scrollTo(0, document.body.scrollHeight);
     } catch (err) { say($('chatNote'), err.message, 'bad'); }
     btn.disabled = false;

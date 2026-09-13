@@ -17,6 +17,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, adminEmails, ourSiteUrl } = require('./_env.js');
 const { sitesFor, siteFor, isUuid } = require('./_mcp.js');
 const { cleanBody, isOnline, addMessage } = require('./_chat.js');
+const { sendSms, placeCall } = require('./_twilio.js');
 const { sendEmail } = require('./_email.js');
 const { html: emailHtml, esc } = require('./_email_template.js');
 
@@ -106,12 +107,12 @@ async function me(db, caller) {
   const ids = sites.map((s) => s.site_id);
   const config = {};
   if (ids.length) {
-    const { data } = await db.from('sites').select('id, dashboard_url, modules, labels, deep_links').in('id', ids);
+    const { data } = await db.from('sites').select('id, dashboard_url, modules, labels, deep_links, phone_number').in('id', ids);
     (data || []).forEach((s) => { config[s.id] = s; });
   }
   const full = sites.map((s) => {
     const c = config[s.site_id] || {};
-    return Object.assign({}, s, { dashboard_url: c.dashboard_url || null, modules: c.modules || [], labels: c.labels || {}, deep_links: c.deep_links || {} });
+    return Object.assign({}, s, { dashboard_url: c.dashboard_url || null, modules: c.modules || [], labels: c.labels || {}, deep_links: c.deep_links || {}, phone_number: c.phone_number || null });
   });
 
   const { data: prof } = await db.from('profiles').select('notifications_seen_at, active_plan, business_name').eq('id', caller.user_id).maybeSingle();
@@ -153,7 +154,7 @@ async function events(db, caller, siteId) {
 
 function convOut(c, now) {
   return {
-    id: c.id, name: c.visitor_name, email: c.visitor_email, phone: c.visitor_phone, page: c.page,
+    id: c.id, channel: c.channel || 'web', name: c.visitor_name, email: c.visitor_email, phone: c.visitor_phone, page: c.page,
     status: c.status, blocked: !!c.blocked_at, online: isOnline(c, now),
     last_at: c.last_message_at, last_by: c.last_message_by, preview: c.last_message_preview,
     unread: c.last_message_by === 'visitor' && (!c.owner_seen_at || new Date(c.owner_seen_at) < new Date(c.last_message_at)),
@@ -191,6 +192,20 @@ async function chatReply(db, site, id, bodyIn, via) {
   const text = cleanBody(bodyIn);
   if (text.length < 1) { const e = new Error('Write a reply first.'); e.shown = true; throw e; }
   if (conv.blocked_at) { const e = new Error('This visitor is blocked. Unblock them to reply.'); e.shown = true; throw e; }
+  // A text or WhatsApp thread: the reply goes back the way it came, and
+  // only lands in the thread once it has actually gone.
+  const channel = conv.channel || 'web';
+  if (channel === 'sms' || channel === 'whatsapp') {
+    if (!site.phone_number) { const e = new Error('This site has no number to send from yet.'); e.shown = true; throw e; }
+    const prefix = channel === 'whatsapp' ? 'whatsapp:' : '';
+    const result = await sendSms({ from: prefix + site.phone_number, to: prefix + conv.visitor_phone, body: text });
+    if (result !== 'sent') {
+      const e = new Error(channel === 'whatsapp' ? 'WhatsApp would not take that. If it has been over 24 hours since they last messaged, send them a text instead.' : 'The text could not be sent. Try again in a moment.');
+      e.shown = true; throw e;
+    }
+    const madeOut = await addMessage(db, conv, 'owner', text);
+    return { message: { id: madeOut.message.id, author: 'owner', body: text, emailed: false, at: madeOut.message.created_at }, delivered: [channel], conversation: convOut(madeOut.conversation) };
+  }
   const made = await addMessage(db, conv, 'owner', text);
   const delivered = ['chat'];
   const wantsEmail = via === 'email' || (via !== 'chat' && !isOnline(conv) && !!conv.visitor_email);
@@ -211,6 +226,22 @@ async function chatReply(db, site, id, bodyIn, via) {
     if (result === 'sent') { delivered.push('email'); await db.from('messages').update({ emailed_at: new Date().toISOString() }).eq('id', made.message.id); }
   }
   return { message: { id: made.message.id, author: 'owner', body: text, emailed: delivered.includes('email'), at: made.message.created_at }, delivered, conversation: convOut(made.conversation) };
+}
+
+/* The owner calls a customer from the app, showing the site's number.
+   Twilio rings the owner's mobile first; when they answer, the bridge
+   dials the customer. */
+async function callBack(db, site, id, toIn) {
+  if (!site.phone_number || !site.forward_to) { const e = new Error('Calling from the business number needs the site\u2019s number and your mobile set up first.'); e.shown = true; throw e; }
+  let to = null;
+  if (id) { const conv = await conversationIn(db, site, id); to = conv.visitor_phone; }
+  else to = String(toIn || '').trim();
+  if (!/^\+\d{8,15}$/.test(String(to || ''))) { const e = new Error('No number to call on this conversation.'); e.shown = true; throw e; }
+  const url = ourSiteUrl() + '/api/twilio/bridge?site=' + encodeURIComponent(site.id) + '&to=' + encodeURIComponent(to);
+  const r = await placeCall({ from: site.phone_number, to: site.forward_to, url });
+  if (!r.ok) { const e = new Error(r.error || 'Could not place the call.'); e.shown = true; throw e; }
+  await db.from('call_log').insert({ site_id: site.id, kind: 'call_out', from_number: to });
+  return { ok: true, ringing: site.forward_to, to };
 }
 
 async function chatSet(db, site, id, patchIn) {
@@ -270,6 +301,7 @@ module.exports = async function handler(req, res) {
     if (action === 'chat_list') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json({ conversations: await chatList(db, site) }); }
     if (action === 'chat_get') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await chatGet(db, site, body.conversation_id)); }
     if (action === 'chat_reply') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await chatReply(db, site, body.conversation_id, body.body, body.via)); }
+    if (action === 'call_back') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await callBack(db, site, body.conversation_id, body.to)); }
     if (action === 'chat_set') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json({ conversation: await chatSet(db, site, body.conversation_id, body) }); }
 
     if (action === 'dashboard') {
