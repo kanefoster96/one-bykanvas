@@ -400,8 +400,8 @@ module.exports = async function handler(req, res) {
     if (action === 'appConfig') {
       const userId = String(body.userId || '');
       if (!userId) return res.status(400).json({ error: 'Which customer?' });
-      const { data } = await db.from('sites').select('id, dashboard_url, modules, labels, deep_links').eq('id', userId).maybeSingle();
-      return res.status(200).json({ config: data || { id: userId, dashboard_url: null, modules: [], labels: {}, deep_links: {} } });
+      const { data } = await db.from('sites').select('id, dashboard_url, modules, labels, deep_links, phone_number, forward_to, missed_call_text').eq('id', userId).maybeSingle();
+      return res.status(200).json({ config: data || { id: userId, dashboard_url: null, modules: [], labels: {}, deep_links: {}, phone_number: null, forward_to: null, missed_call_text: null } });
     }
 
     // ---- write: how the One app sees this site -------------------------
@@ -431,7 +431,16 @@ module.exports = async function handler(req, res) {
         const { error: mkErr } = await db.from('sites').insert({ id: userId, owner_id: userId, name: prof.business_name || '', url: prof.site_url || null, status: prof.site_status || 'building' });
         if (mkErr) throw new Error(mkErr.message);
       }
-      const { error } = await db.from('sites').update({ dashboard_url: dashboard || null, modules, labels, deep_links: deepLinks }).eq('id', userId);
+      const { e164 } = require('./_twilio.js');
+      const phoneNumber = body.phoneNumber == null ? undefined : (String(body.phoneNumber).trim() ? e164(body.phoneNumber) : null);
+      const forwardTo = body.forwardTo == null ? undefined : (String(body.forwardTo).trim() ? e164(body.forwardTo) : null);
+      if (phoneNumber === null && String(body.phoneNumber || '').trim()) return res.status(400).json({ error: 'The site number needs to be a full number, like +44 7700 900123.' });
+      if (forwardTo === null && String(body.forwardTo || '').trim()) return res.status(400).json({ error: 'The forwarding number needs to be a full number, like +44 7700 900123.' });
+      const patch = { dashboard_url: dashboard || null, modules, labels, deep_links: deepLinks };
+      if (phoneNumber !== undefined) patch.phone_number = phoneNumber;
+      if (forwardTo !== undefined) patch.forward_to = forwardTo;
+      if (body.missedCallText != null) patch.missed_call_text = String(body.missedCallText).trim().slice(0, 300) || null;
+      const { error } = await db.from('sites').update(patch).eq('id', userId);
       if (error) throw new Error(error.message);
       return res.status(200).json({ ok: true, modules, labels, deep_links: deepLinks });
     }

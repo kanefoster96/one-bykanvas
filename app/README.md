@@ -42,6 +42,42 @@ Supabase Realtime on the site's `messages` rows, with a slow poll as backup.
 Optional attributes: `data-color` for the button, `data-greeting` for the
 first line.
 
+## Missed calls answered by text (Max)
+
+A site on Max gets a phone number of its own. Calls to it ring the owner's
+mobile showing the caller's number; if nobody picks up within twenty
+seconds, the caller gets a text within the call ("Sorry we missed your
+call. This is Rowan & Fig. We'll call you back shortly...") and the owner's
+phone gets a notification. Texts back to that number are pushed to the
+owner and forwarded to their mobile with the sender's number in front.
+
+Setup, once: in Vercel set `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN`
+(Twilio console → Account info). Never paste them into chat or the repo.
+
+Per site: buy a number in Twilio (a local landline number looks right for a
+business). On the number's configuration page set:
+
+- Voice → A call comes in → Webhook → `https://kanvas.one/api/twilio/voice`, POST
+- Messaging → A message comes in → Webhook → `https://kanvas.one/api/twilio/sms`, POST
+
+Then on the customer's admin page under **One app**, enter the site number
+and the mobile it rings through to, and optionally the wording of the text.
+The text-back only fires for customers on Max; the forwarding works either
+way. Every webhook is checked against Twilio's signature first.
+
+## Enquiries answered straight away
+
+A contact form on a site posts to `api/enquiry.js`:
+
+```js
+fetch('https://kanvas.one/api/enquiry', { method: 'POST', body: JSON.stringify({ site: '<site id>', name, email, phone, message, page: location.pathname }) });
+```
+
+The enquiry is stored, pushed to the owner's phone as "New customer", emailed
+to the owner with reply-to set to the sender, and the sender gets "Thanks,
+<business> will be in touch shortly" by email at once. Include a hidden
+`website` field in the form and leave it empty: bots fill it and are dropped.
+
 ## The dashboard inside the app
 
 Every dashboard we build gets two things:
