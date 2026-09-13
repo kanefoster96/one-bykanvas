@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 72;
+const CSS_V = 73;
 const SCRIPT_V = 27;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -45,6 +45,7 @@ const ICONS = {
 const ICO_COLORS = ['ico-blue', 'ico-green', 'ico-purple', 'ico-orange', 'ico-pink', 'ico-grey'];
 
 const INDUSTRIES = require('./industries.js');
+const CASES = INDUSTRIES.CASES || [];
 
 /* The cross-link strip: every industry page links the other nine, and the
    homepage links all ten, so each page is reachable by crawl, not only by
@@ -71,7 +72,7 @@ function card([h, p], iconKey, color) {
 const DEFAULT_STEPS = [
   ['Tell us about the business', 'Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.'],
   ['We build it for you', 'Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.'],
-  ['Online within 10 days', 'Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.']
+  ['Online within 7 days', 'Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.']
 ];
 const STEP_COLORS = ['ico-blue', 'ico-purple', 'ico-green'];
 
@@ -205,7 +206,21 @@ ${b.stepsLine ? `  <div class="wrap center reveal">
   </div>
 ` : ''}</section>
 
-${b.maxPitch ? `<section class="section">
+${CASES.length ? `<section class="section grey cases-section">
+  <div class="wrap center">
+    <h2 class="reveal">Built by us. Working for them.</h2>
+    <p class="lede reveal">Two of ours, doing what they were built to do.</p>
+  </div>
+  <div class="wrap cases reveal">
+${CASES.map((c) => `    <article class="case">
+      <p class="case-tag">${c.tag}</p>
+      <h3>${c.title}</h3>
+      <p>${c.text}</p>
+      <a href="${c.url}" target="_blank" rel="noopener">${c.host} &rsaquo;</a>
+    </article>`).join('\n')}
+  </div>
+</section>
+` : ''}${b.maxPitch ? `<section class="section">
   <div class="wrap center">
     <h2 class="reveal">${b.maxPitch.heading}</h2>
     <p class="lede reveal">${b.maxPitch.text}</p>
@@ -222,7 +237,7 @@ ${b.maxPitch ? `<section class="section">
       <div class="badge">Optional</div>
       <h3>Max</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
-      <p class="plan-note">Everything in Business, plus we work on your Google ranking every month &mdash; new service and area pages, refreshed content, and a short monthly note on what changed. Add or drop it any time.</p>
+      <p class="plan-note">Everything in Business, plus we work on your Google ranking every month &mdash; new service and area pages, refreshed content, and a short monthly note on what changed. Missed calls are answered by text in seconds, so a job you couldn&rsquo;t pick up isn&rsquo;t a job lost. Add or drop it any time.</p>
       <a class="btn btn-ghost full" href="/plans.html#max">Learn more about Max &rsaquo;</a>
     </article>
   </div>
