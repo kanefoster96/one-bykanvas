@@ -308,12 +308,21 @@ module.exports = async function handler(req, res) {
       const site = await siteFor({ db }, caller, body.site_id);
       if (!site.dashboard_url) return res.status(400).json({ error: 'This site has no dashboard connected yet.' });
       const path = cleanPath(body.path);
+      // A dashboard address may name a page (kanvas.one/admin.html); a deep
+      // link path then replaces the page, the front door keeps it.
+      const base = site.dashboard_url.replace(/\/+$/, '');
+      const target = path === '/' ? base : base.replace(/\/[^/]*\.html?$/i, '') + path;
+      // Our own pages share the app's origin, so the session is already
+      // there: no token to mint, nothing to hand off.
+      let sameOrigin = false;
+      try { sameOrigin = new URL(base).origin === new URL(ourSiteUrl()).origin; } catch (e) { sameOrigin = false; }
+      if (sameOrigin) return res.status(200).json({ url: target });
       // Minted for the caller, never for the site's owner on their behalf:
       // the admin arrives in a dashboard as themselves, and RLS there decides.
       const { data, error } = await db.auth.admin.generateLink({ type: 'magiclink', email: caller.email });
       const hashed = data && data.properties && data.properties.hashed_token;
       if (error || !hashed) throw new Error('handoff: ' + ((error && error.message) || 'no token'));
-      return res.status(200).json({ url: site.dashboard_url.replace(/\/+$/, '') + path + '#kanvas_handoff=' + encodeURIComponent(hashed) });
+      return res.status(200).json({ url: target + '#kanvas_handoff=' + encodeURIComponent(hashed) });
     }
 
     if (action === 'seen') {
