@@ -33,14 +33,38 @@ Sites with the chat module get one more line:
 A button in the corner, a panel, and the owner gets it on their phone. The
 visitor holds a random token for their thread in localStorage and nothing
 else. `api/chat.js` is the visitor's door (start, send, poll, details), rate
-limited per thread; `api/app.js` (`chat_*`) is the owner's. A reply always
-lands in the thread; it also goes by email (Resend, reply-to the owner) when
-the owner ticks "also send by email", or when the visitor has left the site
-and left an address. A phone number becomes a Call button. Owners can close
-a conversation or block a visitor. The app hears new messages through
-Supabase Realtime on the site's `messages` rows, with a slow poll as backup.
-Optional attributes: `data-color` for the button, `data-greeting` for the
-first line.
+limited per thread; `api/app.js` (`chat_*`) is the owner's. A phone number
+becomes a Call button. Owners can close a conversation or block a visitor.
+The app hears new messages through Supabase Realtime on the site's
+`messages` rows, with a slow poll as backup. Optional attributes:
+`data-color` for the button, `data-greeting` for the first line,
+`data-trigger="#id"` to use the site's own button, `data-full` for a
+full-screen chat on phones.
+
+### Live chat or email
+
+Every reply in the app is sent as **Live chat** or **Email**, the owner's
+choice, with the right one picked first:
+
+- Visitor on the site now: live chat, straight into the widget.
+- Visitor gone, email left: email, with the reply, the last few lines of
+  the thread, a **Continue the chat** button back to the page they were on
+  (`?k1chat=open` opens the widget), and a reply address. A live-chat reply
+  to them is emailed as well, whichever button was pressed, so nothing is
+  lost.
+- Visitor gone, nothing left: chat only; they see it when they return.
+- Text and WhatsApp threads take no typed replies. Texts are for
+  automations only (the missed-call text-back), to keep costs down; the
+  owner calls back, or emails if an address was left.
+
+**Email replies back into the inbox.** Once, in Resend: add a domain for
+receiving (say `reply.kanvas.one`, one MX record), add a webhook for
+`email.received` pointing at `https://kanvas.one/api/email-inbound`, and set
+`CHAT_REPLY_DOMAIN` and `RESEND_WEBHOOK_SECRET` in Vercel. Every chat email
+then carries `reply+<conversation id>@reply.kanvas.one` as its reply address;
+a visitor's reply is checked against the address they gave, the quoted
+history is cut off, and what they wrote lands in the thread and on the
+owner's phone. Until that is set up, replies go to the business's own inbox.
 
 ## Missed calls answered by text (Max)
 

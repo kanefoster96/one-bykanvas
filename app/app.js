@@ -514,15 +514,45 @@
     $('convTools').hidden = !(c.phone || c.email);
     $('convClose').textContent = c.status === 'closed' ? 'Reopen conversation' : 'Close conversation';
     $('convBlock').textContent = c.blocked ? 'Unblock this visitor' : 'Block this visitor';
-    // Gone but reachable: say so, and default the reply to go by email too.
-    var off = $('chatOffline'), emailToo = $('chatEmailToo');
-    $('chatBody').placeholder = chan === 'whatsapp' ? 'Reply on WhatsApp' : chan === 'sms' ? 'Reply by text' : 'Write a reply';
-    if (chan !== 'web') { off.hidden = true; emailToo.hidden = true; }
-    else if (!c.online && c.email) { off.hidden = false; off.textContent = 'They’ve left the site. Your reply goes to ' + c.email + ' as well.'; emailToo.hidden = false; $('chatEmailBox').checked = true; }
-    else if (!c.online && c.phone) { off.hidden = false; off.textContent = 'They’ve left the site. They left a number, so a call might be quickest.'; emailToo.hidden = true; }
-    else if (c.email) { off.hidden = true; emailToo.hidden = false; $('chatEmailBox').checked = false; }
-    else { off.hidden = true; emailToo.hidden = true; }
-    $('chatForm').hidden = !!c.blocked;
+    renderReplyBar(c);
+  }
+
+  /* How a reply goes out: Live chat or Email, chosen by the owner, with
+     the sensible one picked first. Someone on the site now gets live
+     chat; someone who has gone and left an address gets email (and a
+     live-chat reply to them is emailed anyway, so nothing is lost);
+     someone who has gone and left nothing can only be reached in the
+     chat when they return. Text and WhatsApp threads take no typed
+     replies: texts are for automations only. */
+  var via = 'chat';
+  function setVia(v) {
+    via = v;
+    document.querySelectorAll('.oa-via-btn').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.via === v)); });
+    if (openConv) viaHint(openConv);
+  }
+  document.querySelectorAll('.oa-via-btn').forEach(function (b) { b.addEventListener('click', function () { if (!b.disabled) setVia(b.dataset.via); }); });
+  function viaHint(c) {
+    var off = $('chatOffline');
+    if (c.online) off.textContent = via === 'email' ? 'They’re on your site now, so live chat reaches them straight away. Email works too.' : 'They’re on your site now.';
+    else if (c.email) off.textContent = via === 'email' ? 'They’ve left the site. They get your reply by email, with a link back to the chat, and can reply to the email.'
+      : 'They’ve left the site, so a live chat reply is emailed to them as well.';
+    else off.textContent = 'They’ve left the site and didn’t leave an email address. They’ll see your reply if they come back.' + (c.phone ? ' They left a number, so a call might be quickest.' : '');
+  }
+  function renderReplyBar(c) {
+    var chan = c.channel || 'web';
+    var form = $('chatForm'), row = $('chatViaRow'), none = $('chatNoReply');
+    if (c.blocked) { form.hidden = true; row.hidden = true; none.hidden = false; none.textContent = 'This visitor is blocked. Unblock them to reply.'; return; }
+    if (chan !== 'web') {
+      form.hidden = true; row.hidden = true; none.hidden = false;
+      none.textContent = (chan === 'whatsapp' ? 'WhatsApp' : 'Text') + ' threads take no typed replies: texts are automated only, to keep costs down. Call them back' + (c.email ? ', or email them.' : '.');
+      return;
+    }
+    form.hidden = false; none.hidden = true; row.hidden = false;
+    $('chatBody').placeholder = 'Write a reply';
+    var emailBtn = document.querySelector('.oa-via-btn[data-via="email"]');
+    emailBtn.disabled = !c.email;
+    emailBtn.title = c.email ? 'To ' + c.email : 'They did not leave an email address';
+    setVia(c.online || !c.email ? 'chat' : 'email');
   }
 
   async function openThread(id) {
@@ -585,12 +615,14 @@
     var btn = $('chatSend');
     btn.disabled = true;
     try {
-      var via = $('chatEmailToo').hidden ? undefined : ($('chatEmailBox').checked ? 'email' : 'chat');
       var r = await api({ action: 'chat_reply', site_id: site.site_id, conversation_id: openConv.id, body: text, via: via });
       ta.value = ''; ta.style.height = 'auto';
       $('chatMsgs').appendChild(chatBubble(r.message));
       openConv = r.conversation;
-      say($('chatNote'), r.delivered.indexOf('email') >= 0 ? 'Sent, and emailed to them.' : r.delivered[0] === 'sms' ? 'Sent by text.' : r.delivered[0] === 'whatsapp' ? 'Sent on WhatsApp.' : '', 'ok');
+      var emailed = r.delivered.indexOf('email') >= 0;
+      say($('chatNote'), via === 'email' && emailed ? 'Emailed to them, with a link back to the chat. They can reply to the email too.'
+        : emailed ? 'Sent. They’ve left the site, so it went by email as well.'
+        : r.online === false && !openConv.email ? 'Sent. They’ll see it when they come back.' : '', 'ok');
       scrollThread();
     } catch (err) { say($('chatNote'), err.message, 'bad'); }
     btn.disabled = false;
