@@ -106,6 +106,11 @@
 .oa-dash-stub h2{font-size:26px;letter-spacing:-.03em;margin:0 0 8px}
 .oa-dash-stub .hint{font-size:15px;line-height:1.5;margin:0 0 18px}
 .oa-dash-frame{width:100%;height:calc(100vh - 140px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border:0;border-radius:var(--radius);background:var(--bg-grey)}
+.oa-dash-spin{display:none}
+#tabDashboard.is-loading .oa-dash-stub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;min-height:calc(100vh - 62px - 74px - 42px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+#tabDashboard.is-loading .oa-dash-stub h2{display:none}
+#tabDashboard.is-loading .oa-dash-stub .hint{margin:0;color:var(--ink-2)}
+#tabDashboard.is-loading .oa-dash-spin{display:block;width:26px;height:26px;animation:oa-spin .8s linear infinite}
 #tabDashboard.is-framed{padding:0}
 #tabDashboard.is-framed .oa-dash-frame{border-radius:0;height:calc(100vh - 62px - 74px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
 
