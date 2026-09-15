@@ -175,7 +175,7 @@
     var text = document.createElement('p');
     text.className = 'consent-text';
     /* The Academy site's pill, with one line saying what each answer does. */
-    text.innerHTML = 'We count visits ourselves, with no cookies. Accept also lets us measure our ads. <a href="/cookies.html">Details</a>';
+    text.innerHTML = 'We count visits without cookies. Accept adds ad cookies. <a href="/cookies.html">Details</a>';
 
     var actions = document.createElement('div');
     actions.className = 'consent-actions';
