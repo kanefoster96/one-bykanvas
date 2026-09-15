@@ -163,7 +163,12 @@
   window.addEventListener('hashchange', function () {
     var h = location.hash.replace(/^#/, '');
     if (/^(new|r\/)/.test(h) && tab !== 'Support') showTab('Support');
+    if (!(me && me.user && me.user.is_admin)) reqScreen(/^r\//.test(h));
   });
+
+  /* One request open: the Support tab drops its padding and the thread
+     takes the whole screen between header and tabs, like a chat. */
+  function reqScreen(on) { $('tabSupport').classList.toggle('is-thread', !!on); }
 
   function hasModule(m) { return !!(site && (site.modules || []).indexOf(m) >= 0); }
 
@@ -700,6 +705,7 @@
   async function loadAdminInbox() {
     $('adminThread').hidden = true;
     $('adminInbox').hidden = false;
+    reqScreen(false);
     try {
       var res = await apiTo('/api/admin', { action: 'requestsInbox' });
       adminRows = res.requests || [];
@@ -740,8 +746,10 @@
   async function openAdminThread(id) {
     $('adminInbox').hidden = true;
     $('adminThread').hidden = false;
+    reqScreen(true);
     $('aThread').innerHTML = '';
     say($('aNote'), '');
+    setAdminMode('waiting');
     adminOpenId = id;
     try {
       var t = await apiTo('/api/admin', { action: 'requestThread', requestId: id });
@@ -752,10 +760,23 @@
       $('aWho').textContent = [c.business_name, c.contact_name, c.email].filter(Boolean).join(' · ');
       var box = $('aThread');
       (t.notes || []).forEach(function (n) { box.appendChild(noteBubble(n)); });
-      window.scrollTo(0, document.body.scrollHeight);
+      box.scrollTop = box.scrollHeight;
     } catch (err) { say($('aNote'), err.message, 'bad'); }
   }
   $('adminBack').addEventListener('click', loadAdminInbox);
+
+  /* What a note does: a plain reply, a status change with it, or a note
+     only I see. A pill row above the reply box, like Live chat / Email. */
+  var adminMode = 'waiting';
+  function setAdminMode(m) {
+    adminMode = m;
+    $('aModes').querySelectorAll('.oa-via-btn').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.mode === m)); });
+    $('aBody').placeholder = m === 'private' ? 'A note just for you' : m === 'done' ? 'Tell them it is live' : 'Write a reply';
+  }
+  $('aModes').addEventListener('click', function (e) {
+    var b = e.target.closest('.oa-via-btn');
+    if (b) setAdminMode(b.dataset.mode);
+  });
   $('aBody').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(120, this.scrollHeight) + 'px'; });
   $('aForm').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -763,7 +784,7 @@
     var ta = $('aBody');
     var text = ta.value.trim();
     if (!text) return;
-    var mode = (document.querySelector('input[name="aMode"]:checked') || {}).value || 'waiting';
+    var mode = adminMode;
     var payload = { action: 'addRequestNote', requestId: adminOpenId, body: text };
     if (mode === 'private') payload.isPrivate = true; else payload.status = mode;
     $('aSend').disabled = true;
@@ -773,14 +794,21 @@
       $('aThread').appendChild(noteBubble(Object.assign({ author: 'admin', private: mode === 'private' }, r.note)));
       if (r.request) { $('aStatus').textContent = STATUS_WORD[r.request.status] || 'Open'; $('aStatus').className = 'req-state ' + (STATUS_CLASS[r.request.status] || ''); }
       say($('aNote'), mode === 'private' ? 'Noted, just for you.' : 'Sent. They get it on their phone and by email.', 'ok');
-      window.scrollTo(0, document.body.scrollHeight);
+      $('aThread').scrollTop = $('aThread').scrollHeight;
+      if (mode !== 'waiting') setAdminMode('waiting');
     } catch (err) { say($('aNote'), err.message, 'bad'); }
     $('aSend').disabled = false;
   });
 
   function loadRequests() {
     if (me && me.user && me.user.is_admin) { if (pendingRequest || $('adminThread').hidden) loadAdminInbox(); return; }
-    if (requestsLoaded) { if (ONE.refreshRequestBadge) ONE.refreshRequestBadge(); return; }
+    reqScreen(/^#r\//.test(location.hash));
+    if (requestsLoaded) {
+      if (ONE.refreshRequestBadge) ONE.refreshRequestBadge();
+      // Coming back after another tab cleared the hash: route to the list.
+      if (!location.hash && $('viewDetail') && !$('viewDetail').hidden) window.dispatchEvent(new Event('hashchange'));
+      return;
+    }
     requestsLoaded = true;
     var base = native ? BASE + '/' : '../';
     [base + 'requests-badge.js?v=1', base + 'requests.js?v=5'].forEach(function (src) {
