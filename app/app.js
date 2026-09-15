@@ -313,20 +313,56 @@
     box.setAttribute('title', first.day + ' to ' + last.day);
   }
 
-  function list(id, rows, keyName, nName, empty) {
+  function list(id, rows, keyName, nName, empty, label) {
     var ol = $(id);
     ol.innerHTML = '';
     if (!rows.length) { ol.appendChild(el('li', 'oa-list-empty', empty)); return; }
     var max = rows[0][nName] || 1;
     rows.forEach(function (r) {
       var li = el('li');
-      li.appendChild(el('span', 'oa-list-key', r[keyName]));
+      li.appendChild(el('span', 'oa-list-key', label ? label(r[keyName]) : r[keyName]));
       var bar = el('span', 'oa-list-bar');
       bar.style.width = Math.max(6, Math.round((r[nName] / max) * 60)) + 'px';
       li.appendChild(bar);
       li.appendChild(el('span', 'oa-list-n', fmt(r[nName])));
       ol.appendChild(li);
     });
+  }
+
+  /* Money as a person says it: £1,240, or £12.50 when the pence matter. */
+  function pounds(pence, currency) {
+    var sym = { gbp: '£', usd: '$', eur: '€' }[String(currency || 'gbp').toLowerCase()] || '';
+    var n = Number(pence || 0) / 100;
+    return sym + n.toLocaleString('en-GB', { minimumFractionDigits: n < 100 && n % 1 ? 2 : 0, maximumFractionDigits: n < 100 && n % 1 ? 2 : 0 });
+  }
+  function pct(part, whole) { return whole ? (part / whole < 0.01 && part ? '<1' : Math.round((part / whole) * 100)) + '%' : '0%'; }
+  var countryNames = (typeof Intl !== 'undefined' && Intl.DisplayNames) ? new Intl.DisplayNames(['en-GB'], { type: 'region' }) : null;
+  function countryName(code) { try { return (countryNames && countryNames.of(code)) || code; } catch (e) { return code; } }
+
+  /* Three bars, each as wide as its share of the visitors. */
+  function drawFunnel(f, hasChat, hasPay) {
+    var box = $('anFunnel');
+    box.innerHTML = '';
+    var rows = [['Visited', f.visitors]];
+    if (hasChat) rows.push(['Messaged', f.messaged]);
+    if (hasPay) rows.push(['Paid', f.paid]);
+    var max = f.visitors || 1;
+    rows.forEach(function (r) {
+      var row = el('div', 'oa-funnel-row');
+      row.appendChild(el('span', 'oa-funnel-label', r[0]));
+      var track = el('span', 'oa-funnel-track');
+      var bar = el('span', 'oa-funnel-bar');
+      bar.style.width = (r[1] ? Math.max(2, (r[1] / max) * 100) : 0) + '%';
+      track.appendChild(bar);
+      row.appendChild(track);
+      row.appendChild(el('span', 'oa-funnel-n', fmt(r[1])));
+      box.appendChild(row);
+    });
+    var bits = [];
+    if (hasPay) bits.push(f.visitors ? pct(f.paid, f.visitors) + ' of visitors paid.' : 'No visitors yet.');
+    if (hasChat && hasPay) bits.push(f.messaged ? f.messaged_and_paid + ' of the ' + f.messaged + ' who messaged went on to pay.' : 'Nobody has messaged yet.');
+    else if (hasChat) bits.push(f.visitors ? pct(f.messaged, f.visitors) + ' of visitors sent a message.' : '');
+    $('anFunnelNote').textContent = bits.join(' ');
   }
 
   async function loadAnalytics() {
@@ -343,15 +379,72 @@
     $('anCompare').textContent = 'Last ' + d.days + ' days, against the ' + d.days + ' before.';
     $('anVisitors').textContent = fmt(d.visitors);
     $('anViews').textContent = fmt(d.views);
-    $('anRequests').textContent = fmt(d.requests_open);
     delta($('anVisitorsDelta'), d.visitors, d.previous.visitors);
     delta($('anViewsDelta'), d.views, d.previous.views);
-    if (d.payments == null) { $('anPayments').textContent = '–'; $('anPaymentsNote').textContent = hasModule('payments') ? 'connecting' : 'once connected'; }
-    else { $('anPayments').textContent = '£' + fmt(Math.round(d.payments / 100)); $('anPaymentsNote').textContent = ''; }
+    $('anOnline').textContent = fmt(d.online_now);
+    $('anOnlineNote').textContent = d.online_now ? 'in the last 5 minutes' : 'nobody right now';
+
+    // The fourth tile is the one that matters most on this site.
+    var j = d.journeys || { pages_per_visit: 0, top: [], one_page_pct: 0 };
+    if (d.money) {
+      $('anFourthLabel').textContent = 'Taken';
+      $('anFourthN').textContent = pounds(d.money.amount, d.money.currency);
+      delta($('anFourthDelta'), d.money.amount, d.money.previous.amount);
+    } else if (d.chat) {
+      $('anFourthLabel').textContent = 'Conversations';
+      $('anFourthN').textContent = fmt(d.chat.conversations);
+      delta($('anFourthDelta'), d.chat.conversations, d.chat.previous.conversations);
+    } else {
+      $('anFourthLabel').textContent = 'Pages a visit';
+      $('anFourthN').textContent = String(j.pages_per_visit || 0);
+      $('anFourthDelta').textContent = d.visitors ? j.one_page_pct + '% saw one page' : '';
+    }
+
     $('anEmpty').hidden = d.beacon_seen;
     spark(d.series);
-    list('anPages', d.pages, 'path', 'views', 'No pages viewed yet.');
+
+    $('anFunnelCard').hidden = !d.funnel;
+    if (d.funnel) drawFunnel(d.funnel, !!d.chat, !!d.money);
+
+    $('anMoneyCard').hidden = !d.money;
+    $('anMoneyOff').hidden = !!d.money;
+    if (d.money) {
+      var m = d.money;
+      $('anTaken').textContent = pounds(m.amount, m.currency);
+      delta($('anTakenDelta'), m.amount, m.previous.amount);
+      $('anPayCount').textContent = fmt(m.count);
+      delta($('anPayCountDelta'), m.count, m.previous.count);
+      $('anPayers').textContent = fmt(m.payers);
+      $('anPayAvg').textContent = m.count ? pounds(m.average, m.currency) : '–';
+      $('anRefunds').textContent = m.refunds ? m.refunds + ' refunded, ' + pounds(m.refunded, m.currency) : '';
+      $('anMoneyNote').textContent = m.count ? '' : 'No payments in this period yet.';
+    }
+
+    $('anChatCard').hidden = !d.chat;
+    $('anChatOff').hidden = !!d.chat;
+    if (d.chat) {
+      $('anConvs').textContent = fmt(d.chat.conversations);
+      delta($('anConvsDelta'), d.chat.conversations, d.chat.previous.conversations);
+      var f = d.funnel || { messaged: 0, messaged_and_paid: 0 };
+      $('anConvsPaid').textContent = d.money ? fmt(f.messaged_and_paid) : '–';
+      $('anConvsPaidNote').textContent = d.money ? (f.messaged ? pct(f.messaged_and_paid, f.messaged) + ' of them' : '') : 'once payments are connected';
+    }
+
+    list('anPages', d.pages, 'path', 'views', 'No pages viewed yet.', pageName);
+    var jl = $('anJourneys');
+    jl.innerHTML = '';
+    if (!j.top.length) jl.appendChild(el('li', 'oa-list-empty', d.visitors ? 'Every visit so far stayed on one page.' : 'Nothing yet.'));
+    j.top.forEach(function (r) {
+      var li = el('li');
+      var steps = el('span', 'oa-list-key oa-journey');
+      r.steps.forEach(function (s, i) { if (i) steps.appendChild(el('i', 'oa-journey-arrow', '→')); steps.appendChild(el('span', '', pageName(s))); });
+      li.appendChild(steps);
+      li.appendChild(el('span', 'oa-list-n', fmt(r.visitors)));
+      jl.appendChild(li);
+    });
+    $('anJourneysNote').textContent = d.visitors ? 'About ' + j.pages_per_visit + ' pages a visit. ' + j.one_page_pct + '% of visits saw one page and left.' : '';
     list('anRefs', d.referrers, 'host', 'visitors', d.visitors ? 'Everyone typed your address or came from Google with no referrer.' : 'Nothing yet.');
+    list('anCountries', d.countries || [], 'country', 'visitors', 'Nothing yet.', countryName);
     var total = d.devices.phone + d.devices.desktop;
     var bar = $('anDevices');
     bar.innerHTML = '';

@@ -44,6 +44,16 @@ give it the id of a button in the site's own header (as kanvas.one does);
 `data-full` opens the chat over the whole screen on a phone. Only add the
 chat line if the site has the chat module ticked.
 
+If the site **takes payments**, one call on its thank-you or order
+confirmation page, after the beacon line, so the payment is counted in the
+Analytics tab (amount in pence, ref the order id so a refresh counts once):
+
+```html
+<script>k1.payment({ amount: 4500, ref: 'order_123', email: 'sam@example.com' });</script>
+```
+
+Tick **Payments** under One app so the money cards show from day one.
+
 On the **dashboard page(s)** (`/admin`), before the dashboard's own scripts:
 
 ```html
