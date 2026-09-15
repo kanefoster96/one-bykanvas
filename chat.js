@@ -5,7 +5,10 @@
  * A small button in the corner, a panel, a conversation with the owner
  * who gets it on their phone. The visitor keeps a random token for their
  * thread in localStorage and nothing else; no account, no cookie.
- * Optional: data-color for the button, data-greeting for the first line.
+ * Optional: data-color for the button, data-greeting for the first line,
+ * data-trigger="#id" to use the site's own button (in its header, say)
+ * instead of the corner one, and data-full to open the chat over the
+ * whole screen on a phone and as a full-height panel on a desktop.
  */
 (function () {
   'use strict';
@@ -16,6 +19,8 @@
   var name = me.getAttribute('data-name') || 'us';
   var color = me.getAttribute('data-color') || '#1d1d1f';
   var greeting = me.getAttribute('data-greeting') || 'Hi! Send us a message and we’ll reply here, or by email or phone if you leave one.';
+  var trigger = me.getAttribute('data-trigger') || '';
+  var full = me.hasAttribute('data-full');
   var KEY = 'k1chat:' + site;
 
   var saved = null;
@@ -30,29 +35,46 @@
   var askedDetails = false;
 
   /* ---- markup ---- */
+  /* Text entry is 16px on purpose: anything smaller makes iOS Safari zoom
+     the whole page the moment the box is tapped. */
   var css = '.k1c-btn{position:fixed;right:18px;bottom:18px;z-index:2147483000;width:56px;height:56px;border-radius:50%;border:0;background:' + color + ';color:#fff;box-shadow:0 6px 24px rgba(0,0,0,.22);cursor:pointer;display:flex;align-items:center;justify-content:center;font:inherit}'
-    + '.k1c-btn svg{width:26px;height:26px}.k1c-btn .k1c-n{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e5484d;color:#fff;font:600 12px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;text-align:center}'
+    + '.k1c-btn svg{width:26px;height:26px}.k1c-n{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e5484d;color:#fff;font:600 12px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;text-align:center}'
+    + '.k1c-launch{position:relative}.k1c-launch .k1c-n{top:-3px;right:-5px;min-width:16px;height:16px;padding:0 4px;font-size:11px;line-height:16px}'
     + '.k1c{position:fixed;right:18px;bottom:86px;z-index:2147483000;width:min(360px,calc(100vw - 36px));max-height:min(560px,calc(100vh - 110px));display:flex;flex-direction:column;background:#fff;color:#1d1d1f;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.24);overflow:hidden;font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}'
-    + '.k1c[hidden]{display:none}.k1c-head{padding:14px 16px;background:' + color + ';color:#fff;display:flex;justify-content:space-between;align-items:center}.k1c-head b{font-size:15px}.k1c-head small{display:block;opacity:.85;font-size:12.5px}.k1c-x{background:none;border:0;color:#fff;font-size:22px;cursor:pointer;line-height:1}'
-    + '.k1c-msgs{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:8px;min-height:160px}'
+    + '.k1c[hidden]{display:none}.k1c-head{padding:14px 16px;background:' + color + ';color:#fff;display:flex;justify-content:space-between;align-items:center}.k1c-head b{font-size:15px}.k1c-head small{display:block;opacity:.85;font-size:12.5px}.k1c-x{background:none;border:0;color:#fff;font-size:22px;cursor:pointer;line-height:1;padding:4px 8px}'
+    + '.k1c-msgs{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:8px;min-height:160px;-webkit-overflow-scrolling:touch}'
     + '.k1c-m{max-width:84%;padding:9px 13px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere}.k1c-m.k1c-v{align-self:flex-end;background:' + color + ';color:#fff;border-bottom-right-radius:6px}.k1c-m.k1c-o{align-self:flex-start;background:#f0f0f3;border-bottom-left-radius:6px}.k1c-sys{align-self:center;font-size:12.5px;color:#86868b;text-align:center;padding:2px 10px}'
-    + '.k1c-form{display:flex;gap:8px;padding:10px 12px 12px;border-top:1px solid #eee}.k1c-form textarea{flex:1;resize:none;border:1px solid #d2d2d7;border-radius:12px;padding:9px 12px;font:inherit;max-height:96px;min-height:40px}.k1c-form textarea:focus{outline:none;border-color:' + color + '}.k1c-send{border:0;border-radius:12px;padding:0 14px;background:' + color + ';color:#fff;font:inherit;font-weight:600;cursor:pointer}'
-    + '.k1c-details{padding:10px 12px;border-top:1px solid #eee;background:#fafafa;font-size:13px;color:#6e6e73}.k1c-details p{margin:0 0 8px}.k1c-details input{width:100%;box-sizing:border-box;border:1px solid #d2d2d7;border-radius:10px;padding:8px 10px;font:inherit;font-size:14px;margin-bottom:6px}.k1c-details .k1c-row{display:flex;gap:6px}.k1c-details button{border:0;background:' + color + ';color:#fff;border-radius:10px;padding:8px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.k1c-details .k1c-skip{background:none;color:#86868b;font-weight:500}'
-    + '@media (max-width:480px){.k1c{right:10px;left:10px;width:auto;bottom:80px}}';
+    + '.k1c-form{display:flex;gap:8px;padding:10px 12px 12px;border-top:1px solid #eee}.k1c-form textarea{flex:1;resize:none;border:1px solid #d2d2d7;border-radius:12px;padding:9px 12px;font:inherit;font-size:16px;max-height:96px;min-height:42px}.k1c-form textarea:focus{outline:none;border-color:' + color + '}.k1c-send{border:0;border-radius:12px;padding:0 14px;background:' + color + ';color:#fff;font:inherit;font-weight:600;cursor:pointer}'
+    + '.k1c-details{padding:10px 12px;border-top:1px solid #eee;background:#fafafa;font-size:13px;color:#6e6e73}.k1c-details p{margin:0 0 8px}.k1c-details input{width:100%;box-sizing:border-box;border:1px solid #d2d2d7;border-radius:10px;padding:8px 10px;font:inherit;font-size:16px;margin-bottom:6px}.k1c-details .k1c-row{display:flex;gap:6px}.k1c-details button{border:0;background:' + color + ';color:#fff;border-radius:10px;padding:8px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.k1c-details .k1c-skip{background:none;color:#86868b;font-weight:500}'
+    + '@media (max-width:480px){.k1c{right:10px;left:10px;width:auto;bottom:80px}}'
+    /* data-full: the whole screen on a phone, a full-height panel on the right elsewhere. */
+    + '.k1c-full{top:12px;right:12px;bottom:12px;width:min(420px,calc(100vw - 24px));max-height:none}'
+    + '@media (max-width:700px){.k1c-full{top:0;right:0;bottom:0;left:0;width:auto;border-radius:0;box-shadow:none;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}}';
   function mount() {
   var style = document.createElement('style'); style.textContent = css; document.head.appendChild(style);
 
-  var btn = document.createElement('button');
-  btn.className = 'k1c-btn'; btn.type = 'button'; btn.setAttribute('aria-label', 'Chat with ' + name);
-  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg><span class="k1c-n" hidden></span>';
+  /* The site's own button if it named one and it is on this page;
+     otherwise the corner button. */
+  var btn = trigger ? document.querySelector(trigger) : null;
+  if (btn) {
+    btn.classList.add('k1c-launch');
+    btn.hidden = false;
+    if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', 'Chat with ' + name);
+    btn.insertAdjacentHTML('beforeend', '<span class="k1c-n" hidden></span>');
+  } else {
+    btn = document.createElement('button');
+    btn.className = 'k1c-btn'; btn.type = 'button'; btn.setAttribute('aria-label', 'Chat with ' + name);
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg><span class="k1c-n" hidden></span>';
+  }
   var panel = document.createElement('div');
-  panel.className = 'k1c'; panel.hidden = true; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Chat with ' + name);
+  panel.className = 'k1c' + (full ? ' k1c-full' : ''); panel.hidden = true; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Chat with ' + name);
   panel.innerHTML = '<div class="k1c-head"><div><b></b><small>Usually replies quickly</small></div><button class="k1c-x" type="button" aria-label="Close">&times;</button></div>'
     + '<div class="k1c-msgs"></div>'
     + '<div class="k1c-details" hidden><p>Leave an email or number in case you step away, and we’ll reply there too.</p><input type="text" placeholder="Your name" autocomplete="name"><input type="email" placeholder="Email" autocomplete="email" inputmode="email"><input type="tel" placeholder="Mobile" autocomplete="tel" inputmode="tel"><div class="k1c-row"><button type="button" class="k1c-save">Save</button><button type="button" class="k1c-skip">Not now</button></div></div>'
     + '<form class="k1c-form"><textarea rows="1" placeholder="Write a message" aria-label="Your message" maxlength="2000"></textarea><button class="k1c-send" type="submit">Send</button></form>';
   panel.querySelector('.k1c-head b').textContent = name;
-  document.body.appendChild(btn); document.body.appendChild(panel);
+  if (!btn.parentNode) document.body.appendChild(btn);
+  document.body.appendChild(panel);
 
   var msgs = panel.querySelector('.k1c-msgs');
   var form = panel.querySelector('.k1c-form');
@@ -110,11 +132,15 @@
   function setOpen(next) {
     open = next;
     panel.hidden = !open;
+    btn.setAttribute('aria-expanded', String(open));
+    // Full screen on a phone: the page behind must not scroll instead.
+    if (full && window.innerWidth <= 700) document.documentElement.style.overflow = open ? 'hidden' : '';
     if (open) { unread = 0; badge.hidden = true; input.focus(); msgs.scrollTop = msgs.scrollHeight; if (conv) poll().then(schedule); }
     else schedule();
   }
   btn.addEventListener('click', function () { setOpen(!open); });
   panel.querySelector('.k1c-x').addEventListener('click', function () { setOpen(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) setOpen(false); });
 
   input.addEventListener('input', function () { input.style.height = 'auto'; input.style.height = Math.min(96, input.scrollHeight) + 'px'; });
   input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true })); } });

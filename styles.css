@@ -88,6 +88,15 @@ h3{font-size:21px;letter-spacing:-.02em}
 }
 .logo:hover{text-decoration:none;opacity:.7}
 
+/* The chat button next to the menu. Hidden until chat.js finds it, so a
+   page without chat never shows a button that does nothing. */
+.nav-chat{
+  width:34px;height:34px;border:0;background:none;padding:0;cursor:pointer;
+  display:grid;place-content:center;color:var(--ink);margin-right:6px;
+}
+.nav-chat[hidden]{display:none}
+.nav-chat svg{width:22px;height:22px}
+.nav-chat:hover{opacity:.7}
 .burger{
   width:34px;height:34px;border:0;background:none;padding:0;cursor:pointer;
   display:grid;place-content:center;gap:5px;
@@ -1051,11 +1060,9 @@ a.hero-pill:hover .pill-go{opacity:1}
 .consent-btn-yes{background:var(--ink);border-color:var(--ink);color:#fff}
 .consent-btn-yes:hover{background:#000}
 
-/* Phones: same single row, shorter label, sat to the left so it stays
-   clear of the chat button in the corner. */
+/* Phones: the same single row, centred, with a shorter label. */
 @media (max-width:560px){
-  .consent{left:12px;transform:translateY(10px);gap:10px;padding:5px 5px 5px 14px}
-  .consent.in{transform:translateY(0)}
+  .consent{gap:10px;padding:5px 5px 5px 14px}
   .consent-long{display:none}
   .consent-short{display:inline}
   .consent-btn{padding:7px 12px}
@@ -1064,9 +1071,6 @@ a.hero-pill:hover .pill-go{opacity:1}
 @media (prefers-reduced-motion:reduce){
   .consent{transition:none;opacity:1;transform:translate(-50%,0)}
   .consent.in{transform:translate(-50%,0)}
-}
-@media (prefers-reduced-motion:reduce) and (max-width:560px){
-  .consent,.consent.in{transform:none}
 }
 
 /* ---------- Legal / prose pages ---------- */
