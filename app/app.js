@@ -177,36 +177,63 @@
   var pullEl = el('div', 'oa-pull');
   pullEl.appendChild(el('span', 'oa-pull-spin'));
   document.body.appendChild(pullEl);
-  var pull = { y0: null, dy: 0, busy: false };
-  function pullDist() { return Math.min(90, pull.dy * 0.5); }
+  var pull = { y0: null, dy: 0, busy: false, target: null };
+  var PULL_HOLD = 64;
+  function pullDist() { return Math.min(96, pull.dy * 0.5); }
+  /* What slides: the message list in a thread, else the visible part of
+     the tab (its open section, or the tab itself). */
+  function pullTarget(t) {
+    var box = t.closest('.oa-thread');
+    if (box) return box.scrollTop <= 0 ? box : null;
+    if (t.closest('.oa-screen')) return null;
+    if ((window.scrollY || document.documentElement.scrollTop || 0) > 0) return null;
+    var tabEl = document.querySelector('.oa-tab:not([hidden])');
+    if (!tabEl) return null;
+    var inner = tabEl.querySelector(':scope > section:not([hidden])');
+    return inner || tabEl;
+  }
+  function movePull(d, animate) {
+    var el_ = pull.target;
+    if (!el_) return;
+    el_.classList.toggle('oa-pulling', !animate);
+    el_.classList.toggle('oa-pull-back', !!animate);
+    el_.style.transform = d ? 'translateY(' + d + 'px)' : '';
+    pullEl.style.top = (pull.top + 14) + 'px';
+    pullEl.style.opacity = d ? String(Math.min(1, d / 40)) : '';
+    pullEl.classList.toggle('is-on', d > 0);
+    if (!pull.busy) pullEl.firstChild.style.transform = 'rotate(' + Math.round(d * 4) + 'deg)';
+  }
   document.addEventListener('touchstart', function (e) {
     pull.y0 = null;
     if (pull.busy || e.touches.length !== 1) return;
     var t = e.target;
     if (!t.closest || t.closest('.oa-sheet, .oa-sheet-back, iframe, .oa-via-scroll, .oa-conv-tools')) return;
-    var box = t.closest('.oa-thread');
-    var atTop = box ? box.scrollTop <= 0 : (window.scrollY || document.documentElement.scrollTop || 0) <= 0;
-    if (!atTop) return;
+    var target = pullTarget(t);
+    if (!target) return;
+    pull.target = target;
+    pull.top = target.getBoundingClientRect().top;
     pull.y0 = e.touches[0].clientY; pull.dy = 0;
   }, { passive: true });
   document.addEventListener('touchmove', function (e) {
     if (pull.y0 === null) return;
     pull.dy = Math.max(0, e.touches[0].clientY - pull.y0);
-    pullEl.classList.add('is-pulling');
-    pullEl.classList.toggle('is-ready', pullDist() >= 60);
-    pullEl.style.transform = 'translateY(' + (pullDist() - 52) + 'px)';
+    movePull(pullDist(), false);
   }, { passive: true });
   document.addEventListener('touchend', function () {
     if (pull.y0 === null) return;
     pull.y0 = null;
-    pullEl.classList.remove('is-pulling');
-    if (pullDist() >= 60) refreshTab(); else settlePull();
+    if (pullDist() >= PULL_HOLD) refreshTab(); else settlePull();
   }, { passive: true });
-  function settlePull() { pull.busy = false; pullEl.classList.remove('is-busy', 'is-ready'); pullEl.style.transform = ''; }
+  function settlePull() {
+    movePull(0, true);
+    var t = pull.target;
+    setTimeout(function () { if (t) t.classList.remove('oa-pulling', 'oa-pull-back'); pullEl.classList.remove('is-busy'); pullEl.firstChild.style.transform = ''; pull.busy = false; pull.target = null; }, 300);
+  }
   function refreshTab() {
     pull.busy = true;
     pullEl.classList.add('is-busy');
-    pullEl.style.transform = 'translateY(8px)';
+    pullEl.firstChild.style.transform = '';
+    movePull(PULL_HOLD, true);
     var work = [];
     try {
       if (tab === 'Analytics') { anCache = {}; work.push(loadAnalytics()); }
