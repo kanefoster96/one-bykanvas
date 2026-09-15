@@ -270,6 +270,11 @@
      link with a path hands off again at that path. */
   var framedAt = null;    // the path the frame was last handed off to
   var pendingPath = null; // a deep link waiting for the tab to show
+  var dashReveal = null;  // shows the frame once the page inside says it is ready
+  window.addEventListener('message', function (e) {
+    var frame = $('dashFrame');
+    if (e.source === frame.contentWindow && e.data && e.data.kanvas === 'ready' && dashReveal) dashReveal();
+  });
 
   function renderDashboard(path) {
     var stub = $('dashStub');
@@ -288,17 +293,28 @@
     }
     if (framedAt !== null && !path) return; // already showing, leave it be
     var target = path || '/';
-    // Say what is happening while the dashboard page arrives, then swap.
+    // One loading screen: ours, centred, until the dashboard page says it
+    // is ready (kanvas-handoff.js posts that; our own admin page too).
+    // A page that never says so is shown a few seconds after it loads.
     wrap.classList.remove('is-framed');
+    wrap.classList.add('is-loading');
     frame.hidden = true; stub.hidden = false; open.hidden = true;
     hint.textContent = 'Loading your dashboard…';
+    var shown = false;
+    function reveal() {
+      if (shown) return;
+      shown = true;
+      wrap.classList.remove('is-loading');
+      wrap.classList.add('is-framed'); stub.hidden = true; frame.hidden = false;
+    }
+    dashReveal = reveal;
     api({ action: 'dashboard', site_id: site.site_id, path: target }).then(function (res) {
       framedAt = target;
-      frame.onload = function () { wrap.classList.add('is-framed'); stub.hidden = true; frame.hidden = false; };
+      frame.onload = function () { setTimeout(reveal, 3000); };
       frame.src = res.url;
     }).catch(function (err) {
       // No handoff: say so and offer the browser, where they log in as usual.
-      wrap.classList.remove('is-framed');
+      wrap.classList.remove('is-framed', 'is-loading');
       frame.hidden = true; stub.hidden = false;
       hint.textContent = 'Could not open your dashboard here just now (' + err.message + '). It still opens in your browser.';
       open.hidden = false; open.href = site.dashboard_url;

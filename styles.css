@@ -1037,6 +1037,8 @@ a.hero-pill:hover .pill-go{opacity:1}
    screen of the app; the app has its own header and tabs around it. */
 .kanvas-embedded{scroll-padding-top:12px}
 .kanvas-embedded .nav,.kanvas-embedded .menu,.kanvas-embedded .scrim,.kanvas-embedded .foot,.kanvas-embedded .consent{display:none !important}
+/* The app shows its own loading screen over the frame until this page is ready. */
+.kanvas-embedded .acct-loading{visibility:hidden}
 
 /* ---------- Cookie consent ---------- */
 /* A pill, not a bar: it sits above the page rather than blocking it, and

@@ -23,7 +23,18 @@
        .kanvas-embedded .site-header, .kanvas-embedded .site-footer { display: none } */
   var embedded = false;
   try { embedded = window.self !== window.top; } catch (e) { /* cross-origin top: framed */ embedded = true; }
-  if (embedded) { document.documentElement.classList.add('kanvas-embedded'); pullToRefresh(); }
+  if (embedded) {
+    document.documentElement.classList.add('kanvas-embedded');
+    pullToRefresh();
+    /* The app keeps its own loading screen up until the page says it is
+       ready, so the person sees one loading screen, not the app's and
+       then the dashboard's. Said once the page has loaded; a dashboard
+       that fetches its data after that can call window.kanvasReady()
+       itself when the data is on screen. */
+    var told = false;
+    window.kanvasReady = function () { if (told) return; told = true; try { window.parent.postMessage({ kanvas: 'ready' }, '*'); } catch (e) { /* nothing to tell */ } };
+    if (document.readyState === 'complete') window.kanvasReady(); else window.addEventListener('load', window.kanvasReady);
+  }
 
   /* Framed in the app, a pull down from the top of the page reloads it,
      the way every other screen of the app refreshes. The app cannot see

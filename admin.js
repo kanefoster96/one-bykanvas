@@ -106,14 +106,22 @@ async function load() {
     }).catch(function () {});
   } catch (err) {
     loading.innerHTML = '<p>' + esc(err.message) + '</p>';
+    tellApp();
     return;
   }
   markShortfall();
   render();
   loading.hidden = true;
   app.hidden = false;
+  tellApp();
   showBellCount();
   openFromHash();
+}
+
+/* Framed in the One app, the app keeps its own loading screen up until
+   this page says it is ready, so there is one loading screen, not two. */
+function tellApp() {
+  try { if (window.parent !== window) window.parent.postMessage({ kanvas: 'ready' }, '*'); } catch (e) { /* not framed */ }
 }
 
 /* Unread count for the header bell. Row level security already scopes the
