@@ -166,6 +166,16 @@
   /* First paint: the greeting, then whatever thread is already here. */
   sys(greeting);
   if (conv) poll().then(schedule);
+
+  /* A link from one of the owner's emails (?k1chat=open) lands the visitor
+     straight back in the chat, then tidies the address bar. */
+  if (/(^|[?&])k1chat=open(&|$)/.test(location.search)) {
+    setOpen(true);
+    try {
+      var clean = location.search.replace(/(^\?|&)k1chat=open(&|$)/, function (m, a, b) { return a === '?' && b === '&' ? '?' : a === '?' ? '' : b ? '&' : ''; });
+      history.replaceState(null, '', location.pathname + (clean === '?' ? '' : clean) + location.hash);
+    } catch (e) { /* stays, harmless */ }
+  }
   }
 
   /* The tag may sit in the head; the button needs a body to live in. */

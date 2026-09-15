@@ -186,48 +186,72 @@ async function chatGet(db, site, id) {
   return { conversation: convOut(conv), messages: (msgs || []).map((m) => ({ id: m.id, author: m.author, body: m.body, emailed: !!m.emailed_at, at: m.created_at })) };
 }
 
-/* The owner's reply lands in the thread. It also goes by email when the
-   owner asks, or when the visitor has gone and left an address: a reply
-   nobody is there to read is a reply lost. */
+/* Where a visitor's reply to one of our emails should go: a per-conversation
+   address on the reply domain, which api/email-inbound.js turns back into a
+   message in the thread. Without that domain set up, replies go to the
+   business's own inbox instead. */
+function replyAddressFor(conv, site) {
+  const domain = String(process.env.CHAT_REPLY_DOMAIN || '').trim().toLowerCase();
+  if (domain) return 'reply+' + conv.id + '@' + domain;
+  return site.email || undefined;
+}
+
+/* The link in the email that lands the visitor back in the chat: the page
+   they were on, with the widget told to open. Only their own browser still
+   holds the thread, so the email also works as a plain reply. */
+function continueLink(conv, site) {
+  const base = String(site.url || (site.profile && site.profile.site_url) || '').trim().replace(/\/+$/, '');
+  if (!/^https?:\/\//i.test(base)) return null;
+  const page = /^\/[^\s?#]*$/.test(String(conv.page || '')) ? conv.page : '/';
+  return base + page + '?k1chat=open';
+}
+
+/* The owner's reply lands in the thread. Whether it also goes by email is
+   the owner's choice in the app (via = 'chat' | 'email'), with one rule
+   over the top: a visitor who has left the site and left an address is
+   always emailed, whichever button was pressed, because a reply nobody is
+   there to read is a reply lost. Text and WhatsApp threads take no typed
+   replies: texts are for automations only, to keep costs down. */
 async function chatReply(db, site, id, bodyIn, via) {
   const conv = await conversationIn(db, site, id);
   const text = cleanBody(bodyIn);
   if (text.length < 1) { const e = new Error('Write a reply first.'); e.shown = true; throw e; }
   if (conv.blocked_at) { const e = new Error('This visitor is blocked. Unblock them to reply.'); e.shown = true; throw e; }
-  // A text or WhatsApp thread: the reply goes back the way it came, and
-  // only lands in the thread once it has actually gone.
   const channel = conv.channel || 'web';
   if (channel === 'sms' || channel === 'whatsapp') {
-    if (!site.phone_number) { const e = new Error('This site has no number to send from yet.'); e.shown = true; throw e; }
-    const prefix = channel === 'whatsapp' ? 'whatsapp:' : '';
-    const result = await sendSms({ from: prefix + site.phone_number, to: prefix + conv.visitor_phone, body: text });
-    if (result !== 'sent') {
-      const e = new Error(channel === 'whatsapp' ? 'WhatsApp would not take that. If it has been over 24 hours since they last messaged, send them a text instead.' : 'The text could not be sent. Try again in a moment.');
-      e.shown = true; throw e;
-    }
-    const madeOut = await addMessage(db, conv, 'owner', text);
-    return { message: { id: madeOut.message.id, author: 'owner', body: text, emailed: false, at: madeOut.message.created_at }, delivered: [channel], conversation: convOut(madeOut.conversation) };
+    const e = new Error('Texts are automated only. Call them back, or email them if they left an address.'); e.shown = true; throw e;
   }
+  if (via === 'email' && !conv.visitor_email) {
+    const e = new Error('They did not leave an email address, so this can only go to the chat. They will see it when they come back.'); e.shown = true; throw e;
+  }
+  const online = isOnline(conv);
   const made = await addMessage(db, conv, 'owner', text);
   const delivered = ['chat'];
-  const wantsEmail = via === 'email' || (via !== 'chat' && !isOnline(conv) && !!conv.visitor_email);
-  if (wantsEmail && conv.visitor_email) {
+  const wantsEmail = !!conv.visitor_email && (via === 'email' || !online);
+  if (wantsEmail) {
     const business = site.name || site.profile.business_name || 'us';
-    const { data: recent } = await db.from('messages').select('author, body, created_at').eq('conversation_id', conv.id).order('created_at', { ascending: false }).limit(6);
-    const thread = (recent || []).reverse().filter((m) => m.id !== made.message.id);
+    const { data: recent } = await db.from('messages').select('id, author, body, created_at').eq('conversation_id', conv.id).order('created_at', { ascending: false }).limit(6);
+    const thread = (recent || []).reverse().filter((m) => m.id !== made.message.id && m.author !== 'system');
+    const link = continueLink(conv, site);
     const lines = [esc(text).replace(/\n/g, '<br>')];
     if (thread.length) lines.push('<span style="color:#86868b;font-size:13px;">Earlier:</span><br>' + thread.map((m) => '<b>' + (m.author === 'owner' ? esc(business) : esc(conv.visitor_name || 'You')) + ':</b> ' + esc(m.body).replace(/\n/g, ' ')).join('<br>'));
+    const howToReply = 'Reply to this email and it goes straight back to ' + business + (link ? ', or carry on in the chat on their site.' : '.');
     const result = await sendEmail({
       to: conv.visitor_email,
       subject: 'Reply from ' + business,
-      replyTo: site.email || undefined,
-      text: text + (thread.length ? '\n\nEarlier:\n' + thread.map((m) => (m.author === 'owner' ? business : conv.visitor_name || 'You') + ': ' + m.body).join('\n') : '') + '\n\nReply to this email to carry on.',
-      html: emailHtml({ preheader: text.slice(0, 90), heading: 'A reply from ' + business, lines, footer: 'You messaged ' + business + ' on their website. Reply to this email to carry on the conversation.' }),
+      replyTo: replyAddressFor(conv, site),
+      text: text + (thread.length ? '\n\nEarlier:\n' + thread.map((m) => (m.author === 'owner' ? business : conv.visitor_name || 'You') + ': ' + m.body).join('\n') : '') + '\n\n' + howToReply + (link ? '\n' + link : ''),
+      html: emailHtml({
+        preheader: text.slice(0, 90), heading: 'A reply from ' + business, lines,
+        ctaText: link ? 'Continue the chat' : undefined, ctaHref: link || undefined,
+        ctaNote: link ? 'Opens the chat on ' + business + '’s website, where your conversation is waiting.' : undefined,
+        footer: 'You messaged ' + business + ' on their website. ' + howToReply
+      }),
       headers: { 'Auto-Submitted': 'no' }
     });
     if (result === 'sent') { delivered.push('email'); await db.from('messages').update({ emailed_at: new Date().toISOString() }).eq('id', made.message.id); }
   }
-  return { message: { id: made.message.id, author: 'owner', body: text, emailed: delivered.includes('email'), at: made.message.created_at }, delivered, conversation: convOut(made.conversation) };
+  return { message: { id: made.message.id, author: 'owner', body: text, emailed: delivered.includes('email'), at: made.message.created_at }, delivered, online, conversation: convOut(made.conversation) };
 }
 
 /* The owner calls a customer from the app, showing the site's number.
