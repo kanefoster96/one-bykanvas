@@ -170,6 +170,72 @@
      takes the whole screen between header and tabs, like a chat. */
   function reqScreen(on) { $('tabSupport').classList.toggle('is-thread', !!on); }
 
+  /* Pull down to refresh, on every tab. From the top of the page (or of
+     the thread on screen) a pull past the mark reloads what the tab
+     shows; the shell has native bounce off, so this is the only pull.
+     The Dashboard frame does its own, inside the frame (kanvas-handoff.js). */
+  var pullEl = el('div', 'oa-pull');
+  pullEl.appendChild(el('span', 'oa-pull-spin'));
+  document.body.appendChild(pullEl);
+  var pull = { y0: null, dy: 0, busy: false };
+  function pullDist() { return Math.min(90, pull.dy * 0.5); }
+  document.addEventListener('touchstart', function (e) {
+    pull.y0 = null;
+    if (pull.busy || e.touches.length !== 1) return;
+    var t = e.target;
+    if (!t.closest || t.closest('.oa-sheet, .oa-sheet-back, iframe, .oa-via-scroll, .oa-conv-tools')) return;
+    var box = t.closest('.oa-thread');
+    var atTop = box ? box.scrollTop <= 0 : (window.scrollY || document.documentElement.scrollTop || 0) <= 0;
+    if (!atTop) return;
+    pull.y0 = e.touches[0].clientY; pull.dy = 0;
+  }, { passive: true });
+  document.addEventListener('touchmove', function (e) {
+    if (pull.y0 === null) return;
+    pull.dy = Math.max(0, e.touches[0].clientY - pull.y0);
+    pullEl.classList.add('is-pulling');
+    pullEl.classList.toggle('is-ready', pullDist() >= 60);
+    pullEl.style.transform = 'translateY(' + (pullDist() - 52) + 'px)';
+  }, { passive: true });
+  document.addEventListener('touchend', function () {
+    if (pull.y0 === null) return;
+    pull.y0 = null;
+    pullEl.classList.remove('is-pulling');
+    if (pullDist() >= 60) refreshTab(); else settlePull();
+  }, { passive: true });
+  function settlePull() { pull.busy = false; pullEl.classList.remove('is-busy', 'is-ready'); pullEl.style.transform = ''; }
+  function refreshTab() {
+    pull.busy = true;
+    pullEl.classList.add('is-busy');
+    pullEl.style.transform = 'translateY(8px)';
+    var work = [];
+    try {
+      if (tab === 'Analytics') { anCache = {}; work.push(loadAnalytics()); }
+      else if (tab === 'Chat') work.push(openConv ? openThread(openConv.id) : loadChats());
+      else if (tab === 'Support') {
+        if (me && me.user && me.user.is_admin) work.push(adminOpenId && !$('adminThread').hidden ? openAdminThread(adminOpenId) : loadAdminInbox());
+        else if (requestsLoaded) window.dispatchEvent(new Event('hashchange')); // requests.js routes again: list or thread
+        else loadRequests();
+      }
+      else if (tab === 'Dashboard') { framedAt = null; renderDashboard(); }
+      else if (tab === 'Payments') { /* nothing to fetch yet */ }
+      work.push(refreshMe());
+    } catch (e) { /* a tab that failed to refresh still settles */ }
+    Promise.all(work.map(function (p) { return Promise.resolve(p).catch(function () {}); })).then(function () {
+      setTimeout(settlePull, 300);
+    });
+  }
+  /* The badges, without a reboot. */
+  async function refreshMe() {
+    if (!me) return;
+    var fresh = await api({ action: 'me' });
+    me.unread = fresh.unread;
+    if (fresh.sites) { me.sites = fresh.sites; var cur = fresh.sites.filter(function (s) { return site && s.site_id === site.site_id; })[0]; if (cur) site = cur; }
+    $('bellDot').hidden = !(me.unread && me.unread.notifications > 0);
+    var reqBadge = $('navReqCount');
+    reqBadge.textContent = String(me.unread ? me.unread.requests : 0);
+    reqBadge.hidden = !(me.unread && me.unread.requests > 0);
+  }
+
   function hasModule(m) { return !!(site && (site.modules || []).indexOf(m) >= 0); }
 
   /* Where the app opens: the Dashboard, the first tab, once the site has
