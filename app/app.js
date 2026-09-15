@@ -141,7 +141,8 @@
     if (tab === 'Analytics') loadAnalytics();
     if (tab === 'Dashboard') { var p = pendingPath; pendingPath = null; renderDashboard(p); }
     if (tab === 'Support') loadRequests();
-    if (tab === 'Chat') { if (openConv && !pendingConv) schedulePoll(); else { openConv = null; $('chatThread').hidden = true; $('chatList').hidden = false; loadChats(); } }
+    if (tab === 'Chat') { if (openConv && !pendingConv) schedulePoll(); else { openConv = null; $('chatThread').hidden = true; $('tabChat').classList.remove('is-thread'); $('chatList').hidden = false; loadChats(); } }
+    else { $('onlineBar').hidden = true; }
   }
 
   document.querySelectorAll('.oa-nav-btn').forEach(function (b) {
@@ -360,27 +361,96 @@
     return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
   }
 
+  /* A page path as a person would say it: / is the homepage, the rest is
+     the file name in words. */
+  function pageName(path) {
+    var p = String(path || '').split(/[?#]/)[0].replace(/\/+$/, '');
+    if (!p || p === '/index.html' || p === '/index') return 'Homepage';
+    var last = p.split('/').filter(Boolean).pop() || '';
+    last = last.replace(/\.html?$/i, '').replace(/[-_]+/g, ' ').trim();
+    return last ? last.charAt(0).toUpperCase() + last.slice(1) : 'Homepage';
+  }
+
+  /* An anonymous visitor gets a steady number from their conversation id,
+     the way an inbox names people who never said who they were. */
+  function visitorNo(id) { return String(parseInt(String(id || '').replace(/-/g, '').slice(-6), 16) % 9000 + 1000); }
+  function displayName(c) {
+    if (c.name) return c.name;
+    if (c.channel && c.channel !== 'web' && c.phone) return c.phone;
+    return 'Visitor #' + visitorNo(c.id);
+  }
+
+  var AVATAR_COLOURS = ['#f5a623', '#3b6fd6', '#2a9d8f', '#c2417f', '#7b4fd6', '#e07a3a'];
+  var CHAN_ICON = {
+    web: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C7 3 3 6.6 3 11c0 2.4 1.2 4.5 3.1 6L5 21l4.4-2.1c.8.2 1.7.3 2.6.3 5 0 9-3.6 9-8s-4-8-9-8z"/></svg>',
+    sms: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>',
+    whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 0 0-8.2 14.3L2.5 21.5l4.8-1.3A9.5 9.5 0 1 0 12 2.5zm0 2a7.5 7.5 0 1 1-3.9 13.9l-.3-.2-2.6.7.7-2.5-.2-.3A7.5 7.5 0 0 1 12 4.5zm-2.7 3.6c-.2 0-.5 0-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.2 2.4.9 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4 0-.1-.2-.2-.5-.4l-1.8-.9c-.3-.1-.4-.1-.6.1l-.8 1c-.2.2-.3.2-.6.1-.3-.2-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.4-.5.3-.5c.1-.2 0-.4 0-.5l-.8-2c-.2-.5-.4-.4-.6-.4h-.5z"/></svg>'
+  };
+  function avatarFor(c, size) {
+    var av = el('span', 'oa-avatar');
+    if (c.name) {
+      av.textContent = initials(c.name);
+      var n = 0; String(c.id || '').split('').forEach(function (ch) { n = (n + ch.charCodeAt(0)) % 9973; });
+      av.style.background = AVATAR_COLOURS[n % AVATAR_COLOURS.length];
+    } else {
+      av.classList.add('is-anon');
+      av.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="3.6"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/></svg>';
+    }
+    var chan = c.channel || 'web';
+    if (c.online && chan === 'web') av.appendChild(el('span', 'oa-online'));
+    else { var dot = el('span', 'oa-chan-dot is-' + chan); dot.innerHTML = CHAN_ICON[chan] || CHAN_ICON.web; av.appendChild(dot); }
+    return av;
+  }
+
+  /* When a conversation last moved, the way an inbox says it: a time
+     today, Yesterday, a weekday this week, else a date. */
+  function whenText(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    var now = new Date();
+    var startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    var t = d.getTime();
+    if (t >= startToday) return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    if (t >= startToday - 86400000) return 'Yesterday';
+    if (t >= startToday - 6 * 86400000) return d.toLocaleDateString('en-GB', { weekday: 'short' });
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+
+  var convFilter = '';
+  $('convSearch').addEventListener('input', function () { convFilter = this.value.trim().toLowerCase(); renderConvs(); });
+
   function renderConvs() {
     var ul = $('convList');
     ul.innerHTML = '';
+    var rows = convs;
+    if (convFilter) rows = convs.filter(function (c) { return (displayName(c) + ' ' + (c.preview || '') + ' ' + (c.email || '') + ' ' + (c.phone || '')).toLowerCase().indexOf(convFilter) >= 0; });
     $('convEmpty').hidden = convs.length > 0;
-    convs.forEach(function (c) {
+    if (convs.length && !rows.length) ul.appendChild(el('li', 'oa-list-none', 'Nothing matches.'));
+    rows.forEach(function (c) {
       var li = el('li', (c.unread ? 'is-unread' : '') + (c.status === 'closed' ? ' is-closed' : ''));
-      var av = el('span', 'oa-conv-avatar', initials(c.name || 'Visitor'));
-      if (c.online) av.appendChild(el('span', 'oa-online'));
-      li.appendChild(av);
+      li.appendChild(avatarFor(c));
       var body = el('div', 'oa-conv-body');
       var top = el('div', 'oa-conv-top');
-      var nm = el('p', 'oa-conv-name', c.name || (c.channel !== 'web' && c.phone) || 'Visitor' + (c.page ? ' on ' + c.page : ''));
-      if (c.channel && c.channel !== 'web') nm.appendChild(el('span', 'oa-chan is-' + c.channel, c.channel === 'whatsapp' ? 'WhatsApp' : 'Text'));
-      top.appendChild(nm);
-      top.appendChild(el('span', 'oa-conv-when', ago(c.last_at)));
+      top.appendChild(el('p', 'oa-conv-name', displayName(c)));
+      top.appendChild(el('span', 'oa-conv-when', whenText(c.last_at)));
       body.appendChild(top);
-      body.appendChild(el('p', 'oa-conv-preview', (c.last_by === 'owner' ? 'You: ' : '') + (c.preview || '')));
+      body.appendChild(el('p', 'oa-conv-preview', (c.last_by === 'owner' ? 'You: ' : '') + (c.preview || (c.page ? 'Visited ' + pageName(c.page) : ''))));
       li.appendChild(body);
       li.addEventListener('click', function () { openThread(c.id); });
       ul.appendChild(li);
     });
+    renderOnlineBar();
+  }
+
+  /* The green bar: who is on the site right now. Tapping it opens the
+     newest of them. */
+  function renderOnlineBar() {
+    var here = convs.filter(function (c) { return c.online && c.status !== 'closed' && !c.blocked; });
+    var bar = $('onlineBar');
+    bar.hidden = !here.length || tab !== 'Chat' || !!openConv;
+    $('onlineN').textContent = String(here.length);
+    $('onlineText').textContent = here.length === 1 ? 'Visitor on your site now' : 'Visitors on your site now';
+    bar.onclick = here.length ? function () { openThread(here[0].id); } : null;
   }
 
   async function loadChats() {
@@ -396,10 +466,12 @@
     if (pendingConv) { var id = pendingConv; pendingConv = null; openThread(id); }
   }
 
+  function scrollThread() { var box = $('chatMsgs'); box.scrollTop = box.scrollHeight; }
+
   function chatBubble(m) {
     var wrap = el('div', 'msg ' + (m.author === 'owner' ? 'from-owner' : m.author === 'system' ? 'from-system' : 'from-visitor'));
     wrap.dataset.id = m.id;
-    var head = el('div', 'msg-who', m.author === 'owner' ? 'You' + (m.emailed ? ' · also emailed' : '') : (openConv && (openConv.name || openConv.phone)) || 'Visitor');
+    var head = el('div', 'msg-who', m.author === 'owner' ? 'You' + (m.emailed ? ' · also emailed' : '') : (openConv ? displayName(openConv) : 'Visitor'));
     wrap.appendChild(head);
     var box = el('div', 'msg-body');
     String(m.body).split(/\n{2,}/).forEach(function (p) {
@@ -408,25 +480,28 @@
       box.appendChild(para);
     });
     wrap.appendChild(box);
-    wrap.appendChild(el('div', 'msg-when', ago(m.at)));
+    wrap.appendChild(el('div', 'msg-when', (m.author === 'owner' && m.emailed ? 'Also emailed · ' : '') + ago(m.at)));
     return wrap;
   }
 
   function renderConvHead(c) {
     var chan = c.channel || 'web';
-    $('convName').textContent = c.name || (chan !== 'web' && c.phone) || 'Visitor';
+    $('convName').textContent = displayName(c);
+    var avBox = $('convAvatar');
+    avBox.replaceWith(avatarFor(c)); $('chatThread').querySelector('.oa-conv-head .oa-avatar').id = 'convAvatar';
     var bits = [];
     if (chan === 'whatsapp') bits.push('WhatsApp');
     else if (chan === 'sms') bits.push('Text message' + (c.name && c.phone ? ' · ' + c.phone : ''));
     else if (c.online) bits.push('On your site now'); else bits.push('Last seen ' + ago(c.last_at));
-    if (c.page) bits.push('from ' + c.page);
-    if (c.status === 'closed') bits.push('closed');
-    if (c.blocked) bits.push('blocked');
+    if (c.page) bits.push(pageName(c.page));
+    if (c.status === 'closed') bits.push('Closed');
+    if (c.blocked) bits.push('Blocked');
     $('convMeta').textContent = bits.join(' · ');
     var call = $('convCall'), mail = $('convMail');
     call.hidden = !c.phone; if (c.phone) call.href = 'tel:' + String(c.phone).replace(/[^\d+]/g, '');
     $('convCallBiz').hidden = !(c.phone && site && site.phone_number);
     mail.hidden = !c.email; if (c.email) mail.href = 'mailto:' + c.email;
+    $('convTools').hidden = !(c.phone || c.email);
     $('convClose').textContent = c.status === 'closed' ? 'Reopen conversation' : 'Close conversation';
     $('convBlock').textContent = c.blocked ? 'Unblock this visitor' : 'Block this visitor';
     // Gone but reachable: say so, and default the reply to go by email too.
@@ -443,16 +518,19 @@
   async function openThread(id) {
     $('chatList').hidden = true;
     $('chatThread').hidden = false;
+    $('tabChat').classList.add('is-thread');
+    $('onlineBar').hidden = true;
     $('convMenu').hidden = true;
     $('chatMsgs').innerHTML = '';
     say($('chatNote'), '');
+    window.scrollTo(0, 0);
     try {
       var res = await api({ action: 'chat_get', site_id: site.site_id, conversation_id: id });
       openConv = res.conversation;
       renderConvHead(openConv);
       var box = $('chatMsgs');
       res.messages.forEach(function (m) { box.appendChild(chatBubble(m)); });
-      window.scrollTo(0, document.body.scrollHeight);
+      scrollThread();
       convs.forEach(function (c) { if (c.id === id) c.unread = false; });
     } catch (err) { say($('chatNote'), err.message, 'bad'); }
     schedulePoll();
@@ -461,6 +539,7 @@
   function closeThread() {
     openConv = null;
     $('chatThread').hidden = true;
+    $('tabChat').classList.remove('is-thread');
     $('chatList').hidden = false;
     loadChats();
   }
@@ -501,8 +580,8 @@
       ta.value = ''; ta.style.height = 'auto';
       $('chatMsgs').appendChild(chatBubble(r.message));
       openConv = r.conversation;
-      say($('chatNote'), r.delivered.indexOf('email') >= 0 ? 'Sent, and emailed to them.' : r.delivered[0] === 'sms' ? 'Sent by text.' : r.delivered[0] === 'whatsapp' ? 'Sent on WhatsApp.' : 'Sent.', 'ok');
-      window.scrollTo(0, document.body.scrollHeight);
+      say($('chatNote'), r.delivered.indexOf('email') >= 0 ? 'Sent, and emailed to them.' : r.delivered[0] === 'sms' ? 'Sent by text.' : r.delivered[0] === 'whatsapp' ? 'Sent on WhatsApp.' : '', 'ok');
+      scrollThread();
     } catch (err) { say($('chatNote'), err.message, 'bad'); }
     btn.disabled = false;
   });
@@ -513,7 +592,7 @@
     if (openConv && m.conversation_id === openConv.id) {
       if (!$('chatMsgs').querySelector('[data-id="' + m.id + '"]')) {
         $('chatMsgs').appendChild(chatBubble({ id: m.id, author: m.author, body: m.body, at: m.created_at }));
-        window.scrollTo(0, document.body.scrollHeight);
+        scrollThread();
       }
       if (m.author === 'visitor') api({ action: 'chat_get', site_id: site.site_id, conversation_id: openConv.id }).then(function (r) { openConv = r.conversation; renderConvHead(openConv); }).catch(function () {});
     } else if (tab === 'Chat') loadChats();
@@ -536,7 +615,9 @@
           var r = await api({ action: 'chat_get', site_id: site.site_id, conversation_id: openConv.id });
           openConv = r.conversation; renderConvHead(openConv);
           var box = $('chatMsgs');
-          r.messages.forEach(function (m) { if (!box.querySelector('[data-id="' + m.id + '"]')) box.appendChild(chatBubble(m)); });
+          var added = false;
+          r.messages.forEach(function (m) { if (!box.querySelector('[data-id="' + m.id + '"]')) { box.appendChild(chatBubble(m)); added = true; } });
+          if (added) scrollThread();
         } else if (tab === 'Chat') await loadChats();
       } catch (e) { /* next tick */ }
       schedulePoll();
