@@ -773,7 +773,24 @@
   $('activityClose').addEventListener('click', closeSheets);
   $('accountClose').addEventListener('click', closeSheets);
   $('accountBtn').addEventListener('click', function () { openSheet('accountSheet'); });
-  $('deleteLink').addEventListener('click', function () { closeSheets(); showTab('Support'); });
+  /* Deleting the account, from inside the app, as both stores require.
+     Two confirmations, then the server cancels the plan and removes the
+     login and everything hanging off it. */
+  $('deleteBtn').addEventListener('click', async function () {
+    var note = $('deleteNote');
+    if (!confirm('Delete your account? Your login, your site’s records, requests and chats are removed for good, and any plan is cancelled. This cannot be undone.')) return;
+    if (!confirm('Last check: delete the account for ' + ((me && me.user && me.user.email) || 'this login') + '?')) return;
+    this.disabled = true;
+    say(note, 'Deleting…');
+    try {
+      await api({ action: 'delete_account' });
+      try { await ONE.db.auth.signOut({ scope: 'local' }); } catch (e) { /* the login is already gone */ }
+      if (window.ONE_SESSION) await ONE_SESSION.logOut();
+      alert('Your account has been deleted.');
+      location.hash = '';
+      location.reload();
+    } catch (err) { say(note, err.message, 'bad'); this.disabled = false; }
+  });
 
   $('bellBtn').addEventListener('click', async function () {
     openSheet('activitySheet');
@@ -889,6 +906,7 @@
       $('siteName').hidden = true;
     }
     $('accountEmail').textContent = me.user.email || '';
+    $('deleteWrap').hidden = !!me.user.is_admin;
     $('navChat').hidden = !hasModule('chat');
     $('bellDot').hidden = !(me.unread && me.unread.notifications > 0);
     var reqBadge = $('navReqCount');
