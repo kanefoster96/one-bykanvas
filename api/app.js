@@ -60,32 +60,114 @@ function summarise(rows, days, now) {
   const seen = new Set();
   cur.forEach((r) => { if (seen.has(r.session)) return; seen.add(r.session); devices[r.device === 'phone' ? 'phone' : 'desktop']++; });
 
+  // On the site now: a page view in the last five minutes.
+  const online = new Set();
+  cur.forEach((r) => { if (end - new Date(r.created_at).getTime() < 5 * 60000) online.add(r.session); });
+
   return {
     days,
     visitors: sessions(cur), views: cur.length,
+    online_now: online.size,
     previous: { visitors: sessions(prev), views: prev.length },
     series: Object.keys(byDay).map((k) => ({ day: k, views: byDay[k].views, visitors: byDay[k].sessions.size })),
     pages: count(cur, 'path').map((x) => ({ path: x.key, views: x.n })),
     referrers: count(cur, 'referrer', 'session').map((x) => ({ host: x.key, visitors: x.n })),
     countries: count(cur, 'country', 'session').map((x) => ({ country: x.key, visitors: x.n })),
-    devices
+    devices,
+    journeys: journeys(cur)
+  };
+}
+
+/* The routes visitors take: each visit's pages in order, repeats of the
+   same page collapsed, the first four steps. The commonest routes of two
+   pages or more, plus how many pages a visit runs to. */
+function journeys(list) {
+  const bySession = {};
+  list.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    .forEach((r) => { (bySession[r.session] = bySession[r.session] || []).push(r.path); });
+  const routes = {};
+  let pages = 0, visits = 0, bounced = 0;
+  Object.keys(bySession).forEach((s) => {
+    const steps = bySession[s].filter((p, i, a) => i === 0 || p !== a[i - 1]);
+    visits++; pages += steps.length;
+    if (steps.length < 2) { bounced++; return; }
+    const key = steps.slice(0, 4).join('\n');
+    routes[key] = (routes[key] || 0) + 1;
+  });
+  return {
+    top: Object.keys(routes).map((k) => ({ steps: k.split('\n'), visitors: routes[k] })).sort((a, b) => b.visitors - a.visitors).slice(0, 6),
+    pages_per_visit: visits ? Math.round((pages / visits) * 10) / 10 : 0,
+    one_page_pct: visits ? Math.round((bounced / visits) * 100) : 0
+  };
+}
+
+function inWindow(list, field, days, now) {
+  const end = now || Date.now(), start = end - days * DAY, prevStart = start - days * DAY;
+  const cur = [], prev = [];
+  list.forEach((r) => { const t = new Date(r[field]).getTime(); if (t >= start) cur.push(r); else if (t >= prevStart) prev.push(r); });
+  return { cur, prev };
+}
+
+/* Who paid: one person per email where given, else per visit. */
+function payerKey(p) { return p.customer_email ? 'e:' + p.customer_email.toLowerCase() : p.session ? 's:' + p.session : 'r:' + p.ref; }
+
+/* Money in over the window against the one before. Pure. */
+function money(pays, days, now) {
+  const { cur, prev } = inWindow(pays, 'paid_at', days, now);
+  const net = (l) => l.reduce((n, p) => n + Math.max(0, (p.amount_pence || 0) - (p.refunded_pence || 0)), 0);
+  const refunded = cur.reduce((n, p) => n + (p.refunded_pence || 0), 0);
+  return {
+    count: cur.length, amount: net(cur), refunded, refunds: cur.filter((p) => p.refunded_pence > 0).length,
+    payers: new Set(cur.map(payerKey)).size,
+    average: cur.length ? Math.round(net(cur) / cur.length) : 0,
+    currency: (cur[0] || prev[0] || {}).currency || 'gbp',
+    previous: { count: prev.length, amount: net(prev) }
+  };
+}
+
+/* From a visit to a payment: how many visited, how many of them wrote in
+   the chat, how many paid, and how many of those who wrote went on to
+   pay. A chat is tied to a payment by the visit it started in or by the
+   email left in both. Pure. */
+function funnel(views, convs, pays, days, now) {
+  const v = inWindow(views, 'created_at', days, now).cur;
+  const c = inWindow(convs, 'created_at', days, now).cur;
+  const p = inWindow(pays, 'paid_at', days, now).cur;
+  const paySessions = new Set(p.map((x) => x.session).filter(Boolean));
+  const payEmails = new Set(p.map((x) => x.customer_email && x.customer_email.toLowerCase()).filter(Boolean));
+  const messagedAndPaid = c.filter((x) => (x.session && paySessions.has(x.session)) || (x.visitor_email && payEmails.has(String(x.visitor_email).toLowerCase()))).length;
+  return {
+    visitors: new Set(v.map((x) => x.session)).size,
+    messaged: c.length,
+    paid: new Set(p.map(payerKey)).size,
+    messaged_and_paid: messagedAndPaid
   };
 }
 
 async function analytics(db, site, daysIn) {
   const days = [7, 30, 90].includes(Number(daysIn)) ? Number(daysIn) : 30;
   const since = new Date(Date.now() - 2 * days * DAY).toISOString();
-  const { data, error } = await db.from('page_views').select('session, path, referrer, device, country, created_at')
-    .eq('site_id', site.id).gte('created_at', since).order('created_at', { ascending: false }).limit(MAX_ROWS);
-  if (error) throw new Error(error.message);
-  const out = summarise(data || [], days);
+  const [views, pays, convs] = await Promise.all([
+    db.from('page_views').select('session, path, referrer, device, country, created_at').eq('site_id', site.id).gte('created_at', since).order('created_at', { ascending: false }).limit(MAX_ROWS),
+    db.from('payments').select('ref, amount_pence, refunded_pence, currency, customer_email, session, paid_at').eq('site_id', site.id).gte('paid_at', since).order('paid_at', { ascending: false }).limit(MAX_ROWS),
+    db.from('conversations').select('id, session, visitor_email, channel, created_at').eq('site_id', site.id).gte('created_at', since).limit(MAX_ROWS)
+  ]);
+  if (views.error) throw new Error(views.error.message);
+  const rows = views.data || [], payRows = pays.data || [], convRows = (convs.data || []).filter((c) => !c.channel || c.channel === 'web');
+  const modules = site.modules || [];
+  const out = summarise(rows, days);
+  out.beacon_seen = rows.length > 0;
 
-  // Open requests on this site, for the "work with us" tile.
-  const { data: reqs } = await db.from('requests').select('id, status, site_id, user_id').eq('user_id', site.owner_id).limit(500);
-  out.requests_open = (reqs || []).filter((r) => r.status !== 'done' && r.status !== 'declined').length;
-  // Money in, once payments are connected (phase 3). Null says "not yet".
-  out.payments = null;
-  out.beacon_seen = (data || []).length > 0;
+  // Payments and chat show only on sites that have them. A site with
+  // payment rows has them whether or not the module was ticked.
+  out.has_payments = modules.includes('payments') || payRows.length > 0;
+  out.has_chat = modules.includes('chat') || convRows.length > 0;
+  out.money = out.has_payments ? money(payRows, days) : null;
+  if (out.has_chat) {
+    const c = inWindow(convRows, 'created_at', days);
+    out.chat = { conversations: c.cur.length, previous: { conversations: c.prev.length } };
+  } else out.chat = null;
+  out.funnel = (out.has_payments || out.has_chat) ? funnel(rows, convRows, payRows, days) : null;
   return out;
 }
 
@@ -418,4 +500,6 @@ module.exports = async function handler(req, res) {
 };
 
 module.exports.summarise = summarise;
+module.exports.money = money;
+module.exports.funnel = funnel;
 module.exports.cleanPath = cleanPath;

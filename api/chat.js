@@ -73,6 +73,9 @@ module.exports = async function handler(req, res) {
         site_id: site.id, visitor_token_hash: sha(token),
         visitor_name: cleanName(body.name), visitor_email: cleanEmail(body.email), visitor_phone: cleanPhone(body.phone),
         page: String(body.page || '').slice(0, 300) || null,
+        // The beacon's session for this tab, so the Analytics tab can say
+        // how many of the people who messaged went on to pay.
+        session: String(body.session || '').replace(/[^a-z0-9]/gi, '').slice(0, 32) || null,
         visitor_online_at: new Date().toISOString()
       };
       const { data: conv, error } = await db.from('conversations').insert(row).select().single();

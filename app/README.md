@@ -22,6 +22,46 @@ Then on the admin page, under the customer, **One app**: the dashboard
 address, which modules the site has, what they call things (job / order /
 booking / client) and where records live in the dashboard.
 
+## The numbers
+
+The Analytics tab is the same for every site: visitors, who is on the site
+now, page views, visitors a day, top pages, the routes visitors take
+through the site, where they came from, phone or desktop, and country. All
+of it comes from the beacon line above. Two more cards appear when the
+site has them:
+
+- **Money in**: taken, number of payments, paying customers, average
+  payment, refunds, against the period before.
+- **Live chat**: conversations, and how many of the people who messaged
+  went on to pay.
+- **From a visit to a payment**: visited, messaged, paid, as three bars.
+
+A site that does not have payments or chat sees a short "not connected"
+card in their place, nothing more.
+
+### Counting a payment
+
+Any site that takes payments, through Stripe, PayPal, Square or anything
+else, reports each one with a single call on its thank-you or order
+confirmation page:
+
+```html
+<script>k1.payment({ amount: 4500, ref: 'order_123', email: 'sam@example.com', name: 'Sam', description: 'Cut and colour' });</script>
+```
+
+`amount` is in pence. `ref` is the order or payment id: the same ref twice
+is one payment, so a refreshed page does not count twice. `email` is what
+ties a payment to a chat when the visit is not known; `name` and
+`description` are optional. The call goes to `api/beacon.js` alongside the
+page views and is stored in `payments`, one row per payment, owner-readable
+only. Tick **Payments** under One app on the admin page so the cards show
+before the first payment lands.
+
+Visits, chats and payments are tied together by the beacon's session id:
+random per browser tab, gone when the tab closes, never a cookie. chat.js
+sends it when a conversation starts and the thank-you page sends it with
+the payment, so the app can say "9 of the 38 who messaged went on to pay".
+
 ## Live chat
 
 Sites with the chat module get one more line:

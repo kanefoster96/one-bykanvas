@@ -12,7 +12,7 @@
 <link rel="icon" href="../assets/favicon.svg?v=2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/favicon.svg?v=2">
 <link rel="stylesheet" href="../styles.css?v=72">
-<link rel="stylesheet" href="app.css?v=7">
+<link rel="stylesheet" href="app.css?v=8">
 </head>
 <body class="oa-body">
 
@@ -83,9 +83,9 @@
 
     <div class="oa-tiles">
       <div class="oa-tile"><span class="oa-tile-label">Visitors</span><b id="anVisitors">–</b><span class="oa-delta" id="anVisitorsDelta"></span></div>
+      <div class="oa-tile"><span class="oa-tile-label">On the site now</span><b id="anOnline">–</b><span class="oa-delta" id="anOnlineNote"></span></div>
       <div class="oa-tile"><span class="oa-tile-label">Page views</span><b id="anViews">–</b><span class="oa-delta" id="anViewsDelta"></span></div>
-      <div class="oa-tile"><span class="oa-tile-label">Open requests</span><b id="anRequests">–</b><span class="oa-delta"></span></div>
-      <div class="oa-tile is-soon"><span class="oa-tile-label">Payments</span><b id="anPayments">–</b><span class="oa-delta" id="anPaymentsNote">once connected</span></div>
+      <div class="oa-tile" id="anFourth"><span class="oa-tile-label" id="anFourthLabel">Pages a visit</span><b id="anFourthN">–</b><span class="oa-delta" id="anFourthDelta"></span></div>
     </div>
 
     <div class="oa-card">
@@ -94,9 +94,47 @@
       <p class="oa-empty" id="anEmpty" hidden>No visits recorded yet. The first visitors show here within minutes of your site going live.</p>
     </div>
 
+    <div class="oa-card" id="anFunnelCard" hidden>
+      <p class="oa-card-title">From a visit to a payment</p>
+      <div class="oa-funnel" id="anFunnel"></div>
+      <p class="hint oa-funnel-note" id="anFunnelNote"></p>
+    </div>
+
+    <div class="oa-card" id="anMoneyCard" hidden>
+      <p class="oa-card-title">Money in</p>
+      <div class="oa-minis">
+        <div class="oa-mini"><span>Taken</span><b id="anTaken">–</b><em class="oa-delta" id="anTakenDelta"></em></div>
+        <div class="oa-mini"><span>Payments</span><b id="anPayCount">–</b><em class="oa-delta" id="anPayCountDelta"></em></div>
+        <div class="oa-mini"><span>Paying customers</span><b id="anPayers">–</b><em></em></div>
+        <div class="oa-mini"><span>Average payment</span><b id="anPayAvg">–</b><em id="anRefunds"></em></div>
+      </div>
+      <p class="hint" id="anMoneyNote"></p>
+    </div>
+    <div class="oa-card oa-soon" id="anMoneyOff" hidden>
+      <p class="oa-card-title">Money in</p>
+      <p class="hint">Payments aren&rsquo;t connected on this site yet. Once they are, every payment shows here: how much was taken, how many people paid, and how many of your visitors became customers.</p>
+    </div>
+
+    <div class="oa-card" id="anChatCard" hidden>
+      <p class="oa-card-title">Live chat</p>
+      <div class="oa-minis">
+        <div class="oa-mini"><span>Conversations</span><b id="anConvs">–</b><em class="oa-delta" id="anConvsDelta"></em></div>
+        <div class="oa-mini"><span>Went on to pay</span><b id="anConvsPaid">–</b><em id="anConvsPaidNote"></em></div>
+      </div>
+    </div>
+    <div class="oa-card oa-soon" id="anChatOff" hidden>
+      <p class="oa-card-title">Live chat</p>
+      <p class="hint">Live chat isn&rsquo;t on this site yet. With it, visitors can message you from any page and you answer from the Chat tab; the numbers here show how many do, and how many go on to pay.</p>
+    </div>
+
     <div class="oa-card">
       <p class="oa-card-title">Top pages</p>
       <ol class="oa-list" id="anPages"></ol>
+    </div>
+    <div class="oa-card">
+      <p class="oa-card-title">Visitor journeys</p>
+      <ol class="oa-list oa-journeys" id="anJourneys"></ol>
+      <p class="hint" id="anJourneysNote"></p>
     </div>
     <div class="oa-card">
       <p class="oa-card-title">Where they came from</p>
@@ -106,6 +144,10 @@
       <p class="oa-card-title">Phone or desktop</p>
       <div class="oa-bar" id="anDevices"></div>
       <p class="hint" id="anDevicesNote"></p>
+    </div>
+    <div class="oa-card">
+      <p class="oa-card-title">Where in the world</p>
+      <ol class="oa-list" id="anCountries"></ol>
     </div>
   </section>
 
@@ -357,6 +399,6 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

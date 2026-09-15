@@ -88,6 +88,11 @@
     msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
     if (m.at && (!lastAt || m.at > lastAt)) lastAt = m.at;
   }
+  /* The beacon's id for this tab, when the visitor is being counted, so
+     the owner's numbers can tie this chat to the visit. */
+  function visitSession() {
+    try { return (window.k1 && window.k1.session && window.k1.session()) || sessionStorage.getItem('k1s') || null; } catch (e) { return null; }
+  }
   function post(payload) {
     return fetch(base + '/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) throw new Error(d.error || 'Could not send that.'); return d; }); });
@@ -153,7 +158,7 @@
     var sendBtn = form.querySelector('.k1c-send'); sendBtn.disabled = true;
     var p = conv
       ? post({ action: 'send', conversation_id: conv.id, token: conv.token, body: text })
-      : post({ action: 'start', site: site, body: text, page: location.pathname, name: details.name, email: details.email, phone: details.phone }).then(function (r) {
+      : post({ action: 'start', site: site, body: text, page: location.pathname, name: details.name, email: details.email, phone: details.phone, session: visitSession() }).then(function (r) {
           conv = { id: r.conversation_id, token: r.token };
           try { localStorage.setItem(KEY, JSON.stringify(conv)); } catch (er) {}
           return r;

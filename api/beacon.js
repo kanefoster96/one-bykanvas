@@ -51,6 +51,29 @@ function clean(input, headers) {
   return { site_id: String(input.site).toLowerCase(), session, path, referrer, device, country };
 }
 
+/* A payment the site reported from its thank-you page (k1.payment), or
+   null. Amount is whole pence; ref is the site's own order id, and the
+   same ref twice is one payment. Without a ref, the session and amount
+   stand in, so a refreshed page still counts once. */
+function cleanPayment(input, headers) {
+  if (!input || !UUID.test(String(input.site || ''))) return null;
+  if (BOT.test(String(headers['user-agent'] || ''))) return null;
+  const amount = Math.round(Number(input.amount));
+  if (!(amount >= 0 && amount <= 100000000)) return null;
+  const session = String(input.session || '').replace(/[^a-z0-9]/gi, '').slice(0, 32) || null;
+  const ref = String(input.ref || '').trim().slice(0, 120) || (session ? 'visit:' + session + ':' + amount : null);
+  if (!ref) return null;
+  const email = String(input.email || '').trim().toLowerCase().slice(0, 200);
+  return {
+    site_id: String(input.site).toLowerCase(), source: 'site', ref, amount_pence: amount,
+    currency: (String(input.currency || 'gbp').toLowerCase().match(/^[a-z]{3}$/) || ['gbp'])[0],
+    customer_email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : null,
+    customer_name: String(input.name || '').trim().slice(0, 120) || null,
+    description: String(input.description || '').trim().slice(0, 300) || null,
+    session
+  };
+}
+
 module.exports = async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(204).end();
@@ -63,9 +86,17 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const row = clean(parse(req.body), req.headers || {});
-    if (!row) return res.status(204).end();
+    const input = parse(req.body);
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+    if (input && input.type === 'payment') {
+      const pay = cleanPayment(input, req.headers || {});
+      if (!pay) return res.status(204).end();
+      const { error: payErr } = await db.from('payments').upsert(pay, { onConflict: 'site_id,ref', ignoreDuplicates: true });
+      if (payErr && !/foreign key|violates/i.test(payErr.message)) console.error('beacon payment:', payErr.message);
+      return res.status(204).end();
+    }
+    const row = clean(input, req.headers || {});
+    if (!row) return res.status(204).end();
     // An unknown site id is not a site: the insert fails the foreign key
     // and that is the whole check. Nothing to say back either way.
     const { error } = await db.from('page_views').insert(row);
@@ -77,3 +108,4 @@ module.exports = async function handler(req, res) {
 };
 
 module.exports.clean = clean;
+module.exports.cleanPayment = cleanPayment;
