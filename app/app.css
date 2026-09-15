@@ -94,6 +94,14 @@
 .oa-journey-arrow{font-style:normal;color:var(--ink-3);margin:0 5px}
 #anDevicesNote{margin:10px 0 0;font-size:13.5px}
 
+/* ---- pull down to refresh ---- */
+.oa-pull{position:fixed;left:50%;top:calc(61px + env(safe-area-inset-top));z-index:19;width:36px;height:36px;margin-left:-18px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.14);display:grid;place-items:center;transform:translateY(-52px);transition:transform .2s ease;pointer-events:none}
+.oa-pull.is-pulling{transition:none}
+.oa-pull-spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--ink);transform:rotate(0deg);transition:transform .2s ease}
+.oa-pull.is-ready .oa-pull-spin{transform:rotate(180deg)}
+.oa-pull.is-busy .oa-pull-spin{animation:oa-spin .8s linear infinite}
+@keyframes oa-spin{to{transform:rotate(360deg)}}
+
 /* ---- dashboard ---- */
 .oa-dash-stub h2{font-size:26px;letter-spacing:-.03em;margin:0 0 8px}
 .oa-dash-stub .hint{font-size:15px;line-height:1.5;margin:0 0 18px}
