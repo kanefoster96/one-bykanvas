@@ -305,6 +305,7 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>
+<script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="chat.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" defer></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
