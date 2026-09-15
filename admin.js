@@ -433,13 +433,31 @@ function appConfigRow(p) {
 
     var url = el('input', 'admin-input');
     url.type = 'url';
-    url.value = c.dashboard_url || '';
+    // Every site's dashboard lives at /admin: offered as the default the
+    // moment the site has an address, saved with the rest of this form.
+    var siteBase = p.site_url ? String(p.site_url).trim().replace(/\/+$/, '') : '';
+    url.value = c.dashboard_url || (siteBase ? siteBase + '/admin' : '');
     url.placeholder = 'https://their-site.co.uk/admin';
     url.setAttribute('aria-label', 'Dashboard address');
     var urlRow = el('div', 'cust-site');
     urlRow.appendChild(el('label', 'app-config-label', 'Dashboard'));
     urlRow.appendChild(url);
     wrap.appendChild(urlRow);
+
+    // The lines the site needs, with this site's id already in them. See
+    // NEW-SITE.md for the whole checklist.
+    var code = el('details', 'app-config-code-wrap');
+    code.appendChild(el('summary', null, 'Code for their site (site id ' + p.id + ')'));
+    code.appendChild(el('p', 'hint', 'Every page, before </body>. The chat line only if Live chat is ticked; drop data-trigger for a floating button.'));
+    var pages = el('pre', 'app-config-code');
+    pages.textContent = '<script src="https://kanvas.one/beacon.js" data-site="' + p.id + '" defer></script>\n'
+      + '<script src="https://kanvas.one/chat.js" data-site="' + p.id + '" data-name="' + String(p.business_name || 'us').replace(/"/g, '&quot;') + '" data-trigger="#chatButton" data-full defer></script>';
+    code.appendChild(pages);
+    code.appendChild(el('p', 'hint', 'The dashboard page, before its own scripts, so the app opens it signed in. Plus a frame-ancestors header allowing https://kanvas.one, and .kanvas-embedded in its CSS to hide its header and footer.'));
+    var dash = el('pre', 'app-config-code');
+    dash.textContent = '<script src="https://kanvas.one/kanvas-handoff.js" data-url="' + ((window.ONE_SUPABASE && ONE_SUPABASE.url) || '') + '" data-key="' + ((window.ONE_SUPABASE && ONE_SUPABASE.publishableKey) || '') + '"></script>';
+    code.appendChild(dash);
+    wrap.appendChild(code);
 
     var mods = el('div', 'app-config-mods');
     var modInputs = {};

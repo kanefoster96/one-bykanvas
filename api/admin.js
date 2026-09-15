@@ -468,6 +468,8 @@ module.exports = async function handler(req, res) {
         .update({ site_url: siteUrl || null, site_status: siteStatus })
         .eq('id', userId);
       if (error) throw new Error(error.message);
+      // The app reads the site row, not the profile: keep it in step.
+      await db.from('sites').update({ url: siteUrl || null, status: siteStatus }).eq('id', userId);
 
       // Told the moment it actually goes live, not on every save of this
       // form - re-saving an already-live address should not re-announce it.
