@@ -117,6 +117,12 @@ Every dashboard we build gets two things:
    { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://kanvas.one capacitor://localhost https://localhost" }
    ```
 
+Inside the app the dashboard should look like a screen of the app, not a
+website in a box: `kanvas-handoff.js` adds `kanvas-embedded` to `<html>`
+whenever the page is framed, so the dashboard's stylesheet can hide its own
+header and footer (`.kanvas-embedded .site-header { display: none }`).
+kanvas.one's own admin page does the same.
+
 How it works: the app asks `api/app.js` (`dashboard`) for a handoff URL. The
 server checks the site is theirs, mints a single-use magic-link token for the
 signed-in user with Supabase's admin `generateLink` (no email is sent), and

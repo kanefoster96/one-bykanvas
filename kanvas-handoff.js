@@ -17,6 +17,11 @@
  */
 (function () {
   'use strict';
+  /* Inside the One app the dashboard is framed. A class on <html> lets
+     the dashboard hide its own header and footer, so it reads as part of
+     the app rather than a website inside one:
+       .kanvas-embedded .site-header, .kanvas-embedded .site-footer { display: none } */
+  try { if (window.self !== window.top) document.documentElement.classList.add('kanvas-embedded'); } catch (e) { /* cross-origin top: framed */ document.documentElement.classList.add('kanvas-embedded'); }
   var m = /[#&]kanvas_handoff=([^&]+)/.exec(location.hash || '');
   if (!m) return;
   var token = decodeURIComponent(m[1]);
