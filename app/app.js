@@ -1119,7 +1119,9 @@
     openLink: function (d) { var n = parseNativeLink(d); if (me) openLink(n); else nativeLink = n; },
     refresh: function () {
       if (!me) return;
-      $('bellDot').hidden = false;
+      // Ask what is unread rather than assume: a resume with nothing new
+      // must not light the bell.
+      refreshMe().catch(function () {});
       if (hasModule('chat')) loadChats();
       if (tab === 'Support' && me.user && me.user.is_admin && $('adminThread').hidden) loadAdminInbox();
       if (tab === 'Support' && !(me.user && me.user.is_admin) && ONE.refreshRequestBadge) ONE.refreshRequestBadge();
