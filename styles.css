@@ -1025,6 +1025,13 @@ a.hero-pill:hover .pill-go{opacity:1}
 .mail-btn b{display:block;font-size:15px;font-weight:600;letter-spacing:-.01em}
 .mail-btn span{display:block;font-size:13px;color:var(--ink-3);margin-top:1px}
 
+/* ---------- Framed inside the One app ---------- */
+/* admin.html sets .kanvas-embedded on <html> when it is not the top window.
+   The site's own header, footer and cookie pill go, so the page reads as a
+   screen of the app; the app has its own header and tabs around it. */
+.kanvas-embedded{scroll-padding-top:12px}
+.kanvas-embedded .nav,.kanvas-embedded .menu,.kanvas-embedded .scrim,.kanvas-embedded .foot,.kanvas-embedded .consent{display:none !important}
+
 /* ---------- Cookie consent ---------- */
 /* A pill, not a bar: it sits above the page rather than blocking it, and
    both answers are the same size and weight, because under PECR refusing
