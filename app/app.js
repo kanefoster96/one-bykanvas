@@ -19,13 +19,25 @@
   var login = document.getElementById('login');
   var app = document.getElementById('app');
 
-  var native = !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
-  var platform = native ? Capacitor.getPlatform() : 'web';
-  var BASE = native ? 'https://kanvas.one' : '';
+  /* Two native shells are understood: the Expo app (mobile/), which loads
+     this page from kanvas.one inside a WebView and talks through
+     window.ReactNativeWebView, and the older Capacitor bundle. */
+  var capacitor = !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
+  var rn = !!window.ReactNativeWebView;
+  var native = capacitor || rn;
+  var platform = capacitor ? Capacitor.getPlatform() : rn ? (window.ONE_NATIVE_PLATFORM || 'ios') : 'web';
+  var BASE = capacitor ? 'https://kanvas.one' : '';
   window.ONE_API_BASE = BASE;
+
+  function toNative(msg) {
+    if (!rn) return;
+    try { window.ReactNativeWebView.postMessage(JSON.stringify(msg)); } catch (e) { /* not in the shell after all */ }
+  }
+  function nativeReady() { toNative({ type: 'ready' }); }
 
   if (!window.ONE || !ONE.ready) {
     loading.innerHTML = '<p>Accounts are not connected yet.</p>';
+    nativeReady();
     return;
   }
 
@@ -74,7 +86,14 @@
     loading.hidden = true;
     app.hidden = true;
     login.hidden = false;
+    nativeReady();
   }
+
+  /* In the shell, a link out of the app opens outside it; a WebView that
+     wandered off to reset.html would have no way back. */
+  $('forgotLink').addEventListener('click', function (e) {
+    if (native) { e.preventDefault(); openExternal(this.href); }
+  });
 
   $('loginForm').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -218,8 +237,9 @@
   }
 
   function openExternal(url) {
+    if (rn) { toNative({ type: 'open', url: url }); return; }
     try {
-      if (native && Capacitor.Plugins && Capacitor.Plugins.Browser) { Capacitor.Plugins.Browser.open({ url: url }); return; }
+      if (capacitor && Capacitor.Plugins && Capacitor.Plugins.Browser) { Capacitor.Plugins.Browser.open({ url: url }); return; }
     } catch (e) { /* fall back */ }
     window.open(url, '_blank', 'noopener');
   }
@@ -702,20 +722,51 @@
 
   /* Native only. Asked for after login, not at launch: the person has
      seen what the app is for by then, which is what the stores want. */
+  async function registerDevice(t) {
+    var note = $('accountPush');
+    pushToken = t;
+    try { await api({ action: 'device', token: t, platform: platform, app_version: (window.ONE_APP_VERSION || '1.0.0') }); note.textContent = 'Notifications are on for this phone.'; }
+    catch (err) { note.textContent = 'Could not register this phone: ' + err.message; }
+  }
+
+  /* What the Expo shell can call into the page. Defined once, before
+     login: a notification tapped on a cold start arrives before the app
+     has booted, and waits here until it has. */
+  var nativeLink = null;
+  function parseNativeLink(d) {
+    d = d && typeof d === 'object' ? d : {};
+    var link = d.deep_link;
+    if (typeof link === 'string') { try { link = JSON.parse(link); } catch (e) { link = null; } }
+    return { kind: d.kind, href: d.href, deep_link: link || null };
+  }
+  window.ONE_NATIVE = {
+    onPushToken: function (t) { if (t) registerDevice(String(t)); },
+    onPushDenied: function (why) {
+      $('accountPush').textContent = why === 'simulator' ? 'Notifications need a real phone.'
+        : why === 'denied' ? 'Notifications are off. Turn them on in your phone’s settings to hear about payments and messages.'
+        : 'Notifications are not available right now.';
+    },
+    openLink: function (d) { var n = parseNativeLink(d); if (me) openLink(n); else nativeLink = n; },
+    refresh: function () {
+      if (!me) return;
+      $('bellDot').hidden = false;
+      if (hasModule('chat')) loadChats();
+      if (tab === 'Support' && me.user && me.user.is_admin && $('adminThread').hidden) loadAdminInbox();
+      if (tab === 'Support' && !(me.user && me.user.is_admin) && ONE.refreshRequestBadge) ONE.refreshRequestBadge();
+    }
+  };
+
   async function setupPush() {
     var note = $('accountPush');
     if (!native) { note.textContent = 'Install the app on your phone to get notifications.'; return; }
+    if (rn) { note.textContent = 'Setting up notifications…'; toNative({ type: 'push:register' }); return; }
     var P = (Capacitor.Plugins && Capacitor.Plugins.PushNotifications) || (Capacitor.registerPlugin && Capacitor.registerPlugin('PushNotifications'));
     if (!P) { note.textContent = 'Notifications are not available in this build.'; return; }
     try {
       var perm = await P.checkPermissions();
       if (perm.receive === 'prompt' || perm.receive === 'prompt-with-rationale') perm = await P.requestPermissions();
       if (perm.receive !== 'granted') { note.textContent = 'Notifications are off. Turn them on in your phone’s settings to hear about payments and messages.'; return; }
-      await P.addListener('registration', async function (t) {
-        pushToken = t.value;
-        try { await api({ action: 'device', token: t.value, platform: platform, app_version: (window.ONE_APP_VERSION || '1.0.0') }); note.textContent = 'Notifications are on for this phone.'; }
-        catch (err) { note.textContent = 'Could not register this phone: ' + err.message; }
-      });
+      await P.addListener('registration', function (t) { registerDevice(t.value); });
       await P.addListener('registrationError', function (e) { note.textContent = 'Could not register for notifications.'; console.error('push', e); });
       await P.addListener('pushNotificationActionPerformed', function (a) {
         var d = (a && a.notification && a.notification.data) || {};
@@ -739,6 +790,7 @@
     } catch (err) {
       loading.innerHTML = '<p>Could not load your account: ' + ONE.friendlyError(err) + '</p>';
       loading.hidden = false;
+      nativeReady();
       return;
     }
     site = (me.sites && me.sites[0]) || null;
@@ -766,6 +818,8 @@
     showTab(/^(new|r\/)/.test(h) ? 'Support' : 'Analytics');
     setupPush();
     if (hasModule('chat')) { listenChat(); loadChats(); schedulePoll(); }
+    nativeReady();
+    if (nativeLink) { var l = nativeLink; nativeLink = null; openLink(l); }
   }
 
   boot();
