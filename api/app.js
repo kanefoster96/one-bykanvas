@@ -14,7 +14,9 @@
  * it for a session of its own. See `dashboard` below.
  */
 const { createClient } = require('@supabase/supabase-js');
+const Stripe = require('stripe');
 const { missingEnv, adminEmails, ourSiteUrl } = require('./_env.js');
+const { notifyAdmin } = require('./_notify.js');
 const { sitesFor, siteFor, isUuid } = require('./_mcp.js');
 const { cleanBody, isOnline, addMessage } = require('./_chat.js');
 const { sendSms, placeCall } = require('./_twilio.js');
@@ -263,6 +265,39 @@ function cleanPath(p) {
   return s.slice(0, 300);
 }
 
+/* ----------------------------------------------------- delete account -- */
+
+/* Closing an account for good, from inside the app: both stores require
+   it (Apple 5.1.1(v), Google Play's data deletion policy). In order:
+   cancel any live Stripe subscription, so a card is never charged for a
+   site nobody can see; clear their uploaded files; tell the admin; then
+   delete the login, which takes the profile, site, requests, chats, page
+   views and device tokens with it by cascade. Billing records stay in
+   Stripe, which is the accounting record. The admin's own account is
+   refused: removing it is an operational decision, not a personal one. */
+async function deleteAccount(db, caller) {
+  if (caller.is_admin) { const e = new Error('The admin account cannot be deleted from the app.'); e.shown = true; throw e; }
+  const { data: prof } = await db.from('profiles').select('business_name, stripe_subscription_id').eq('id', caller.user_id).maybeSingle();
+  if (prof && prof.stripe_subscription_id && process.env.STRIPE_SECRET_KEY) {
+    try { await new Stripe(process.env.STRIPE_SECRET_KEY).subscriptions.cancel(prof.stripe_subscription_id); }
+    catch (err) {
+      if (!err || err.code !== 'resource_missing') {
+        console.error('delete_account: subscription cancel failed:', err && err.message);
+        const e = new Error('Your plan could not be cancelled just now, so nothing was deleted. Try again in a minute, or email support@kanvas.one.'); e.shown = true; throw e;
+      }
+    }
+  }
+  try {
+    const { data: files } = await db.storage.from('request-attachments').list(caller.user_id, { limit: 1000 });
+    const paths = (files || []).filter((f) => f.name).map((f) => caller.user_id + '/' + f.name);
+    if (paths.length) await db.storage.from('request-attachments').remove(paths);
+  } catch (err) { console.error('delete_account: files:', err && err.message); }
+  await notifyAdmin(db, 'Account deleted', ((prof && prof.business_name) || caller.email) + ' deleted their account from the app.');
+  const { error } = await db.auth.admin.deleteUser(caller.user_id);
+  if (error) throw new Error('delete: ' + error.message);
+  return { ok: true };
+}
+
 /* ---------------------------------------------------------- handler -- */
 
 module.exports = async function handler(req, res) {
@@ -340,6 +375,8 @@ module.exports = async function handler(req, res) {
       if (error) throw new Error(error.message);
       return res.status(200).json({ ok: true });
     }
+
+    if (action === 'delete_account') return res.status(200).json(await deleteAccount(db, caller));
 
     if (action === 'device_remove') {
       const deviceToken = String(body.token || '').trim();

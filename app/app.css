@@ -103,7 +103,9 @@
 .oa-activity li.is-new .oa-act-title::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#e5484d;margin-right:7px;vertical-align:middle}
 .oa-account-email{font-size:15px;font-weight:500;margin:10px 0 4px}
 #accountSheet .hint{margin:0 0 16px}
-.oa-account-foot{margin-top:18px !important}
+.oa-account-foot{margin-top:22px;padding-top:16px;border-top:1px solid var(--line-soft)}
+.oa-account-foot .hint{margin:6px 0 0;font-size:13px}
+.oa-danger{color:#c0392b;font-weight:600;font-size:15px}
 
 /* ---- chat: the inbox ---- */
 .oa-search{display:flex;align-items:center;gap:10px;margin:10px 0 4px;padding:0 14px;height:42px;border-radius:14px;background:var(--bg-grey);color:var(--ink-3)}

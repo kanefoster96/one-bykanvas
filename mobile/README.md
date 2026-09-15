@@ -104,9 +104,16 @@ on the phone).
 
 ## Store review notes
 
-- Give App Review a demo login (a real customer-style account on a demo
-  site with a few visits, requests and messages in it). Both stores reject
-  login-only apps without one.
+- Give App Review a demo login. Both stores reject login-only apps without
+  one. There is a seeded one: **demo@kanvas.one**, a customer-style
+  account for a demo salon ("Rowan & Fig") with six weeks of visits, three
+  chats, two requests and a handful of notifications. The password is not
+  in this repo; it goes in the App Review notes only. Re-seed it any time
+  by re-running the block in the session notes (it deletes and rewrites
+  the demo's own rows, nothing else).
+- The Account sheet has **Delete my account**, which cancels any plan and
+  removes the login and everything under it (Apple 5.1.1(v), Google Play's
+  data deletion policy). The admin account is refused.
 - The app has no signup, no prices and nothing to buy, on purpose: the
   subscription is for the website, bought on the website, and the app is
   its companion. Say so in the review notes.
