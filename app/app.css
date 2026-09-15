@@ -5,7 +5,8 @@
 
 /* ---- splash + login ---- */
 .oa-splash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:50}
-.oa-splash-logo{font-size:34px;font-weight:700;letter-spacing:-.04em;margin:0}
+/* The wordmark is the app icon's own, so every logo has the same round dot. */
+.oa-splash-logo{display:block;width:96px;height:auto;margin:0}
 .oa-shell .oa-splash .oa-splash-logo{visibility:hidden}
 .oa-login{max-width:420px;margin:0 auto;padding:calc(64px + env(safe-area-inset-top)) 22px 40px}
 .oa-login .oa-splash-logo{margin-bottom:34px}
@@ -23,7 +24,7 @@
 .one-app{padding:0 0 calc(74px + env(safe-area-inset-bottom));min-height:100vh;box-sizing:border-box}
 .oa-head{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(10px + env(safe-area-inset-top)) 18px 10px;background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line-soft)}
 .oa-head-site{display:flex;align-items:baseline;gap:10px;min-width:0}
-.oa-brand{font-weight:700;font-size:20px;letter-spacing:-.04em}
+.oa-brand{display:block;height:18px;width:auto;align-self:center}
 .oa-site-name{font-size:15px;font-weight:500;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .oa-head-actions{display:flex;gap:4px}
 .oa-icon-btn{position:relative;width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer}
