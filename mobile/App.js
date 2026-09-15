@@ -146,9 +146,10 @@ function Shell() {
   }, []);
 
   const onLoadEnd = useCallback(() => {
-    // The web app posts 'ready' itself once booted; this is the fallback
-    // so a slow script never leaves the native splash up forever.
-    setTimeout(() => { SplashScreen.hideAsync().catch(() => {}); setLoading(false); }, 1500);
+    // The web app posts 'ready' once it has booted and fetched the account,
+    // and the native splash stays up until then, so there is one splash,
+    // not two. This is only the fallback for a page that never says so.
+    setTimeout(() => { SplashScreen.hideAsync().catch(() => {}); setLoading(false); }, 8000);
   }, []);
 
   const onError = useCallback((e) => {

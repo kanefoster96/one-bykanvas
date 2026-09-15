@@ -6,6 +6,7 @@
 /* ---- splash + login ---- */
 .oa-splash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:50}
 .oa-splash-logo{font-size:34px;font-weight:700;letter-spacing:-.04em;margin:0}
+.oa-shell .oa-splash .oa-splash-logo{visibility:hidden}
 .oa-login{max-width:420px;margin:0 auto;padding:calc(64px + env(safe-area-inset-top)) 22px 40px}
 .oa-login .oa-splash-logo{margin-bottom:34px}
 .oa-login h1{font-size:28px;letter-spacing:-.03em;margin:0 0 6px}
