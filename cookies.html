@@ -71,6 +71,10 @@
       <dd>Set for a moment when you ask for a free example, so the thank-you page knows the form really was sent. Cleared when you close the tab.</dd>
       <dt>one.purchase-tracked</dt>
       <dd>A single flag set after payment, so that reloading the confirmation page cannot report the same purchase to Meta twice. It identifies nothing and is cleared when you close the tab. Only ever set if you accepted advertising cookies.</dd>
+      <dt>k1s</dt>
+      <dd>A random string made by your browser when you open a tab on this site, so that our own visitor count can tell ten page views by one person from ten people. It is not a cookie, it is never sent to anyone but us, it is not linked to your name or account, and it is gone when you close the tab. What we keep is the page, the site that sent you and whether you are on a phone. See <a href="#none">what we do not do</a>.</dd>
+      <dt>k1chat:&hellip;</dt>
+      <dd>Set only if you use the chat button, so your conversation is still there if you reload or come back. It holds a random ticket for that one conversation and nothing else. Removed when you clear your browser&rsquo;s storage.</dd>
     </dl>
 
     <h2 id="ads">Advertising &mdash; only if you accept</h2>
@@ -86,7 +90,8 @@
     <p>Meta is a separate controller for what it does with this. Its privacy policy is at <a href="https://www.facebook.com/privacy/policy" rel="noopener">facebook.com/privacy/policy</a>.</p>
 
     <h2 id="none">What we do not do</h2>
-    <p>No analytics. No Google Tag Manager, no session recording, no heatmaps, no A/B testing tools. No embedded fonts, maps, video players, chat widgets or social buttons &mdash; nothing loads from another company&rsquo;s server while you read these pages, except the pixel above, and only with your consent.</p>
+    <p>No third-party analytics. No Google Analytics, no Google Tag Manager, no session recording, no heatmaps, no A/B testing tools. The only counting we do is our own: each page view is sent to our own server with the page, the site that sent you, and whether the screen is a phone or a desktop, tied to the tab-only <code>k1s</code> string above. No IP address is stored, no cookie is set, and nothing is shared with another company.</p>
+    <p>No embedded fonts, maps, video players or social buttons. The chat button in the corner is ours too, served from this site and talking only to our server &mdash; nothing loads from another company&rsquo;s server while you read these pages, except the pixel above, and only with your consent.</p>
 
     <h2 id="change">Changing your mind</h2>
     <p>Withdrawing consent has to be as easy as giving it, so it is the same two buttons. Use the button at the top of this page, or <strong>Cookie settings</strong> in the footer of any page.</p>
