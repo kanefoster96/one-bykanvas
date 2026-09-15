@@ -48,10 +48,10 @@
   <div class="wrap">
    <div class="legal reveal">
 
-    <p class="legal-meta">Last updated 4 September 2026.</p>
+    <p class="legal-meta">Last updated 15 September 2026.</p>
 
     <div class="legal-key">
-      <p>The short version: we collect what we need to build your site, bill you and email you about it. We run no analytics at all. The only tracking on this site measures our own ads, it only runs if you accept cookies, and it is never sent your name or email address. We do not sell your details, and we do not share them with anyone for their own marketing.</p>
+      <p>The short version: we collect what we need to build your site, bill you and email you about it. We count visits to this site ourselves, without cookies and without any other company involved, and you can switch that off. The only third-party tracking measures our own ads, it only runs if you accept cookies, and it is never sent your name or email address. If you message us through the chat button, we keep the conversation so we can reply. We do not sell your details, and we do not share them with anyone for their own marketing.</p>
     </div>
 
     <nav class="legal-toc" aria-label="On this page">
@@ -100,9 +100,16 @@
     <h3>If you leave a review</h3>
     <p>Your name, your business name and what you wrote, so we can publish it.</p>
 
+    <h3>If you use the chat button</h3>
+    <p>What you write, and, only if you choose to give them, your name, email address and phone number so we can reply if you leave the page. The page you were on when you started. We do not record your IP address against the conversation. Your browser keeps a random ticket for the conversation so it is still there if you come back; that is all it holds.</p>
+
+    <h3>If you install the Kanvas One app</h3>
+    <p>The app shows you the same account as the website. If you allow notifications, your phone gives us a push token &mdash; an address for that one installation, issued by Apple or Google &mdash; which we keep so we can send you a notification when something happens on your site. It is removed when you log out or the phone tells us the app is gone. The app has no advertising and no tracking.</p>
+
     <h3>Automatically</h3>
     <p>Our hosting provider keeps short-lived server logs, which include IP addresses, for security and to keep the service running.</p>
-<p>We use no analytics software at all. If &mdash; and only if &mdash; you accept cookies, we load the Meta pixel, which tells Meta that a visit, an enquiry or a signup followed one of our ads. Choose &ldquo;Essential only&rdquo; and that code is never loaded. See the <a href="/cookies.html">cookie policy</a> for exactly what it sets and what we send with it.</p>
+    <p>We count visits to this site ourselves. Each page view is sent to our own server with the page, the site that sent you here, whether the screen is a phone or a desktop, and a random string your browser makes for the tab so that ten pages read by one person are not counted as ten people. No IP address is stored with it, it is not linked to your account, and no other company is involved. It runs unless you press <strong>Decline</strong> on the cookie pill, after which nothing is sent.</p>
+    <p>If &mdash; and only if &mdash; you press <strong>Accept</strong>, we also load the Meta pixel, which tells Meta that a visit, an enquiry or a signup followed one of our ads. Decline and that code is never loaded. See the <a href="/cookies.html">cookie policy</a> for exactly what each one sets and sends.</p>
 
     <h2 id="why">3. Why, and our lawful basis</h2>
     <dl>
@@ -124,8 +131,17 @@
       <dt>To publish a review you have given us</dt>
       <dd>Basis: your consent, given when you submit it. Ask us and we will take it down.</dd>
 
+      <dt>To reply to a chat message</dt>
+      <dd>You started the conversation, and we cannot answer it without keeping it. Basis: our legitimate interest in responding to someone who has asked us something, and in keeping a record of what was said.</dd>
+
+      <dt>To count visits to this site</dt>
+      <dd>Knowing how many people read which pages, and where they came from, is how we decide what to improve. Basis: our legitimate interest in understanding our own site, using the least data that will do it, with a Decline button that stops it.</dd>
+
+      <dt>To send you notifications in the app</dt>
+      <dd>Basis: performance of our contract with you, and your choice: the phone asks before any notification is sent, and you can turn them off in its settings at any time.</dd>
+
       <dt>To measure our advertising</dt>
-      <dd>Knowing which ads lead to an enquiry is what stops us paying for ads that do not work. Basis: your consent, given by choosing &ldquo;Accept all&rdquo; on the cookie pill, and withdrawable at any time from the footer of any page.</dd>
+      <dd>Knowing which ads lead to an enquiry is what stops us paying for ads that do not work. Basis: your consent, given by choosing &ldquo;Accept&rdquo; on the cookie pill, and withdrawable at any time from the footer of any page.</dd>
 
       <dt>To keep the service secure and prevent fraud</dt>
       <dd>Basis: our legitimate interest in protecting the service and our customers.</dd>
@@ -138,12 +154,13 @@
     <p>We use Resend to deliver email. They process the message and your address on our behalf and do not use it for anything else.</p>
 
     <h2 id="share">5. Who we share it with</h2>
-    <p>We do not sell your personal data, and we do not share it with anyone for their own marketing. We use the following providers to run the service. The first four act only on our instructions; the last is there only if you accept cookies, and decides for itself what it does with what it receives:</p>
+    <p>We do not sell your personal data, and we do not share it with anyone for their own marketing. We use the following providers to run the service. All but the last act only on our instructions; the last is there only if you accept cookies, and decides for itself what it does with what it receives:</p>
     <ul>
       <li><strong>Vercel</strong> &mdash; hosting for this site and its server functions. Sees requests to the site, including IP addresses in short-term logs.</li>
-      <li><strong>Supabase</strong> &mdash; the database that holds your account, profile, requests and uploaded files, and the system that signs you in.</li>
+      <li><strong>Supabase</strong> &mdash; the database that holds your account, profile, requests, chat conversations, visit counts and uploaded files, and the system that signs you in.</li>
       <li><strong>Stripe</strong> &mdash; payments and subscriptions. Your card details go to Stripe directly from their own checkout page and never reach our servers. Stripe is a data controller in its own right for fraud prevention; see stripe.com/privacy.</li>
-      <li><strong>Resend</strong> &mdash; sending the emails described above.</li>
+      <li><strong>Resend</strong> &mdash; sending the emails described above, including a chat reply sent on to your email address when you have left one.</li>
+      <li><strong>Expo, and Apple or Google</strong> &mdash; only if you install the app and allow notifications. Expo relays each notification to Apple&rsquo;s or Google&rsquo;s push service, which delivers it to your phone. They see the push token and the words of the notification, nothing else.</li>
       <li><strong>Meta</strong> (Facebook and Instagram) &mdash; <strong>only if you accept cookies.</strong> Receives that a page was viewed, an enquiry submitted, an account created or a plan started, along with your IP address and the identifier in the cookie it sets. We do not send your name or your email address, in any form. Meta decides for itself what it does with this, so it is a controller in its own right rather than a processor acting on our instructions. See <a href="https://www.facebook.com/privacy/policy" rel="noopener">facebook.com/privacy/policy</a>.</li>
     </ul>
     <p>When you use the web address finder, we send only the name you are checking to the relevant domain registry (Nominet for .uk addresses, the appropriate registry otherwise). No personal data is sent with it.</p>
@@ -161,6 +178,9 @@
       <li><strong>Change requests and uploaded files</strong> &mdash; the same period as your account.</li>
       <li><strong>Billing and accounting records</strong> &mdash; six years from the end of the relevant financial year, because HMRC requires it. This applies even if you ask us to delete everything else.</li>
       <li><strong>Reviews</strong> &mdash; until you ask us to remove them.</li>
+      <li><strong>Chat conversations</strong> &mdash; 24 months from the last message, then deleted. Ask sooner and we delete them sooner.</li>
+      <li><strong>Visit counts</strong> &mdash; 13 months, so one year can be compared with the last, then deleted. They contain no name, account or IP address in the first place.</li>
+      <li><strong>Push tokens</strong> &mdash; until you log out of the app, or the phone reports the app is no longer installed.</li>
       <li><strong>Marketing preferences</strong> &mdash; we keep a record that you unsubscribed indefinitely, so that we do not email you again by mistake.</li>
       <li><strong>Your cookie choice</strong> &mdash; kept in your own browser, not on our servers, until you clear it or change it.</li>
     </ul>
@@ -184,7 +204,7 @@
     <p>Email <a href="mailto:support@kanvas.one">support@kanvas.one</a> and we will respond within one month. There is no charge. We may ask you to confirm who you are before we hand over data.</p>
 
     <h2 id="yoursite">10. Data your own site collects</h2>
-    <p>If the site we build for you collects personal data about your customers &mdash; a contact form, a booking, a mailing list &mdash; then you are the controller of that data and we act as your processor. You need your own privacy notice for it, and we will help you put one in place. This notice covers our relationship with you, not your relationship with your customers.</p>
+    <p>If the site we build for you collects personal data about your customers &mdash; a contact form, a booking, a mailing list, a chat, a missed-call text &mdash; then you are the controller of that data and we act as your processor. That includes the visitor count and the chat button we put on your site, which work exactly as described above for this one, and the calls and texts to a business number we run for you. You need your own privacy notice for it, and we will help you put one in place. This notice covers our relationship with you, not your relationship with your customers.</p>
 
     <h2 id="children">11. Children</h2>
     <p>This is a service for businesses. It is not directed at children and we do not knowingly collect data about anyone under 18. If you think we have, tell us and we will delete it.</p>
@@ -214,7 +234,7 @@
   </div>
 </footer>
 
-<script src="consent.js?v=3"></script>
+<script src="consent.js?v=4"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=28"></script>

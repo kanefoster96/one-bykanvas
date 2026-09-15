@@ -264,6 +264,15 @@ module.exports = async function handler(req, res) {
         `${sentF1} "what did you think", ${sentF2} final follow-ups, and ${sentWb} win-backs went out.`);
     }
 
+    /* ---- retention: what the privacy notice promises, kept true ------- */
+    /* Visit counts go after 13 months, chat conversations (and their
+       messages, by cascade) 24 months after the last message. Best effort:
+       a failed sweep is logged and tried again tomorrow. */
+    const views = await db.from('page_views').delete().lt('created_at', new Date(now - 13 * 30 * DAY).toISOString());
+    if (views.error) console.error('followups: page_views sweep failed:', views.error.message);
+    const chats = await db.from('conversations').delete().lt('last_message_at', new Date(now - 24 * 30 * DAY).toISOString());
+    if (chats.error) console.error('followups: conversations sweep failed:', chats.error.message);
+
     return res.status(200).json({ ok: true, followup1: sentF1, followup2: sentF2, winback: sentWb });
   } catch (err) {
     console.error('followups:', err && err.message);
