@@ -1025,6 +1025,12 @@ a.hero-pill:hover .pill-go{opacity:1}
 .mail-btn b{display:block;font-size:15px;font-weight:600;letter-spacing:-.01em}
 .mail-btn span{display:block;font-size:13px;color:var(--ink-3);margin-top:1px}
 
+/* ---------- Admin: the code a site needs ---------- */
+.app-config-code-wrap{margin:12px 0 4px;font-size:14px}
+.app-config-code-wrap summary{cursor:pointer;font-weight:600;color:var(--ink)}
+.app-config-code-wrap .hint{margin:10px 0 6px;font-size:13px}
+.app-config-code{margin:0;padding:10px 12px;border-radius:10px;background:var(--bg-grey);font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;user-select:all;-webkit-user-select:all}
+
 /* ---------- Framed inside the One app ---------- */
 /* admin.html sets .kanvas-embedded on <html> when it is not the top window.
    The site's own header, footer and cookie pill go, so the page reads as a

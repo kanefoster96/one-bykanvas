@@ -109,7 +109,9 @@ stores the views, `api/app.js` is the app's API, `chat.js` and `api/chat.js`
 are the live chat widget and its endpoint, `api/_notify.js` words every
 event with the site's own labels and `api/_push.js` sends it to their phone.
 Server setup is in `app/README.md`; building the app and getting it on
-TestFlight is in `mobile/README.md`.
+TestFlight is in `mobile/README.md`. Connecting each new customer site to
+the app (the admin-page fields and the three script lines) is
+`NEW-SITE.md`.
 
 kanvas.one itself carries the chat widget on every page (site id
 `9094de37-b610-41b6-98f1-2aaf8f5bd52b`, the admin's own site row), so
