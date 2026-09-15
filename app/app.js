@@ -29,6 +29,10 @@
   var BASE = capacitor ? 'https://kanvas.one' : '';
   window.ONE_API_BASE = BASE;
 
+  // Inside the shell the native splash covers the boot, so the page's own
+  // splash logo stays out of it: one logo on the way in, not two.
+  if (rn) document.documentElement.classList.add('oa-shell');
+
   function toNative(msg) {
     if (!rn) return;
     try { window.ReactNativeWebView.postMessage(JSON.stringify(msg)); } catch (e) { /* not in the shell after all */ }
@@ -213,11 +217,13 @@
     }
     if (framedAt !== null && !path) return; // already showing, leave it be
     var target = path || '/';
+    // Say what is happening while the dashboard page arrives, then swap.
+    wrap.classList.remove('is-framed');
+    frame.hidden = true; stub.hidden = false; open.hidden = true;
+    hint.textContent = 'Loading your dashboard…';
     api({ action: 'dashboard', site_id: site.site_id, path: target }).then(function (res) {
       framedAt = target;
-      wrap.classList.add('is-framed');
-      stub.hidden = true;
-      frame.hidden = false;
+      frame.onload = function () { wrap.classList.add('is-framed'); stub.hidden = true; frame.hidden = false; };
       frame.src = res.url;
     }).catch(function (err) {
       // No handoff: say so and offer the browser, where they log in as usual.
