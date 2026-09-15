@@ -1,19 +1,24 @@
-/* one — cookie consent, and the Meta pixel it gates.
+/* one — cookie consent: the Meta pixel it gates, and our own visitor count
+ * it lets people switch off.
  *
- * The rule this file exists to enforce: nothing that identifies a visitor is
- * stored or sent until they have said yes. UK PECR allows exactly one
- * exception - storage that is strictly necessary for a service the visitor
- * asked for - and advertising is not that. So the pixel is not a <script> tag
- * anywhere in the HTML. It is injected here, after a click, or not at all.
+ * Two things are on the table, handled differently:
+ *
+ * - Our own visitor count (beacon.js): first party, no cookie, a random
+ *   string for the tab that dies with it, nothing sent to anyone but us.
+ *   Runs by default and stops the moment someone presses Decline (the
+ *   k1nocount flag below, which beacon.js checks). That is the opt-out the
+ *   first-party statistics exemption asks for.
+ * - The Meta pixel: advertising, a third party, cookies that identify the
+ *   browser. Never loaded until someone presses Accept. It is not a <script>
+ *   tag anywhere in the HTML; it is injected here after a click, or not at
+ *   all, and only once META_PIXEL_ID is set.
  *
  * Refusing has to be as easy as accepting, so there are two buttons, side by
  * side, styled the same weight. No "manage preferences" maze, no pre-ticked
  * anything, and the pill never blocks the page behind it.
  *
- * TO GO LIVE: put your pixel ID in META_PIXEL_ID below. Until you do, the
- * banner does not appear, because there would be nothing to consent to and
- * asking anyway would be theatre. Meta Events Manager -> Data Sources -> your
- * pixel; it is a 15-16 digit number.
+ * Meta Events Manager -> Data Sources -> your pixel; it is a 15-16 digit
+ * number. Until it is set, Accept simply records the choice.
  */
 (function () {
   'use strict';
@@ -21,7 +26,8 @@
   var META_PIXEL_ID = '';          /* <- your pixel ID goes here */
 
   var KEY = 'one.consent';
-  var VERSION = 1;                 /* bump to re-ask everyone after a change */
+  var NO_COUNT = 'k1nocount';      /* set on Decline; beacon.js stays quiet while it exists */
+  var VERSION = 2;                 /* bump to re-ask everyone after a change */
 
   /* ?cookies=preview shows the pill on any page without a pixel ID, so the
      design can be checked on a real phone before there is a Meta account.
@@ -56,6 +62,9 @@
       localStorage.setItem(KEY, JSON.stringify({
         v: VERSION, choice: choice, at: new Date().toISOString()
       }));
+      /* Decline also switches off our own counting, from the next page on. */
+      if (memChoice === 'essential') localStorage.setItem(NO_COUNT, '1');
+      else localStorage.removeItem(NO_COUNT);
     } catch (e) { /* nothing we can do; the pixel simply will not persist */ }
   }
 
@@ -165,8 +174,8 @@
 
     var text = document.createElement('p');
     text.className = 'consent-text';
-    /* Same label as the Academy site's pill: the link IS the explanation. */
-    text.innerHTML = '<a href="/cookies.html">Cookie preferences</a>';
+    /* The Academy site's pill, with one line saying what each answer does. */
+    text.innerHTML = 'We count visits ourselves, with no cookies. Accept also lets us measure our ads. <a href="/cookies.html">Details</a>';
 
     var actions = document.createElement('div');
     actions.className = 'consent-actions';
@@ -197,14 +206,12 @@
 
   /* ------------------------------------------------------------------ boot */
 
-  /* Any control on the page that reopens the choice. Hidden when there is
-     nothing to choose, so the footer does not offer settings that do not
-     exist. */
+  /* Any control on the page that reopens the choice: the footer's Cookie
+     settings and the button on the cookie page. */
   function wireOpeners() {
     var els = document.querySelectorAll('[data-consent-open], #cookieSettings');
     for (var i = 0; i < els.length; i++) {
       (function (el) {
-        if (!META_PIXEL_ID && !PREVIEW) { el.hidden = true; return; }
         el.hidden = false;
         el.addEventListener('click', function (e) { e.preventDefault(); show(); });
       })(els[i]);
@@ -214,10 +221,9 @@
   function boot() {
     wireOpeners();
     if (PREVIEW) { show(); return; }
-    if (!META_PIXEL_ID) return;      /* nothing to ask about yet */
     var choice = read();
-    if (choice === 'all') loadPixel();
-    else if (choice === null) show();
+    if (choice === null) show();
+    else if (choice === 'all') loadPixel();
   }
 
   if (document.readyState === 'loading') {

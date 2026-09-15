@@ -7,3 +7,7 @@ supabase/.temp/
 .env.*
 !.env.example
 app-dist/
+mobile/node_modules/
+mobile/.expo/
+mobile/ios/
+mobile/android/

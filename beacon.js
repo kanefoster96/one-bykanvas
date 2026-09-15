@@ -16,6 +16,8 @@
   var base = (me.getAttribute('data-host') || (me.src ? me.src.replace(/\/beacon\.js.*$/, '') : '') || 'https://kanvas.one').replace(/\/+$/, '');
   // The owner looking at their own dashboard is not a visitor.
   if (/\/(admin|dashboard)(\/|$)/.test(location.pathname)) return;
+  // Someone who pressed Decline on the site's cookie pill is not counted.
+  try { if (localStorage.getItem('k1nocount')) return; } catch (e) { /* storage blocked: count as normal */ }
 
   function sessionId() {
     var key = 'k1s';

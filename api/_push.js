@@ -1,14 +1,19 @@
-/* Push to phones, through Firebase Cloud Messaging's HTTP v1 API.
+/* Push to phones.
  *
- * One send path for both platforms: Android goes through FCM natively, and
- * iOS goes through it too once the APNs key is uploaded to the Firebase
- * project. No SDK - a service account, an RS256 assertion signed with
- * Node's own crypto, one token exchange cached for its lifetime, and a
- * POST per device.
+ * Two roads, chosen per device by the shape of its token:
  *
- * Configured by FCM_SERVICE_ACCOUNT in Vercel: the Firebase service
- * account JSON, either raw or base64. Unset means "no push" and every
- * call quietly does nothing, so the rest of the app works without it.
+ * - Expo push tokens (`ExponentPushToken[...]`), from the Expo app in
+ *   mobile/. Sent to Expo's push service, which carries them on to APNs
+ *   and FCM with the keys held in the EAS project. Nothing to configure
+ *   here; EXPO_ACCESS_TOKEN is optional and only needed if "enhanced push
+ *   security" is switched on for the Expo account.
+ *
+ * - Anything else is a raw FCM registration token from the older
+ *   Capacitor bundle, sent through Firebase Cloud Messaging's HTTP v1 API:
+ *   a service account in FCM_SERVICE_ACCOUNT (the JSON, raw or base64), an
+ *   RS256 assertion signed with Node's own crypto, one token exchange
+ *   cached for its lifetime, and a POST per device. Unset means those
+ *   devices are skipped and nothing else notices.
  *
  * Everything here is best effort. The thing being announced has already
  * happened, and a phone that cannot be reached must never fail it.
@@ -16,6 +21,8 @@
 const crypto = require('crypto');
 
 const SCOPE = 'https://www.googleapis.com/auth/firebase.messaging';
+const EXPO_URL = 'https://exp.host/--/api/v2/push/send';
+const EXPO_BATCH = 100;
 let cached = null; // { token, expires } for this warm lambda
 
 function account() {
@@ -31,6 +38,8 @@ function account() {
 function b64url(input) {
   return Buffer.from(input).toString('base64').replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
+
+function isExpoToken(token) { return /^Expo(nent)?PushToken\[[^\]]+\]$/.test(String(token || '')); }
 
 /* A signed JWT the token endpoint swaps for a bearer token, good for an
    hour. Cached with a minute to spare. */
@@ -68,6 +77,24 @@ function messageFor(token, note) {
   };
 }
 
+/* The Expo message for one device. Expo carries data as JSON, so the
+   deep link travels as it is; the app accepts either shape. */
+function expoMessageFor(token, note) {
+  const data = {};
+  Object.keys(note.data || {}).forEach((k) => { const v = note.data[k]; if (v != null) data[k] = v; });
+  const m = {
+    to: token,
+    title: String(note.title || '').slice(0, 120),
+    body: String(note.body || '').slice(0, 500),
+    data,
+    sound: 'default',
+    priority: 'high',
+    channelId: 'one'
+  };
+  if (note.badge != null) m.badge = note.badge;
+  return m;
+}
+
 /* Tokens FCM says are gone (uninstalled, expired) are marked so the next
    send skips them. Anything else is logged and left: a transient error
    should not retire a good phone. */
@@ -79,16 +106,47 @@ function isDead(body) {
   return details.some((d) => d.errorCode === 'UNREGISTERED' || d.errorCode === 'INVALID_ARGUMENT' && /registration token/i.test(err.message || ''));
 }
 
-/* Sends one note to every live device in `rows` (device_tokens rows).
-   Returns { sent, dead } and never throws. */
-async function pushTo(db, rows, note, fetchFn) {
-  const out = { sent: 0, dead: 0, skipped: 0 };
+/* The same question of one Expo push ticket. */
+function isExpoDead(ticket) {
+  const code = ticket && ticket.status === 'error' && ticket.details && ticket.details.error;
+  return code === 'DeviceNotRegistered';
+}
+
+async function retire(db, row) {
+  await db.from('device_tokens').update({ failed_at: new Date().toISOString() }).eq('id', row.id);
+}
+
+async function sendExpo(db, rows, note, f, out) {
+  const headers = { Accept: 'application/json', 'Accept-Encoding': 'gzip, deflate', 'Content-Type': 'application/json' };
+  const access = String(process.env.EXPO_ACCESS_TOKEN || '').trim();
+  if (access) headers.Authorization = 'Bearer ' + access;
+  for (let i = 0; i < rows.length; i += EXPO_BATCH) {
+    const batch = rows.slice(i, i + EXPO_BATCH);
+    try {
+      const res = await f(EXPO_URL, { method: 'POST', headers, body: JSON.stringify(batch.map((r) => expoMessageFor(r.token, note))) });
+      const body = await res.json().catch(() => ({}));
+      const tickets = Array.isArray(body.data) ? body.data : [];
+      if (!res.ok || !tickets.length) {
+        console.error('push: expo refused:', res.status, (body.errors && body.errors[0] && body.errors[0].message) || '');
+        out.skipped += batch.length;
+        continue;
+      }
+      for (let j = 0; j < batch.length; j++) {
+        const t = tickets[j];
+        if (t && t.status === 'ok') { out.sent++; continue; }
+        if (isExpoDead(t)) { out.dead++; await retire(db, batch[j]); }
+        else console.error('push: expo ticket:', (t && t.message) || 'no ticket', (t && t.details && t.details.error) || '');
+      }
+    } catch (err) { console.error('push:', err.message); out.skipped += batch.length; }
+  }
+}
+
+async function sendFcm(db, rows, note, f, out) {
   const sa = account();
-  const f = fetchFn || (typeof fetch === 'function' ? fetch : null);
-  if (!sa || !f || !rows || !rows.length) { out.skipped = (rows || []).length; return out; }
+  if (!sa) { out.skipped += rows.length; return; }
   let bearer;
   try { bearer = await accessToken(sa, f); }
-  catch (err) { console.error('push:', err.message); out.skipped = rows.length; return out; }
+  catch (err) { console.error('push:', err.message); out.skipped += rows.length; return; }
 
   const url = 'https://fcm.googleapis.com/v1/projects/' + encodeURIComponent(sa.project_id) + '/messages:send';
   for (const row of rows) {
@@ -100,14 +158,22 @@ async function pushTo(db, rows, note, fetchFn) {
       });
       if (res.ok) { out.sent++; continue; }
       const body = await res.json().catch(() => ({}));
-      if (isDead(body)) {
-        out.dead++;
-        await db.from('device_tokens').update({ failed_at: new Date().toISOString() }).eq('id', row.id);
-      } else {
-        console.error('push: device refused:', res.status, (body.error && body.error.message) || '');
-      }
+      if (isDead(body)) { out.dead++; await retire(db, row); }
+      else console.error('push: device refused:', res.status, (body.error && body.error.message) || '');
     } catch (err) { console.error('push:', err.message); }
   }
+}
+
+/* Sends one note to every live device in `rows` (device_tokens rows).
+   Returns { sent, dead, skipped } and never throws. */
+async function pushTo(db, rows, note, fetchFn) {
+  const out = { sent: 0, dead: 0, skipped: 0 };
+  const f = fetchFn || (typeof fetch === 'function' ? fetch : null);
+  if (!f || !rows || !rows.length) { out.skipped = (rows || []).length; return out; }
+  const expo = rows.filter((r) => isExpoToken(r.token));
+  const fcm = rows.filter((r) => !isExpoToken(r.token));
+  if (expo.length) await sendExpo(db, expo, note, f, out);
+  if (fcm.length) await sendFcm(db, fcm, note, f, out);
   return out;
 }
 
@@ -120,4 +186,4 @@ async function devicesFor(db, who) {
   return data || [];
 }
 
-module.exports = { pushTo, devicesFor, messageFor, isDead, account, _resetCache() { cached = null; } };
+module.exports = { pushTo, devicesFor, messageFor, expoMessageFor, isDead, isExpoDead, isExpoToken, account, _resetCache() { cached = null; } };

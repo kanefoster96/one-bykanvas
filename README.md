@@ -102,11 +102,16 @@ admin token changes in Vercel.
 
 `app/` is the customer's phone app: notifications, live chat and
 analytics for their site, with their own dashboard opened inside it and the
-Requests feature as the Support tab. It runs at `/app/` and, through
-Capacitor, as the native iOS and Android app. `beacon.js` is the one-line
-analytics tag every site gets; `api/beacon.js` stores the views, `api/app.js`
-serves the app, `chat.js` and `api/chat.js` are the live chat widget and its
-endpoint, `api/_notify.js` words every event with the site's own labels
-and `api/_push.js` sends it to their phone. Setup and the native build are in
-`app/README.md`.
+Requests feature as the Support tab. It runs at `/app/` and, inside the Expo
+shell in `mobile/`, as the native iOS and Android app **Kanvas One**.
+`beacon.js` is the one-line analytics tag every site gets; `api/beacon.js`
+stores the views, `api/app.js` is the app's API, `chat.js` and `api/chat.js`
+are the live chat widget and its endpoint, `api/_notify.js` words every
+event with the site's own labels and `api/_push.js` sends it to their phone.
+Server setup is in `app/README.md`; building the app and getting it on
+TestFlight is in `mobile/README.md`.
+
+kanvas.one itself carries the chat widget on every page (site id
+`9094de37-b610-41b6-98f1-2aaf8f5bd52b`, the admin's own site row), so
+visitors' messages land in the admin's Chat tab.
 

@@ -1,0 +1,69 @@
+{
+  "expo": {
+    "name": "Kanvas One",
+    "slug": "kanvas-one",
+    "version": "1.0.0",
+    "scheme": "kanvasone",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#ffffff",
+    "primaryColor": "#1d1d1f",
+    "ios": {
+      "bundleIdentifier": "one.kanvas.app",
+      "buildNumber": "1",
+      "supportsTablet": false,
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "So you can take a photo to send with a request or a message.",
+        "NSPhotoLibraryUsageDescription": "So you can attach photos to a request or a message.",
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "package": "one.kanvas.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/adaptive-icon.png"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#1d1d1f",
+          "defaultChannel": "one"
+        }
+      ],
+      "expo-web-browser"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2d7868d0-929f-451a-8796-82681204f0f8"
+      }
+    },
+    "owner": "kanefoster96"
+  }
+}

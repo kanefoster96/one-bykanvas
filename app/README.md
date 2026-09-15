@@ -128,36 +128,21 @@ cannot be used twice. Every deep link is the same handoff at a different path.
 
 ## Server setup, once
 
-1. Run `supabase/migrations/0035_one_app.sql`.
-2. Push: create a Firebase project, enable Cloud Messaging, upload the Apple
-   APNs key (Apple Developer → Keys → APNs) so iOS goes through Firebase too.
-   Create a service account (Project settings → Service accounts → Generate
-   new private key), base64 the JSON file and set it in Vercel as
-   `FCM_SERVICE_ACCOUNT`. Never paste it into chat or a file in this repo.
-   Without it, everything works and nothing is pushed.
+1. Run migrations `0031` to `0038` (done on the live project on 15 Sep 2026).
+2. Push needs nothing in Vercel. The native app registers an Expo push
+   token and `api/_push.js` sends through Expo's push service; the Apple
+   push key is held by the EAS project (see `mobile/README.md`). Optional:
+   `EXPO_ACCESS_TOKEN`, only if enhanced push security is turned on for the
+   Expo account. `FCM_SERVICE_ACCOUNT` is only read for raw FCM tokens from
+   the old Capacitor bundle.
 
-## Native build (on a Mac with Xcode and Android Studio)
+## The native app
 
-```bash
-npm install
-npm run app:build            # bundles app/ + shared files into app-dist/
-npx cap add ios
-npx cap add android
-npm run app:ios              # sync + open Xcode
-npm run app:android          # sync + open Android Studio
-```
-
-Commit the generated `ios/` and `android/` folders. After that, every
-change to `app/` is `npm run app:sync`, then build from Xcode / Android
-Studio. The wrapper enables `CapacitorHttp`, so requests to kanvas.one go
-through native networking and need no CORS changes on the API.
-
-- iOS: add the Push Notifications capability and Background Modes → Remote
-  notifications in Xcode; drop `GoogleService-Info.plist` from Firebase into
-  the app target.
-- Android: drop `google-services.json` from Firebase into `android/app/`.
-- App id `one.kanvas.app`, name **One**. Icons and splash from
-  `assets/favicon.svg` via `@capacitor/assets` when ready.
+`mobile/` is the Expo shell: a WebView on `/app/` plus push. This page
+detects it through `window.ReactNativeWebView` and switches to shell mode
+(the bridge is at the top of `app.js` and in `setupPush`). Build and
+TestFlight steps are in `mobile/README.md`. Name **Kanvas One**, bundle id
+`one.kanvas.app`.
 
 ## Store submission notes
 
