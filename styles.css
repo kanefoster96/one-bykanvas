@@ -1020,54 +1020,53 @@ a.hero-pill:hover .pill-go{opacity:1}
 /* A pill, not a bar: it sits above the page rather than blocking it, and
    both answers are the same size and weight, because under PECR refusing
    has to be as easy as accepting. */
+/* The Academy site's pill in white glass: one row, a link that is the
+   whole explanation, Decline as a ghost, Accept filled. */
 .consent{
   position:fixed;z-index:60;left:50%;transform:translate(-50%,10px);
   bottom:calc(14px + env(safe-area-inset-bottom));
-  width:max-content;max-width:min(600px,calc(100vw - 24px));
-  display:flex;align-items:center;gap:10px;
-  padding:5px 5px 5px 14px;border-radius:980px;
-  background:rgba(255,255,255,.94);
-  -webkit-backdrop-filter:saturate(180%) blur(20px);
-  backdrop-filter:saturate(180%) blur(20px);
-  border:1px solid var(--line-soft);
-  box-shadow:0 6px 22px rgba(0,0,0,.08);
+  width:max-content;max-width:calc(100vw - 24px);
+  display:flex;align-items:center;gap:12px;
+  padding:6px 6px 6px 16px;border-radius:980px;
+  background:rgba(255,255,255,.7);
+  -webkit-backdrop-filter:saturate(180%) blur(22px);
+  backdrop-filter:saturate(180%) blur(22px);
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 8px 28px rgba(0,0,0,.10);
   opacity:0;transition:opacity .38s var(--ease),transform .38s var(--ease);
 }
 .consent.in{opacity:1;transform:translate(-50%,0)}
-.consent-text{margin:0;font-size:12.5px;line-height:1.35;color:var(--ink-2);max-width:32em}
-.consent-text a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
-.consent-actions{display:flex;gap:5px;flex:0 0 auto}
+.consent-text{margin:0;font-size:13px;line-height:1.3;color:var(--ink-2);white-space:nowrap}
+.consent-text a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.consent-short{display:none}
+.consent-actions{display:flex;gap:6px;flex:0 0 auto}
 .consent-btn{
-  font-family:var(--font);font-size:12.5px;font-weight:500;letter-spacing:-.01em;
-  padding:6px 12px;border-radius:980px;cursor:pointer;white-space:nowrap;
-  background:#fff;border:1px solid var(--line);color:var(--ink);
+  font-family:var(--font);font-size:13px;font-weight:500;letter-spacing:-.01em;
+  padding:7px 14px;border-radius:980px;cursor:pointer;white-space:nowrap;
+  background:rgba(255,255,255,.55);border:1px solid rgba(0,0,0,.12);color:var(--ink);
   transition:background .2s var(--ease);
 }
-.consent-btn:hover{background:var(--bg-grey)}
+.consent-btn:hover{background:#fff}
 .consent-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-/* Accept is styled identically to refuse on purpose. Making the yes button
-   brighter is the nudge the ICO has written to sites about: refusing has to
-   be as easy as accepting, and "as easy" covers how it looks, not just how
-   many clicks it takes. */
-.consent-btn-yes{background:#fff}
+.consent-btn-yes{background:var(--ink);border-color:var(--ink);color:#fff}
+.consent-btn-yes:hover{background:#000}
 
-/* Narrow screens: the pill wraps into a small rounded card, kept to the
-   left so it never sits on the chat button in the corner. */
+/* Phones: same single row, shorter label, sat to the left so it stays
+   clear of the chat button in the corner. */
 @media (max-width:560px){
-  .consent{
-    flex-wrap:wrap;gap:8px 10px;
-    width:auto;left:12px;right:84px;transform:translateY(10px);
-    padding:10px 12px;border-radius:18px;
-  }
+  .consent{left:12px;transform:translateY(10px);gap:10px;padding:5px 5px 5px 14px}
   .consent.in{transform:translateY(0)}
-  .consent-text{font-size:12.5px}
-  .consent-actions{gap:6px}
-  .consent-btn{padding:6px 12px}
+  .consent-long{display:none}
+  .consent-short{display:inline}
+  .consent-btn{padding:7px 12px}
 }
 
 @media (prefers-reduced-motion:reduce){
   .consent{transition:none;opacity:1;transform:translate(-50%,0)}
   .consent.in{transform:translate(-50%,0)}
+}
+@media (prefers-reduced-motion:reduce) and (max-width:560px){
+  .consent,.consent.in{transform:none}
 }
 
 /* ---------- Legal / prose pages ---------- */
