@@ -41,15 +41,28 @@
      touches inside the frame, so the page does it itself. */
   function pullToRefresh() {
     var y0 = null, dy = 0, busy = false, ring = null;
+    var HOLD = 64;
+    function dist() { return Math.min(96, dy * 0.5); }
     function ui() {
       if (ring) return ring;
+      var st = document.createElement('style');
+      st.textContent = '@keyframes kanvas-spin{to{transform:rotate(360deg)}}';
+      document.head.appendChild(st);
       ring = document.createElement('div');
-      ring.setAttribute('style', 'position:fixed;left:50%;top:8px;z-index:2147483000;width:36px;height:36px;margin-left:-18px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.14);display:flex;align-items:center;justify-content:center;transform:translateY(-52px);pointer-events:none');
+      ring.setAttribute('style', 'position:fixed;left:50%;top:14px;z-index:2147483000;width:36px;height:36px;margin-left:-18px;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none');
       var spin = document.createElement('div');
-      spin.setAttribute('style', 'width:18px;height:18px;border-radius:50%;border:2px solid #d2d2d7;border-top-color:#1d1d1f;box-sizing:border-box');
+      spin.setAttribute('style', 'width:20px;height:20px;border-radius:50%;border:2px solid #d2d2d7;border-top-color:#1d1d1f;box-sizing:border-box');
       ring.appendChild(spin);
       (document.body || document.documentElement).appendChild(ring);
       return ring;
+    }
+    /* The page itself slides down, the ring in the gap it opens. */
+    function move(d, animate) {
+      var b = document.body, r = ui();
+      b.style.transition = animate ? 'transform .28s cubic-bezier(.2,.8,.3,1)' : 'none';
+      b.style.transform = d ? 'translateY(' + d + 'px)' : '';
+      r.style.opacity = d ? String(Math.min(1, d / 40)) : '0';
+      if (!busy) r.firstChild.style.transform = 'rotate(' + Math.round(d * 4) + 'deg)';
     }
     document.addEventListener('touchstart', function (e) {
       if (busy || e.touches.length !== 1 || (window.scrollY || document.documentElement.scrollTop || 0) > 0) { y0 = null; return; }
@@ -58,22 +71,18 @@
     document.addEventListener('touchmove', function (e) {
       if (y0 === null) return;
       dy = Math.max(0, e.touches[0].clientY - y0);
-      var r = ui();
-      r.style.transition = 'none';
-      r.style.transform = 'translateY(' + (Math.min(90, dy * 0.5) - 52) + 'px)';
-      r.firstChild.style.transform = 'rotate(' + Math.min(180, dy * 2) + 'deg)';
+      move(dist(), false);
     }, { passive: true });
     document.addEventListener('touchend', function () {
       if (y0 === null) return;
-      var r = ui(); y0 = null;
-      r.style.transition = 'transform .2s ease';
-      if (Math.min(90, dy * 0.5) >= 60) {
+      y0 = null;
+      if (dist() >= HOLD) {
         busy = true;
-        r.style.transform = 'translateY(8px)';
-        r.firstChild.style.animation = 'kanvas-spin .8s linear infinite';
-        var st = document.createElement('style'); st.textContent = '@keyframes kanvas-spin{to{transform:rotate(360deg)}}'; document.head.appendChild(st);
-        setTimeout(function () { location.reload(); }, 150);
-      } else r.style.transform = 'translateY(-52px)';
+        ui().firstChild.style.transform = '';
+        ui().firstChild.style.animation = 'kanvas-spin .8s linear infinite';
+        move(HOLD, true);
+        setTimeout(function () { location.reload(); }, 350);
+      } else move(0, true);
     }, { passive: true });
   }
 
