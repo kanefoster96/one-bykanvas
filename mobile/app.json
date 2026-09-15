@@ -13,11 +13,15 @@
       "bundleIdentifier": "one.kanvas.app",
       "buildNumber": "1",
       "supportsTablet": false,
-      "config": { "usesNonExemptEncryption": false },
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "infoPlist": {
         "NSCameraUsageDescription": "So you can take a photo to send with a request or a message.",
         "NSPhotoLibraryUsageDescription": "So you can attach photos to a request or a message.",
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -27,7 +31,10 @@
         "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/adaptive-icon.png"
       },
-      "permissions": ["android.permission.CAMERA", "android.permission.POST_NOTIFICATIONS"]
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -51,6 +58,12 @@
         }
       ],
       "expo-web-browser"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2d7868d0-929f-451a-8796-82681204f0f8"
+      }
+    },
+    "owner": "kanefoster96"
   }
 }
