@@ -128,7 +128,7 @@
   var TABS = ['Dashboard', 'Analytics', 'Payments', 'Chat', 'Support'];
 
   function showTab(next) {
-    if (next === 'Chat' && !hasModule('chat')) next = 'Analytics';
+    if (next === 'Chat' && !hasModule('chat')) next = homeTab();
     tab = next;
     TABS.forEach(function (t) {
       $('tab' + t).hidden = t !== tab;
@@ -163,6 +163,10 @@
 
   function hasModule(m) { return !!(site && (site.modules || []).indexOf(m) >= 0); }
 
+  /* Where the app opens: the Dashboard, the first tab, once the site has
+     one connected; the numbers until then, rather than an empty screen. */
+  function homeTab() { return site && site.dashboard_url ? 'Dashboard' : 'Analytics'; }
+
   /* The admin sees every site; a picker in the header says which one the
      tabs are about. Everything cached per site is dropped on a switch. */
   function selectSite(id) {
@@ -177,7 +181,7 @@
     $('navChat').hidden = !hasModule('chat');
     var badge = $('navChatCount'); if (badge) badge.hidden = true;
     if (hasModule('chat')) { listenChat(); loadChats(); }
-    showTab(tab === 'Chat' && !hasModule('chat') ? 'Analytics' : tab);
+    showTab(tab === 'Chat' && !hasModule('chat') ? homeTab() : tab);
   }
   $('sitePick').addEventListener('change', function () { selectSite(this.value); });
 
@@ -896,7 +900,7 @@
     app.hidden = false;
 
     var h = location.hash.replace(/^#/, '');
-    showTab(/^(new|r\/)/.test(h) ? 'Support' : 'Analytics');
+    showTab(/^(new|r\/)/.test(h) ? 'Support' : homeTab());
     setupPush();
     if (hasModule('chat')) { listenChat(); loadChats(); schedulePoll(); }
     nativeReady();
