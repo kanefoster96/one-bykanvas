@@ -81,6 +81,26 @@ The app hears new messages through Supabase Realtime on the site's
 `data-trigger="#id"` to use the site's own button, `data-full` for a
 full-screen chat on phones.
 
+### Live, not refreshed
+
+The Chat tab hears three things through Supabase Realtime, under the
+owner's login: new `messages` (drawn into the open thread at once),
+`conversations` changing (someone comes online or a thread opens) and
+`page_views` landing (a visitor moves to another page). Either of the
+last two reloads the inbox a moment later; a poll every 10 s (6 s inside
+a thread) is the backup, and the only source for the admin looking at
+another customer's site, whose rows RLS keeps from Realtime.
+
+**Who is on the site now** comes from the beacon, not just the widget:
+`chat_list` returns `visitors_now`, everyone with a page view in the last
+five minutes, on the page they were last seen on, with their thread if
+they hold one. The green bar counts them; tapping it lists them with
+**Message** (or **Open chat**). Message starts a thread for that visit
+(`visitor_chat_start`); the widget on their page finds it on its next
+`ping` and pops up with the owner's message. Pings are cheap by design:
+`chat_list` stamps `sites.watch_until` a minute ahead, and the widget
+asks every 10 s only while that holds, every 90 s otherwise.
+
 ### Live chat or email
 
 Every reply in the app is sent as **Live chat** or **Email**, the owner's
