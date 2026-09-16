@@ -172,6 +172,32 @@
   sys(greeting);
   if (conv) poll().then(schedule);
 
+  /* The owner can open a chat with someone browsing. While the owner is
+     in their app watching (the server says so), ask every ten seconds
+     whether they have; otherwise only now and then. A chat opened for us
+     is claimed and pops up with their message. */
+  var pingTimer = null;
+  function takeInvite(inv) {
+    return post({ action: 'claim', conversation_id: inv.conversation_id, code: inv.code }).then(function (c) {
+      conv = { id: c.conversation_id, token: c.token };
+      try { localStorage.setItem(KEY, JSON.stringify(conv)); } catch (er) {}
+      msgs.innerHTML = ''; lastAt = null; sys(greeting);
+      return poll().then(function () { schedule(); setOpen(true); });
+    });
+  }
+  function ping() {
+    clearTimeout(pingTimer);
+    if (conv) return;
+    var s = visitSession();
+    if (!s || document.visibilityState === 'hidden') { pingTimer = setTimeout(ping, 30000); return; }
+    post({ action: 'ping', site: site, session: s }).then(function (r) {
+      if (r.invite) return takeInvite(r.invite);
+      pingTimer = setTimeout(ping, r.watch ? 10000 : 90000);
+    }).catch(function () { pingTimer = setTimeout(ping, 90000); });
+  }
+  setTimeout(ping, 1500);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && !conv) ping(); });
+
   /* A link from one of the owner's emails (?k1chat=open) lands the visitor
      straight back in the chat, then tidies the address bar. A chat the
      owner started carries a claim code (&k1claim=<id>.<code>) that is

@@ -240,7 +240,7 @@ async function events(db, caller, siteId) {
 
 function convOut(c, now) {
   return {
-    id: c.id, channel: c.channel || 'web', via_app: !!c.app_user_id, name: c.visitor_name, email: c.visitor_email, phone: c.visitor_phone, page: c.page,
+    id: c.id, channel: c.channel || 'web', via_app: !!c.app_user_id, session: c.session || null, name: c.visitor_name, email: c.visitor_email, phone: c.visitor_phone, page: c.page,
     status: c.status, blocked: !!c.blocked_at, online: isOnline(c, now),
     last_at: c.last_message_at, last_by: c.last_message_by, preview: c.last_message_preview,
     unread: c.last_message_by === 'visitor' && (!c.owner_seen_at || new Date(c.owner_seen_at) < new Date(c.last_message_at)),
@@ -259,7 +259,53 @@ async function chatList(db, site) {
   const { data, error } = await db.from('conversations').select('*').eq('site_id', site.id).order('last_message_at', { ascending: false }).limit(100);
   if (error) throw new Error(error.message);
   const now = Date.now();
-  return (data || []).map((c) => convOut(c, now));
+  // The owner is looking: the widget on the site may ask, for the next
+  // minute, whether a chat has been opened with its visitor.
+  db.from('sites').update({ watch_until: new Date(now + 60000).toISOString() }).eq('id', site.id).then(() => {}, () => {});
+  const conversations = (data || []).map((c) => convOut(c, now));
+  const visitors_now = await visitorsNow(db, site, data || [], now);
+  return { conversations, visitors_now };
+}
+
+/* Everyone on the site in the last five minutes, from the beacon: one
+   entry per visit, on the page they were last seen on, with the thread
+   they hold if they have one. */
+const NOW_WINDOW = 5 * 60 * 1000;
+async function visitorsNow(db, site, convs, now) {
+  const since = new Date((now || Date.now()) - NOW_WINDOW).toISOString();
+  const { data } = await db.from('page_views').select('session, path, device, country, created_at').eq('site_id', site.id).gte('created_at', since).order('created_at', { ascending: false }).limit(2000);
+  const bySession = {};
+  (data || []).forEach((r) => {
+    const v = bySession[r.session] || (bySession[r.session] = { session: r.session, path: r.path, device: r.device, country: r.country, last_at: r.created_at, first_at: r.created_at, pages: 0 });
+    v.pages++;
+    if (r.created_at < v.first_at) v.first_at = r.created_at;
+  });
+  const convBySession = {};
+  convs.forEach((c) => { if (c.session && (!convBySession[c.session] || c.last_message_at > convBySession[c.session].last_message_at)) convBySession[c.session] = c; });
+  return Object.keys(bySession).map((s) => {
+    const v = bySession[s], c = convBySession[s];
+    return Object.assign(v, { conversation_id: c ? c.id : null, name: c ? c.visitor_name : null });
+  }).sort((a, b) => (a.last_at < b.last_at ? 1 : -1));
+}
+
+/* The owner opens a chat with someone browsing right now. Their existing
+   thread if they have one; else a new one the widget on their page picks
+   up on its next ping (claim code), and the first message pops up in
+   front of them. */
+async function visitorChatStart(db, site, sessionIn) {
+  const session = String(sessionIn || '').replace(/[^a-z0-9]/gi, '').slice(0, 32);
+  if (session.length < 8) { const e = new Error('Which visitor?'); e.shown = true; throw e; }
+  const { data: have } = await db.from('conversations').select('*').eq('site_id', site.id).eq('session', session).is('blocked_at', null).order('last_message_at', { ascending: false }).limit(1);
+  if (have && have[0]) return { conversation_id: have[0].id, created: false };
+  const { data: views } = await db.from('page_views').select('path').eq('site_id', site.id).eq('session', session).order('created_at', { ascending: false }).limit(1);
+  const row = {
+    site_id: site.id, channel: 'web', session, page: (views && views[0] && views[0].path) || '/',
+    visitor_token_hash: 'o:' + crypto.randomBytes(24).toString('hex'), claim_code: crypto.randomBytes(18).toString('base64url'),
+    status: 'open', last_message_by: 'owner', owner_seen_at: new Date().toISOString(), visitor_online_at: new Date().toISOString()
+  };
+  const { data: conv, error } = await db.from('conversations').insert(row).select().single();
+  if (error) throw new Error(error.message);
+  return { conversation_id: conv.id, created: true };
 }
 
 async function chatGet(db, site, id) {
@@ -721,7 +767,8 @@ module.exports = async function handler(req, res) {
 
     if (action === 'events') return res.status(200).json({ events: await events(db, caller, body.site_id) });
 
-    if (action === 'chat_list') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json({ conversations: await chatList(db, site) }); }
+    if (action === 'chat_list') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await chatList(db, site)); }
+    if (action === 'visitor_chat_start') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await visitorChatStart(db, site, body.session)); }
     if (action === 'chat_get') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await chatGet(db, site, body.conversation_id)); }
     if (action === 'chat_reply') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await chatReply(db, site, body.conversation_id, body.body, body.via)); }
     if (action === 'call_back') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await callBack(db, site, body.conversation_id, body.to)); }

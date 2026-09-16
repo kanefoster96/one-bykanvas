@@ -192,6 +192,13 @@
 .oa-online-text{flex:1}
 .oa-online-bar svg{width:18px;height:18px}
 
+/* ---- who is on the site now ---- */
+.oa-online-hint{margin:0 0 6px;font-size:13.5px;line-height:1.45}
+.oa-online-list li{cursor:default}
+.oa-online-list .oa-chip{flex:0 0 auto;height:34px}
+.oa-online-sub{margin:3px 0 0;font-size:13.5px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oa-online-sub b{color:var(--good);font-weight:600}
+
 /* ---- chat: a conversation, filling the screen between header and tabs ---- */
 #tabChat.is-thread{padding:0;max-width:none}
 .oa-screen{position:fixed;left:0;right:0;top:calc(61px + env(safe-area-inset-top));bottom:calc(74px + env(safe-area-inset-bottom));z-index:5;display:flex;flex-direction:column;background:#fff}

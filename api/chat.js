@@ -85,6 +85,21 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ conversation_id: conv.id, token, message: out(made.message) });
     }
 
+    /* "Has the owner opened a chat with me?" Asked by the widget while the
+       owner is watching their Chat tab (sites.watch_until), rarely
+       otherwise. The answer carries the claim code for this visit only. */
+    if (action === 'ping') {
+      const siteId = String(body.site || '').toLowerCase();
+      const session = String(body.session || '').replace(/[^a-z0-9]/gi, '').slice(0, 32);
+      if (!UUID.test(siteId) || session.length < 8) return res.status(200).json({ watch: false, invite: null });
+      const { data: site } = await db.from('sites').select('id, watch_until, modules').eq('id', siteId).maybeSingle();
+      if (!site || !(site.modules || []).includes('chat')) return res.status(200).json({ watch: false, invite: null });
+      const watch = !!(site.watch_until && new Date(site.watch_until).getTime() > Date.now());
+      const { data: inv } = await db.from('conversations').select('id, claim_code').eq('site_id', site.id).eq('session', session).not('claim_code', 'is', null).is('blocked_at', null).order('created_at', { ascending: false }).limit(1);
+      const c = inv && inv[0];
+      return res.status(200).json({ watch, invite: c ? { conversation_id: c.id, code: c.claim_code } : null });
+    }
+
     /* A thread the owner started from a contact: the link in their email
        carries a claim code; it is swapped, once, for the visitor's token. */
     if (action === 'claim') {

@@ -767,7 +767,7 @@
       top.appendChild(el('p', 'oa-conv-name', displayName(c)));
       top.appendChild(el('span', 'oa-conv-when', whenText(c.last_at)));
       body.appendChild(top);
-      body.appendChild(el('p', 'oa-conv-preview', (c.last_by === 'owner' ? 'You: ' : '') + (c.preview || (c.via_app ? 'From their One app' : c.page ? 'Visited ' + pageName(c.page) : ''))));
+      body.appendChild(el('p', 'oa-conv-preview', (c.last_by === 'owner' ? 'You: ' : '') + (c.preview || (c.via_app ? 'From their One app' : c.online && c.now_path ? 'On ' + pageName(c.now_path) + ' now' : c.page ? 'Visited ' + pageName(c.page) : ''))));
       li.appendChild(body);
       li.addEventListener('click', function () { openThread(c.id); });
       ul.appendChild(li);
@@ -775,15 +775,63 @@
     renderOnlineBar();
   }
 
-  /* The green bar: who is on the site right now. Tapping it opens the
-     newest of them. */
+  /* The green bar: who is on the site right now, from the visitor counter
+     (everyone browsing) and the chat widget (anyone with it open). Tapping
+     it lists them, with the page each is on and a Message button. */
+  var visitorsNow = [];
+  function sessionNo(s) { var n = 0; String(s || '').split('').forEach(function (ch) { n = (n * 31 + ch.charCodeAt(0)) % 9000; }); return String(1000 + n); }
+  function hereNow() {
+    var seen = {}, out = [];
+    visitorsNow.forEach(function (v) { seen[v.session] = true; out.push(v); });
+    convs.forEach(function (c) { if (c.online && c.status !== 'closed' && !c.blocked && !(c.session && seen[c.session])) out.push({ session: c.session, conversation_id: c.id, name: c.name, path: c.page, last_at: c.last_at, conv: c }); });
+    return out;
+  }
   function renderOnlineBar() {
-    var here = convs.filter(function (c) { return c.online && c.status !== 'closed' && !c.blocked; });
+    var here = hereNow();
     var bar = $('onlineBar');
     bar.hidden = !here.length || tab !== 'Chat' || !!openConv || chatMode !== 'inbox' || !!openContact;
     $('onlineN').textContent = String(here.length);
     $('onlineText').textContent = here.length === 1 ? 'Visitor on your site now' : 'Visitors on your site now';
-    bar.onclick = here.length ? function () { openThread(here[0].id); } : null;
+    bar.onclick = here.length ? openOnlineSheet : null;
+  }
+  function onSiteFor(v) {
+    var mins = Math.max(1, Math.round((Date.now() - new Date(v.first_at || v.last_at).getTime()) / 60000));
+    return mins < 60 ? mins + ' min' : Math.round(mins / 60) + ' h';
+  }
+  function openOnlineSheet() {
+    openSheet('onlineSheet');
+    renderOnlineSheet();
+  }
+  function renderOnlineSheet() {
+    if ($('onlineSheet').hidden) return;
+    var here = hereNow();
+    var ul = $('onlineList'); ul.innerHTML = '';
+    $('onlineEmpty').hidden = here.length > 0;
+    here.forEach(function (v) {
+      var c = v.conv || convs.filter(function (x) { return x.id === v.conversation_id; })[0] || null;
+      var li = el('li');
+      li.appendChild(c ? avatarFor(Object.assign({}, c, { online: true })) : contactAvatar({ name: v.name }));
+      var body = el('div', 'oa-conv-body');
+      body.appendChild(el('p', 'oa-conv-name', v.name || (c ? displayName(c) : 'Visitor #' + sessionNo(v.session))));
+      var sub = el('p', 'oa-online-sub');
+      var where = el('b', '', 'On ' + pageName(v.path || '/'));
+      sub.appendChild(where);
+      sub.appendChild(document.createTextNode(' · ' + onSiteFor(v) + (v.device ? ' · ' + (v.device === 'phone' ? 'Phone' : 'Desktop') : '') + (v.country ? ' · ' + countryName(v.country) : '')));
+      body.appendChild(sub);
+      li.appendChild(body);
+      var btn = el('button', 'oa-chip' + (c ? '' : ' oa-chip-dark'), c ? 'Open chat' : 'Message'); btn.type = 'button';
+      btn.addEventListener('click', async function () {
+        btn.disabled = true;
+        try {
+          var id = c ? c.id : (await api({ action: 'visitor_chat_start', site_id: site.site_id, session: v.session })).conversation_id;
+          closeSheets();
+          await openThread(id);
+          if (!c) say($('chatNote'), 'They are on ' + pageName(v.path || '/') + ' now. Your message pops up in the chat on their screen.', 'ok');
+        } catch (err) { say($('chatNote'), err.message, 'bad'); btn.disabled = false; }
+      });
+      li.appendChild(btn);
+      ul.appendChild(li);
+    });
   }
 
   async function loadChats() {
@@ -791,7 +839,13 @@
     try {
       var res = await api({ action: 'chat_list', site_id: site.site_id });
       convs = res.conversations || [];
+      visitorsNow = res.visitors_now || [];
+      // Someone whose visit the counter still sees is here, widget open or not.
+      var sessions = {}; visitorsNow.forEach(function (v) { sessions[v.session] = v; });
+      convs.forEach(function (c) { if (c.session && sessions[c.session]) { c.online = true; c.now_path = sessions[c.session].path; } });
       renderConvs();
+      renderOnlineSheet();
+      if (openConv) { var cur = convs.filter(function (c) { return c.id === openConv.id; })[0]; if (cur) { openConv = cur; renderConvHead(cur); } }
       var n = convs.filter(function (c) { return c.unread; }).length;
       var badge = $('navChatCount');
       if (badge) { badge.textContent = String(n); badge.hidden = n === 0; }
@@ -825,8 +879,8 @@
     var bits = [];
     if (chan === 'whatsapp') bits.push('WhatsApp');
     else if (chan === 'sms') bits.push('Text message' + (c.name && c.phone ? ' · ' + c.phone : ''));
-    else if (c.online) bits.push('On your site now'); else bits.push('Last seen ' + ago(c.last_at));
-    if (c.page) bits.push(pageName(c.page));
+    else if (c.online) bits.push(c.now_path ? 'On ' + pageName(c.now_path) + ' now' : 'On your site now'); else bits.push('Last seen ' + ago(c.last_at));
+    if (c.page && !(c.online && c.now_path)) bits.push(pageName(c.page));
     if (c.status === 'closed') bits.push('Closed');
     if (c.blocked) bits.push('Blocked');
     $('convMeta').textContent = bits.join(' · ');
@@ -970,11 +1024,23 @@
     } else if (tab === 'Chat') loadChats();
     else if (m.author === 'visitor') { var b = $('navChatCount'); if (b) { b.textContent = String((Number(b.textContent) || 0) + 1); b.hidden = false; } }
   }
+  /* Live, not refreshed: new messages land as they are sent; a visitor
+     arriving, moving to another page or opening the widget moves the
+     green bar and the inbox within a moment or two. Realtime rows are
+     read under the owner's own login, so the admin looking at another
+     customer's site hears nothing here and leans on the poll instead. */
+  var liveTimer = null;
+  function liveRefresh() {
+    clearTimeout(liveTimer);
+    liveTimer = setTimeout(function () { if (tab === 'Chat' && chatMode === 'inbox' && !openContact) loadChats(); }, 1200);
+  }
   function listenChat() {
     if (chatChannel || !site || !hasModule('chat') || !ONE.db.channel) return;
     try {
-      chatChannel = ONE.db.channel('site-messages-' + site.site_id)
+      chatChannel = ONE.db.channel('site-live-' + site.site_id)
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: 'site_id=eq.' + site.site_id }, function (payload) { if (payload && payload.new) onNewMessage(payload.new); })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'conversations', filter: 'site_id=eq.' + site.site_id }, liveRefresh)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'page_views', filter: 'site_id=eq.' + site.site_id }, liveRefresh)
         .subscribe();
     } catch (e) { chatChannel = null; }
   }
@@ -993,7 +1059,7 @@
         } else if (tab === 'Chat') await loadChats();
       } catch (e) { /* next tick */ }
       schedulePoll();
-    }, openConv ? 8000 : 20000);
+    }, openConv ? 6000 : 10000);
   }
 
   /* ---------------------------------------------------------- support -- */
@@ -1384,7 +1450,8 @@
   }
 
   function openSheet(id) { $('sheetBack').hidden = false; $(id).hidden = false; }
-  function closeSheets() { $('sheetBack').hidden = true; $('activitySheet').hidden = true; $('accountSheet').hidden = true; }
+  function closeSheets() { $('sheetBack').hidden = true; $('activitySheet').hidden = true; $('accountSheet').hidden = true; $('onlineSheet').hidden = true; }
+  $('onlineClose').addEventListener('click', closeSheets);
   $('sheetBack').addEventListener('click', closeSheets);
   $('activityClose').addEventListener('click', closeSheets);
   $('accountClose').addEventListener('click', closeSheets);
