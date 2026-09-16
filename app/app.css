@@ -21,7 +21,11 @@
 .oa-login-foot{margin-top:26px;text-align:center}
 
 /* ---- shell ---- */
-.one-app{padding:0 0 calc(74px + env(safe-area-inset-bottom));min-height:100vh;box-sizing:border-box}
+/* How tall the header and the tab bar are: app.js measures them and sets
+   these on <html>, so the screens between them fit exactly. These are the
+   guesses used until it has. */
+html{--oa-head:calc(61px + env(safe-area-inset-top));--oa-nav:calc(74px + env(safe-area-inset-bottom))}
+.one-app{padding:0 0 var(--oa-nav);min-height:100vh;box-sizing:border-box}
 .oa-head{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(10px + env(safe-area-inset-top)) 18px 10px;background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line-soft)}
 .oa-head-site{display:flex;align-items:baseline;gap:10px;min-width:0}
 .oa-brand{display:block;height:18px;width:auto;align-self:center}
@@ -108,14 +112,14 @@
 /* ---- dashboard ---- */
 .oa-dash-stub h2{font-size:26px;letter-spacing:-.03em;margin:0 0 8px}
 .oa-dash-stub .hint{font-size:15px;line-height:1.5;margin:0 0 18px}
-.oa-dash-frame{width:100%;height:calc(100vh - 140px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border:0;border-radius:var(--radius);background:var(--bg-grey)}
+.oa-dash-frame{display:block;width:100%;height:calc(100vh - var(--oa-head) - var(--oa-nav) - 42px);border:0;border-radius:var(--radius);background:var(--bg-grey)}
 .oa-dash-spin{display:none}
-#tabDashboard.is-loading .oa-dash-stub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;min-height:calc(100vh - 62px - 74px - 42px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+#tabDashboard.is-loading .oa-dash-stub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;min-height:calc(100vh - var(--oa-head) - var(--oa-nav) - 42px)}
 #tabDashboard.is-loading .oa-dash-stub h2{display:none}
 #tabDashboard.is-loading .oa-dash-stub .hint{margin:0;color:var(--ink-2)}
 #tabDashboard.is-loading .oa-dash-spin{display:block;width:26px;height:26px;animation:oa-spin .8s linear infinite}
 #tabDashboard.is-framed{padding:0}
-#tabDashboard.is-framed .oa-dash-frame{border-radius:0;height:calc(100vh - 62px - 74px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+#tabDashboard.is-framed .oa-dash-frame{border-radius:0;height:calc(100vh - var(--oa-head) - var(--oa-nav))}
 
 /* ---- support: the requests page inside a tab ---- */
 #tabSupport.req-wrap{padding-top:14px}
@@ -186,7 +190,7 @@
 .oa-list-none{padding:18px 0;font-size:14.5px;color:var(--ink-3)}
 
 /* The green bar Wix puts above the tabs: someone is on the site right now. */
-.oa-online-bar{position:fixed;left:0;right:0;bottom:calc(74px + env(safe-area-inset-bottom));z-index:29;display:flex;align-items:center;gap:12px;padding:12px 18px;border:0;background:#0f8a63;color:#fff;font:inherit;font-size:16px;font-weight:500;cursor:pointer;text-align:left}
+.oa-online-bar{position:fixed;left:0;right:0;bottom:var(--oa-nav);z-index:29;display:flex;align-items:center;gap:12px;padding:12px 18px;border:0;background:#0f8a63;color:#fff;font:inherit;font-size:16px;font-weight:500;cursor:pointer;text-align:left}
 .oa-online-bar[hidden]{display:none}
 .oa-online-n{width:30px;height:30px;border-radius:50%;background:#fff;color:#0f8a63;display:grid;place-items:center;font-size:14px;font-weight:700;flex:0 0 auto}
 .oa-online-text{flex:1}
@@ -201,7 +205,7 @@
 
 /* ---- chat: a conversation, filling the screen between header and tabs ---- */
 #tabChat.is-thread{padding:0;max-width:none}
-.oa-screen{position:fixed;left:0;right:0;top:calc(61px + env(safe-area-inset-top));bottom:calc(74px + env(safe-area-inset-bottom));z-index:5;display:flex;flex-direction:column;background:#fff}
+.oa-screen{position:fixed;left:0;right:0;top:var(--oa-head);bottom:var(--oa-nav);z-index:5;display:flex;flex-direction:column;background:#fff}
 /* While one of these screens is up the page behind it has nothing to show,
    yet it was still a viewport plus the tabs' height tall, and iOS shoves a
    page up under an open keyboard until the reply box clears it, header and
@@ -271,7 +275,7 @@ html.oa-lock .one-app{position:fixed;left:0;right:0;top:var(--oa-vt,0px);height:
 .oa-seg{width:100%;box-sizing:border-box}
 .oa-seg .oa-pill{flex:1;text-align:center;position:relative;font-size:14px;padding:8px 12px}
 .oa-seg-dot{position:absolute;top:7px;right:9px;width:8px;height:8px;border-radius:50%;background:#3b6fd6}
-.oa-screen-low{top:calc(61px + 58px + env(safe-area-inset-top))}
+.oa-screen-low{top:calc(var(--oa-head) + 58px)}
 .oa-avatar-k{flex-basis:40px;width:40px;height:40px;font-size:15px;background:var(--ink)}
 
 /* ---- contacts ---- */

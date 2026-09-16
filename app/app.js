@@ -182,6 +182,18 @@
      those screens is up the page is locked (html.oa-lock in app.css) and
      .one-app is sized to the visual viewport: an open keyboard shrinks the
      screen, the reply box sits on it and the last messages stay in view. */
+  /* The header and the tab bar are measured, not guessed: the screens
+     between them, and the framed dashboard, are sized from these. A guess
+     a few pixels out showed as a white line above the tabs. */
+  var chrome = { head: document.querySelector('.oa-head'), nav: document.querySelector('.oa-nav') };
+  function measureChrome() {
+    var s = document.documentElement.style;
+    if (chrome.head.offsetHeight) s.setProperty('--oa-head', chrome.head.offsetHeight + 'px');
+    if (chrome.nav.offsetHeight) s.setProperty('--oa-nav', chrome.nav.offsetHeight + 'px');
+  }
+  if (window.ResizeObserver) { var ro = new ResizeObserver(measureChrome); ro.observe(chrome.head); ro.observe(chrome.nav); }
+  else window.addEventListener('resize', measureChrome);
+
   var vv = window.visualViewport;
   var locked = false;
   function screenOn() {
