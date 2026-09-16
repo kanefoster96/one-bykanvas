@@ -173,11 +173,27 @@
   if (conv) poll().then(schedule);
 
   /* A link from one of the owner's emails (?k1chat=open) lands the visitor
-     straight back in the chat, then tidies the address bar. */
+     straight back in the chat, then tidies the address bar. A chat the
+     owner started carries a claim code (&k1claim=<id>.<code>) that is
+     swapped, once, for this browser's token to the thread. */
   if (/(^|[?&])k1chat=open(&|$)/.test(location.search)) {
+    var cm = /(?:^|[?&])k1claim=([^&]+)/.exec(location.search);
+    if (cm) {
+      var parts = decodeURIComponent(cm[1]).split('.');
+      if (parts.length === 2 && !(conv && conv.id === parts[0])) {
+        post({ action: 'claim', conversation_id: parts[0], code: parts[1] }).then(function (r) {
+          conv = { id: r.conversation_id, token: r.token };
+          try { localStorage.setItem(KEY, JSON.stringify(conv)); } catch (er) {}
+          if (r.name) details.name = r.name;
+          msgs.innerHTML = ''; lastAt = null; sys(greeting);
+          return poll().then(schedule);
+        }).catch(function () { sys('That link has already been used. Send a new message below and we will pick it up.'); });
+      }
+    }
     setOpen(true);
     try {
-      var clean = location.search.replace(/(^\?|&)k1chat=open(&|$)/, function (m, a, b) { return a === '?' && b === '&' ? '?' : a === '?' ? '' : b ? '&' : ''; });
+      var clean = location.search.replace(/(^\?|&)k1claim=[^&]*(&|$)/, function (m, a, b) { return a === '?' && b === '&' ? '?' : a === '?' ? '' : b ? '&' : ''; })
+        .replace(/(^\?|&)k1chat=open(&|$)/, function (m, a, b) { return a === '?' && b === '&' ? '?' : a === '?' ? '' : b ? '&' : ''; });
       history.replaceState(null, '', location.pathname + (clean === '?' ? '' : clean) + location.hash);
     } catch (e) { /* stays, harmless */ }
   }

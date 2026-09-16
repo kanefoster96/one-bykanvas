@@ -18,7 +18,8 @@ const Stripe = require('stripe');
 const { missingEnv, adminEmails, ourSiteUrl } = require('./_env.js');
 const { notifyAdmin } = require('./_notify.js');
 const { sitesFor, siteFor, isUuid } = require('./_mcp.js');
-const { cleanBody, isOnline, addMessage } = require('./_chat.js');
+const crypto = require('crypto');
+const { cleanBody, cleanName, cleanEmail, cleanPhone, isOnline, addMessage } = require('./_chat.js');
 const { sendSms, placeCall } = require('./_twilio.js');
 const { sendEmail } = require('./_email.js');
 const { html: emailHtml, esc } = require('./_email_template.js');
@@ -285,7 +286,10 @@ function continueLink(conv, site) {
   const base = String(site.url || (site.profile && site.profile.site_url) || '').trim().replace(/\/+$/, '');
   if (!/^https?:\/\//i.test(base)) return null;
   const page = /^\/[^\s?#]*$/.test(String(conv.page || '')) ? conv.page : '/';
-  return base + page + '?k1chat=open';
+  // A chat the owner started has no visitor holding a token yet: the link
+  // carries a claim code the widget swaps for one (api/chat.js claim).
+  const claim = conv.claim_code ? '&k1claim=' + encodeURIComponent(conv.id + '.' + conv.claim_code) : '';
+  return base + page + '?k1chat=open' + claim;
 }
 
 /* The owner's reply lands in the thread. Whether it also goes by email is
@@ -404,6 +408,198 @@ async function deleteAccount(db, caller) {
   return { ok: true };
 }
 
+/* ---------------------------------------------------------- contacts -- */
+
+/* Business and above. The admin sees every site's contacts regardless. */
+function contactsAllowed(site, caller) {
+  if (caller && caller.is_admin) return;
+  if ((site.profile && site.profile.active_plan) === 'starter') {
+    const e = new Error('Contacts are part of Business and above.'); e.shown = true; e.code = 'PLAN'; throw e;
+  }
+}
+
+/* Digits only, UK national form folded into international, so the same
+   number written two ways is one person. */
+function phoneKey(p) {
+  let d = String(p || '').replace(/\D/g, '');
+  if (!d) return null;
+  if (d.startsWith('00')) d = d.slice(2);
+  if (d.length === 11 && d.startsWith('0')) d = '44' + d.slice(1);
+  return d.length >= 7 ? d : null;
+}
+function cleanText(s, max) { const t = String(s || '').replace(/\r\n?/g, '\n').replace(/[ \t]+\n/g, '\n').trim().slice(0, max); return t || null; }
+
+function contactOut(c, extra) {
+  return Object.assign({
+    id: c.id, name: c.name, email: c.email, phone: c.phone, address: c.address, company: c.company,
+    source: c.source, first_seen_at: c.first_seen_at, last_seen_at: c.last_seen_at
+  }, extra || {});
+}
+
+/* Everyone who has been in touch becomes a contact: chats, enquiries and
+   payments with a name, email or phone. Matched on email, then phone;
+   blanks on an existing contact are filled in, never overwritten. */
+async function syncContacts(db, site) {
+  const { data: existing } = await db.from('contacts').select('*').eq('site_id', site.id).limit(3000);
+  const byEmail = {}, byPhone = {};
+  const rows = existing || [];
+  rows.forEach((c) => { if (c.email) byEmail[c.email.toLowerCase()] = c; if (c.phone_key) byPhone[c.phone_key] = c; });
+  const fresh = [];   // to insert
+  const patches = {}; // id -> patch
+  function absorb(name, email, phone, source, seenAt) {
+    email = cleanEmail(email); phone = cleanPhone(phone); name = cleanName(name);
+    const key = phoneKey(phone);
+    if (!email && !key) return;
+    let c = (email && byEmail[email]) || (key && byPhone[key]) || null;
+    if (!c) {
+      c = { site_id: site.id, name, email, phone, phone_key: key, source, first_seen_at: seenAt, last_seen_at: seenAt, _new: true };
+      fresh.push(c);
+    } else {
+      const p = patches[c.id] || (c._new ? c : {});
+      if (!c.name && name) { c.name = name; if (!c._new) p.name = name; }
+      if (!c.email && email && !byEmail[email]) { c.email = email; if (!c._new) p.email = email; }
+      if (!c.phone && phone && key && !byPhone[key]) { c.phone = phone; c.phone_key = key; if (!c._new) { p.phone = phone; p.phone_key = key; } }
+      if (seenAt && (!c.last_seen_at || new Date(seenAt) > new Date(c.last_seen_at))) { c.last_seen_at = seenAt; if (!c._new) p.last_seen_at = seenAt; }
+      if (seenAt && c.first_seen_at && new Date(seenAt) < new Date(c.first_seen_at)) { c.first_seen_at = seenAt; if (!c._new) p.first_seen_at = seenAt; }
+      if (!c._new && Object.keys(p).length) patches[c.id] = p;
+    }
+    if (c.email) byEmail[c.email.toLowerCase()] = c;
+    if (c.phone_key) byPhone[c.phone_key] = c;
+  }
+  const [convs, enqs, pays] = await Promise.all([
+    db.from('conversations').select('visitor_name, visitor_email, visitor_phone, created_at, last_message_at').eq('site_id', site.id).order('created_at', { ascending: true }).limit(2000),
+    db.from('enquiries').select('name, email, phone, created_at').eq('site_id', site.id).order('created_at', { ascending: true }).limit(2000),
+    db.from('payments').select('customer_name, customer_email, paid_at').eq('site_id', site.id).order('paid_at', { ascending: true }).limit(2000)
+  ]);
+  (convs.data || []).forEach((r) => absorb(r.visitor_name, r.visitor_email, r.visitor_phone, 'chat', r.last_message_at || r.created_at));
+  (enqs.data || []).forEach((r) => absorb(r.name, r.email, r.phone, 'enquiry', r.created_at));
+  (pays.data || []).forEach((r) => absorb(r.customer_name, r.customer_email, null, 'payment', r.paid_at));
+  if (fresh.length) {
+    const { error } = await db.from('contacts').insert(fresh.map((c) => { const o = Object.assign({}, c); delete o._new; return o; }));
+    if (error) console.error('contacts sync insert:', error.message);
+  }
+  const ids = Object.keys(patches);
+  for (const id of ids) {
+    const { error } = await db.from('contacts').update(Object.assign({ updated_at: new Date().toISOString() }, patches[id])).eq('id', id);
+    if (error) console.error('contacts sync update:', error.message);
+  }
+  return fresh.length + ids.length;
+}
+
+async function contactsList(db, site) {
+  await syncContacts(db, site);
+  const { data, error } = await db.from('contacts').select('*').eq('site_id', site.id).order('last_seen_at', { ascending: false }).limit(3000);
+  if (error) throw new Error(error.message);
+  const { data: notes } = await db.from('contact_notes').select('contact_id').eq('site_id', site.id).limit(10000);
+  const counts = {};
+  (notes || []).forEach((n) => { counts[n.contact_id] = (counts[n.contact_id] || 0) + 1; });
+  return (data || []).map((c) => contactOut(c, { notes: counts[c.id] || 0 }));
+}
+
+async function contactIn(db, site, id) {
+  if (!isUuid(id)) { const e = new Error('Which contact?'); e.shown = true; throw e; }
+  const { data } = await db.from('contacts').select('*').eq('id', id).maybeSingle();
+  if (!data || data.site_id !== site.id) { const e = new Error('Permission denied: that contact is not on this site.'); e.shown = true; e.code = 'PERMISSION_DENIED'; throw e; }
+  return data;
+}
+
+/* The conversations a contact has had: by the email or phone on the
+   contact, web chats first, newest first. */
+async function contactConversations(db, site, c) {
+  const ors = [];
+  if (c.email) ors.push('visitor_email.ilike.' + c.email.replace(/[,()]/g, ''));
+  if (c.phone_key) ors.push('visitor_phone.ilike.*' + c.phone_key.slice(-9) + '*');
+  if (!ors.length) return [];
+  const { data } = await db.from('conversations').select('*').eq('site_id', site.id).or(ors.join(',')).order('last_message_at', { ascending: false }).limit(20);
+  const now = Date.now();
+  return (data || []).map((x) => convOut(x, now));
+}
+
+async function contactGet(db, site, id) {
+  const c = await contactIn(db, site, id);
+  const [notes, convs, pays] = await Promise.all([
+    db.from('contact_notes').select('id, body, created_at').eq('contact_id', c.id).order('created_at', { ascending: false }).limit(200),
+    contactConversations(db, site, c),
+    c.email ? db.from('payments').select('amount_pence, refunded_pence, paid_at').eq('site_id', site.id).ilike('customer_email', c.email).order('paid_at', { ascending: false }).limit(500) : Promise.resolve({ data: [] })
+  ]);
+  const paid = (pays.data || []).reduce((n, p) => n + Math.max(0, (p.amount_pence || 0) - (p.refunded_pence || 0)), 0);
+  return {
+    contact: contactOut(c),
+    notes: (notes.data || []).map((n) => ({ id: n.id, body: n.body, at: n.created_at })),
+    conversations: convs,
+    payments: { count: (pays.data || []).length, amount: paid, last_at: (pays.data || [])[0] ? pays.data[0].paid_at : null }
+  };
+}
+
+/* New or changed, from the form in the app. */
+async function contactSave(db, site, input) {
+  const patch = {
+    name: cleanName(input.name), email: cleanEmail(input.email), phone: cleanPhone(input.phone),
+    address: cleanText(input.address, 300), company: cleanText(input.company, 120)
+  };
+  patch.phone_key = phoneKey(patch.phone);
+  if (input.email && !patch.email) { const e = new Error('That email address does not look right.'); e.shown = true; throw e; }
+  if (input.phone && !patch.phone) { const e = new Error('That phone number does not look right.'); e.shown = true; throw e; }
+  if (!patch.name && !patch.email && !patch.phone) { const e = new Error('A name, an email or a phone number, at least.'); e.shown = true; throw e; }
+  let res;
+  if (input.id) {
+    await contactIn(db, site, input.id);
+    res = await db.from('contacts').update(Object.assign({ updated_at: new Date().toISOString() }, patch)).eq('id', input.id).select().single();
+  } else {
+    res = await db.from('contacts').insert(Object.assign({ site_id: site.id, source: 'manual' }, patch)).select().single();
+  }
+  if (res.error) {
+    if (/duplicate|unique/i.test(res.error.message)) { const e = new Error('You already have a contact with that email or phone number.'); e.shown = true; throw e; }
+    throw new Error(res.error.message);
+  }
+  return contactOut(res.data);
+}
+
+async function contactDelete(db, site, id) {
+  const c = await contactIn(db, site, id);
+  const { error } = await db.from('contacts').delete().eq('id', c.id);
+  if (error) throw new Error(error.message);
+  return { ok: true };
+}
+
+async function noteAdd(db, site, contactId, bodyIn) {
+  const c = await contactIn(db, site, contactId);
+  const body = cleanText(bodyIn, 4000);
+  if (!body) { const e = new Error('Write the note first.'); e.shown = true; throw e; }
+  const { data, error } = await db.from('contact_notes').insert({ contact_id: c.id, site_id: site.id, body }).select().single();
+  if (error) throw new Error(error.message);
+  await db.from('contacts').update({ updated_at: new Date().toISOString() }).eq('id', c.id);
+  return { id: data.id, body: data.body, at: data.created_at };
+}
+
+async function noteDelete(db, site, noteId) {
+  if (!isUuid(noteId)) { const e = new Error('Which note?'); e.shown = true; throw e; }
+  const { error } = await db.from('contact_notes').delete().eq('id', noteId).eq('site_id', site.id);
+  if (error) throw new Error(error.message);
+  return { ok: true };
+}
+
+/* Chat with a contact: their open web thread if they have one, else a new
+   one the owner starts. Nobody is holding the visitor's side yet, so the
+   first reply goes by email with a link that claims the thread on the
+   site; without an email address there is no way to reach them, so that
+   is refused and the app offers Call instead. */
+async function contactChat(db, site, contactId) {
+  const c = await contactIn(db, site, contactId);
+  const have = (await contactConversations(db, site, c)).filter((x) => x.channel === 'web' && !x.blocked);
+  if (have.length) return { conversation_id: have[0].id, created: false };
+  if (!c.email) { const e = new Error('They have no email address, so a chat could not reach them. Call them, or add their email first.'); e.shown = true; throw e; }
+  const claim = crypto.randomBytes(18).toString('base64url');
+  const row = {
+    site_id: site.id, channel: 'web', visitor_name: c.name, visitor_email: c.email, visitor_phone: c.phone,
+    visitor_token_hash: 'o:' + crypto.randomBytes(24).toString('hex'), claim_code: claim,
+    page: '/', status: 'open', last_message_by: 'owner', owner_seen_at: new Date().toISOString(), visitor_online_at: null
+  };
+  const { data: conv, error } = await db.from('conversations').insert(row).select().single();
+  if (error) throw new Error(error.message);
+  return { conversation_id: conv.id, created: true };
+}
+
 /* ---------------------------------------------------------- handler -- */
 
 module.exports = async function handler(req, res) {
@@ -444,6 +640,18 @@ module.exports = async function handler(req, res) {
     if (action === 'chat_reply') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await chatReply(db, site, body.conversation_id, body.body, body.via)); }
     if (action === 'call_back') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await callBack(db, site, body.conversation_id, body.to)); }
     if (action === 'chat_set') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json({ conversation: await chatSet(db, site, body.conversation_id, body) }); }
+
+    if (/^contact/.test(action)) {
+      const site = await siteFor({ db }, caller, body.site_id);
+      contactsAllowed(site, caller);
+      if (action === 'contacts_list') return res.status(200).json({ contacts: await contactsList(db, site) });
+      if (action === 'contact_get') return res.status(200).json(await contactGet(db, site, body.contact_id));
+      if (action === 'contact_save') return res.status(200).json({ contact: await contactSave(db, site, body.contact || {}) });
+      if (action === 'contact_delete') return res.status(200).json(await contactDelete(db, site, body.contact_id));
+      if (action === 'contact_note_add') return res.status(200).json({ note: await noteAdd(db, site, body.contact_id, body.body) });
+      if (action === 'contact_note_delete') return res.status(200).json(await noteDelete(db, site, body.note_id));
+      if (action === 'contact_chat') return res.status(200).json(await contactChat(db, site, body.contact_id));
+    }
 
     if (action === 'dashboard') {
       const site = await siteFor({ db }, caller, body.site_id);

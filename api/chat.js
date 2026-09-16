@@ -85,6 +85,21 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ conversation_id: conv.id, token, message: out(made.message) });
     }
 
+    /* A thread the owner started from a contact: the link in their email
+       carries a claim code; it is swapped, once, for the visitor's token. */
+    if (action === 'claim') {
+      const id = String(body.conversation_id || '').toLowerCase();
+      const code = String(body.code || '');
+      if (!UUID.test(id) || code.length < 10) return res.status(404).json({ error: 'That link has been used or has expired.' });
+      const { data: c } = await db.from('conversations').select('*').eq('id', id).maybeSingle();
+      const a = Buffer.from(String((c && c.claim_code) || '')), b = Buffer.from(code);
+      if (!c || !c.claim_code || c.blocked_at || a.length !== b.length || !crypto.timingSafeEqual(a, b)) return res.status(404).json({ error: 'That link has been used or has expired.' });
+      const token = crypto.randomBytes(24).toString('base64url');
+      const { error } = await db.from('conversations').update({ visitor_token_hash: sha(token), claim_code: null, visitor_online_at: new Date().toISOString() }).eq('id', c.id);
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ conversation_id: c.id, token, name: c.visitor_name || null });
+    }
+
     const conv = await claim(db, body.conversation_id, body.token);
     if (!conv) return res.status(404).json({ error: 'That conversation is not here.' });
 

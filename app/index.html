@@ -12,7 +12,7 @@
 <link rel="icon" href="../assets/favicon.svg?v=2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/favicon.svg?v=2">
 <link rel="stylesheet" href="../styles.css?v=72">
-<link rel="stylesheet" href="app.css?v=11">
+<link rel="stylesheet" href="app.css?v=12">
 </head>
 <body class="oa-body">
 
@@ -164,13 +164,81 @@
   <!-- ---- Chat ---- -->
   <section class="oa-tab oa-chat" id="tabChat" hidden>
     <section id="chatList">
-      <div class="oa-tab-head"><h2>Inbox</h2></div>
-      <label class="oa-search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
-        <input id="convSearch" type="search" placeholder="Search" aria-label="Search conversations" autocomplete="off" autocapitalize="off">
-      </label>
-      <ul class="oa-convs" id="convList"></ul>
-      <p class="oa-empty" id="convEmpty" hidden>No conversations yet. The chat button is live on your site; the first message lands here and on your phone.</p>
+      <div class="oa-tab-head">
+        <h2 id="chatHeading">Inbox</h2>
+        <div class="oa-pills" id="chatMode" role="tablist" aria-label="Inbox or contacts" hidden>
+          <button class="oa-pill is-on" type="button" data-mode="inbox" role="tab" aria-selected="true">Inbox</button>
+          <button class="oa-pill" type="button" data-mode="contacts" role="tab" aria-selected="false">Contacts</button>
+        </div>
+      </div>
+      <div id="inboxView">
+        <label class="oa-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+          <input id="convSearch" type="search" placeholder="Search" aria-label="Search conversations" autocomplete="off" autocapitalize="off">
+        </label>
+        <ul class="oa-convs" id="convList"></ul>
+        <p class="oa-empty" id="convEmpty" hidden>No conversations yet. The chat button is live on your site; the first message lands here and on your phone.</p>
+      </div>
+      <div id="contactsView" hidden>
+        <label class="oa-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+          <input id="contactSearch" type="search" placeholder="Search name, email, phone" aria-label="Search contacts" autocomplete="off" autocapitalize="off">
+        </label>
+        <div class="oa-contacts-row">
+          <p class="hint" id="contactCount"></p>
+          <button class="oa-chip oa-chip-dark" id="contactAdd" type="button">+ New contact</button>
+        </div>
+        <ul class="oa-convs" id="contactList"></ul>
+        <p class="oa-empty" id="contactEmpty" hidden>Nobody yet. Everyone who chats, sends an enquiry or pays through your site lands here on their own; add anyone else with New contact.</p>
+      </div>
+    </section>
+
+    <section class="oa-screen" id="contactScreen" hidden>
+      <div class="oa-conv-head">
+        <button class="oa-icon-btn oa-back" id="contactBack" type="button" aria-label="All contacts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <span class="oa-avatar" id="contactAvatar"></span>
+        <div class="oa-conv-who">
+          <h2 id="contactTitle">New contact</h2>
+          <p class="hint" id="contactMeta"></p>
+        </div>
+      </div>
+      <div class="oa-conv-tools" id="contactTools">
+        <button class="oa-chip oa-chip-dark" id="contactChat" type="button">Chat</button>
+        <a class="oa-chip" id="contactCall" href="#">Call</a>
+        <a class="oa-chip" id="contactMail" href="#">Email</a>
+        <a class="oa-chip" id="contactMap" href="#" target="_blank" rel="noopener">Map</a>
+      </div>
+      <div class="oa-contact-body">
+        <form class="oa-card oa-contact-form" id="contactForm" novalidate>
+          <p class="oa-card-title">Details</p>
+          <div class="field full"><label for="cfName">Name</label><input id="cfName" type="text" maxlength="80" autocomplete="off" autocapitalize="words"></div>
+          <div class="field full"><label for="cfPhone">Phone</label><input id="cfPhone" type="tel" maxlength="30" autocomplete="off"></div>
+          <div class="field full"><label for="cfEmail">Email</label><input id="cfEmail" type="email" maxlength="200" autocomplete="off" autocapitalize="off"></div>
+          <div class="field full"><label for="cfAddress">Address</label><textarea id="cfAddress" rows="2" maxlength="300"></textarea></div>
+          <div class="field full"><label for="cfCompany">Business <span class="hint">optional</span></label><input id="cfCompany" type="text" maxlength="120" autocomplete="off"></div>
+          <div class="oa-contact-actions">
+            <button class="btn btn-primary" id="contactSave" type="submit">Save</button>
+            <button class="linkish oa-danger" id="contactDelete" type="button" hidden>Delete contact</button>
+          </div>
+          <p class="note" id="contactNote" role="status" aria-live="polite"></p>
+        </form>
+        <div class="oa-card" id="contactHistory" hidden>
+          <p class="oa-card-title">History</p>
+          <p class="hint" id="contactHistoryText"></p>
+          <ul class="oa-list oa-contact-convs" id="contactConvs"></ul>
+        </div>
+        <div class="oa-card" id="contactNotesCard" hidden>
+          <p class="oa-card-title">Notes</p>
+          <form class="oa-note-form" id="noteForm" novalidate>
+            <textarea id="noteBody" rows="2" maxlength="4000" placeholder="Last visit, what they have, what they asked for…"></textarea>
+            <button class="btn btn-primary" id="noteAdd" type="submit">Add note</button>
+          </form>
+          <p class="note" id="noteNote" role="status" aria-live="polite"></p>
+          <ul class="oa-notes" id="noteList"></ul>
+        </div>
+      </div>
     </section>
 
     <section class="oa-screen" id="chatThread" hidden>
@@ -400,6 +468,6 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=13"></script>
+<script src="app.js?v=14"></script>
 </body>
 </html>

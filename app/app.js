@@ -145,7 +145,7 @@
     if (tab === 'Analytics') loadAnalytics();
     if (tab === 'Dashboard') { var p = pendingPath; pendingPath = null; renderDashboard(p); }
     if (tab === 'Support') loadRequests();
-    if (tab === 'Chat') { if (openConv && !pendingConv) schedulePoll(); else { openConv = null; $('chatThread').hidden = true; $('tabChat').classList.remove('is-thread'); $('chatList').hidden = false; loadChats(); } }
+    if (tab === 'Chat') { if (openConv && !pendingConv) schedulePoll(); else { openConv = null; openContact = null; $('chatThread').hidden = true; $('contactScreen').hidden = true; $('tabChat').classList.remove('is-thread'); $('chatList').hidden = false; if (chatMode === 'contacts') loadContacts(); else loadChats(); } }
     else { $('onlineBar').hidden = true; }
   }
 
@@ -183,7 +183,7 @@
   /* What slides: the message list in a thread, else the visible part of
      the tab (its open section, or the tab itself). */
   function pullTarget(t) {
-    var box = t.closest('.oa-thread');
+    var box = t.closest('.oa-thread, .oa-contact-body');
     if (box) return box.scrollTop <= 0 ? box : null;
     if (t.closest('.oa-screen')) return null;
     if ((window.scrollY || document.documentElement.scrollTop || 0) > 0) return null;
@@ -237,7 +237,7 @@
     var work = [];
     try {
       if (tab === 'Analytics') { anCache = {}; work.push(loadAnalytics()); }
-      else if (tab === 'Chat') work.push(openConv ? openThread(openConv.id) : loadChats());
+      else if (tab === 'Chat') work.push(openContact && openContact.id ? loadContact(openContact.id) : openConv ? openThread(openConv.id) : chatMode === 'contacts' ? loadContacts() : loadChats());
       else if (tab === 'Support') {
         if (me && me.user && me.user.is_admin) work.push(adminOpenId && !$('adminThread').hidden ? openAdminThread(adminOpenId) : loadAdminInbox());
         else if (requestsLoaded) window.dispatchEvent(new Event('hashchange')); // requests.js routes again: list or thread
@@ -279,8 +279,9 @@
     framedAt = null; pendingPath = null;
     $('dashFrame').src = 'about:blank';
     convs = []; openConv = null; pendingConv = null;
+    contacts = []; contactsLoaded = false; openContact = null; $('contactScreen').hidden = true;
     if (chatChannel) { try { ONE.db.removeChannel(chatChannel); } catch (e) {} chatChannel = null; }
-    $('navChat').hidden = !hasModule('chat');
+    applyChatUi();
     var badge = $('navChatCount'); if (badge) badge.hidden = true;
     if (hasModule('chat')) { listenChat(); loadChats(); }
     showTab(tab === 'Chat' && !hasModule('chat') ? homeTab() : tab);
@@ -664,7 +665,7 @@
   function renderOnlineBar() {
     var here = convs.filter(function (c) { return c.online && c.status !== 'closed' && !c.blocked; });
     var bar = $('onlineBar');
-    bar.hidden = !here.length || tab !== 'Chat' || !!openConv;
+    bar.hidden = !here.length || tab !== 'Chat' || !!openConv || chatMode !== 'inbox' || !!openContact;
     $('onlineN').textContent = String(here.length);
     $('onlineText').textContent = here.length === 1 ? 'Visitor on your site now' : 'Visitors on your site now';
     bar.onclick = here.length ? function () { openThread(here[0].id); } : null;
@@ -1020,6 +1021,230 @@
     });
   }
 
+  /* --------------------------------------------------------- contacts -- */
+
+  /* Everyone the site has dealt with, beside the inbox: filled from chats,
+     enquiries and payments on the server, plus anyone added by hand. Each
+     has details, Call / Email / Chat, and dated notes. Business and above;
+     a site without live chat still gets them, under that name. */
+  var contacts = [], contactsLoaded = false, contactFilter = '', openContact = null, chatMode = 'inbox', contactsDirty = false;
+  var SOURCE_WORD = { chat: 'From live chat', enquiry: 'From an enquiry', payment: 'Paid on your site', manual: 'Added by you' };
+  function contactsAllowed() { return !!site && site.plan !== 'Starter'; }
+
+  function applyChatUi() {
+    var chat = hasModule('chat'), people = contactsAllowed();
+    $('navChat').hidden = !(chat || people);
+    $('navChat').querySelector('span:not(.nav-count)').textContent = chat ? 'Chat' : 'Contacts';
+    $('chatMode').hidden = !(chat && people);
+    setChatMode(!chat ? 'contacts' : (people && chatMode === 'contacts') ? 'contacts' : 'inbox', true);
+  }
+  function setChatMode(m, quiet) {
+    chatMode = m;
+    $('chatMode').querySelectorAll('.oa-pill').forEach(function (p) { var on = p.dataset.mode === m; p.classList.toggle('is-on', on); p.setAttribute('aria-selected', String(on)); });
+    $('inboxView').hidden = m !== 'inbox';
+    $('contactsView').hidden = m !== 'contacts';
+    $('chatHeading').textContent = m === 'inbox' ? 'Inbox' : 'Contacts';
+    renderOnlineBar();
+    if (m === 'contacts' && !quiet && !contactsLoaded) loadContacts();
+  }
+  $('chatMode').addEventListener('click', function (e) { var p = e.target.closest('.oa-pill'); if (p) setChatMode(p.dataset.mode); });
+
+  function contactName(c) { return c.name || c.email || c.phone || 'Contact'; }
+  function contactAvatar(c) {
+    var av = el('span', 'oa-avatar');
+    if (c.name) {
+      av.textContent = initials(c.name);
+      var n = 0; String(c.id || '').split('').forEach(function (ch) { n = (n + ch.charCodeAt(0)) % 9973; });
+      av.style.background = AVATAR_COLOURS[n % AVATAR_COLOURS.length];
+    } else {
+      av.classList.add('is-anon');
+      av.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="3.6"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/></svg>';
+    }
+    return av;
+  }
+
+  $('contactSearch').addEventListener('input', function () { contactFilter = this.value.trim().toLowerCase(); renderContacts(); });
+  function renderContacts() {
+    var ul = $('contactList');
+    ul.innerHTML = '';
+    var rows = contacts;
+    if (contactFilter) rows = contacts.filter(function (c) { return [c.name, c.email, c.phone, c.company, c.address].join(' ').toLowerCase().indexOf(contactFilter) >= 0; });
+    $('contactEmpty').hidden = contacts.length > 0;
+    $('contactCount').textContent = contacts.length ? contacts.length + (contacts.length === 1 ? ' person' : ' people') : '';
+    if (contacts.length && !rows.length) ul.appendChild(el('li', 'oa-list-none', 'Nobody matches.'));
+    rows.forEach(function (c) {
+      var li = el('li');
+      li.appendChild(contactAvatar(c));
+      var body = el('div', 'oa-conv-body');
+      var top = el('div', 'oa-conv-top');
+      top.appendChild(el('p', 'oa-conv-name', contactName(c)));
+      top.appendChild(el('span', 'oa-conv-when', whenText(c.last_seen_at)));
+      body.appendChild(top);
+      var name = contactName(c);
+      var sub = [c.company, c.phone, c.email].filter(function (v) { return v && v !== name; }).join(' · ');
+      body.appendChild(el('p', 'oa-contact-sub', sub || (c.notes ? c.notes + (c.notes === 1 ? ' note' : ' notes') : SOURCE_WORD[c.source] || '')));
+      li.appendChild(body);
+      li.addEventListener('click', function () { openContactScreen(c); });
+      ul.appendChild(li);
+    });
+  }
+  async function loadContacts() {
+    if (!site) return;
+    try {
+      var res = await api({ action: 'contacts_list', site_id: site.site_id });
+      contacts = res.contacts || []; contactsLoaded = true;
+      renderContacts();
+    } catch (err) { $('contactEmpty').hidden = false; $('contactEmpty').textContent = err.message; }
+  }
+
+  function fillContactForm(c) {
+    $('cfName').value = c.name || ''; $('cfPhone').value = c.phone || ''; $('cfEmail').value = c.email || '';
+    $('cfAddress').value = c.address || ''; $('cfCompany').value = c.company || '';
+  }
+  function renderContactHead(c) {
+    $('contactTitle').textContent = contactName(c);
+    var av = contactAvatar(c); av.id = 'contactAvatar'; $('contactAvatar').replaceWith(av);
+    var since = c.first_seen_at ? new Date(c.first_seen_at) : null;
+    $('contactMeta').textContent = [SOURCE_WORD[c.source], since && !isNaN(since) ? 'since ' + since.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : null].filter(Boolean).join(' · ');
+    $('contactCall').hidden = !c.phone; $('contactCall').href = 'tel:' + String(c.phone || '').replace(/[^\d+]/g, '');
+    $('contactMail').hidden = !c.email; $('contactMail').href = 'mailto:' + (c.email || '');
+    $('contactMap').hidden = !c.address; $('contactMap').href = 'https://maps.apple.com/?q=' + encodeURIComponent(c.address || '');
+    $('contactChat').hidden = !hasModule('chat');
+  }
+  function showContactExtras(on) { $('contactNotesCard').hidden = !on; $('contactTools').hidden = !on; $('contactDelete').hidden = !on; }
+
+  function openContactScreen(c) {
+    openContact = c ? Object.assign({}, c) : { id: null };
+    $('chatList').hidden = true; $('chatThread').hidden = true;
+    $('contactScreen').hidden = false;
+    $('tabChat').classList.add('is-thread');
+    $('onlineBar').hidden = true;
+    fillContactForm(openContact);
+    say($('contactNote'), ''); say($('noteNote'), '');
+    $('noteList').innerHTML = ''; $('contactConvs').innerHTML = '';
+    $('contactHistory').hidden = true;
+    showContactExtras(!!openContact.id);
+    $('contactScreen').querySelector('.oa-contact-body').scrollTop = 0;
+    if (openContact.id) { renderContactHead(openContact); loadContact(openContact.id); }
+    else {
+      $('contactTitle').textContent = 'New contact';
+      $('contactMeta').textContent = 'A name, a phone, an email: whatever you have.';
+      var av = contactAvatar({}); av.id = 'contactAvatar'; $('contactAvatar').replaceWith(av);
+      setTimeout(function () { $('cfName').focus(); }, 60);
+    }
+  }
+  async function loadContact(id) {
+    try {
+      var res = await api({ action: 'contact_get', site_id: site.site_id, contact_id: id });
+      if (!openContact || openContact.id !== id) return;
+      openContact = res.contact;
+      fillContactForm(openContact); renderContactHead(openContact); showContactExtras(true);
+      renderNotes(res.notes || []);
+      renderContactHistory(res);
+    } catch (err) { say($('contactNote'), err.message, 'bad'); }
+  }
+  function renderContactHistory(res) {
+    var convs = res.conversations || [], pays = res.payments || { count: 0 };
+    var bits = [];
+    if (pays.count) bits.push(pays.count + (pays.count === 1 ? ' payment, ' : ' payments, ') + pounds(pays.amount, 'gbp') + (pays.last_at ? ', last ' + ago(pays.last_at) : ''));
+    if (convs.length) bits.push(convs.length + (convs.length === 1 ? ' conversation' : ' conversations'));
+    $('contactHistory').hidden = !bits.length;
+    $('contactHistoryText').textContent = bits.length ? bits.join('. ') + '.' : '';
+    var ul = $('contactConvs'); ul.innerHTML = '';
+    convs.slice(0, 5).forEach(function (c) {
+      var li = el('li');
+      li.appendChild(el('span', 'oa-list-key', (c.channel === 'sms' ? 'Text · ' : c.channel === 'whatsapp' ? 'WhatsApp · ' : '') + (c.preview || 'Conversation')));
+      li.appendChild(el('span', 'oa-list-n', whenText(c.last_at)));
+      li.addEventListener('click', function () { goToThread(c.id); });
+      ul.appendChild(li);
+    });
+  }
+  function closeContactScreen(keepThread) {
+    openContact = null;
+    $('contactScreen').hidden = true;
+    if (!keepThread) { $('tabChat').classList.remove('is-thread'); $('chatList').hidden = false; renderOnlineBar(); }
+    if (contactsDirty) { contactsDirty = false; loadContacts(); }
+  }
+  function goToThread(id) { closeContactScreen(true); setChatMode('inbox', true); return openThread(id); }
+  $('contactBack').addEventListener('click', function () { closeContactScreen(false); });
+  $('contactAdd').addEventListener('click', function () { openContactScreen(null); });
+
+  $('contactForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!openContact) return;
+    var btn = $('contactSave'); btn.disabled = true; say($('contactNote'), 'Saving…');
+    try {
+      var res = await api({ action: 'contact_save', site_id: site.site_id, contact: { id: openContact.id, name: $('cfName').value, phone: $('cfPhone').value, email: $('cfEmail').value, address: $('cfAddress').value, company: $('cfCompany').value } });
+      var wasNew = !openContact.id;
+      openContact = res.contact; contactsDirty = true;
+      fillContactForm(openContact); renderContactHead(openContact); showContactExtras(true);
+      if (wasNew) renderNotes([]);
+      say($('contactNote'), wasNew ? 'Added.' : 'Saved.', 'ok');
+    } catch (err) { say($('contactNote'), err.message, 'bad'); }
+    btn.disabled = false;
+  });
+  $('contactDelete').addEventListener('click', async function () {
+    if (!openContact || !openContact.id) return;
+    if (!confirm('Delete ' + contactName(openContact) + ' and their notes? Their chats stay in the inbox.')) return;
+    try { await api({ action: 'contact_delete', site_id: site.site_id, contact_id: openContact.id }); contactsDirty = true; closeContactScreen(false); }
+    catch (err) { say($('contactNote'), err.message, 'bad'); }
+  });
+
+  function renderNotes(notes) {
+    var ul = $('noteList'); ul.innerHTML = '';
+    if (!notes.length) { ul.appendChild(el('li', 'oa-list-empty', 'No notes yet. The kind of thing you would otherwise keep in your head.')); return; }
+    notes.forEach(function (n) { ul.appendChild(noteRow(n)); });
+  }
+  function noteRow(n) {
+    var li = el('li'); li.dataset.id = n.id;
+    li.appendChild(el('p', 'oa-note-body', n.body));
+    var foot = el('div', 'oa-note-foot');
+    var d = new Date(n.at);
+    foot.appendChild(el('span', '', d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + ', ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })));
+    var del = el('button', 'linkish', 'Delete'); del.type = 'button';
+    del.addEventListener('click', async function () {
+      if (!confirm('Delete this note?')) return;
+      try {
+        await api({ action: 'contact_note_delete', site_id: site.site_id, note_id: n.id });
+        li.remove(); contactsDirty = true;
+        if (!$('noteList').children.length) renderNotes([]);
+      } catch (err) { say($('noteNote'), err.message, 'bad'); }
+    });
+    foot.appendChild(del);
+    li.appendChild(foot);
+    return li;
+  }
+  $('noteBody').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(160, this.scrollHeight) + 'px'; });
+  $('noteForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!openContact || !openContact.id) return;
+    var ta = $('noteBody'); var text = ta.value.trim();
+    if (!text) return;
+    $('noteAdd').disabled = true;
+    try {
+      var res = await api({ action: 'contact_note_add', site_id: site.site_id, contact_id: openContact.id, body: text });
+      ta.value = ''; ta.style.height = 'auto'; say($('noteNote'), '');
+      var ul = $('noteList'); var empty = ul.querySelector('.oa-list-empty'); if (empty) empty.remove();
+      ul.insertBefore(noteRow(res.note), ul.firstChild);
+      contactsDirty = true;
+    } catch (err) { say($('noteNote'), err.message, 'bad'); }
+    $('noteAdd').disabled = false;
+  });
+
+  /* Chat with them: their thread if they have one, else a new one. The
+     first message of a new one goes by email with a link that carries the
+     thread on in the chat on the site. */
+  $('contactChat').addEventListener('click', async function () {
+    if (!openContact || !openContact.id) return;
+    var btn = this; btn.disabled = true;
+    try {
+      var res = await api({ action: 'contact_chat', site_id: site.site_id, contact_id: openContact.id });
+      await goToThread(res.conversation_id);
+      if (res.created) say($('chatNote'), 'A new chat. Your first message goes to them by email, with a link to carry it on in the chat on your site.', 'ok');
+    } catch (err) { say($('contactNote'), err.message, 'bad'); }
+    btn.disabled = false;
+  });
+
   /* --------------------------------------------------------- activity -- */
 
   var ICON = { money_in: '£', money_failed: '!', money_refund: '↩', money_cancelled: '✕', work: '🛠', booking: '📅', person: '👤', chat: '💬', review: '★', support: '?' };
@@ -1177,7 +1402,7 @@
     }
     $('accountEmail').textContent = me.user.email || '';
     $('deleteWrap').hidden = !!me.user.is_admin;
-    $('navChat').hidden = !hasModule('chat');
+    applyChatUi();
     $('bellDot').hidden = !(me.unread && me.unread.notifications > 0);
     var reqBadge = $('navReqCount');
     reqBadge.textContent = String(me.unread ? me.unread.requests : 0);
