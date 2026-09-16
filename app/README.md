@@ -106,6 +106,28 @@ a visitor's reply is checked against the address they gave, the quoted
 history is cut off, and what they wrote lands in the thread and on the
 owner's phone. Until that is set up, replies go to the business's own inbox.
 
+## Contacts (Business and above)
+
+Beside the inbox on the Chat tab: everyone the site has dealt with. The
+list fills itself from live chat, enquiries and payments (anyone who left
+a name, email or phone), matched on email then phone, and the owner adds
+anyone else with **New contact**. A site without live chat still gets the
+tab, called Contacts. Starter does not get it: `api/app.js` refuses the
+`contact*` actions for a Starter site and the app hides the control.
+
+A contact has name, phone, email, address and business, each editable;
+**Call**, **Email** and **Map** open the phone's own apps; **History**
+shows their payments and conversations; **Notes** are dated entries
+("Worcester 30i, serviced March, needs a new pump next time").
+
+**Chat** from a contact opens their existing thread, or starts a new one.
+Nobody is holding the visitor's side of a new thread yet, so the first
+reply goes by email (the reply bar defaults to Email) with a **Continue
+the chat** link carrying a one-time claim code; `chat.js` on the site
+swaps it for the visitor's token (`api/chat.js` `claim`) and the thread
+carries on there. Without an email address the app says to call instead.
+Tables: `contacts`, `contact_notes` (migration 0040).
+
 ## Missed calls answered by text (Max)
 
 A site on Max gets a phone number of its own. Calls to it ring the owner's
