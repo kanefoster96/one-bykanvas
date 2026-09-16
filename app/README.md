@@ -115,15 +115,33 @@ hidden (not gated: the same page, `isStarter()` in `app.js`):
   the address from the server when the tab opens; under 500 is online),
   the address, **Open your website** in the phone's browser, their plan,
   and two shortcuts: make a request, chat to Kane.
-- **Support**: the Requests feature, where the monthly change is asked for.
-- **Chat**: straight to Kane, not with their visitors. It is the customer's
-  side of a conversation on kanvas.one's own site row (`support_get` /
-  `support_send`), keyed by their login email, so it lands in Kane's
-  inbox next to chat from the website with their name on it. The app
-  polls while the tab is open and stamps them online, so Kane's reply goes
-  to the chat; when they are not in the app it goes by email as usual, and
-  the **Continue the chat** link (`/app/?k1chat=open`) opens the app on the
-  Chat tab.
+- **Support**: the Requests feature, where the monthly change is asked
+  for, and the chat with Kane (below).
+
+## Chat with Kane (every plan)
+
+On the Support tab, beside Requests, every business has a chat straight to
+Kane. It is the business's side of a conversation on kanvas.one's own site
+row (`support_get` / `support_send`, `conversations.app_user_id` names the
+business), so it lands in Kane's inbox next to chat from the website, with
+the business name on it and "From their One app" under it.
+
+Two kinds of chat, two kinds of delivery:
+
+- **A business's own visitors** have no app, so Kane's-style rules apply
+  to the business's replies: live chat while the visitor is on the site,
+  email once they have gone.
+- **A business talking to Kane** is an app user, so Kane's reply reaches
+  them as a **notification in the app** ("Kane replied", kind
+  `support_chat`, opens the chat), never an email while they have a phone
+  registered for push. The Support badge counts an unread reply and the
+  chat pill carries a dot. The app polls while the chat is on screen and
+  stamps them online, so Kane sees them as such. Only a business with no
+  device registered falls back to email, with a link that opens the app on
+  the chat.
+
+Starter has no Chat tab of its own (no visitors to chat with); its chat is
+this one, on Support.
 
 ## Contacts (Business and above)
 
