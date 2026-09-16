@@ -147,9 +147,9 @@
     if (tab === 'Dashboard') { var p = pendingPath; pendingPath = null; renderDashboard(p); }
     if (tab === 'Support') loadRequests();
     if (tab === 'Website') renderWebsite();
-    if (tab !== 'Chat') clearTimeout(supportTimer);
-    if (tab === 'Chat' && isStarter()) { $('chatList').hidden = true; $('chatThread').hidden = true; $('contactScreen').hidden = true; $('supportChat').hidden = false; $('tabChat').classList.add('is-thread'); loadSupportChat(); }
-    else if (tab === 'Chat') { if (openConv && !pendingConv) schedulePoll(); else { openConv = null; openContact = null; $('chatThread').hidden = true; $('contactScreen').hidden = true; $('tabChat').classList.remove('is-thread'); $('chatList').hidden = false; if (chatMode === 'contacts') loadContacts(); else loadChats(); } }
+    if (tab !== 'Support') clearTimeout(supportTimer);
+    if (tab === 'Support' && supportMode === 'chat') showSupportChat();
+    if (tab === 'Chat') { if (openConv && !pendingConv) schedulePoll(); else { openConv = null; openContact = null; $('chatThread').hidden = true; $('contactScreen').hidden = true; $('tabChat').classList.remove('is-thread'); $('chatList').hidden = false; if (chatMode === 'contacts') loadContacts(); else loadChats(); } }
     else { $('onlineBar').hidden = true; }
   }
 
@@ -242,7 +242,8 @@
     try {
       if (tab === 'Analytics') { anCache = {}; work.push(loadAnalytics()); }
       else if (tab === 'Website') work.push(renderWebsite());
-      else if (tab === 'Chat') work.push(isStarter() ? loadSupportChat(true) : openContact && openContact.id ? loadContact(openContact.id) : openConv ? openThread(openConv.id) : chatMode === 'contacts' ? loadContacts() : loadChats());
+      else if (tab === 'Chat') work.push(openContact && openContact.id ? loadContact(openContact.id) : openConv ? openThread(openConv.id) : chatMode === 'contacts' ? loadContacts() : loadChats());
+      else if (tab === 'Support' && supportMode === 'chat') work.push(loadSupportChat(true));
       else if (tab === 'Support') {
         if (me && me.user && me.user.is_admin) work.push(adminOpenId && !$('adminThread').hidden ? openAdminThread(adminOpenId) : loadAdminInbox());
         else if (requestsLoaded) window.dispatchEvent(new Event('hashchange')); // requests.js routes again: list or thread
@@ -256,16 +257,24 @@
       setTimeout(settlePull, 300);
     });
   }
+  /* The bell, the Support badge (requests waiting plus a reply from Kane
+     in the chat) and the dot on the chat pill, from the counts in me. */
+  function paintUnread() {
+    var u = (me && me.unread) || {};
+    $('bellDot').hidden = !(u.notifications > 0);
+    var n = (u.requests || 0) + (u.support || 0);
+    var reqBadge = $('navReqCount');
+    reqBadge.textContent = String(n);
+    reqBadge.hidden = n === 0;
+    $('supportChatDot').hidden = !(u.support > 0) || (tab === 'Support' && supportMode === 'chat');
+  }
   /* The badges, without a reboot. */
   async function refreshMe() {
     if (!me) return;
     var fresh = await api({ action: 'me' });
     me.unread = fresh.unread;
     if (fresh.sites) { me.sites = fresh.sites; var cur = fresh.sites.filter(function (s) { return site && s.site_id === site.site_id; })[0]; if (cur) site = cur; }
-    $('bellDot').hidden = !(me.unread && me.unread.notifications > 0);
-    var reqBadge = $('navReqCount');
-    reqBadge.textContent = String(me.unread ? me.unread.requests : 0);
-    reqBadge.hidden = !(me.unread && me.unread.requests > 0);
+    paintUnread();
   }
 
   function hasModule(m) { return !!(site && (site.modules || []).indexOf(m) >= 0); }
@@ -309,11 +318,25 @@
   }
   $('siteOpen').addEventListener('click', function () { if (site && site.url) openExternal(site.url); });
   $('siteRequest').addEventListener('click', function () { location.hash = '#new'; showTab('Support'); });
-  $('siteChat').addEventListener('click', function () { showTab('Chat'); });
+  $('siteChat').addEventListener('click', function () { showTab('Support'); setSupportMode('chat'); });
 
-  /* The chat with Kane: the customer's side of a conversation on
-     kanvas.one's own site, polled while the tab is open. */
-  var supportTimer = null, supportCount = -1;
+  /* The chat with Kane, on the Support tab for every business: the
+     customer's side of a conversation on kanvas.one's own site, polled
+     while it is on screen. Kane's replies arrive as app notifications. */
+  var supportTimer = null, supportCount = -1, supportMode = 'requests';
+  function setSupportMode(m) {
+    supportMode = m;
+    $('supportMode').querySelectorAll('.oa-pill').forEach(function (p) { var on = p.dataset.mode === m; p.classList.toggle('is-on', on); p.setAttribute('aria-selected', String(on)); });
+    if (m === 'chat') showSupportChat();
+    else { clearTimeout(supportTimer); $('supportChat').hidden = true; reqScreen(/^#r\//.test(location.hash) || !$('adminThread').hidden); }
+  }
+  function showSupportChat() {
+    $('supportChat').hidden = false;
+    reqScreen(true);
+    $('supportChatDot').hidden = true;
+    loadSupportChat();
+  }
+  $('supportMode').addEventListener('click', function (e) { var p = e.target.closest('.oa-pill'); if (p) setSupportMode(p.dataset.mode); });
   function supportBubble(m) {
     var mine = m.author === 'visitor';
     var wrap = el('div', 'msg ' + (mine ? 'from-owner' : 'from-visitor'));
@@ -341,7 +364,7 @@
         box.scrollTop = box.scrollHeight;
       }
     } catch (err) { if (!quiet) say($('supportNote'), err.message, 'bad'); }
-    if (tab === 'Chat' && isStarter()) supportTimer = setTimeout(function () { loadSupportChat(true); }, 8000);
+    if (tab === 'Support' && supportMode === 'chat') supportTimer = setTimeout(function () { loadSupportChat(true); }, 8000);
   }
   $('supportBody').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(120, this.scrollHeight) + 'px'; });
   $('supportForm').addEventListener('submit', async function (e) {
@@ -444,6 +467,7 @@
      a place in the dashboard. */
   function openLink(n) {
     var link = n.deep_link || null;
+    if (link && link.kind === 'support_chat') { showTab('Support'); setSupportMode('chat'); return; }
     if (link && link.kind === 'chat') { pendingConv = link.id || null; showTab('Chat'); return; }
     if (link && link.kind === 'support' && link.id) { location.hash = 'r/' + link.id; showTab('Support'); return; }
     if (n.href && /^\/requests\.html#(r\/.+)$/.test(n.href)) { location.hash = RegExp.$1; showTab('Support'); return; }
@@ -743,7 +767,7 @@
       top.appendChild(el('p', 'oa-conv-name', displayName(c)));
       top.appendChild(el('span', 'oa-conv-when', whenText(c.last_at)));
       body.appendChild(top);
-      body.appendChild(el('p', 'oa-conv-preview', (c.last_by === 'owner' ? 'You: ' : '') + (c.preview || (c.page ? 'Visited ' + pageName(c.page) : ''))));
+      body.appendChild(el('p', 'oa-conv-preview', (c.last_by === 'owner' ? 'You: ' : '') + (c.preview || (c.via_app ? 'From their One app' : c.page ? 'Visited ' + pageName(c.page) : ''))));
       li.appendChild(body);
       li.addEventListener('click', function () { openThread(c.id); });
       ul.appendChild(li);
@@ -844,6 +868,13 @@
     if (chan !== 'web') {
       form.hidden = true; row.hidden = true; none.hidden = false;
       none.textContent = (chan === 'whatsapp' ? 'WhatsApp' : 'Text') + ' threads take no typed replies: texts are automated only, to keep costs down. Call them back' + (c.email ? ', or email them.' : '.');
+      return;
+    }
+    if (c.via_app) {
+      // A business, from their One app: the reply reaches them as a notification there.
+      form.hidden = false; row.hidden = true; none.hidden = false; via = 'chat';
+      none.textContent = 'A Kanvas One customer, writing from their app. Your reply reaches them as a notification in the app' + (c.online ? '; they are in it now.' : '.');
+      $('chatBody').placeholder = 'Write a reply';
       return;
     }
     form.hidden = false; none.hidden = true; row.hidden = false;
@@ -1123,7 +1154,7 @@
   function contactsAllowed() { return !!site && site.plan !== 'Starter'; }
 
   function applyChatUi() {
-    if (isStarter()) { $('navChat').hidden = false; $('navChat').querySelector('span:not(.nav-count)').textContent = 'Chat'; $('chatMode').hidden = true; return; }
+    if (isStarter()) { $('navChat').hidden = true; return; }
     var chat = hasModule('chat'), people = contactsAllowed();
     $('navChat').hidden = !(chat || people);
     $('navChat').querySelector('span:not(.nav-count)').textContent = chat ? 'Chat' : 'Contacts';
@@ -1439,7 +1470,8 @@
       // Ask what is unread rather than assume: a resume with nothing new
       // must not light the bell.
       refreshMe().catch(function () {});
-      if (isStarter()) { if (tab === 'Chat') loadSupportChat(true); return; }
+      if (tab === 'Support' && supportMode === 'chat') loadSupportChat(true);
+      if (isStarter()) return;
       if (hasModule('chat')) loadChats();
       if (tab === 'Support' && me.user && me.user.is_admin && $('adminThread').hidden) loadAdminInbox();
       if (tab === 'Support' && !(me.user && me.user.is_admin) && ONE.refreshRequestBadge) ONE.refreshRequestBadge();
@@ -1497,18 +1529,17 @@
     $('deleteWrap').hidden = !!me.user.is_admin;
     applyPlanUi();
     applyChatUi();
-    $('bellDot').hidden = !(me.unread && me.unread.notifications > 0);
-    var reqBadge = $('navReqCount');
-    reqBadge.textContent = String(me.unread ? me.unread.requests : 0);
-    reqBadge.hidden = !(me.unread && me.unread.requests > 0);
+    paintUnread();
     seenAt = Date.now() - 1; // what is unread now stays highlighted until the sheet opens
 
     loading.hidden = true;
     app.hidden = false;
 
     var h = location.hash.replace(/^#/, '');
-    // A Starter customer arriving from a "Continue the chat" email lands in the chat.
-    showTab(/^(new|r\/)/.test(h) ? 'Support' : isStarter() && /k1chat=open/.test(location.search) ? 'Chat' : homeTab());
+    $('supportModeWrap').hidden = !!me.user.is_admin;
+    // A business arriving from one of Kane's emails lands in the chat with him.
+    if (!me.user.is_admin && /k1chat=open/.test(location.search)) { showTab('Support'); setSupportMode('chat'); }
+    else showTab(/^(new|r\/)/.test(h) ? 'Support' : homeTab());
     setupPush();
     if (hasModule('chat')) { listenChat(); loadChats(); schedulePoll(); }
     nativeReady();

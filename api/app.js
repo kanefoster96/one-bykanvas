@@ -16,7 +16,8 @@
 const { createClient } = require('@supabase/supabase-js');
 const Stripe = require('stripe');
 const { missingEnv, adminEmails, ourSiteUrl } = require('./_env.js');
-const { notifyAdmin } = require('./_notify.js');
+const { notifyAdmin, notify } = require('./_notify.js');
+const { devicesFor } = require('./_push.js');
 const { sitesFor, siteFor, isUuid } = require('./_mcp.js');
 const crypto = require('crypto');
 const { cleanBody, cleanName, cleanEmail, cleanPhone, isOnline, addMessage, tellOwner } = require('./_chat.js');
@@ -219,7 +220,7 @@ async function me(db, caller) {
   return {
     user: { id: caller.user_id, email: caller.email, is_admin: caller.is_admin, plan: (prof && prof.active_plan) || null },
     sites: full,
-    unread: { notifications: (fresh || []).length, requests: requestsUnread }
+    unread: { notifications: (fresh || []).length, requests: requestsUnread, support: caller.is_admin ? 0 : await supportUnread(db, caller) }
   };
 }
 
@@ -239,7 +240,7 @@ async function events(db, caller, siteId) {
 
 function convOut(c, now) {
   return {
-    id: c.id, channel: c.channel || 'web', name: c.visitor_name, email: c.visitor_email, phone: c.visitor_phone, page: c.page,
+    id: c.id, channel: c.channel || 'web', via_app: !!c.app_user_id, name: c.visitor_name, email: c.visitor_email, phone: c.visitor_phone, page: c.page,
     status: c.status, blocked: !!c.blocked_at, online: isOnline(c, now),
     last_at: c.last_message_at, last_by: c.last_message_by, preview: c.last_message_preview,
     unread: c.last_message_by === 'visitor' && (!c.owner_seen_at || new Date(c.owner_seen_at) < new Date(c.last_message_at)),
@@ -313,7 +314,18 @@ async function chatReply(db, site, id, bodyIn, via) {
   const online = isOnline(conv);
   const made = await addMessage(db, conv, 'owner', text);
   const delivered = ['chat'];
-  const wantsEmail = !!conv.visitor_email && (via === 'email' || !online);
+  // A business talking to Kane from their One app: the reply reaches them
+  // as a notification in the app, not an email. Email only if they have
+  // no phone registered for push, so nothing is lost.
+  let pushed = false;
+  if (conv.app_user_id) {
+    const devices = await devicesFor(db, conv.app_user_id).catch(() => []);
+    if (devices.length) {
+      await notify(db, conv.app_user_id, 'Kane replied', text.slice(0, 140), null, { kind: 'support_chat', deepLink: { kind: 'support_chat' } });
+      delivered.push('app'); pushed = true;
+    }
+  }
+  const wantsEmail = !pushed && !!conv.visitor_email && (via === 'email' || !online);
   if (wantsEmail) {
     const business = site.name || site.profile.business_name || 'us';
     const { data: recent } = await db.from('messages').select('id, author, body, created_at').eq('conversation_id', conv.id).order('created_at', { ascending: false }).limit(6);
@@ -634,12 +646,12 @@ async function homeSite(db) {
 async function supportConv(db, caller, create) {
   const home = await homeSite(db);
   if (!home) { const e = new Error('Chat is not set up yet. Send a request instead and we will see it.'); e.shown = true; throw e; }
-  const { data: found } = await db.from('conversations').select('*').eq('site_id', home.id).eq('channel', 'web').ilike('visitor_email', caller.email).order('created_at', { ascending: false }).limit(1);
+  const { data: found } = await db.from('conversations').select('*').eq('site_id', home.id).eq('app_user_id', caller.user_id).order('created_at', { ascending: false }).limit(1);
   let conv = (found && found[0]) || null;
   if (!conv && create) {
     const { data: prof } = await db.from('profiles').select('business_name, contact_name').eq('id', caller.user_id).maybeSingle();
     const row = {
-      site_id: home.id, channel: 'web', visitor_name: (prof && (prof.contact_name || prof.business_name)) || null, visitor_email: caller.email,
+      site_id: home.id, channel: 'web', app_user_id: caller.user_id, visitor_name: (prof && (prof.business_name || prof.contact_name)) || null, visitor_email: caller.email,
       page: '/app/', visitor_token_hash: 'a:' + crypto.randomBytes(24).toString('hex'), visitor_online_at: new Date().toISOString(), last_message_by: 'owner'
     };
     const { data: made, error } = await db.from('conversations').insert(row).select().single();
@@ -647,6 +659,14 @@ async function supportConv(db, caller, create) {
     conv = made;
   }
   return conv;
+}
+/* Kane spoke last and they have not opened the chat since: 1, else 0. The
+   app stamps visitor_online_at every time it shows the chat. */
+async function supportUnread(db, caller) {
+  const { data } = await db.from('conversations').select('last_message_by, last_message_at, visitor_online_at').eq('app_user_id', caller.user_id).order('created_at', { ascending: false }).limit(1);
+  const c = data && data[0];
+  if (!c || c.last_message_by !== 'owner') return 0;
+  return !c.visitor_online_at || new Date(c.last_message_at) > new Date(c.visitor_online_at) ? 1 : 0;
 }
 async function supportGet(db, caller) {
   const conv = await supportConv(db, caller, false);

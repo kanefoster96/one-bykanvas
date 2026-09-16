@@ -12,7 +12,7 @@
 <link rel="icon" href="../assets/favicon.svg?v=2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/favicon.svg?v=2">
 <link rel="stylesheet" href="../styles.css?v=72">
-<link rel="stylesheet" href="app.css?v=13">
+<link rel="stylesheet" href="app.css?v=14">
 </head>
 <body class="oa-body">
 
@@ -222,27 +222,6 @@
       </div>
     </section>
 
-    <!-- Starter: a chat straight to Kane, not with the site's visitors. -->
-    <section class="oa-screen" id="supportChat" hidden>
-      <div class="oa-conv-head oa-support-head">
-        <span class="oa-avatar oa-avatar-k">K</span>
-        <div class="oa-conv-who">
-          <h2>Chat with Kane</h2>
-          <p class="hint">Replies land here, and by email if you are not in the app.</p>
-        </div>
-      </div>
-      <div class="thread oa-thread" id="supportMsgs"></div>
-      <div class="oa-reply-wrap">
-        <form class="oa-reply" id="supportForm" novalidate>
-          <textarea id="supportBody" rows="1" maxlength="2000" placeholder="Write a message" aria-label="Your message"></textarea>
-          <button class="oa-send" id="supportSend" type="submit" aria-label="Send">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
-          </button>
-        </form>
-        <p class="note" id="supportNote" role="status" aria-live="polite"></p>
-      </div>
-    </section>
-
     <section class="oa-screen" id="contactScreen" hidden>
       <div class="oa-conv-head">
         <button class="oa-icon-btn oa-back" id="contactBack" type="button" aria-label="All contacts">
@@ -343,6 +322,34 @@
 
   <!-- ---- Support (the Requests feature, unchanged) ---- -->
   <section class="oa-tab req-wrap" id="tabSupport" hidden>
+
+    <!-- Every business: requests, and a chat straight to Kane. Kane's
+         replies reach them as a notification in this app. -->
+    <div class="oa-seg-wrap" id="supportModeWrap" hidden>
+      <div class="oa-pills oa-seg" id="supportMode" role="tablist" aria-label="Requests or chat">
+        <button class="oa-pill is-on" type="button" data-mode="requests" role="tab" aria-selected="true">Requests</button>
+        <button class="oa-pill" type="button" data-mode="chat" role="tab" aria-selected="false">Chat with Kane<span class="oa-seg-dot" id="supportChatDot" hidden></span></button>
+      </div>
+    </div>
+    <section class="oa-screen oa-screen-low" id="supportChat" hidden>
+      <div class="oa-conv-head oa-support-head">
+        <span class="oa-avatar oa-avatar-k">K</span>
+        <div class="oa-conv-who">
+          <h2>Chat with Kane</h2>
+          <p class="hint">Replies come back here, with a notification on your phone.</p>
+        </div>
+      </div>
+      <div class="thread oa-thread" id="supportMsgs"></div>
+      <div class="oa-reply-wrap">
+        <form class="oa-reply" id="supportForm" novalidate>
+          <textarea id="supportBody" rows="1" maxlength="2000" placeholder="Write a message" aria-label="Your message"></textarea>
+          <button class="oa-send" id="supportSend" type="submit" aria-label="Send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+          </button>
+        </form>
+        <p class="note" id="supportNote" role="status" aria-live="polite"></p>
+      </div>
+    </section>
 
     <!-- The admin's side: every customer's requests, through /api/admin. -->
     <section id="adminInbox" hidden>
@@ -522,6 +529,6 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=15"></script>
+<script src="app.js?v=16"></script>
 </body>
 </html>

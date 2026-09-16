@@ -245,6 +245,12 @@
 .oa-status-plan{margin:0 0 4px;font-size:19px;font-weight:600;letter-spacing:-.02em}
 .oa-status-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .oa-support-head{padding-left:14px}
+.oa-seg-wrap{padding:0 0 10px}
+#tabSupport.is-thread .oa-seg-wrap{padding:10px 18px 0}
+.oa-seg{width:100%;box-sizing:border-box}
+.oa-seg .oa-pill{flex:1;text-align:center;position:relative;font-size:14px;padding:8px 12px}
+.oa-seg-dot{position:absolute;top:7px;right:9px;width:8px;height:8px;border-radius:50%;background:#3b6fd6}
+.oa-screen-low{top:calc(61px + 58px + env(safe-area-inset-top))}
 .oa-avatar-k{flex-basis:40px;width:40px;height:40px;font-size:15px;background:var(--ink)}
 
 /* ---- contacts ---- */
