@@ -19,7 +19,7 @@ const { missingEnv, adminEmails, ourSiteUrl } = require('./_env.js');
 const { notifyAdmin } = require('./_notify.js');
 const { sitesFor, siteFor, isUuid } = require('./_mcp.js');
 const crypto = require('crypto');
-const { cleanBody, cleanName, cleanEmail, cleanPhone, isOnline, addMessage } = require('./_chat.js');
+const { cleanBody, cleanName, cleanEmail, cleanPhone, isOnline, addMessage, tellOwner } = require('./_chat.js');
 const { sendSms, placeCall } = require('./_twilio.js');
 const { sendEmail } = require('./_email.js');
 const { html: emailHtml, esc } = require('./_email_template.js');
@@ -600,6 +600,72 @@ async function contactChat(db, site, contactId) {
   return { conversation_id: conv.id, created: true };
 }
 
+/* ----------------------------------------------------------- starter -- */
+
+/* Is the site up? One request to its address from here, when the owner
+   opens the Website tab. Anything under 500 counts as online: a 404 on
+   the front door is still a server answering. */
+async function siteStatus(site) {
+  const url = String(site.url || (site.profile && site.profile.site_url) || '').trim();
+  const out = { url: /^https?:\/\//i.test(url) ? url.replace(/\/+$/, '') : null, live: site.status === 'live', status: site.status, online: null, code: null, ms: null, checked_at: new Date().toISOString() };
+  if (!out.url || !out.live) return out;
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 6000);
+  const started = Date.now();
+  try {
+    const r = await fetch(out.url, { method: 'GET', redirect: 'follow', signal: ctl.signal, headers: { 'User-Agent': 'KanvasOne-StatusCheck/1.0' } });
+    out.code = r.status; out.online = r.status < 500; out.ms = Date.now() - started;
+  } catch (e) {
+    out.online = false; out.ms = Date.now() - started; out.error = e && e.name === 'AbortError' ? 'timeout' : 'unreachable';
+  } finally { clearTimeout(timer); }
+  return out;
+}
+
+/* A Starter customer's chat goes to Kane, not to their own visitors: one
+   conversation per customer on kanvas.one's own site row, so it lands in
+   the same inbox as chat from the website, with their name on it. The
+   app speaks for the visitor's side with the login, no token needed. */
+async function homeSite(db) {
+  const { data } = await db.from('sites').select('*').eq('url', ourSiteUrl()).limit(1);
+  if (data && data.length) return data[0];
+  const { data: alt } = await db.from('sites').select('*').eq('name', 'Kanvas One').limit(1);
+  return (alt && alt[0]) || null;
+}
+async function supportConv(db, caller, create) {
+  const home = await homeSite(db);
+  if (!home) { const e = new Error('Chat is not set up yet. Send a request instead and we will see it.'); e.shown = true; throw e; }
+  const { data: found } = await db.from('conversations').select('*').eq('site_id', home.id).eq('channel', 'web').ilike('visitor_email', caller.email).order('created_at', { ascending: false }).limit(1);
+  let conv = (found && found[0]) || null;
+  if (!conv && create) {
+    const { data: prof } = await db.from('profiles').select('business_name, contact_name').eq('id', caller.user_id).maybeSingle();
+    const row = {
+      site_id: home.id, channel: 'web', visitor_name: (prof && (prof.contact_name || prof.business_name)) || null, visitor_email: caller.email,
+      page: '/app/', visitor_token_hash: 'a:' + crypto.randomBytes(24).toString('hex'), visitor_online_at: new Date().toISOString(), last_message_by: 'owner'
+    };
+    const { data: made, error } = await db.from('conversations').insert(row).select().single();
+    if (error) throw new Error(error.message);
+    conv = made;
+  }
+  return conv;
+}
+async function supportGet(db, caller) {
+  const conv = await supportConv(db, caller, false);
+  if (!conv) return { messages: [] };
+  // In the app is on the line: Kane's reply goes to the chat, not to email.
+  await db.from('conversations').update({ visitor_online_at: new Date().toISOString() }).eq('id', conv.id);
+  const { data: msgs } = await db.from('messages').select('id, author, body, created_at').eq('conversation_id', conv.id).order('created_at', { ascending: true }).limit(300);
+  return { messages: (msgs || []).filter((m) => m.author !== 'system').map((m) => ({ id: m.id, author: m.author, body: m.body, at: m.created_at })) };
+}
+async function supportSend(db, caller, bodyIn) {
+  const text = cleanBody(bodyIn);
+  if (text.length < 1) { const e = new Error('Write a message first.'); e.shown = true; throw e; }
+  const conv = await supportConv(db, caller, true);
+  if (conv.blocked_at) { const e = new Error('This chat is closed. Send a request instead.'); e.shown = true; throw e; }
+  const made = await addMessage(db, conv, 'visitor', text);
+  await tellOwner(db, made.conversation, text);
+  return { message: { id: made.message.id, author: 'visitor', body: text, at: made.message.created_at } };
+}
+
 /* ---------------------------------------------------------- handler -- */
 
 module.exports = async function handler(req, res) {
@@ -640,6 +706,10 @@ module.exports = async function handler(req, res) {
     if (action === 'chat_reply') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await chatReply(db, site, body.conversation_id, body.body, body.via)); }
     if (action === 'call_back') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await callBack(db, site, body.conversation_id, body.to)); }
     if (action === 'chat_set') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json({ conversation: await chatSet(db, site, body.conversation_id, body) }); }
+
+    if (action === 'site_status') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await siteStatus(site)); }
+    if (action === 'support_get') return res.status(200).json(await supportGet(db, caller));
+    if (action === 'support_send') return res.status(200).json(await supportSend(db, caller, body.body));
 
     if (/^contact/.test(action)) {
       const site = await siteFor({ db }, caller, body.site_id);

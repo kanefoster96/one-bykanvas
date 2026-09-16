@@ -106,6 +106,25 @@ a visitor's reply is checked against the address they gave, the quoted
 history is cut off, and what they wrote lands in the thread and on the
 owner's phone. Until that is set up, replies go to the business's own inbox.
 
+## Starter's app
+
+A Starter customer has no dashboard, so their app is three tabs, the rest
+hidden (not gated: the same page, `isStarter()` in `app.js`):
+
+- **Website**: whether their site is up (`api/app.js` `site_status` fetches
+  the address from the server when the tab opens; under 500 is online),
+  the address, **Open your website** in the phone's browser, their plan,
+  and two shortcuts: make a request, chat to Kane.
+- **Support**: the Requests feature, where the monthly change is asked for.
+- **Chat**: straight to Kane, not with their visitors. It is the customer's
+  side of a conversation on kanvas.one's own site row (`support_get` /
+  `support_send`), keyed by their login email, so it lands in Kane's
+  inbox next to chat from the website with their name on it. The app
+  polls while the tab is open and stamps them online, so Kane's reply goes
+  to the chat; when they are not in the app it goes by email as usual, and
+  the **Continue the chat** link (`/app/?k1chat=open`) opens the app on the
+  Chat tab.
+
 ## Contacts (Business and above)
 
 Beside the inbox on the Chat tab: everyone the site has dealt with. The
