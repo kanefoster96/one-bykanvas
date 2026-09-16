@@ -202,6 +202,20 @@
 /* ---- chat: a conversation, filling the screen between header and tabs ---- */
 #tabChat.is-thread{padding:0;max-width:none}
 .oa-screen{position:fixed;left:0;right:0;top:calc(61px + env(safe-area-inset-top));bottom:calc(74px + env(safe-area-inset-bottom));z-index:5;display:flex;flex-direction:column;background:#fff}
+/* While one of these screens is up the page behind it has nothing to show,
+   yet it was still a viewport plus the tabs' height tall, and iOS shoves a
+   page up under an open keyboard until the reply box clears it, header and
+   all, then lets a finger drag the whole thing. So app.js locks the page
+   (html.oa-lock) and makes .one-app the visual viewport itself, its top and
+   height read from window.visualViewport: a keyboard shrinks the screen,
+   the reply box sits on it. The transform makes .one-app the box the fixed
+   screen, tabs and sheets are placed in, so they follow it. */
+html.oa-lock,html.oa-lock body{height:100%;overflow:hidden;overscroll-behavior:none}
+html.oa-lock body{position:fixed;inset:0;width:100%}
+html.oa-lock .one-app{position:fixed;left:0;right:0;top:var(--oa-vt,0px);height:var(--oa-vh,100%);min-height:0;padding:0;overflow:hidden;transform:translateZ(0)}
+.oa-thread,.oa-contact-body,.oa-reply textarea{overscroll-behavior:contain}
+/* A short thread sits at the bottom, by the reply box, like any chat. */
+.oa-thread > :first-child{margin-top:auto}
 .oa-conv-head{display:flex;align-items:center;gap:10px;padding:6px 10px 8px 4px;border-bottom:1px solid var(--line-soft);flex:0 0 auto}
 .oa-conv-head .oa-avatar{flex-basis:40px;width:40px;height:40px;font-size:14px}
 .oa-conv-who{flex:1;min-width:0}

@@ -174,6 +174,61 @@
      takes the whole screen between header and tabs, like a chat. */
   function reqScreen(on) { $('tabSupport').classList.toggle('is-thread', !!on); }
 
+  /* A thread, a contact or the chat with Kane fills the screen between the
+     header and the tabs (position:fixed), so the page behind it has nowhere
+     to scroll to; it was still taller than the viewport, and iOS shoves a
+     page up under an open keyboard until the reply box clears it, header
+     and all, then lets a finger drag the whole thing about. While one of
+     those screens is up the page is locked (html.oa-lock in app.css) and
+     .one-app is sized to the visual viewport: an open keyboard shrinks the
+     screen, the reply box sits on it and the last messages stay in view. */
+  var vv = window.visualViewport;
+  var locked = false;
+  function screenOn() {
+    return !app.hidden && !!document.querySelector('.oa-tab:not([hidden]) .oa-screen:not([hidden])');
+  }
+  function fitScreen() {
+    var s = document.documentElement.style;
+    if (!locked || !vv) { s.removeProperty('--oa-vt'); s.removeProperty('--oa-vh'); return; }
+    s.setProperty('--oa-vt', Math.max(0, Math.round(vv.offsetTop)) + 'px');
+    s.setProperty('--oa-vh', Math.round(vv.height) + 'px');
+  }
+  function unscroll() {
+    if (window.scrollY || document.documentElement.scrollTop) window.scrollTo(0, 0);
+  }
+  function lockPage() {
+    var on = screenOn();
+    if (on === locked) return;
+    locked = on;
+    document.documentElement.classList.toggle('oa-lock', on);
+    unscroll();
+    fitScreen();
+  }
+  new MutationObserver(lockPage).observe(app, { attributes: true, attributeFilter: ['hidden'], subtree: true });
+  if (vv) {
+    var onViewport = function () {
+      if (!locked) return;
+      // The keyboard opening or closing: keep the end of the thread in view
+      // if that is where they were.
+      var box = document.querySelector('.oa-tab:not([hidden]) .oa-screen:not([hidden]) .oa-thread');
+      var atEnd = box && box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+      fitScreen();
+      unscroll();
+      if (atEnd) requestAnimationFrame(function () { box.scrollTop = box.scrollHeight; });
+    };
+    vv.addEventListener('resize', onViewport);
+    vv.addEventListener('scroll', onViewport);
+  }
+  window.addEventListener('scroll', function () { if (locked) unscroll(); }, { passive: true });
+  /* A drag outside the parts that scroll (the messages, a contact's
+     details, the pill rows, a sheet, the reply box) is stopped before the
+     browser pans the page with it. */
+  document.addEventListener('touchmove', function (e) {
+    if (!locked) return;
+    if (e.target.closest && e.target.closest('.oa-thread, .oa-contact-body, .oa-via-scroll, .oa-conv-tools, .oa-sheet, textarea, input, select')) return;
+    e.preventDefault();
+  }, { passive: false });
+
   /* Pull down to refresh, on every tab. From the top of the page (or of
      the thread on screen) a pull past the mark reloads what the tab
      shows; the shell has native bounce off, so this is the only pull.
