@@ -129,10 +129,11 @@
 
   /* ------------------------------------------------------------ tabs -- */
 
-  var TABS = ['Dashboard', 'Analytics', 'Payments', 'Chat', 'Support'];
+  var TABS = ['Website', 'Dashboard', 'Analytics', 'Payments', 'Chat', 'Support'];
 
   function showTab(next) {
-    if (next === 'Chat' && !hasModule('chat')) next = homeTab();
+    if (next === 'Chat' && !hasModule('chat') && !contactsAllowed() && !isStarter()) next = homeTab();
+    if (next === 'Website' && !isStarter()) next = homeTab();
     tab = next;
     TABS.forEach(function (t) {
       $('tab' + t).hidden = t !== tab;
@@ -145,7 +146,10 @@
     if (tab === 'Analytics') loadAnalytics();
     if (tab === 'Dashboard') { var p = pendingPath; pendingPath = null; renderDashboard(p); }
     if (tab === 'Support') loadRequests();
-    if (tab === 'Chat') { if (openConv && !pendingConv) schedulePoll(); else { openConv = null; openContact = null; $('chatThread').hidden = true; $('contactScreen').hidden = true; $('tabChat').classList.remove('is-thread'); $('chatList').hidden = false; if (chatMode === 'contacts') loadContacts(); else loadChats(); } }
+    if (tab === 'Website') renderWebsite();
+    if (tab !== 'Chat') clearTimeout(supportTimer);
+    if (tab === 'Chat' && isStarter()) { $('chatList').hidden = true; $('chatThread').hidden = true; $('contactScreen').hidden = true; $('supportChat').hidden = false; $('tabChat').classList.add('is-thread'); loadSupportChat(); }
+    else if (tab === 'Chat') { if (openConv && !pendingConv) schedulePoll(); else { openConv = null; openContact = null; $('chatThread').hidden = true; $('contactScreen').hidden = true; $('tabChat').classList.remove('is-thread'); $('chatList').hidden = false; if (chatMode === 'contacts') loadContacts(); else loadChats(); } }
     else { $('onlineBar').hidden = true; }
   }
 
@@ -237,7 +241,8 @@
     var work = [];
     try {
       if (tab === 'Analytics') { anCache = {}; work.push(loadAnalytics()); }
-      else if (tab === 'Chat') work.push(openContact && openContact.id ? loadContact(openContact.id) : openConv ? openThread(openConv.id) : chatMode === 'contacts' ? loadContacts() : loadChats());
+      else if (tab === 'Website') work.push(renderWebsite());
+      else if (tab === 'Chat') work.push(isStarter() ? loadSupportChat(true) : openContact && openContact.id ? loadContact(openContact.id) : openConv ? openThread(openConv.id) : chatMode === 'contacts' ? loadContacts() : loadChats());
       else if (tab === 'Support') {
         if (me && me.user && me.user.is_admin) work.push(adminOpenId && !$('adminThread').hidden ? openAdminThread(adminOpenId) : loadAdminInbox());
         else if (requestsLoaded) window.dispatchEvent(new Event('hashchange')); // requests.js routes again: list or thread
@@ -267,7 +272,93 @@
 
   /* Where the app opens: the Dashboard, the first tab, once the site has
      one connected; the numbers until then, rather than an empty screen. */
-  function homeTab() { return site && site.dashboard_url ? 'Dashboard' : 'Analytics'; }
+  function homeTab() { return isStarter() ? 'Website' : site && site.dashboard_url ? 'Dashboard' : 'Analytics'; }
+
+  /* ---------------------------------------------------------- starter -- */
+
+  /* Starter has no dashboard, so its app is three tabs: the website and
+     whether it is up, Support for the monthly change, and a chat straight
+     to Kane. The other tabs are hidden, not gated. */
+  function isStarter() { return !!(me && me.user && !me.user.is_admin && me.user.plan === 'starter'); }
+  function applyPlanUi() {
+    var s = isStarter();
+    $('navSite').hidden = !s;
+    $('navDash').hidden = s;
+    document.querySelector('.oa-nav-btn[data-tab="Analytics"]').hidden = s;
+    document.querySelector('.oa-nav-btn[data-tab="Payments"]').hidden = s;
+  }
+
+  async function renderWebsite() {
+    var dot = $('siteDot'), title = $('siteStatusTitle'), hint = $('siteStatusHint');
+    var url = site && site.url ? String(site.url).replace(/\/+$/, '') : '';
+    $('siteUrlText').textContent = url.replace(/^https?:\/\//, '');
+    $('siteOpen').hidden = !url;
+    $('sitePlanText').textContent = (site && site.plan) || 'Starter';
+    $('sitePlanHint').textContent = 'One change a month to what is on your site, fresh with every payment: photos, wording, numbers, hours, prices. Ask for it under Support.';
+    dot.className = 'oa-status-dot';
+    if (!site) { title.textContent = 'We have not started your site yet.'; hint.textContent = 'It appears here the moment we do.'; return; }
+    title.textContent = 'Checking your website…'; hint.textContent = '';
+    try {
+      var s = await api({ action: 'site_status', site_id: site.site_id });
+      if (tab !== 'Website') return;
+      if (!s.live) { dot.classList.add('is-building'); title.textContent = 'Your website is being built'; hint.textContent = 'It goes live here the moment it is ready, and you will hear about it.'; }
+      else if (s.online) { dot.classList.add('is-on'); title.textContent = 'Your website is online'; hint.textContent = 'Working and reachable. Checked just now' + (s.ms ? ', answered in ' + (s.ms < 1000 ? s.ms + ' ms' : (s.ms / 1000).toFixed(1) + ' s') : '') + '.'; }
+      else if (s.online === false) { dot.classList.add('is-off'); title.textContent = 'Your website is not responding'; hint.textContent = 'Checked just now from here. Pull down to check again; if it stays like this, tell Kane in the chat and it will be looked at straight away.'; }
+      else { title.textContent = 'No address yet'; hint.textContent = 'Your website address appears here once it is set.'; }
+    } catch (err) { title.textContent = 'Could not check just now'; hint.textContent = err.message; }
+  }
+  $('siteOpen').addEventListener('click', function () { if (site && site.url) openExternal(site.url); });
+  $('siteRequest').addEventListener('click', function () { location.hash = '#new'; showTab('Support'); });
+  $('siteChat').addEventListener('click', function () { showTab('Chat'); });
+
+  /* The chat with Kane: the customer's side of a conversation on
+     kanvas.one's own site, polled while the tab is open. */
+  var supportTimer = null, supportCount = -1;
+  function supportBubble(m) {
+    var mine = m.author === 'visitor';
+    var wrap = el('div', 'msg ' + (mine ? 'from-owner' : 'from-visitor'));
+    wrap.appendChild(el('div', 'msg-who', mine ? 'You' : 'Kane'));
+    var box = el('div', 'msg-body');
+    String(m.body).split(/\n{2,}/).forEach(function (p) {
+      var para = el('p');
+      p.split('\n').forEach(function (line, i) { if (i) para.appendChild(document.createElement('br')); para.appendChild(document.createTextNode(line)); });
+      box.appendChild(para);
+    });
+    wrap.appendChild(box);
+    wrap.appendChild(el('div', 'msg-when', ago(m.at)));
+    return wrap;
+  }
+  async function loadSupportChat(quiet) {
+    clearTimeout(supportTimer);
+    try {
+      var res = await api({ action: 'support_get' });
+      var msgs = res.messages || [];
+      if (msgs.length !== supportCount) {
+        supportCount = msgs.length;
+        var box = $('supportMsgs'); box.innerHTML = '';
+        if (!msgs.length) { var s = el('div', 'msg from-system'); s.appendChild(el('div', 'msg-body', 'Say hello. Kane sees this in his inbox and replies here; if you are not in the app, by email too.')); box.appendChild(s); }
+        msgs.forEach(function (m) { box.appendChild(supportBubble(m)); });
+        box.scrollTop = box.scrollHeight;
+      }
+    } catch (err) { if (!quiet) say($('supportNote'), err.message, 'bad'); }
+    if (tab === 'Chat' && isStarter()) supportTimer = setTimeout(function () { loadSupportChat(true); }, 8000);
+  }
+  $('supportBody').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(120, this.scrollHeight) + 'px'; });
+  $('supportForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var ta = $('supportBody'); var text = ta.value.trim();
+    if (!text) return;
+    $('supportSend').disabled = true;
+    try {
+      var res = await api({ action: 'support_send', body: text });
+      ta.value = ''; ta.style.height = 'auto'; say($('supportNote'), '');
+      var box = $('supportMsgs');
+      var sys = box.querySelector('.from-system'); if (sys) sys.remove();
+      box.appendChild(supportBubble(res.message)); supportCount++;
+      box.scrollTop = box.scrollHeight;
+    } catch (err) { say($('supportNote'), err.message, 'bad'); }
+    $('supportSend').disabled = false;
+  });
 
   /* The admin sees every site; a picker in the header says which one the
      tabs are about. Everything cached per site is dropped on a switch. */
@@ -1032,6 +1123,7 @@
   function contactsAllowed() { return !!site && site.plan !== 'Starter'; }
 
   function applyChatUi() {
+    if (isStarter()) { $('navChat').hidden = false; $('navChat').querySelector('span:not(.nav-count)').textContent = 'Chat'; $('chatMode').hidden = true; return; }
     var chat = hasModule('chat'), people = contactsAllowed();
     $('navChat').hidden = !(chat || people);
     $('navChat').querySelector('span:not(.nav-count)').textContent = chat ? 'Chat' : 'Contacts';
@@ -1347,6 +1439,7 @@
       // Ask what is unread rather than assume: a resume with nothing new
       // must not light the bell.
       refreshMe().catch(function () {});
+      if (isStarter()) { if (tab === 'Chat') loadSupportChat(true); return; }
       if (hasModule('chat')) loadChats();
       if (tab === 'Support' && me.user && me.user.is_admin && $('adminThread').hidden) loadAdminInbox();
       if (tab === 'Support' && !(me.user && me.user.is_admin) && ONE.refreshRequestBadge) ONE.refreshRequestBadge();
@@ -1402,6 +1495,7 @@
     }
     $('accountEmail').textContent = me.user.email || '';
     $('deleteWrap').hidden = !!me.user.is_admin;
+    applyPlanUi();
     applyChatUi();
     $('bellDot').hidden = !(me.unread && me.unread.notifications > 0);
     var reqBadge = $('navReqCount');
@@ -1413,7 +1507,8 @@
     app.hidden = false;
 
     var h = location.hash.replace(/^#/, '');
-    showTab(/^(new|r\/)/.test(h) ? 'Support' : homeTab());
+    // A Starter customer arriving from a "Continue the chat" email lands in the chat.
+    showTab(/^(new|r\/)/.test(h) ? 'Support' : isStarter() && /k1chat=open/.test(location.search) ? 'Chat' : homeTab());
     setupPush();
     if (hasModule('chat')) { listenChat(); loadChats(); schedulePoll(); }
     nativeReady();

@@ -231,6 +231,22 @@
 .oa-reply-wrap .note{margin:6px 0 0;min-height:0}
 .oa-reply-wrap .note:empty{display:none}
 
+/* ---- starter: website status, chat with Kane ---- */
+.oa-status-row{display:flex;gap:14px;align-items:flex-start}
+.oa-status-dot{flex:0 0 14px;width:14px;height:14px;border-radius:50%;background:var(--line);margin-top:7px;transition:background .2s}
+.oa-status-dot.is-on{background:#0f8a63;box-shadow:0 0 0 5px rgba(15,138,99,.14)}
+.oa-status-dot.is-off{background:#c0392b;box-shadow:0 0 0 5px rgba(192,57,43,.14)}
+.oa-status-dot.is-building{background:#f5a623;box-shadow:0 0 0 5px rgba(245,166,35,.16)}
+.oa-status-text{min-width:0}
+.oa-status-title{margin:0;font-size:21px;font-weight:600;letter-spacing:-.02em;line-height:1.25}
+.oa-status-text .hint{margin:4px 0 0;font-size:14px;line-height:1.45}
+.oa-status-url{margin:14px 0 14px;font-size:15px;color:var(--ink-2);overflow-wrap:anywhere}
+.oa-status .btn{width:100%;padding:13px 18px;font-size:16px}
+.oa-status-plan{margin:0 0 4px;font-size:19px;font-weight:600;letter-spacing:-.02em}
+.oa-status-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.oa-support-head{padding-left:14px}
+.oa-avatar-k{flex-basis:40px;width:40px;height:40px;font-size:15px;background:var(--ink)}
+
 /* ---- contacts ---- */
 .oa-contacts-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 2px}
 .oa-contacts-row .hint{margin:0;font-size:13px}
