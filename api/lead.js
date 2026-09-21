@@ -35,6 +35,21 @@ function oneLine(s) {
   return String(s).replace(/[\r\n]+/g, ' ').trim();
 }
 
+/* Where to find them online: an @handle, a pasted link, or a bare
+   "instagram.com/x" or "www.checkatrade.com/...". Tidied so that it can be
+   tapped from the admin and the emails rather than copied out: a handle
+   gets its @ back (habit drops it), anything shaped like a web address gets
+   https:// in front, and everything else is kept as typed. */
+function tidyLink(raw) {
+  const s = String(raw == null ? '' : raw).trim().replace(/\s+/g, ' ');
+  if (!s) return '';
+  if (/^@/.test(s)) return '@' + s.replace(/^@+/, '');
+  if (/^https?:\/\//i.test(s)) return s;
+  if (/^[\w-]+(\.[\w-]+)*\.[a-z]{2,}(\/\S*)?$/i.test(s)) return 'https://' + s;
+  if (/^[\w.]+$/.test(s)) return '@' + s;
+  return s;
+}
+
 /* What a dropped submission is told. It has to match a real success exactly,
    id and all, or the difference is itself the signal: a bot that can tell it
    was caught comes back having learned which field to leave alone. The id is
@@ -74,7 +89,7 @@ module.exports = async function handler(req, res) {
     const source = SOURCES.includes(sourceRaw) ? sourceRaw : 'enquiry';
     const free = source === 'free-preview';
 
-    const handle = clean(body.handle, 200);
+    const handle = tidyLink(clean(body.handle, 200));
     const requested_domain = clean(body.domain, 253).toLowerCase();
 
     if (!name || !business) return res.status(400).json({ error: 'Tell us your name and business.' });
@@ -125,7 +140,7 @@ module.exports = async function handler(req, res) {
       text: free
         ? `${name} at ${business} wants a free example.\n\n`
           + `Email:   ${email}\n`
-          + `Social:  ${handle || 'not given'}\n`
+          + `Find them: ${handle || 'not given'}\n`
           + `Address: ${requested_domain || 'not picked'}\n\n`
           + `Anything they added:\n${about || '-'}\n\n`
           + `Nothing is registered - the address above is only what they chose.\n\n`
@@ -184,7 +199,7 @@ module.exports = async function handler(req, res) {
       ];
 
       const facts = [{ label: 'Business', value: business }];
-      if (handle) facts.push({ label: 'Social', value: handle });
+      if (handle) facts.push({ label: 'Designing from', value: handle });
       if (requested_domain) facts.push({ label: 'Address', value: requested_domain });
 
       const theirs = await sendEmail({

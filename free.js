@@ -130,7 +130,7 @@
 
     if (!biz)  return say('Tell us your business name.', 'bad');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) return say('Enter a valid email address.', 'bad');
-    if (!soc)  return say('Add your Instagram or Facebook.', 'bad');
+    if (!soc)  return say('Add your Instagram, Facebook or a link to your business.', 'bad');
 
     btn.disabled = true;
     say('Sending…');

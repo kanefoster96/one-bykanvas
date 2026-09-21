@@ -1093,24 +1093,137 @@
     return a;
   }
 
+  /* The jobs that are not requests - a site owed to a new customer, a free
+     example asked for - as cards in the same list. Tapping one opens the
+     details (who, what they told us, where to find them) and a box to
+     finish it from here: the site's address to mark it live, or where the
+     example lives to send it. Both go through the same admin actions the
+     desktop page uses. */
+  var PLAN_WORD = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' };
+
+  /* An @handle opens on Instagram (a guess, but the likelier one); a link
+     opens as it is; anything else is just shown. */
+  function findHref(s) {
+    if (!s) return null;
+    if (/^https?:\/\//i.test(s)) return s;
+    if (/^@[\w.]+$/.test(s)) return 'https://instagram.com/' + s.slice(1);
+    return null;
+  }
+
+  /* ago() gives "5m", "2d" or a date; read as a sentence, only the first
+     two want "ago". */
+  function since(iso) {
+    var a = ago(iso);
+    return a === 'now' ? 'just now' : /^\d+[mhd]$/.test(a) ? a + ' ago' : 'on ' + a;
+  }
+
+  function jobLine(label, value, href) {
+    if (!value) return null;
+    var p = el('p', 'oa-job-line');
+    p.appendChild(el('strong', null, label + ': '));
+    if (href) { var a = el('a', null, value); a.href = href; a.target = '_blank'; a.rel = 'noopener'; p.appendChild(a); }
+    else p.appendChild(document.createTextNode(value));
+    return p;
+  }
+
+  function jobCard(kind, r) {
+    var build = kind === 'build';
+    var card = el('details', 'req-card oa-job');
+    var sum = el('summary');
+    var top = el('div', 'req-card-top');
+    var t = el('div');
+    t.appendChild(el('span', 'oa-req-biz', (build ? r.business_name : r.business) || r.contact_name || r.name || 'Customer'));
+    t.appendChild(el('h3', 'req-card-title', build ? 'Build their site' : 'Make their free design'));
+    top.appendChild(t);
+    top.appendChild(el('span', 'req-state ' + (build ? 'is-building' : 'is-waiting'), build ? (PLAN_WORD[r.active_plan] || 'Plan') + ' plan' : 'Free design'));
+    sum.appendChild(top);
+    var line = el('p', 'req-card-line');
+    var bits = build
+      ? [r.contact_name, r.business_type, r.requested_domain ? (r.domain_owned ? 'has ' : 'wants ') + r.requested_domain : null]
+      : [r.handle, r.requested_domain ? 'wants ' + r.requested_domain : null];
+    line.appendChild(el('span', 'req-card-snippet', bits.filter(Boolean).join(' · ') || 'No details yet'));
+    line.appendChild(el('span', 'req-card-meta', (build ? 'Joined ' : 'Asked ') + since(r.created_at) + ' · tap for details'));
+    sum.appendChild(line);
+    card.appendChild(sum);
+
+    var body = el('div', 'oa-job-body');
+    var lines = build
+      ? [
+          jobLine('Contact', r.contact_name),
+          jobLine('Email', r.email, r.email ? 'mailto:' + r.email : null),
+          jobLine('Phone', r.phone, r.phone ? 'tel:' + String(r.phone).replace(/\s+/g, '') : null),
+          jobLine('Trade', r.business_type),
+          jobLine('Web address', r.requested_domain ? r.requested_domain + (r.domain_owned ? ' (already theirs - move it across)' : ' (to register)') : null),
+          jobLine('Wants the site to', r.site_goals),
+          jobLine('Asked for', (r.site_uses || []).join(', ')),
+          jobLine('Menu/services', r.services),
+          jobLine('Already online', r.existing_links)
+        ]
+      : [
+          jobLine('Name', r.name !== r.business ? r.name : null),
+          jobLine('Email', r.email, 'mailto:' + r.email),
+          jobLine('Find them', r.handle, findHref(r.handle)),
+          jobLine('Web address', r.requested_domain ? r.requested_domain + ' (picked, nothing registered)' : null),
+          jobLine('They added', r.about)
+        ];
+    lines.filter(Boolean).forEach(function (l) { body.appendChild(l); });
+
+    var finish = el('form', 'oa-job-finish');
+    var url = el('input'); url.type = 'url'; url.inputMode = 'url'; url.autocapitalize = 'none';
+    url.placeholder = build ? 'https://their-site.com' : 'https://where-the-example-lives';
+    url.setAttribute('aria-label', build ? 'Their site address' : 'Where the example lives');
+    if (build && r.site_url) url.value = r.site_url;
+    var go = el('button', 'btn btn-primary', build ? 'Mark it live' : 'Send the free design');
+    go.type = 'submit';
+    var note = el('p', 'note'); note.setAttribute('role', 'status');
+    finish.appendChild(url); finish.appendChild(go); finish.appendChild(note);
+    finish.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var link = url.value.trim();
+      if (!/^https:\/\/\S+\.\S{2,}/i.test(link)) { say(note, 'That needs to be a full https:// address.', 'bad'); url.focus(); return; }
+      go.disabled = true;
+      say(note, build ? 'Marking it live…' : 'Sending…');
+      try {
+        if (build) await apiTo('/api/admin', { action: 'setSite', userId: r.id, siteUrl: link, siteStatus: 'live' });
+        else await apiTo('/api/admin', { action: 'sendPreview', leadId: r.id, url: link });
+        say(note, build ? 'Live. They have been told.' : 'Sent. It is in their inbox.', 'ok');
+        setTimeout(loadAdminInbox, 900);
+      } catch (err) { say(note, err.message, 'bad'); go.disabled = false; }
+    });
+    body.appendChild(finish);
+    card.appendChild(body);
+    return card;
+  }
+
   async function loadAdminInbox() {
     $('adminThread').hidden = true;
     $('adminInbox').hidden = false;
     reqScreen(false);
+    var builds, designs;
     try {
       var res = await apiTo('/api/admin', { action: 'requestsInbox' });
       adminRows = res.requests || [];
+      builds = res.builds || [];
+      designs = res.designs || [];
     } catch (err) { $('adminEmpty').hidden = false; $('adminEmpty').textContent = 'Could not load requests: ' + err.message; return; }
     var open = adminRows.filter(function (r) { return r.status !== 'done' && r.status !== 'declined'; });
     var done = adminRows.filter(function (r) { return r.status === 'done' || r.status === 'declined'; });
+    var buildBox = $('adminBuilds'); buildBox.innerHTML = '';
+    builds.forEach(function (p) { buildBox.appendChild(jobCard('build', p)); });
+    $('adminBuildsTitle').hidden = builds.length === 0;
+    var designBox = $('adminDesigns'); designBox.innerHTML = '';
+    designs.forEach(function (l) { designBox.appendChild(jobCard('design', l)); });
+    $('adminDesignsTitle').hidden = designs.length === 0;
     var openBox = $('adminOpen'); openBox.innerHTML = '';
     open.forEach(function (r) { openBox.appendChild(adminCard(r)); });
-    $('adminEmpty').hidden = open.length > 0;
+    /* The heading only earns its place once there is something above it. */
+    $('adminOpenTitle').hidden = open.length === 0 || (builds.length === 0 && designs.length === 0);
+    $('adminEmpty').hidden = open.length > 0 || builds.length > 0 || designs.length > 0;
     var doneBox = $('adminDone'); doneBox.innerHTML = '';
     done.forEach(function (r) { doneBox.appendChild(adminCard(r)); });
     $('adminDoneWrap').hidden = done.length === 0;
     $('adminDoneCount').textContent = String(done.length);
-    var waiting = open.filter(function (r) { return r.last_note_by === 'customer'; }).length;
+    var waiting = open.filter(function (r) { return r.last_note_by === 'customer'; }).length + builds.length + designs.length;
     var badge = $('navReqCount'); badge.textContent = String(waiting); badge.hidden = waiting === 0;
     if (pendingRequest) { var id = pendingRequest; pendingRequest = null; openAdminThread(id); }
   }

@@ -426,8 +426,8 @@
 
   /* ---------- Homepage free example, one field at a time ----------
    *
-   * Three boxes, shown one after another: the Instagram field appears once a
-   * business name is typed, the email once the handle is. Nothing is ever
+   * Three boxes, shown one after another: the link field appears once a
+   * business name is typed, the email once the link is. Nothing is ever
    * hidden again - a step that vanished while someone was mid-thought would
    * feel broken. Enter in an earlier box moves on rather than submitting.
    * Posts to the same /api/lead as free.html and lands on the same thanks
@@ -483,12 +483,10 @@
       business.classList.remove('err');
       if (filled(business)) show(step2);
     });
-    /* The @ is painted in front of the box, so one typed as well is
-       dropped rather than doubled - "@@shop" is what autocorrect and habit
-       produce otherwise. */
+    /* An @handle or a link, as typed: the server tidies it (api/lead.js),
+       so nothing is stripped here that a pasted address might need. */
     handle.addEventListener('input', function () {
       handle.classList.remove('err');
-      if (/^@/.test(handle.value)) handle.value = handle.value.replace(/^@+/, '');
       if (filled(handle)) show(step3);
     });
     email.addEventListener('input', function () { email.classList.remove('err'); });
@@ -510,11 +508,11 @@
     mini.addEventListener('submit', async function (e) {
       e.preventDefault();
       var biz  = business.value.trim();
-      var soc  = '@' + handle.value.trim().replace(/^@+/, '');
+      var soc  = handle.value.trim();
       var mail = email.value.trim();
 
       if (!filled(business)) { show(step2); business.classList.add('err'); business.focus(); return say('Tell us your business name.', 'bad'); }
-      if (!filled(handle))   { show(step3); handle.classList.add('err'); handle.focus(); return say('Add your Instagram or Facebook.', 'bad'); }
+      if (!filled(handle))   { show(step3); handle.classList.add('err'); handle.focus(); return say('Add your Instagram, Facebook or a link to your business.', 'bad'); }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { email.classList.add('err'); email.focus(); return say('Enter a valid email address.', 'bad'); }
 
       send.disabled = true;

@@ -209,9 +209,16 @@ async function me(db, caller) {
 
   let requestsUnread = 0;
   if (caller.is_admin) {
-    // Waiting on Kane: the customer spoke last and it is not finished.
-    const { data: reqs } = await db.from('requests').select('id, status, last_note_by').eq('last_note_by', 'customer').limit(500);
-    requestsUnread = (reqs || []).filter((r) => r.status !== 'done' && r.status !== 'declined').length;
+    // Waiting on Kane: the customer spoke last and it is not finished -
+    // plus the jobs that are not requests, a site owed to a new customer
+    // and a free example not yet sent, which the same inbox now shows.
+    const [{ data: reqs }, builds, designs] = await Promise.all([
+      db.from('requests').select('id, status, last_note_by').eq('last_note_by', 'customer').limit(500),
+      db.from('profiles').select('id', { count: 'exact', head: true }).not('active_plan', 'is', null).eq('site_status', 'building'),
+      db.from('leads').select('id', { count: 'exact', head: true }).eq('source', 'free-preview').is('preview_sent_at', null)
+    ]);
+    requestsUnread = (reqs || []).filter((r) => r.status !== 'done' && r.status !== 'declined').length
+      + (builds.count || 0) + (designs.count || 0);
   } else {
     const { data: reqs } = await db.from('requests').select('id, last_note_at, customer_seen_at, last_note_by').eq('user_id', caller.user_id).eq('last_note_by', 'admin').limit(200);
     requestsUnread = (reqs || []).filter((r) => !r.customer_seen_at || new Date(r.customer_seen_at) < new Date(r.last_note_at)).length;
