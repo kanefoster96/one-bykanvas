@@ -757,6 +757,24 @@ body.dialog-open{overflow:hidden}
 .kb-price strong{color:var(--ink);font-weight:600}
 .kb-how .btn{margin-top:18px}
 @media (max-width:760px){.kb{grid-template-columns:1fr;gap:14px}}
+/* Who builds it: Kane, once, with a photo when there is one. The card
+   reads as a note from a person rather than a section from a company. */
+.who{
+  display:flex;align-items:center;gap:clamp(22px,4vw,40px);max-width:760px;margin:0 auto;
+  padding:clamp(26px,4vw,38px);background:#fff;border:1px solid var(--line-soft);
+  border-radius:var(--radius-lg);box-shadow:0 12px 40px rgba(0,0,0,.05);
+}
+.who-photo{flex:0 0 120px;width:120px;height:120px;border-radius:50%;object-fit:cover;background:var(--bg-grey)}
+.who-text{flex:1;min-width:0}
+.who-tag{margin:0 0 8px;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--good)}
+.who h2{margin:0 0 12px;font-size:clamp(22px,3.4vw,27px);letter-spacing:-.025em;line-height:1.2;text-wrap:balance}
+.who p{margin:0 0 12px;font-size:16px;line-height:1.6;color:var(--ink-2);text-wrap:pretty}
+.who-sign{margin:0;font-weight:600;color:var(--ink)}
+@media (max-width:600px){
+  .who{flex-direction:column;align-items:flex-start;gap:18px}
+  .who-photo{width:88px;height:88px;flex-basis:88px}
+}
+
 /* KeepBook as an app that comes with the site: the tile mark, the name,
    and a pill saying it is free. Sits where a section tag would. */
 .kb-app{display:inline-flex;align-items:center;gap:12px;margin:0 0 16px;text-align:left}
