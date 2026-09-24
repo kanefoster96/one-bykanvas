@@ -756,7 +756,6 @@ body.dialog-open{overflow:hidden}
 .kb-price{margin:20px 0 0;padding-top:18px;border-top:1px solid var(--line-soft);font-size:15.5px;line-height:1.55;color:var(--ink-2)}
 .kb-price strong{color:var(--ink);font-weight:600}
 .kb-how .btn{margin-top:18px}
-.kb-tone{margin:22px auto 0;max-width:56ch;font-size:14.5px;line-height:1.55;color:var(--ink-3)}
 @media (max-width:760px){.kb{grid-template-columns:1fr;gap:14px}}
 /* The homepage carries the story alone, one column, with how it works in a
    single line under it; the full three steps live on the plans page. */
