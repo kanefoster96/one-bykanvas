@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 75;
+const CSS_V = 76;
 const SCRIPT_V = 28;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -86,6 +86,12 @@ function stepCards(b) {
     </article>`).join('\n');
 }
 
+/* The page's questions, with the Keep Book ones added wherever the page
+   has a Keep Book section - they only make sense under it. */
+function faqFor(b) {
+  return b.keepBook ? b.faq.concat(INDUSTRIES.KEEP_BOOK_FAQ || []) : b.faq;
+}
+
 /* Entities out, for the structured data Google reads as plain text. */
 function plain(html) {
   return html.replace(/<[^>]+>/g, '').replace(/&rsquo;/g, '\u2019').replace(/&lsquo;/g, '\u2018')
@@ -130,7 +136,7 @@ ${b.faq ? `<script type="application/ld+json">
 ${JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: b.faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
+  mainEntity: faqFor(b).map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
 ` : ''}<link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
@@ -191,7 +197,33 @@ ${b.also ? `  <div class="wrap center also reveal">
   </div>
 ` : ''}</section>
 
-<section class="section grey">
+${b.keepBook ? `<!-- Keep Book, in this trade's words: one customer, the moment they could
+     not find you again, and the reminder that would have kept them. -->
+<section class="section" id="keepbook">
+  <div class="wrap center">
+    <p class="fiveyear-tag reveal">Keep Book &mdash; on Business and Max</p>
+    <h2 class="reveal">${b.keepBook.heading}</h2>
+    <p class="lede reveal">${b.keepBook.lede}</p>
+  </div>
+  <div class="wrap kb reveal">
+    <div class="kb-story">
+${b.keepBook.story.map((p, i) => `      <p${i === 1 ? ' class="kb-turn"' : ''}>${p}</p>`).join('\n')}
+    </div>
+    <div class="kb-how">
+      <h3>How it works</h3>
+      <ol class="kb-steps">
+        <li><strong>Add them after the job</strong>Name, email, what you did and the date. About thirty seconds on your phone.</li>
+        <li><strong>They&rsquo;re reminded when they&rsquo;re due</strong>${b.keepBook.due} If they haven&rsquo;t booked two weeks later, one gentle nudge.</li>
+        <li><strong>A short note every three months</strong>Plain text, in your name, no logo, no newsletter. ${b.keepBook.note} Your name, your number.</li>
+      </ol>
+      <p class="kb-price"><strong>Included on Business, &pound;50 a month. Nothing extra.</strong> ${b.keepBook.close}</p>
+      <a class="btn btn-primary" href="/get-started.html">Get started &rsaquo;</a>
+    </div>
+  </div>
+  <p class="wrap center kb-tone reveal">Every email has an unsubscribe link, and sends are spaced from each customer&rsquo;s own job date, never everyone at once. It should feel like you not disappearing, never like marketing.</p>
+</section>
+
+` : ''}<section class="section grey">
   <div class="wrap center">
     <h2 class="reveal">How it works.</h2>
     <p class="lede reveal">${b.buildNote}</p>
@@ -248,7 +280,7 @@ ${CASES.map((c) => `    <article class="case">
     <h2 class="reveal">Questions.</h2>
   </div>
   <div class="wrap faq reveal">
-${b.faq.map(([q, a]) => `    <details>
+${faqFor(b).map(([q, a]) => `    <details>
       <summary>${q}</summary>
       <div class="ans"><p>${a}</p></div>
     </details>`).join('\n')}
@@ -306,8 +338,8 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>
-<script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
+<script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
