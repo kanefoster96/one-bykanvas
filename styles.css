@@ -2595,6 +2595,27 @@ a.hero-pill:hover .pill-go{opacity:1}
 .starter-note strong{color:var(--ink)}
 .plan-up{margin:18px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-3)}
 
+/* Starter as a strip under the plan cards: green so it still stands out,
+   one row so it takes a fraction of the space. The whole strip is the link. */
+.plan-mini{
+  display:flex;align-items:center;gap:18px;max-width:822px;margin:18px auto 0;
+  padding:16px 22px;border-radius:var(--radius);background:var(--good-soft);
+  border:1px solid rgba(26,127,55,.18);color:var(--ink);text-decoration:none;
+  transition:transform .2s var(--ease),box-shadow .2s var(--ease);
+}
+.plan-mini:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,127,55,.12);text-decoration:none}
+.plan-mini-price{flex:0 0 auto;font-size:26px;font-weight:700;letter-spacing:-.03em;color:var(--good);line-height:1}
+.plan-mini-price .cur{font-size:16px;vertical-align:top;margin-right:1px}
+.plan-mini-price .per{font-size:12.5px;font-weight:500;letter-spacing:0;color:var(--good);opacity:.8;margin-left:2px}
+.plan-mini-text{flex:1;min-width:0;font-size:14.5px;line-height:1.45;color:var(--ink-2)}
+.plan-mini-text strong{color:var(--ink);font-weight:600}
+.plan-mini-go{flex:0 0 auto;font-size:14px;font-weight:600;color:var(--good);white-space:nowrap}
+@media (max-width:600px){
+  .plan-mini{flex-wrap:wrap;gap:10px 14px;padding:16px 18px}
+  .plan-mini-text{flex-basis:100%;order:3}
+  .plan-mini-go{margin-left:auto}
+}
+
 /* Connect Claude, on the account page */
 .claude-new{margin:14px 0 18px;padding:14px 16px;border-radius:14px;background:var(--bg-grey)}
 .claude-new .hint{margin:0 0 10px;line-height:1.5}
