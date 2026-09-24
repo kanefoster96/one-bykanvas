@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 82;
+const CSS_V = 83;
 const SCRIPT_V = 28;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -71,7 +71,7 @@ function card([h, p], iconKey, color) {
 
 const DEFAULT_STEPS = [
   ['Tell us about the business', 'Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.'],
-  ['We build it for you', 'Design, writing, web address, hosting and security &mdash; all handled by a person, all in the monthly price.'],
+  ['Kane builds it for you', 'Design, writing, web address, hosting and security &mdash; all done by one person, all in the monthly price.'],
   ['Online within 7 days', 'Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.']
 ];
 const STEP_COLORS = ['ico-blue', 'ico-purple', 'ico-green'];
@@ -311,7 +311,7 @@ ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join
       <a class="btn btn-ghost" href="/get-started.html">Get started &rsaquo;</a>
     </div>
     <p class="micro reveal">From &pound;25 a month. No setup fees. Cancel anytime. <a href="/plans.html">See all plans</a></p>
-    <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email us</a> and a real person will answer &mdash; usually the same working day.</p>
+    <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email Kane</a> and you&rsquo;ll get an answer &mdash; usually the same working day.</p>
 `}    <nav class="ind-links reveal" aria-label="Websites for other business types">
       <span>We also build for:</span>${linkStrip(b.slug)}
     </nav>
