@@ -84,12 +84,10 @@ const MAX_HEADING = 'Want to show up higher every month?';
 /* Keep Book: the customer you already won, kept. Every trade page with
    repeat custom carries a keepBook block - one named customer, the moment
    they could not find you, the reminder that would have kept them - and
-   these three questions under it. Coffee shops have no per-customer job
-   date to remind from, so that page has neither. */
+   this question under it. Coffee shops have no per-customer job date to
+   remind from, so that page has neither. */
 const KEEP_BOOK_FAQ = [
-  ['Keep Book: do I have to write the emails?', 'No. They&rsquo;re written for you, in plain text and in your name, and you can change any of them. Your part is adding the customer after the job &mdash; name, email, what you did, the date &mdash; about thirty seconds on your phone.'],
-  ['Won&rsquo;t my customers find it annoying?', 'One reminder when they&rsquo;re due, one nudge two weeks later if they haven&rsquo;t booked, and a two-line note from you every three months. That&rsquo;s all, and every email has an unsubscribe link. It reads like you keeping in touch, not like marketing.'],
-  ['Is emailing past customers allowed under UK rules?', 'Yes, for your own customers. UK rules let you email people you&rsquo;ve done work for about similar work, as long as they can opt out at any time &mdash; the &ldquo;soft opt-in&rdquo;, which doesn&rsquo;t need a tick box. Every Keep Book email has an unsubscribe link, and nobody goes in your book unless you&rsquo;ve done a job for them.']
+  ['Keep Book: do I have to write the emails?', 'No. They&rsquo;re written for you and sent in your name; you can change any of them. Your part is adding the customer after the job, about thirty seconds on your phone. The reminder and the note go out on their own, and it&rsquo;s all within UK rules for emailing your own customers, with an opt-out on every one.']
 ];
 
 module.exports = [
