@@ -334,7 +334,7 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
   </div>
 </footer>
 
-<script src="consent.js?v=5"></script>
+<script src="consent.js?v=6"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>

@@ -183,7 +183,7 @@
     var text = document.createElement('p');
     text.className = 'consent-text';
     text.appendChild(document.createTextNode(
-      'We use cookies to run the site and count visits. If you agree, we also use one from Meta to see whether our ads are working. You can read our cookie policy '));
+      'We use cookies to run the site and count visits. If you agree, they also help us improve our ads and learn how to get businesses like yours showing up first. You can read our cookie policy '));
     var link = document.createElement('a');
     link.href = '/cookies.html';
     link.textContent = 'here';
