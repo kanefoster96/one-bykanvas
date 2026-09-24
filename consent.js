@@ -5,7 +5,7 @@
  *
  * - Our own visitor count (beacon.js): first party, no cookie, a random
  *   string for the tab that dies with it, nothing sent to anyone but us.
- *   Runs by default and stops the moment someone presses Decline (the
+ *   Runs by default and stops the moment someone presses Reject (the
  *   k1nocount flag below, which beacon.js checks). That is the opt-out the
  *   first-party statistics exemption asks for.
  * - The Meta pixel: advertising, a third party, cookies that identify the
@@ -13,7 +13,7 @@
  *   tag anywhere in the HTML; it is injected here after a click, or not at
  *   all, and only once META_PIXEL_ID is set.
  *
- * Refusing has to be as easy as accepting, so there are two buttons, side by
+ * Refusing has to be as easy as accepting, so Reject and Accept sit side by
  * side, styled the same weight. No "manage preferences" maze, no pre-ticked
  * anything, and the pill never blocks the page behind it.
  *
@@ -26,7 +26,7 @@
   var META_PIXEL_ID = '';          /* <- your pixel ID goes here */
 
   var KEY = 'one.consent';
-  var NO_COUNT = 'k1nocount';      /* set on Decline; beacon.js stays quiet while it exists */
+  var NO_COUNT = 'k1nocount';      /* set on Reject; beacon.js stays quiet while it exists */
   var VERSION = 2;                 /* bump to re-ask everyone after a change */
 
   /* ?cookies=preview shows the pill on any page without a pixel ID, so the
@@ -62,7 +62,7 @@
       localStorage.setItem(KEY, JSON.stringify({
         v: VERSION, choice: choice, at: new Date().toISOString()
       }));
-      /* Decline also switches off our own counting, from the next page on. */
+      /* Reject also switches off our own counting, from the next page on. */
       if (memChoice === 'essential') localStorage.setItem(NO_COUNT, '1');
       else localStorage.removeItem(NO_COUNT);
     } catch (e) { /* nothing we can do; the pixel simply will not persist */ }
@@ -172,15 +172,34 @@
     pill.setAttribute('role', 'region');
     pill.setAttribute('aria-label', 'Cookies');
 
+    /* A card at the foot of the screen: a title, one plain sentence on what
+       the cookies do, the policy linked, and three buttons in one row.
+       Customise goes to the cookie page, where every cookie is named and
+       the same two choices are offered; Reject and Accept answer here. */
+    var title = document.createElement('p');
+    title.className = 'consent-title';
+    title.textContent = 'Cookie settings';
+
     var text = document.createElement('p');
     text.className = 'consent-text';
-    /* Same label as the Academy site's pill: the link IS the explanation. */
-    text.innerHTML = '<a href="/cookies.html"><span class="consent-long">Cookie preferences</span><span class="consent-short">Cookies</span></a>';
+    text.appendChild(document.createTextNode(
+      'We use cookies to run the site and count visits. If you agree, they also help us improve our ads and learn how to get businesses like yours showing up first. You can read our cookie policy '));
+    var link = document.createElement('a');
+    link.href = '/cookies.html';
+    link.textContent = 'here';
+    text.appendChild(link);
+    text.appendChild(document.createTextNode('.'));
 
     var actions = document.createElement('div');
     actions.className = 'consent-actions';
 
-    [['Decline', 'essential'], ['Accept', 'all']].forEach(function (b) {
+    var custom = document.createElement('a');
+    custom.className = 'consent-btn';
+    custom.href = '/cookies.html';
+    custom.textContent = 'Customise';
+    actions.appendChild(custom);
+
+    [['Reject', 'essential'], ['Accept', 'all']].forEach(function (b) {
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'consent-btn' + (b[1] === 'all' ? ' consent-btn-yes' : '');
@@ -189,6 +208,7 @@
       actions.appendChild(btn);
     });
 
+    pill.appendChild(title);
     pill.appendChild(text);
     pill.appendChild(actions);
     document.body.appendChild(pill);

@@ -1065,47 +1065,36 @@ a.hero-pill:hover .pill-go{opacity:1}
 .kanvas-embedded .acct-loading{visibility:hidden}
 
 /* ---------- Cookie consent ---------- */
-/* A pill, not a bar: it sits above the page rather than blocking it, and
-   both answers are the same size and weight, because under PECR refusing
-   has to be as easy as accepting. */
-/* The Academy site's pill in white glass: one row, a link that is the
-   whole explanation, Decline as a ghost, Accept filled. */
+/* A card at the foot of the screen, not a bar across it: it sits above the
+   page rather than blocking it. A title, one sentence, the policy linked,
+   and three buttons in a row - Customise to the cookie page, Reject and
+   Accept the same size and weight, because under PECR refusing has to be
+   as easy as accepting. Light: white card, soft border, one filled button. */
 .consent{
-  position:fixed;z-index:60;left:50%;transform:translate(-50%,10px);
-  bottom:calc(14px + env(safe-area-inset-bottom));
-  width:max-content;max-width:calc(100vw - 24px);
-  display:flex;align-items:center;gap:12px;
-  padding:6px 6px 6px 16px;border-radius:980px;
-  background:rgba(255,255,255,.7);
-  -webkit-backdrop-filter:saturate(180%) blur(22px);
-  backdrop-filter:saturate(180%) blur(22px);
-  border:1px solid rgba(0,0,0,.08);
-  box-shadow:0 8px 28px rgba(0,0,0,.10);
+  position:fixed;z-index:60;left:50%;transform:translate(-50%,12px);
+  bottom:calc(12px + env(safe-area-inset-bottom));
+  width:calc(100vw - 24px);max-width:600px;
+  padding:20px 20px 16px;border-radius:22px;
+  background:#fff;border:1px solid var(--line-soft);
+  box-shadow:0 12px 40px rgba(0,0,0,.12);
   opacity:0;transition:opacity .38s var(--ease),transform .38s var(--ease);
 }
 .consent.in{opacity:1;transform:translate(-50%,0)}
-.consent-text{margin:0;font-size:13px;line-height:1.3;color:var(--ink-2);white-space:nowrap}
+.consent-title{margin:0 0 8px;font-size:17px;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.consent-text{margin:0 0 16px;font-size:14.5px;line-height:1.5;color:var(--ink-2);text-wrap:pretty}
 .consent-text a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
-.consent-short{display:none}
-.consent-actions{display:flex;gap:6px;flex:0 0 auto}
+.consent-actions{display:flex;gap:8px}
 .consent-btn{
-  font-family:var(--font);font-size:13px;font-weight:500;letter-spacing:-.01em;
-  padding:7px 14px;border-radius:980px;cursor:pointer;white-space:nowrap;
-  background:rgba(255,255,255,.55);border:1px solid rgba(0,0,0,.12);color:var(--ink);
-  transition:background .2s var(--ease);
+  flex:1 1 0;min-width:0;text-align:center;text-decoration:none;
+  font-family:var(--font);font-size:15px;font-weight:500;letter-spacing:-.01em;line-height:1.2;
+  padding:12px 10px;border-radius:12px;cursor:pointer;white-space:nowrap;
+  background:var(--bg-grey);border:1px solid var(--bg-grey);color:var(--ink);
+  transition:background .2s var(--ease),border-color .2s var(--ease);
 }
-.consent-btn:hover{background:#fff}
+.consent-btn:hover{background:#ebebf0;border-color:#ebebf0;text-decoration:none}
 .consent-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .consent-btn-yes{background:var(--ink);border-color:var(--ink);color:#fff}
-.consent-btn-yes:hover{background:#000}
-
-/* Phones: the same single row, centred, with a shorter label. */
-@media (max-width:560px){
-  .consent{gap:10px;padding:5px 5px 5px 14px}
-  .consent-long{display:none}
-  .consent-short{display:inline}
-  .consent-btn{padding:7px 12px}
-}
+.consent-btn-yes:hover{background:#000;border-color:#000}
 
 @media (prefers-reduced-motion:reduce){
   .consent{transition:none;opacity:1;transform:translate(-50%,0)}

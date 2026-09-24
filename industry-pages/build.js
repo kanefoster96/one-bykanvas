@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 77;
+const CSS_V = 78;
 const SCRIPT_V = 28;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -334,7 +334,7 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
   </div>
 </footer>
 
-<script src="consent.js?v=4"></script>
+<script src="consent.js?v=6"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>
