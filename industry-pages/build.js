@@ -270,7 +270,7 @@ ${CASES.map((c) => `    <article class="case">
       <div class="badge">Optional</div>
       <h3>Max</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
-      <p class="plan-note">Everything in Business, plus we work on your Google ranking every month &mdash; new service and area pages, refreshed content, and a short monthly note on what changed. Missed calls are answered by text in seconds, and your customers are texted their booking reminders. Run it for the launch months, then step down to Business any month: the ranking stays.</p>
+      <p class="plan-note">Everything in Business, plus we work on your Google ranking every month &mdash; new service and area pages, refreshed content, and a short monthly note on what changed. You get your own business number that rings your mobile, missed calls are answered by text in seconds, and your customers are texted their booking reminders. Run it for the launch months, then step down to Business any month: the ranking stays.</p>
       <a class="btn btn-ghost full" href="/plans.html#max">Learn more about Max &rsaquo;</a>
     </article>
   </div>

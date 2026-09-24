@@ -947,7 +947,7 @@
         head: 'Max gets you ranking and texting from day one.',
         list: [
           'Your Google ranking worked on every month, from the first',
-          'Missed calls answered by text in seconds',
+          'Your own business number — rings your mobile, missed calls answered by text',
           'Booking reminders and confirmations texted to your customers',
           'Business email, and first in the queue'
         ],
