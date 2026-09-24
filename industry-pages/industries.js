@@ -81,13 +81,13 @@ const COMMON_FAQ = [
 
 const MAX_HEADING = 'Want to show up higher every month?';
 
-/* Keep Book: the customer you already won, kept. Every trade page with
+/* KeepBook: the customer you already won, kept. Every trade page with
    repeat custom carries a keepBook block - one named customer, the moment
    they could not find you, the reminder that would have kept them - and
    this question under it. Coffee shops have no per-customer job date to
    remind from, so that page has neither. */
 const KEEP_BOOK_FAQ = [
-  ['Keep Book: do I have to write the emails?', 'No. They&rsquo;re written for you and sent in your name; you can change any of them. Your part is adding the customer after the job, about thirty seconds on your phone. The reminder and the note go out on their own, and it&rsquo;s all within UK rules for emailing your own customers, with an opt-out on every one.']
+  ['KeepBook: do I have to write the emails?', 'No. They&rsquo;re written for you and sent in your name; you can change any of them. Your part is adding the customer after the job, about thirty seconds on your phone. The reminder and the note go out on their own, and it&rsquo;s all within UK rules for emailing your own customers, with an opt-out on every one.']
 ];
 
 module.exports = [
@@ -120,11 +120,11 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     keepBook: {
       heading: 'Stop renting your own customers.',
-      lede: 'Checkatrade, Trust a Trader, Bark: they get you found once, then hand your customer straight back to the list. A year later they need you again, can&rsquo;t remember your name, and pick someone else. Keep Book keeps them.',
+      lede: 'Checkatrade, Trust a Trader, Bark: they get you found once, then hand your customer straight back to the list. A year later they need you again, can&rsquo;t remember your name, and pick someone else. KeepBook keeps them.',
       story: [
         'Remember the boiler you fitted last November? She was made up with it. Then a year went by, the service light came on, and she couldn&rsquo;t remember your name. So she went back on Checkatrade, scrolled the list, and rang someone with a nicer photo.',
         'You did the hard bit and lost her anyway, because there was nowhere for her to find you again.',
-        'With Keep Book, she goes in your book the day you fit it. Eleven months later a reminder lands with a button that says <strong>Book my service</strong>. Every few months, a short note from you: still here if you need anything. She never has to remember your name, because you never quite leave. Electrician? The same for an EICR due in five years, an EV charger check, and the jobs they&rsquo;ve been putting off.'
+        'With KeepBook, she goes in your book the day you fit it. Eleven months later a reminder lands with a button that says <strong>Book my service</strong>. Every few months, a short note from you: still here if you need anything. She never has to remember your name, because you never quite leave. Electrician? The same for an EICR due in five years, an EV charger check, and the jobs they&rsquo;ve been putting off.'
       ],
       due: 'Eleven months after a boiler install, five years after an EICR, a year after a service: a reminder lands with a one-tap Book button.',
       note: '&ldquo;Still here if you need a service, a repair, or you&rsquo;re thinking about a new boiler. No obligation.&rdquo;',
@@ -171,11 +171,11 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     keepBook: {
       heading: 'The client who meant to rebook.',
-      lede: 'Booksy and Treatwell get you found once, then show your client the whole list next time. Keep Book keeps her coming back to your chair.',
+      lede: 'Booksy and Treatwell get you found once, then show your client the whole list next time. KeepBook keeps her coming back to your chair.',
       story: [
         'Remember Sophie, the balayage in March? She loved it, said she&rsquo;d be back in ten weeks. Ten weeks came and went. Her roots came through, she opened Instagram, an ad for the new place on the high street came up, and that was that.',
         'Nothing was wrong with you. There was just nothing from you.',
-        'With Keep Book, Sophie goes in your book after her appointment. When her ten weeks are up, a reminder lands with a button that says <strong>Book my next one</strong>. Nails and lashes? Infills reminded at two or three weeks. And every few months a short note in your name: still here, and there&rsquo;s a quiet week coming if you want a slot. She never has to remember to rebook, because you remember for her.'
+        'With KeepBook, Sophie goes in your book after her appointment. When her ten weeks are up, a reminder lands with a button that says <strong>Book my next one</strong>. Nails and lashes? Infills reminded at two or three weeks. And every few months a short note in your name: still here, and there&rsquo;s a quiet week coming if you want a slot. She never has to remember to rebook, because you remember for her.'
       ],
       due: 'Ten weeks after a colour, six after a cut, two or three after a set of nails or lashes: a reminder lands with a one-tap Book button.',
       note: '&ldquo;Still here if you&rsquo;re due a refresh, or fancy trying something new. No obligation.&rdquo;',
@@ -222,11 +222,11 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     keepBook: {
       heading: 'The regular who drifted.',
-      lede: 'A booking app gets you found once, then shows your client every chair in town next time. Keep Book keeps him coming back to yours.',
+      lede: 'A booking app gets you found once, then shows your client every chair in town next time. KeepBook keeps him coming back to yours.',
       story: [
         'Remember Dan, the skin fade every four weeks? Regular as clockwork, until he wasn&rsquo;t. Work got busy, five weeks became eight, and one Saturday he walked into the place next to his gym because it was there.',
         'You never lost him to a better cut. You lost him to a gap.',
-        'With Keep Book, Dan goes in your book after his first cut. When his four weeks are up, a reminder lands with a button that says <strong>Book my chair</strong>. Every few months, a line from you: still here, same chair. He doesn&rsquo;t have to remember when he was last in, because you do.'
+        'With KeepBook, Dan goes in your book after his first cut. When his four weeks are up, a reminder lands with a button that says <strong>Book my chair</strong>. Every few months, a line from you: still here, same chair. He doesn&rsquo;t have to remember when he was last in, because you do.'
       ],
       due: 'At the client&rsquo;s usual gap, four weeks or six, a reminder lands with a one-tap Book button.',
       note: '&ldquo;Still here if you&rsquo;re due a tidy-up. Same chair, same time if you want it.&rdquo;',
@@ -312,11 +312,11 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     keepBook: {
       heading: 'The client whose block ran out.',
-      lede: 'Memberships renew themselves. It&rsquo;s the block of sessions that ends, and the member who lapses, that slip away with nowhere to find you. Keep Book keeps them.',
+      lede: 'Memberships renew themselves. It&rsquo;s the block of sessions that ends, and the member who lapses, that slip away with nowhere to find you. KeepBook keeps them.',
       story: [
         'Remember Claire, the ten-session block in February? Lost half a stone, loved it, then the block ran out and life got in the way. By June she was searching &ldquo;personal trainer near me&rdquo; as if she&rsquo;d never met you.',
         'She didn&rsquo;t stop because of you. She stopped because nothing reminded her to start again.',
-        'With Keep Book, Claire goes in your book when the block ends. A few weeks later a reminder lands with a button that says <strong>Book my next block</strong>. Every few months, a short note from you: still here when you&rsquo;re ready, no pressure. Lapsed members get the same &mdash; a nudge when their pass runs out, and a line now and then, from you, not a marketing team.'
+        'With KeepBook, Claire goes in your book when the block ends. A few weeks later a reminder lands with a button that says <strong>Book my next block</strong>. Every few months, a short note from you: still here when you&rsquo;re ready, no pressure. Lapsed members get the same &mdash; a nudge when their pass runs out, and a line now and then, from you, not a marketing team.'
       ],
       due: 'When a block of sessions ends, or a pass runs out, a reminder lands with a one-tap Book button.',
       note: '&ldquo;Still here when you&rsquo;re ready to get back into it. No pressure.&rdquo;',
@@ -363,11 +363,11 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     keepBook: {
       heading: 'The one-off job that comes round again.',
-      lede: 'Your regular round looks after itself. It&rsquo;s the deep cleans, the ovens, the carpets and the end-of-tenancy jobs that come round again with nowhere to find you. Keep Book keeps them.',
+      lede: 'Your regular round looks after itself. It&rsquo;s the deep cleans, the ovens, the carpets and the end-of-tenancy jobs that come round again with nowhere to find you. KeepBook keeps them.',
       story: [
         'Remember the end-of-tenancy clean in Cramlington? The landlord was over the moon. Six months later the next tenants moved out, he needed it done again, and he typed &ldquo;end of tenancy clean near me&rdquo; into Google like he&rsquo;d never met you.',
         'He would have booked you in a heartbeat. He just couldn&rsquo;t find you.',
-        'With Keep Book, he goes in your book the day you finish. When the job is due again, a reminder lands with a button that says <strong>Book it again</strong>. Every few months, a short note from you: still here if you need a one-off doing. The oven, the carpets, the spring deep clean &mdash; they all come round, and now they come round to you.'
+        'With KeepBook, he goes in your book the day you finish. When the job is due again, a reminder lands with a button that says <strong>Book it again</strong>. Every few months, a short note from you: still here if you need a one-off doing. The oven, the carpets, the spring deep clean &mdash; they all come round, and now they come round to you.'
       ],
       due: 'Six months after a deep clean, a year after the oven or the carpets, whenever a tenancy turns over: a reminder lands with a one-tap Book button.',
       note: '&ldquo;Still here if you need a deep clean, the oven doing, or a one-off before guests. No obligation.&rdquo;',
@@ -414,11 +414,11 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     keepBook: {
       heading: 'The family who went back to the directory.',
-      lede: 'A tutoring directory gets you found once, then lists you beside fifty others the next time that family needs someone. Keep Book keeps them.',
+      lede: 'A tutoring directory gets you found once, then lists you beside fifty others the next time that family needs someone. KeepBook keeps them.',
       story: [
         'Remember Amir, GCSE maths, passed in June? His mum told everyone. In September his younger sister started Year 10, and his mum went back on the directory, because that&rsquo;s where she found you the first time.',
         'She&rsquo;d have chosen you again. She just didn&rsquo;t have your number to hand.',
-        'With Keep Book, the family goes in your book at the end of term. When the new school year comes round, a note lands in your name with a button that says <strong>Book a lesson</strong>. Every term, a line from you: still here, spaces for mocks season. The parents never have to hunt for you, because you come to them.'
+        'With KeepBook, the family goes in your book at the end of term. When the new school year comes round, a note lands in your name with a button that says <strong>Book a lesson</strong>. Every term, a line from you: still here, spaces for mocks season. The parents never have to hunt for you, because you come to them.'
       ],
       due: 'At the start of the next school year, or before mocks and exam season, a reminder lands with a one-tap Book button.',
       note: '&ldquo;Still here if a lesson or two would help this term, or for a younger one coming up. No obligation.&rdquo;',
@@ -465,11 +465,11 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     keepBook: {
       heading: 'The family who&rsquo;d have booked you again.',
-      lede: 'A Facebook group or a directory gets you found once, then shows that family whoever posted last when they want photos again. Keep Book keeps them.',
+      lede: 'A Facebook group or a directory gets you found once, then shows that family whoever posted last when they want photos again. KeepBook keeps them.',
       story: [
         'Remember the newborn shoot last spring? They cried at the gallery, in a good way. A year on, the first birthday came round, they wanted photos again, and went back to the group where they first found you and picked whoever had posted that morning.',
         'You&rsquo;d already won them. Nothing brought them back.',
-        'With Keep Book, they go in your book when the gallery goes out. Eleven months later a reminder lands with a button that says <strong>Book our next shoot</strong>. Every few months, a short note from you: still here, and there are mini sessions this autumn. Families come back every year. Now they come back to you.'
+        'With KeepBook, they go in your book when the gallery goes out. Eleven months later a reminder lands with a button that says <strong>Book our next shoot</strong>. Every few months, a short note from you: still here, and there are mini sessions this autumn. Families come back every year. Now they come back to you.'
       ],
       due: 'A year after a family or newborn shoot, two years after headshots, before the anniversary of a wedding: a reminder lands with a one-tap Book button.',
       note: '&ldquo;Still here if you&rsquo;d like photos again this year, or something for the wall. No obligation.&rdquo;',
@@ -516,11 +516,11 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     keepBook: {
       heading: 'The hedges that grew back.',
-      lede: 'Checkatrade and Bark get you found once, then show that customer the whole list when the job comes round again. Keep Book keeps them.',
+      lede: 'Checkatrade and Bark get you found once, then show that customer the whole list when the job comes round again. KeepBook keeps them.',
       story: [
         'Remember the hedges in Ponteland last September? Sharp as a ruler. Twelve months later they&rsquo;d grown out, the owner wanted them done again, and searched &ldquo;hedge cutting near me&rdquo; because your number was on a van that had long since driven off.',
         'He wanted you. He got whoever came up first.',
-        'With Keep Book, he goes in your book the day you finish. When autumn comes round, a reminder lands with a button that says <strong>Book my hedges</strong>. Same for the spring lawn treatment and the patio wash. Every few months, a line from you: still here if the garden needs anything. Seasonal work comes round every year. Now it comes round to you.'
+        'With KeepBook, he goes in your book the day you finish. When autumn comes round, a reminder lands with a button that says <strong>Book my hedges</strong>. Same for the spring lawn treatment and the patio wash. Every few months, a line from you: still here if the garden needs anything. Seasonal work comes round every year. Now it comes round to you.'
       ],
       due: 'A year after the hedges, the spring after a lawn treatment, when the patio needs its wash: a reminder lands with a one-tap Book button.',
       note: '&ldquo;Still here if the garden needs anything, or you&rsquo;re thinking about that patio. No obligation.&rdquo;',

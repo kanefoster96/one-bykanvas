@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 80;
+const CSS_V = 81;
 const SCRIPT_V = 28;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -86,8 +86,8 @@ function stepCards(b) {
     </article>`).join('\n');
 }
 
-/* The page's questions, with the Keep Book ones added wherever the page
-   has a Keep Book section - they only make sense under it. */
+/* The page's questions, with the KeepBook ones added wherever the page
+   has a KeepBook section - they only make sense under it. */
 function faqFor(b) {
   return b.keepBook ? b.faq.concat(INDUSTRIES.KEEP_BOOK_FAQ || []) : b.faq;
 }
@@ -197,11 +197,11 @@ ${b.also ? `  <div class="wrap center also reveal">
   </div>
 ` : ''}</section>
 
-${b.keepBook ? `<!-- Keep Book, in this trade's words: one customer, the moment they could
+${b.keepBook ? `<!-- KeepBook, in this trade's words: one customer, the moment they could
      not find you again, and the reminder that would have kept them. -->
 <section class="section" id="keepbook">
   <div class="wrap center">
-    <p class="fiveyear-tag reveal">Keep Book &mdash; on Business and Max</p>
+    <p class="kb-app reveal"><img class="kb-app-mark" src="assets/keepbook.svg" alt="" width="44" height="44"><span class="kb-app-text"><span class="kb-app-name">KeepBook<span class="kb-app-free">Free on Business and Max</span></span><span class="kb-app-sub">The app that brings your customers back</span></span></p>
     <h2 class="reveal">${b.keepBook.heading}</h2>
     <p class="lede reveal">${b.keepBook.lede}</p>
   </div>

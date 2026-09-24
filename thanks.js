@@ -29,7 +29,7 @@
     var lede = document.getElementById('thanksLede');
     if (lede) {
       lede.textContent = 'We’ve got your details. We’ll email ' + stash.email
-        + ' as soon as your page is ready, with a look at how Keep Book would bring your customers back.';
+        + ' as soon as your page is ready, with a look at how KeepBook would bring your customers back.';
     }
   }
 
