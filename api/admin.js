@@ -22,7 +22,7 @@ const { lookup: domainLookup } = require('./domains.js');
 const { notify } = require('./_notify.js');
 const { notifySiteLive } = require('./_site_live.js');
 const { sendLeadPreview } = require('./_previews.js');
-const { STATUSES: REQUEST_STATUSES, cleanAttachments, addNote, listInbox, getThread } = require('./_requests.js');
+const { STATUSES: REQUEST_STATUSES, cleanAttachments, addNote, listInbox, listJobs, getThread } = require('./_requests.js');
 
 const DEFAULT_ADMINS = ['kane@kanvas.one'];
 
@@ -320,7 +320,11 @@ module.exports = async function handler(req, res) {
        snippet a customer would recognise, so they are skipped for the
        snippet and kept for the timestamp. */
     if (action === 'requestsInbox') {
-      return res.status(200).json({ requests: await listInbox(db) });
+      /* Alongside the requests, the jobs that are not requests: sites owed
+         to new customers and free examples still to make. The app shows
+         all three as one list of outstanding work. */
+      const [requests, jobs] = await Promise.all([listInbox(db), listJobs(db)]);
+      return res.status(200).json({ requests, builds: jobs.builds, designs: jobs.designs });
     }
 
     if (action === 'requestThread') {

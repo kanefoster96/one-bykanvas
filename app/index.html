@@ -12,7 +12,7 @@
 <link rel="icon" href="../assets/favicon.svg?v=2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/favicon.svg?v=2">
 <link rel="stylesheet" href="../styles.css?v=72">
-<link rel="stylesheet" href="app.css?v=15">
+<link rel="stylesheet" href="app.css?v=16">
 </head>
 <body class="oa-body">
 
@@ -354,7 +354,15 @@
     <!-- The admin's side: every customer's requests, through /api/admin. -->
     <section id="adminInbox" hidden>
       <div class="req-top"><h1 class="req-h1">Requests</h1></div>
-      <p class="hint req-lede">Everything customers have asked for, newest first. Ones waiting on you are marked.</p>
+      <p class="hint req-lede">Every job outstanding: sites to build, free designs to make, and what customers have asked for. Ones waiting on you are marked.</p>
+      <!-- The jobs that are not requests: a site owed to a new customer, a
+           free example asked for. Each card opens to the details and a box
+           to finish it from here. -->
+      <h3 class="req-list-title oa-jobs-title" id="adminBuildsTitle" hidden>Sites to build</h3>
+      <div class="req-cards" id="adminBuilds"></div>
+      <h3 class="req-list-title oa-jobs-title" id="adminDesignsTitle" hidden>Free designs to make</h3>
+      <div class="req-cards" id="adminDesigns"></div>
+      <h3 class="req-list-title oa-jobs-title" id="adminOpenTitle" hidden>Customer requests</h3>
       <div class="req-cards" id="adminOpen"></div>
       <p class="req-empty" id="adminEmpty" hidden>Nothing open. Enjoy it.</p>
       <details class="req-done-wrap" id="adminDoneWrap" hidden>
@@ -535,6 +543,6 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=17"></script>
+<script src="app.js?v=18"></script>
 </body>
 </html>

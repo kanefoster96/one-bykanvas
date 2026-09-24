@@ -289,6 +289,22 @@
 .oa-site-pick{font:inherit;font-size:15px;font-weight:500;color:var(--ink);border:0;background:transparent;padding:2px 0;max-width:52vw;text-overflow:ellipsis;-webkit-appearance:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d1d1f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right center;background-size:14px;padding-right:18px}
 .oa-req-biz{display:block;font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);margin-bottom:3px}
 .oa-req-wait{color:#c0392b}
+/* Jobs that are not requests (a build owed, a free example to make): a card
+   that opens to its details and a box to finish it from the phone. */
+.oa-jobs-title{margin-top:26px}
+.oa-jobs-title + .req-cards{margin-top:0}
+.oa-jobs-title + .req-cards:empty{display:none}
+.oa-job summary{list-style:none;cursor:pointer}
+.oa-job summary::-webkit-details-marker{display:none}
+.oa-job-body{margin-top:14px;padding-top:12px;border-top:1px solid var(--line-soft)}
+.oa-job-line{margin:0 0 7px;font-size:14px;line-height:1.45;color:var(--ink-2);overflow-wrap:anywhere}
+.oa-job-line strong{color:var(--ink);font-weight:600}
+.oa-job-line a{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.oa-job-finish{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.oa-job-finish input{font:inherit;font-size:16px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);width:100%;box-sizing:border-box}
+.oa-job-finish input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(29,29,31,.12)}
+.oa-job-finish .btn{width:100%}
+.oa-job-finish .note:empty{display:none}
 .thread .msg.is-private .msg-body{background:#fdf6e9;color:#8a5a17;border:1px dashed #f0e2c4}
 
 /* ---- channels ---- */

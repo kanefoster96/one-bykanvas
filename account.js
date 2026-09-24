@@ -749,18 +749,23 @@ function showBilling(row) {
 
     var up = ORDER.indexOf(chosen) > ORDER.indexOf(current);
     var PERK = {
-      starter: 'your live site with one change a month. Bookings, forms, chat and customer records are part of Business',
-      business: 'unlimited changes made by us, plus bookings, forms, chat, customer records and automated emails',
+      starter: 'your live site with one change a month. Bookings, forms, chat, Keep Book and customer records are part of Business',
+      business: 'unlimited changes made by us, plus bookings, forms, chat, Keep Book, customer records and automated emails',
       pro: 'priority requests and business email',   // legacy, no longer sold
-      max: 'top priority, business email, and SEO work every month'
+      max: 'top priority, business email, SEO work every month, missed calls answered by text and booking reminders texted to your customers'
     };
     var head = (up ? 'Upgrading' : 'Downgrading') + ' from ' + PLAN_NAME[current] +
       ' to ' + PLAN_NAME[chosen] + ' \u2014 ' + (PERK[chosen] || '') + '.';
 
+    /* Stepping down from Max: the ranking work stays done; the texts are
+       the one thing that stops, and can be kept on for an add-on. */
+    var leavingMax = !up && current === 'max';
+
     move.hidden = false;
     move.textContent = head + (up
       ? ' You only pay the difference for the rest of this month.'
-      : ' Nothing to pay now, and you keep your current plan until it renews.');
+      : ' Nothing to pay now, and you keep your current plan until it renews.'
+        + (leavingMax ? ' Everything done to your ranking so far stays done. Texts to your customers stop on ' + PLAN_NAME[chosen] + ' \u2014 message us before you switch if you\u2019d like to keep them on as an add-on.' : ''));
 
     /* Then replace the vague half with the real number, once Stripe has
        worked it out. Sequenced so a quick second change cannot be overwritten
@@ -814,6 +819,26 @@ function showBilling(row) {
   var subscribed = status === 'active' || status === 'trialing';
   payBtn.textContent = subscribed ? 'Change plan' : 'Set up payment';
   payBtn.dataset.mode = subscribed ? 'change' : '';
+
+  /* The step up from the plan they are on, said once under the billing
+     box. Picking it only moves the select; the button above still does
+     the change, with its price preview first. */
+  var upEl = document.getElementById('billUp');
+  var UP = {
+    starter: { to: 'business', text: 'For £25 more, Business adds bookings, payments and forms, Keep Book reminders for your customers, live chat, and unlimited changes made by us within 48 hours. ' },
+    business: { to: 'max', text: 'Max works on your Google ranking every month, answers missed calls by text, and texts your customers their booking reminders. Run it while your site climbs, then step down to Business any month — you keep the ranking. ' }
+  };
+  var step = subscribed && UP[current];
+  upEl.hidden = !step;
+  upEl.innerHTML = '';
+  if (step) {
+    upEl.appendChild(document.createTextNode(step.text));
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = 'See what ' + PLAN_NAME[step.to] + ' would cost ›';
+    b.addEventListener('click', function () { pick.value = step.to; describeMove(); pick.focus(); });
+    upEl.appendChild(b);
+  }
 }
 
 document.getElementById('portalBtn').addEventListener('click', async function () {

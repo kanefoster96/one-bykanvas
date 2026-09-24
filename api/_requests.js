@@ -210,7 +210,39 @@ async function siteForUser(db, userId) {
   return made.id;
 }
 
+/* The two other kinds of outstanding work, so the app's inbox is every job
+   in one place: customers whose plan is live but whose site is not yet
+   (a build owed), and free examples asked for and not yet sent. Neither is
+   a request row, so listInbox alone would never show them. Oldest first,
+   because the one who has waited longest is the one to do next. */
+async function listJobs(db) {
+  const [builds, designs] = await Promise.all([
+    db.from('profiles')
+      .select('id, business_name, contact_name, phone, business_type, active_plan, site_url, '
+            + 'requested_domain, domain_owned, site_goals, site_uses, services, existing_links, created_at')
+      .not('active_plan', 'is', null).eq('site_status', 'building')
+      .order('created_at', { ascending: true }).limit(100),
+    db.from('leads')
+      .select('id, name, business, email, handle, requested_domain, about, created_at')
+      .eq('source', 'free-preview').is('preview_sent_at', null)
+      .order('created_at', { ascending: true }).limit(200)
+  ]);
+  if (builds.error) throw new Error(builds.error.message);
+  if (designs.error) throw new Error(designs.error.message);
+
+  /* Emails live in auth.users. Best effort, one lookup per build - there
+     are never many, and a build without an email still shows. */
+  const rows = builds.data || [];
+  for (const p of rows) {
+    try {
+      const { data } = await db.auth.admin.getUserById(p.id);
+      p.email = (data && data.user && data.user.email) || null;
+    } catch (e) { p.email = null; }
+  }
+  return { builds: rows, designs: designs.data || [] };
+}
+
 module.exports = {
   STATUSES, CUSTOMER_LABEL, MAX_ATTACHMENTS, BODY_MIN, BODY_MAX,
-  cleanBody, cleanAttachments, addNote, listInbox, getThread, siteForUser
+  cleanBody, cleanAttachments, addNote, listInbox, listJobs, getThread, siteForUser
 };

@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=75">
+<link rel="stylesheet" href="styles.css?v=77">
 </head>
 <body class="auth-body">
 
@@ -179,7 +179,7 @@
 
       <section class="wiz-step" data-step="4" aria-label="Choose a plan" hidden>
         <h1>Pick your plan.</h1>
-        <p class="wiz-sub">Business covers everything you need &mdash; Max adds monthly SEO, ongoing improvements and business email.</p>
+        <p class="wiz-sub">Business covers everything you need &mdash; Max adds monthly SEO, texts to your customers and business email. Move up or down any time.</p>
 
         <!-- Tapping a plan expands its full list right under it; the ticks
              from the last step pre-select the plan that covers them, and the
@@ -194,13 +194,15 @@
             <input type="radio" name="plan" value="max">
             <span class="pick-main">
               <span class="pick-head"><b>Max</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
-              <span class="pick-note">Growth mode &mdash; improved monthly, without you asking.</span>
+              <span class="pick-note">Growth mode &mdash; improved monthly, and your customers texted, without you asking.</span>
             </span>
           </label>
           <div class="pick-feats" data-plan="max">
             <ul class="ticks">
               <li>Everything in Business</li>
               <li>SEO and site improvements every month</li>
+              <li>Your own business number &mdash; rings your mobile, missed calls answered by text</li>
+              <li>Booking reminders and confirmations texted to your customers</li>
               <li>Business email &mdash; you@yourbusiness.co.uk, on Google Workspace</li>
               <li>Top priority &mdash; first in the queue</li>
             </ul>
@@ -216,9 +218,10 @@
           <div class="pick-feats" data-plan="business">
             <ul class="ticks">
               <li>Built and online within 7 days</li>
+              <li>Keep Book &mdash; your customers reminded when they&rsquo;re due</li>
+              <li>Bookings, payments, forms and live chat</li>
               <li>Domain, hosting and SSL included</li>
               <li>Everything you ask for in the build, however big</li>
-              <li>Ongoing support</li>
               <li>Unlimited changes and new features, made by us within 48 hours</li>
             </ul>
           </div>
@@ -244,6 +247,18 @@
         </div>
 
         <p class="pick-warn" id="planSteer" role="status" aria-live="polite" hidden></p>
+
+        <!-- The step up from whichever plan is picked, said once, optional.
+             Starter is shown what £25 more unlocks; Business is shown Max
+             as a launch-months choice they can step down from. Filled by
+             get-started.js from what is selected. -->
+        <div class="pick-up" id="planUp" hidden>
+          <p class="pick-up-tag" id="planUpTag"></p>
+          <p class="pick-up-head" id="planUpHead"></p>
+          <ul class="ticks pick-up-list" id="planUpList"></ul>
+          <p class="pick-up-note" id="planUpNote"></p>
+          <button class="btn btn-ghost pick-up-btn" id="planUpBtn" type="button"></button>
+        </div>
 
         <p class="note" id="note3" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
@@ -286,6 +301,9 @@
 
         <div class="field"><label for="refCode">Referral code (optional)</label>
           <input id="refCode" type="text" autocomplete="off" autocapitalize="characters" placeholder="Got one from another business? It goes here"></div>
+
+        <!-- One line, last chance, only when there is a step up to take. -->
+        <p class="pay-up" id="payUp" hidden></p>
 
         <p class="note" id="note4" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full" id="payAction" type="button">Set up payment</button>
@@ -347,7 +365,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=17"></script>
+<script src="get-started.js?v=19"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

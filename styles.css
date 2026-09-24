@@ -701,6 +701,7 @@ body.dialog-open{overflow:hidden}
    the ticks only hint at. */
 .ticks li.tick-hero{color:var(--good);font-weight:600}
 .ticks li.tick-hero::before{border-color:var(--good);border-width:2.5px}
+.ticks li.tick-hero a{color:inherit;text-decoration:underline;text-underline-offset:3px}
 
 /* And the case for it, under the three cards rather than crammed into one. */
 .seo-pitch{
@@ -728,6 +729,32 @@ body.dialog-open{overflow:hidden}
   .seo-pitch{display:flex;align-items:center;gap:clamp(28px,5vw,64px)}
   .seo-pitch .btn{margin-top:0}
 }
+
+/* Keep Book: the same pitch card in white, because it is on Business and
+   Max rather than only on Max, and the green is Max's colour on this page. */
+.seo-pitch.kb-pitch{background:#fff;border-color:var(--line-soft);box-shadow:0 12px 40px rgba(0,0,0,.05)}
+
+/* The Keep Book section: one customer's story beside how it works. Story
+   first on a phone, since that is the part that sells it. */
+.kb{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:clamp(30px,4vw,44px);text-align:left}
+.kb-story,.kb-how{background:#fff;border-radius:var(--radius-lg);padding:clamp(24px,3.5vw,34px);box-shadow:0 2px 18px rgba(0,0,0,.05)}
+.kb-story p{margin:0 0 14px;font-size:17px;line-height:1.6;color:var(--ink);text-wrap:pretty}
+.kb-story p:last-child{margin-bottom:0}
+.kb-story p.kb-turn{color:var(--ink-2)}
+.kb-how h3{margin:0 0 16px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--good)}
+.kb-steps{list-style:none;margin:0;padding:0;counter-reset:kb;display:flex;flex-direction:column;gap:14px}
+.kb-steps li{position:relative;padding-left:38px;font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+.kb-steps li strong{display:block;color:var(--ink);font-weight:600}
+.kb-steps li::before{
+  counter-increment:kb;content:counter(kb);position:absolute;left:0;top:1px;width:26px;height:26px;
+  border-radius:50%;background:var(--ink);color:#fff;font-size:13px;font-weight:600;
+  display:grid;place-items:center;
+}
+.kb-price{margin:20px 0 0;padding-top:18px;border-top:1px solid var(--line-soft);font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+.kb-price strong{color:var(--ink);font-weight:600}
+.kb-how .btn{margin-top:18px}
+.kb-tone{margin:22px auto 0;max-width:56ch;font-size:14.5px;line-height:1.55;color:var(--ink-3)}
+@media (max-width:760px){.kb{grid-template-columns:1fr;gap:14px}}
 
 /* ---------- App ---------- */
 .app{background:var(--ink);color:#f5f5f7;overflow:hidden}
@@ -881,9 +908,6 @@ a.hero-pill:hover .pill-go{opacity:1}
 .mini-step input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,29,31,.13)}
 .mini-step input.err{border-color:#d93025}
 .mini-row{display:flex;gap:8px;align-items:center}
-.mini-at{position:relative}
-.mini-at span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--ink-2);pointer-events:none}
-.mini-at input{padding-left:33px}
 .free-mini{scroll-margin-top:90px}
 .mini-row input{flex:1;min-width:0}
 .mini-go{
@@ -2275,6 +2299,23 @@ a.hero-pill:hover .pill-go{opacity:1}
   background:#fff7ed;border:1px solid #f9caa2;border-radius:12px;
   color:#b45309;font-size:13.5px;line-height:1.5;
 }
+
+/* The step up from the plan picked: what the next one unlocks, and the
+   button to take it. Optional, said once, in the grey of the pay notes
+   rather than the orange of a warning - nothing is wrong. */
+.pick-up{margin:14px 2px 0;padding:16px 18px;background:var(--bg-grey);border-radius:14px}
+.pick-up-tag{margin:0 0 4px;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--good)}
+.pick-up-head{margin:0;font-size:15.5px;font-weight:600;line-height:1.4;color:var(--ink)}
+.pick-up .ticks{margin:10px 0 0}
+.pick-up .ticks li{font-size:14px;margin-bottom:8px;color:var(--ink-2)}
+.pick-up-note{margin:10px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.pick-up-note strong{color:var(--ink);font-weight:600}
+.pick-up-btn{margin-top:12px;width:100%}
+.pay-up{margin:0 0 14px;font-size:13.5px;line-height:1.5;color:var(--ink-2);text-align:center}
+.pay-up button{font:inherit;font-weight:600;color:var(--ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.bill-up{margin:14px 0 0;padding:14px 16px;background:var(--bg-grey);border-radius:14px;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.bill-up strong{color:var(--ink);font-weight:600}
+.bill-up button{font:inherit;font-weight:600;color:var(--ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- Email marketing (account page) ---------- */
 .mk-count{margin:0 0 12px;font-size:14px;color:#6e6e73}

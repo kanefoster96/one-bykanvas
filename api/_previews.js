@@ -65,7 +65,7 @@ async function sendLeadPreview(db, id, url, opts) {
       heading: 'Your website is ready 🎁',
       lines: [
         `Here it is. We designed this for <strong>${esc(lead.business)}</strong> from `
-          + `${lead.handle ? 'your ' + esc(lead.handle) : 'what you sent us'}, so it should `
+          + `${!lead.handle ? 'what you sent us' : /^@/.test(lead.handle) ? 'your ' + esc(lead.handle) : 'the link you sent us'}, so it should `
           + `already look like you.`
       ].concat(domainState === 'taken'
         ? [`One thing: <strong>${esc(lead.requested_domain)}</strong> has been `
