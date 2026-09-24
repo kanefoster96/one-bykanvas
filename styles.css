@@ -240,12 +240,15 @@ body.locked{overflow:hidden}
   font-size:11px;font-weight:700;letter-spacing:.02em;white-space:nowrap;
   background:var(--good-soft);color:var(--good);border-radius:980px;padding:3px 8px;
 }
-/* Desktop, cards side by side: one toggle above them flips all three.
-   Phone, cards stacked: a toggle in each card, so any two can be compared
-   on different billing without scrolling back up. */
+/* Desktop, cards side by side: one toggle above them flips all of them.
+   Phone, cards stacked: where the cards carry their own toggles (the plans
+   page), those show and the page one hides, so any two can be compared on
+   different billing without scrolling back up. Where they don't (the
+   homepage's two cards), the page toggle stays. */
 .plan .bill-toggle-card{display:none;margin:14px 0 0;padding:3px}
 @media (max-width:600px){
-  .bill-toggle-page{display:none}
+  .bill-toggle-page:has(~ .plans .bill-toggle-card),
+  .wrap:has(.bill-toggle-page):has(~ .plans .bill-toggle-card) .bill-toggle-page{display:none}
   .plan .bill-toggle-card{display:inline-flex}
 }
 .plan .bill-toggle-card .bill-opt{font-size:12.5px;padding:6px 12px;gap:6px}
@@ -755,6 +758,11 @@ body.dialog-open{overflow:hidden}
 .kb-how .btn{margin-top:18px}
 .kb-tone{margin:22px auto 0;max-width:56ch;font-size:14.5px;line-height:1.55;color:var(--ink-3)}
 @media (max-width:760px){.kb{grid-template-columns:1fr;gap:14px}}
+/* The homepage carries the story alone, one column, with how it works in a
+   single line under it; the full three steps live on the plans page. */
+.kb.kb-one{grid-template-columns:1fr;max-width:640px;gap:0}
+.kb-line{margin:18px 4px 0;font-size:14.5px;line-height:1.55;color:var(--ink-2);text-align:center}
+.kb-line a{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
 
 /* ---------- App ---------- */
 .app{background:var(--ink);color:#f5f5f7;overflow:hidden}
