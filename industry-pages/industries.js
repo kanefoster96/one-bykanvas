@@ -29,7 +29,7 @@ const PROMISE = {
   name: 'The See It First Promise',
   lines: [
     'We design a real page for your business before you join. Don&rsquo;t love it? You owe nothing.',
-    'Live in 7 days. After that, unlimited changes, made by Kane within 48 hours.',
+    'Live in 7 days. After that, unlimited changes, made by me within 48 hours.',
     'Cancel anytime. Your site comes down, your domain stays yours, and there is no exit fee.'
   ]
 };
@@ -62,13 +62,13 @@ function features(t) {
 function steps(one) {
   return [
     one,
-    ['Kane builds it for you', 'Design, writing, web address, hosting and security, all done by one person, all in the monthly price. You never touch a website builder, and you never get passed around.'],
+    ['I build it for you', 'Design, writing, web address, hosting and security, all done by me, all in the monthly price. You never touch a website builder, and you never get passed around.'],
     ['Live in 7 days, then we keep it updated', 'It stays ours to look after: unlimited changes and new features, made for you within 48 hours of asking.']
   ];
 }
 
 function endLine(subject) {
-  return 'Got a question? Email <a href="mailto:hello@kanvas.one?subject=' + encodeURIComponent(subject) + '">hello@kanvas.one</a> and Kane replies.';
+  return 'Got a question? Email <a href="mailto:hello@kanvas.one?subject=' + encodeURIComponent(subject) + '">hello@kanvas.one</a> and I reply.';
 }
 
 const COMMON_FAQ = [
