@@ -92,6 +92,13 @@ function faqFor(b) {
   return b.keepBook ? b.faq.concat(INDUSTRIES.KEEP_BOOK_FAQ || []) : b.faq;
 }
 
+/* A subheading with each sentence on its own line, as the hand-written
+   pages have them. Only for what is shown; the structured data keeps
+   the plain sentence. */
+function lines(html) {
+  return String(html || '').replace(/([.!?]) (?=[A-Z&])/g, '$1<br>');
+}
+
 /* Entities out, for the structured data Google reads as plain text. */
 function plain(html) {
   return html.replace(/<[^>]+>/g, '').replace(/&rsquo;/g, '\u2019').replace(/&lsquo;/g, '\u2018')
@@ -165,7 +172,7 @@ ${JSON.stringify({
   <div class="wrap center">
     <a class="hero-pill hero-pill-link reveal" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">${b.h1}</h1>
-    <p class="lede reveal">${b.lede}</p>
+    <p class="lede reveal">${lines(b.lede)}</p>
 ${b.heroNote ? `    <p class="micro reveal hero-note">${b.heroNote}</p>
 ` : ''}
     <!-- A request being typed, as this trade would type it. Decorative: the
@@ -203,7 +210,7 @@ ${b.keepBook ? `<!-- KeepBook, in this trade's words: one customer, the moment t
   <div class="wrap center">
     <p class="kb-app reveal"><img class="kb-app-mark" src="assets/keepbook.svg" alt="" width="44" height="44"><span class="kb-app-text"><span class="kb-app-name">KeepBook<span class="kb-app-free">Free on Business and Max</span></span><span class="kb-app-sub">The app that brings your customers back</span></span></p>
     <h2 class="reveal">${b.keepBook.heading}</h2>
-    <p class="lede reveal">${b.keepBook.lede}</p>
+    <p class="lede reveal">${lines(b.keepBook.lede)}</p>
   </div>
   <div class="wrap kb reveal">
     <div class="kb-story">
@@ -225,7 +232,7 @@ ${b.keepBook.story.map((p, i) => `      <p${i === 1 ? ' class="kb-turn"' : ''}>$
 ` : ''}<section class="section grey">
   <div class="wrap center">
     <h2 class="reveal">How it works.</h2>
-    <p class="lede reveal">${b.buildNote}</p>
+    <p class="lede reveal">${lines(b.buildNote)}</p>
   </div>
   <div class="wrap grid grid-3 reveal">
 ${stepCards(b)}
@@ -255,7 +262,7 @@ ${CASES.map((c) => `    <article class="case">
 ` : ''}${b.maxPitch ? `<section class="section">
   <div class="wrap center">
     <h2 class="reveal">${b.maxPitch.heading}</h2>
-    <p class="lede reveal">${b.maxPitch.text}</p>
+    <p class="lede reveal">${lines(b.maxPitch.text)}</p>
   </div>
   <div class="wrap plans reveal">
     <article class="plan">
