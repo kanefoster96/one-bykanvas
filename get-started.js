@@ -913,5 +913,105 @@
     document.getElementById('pick').addEventListener('change', warn);
   })();
 
+  /* The step up, offered once at the moment they are choosing. Starter
+   * sees what £25 more unlocks. Business sees Max framed as the launch
+   * months - SEO and texts while the site is new, then step down to
+   * Business once the ranking is where they want it, keeping the ranking.
+   * Max sees nothing: there is nowhere up to go. The pay step repeats it
+   * as one line, and both routes only ever change the radio - the summary
+   * is rebuilt from it when they press Next.
+   */
+  (function wireStepUp() {
+    var box = $('planUp'), tag = $('planUpTag'), head = $('planUpHead'),
+        list = $('planUpList'), noteEl = $('planUpNote'), btn = $('planUpBtn'), pay = $('payUp');
+    if (!box || !btn) return;
+
+    var UP = {
+      starter: {
+        to: 'business',
+        tag: 'For £25 more',
+        head: 'Business turns a website into a way to get booked.',
+        list: [
+          'Bookings, payments and forms on your site',
+          'Keep Book — every customer reminded when they’re due',
+          'Live chat, customer records and reviews asked for automatically',
+          'Unlimited changes, made by us within 48 hours'
+        ],
+        note: 'Starter gets you found. Business gets you booked, and keeps the customer afterwards.',
+        btn: 'Switch to Business — £50 a month',
+        line: 'Want bookings, forms and Keep Book? '
+      },
+      business: {
+        to: 'max',
+        tag: 'The launch months',
+        head: 'Max gets you ranking and texting from day one.',
+        list: [
+          'Your Google ranking worked on every month, from the first',
+          'Missed calls answered by text in seconds',
+          'Booking reminders and confirmations texted to your customers',
+          'Business email, and first in the queue'
+        ],
+        note: 'A new site ranks fastest when the work starts straight away. Run Max while it climbs, then step down to Business any month once you’re where you want to be. <strong>You keep the ranking.</strong> The texts stop on Business unless you ask us to keep them on as an add-on.',
+        btn: 'Start on Max — £250 a month',
+        line: 'Want SEO and texts from day one? '
+      }
+    };
+
+    function picked() {
+      var chosen = document.querySelector('input[name="plan"]:checked');
+      return chosen ? chosen.value : 'business';
+    }
+
+    function choose(plan) {
+      var radio = document.querySelector('input[name="plan"][value="' + plan + '"]');
+      if (!radio) return;
+      radio.checked = true;
+      document.querySelectorAll('#pick .pick-row').forEach(function (row) {
+        var input = row.querySelector('input');
+        if (input) row.classList.toggle('is-on', input.checked);
+      });
+      document.getElementById('pick').dispatchEvent(new Event('change'));
+    }
+
+    function paint() {
+      var up = UP[picked()];
+      box.hidden = !up;
+      if (!up) return;
+      tag.textContent = up.tag;
+      head.textContent = up.head;
+      list.innerHTML = '';
+      up.list.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; list.appendChild(li); });
+      noteEl.innerHTML = up.note;   /* our own strings, no customer input */
+      btn.textContent = up.btn;
+      btn.dataset.to = up.to;
+    }
+
+    btn.addEventListener('click', function () {
+      choose(btn.dataset.to);
+      box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
+    document.getElementById('pick').addEventListener('change', paint);
+    paint();
+
+    /* The pay step's one line. Built when that step is shown: the plan is
+       settled by then, and the line links straight back to the switch. */
+    if (pay) {
+      var origStepPlan = stepPlan;
+      stepPlan = function () {
+        origStepPlan();
+        var up = UP[answers.selected_plan];
+        pay.hidden = !up;
+        pay.innerHTML = '';
+        if (!up) return;
+        pay.appendChild(document.createTextNode(up.line));
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = 'Switch to ' + PLANS[up.to].label + ' ›';
+        b.addEventListener('click', function () { choose(up.to); stepPlan(); });
+        pay.appendChild(b);
+      };
+    }
+  })();
+
   show(1);
 })();

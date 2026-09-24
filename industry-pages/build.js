@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 76;
+const CSS_V = 77;
 const SCRIPT_V = 28;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -270,7 +270,7 @@ ${CASES.map((c) => `    <article class="case">
       <div class="badge">Optional</div>
       <h3>Max</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
-      <p class="plan-note">Everything in Business, plus we work on your Google ranking every month &mdash; new service and area pages, refreshed content, and a short monthly note on what changed. Missed calls are answered by text in seconds, so a job you couldn&rsquo;t pick up isn&rsquo;t a job lost. Add or drop it any time.</p>
+      <p class="plan-note">Everything in Business, plus we work on your Google ranking every month &mdash; new service and area pages, refreshed content, and a short monthly note on what changed. Missed calls are answered by text in seconds, and your customers are texted their booking reminders. Run it for the launch months, then step down to Business any month: the ranking stays.</p>
       <a class="btn btn-ghost full" href="/plans.html#max">Learn more about Max &rsaquo;</a>
     </article>
   </div>
