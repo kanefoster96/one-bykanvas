@@ -749,8 +749,8 @@ function showBilling(row) {
 
     var up = ORDER.indexOf(chosen) > ORDER.indexOf(current);
     var PERK = {
-      starter: 'your live site with one change a month. Bookings, forms, chat, Keep Book and customer records are part of Business',
-      business: 'unlimited changes made by us, plus bookings, forms, chat, Keep Book, customer records and automated emails',
+      starter: 'your live site with one change a month. Bookings, forms, chat, KeepBook and customer records are part of Business',
+      business: 'unlimited changes made by us, plus bookings, forms, chat, KeepBook, customer records and automated emails',
       pro: 'priority requests and business email',   // legacy, no longer sold
       max: 'top priority, business email, SEO work every month, missed calls answered by text and booking reminders texted to your customers'
     };
@@ -825,7 +825,7 @@ function showBilling(row) {
      the change, with its price preview first. */
   var upEl = document.getElementById('billUp');
   var UP = {
-    starter: { to: 'business', text: 'For £25 more, Business adds bookings, payments and forms, Keep Book reminders for your customers, live chat, and unlimited changes made by us within 48 hours. ' },
+    starter: { to: 'business', text: 'For £25 more, Business adds bookings, payments and forms, KeepBook reminders for your customers, live chat, and unlimited changes made by us within 48 hours. ' },
     business: { to: 'max', text: 'Max works on your Google ranking every month, answers missed calls by text, and texts your customers their booking reminders. Run it while your site climbs, then step down to Business any month — you keep the ranking. ' }
   };
   var step = subscribed && UP[current];

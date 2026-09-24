@@ -1336,7 +1336,7 @@
     if (isStarter()) { $('navChat').hidden = true; return; }
     var chat = hasModule('chat'), people = contactsAllowed();
     $('navChat').hidden = !(chat || people);
-    $('navChat').querySelector('span:not(.nav-count)').textContent = chat ? 'Chat' : 'Contacts';
+    $('navChat').querySelector('span:not(.nav-count)').textContent = chat ? 'Chat' : 'KeepBook';
     $('chatMode').hidden = !(chat && people);
     setChatMode(!chat ? 'contacts' : (people && chatMode === 'contacts') ? 'contacts' : 'inbox', true);
   }
@@ -1345,13 +1345,13 @@
     $('chatMode').querySelectorAll('.oa-pill').forEach(function (p) { var on = p.dataset.mode === m; p.classList.toggle('is-on', on); p.setAttribute('aria-selected', String(on)); });
     $('inboxView').hidden = m !== 'inbox';
     $('contactsView').hidden = m !== 'contacts';
-    $('chatHeading').textContent = m === 'inbox' ? 'Inbox' : 'Contacts';
+    $('chatHeading').textContent = m === 'inbox' ? 'Inbox' : 'My KeepBook';
     renderOnlineBar();
     if (m === 'contacts' && !quiet && !contactsLoaded) loadContacts();
   }
   $('chatMode').addEventListener('click', function (e) { var p = e.target.closest('.oa-pill'); if (p) setChatMode(p.dataset.mode); });
 
-  function contactName(c) { return c.name || c.email || c.phone || 'Contact'; }
+  function contactName(c) { return c.name || c.email || c.phone || 'Customer'; }
   function contactAvatar(c) {
     var av = el('span', 'oa-avatar');
     if (c.name) {
@@ -1429,7 +1429,7 @@
     $('contactScreen').querySelector('.oa-contact-body').scrollTop = 0;
     if (openContact.id) { renderContactHead(openContact); loadContact(openContact.id); }
     else {
-      $('contactTitle').textContent = 'New contact';
+      $('contactTitle').textContent = 'New customer';
       $('contactMeta').textContent = 'A name, a phone, an email: whatever you have.';
       var av = contactAvatar({}); av.id = 'contactAvatar'; $('contactAvatar').replaceWith(av);
       setTimeout(function () { $('cfName').focus(); }, 60);

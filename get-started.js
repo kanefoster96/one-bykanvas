@@ -933,13 +933,13 @@
         head: 'Business turns a website into a way to get booked.',
         list: [
           'Bookings, payments and forms on your site',
-          'Keep Book — every customer reminded when they’re due',
+          'KeepBook — every customer reminded when they’re due',
           'Live chat, customer records and reviews asked for automatically',
           'Unlimited changes, made by us within 48 hours'
         ],
         note: 'Starter gets you found. Business gets you booked, and keeps the customer afterwards.',
         btn: 'Switch to Business — £50 a month',
-        line: 'Want bookings, forms and Keep Book? '
+        line: 'Want bookings, forms and KeepBook? '
       },
       business: {
         to: 'max',

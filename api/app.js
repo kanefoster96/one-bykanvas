@@ -479,7 +479,7 @@ async function deleteAccount(db, caller) {
 function contactsAllowed(site, caller) {
   if (caller && caller.is_admin) return;
   if ((site.profile && site.profile.active_plan) === 'starter') {
-    const e = new Error('Contacts are part of Business and above.'); e.shown = true; e.code = 'PLAN'; throw e;
+    const e = new Error('My KeepBook is part of Business and above.'); e.shown = true; e.code = 'PLAN'; throw e;
   }
 }
 

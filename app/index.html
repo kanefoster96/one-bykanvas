@@ -195,9 +195,9 @@
     <section id="chatList">
       <div class="oa-tab-head">
         <h2 id="chatHeading">Inbox</h2>
-        <div class="oa-pills" id="chatMode" role="tablist" aria-label="Inbox or contacts" hidden>
+        <div class="oa-pills" id="chatMode" role="tablist" aria-label="Inbox or My KeepBook" hidden>
           <button class="oa-pill is-on" type="button" data-mode="inbox" role="tab" aria-selected="true">Inbox</button>
-          <button class="oa-pill" type="button" data-mode="contacts" role="tab" aria-selected="false">Contacts</button>
+          <button class="oa-pill" type="button" data-mode="contacts" role="tab" aria-selected="false">My KeepBook</button>
         </div>
       </div>
       <div id="inboxView">
@@ -211,25 +211,25 @@
       <div id="contactsView" hidden>
         <label class="oa-search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
-          <input id="contactSearch" type="search" placeholder="Search name, email, phone" aria-label="Search contacts" autocomplete="off" autocapitalize="off">
+          <input id="contactSearch" type="search" placeholder="Search name, email, phone" aria-label="Search My KeepBook" autocomplete="off" autocapitalize="off">
         </label>
         <div class="oa-contacts-row">
           <p class="hint" id="contactCount"></p>
-          <button class="oa-chip oa-chip-dark" id="contactAdd" type="button">+ New contact</button>
+          <button class="oa-chip oa-chip-dark" id="contactAdd" type="button">+ Add a customer</button>
         </div>
         <ul class="oa-convs" id="contactList"></ul>
-        <p class="oa-empty" id="contactEmpty" hidden>Nobody yet. Everyone who chats, sends an enquiry or pays through your site lands here on their own; add anyone else with New contact.</p>
+        <p class="oa-empty" id="contactEmpty" hidden>Nobody in your book yet. Everyone who chats, sends an enquiry or pays through your site lands here on their own; add anyone else with Add a customer.</p>
       </div>
     </section>
 
     <section class="oa-screen" id="contactScreen" hidden>
       <div class="oa-conv-head">
-        <button class="oa-icon-btn oa-back" id="contactBack" type="button" aria-label="All contacts">
+        <button class="oa-icon-btn oa-back" id="contactBack" type="button" aria-label="Back to My KeepBook">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
         </button>
         <span class="oa-avatar" id="contactAvatar"></span>
         <div class="oa-conv-who">
-          <h2 id="contactTitle">New contact</h2>
+          <h2 id="contactTitle">New customer</h2>
           <p class="hint" id="contactMeta"></p>
         </div>
       </div>
@@ -249,7 +249,7 @@
           <div class="field full"><label for="cfCompany">Business <span class="hint">optional</span></label><input id="cfCompany" type="text" maxlength="120" autocomplete="off"></div>
           <div class="oa-contact-actions">
             <button class="btn btn-primary" id="contactSave" type="submit">Save</button>
-            <button class="linkish oa-danger" id="contactDelete" type="button" hidden>Delete contact</button>
+            <button class="linkish oa-danger" id="contactDelete" type="button" hidden>Remove from my book</button>
           </div>
           <p class="note" id="contactNote" role="status" aria-live="polite"></p>
         </form>
@@ -543,6 +543,6 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=18"></script>
+<script src="app.js?v=19"></script>
 </body>
 </html>
