@@ -23,7 +23,7 @@
 (function () {
   'use strict';
 
-  var META_PIXEL_ID = '';          /* <- your pixel ID goes here */
+  var META_PIXEL_ID = '1092399953329404';
 
   var KEY = 'one.consent';
   var NO_COUNT = 'k1nocount';      /* set on Reject; beacon.js stays quiet while it exists */
