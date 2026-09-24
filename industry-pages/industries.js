@@ -28,7 +28,7 @@
 const PROMISE = {
   name: 'The See It First Promise',
   lines: [
-    'We design a real page for your business before you pay a penny. Don&rsquo;t love it? You owe nothing.',
+    'We design a real page for your business before you join. Don&rsquo;t love it? You owe nothing.',
     'Live in 7 days. After that, unlimited changes, made for you by a person within 48 hours.',
     'Cancel anytime. Your site comes down, your domain stays yours, and there is no exit fee.'
   ]
