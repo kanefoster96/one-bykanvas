@@ -62,6 +62,10 @@ h3{font-size:21px;letter-spacing:-.02em}
   margin:14px auto 0;max-width:38ch;text-wrap:pretty;
   font-size:clamp(17px,2.2vw,21px);line-height:1.42;color:var(--ink-2);font-weight:400;
 }
+/* A sentence break in a lede or the hero fineprint: a new line with a gap
+   above it, so two sentences that each wrap on a phone do not run into one
+   block. (A styled <br> does not take a margin, so it is a spacer span.) */
+.gap{display:block;height:.45em}
 .lede.left{margin-left:0;text-align:left}
 .eyebrow{margin:0 0 10px;font-size:14px;font-weight:600;letter-spacing:.02em;color:var(--blue);text-transform:none}
 .micro{margin-top:34px;font-size:13px;line-height:1.5;color:var(--ink-3);max-width:52ch;margin-left:auto;margin-right:auto}
@@ -388,7 +392,7 @@ body.dialog-open{overflow:hidden}
 .ind-links a{color:var(--ink-3);text-decoration:underline;text-underline-offset:3px}
 .ind-links a:hover{color:var(--ink)}
 
-.fineprint{margin:20px 0 0;font-size:14px;color:var(--ink-3)}
+.fineprint{margin:20px 0 0;font-size:14px;line-height:1.5;color:var(--ink-3)}
 /* The plans link lives here now that the hero button is Contact us, so it has
    to read as a link rather than as more grey small print. */
 .fineprint a{color:var(--ink-2);font-weight:500;text-decoration:underline;text-underline-offset:3px}
