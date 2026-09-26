@@ -5,8 +5,8 @@
  *
  * The email is the offer. In order: the page itself, the web address that
  * could be theirs, what the page could become once they say yes, and the
- * three plans best first - Max, then Business for those who do not need
- * the monthly work, then Starter for those who love the page as it is.
+ * way in: Starter, the page live with a contact form and click to call,
+ * £25, no setup fee. Business sits beside it for £25 more.
  */
 const { ourSiteUrl } = require('./_env.js');
 const { PREVIEW_OFFER } = require('./_plans.js');
@@ -72,26 +72,38 @@ function joinHref(site, plan, domain, leadId) {
   return `${site}/get-started.html?${q.join('&')}`;
 }
 
-/* The one thing to press: Business, with everything in it. Max is offered
-   after they have said yes, in the wizard; Starter only when they signal
-   they want less. Neither belongs in this email. */
-function businessCard(site, domain, leadId) {
+/* The thing to press: Starter, the page live for £25. Business beside it
+   for £25 more, for the person who already knows they want bookings. Max
+   is offered after they have said yes, in the wizard. */
+function planCards(site, domain, leadId) {
+  const live = domain ? 'Live on ' + esc(domain) + ' today.' : 'Live on your own address today.';
   return {
     title: 'Make it your site',
-    intro: 'Business, £50 a month, everything in it. I build the rest around the page you are looking at.',
+    intro: 'This page, designed and hosted for you, £25 a month. No setup fee. Cancel any month.',
     cards: [{
-      name: 'Business', price: '£50', tag: 'Everything included', featured: true,
-      text: (domain ? 'Live on ' + esc(domain) + ' today.' : 'Live on your own address today.')
-          + ' No setup fee. Cancel any month.',
+      name: 'Starter', price: '£25', tag: 'The site', featured: true,
+      text: live + ' Customers find you, call you and message you.',
       items: [
-        'Bookings, payments, forms and live chat',
+        'Contact form and click to call',
+        'Found on Google in your town',
+        'Your web address, hosting and security included',
+        'A change every month, made by me'
+      ],
+      ctaText: 'Make it my site — £25 a month', ctaHref: joinHref(site, 'starter', domain, leadId)
+    }, {
+      name: 'Business', price: '£50', tag: '+£25: get booked',
+      text: 'Everything in Starter, plus the features that take the work off your phone.',
+      items: [
+        'Bookings, payments and live chat',
         'Reviews asked for automatically after every job',
         'Unlimited changes, made by me within 48 hours',
-        'Your web address, hosting and security included'
+        'Your three features built within 14 days, or your next month is free'
       ],
-      ctaText: 'Make it my site — £50 a month', ctaHref: joinHref(site, 'business', domain, leadId)
+      ctaText: 'Choose Business — £50 a month', ctaHref: joinHref(site, 'business', domain, leadId)
     }],
-    note: 'kanvasacademy.com and nellyandnova.co.uk run on this. Built by me, and you can message me.'
+    note: '50% off your first month, on any plan. Or pay for the year: 2 months free and the Launch Boost, '
+        + 'your first month spent getting you found on Google.<br>'
+        + 'kanvasacademy.com and nellyandnova.co.uk run on this. Built by me, and you can message me.'
   };
 }
 
@@ -100,9 +112,9 @@ const NEXT = {
   title: 'What happens when you say yes',
   ticks: true,
   items: [
-    'Today: I register your web address and put this page live on it',
-    'Within 14 days: the three features you choose at signup, or your next month is free',
-    'Any time: changes are free, before and after, within 48 hours'
+    'Today: I register your web address and put this page live on it, with your contact form and click to call',
+    'On Business: the three features you choose at signup, built within 14 days, or your next month is free',
+    'Any time: changes are free, before and after you join'
   ]
 };
 
@@ -177,14 +189,14 @@ async function sendLeadPreview(db, id, url, opts) {
         },
         NEXT
       ],
-      plans: businessCard(site, claimable, lead.id),
+      plans: planCards(site, claimable, lead.id),
       offerLast: true,
       offer: {
         code: PREVIEW_OFFER.code,
         href: `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}`,
         text: '<strong>50% off your first month, on any plan.</strong><br>'
-            + 'Tap the code and it&rsquo;s applied when you join.',
-        note: 'It comes with you &mdash; nothing to copy, and it is already on the bill when you pay.'
+            + 'Applied when you join. Or pay for the year: 2 months free and the Launch Boost.',
+        note: 'Nothing to copy &mdash; it is already on the bill when you pay.'
       },
       closing: 'Anything you&rsquo;d change on the page, just reply and say so. Changes are free, before and after you join. &mdash; Kane',
       footer: 'You&rsquo;re getting this because you asked me for a free example at '
@@ -207,12 +219,16 @@ async function sendLeadPreview(db, id, url, opts) {
         + COULD.map((t) => '- ' + t).join('\n') + '\n\n'
         + `What happens when you say yes:\n`
         + NEXT.items.map((t) => '- ' + t).join('\n') + '\n\n'
-        + `Make it your site. Business, GBP 50 a month, everything in it: bookings, payments, `
-        + `forms and live chat, reviews asked for automatically, unlimited changes within 48 hours, `
-        + `your web address, hosting and security. No setup fee. Cancel any month.\n`
+        + `Make it your site. Starter, GBP 25 a month: this page live on your own address today, `
+        + `with a contact form and click to call, found on Google, a change a month made by me. `
+        + `No setup fee. Cancel any month.\n`
+        + `${joinHref(site, 'starter', claimable, lead.id)}\n\n`
+        + `Want bookings, payments and live chat? Business is GBP 25 more, with unlimited changes `
+        + `and your three features built within 14 days or your next month is free.\n`
         + `${joinHref(site, 'business', claimable, lead.id)}\n\n`
         + `kanvasacademy.com and nellyandnova.co.uk run on this. Built by me, and you can message me.\n\n`
-        + `50% off your first month with ${PREVIEW_OFFER.code}, on any plan:\n`
+        + `50% off your first month, on any plan, applied when you join. Or pay for the year: `
+        + `2 months free and the Launch Boost, your first month spent getting you found on Google.\n`
         + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`
         + `Anything you'd change on the page, just reply and say so. Changes are free, `
         + `before and after you join.\n\nKane\n`

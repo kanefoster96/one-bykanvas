@@ -22,7 +22,7 @@
 {"@context":"https://schema.org","@type":"WebSite","name":"Kanvas One","alternateName":["one","one by Kanvas","kanvas.one"],"url":"https://kanvas.one/"}
 </script>
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=87">
+<link rel="stylesheet" href="styles.css?v=88">
 </head>
 <body>
 
@@ -56,7 +56,7 @@
       <a class="btn btn-primary" href="/free.html">See your site free</a>
       <a class="btn btn-ghost" href="/get-started.html">Get started &rsaquo;</a>
     </div>
-    <p class="fineprint reveal">See a real page for your business within 24 hours, completely free.<br>Built for you, live the same day you join.</p>
+    <p class="fineprint reveal">See a real page for your business within 24 hours, completely free.<br>Designed and hosted for you from &pound;25 a month. No setup fee.</p>
   </div>
   <div class="hero-art reveal" aria-hidden="true">
     <div class="device">
@@ -267,65 +267,84 @@
 </section>
 
 <!-- ============ PLANS ============ -->
-<!-- Business first: the plan, with everything in it. Max is the step up,
-     add growth. Starter lives on the plans page and in a conversation about
-     price, never here. -->
+<!-- Starter first: the site, designed and hosted, with a contact form and
+     click to call, £25, no setup fee. Business is the step up for £25 more.
+     Max is add growth. -->
 <section id="plans" class="section">
   <div class="wrap center">
-    <h2 class="reveal">One plan. Add growth if you want it.</h2>
-    <p class="lede reveal">Business is everything you need.<br>Max adds the monthly work and the texts.<br>Move between them any month.</p>
+    <h2 class="reveal">Your site, designed and hosted. &pound;25 a month.</h2>
+    <p class="lede reveal">No setup fee. Live on your own address the day you join.<br>Want bookings and payments? Business is &pound;25 more.<br>Move between plans any month.</p>
   </div>
 
   <div class="wrap center">
     <div class="bill-toggle bill-toggle-page reveal" role="group" aria-label="Billing period">
       <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
-      <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free</span></button>
+      <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free + Boost</span></button>
     </div>
   </div>
 
-  <div class="wrap plans reveal">
-    <article class="plan featured">
-      <div class="badge">Everything included</div>
-      <h3>Business</h3>
-      <p class="price" data-m="50" data-y="500"><span class="cur">£</span>50<span class="per">/month</span></p>
-      <p class="plan-note">Everything you need to run your business online.</p>
+  <div class="wrap plans three reveal">
+    <article class="plan featured" id="starter">
+      <div class="badge">The site</div>
+      <h3>Starter</h3>
+      <p class="price" data-m="25" data-y="250"><span class="cur">&pound;</span>25<span class="per">/month</span></p>
+      <p class="plan-note">Designed and built for you. Customers find you, call you and message you.</p>
       <p class="plan-free">No setup fees</p>
-      <a class="btn btn-primary full" href="/get-started.html">Choose Business</a>
+      <a class="btn btn-primary full" href="/get-started.html?plan=starter">Choose Starter</a>
       <ul class="ticks">
         <li>Live on your own address the same day</li>
-        <li class="tick-hero">Bookings, payments, forms and live chat</li>
-        <li>Reviews asked for automatically</li>
+        <li class="tick-hero">Contact form and click to call</li>
+        <li>Found on Google in your town</li>
         <li>Web address, hosting and security included</li>
-        <li><strong>Unlimited changes</strong>, made by me within 48 hours</li>
+        <li><strong>A change every month</strong>, made by me</li>
       </ul>
     </article>
 
-    <article class="plan">
+    <article class="plan" id="business">
+      <div class="badge">+&pound;25: get booked</div>
+      <h3>Business</h3>
+      <p class="price" data-m="50" data-y="500"><span class="cur">&pound;</span>50<span class="per">/month</span></p>
+      <p class="plan-note">Everything in Starter, plus the features that take the work off your phone.</p>
+      <a class="btn btn-ghost full" href="/get-started.html?plan=business">Choose Business</a>
+      <ul class="ticks">
+        <li class="tick-hero">Bookings, payments and live chat</li>
+        <li>Reviews asked for automatically</li>
+        <li><strong>Unlimited changes</strong>, made by me within 48 hours</li>
+        <li>Your three features built within 14 days, or your next month is free</li>
+      </ul>
+    </article>
+
+    <article class="plan" id="max">
       <div class="badge">Add growth</div>
       <h3>Max</h3>
-      <p class="price" data-m="250" data-y="2,500"><span class="cur">£</span>250<span class="per">/month</span></p>
+      <p class="price" data-m="250" data-y="2,500"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">Everything in Business, worked on every month.</p>
       <a class="btn btn-ghost full" href="/get-started.html?plan=max">Add growth</a>
       <ul class="ticks">
         <li class="tick-hero">Your Google ranking worked on every month</li>
         <li class="tick-hero">Missed calls answered by text in seconds</li>
-        <li class="tick-hero">Booking reminders texted to customers</li>
+        <li>Booking reminders texted to customers</li>
         <li>Business email at your own address</li>
         <li><strong>First in the queue</strong></li>
       </ul>
-      <p class="plan-up">Run it for the launch months, then step down to Business. You keep the ranking.</p>
+      <p class="plan-up">Run it for the launch months, then step down. You keep the ranking.</p>
     </article>
   </div>
 
-  <!-- Starter, small and green under the two: still there for the business
-       that only wants to be found and called, without taking a card's worth
-       of screen from the plans we lead with. -->
+  <!-- What paying for the year gets, on every plan. -->
   <div class="wrap">
-    <a class="plan-mini reveal" href="/get-started.html?plan=starter">
-      <span class="plan-mini-price"><span class="cur">&pound;</span>25<span class="per">/month</span></span>
-      <span class="plan-mini-text"><strong>Starter</strong> &mdash; DIY-builder money, built for you. Your web address, found on Google, a change a month.</span>
-      <span class="plan-mini-go">Choose Starter &rsaquo;</span>
-    </a>
+    <aside class="boost reveal">
+      <p class="boost-tag">Annual plans</p>
+      <h3>2 months free, and the Launch Boost.</h3>
+      <p>Pay for the year and your first month is spent getting you found:</p>
+      <ul class="ticks">
+        <li>Your Google Business Profile set up, verified and filled in</li>
+        <li>A page for every service you offer and every town you cover</li>
+        <li>Your details marked up the way Google and AI assistants read them</li>
+        <li>Your site submitted to Google, and your first reviews asked for</li>
+        <li>A note at the end of the month showing where you now show up</li>
+      </ul>
+    </aside>
   </div>
 
   <!-- Why Max exists, in two paragraphs: the problem, and the step-down
@@ -350,7 +369,7 @@
 
   <!-- The five-year maths: the price anchor and the risk removal in one
        card. A traditional site's real cost, side by side with ours, and
-       the sum that makes the £50 obvious. Sits right under the promise,
+       the sum that makes the £25 obvious. Sits right under the promise,
        where the price is being weighed. -->
   <div class="wrap">
     <div class="fiveyear reveal" id="fiveyear">
@@ -371,7 +390,7 @@
         <div class="fy-col fy-us">
           <h4>Kanvas One</h4>
           <ul>
-            <li>See a real page free, then &pound;50 a month</li>
+            <li>See a real page free, then from &pound;25 a month</li>
             <li>Every change included, forever</li>
             <li>Hosting, database and email all included</li>
             <li>Never stands still &mdash; it grows with you</li>

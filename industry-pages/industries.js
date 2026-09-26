@@ -108,7 +108,7 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'The trades on page one for &ldquo;electrician Cramlington&rdquo; keep adding pages and reviews. Business gets you there. Max keeps you there, every month.' },
     promise: PROMISE,
-    pricingExtra: ['Business is &pound;50 a month. One callout a month covers it. Under &pound;12 a week, no VAT.'],
+    pricingExtra: ['Starter is &pound;25 a month, no setup fee. One callout a month covers it twice over. Under &pound;6 a week, no VAT.'],
     faq: [
       ['I get all my work from word of mouth. Why do I need a site?', 'Word of mouth ends with a Google search. They look you up before they ring. Your site is where the recommendation lands.'],
       ['I&rsquo;ve already got a Facebook page.', 'Keep it. Facebook doesn&rsquo;t show up for &ldquo;plumber Blyth&rdquo;. Your site does, and takes the booking while you&rsquo;re on a job.'],
@@ -147,7 +147,7 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'The salons top for &ldquo;hairdresser near me&rdquo; keep adding pages, reviews and photos. Business gets you there. Max keeps you there.' },
     promise: PROMISE,
-    pricingExtra: ['Business is &pound;50 a month. One colour appointment a month covers it. Under &pound;12 a week, no VAT.'],
+    pricingExtra: ['Starter is &pound;25 a month, no setup fee. One colour appointment a month covers it twice over. Under &pound;6 a week, no VAT.'],
     faq: [
       ['I already take bookings on Instagram and Facebook.', 'Keep them. Instagram doesn&rsquo;t show up for &ldquo;hairdresser near me&rdquo;. Your site does, and takes the booking while you&rsquo;re with a client.'],
       ['I use a booking app already. Will this replace it?', 'It can, or link to the one you have. Either way, clients book from your own site.'],
@@ -186,7 +186,7 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'Six barbers within a mile, all on Google. The one that keeps adding reviews and pages stays top. Business gets you there. Max keeps you there.' },
     promise: PROMISE,
-    pricingExtra: ['Business is &pound;50 a month. Three cuts a month covers it. Under &pound;12 a week, no VAT.'],
+    pricingExtra: ['Starter is &pound;25 a month, no setup fee. Two cuts a month covers it. Under &pound;6 a week, no VAT.'],
     faq: [
       ['I&rsquo;m walk-in only. Do I need bookings?', 'No. Plenty of shops stay walk-in and use the site for hours, prices and Google. Bookings are there if you want them.'],
       ['I&rsquo;ve got Instagram. Isn&rsquo;t that enough?', 'Instagram is where your work gets seen. Google is where someone finds a barber right now. The site gives you both.'],
@@ -225,7 +225,7 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'Visitors search &ldquo;coffee near me&rdquo; and pick from the top three. Business gets you in the running. Max keeps you there, every season.' },
     promise: PROMISE,
-    pricingExtra: ['Business is &pound;50 a month. Fifteen flat whites a month covers it. Under &pound;12 a week, no VAT.'],
+    pricingExtra: ['Starter is &pound;25 a month, no setup fee. Eight flat whites a month covers it. Under &pound;6 a week, no VAT.'],
     faq: [
       ['People find us on Instagram. Do we need a site?', 'Your regulars do. The person who just parked up and typed &ldquo;coffee near me&rdquo; doesn&rsquo;t. The site puts you in that list.'],
       ['Can I change the menu myself?', 'Yes, from your dashboard, or message me and I do it.'],
@@ -264,7 +264,7 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'January is decided in December. Business gets you ranking at launch. Max keeps you climbing every month.' },
     promise: PROMISE,
-    pricingExtra: ['Business is &pound;50 a month. One membership a month covers it. Under &pound;12 a week, no VAT.'],
+    pricingExtra: ['Starter is &pound;25 a month, no setup fee. One membership a month covers it twice over. Under &pound;6 a week, no VAT.'],
     faq: [
       ['I use a gym app for memberships already.', 'Keep it, or let the site take memberships with no per-member fees. Either way, new members find you on Google.'],
       ['I&rsquo;m a personal trainer, not a gym. Is this for me?', 'Yes. Sessions booked and paid online, a page that ranks for &ldquo;personal trainer near me&rdquo;. Same price.'],
@@ -303,7 +303,7 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'The cleaners top for &ldquo;cleaner near me&rdquo; are the ones whose sites keep growing. Business gets you ranking. Max keeps you climbing.' },
     promise: PROMISE,
-    pricingExtra: ['Business is &pound;50 a month. One regular clean a month covers it. Under &pound;12 a week, no VAT.'],
+    pricingExtra: ['Starter is &pound;25 a month, no setup fee. One regular clean a month covers it twice over. Under &pound;6 a week, no VAT.'],
     faq: [
       ['My work comes from Facebook groups and recommendations.', 'Keep doing that. They look you up before they message. A site with reviews, insurance and clear prices turns the look into a booking.'],
       ['Can I list prices without giving a fixed quote?', 'Yes. A price guide by property size, with a form for the exact quote.'],
@@ -342,7 +342,7 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'September and January are decided on Google. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
-    pricingExtra: ['Business is &pound;50 a month. One lesson a month covers it. Under &pound;12 a week, no VAT.'],
+    pricingExtra: ['Starter is &pound;25 a month, no setup fee. One lesson a month covers it twice over. Under &pound;6 a week, no VAT.'],
     faq: [
       ['I&rsquo;m on a tutoring directory already.', 'Keep it. Directories list you beside fifty others and take a cut. Your own site ranks for your subject in your town.'],
       ['I&rsquo;m fully booked. Why would I need a site?', 'To stay that way. A waiting list fills September in July, and you choose the students.'],
@@ -381,7 +381,7 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'Couples book a year out, from one Google search. Business gets you ranking at launch. Max keeps you in that search, every month.' },
     promise: PROMISE,
-    pricingExtra: ['Business is &pound;50 a month. A fraction of one booking covers the year. Under &pound;12 a week, no VAT.'],
+    pricingExtra: ['Starter is &pound;25 a month, no setup fee. One booking covers the year. Under &pound;6 a week, no VAT.'],
     faq: [
       ['My Instagram is my portfolio. Do I need a site?', 'Instagram shows your work to people who already follow you. Google shows it to the couple searching this week. The site gives you both.'],
       ['I already have a website on a portfolio platform.', 'Then you know: templates, upsells, nothing ranking. This one ranks for your genres, and someone else keeps it updated.'],
@@ -420,7 +420,7 @@ module.exports = [
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'Spring is decided in February, when everyone searches at once. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
-    pricingExtra: ['Business is &pound;50 a month. One lawn cut a week covers it. Under &pound;12 a week, no VAT.'],
+    pricingExtra: ['Starter is &pound;25 a month, no setup fee. One lawn cut a fortnight covers it. Under &pound;6 a week, no VAT.'],
     faq: [
       ['I get plenty of work from Facebook and word of mouth.', 'The small jobs, yes. The patio and the makeover are researched on Google first. That is the job the site wins you.'],
       ['I&rsquo;m out on jobs all day. Who updates it?', 'I do. Send the photos from your phone and they are on the site.'],

@@ -21,7 +21,6 @@
   (function preselectPlan() {
     var want = new URLSearchParams(location.search).get('plan');
     if (['starter', 'business', 'max'].indexOf(want) === -1) return;
-    if (want === 'starter') { var row = document.getElementById('pickStarter'); if (row) row.hidden = false; }
     var radio = document.querySelector('input[name="plan"][value="' + want + '"]');
     if (!radio) return;
     radio.checked = true;
@@ -105,10 +104,10 @@
   var answers = {};
 
   var PLANS = {
-    starter:  { label: 'Starter',  price: '£25', yearly: '£250' },
-    business: { label: 'Business', price: '£50', yearly: '£500' },
+    starter:  { label: 'Starter',  price: '£25', half: '£12.50', yearly: '£250' },
+    business: { label: 'Business', price: '£50', half: '£25',    yearly: '£500' },
     pro:      { label: 'Pro',      price: '£120' },
-    max:      { label: 'Max',      price: '£250', yearly: '£2,500' }
+    max:      { label: 'Max',      price: '£250', half: '£125',   yearly: '£2,500' }
   };
 
   /* Monthly or annual, shared with the plans page through the same stash;
@@ -440,12 +439,9 @@
     document.addEventListener('one:ideas-loaded', function () { if (open !== null) paint(open); });
   })();
 
-  /* Starter, when they ask for it: the row appears, is chosen, and the
-     plan step opens on it. Called from the empty-step-2 hint, the line
-     under the plans, and the downsell on the pay step. */
+  /* Back to Starter from the pay step: the radio moves and the summary is
+     rebuilt from it. */
   function offerStarter() {
-    var row = $('pickStarter');
-    if (row) row.hidden = false;
     var radio = document.querySelector('input[name="plan"][value="starter"]');
     if (radio) radio.checked = true;
     document.querySelectorAll('#pick .pick-row').forEach(function (r) {
@@ -456,7 +452,6 @@
     if (pick) pick.dispatchEvent(new Event('change'));
   }
 
-  var hintedStarter = false;
   function step2() {
     var note = $('note2');
     var type = val('business_type');
@@ -464,38 +459,23 @@
 
     if (!type) return say(note, 'What sort of business is it?', 'bad');
 
-    /* Nothing filled in is a signal, not a mistake: offer Starter once,
-       then let them carry on either way. */
-    var hint = $('starterHint');
-    if (!uses.length && hint && !hintedStarter) {
-      hintedStarter = true;
-      hint.hidden = false;
-      say(note, '');
-      hint.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      return;
-    }
-
+    /* Nothing here is fine: on Starter the page is the site, and the first
+       change can be asked for from day one. */
     answers.business_type = type;
     answers.site_uses = uses;
     say(note, '');
-    if (hint) hint.hidden = true;
     show(3);
     askDomains();
   }
 
-  (function wireStarterHint() {
-    var pickBtn = $('starterPick'), keep = $('starterKeep');
-    if (pickBtn) pickBtn.addEventListener('click', function () { offerStarter(); step2(); });
-    if (keep) keep.addEventListener('click', function () { step2(); });
-    var link = $('showStarter');
-    if (link) link.addEventListener('click', function () {
-      offerStarter();
-      link.hidden = true;
-      var row = $('pickStarter');
-      if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    });
+  (function wireDownsell() {
     var down = $('payDown');
     if (down) down.addEventListener('click', function () { offerStarter(); stepPlan(); });
+    var more = $('boostMore'), list = $('boostList');
+    if (more && list) more.addEventListener('click', function () {
+      list.hidden = !list.hidden;
+      more.textContent = list.hidden ? 'What\u2019s in it?' : 'Hide';
+    });
   })();
 
   /* 3 — web address.
@@ -710,24 +690,26 @@
   /* 4 — plan */
   function stepPlan() {
     var chosen = document.querySelector('input[name="plan"]:checked');
-    answers.selected_plan = chosen ? chosen.value : 'business';
+    answers.selected_plan = chosen ? chosen.value : 'starter';
     var plan = PLANS[answers.selected_plan];
     var annual = billingMode() === 'annual' && plan.yearly;
-    $('sumPlan').textContent = plan.label + (annual ? ' — Annual (2 months free)' : '');
+    $('sumPlan').textContent = plan.label + (annual ? ' — Annual' : '');
     $('sumPrice').textContent = annual ? plan.yearly + '/year' : plan.price + '/month';
     $('sumEmail').textContent = answers.email || '—';
-    $('sumDue').textContent = annual ? plan.yearly : plan.price;
 
-    /* If they arrived with a code, say so before the price - a discount they
-       cannot see is a discount they think never happened. Stripe applies it
-       on the payment page; this line only promises what that page will show. */
+    /* What this way of paying includes, next to the price. Monthly: the
+       first month at half price, applied at checkout whether or not they
+       carried the code, so "due today" is the half (a partner or referral
+       code they brought is named instead, and Stripe shows what it takes
+       off). Annual: two months free and the Launch Boost. */
     var offer = (window.ONE_SESSION && window.ONE_SESSION.offerCode
                  && window.ONE_SESSION.offerCode()) || '';
+    var other = offer && offer !== 'WELCOME26';
+    $('sumDue').textContent = annual ? plan.yearly : (other || !plan.half ? plan.price : plan.half);
     if ($('sumOfferRow')) {
-      /* Promo codes are monthly-only (WELCOME26 on one yearly invoice would
-         halve the year) - never promise one next to an annual price. */
-      $('sumOfferRow').hidden = !offer || !!annual;
-      if (offer) $('sumOffer').textContent = offer + ' applied at checkout';
+      $('sumOffer').textContent = annual
+        ? '2 months free + the Launch Boost'
+        : (other ? offer + ' applied at checkout' : '50% off your first month');
     }
 
     /* The address they chose, shown in a browser bar so the thing they are
@@ -763,7 +745,10 @@
       var strong = document.createElement('b');
       strong.textContent = domain ? 'Live on ' + domain + ' today.' : 'Live on your own address today.';
       promise.appendChild(strong);
-      promise.appendChild(document.createTextNode(' Then I build the features you asked for within 14 days \u2014 or your next month is free.'));
+      promise.appendChild(document.createTextNode(answers.selected_plan === 'starter'
+        ? ' With your contact form and click to call. Your first change of the month, whenever you like.'
+        : ' Then I build the features you asked for within 14 days \u2014 or your next month is free.'));
+      if (annual) promise.appendChild(document.createTextNode(' Your first month: the Launch Boost.'));
     }
 
     /* The payment button is always offered. If the session is not there yet

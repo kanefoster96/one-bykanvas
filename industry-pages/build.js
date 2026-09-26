@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 87;
+const CSS_V = 88;
 const SCRIPT_V = 30;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -281,16 +281,23 @@ ${CASES.map((c) => `    <article class="case">
     <h2 class="reveal">${b.maxPitch.heading}</h2>
     <p class="lede reveal">${lines(b.maxPitch.text)}</p>
   </div>
-  <div class="wrap plans reveal">
+  <div class="wrap plans three reveal">
+    <article class="plan featured">
+      <div class="badge">The site</div>
+      <h3>Starter</h3>
+      <p class="price"><span class="cur">&pound;</span>25<span class="per">/month</span></p>
+      <p class="plan-note">Designed and hosted for you. Contact form and click to call. No setup fee.</p>
+      <a class="btn btn-primary full" href="/get-started.html?plan=starter">Choose Starter &rsaquo;</a>
+    </article>
     <article class="plan">
-      <div class="badge">Most popular</div>
+      <div class="badge">+&pound;25: get booked</div>
       <h3>Business</h3>
       <p class="price"><span class="cur">&pound;</span>50<span class="per">/month</span></p>
-      <p class="plan-note">Everything above, with local SEO built in at launch.</p>
-      <a class="btn btn-primary full" href="/get-started.html">Get started &rsaquo;</a>
+      <p class="plan-note">Everything above: bookings, payments, live chat, unlimited changes.</p>
+      <a class="btn btn-ghost full" href="/get-started.html?plan=business">Choose Business &rsaquo;</a>
     </article>
-    <article class="plan featured">
-      <div class="badge">Optional</div>
+    <article class="plan">
+      <div class="badge">Add growth</div>
       <h3>Max</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">Everything in Business, plus:</p>
@@ -298,12 +305,12 @@ ${CASES.map((c) => `    <article class="case">
         <li>Your Google ranking worked on every month</li>
         <li>Missed calls answered by text in seconds</li>
         <li>Booking reminders texted to customers</li>
-        <li>Business email at your own address</li>
       </ul>
-      <p class="plan-up">Run it for the launch months, then step down to Business. The ranking stays.</p>
+      <p class="plan-up">Run it for the launch months, then step down. The ranking stays.</p>
       <a class="btn btn-ghost full" href="/plans.html#max">Learn more about Max &rsaquo;</a>
     </article>
   </div>
+  <p class="wrap center micro reveal">50% off your first month. Or pay for the year: 2 months free and the Launch Boost.</p>
 </section>
 ` : ''}${b.faq ? `<section class="section grey">
   <div class="wrap center">

@@ -9,11 +9,10 @@
  *
  * They open the page from the ready email and get ten seconds with it,
  * alone. Then a card slides up from the bottom: this is your designed
- * shell, features are what build your business online, this address is
- * yours to claim, and one button for Business. What else it could do waits
- * behind a line. The first close offers Starter once, for the person who
- * just wants to be online; after that it folds to a small pill that brings
- * the card back. The pill's own × hides it for the visit.
+ * shell, this address is yours to claim, one button for Starter (the page
+ * live, £25) and a line for Business (£25 more). What else it could do
+ * waits behind a line. Closing folds it to a small pill that brings the
+ * card back. The pill's own × hides it for the visit.
  *
  * Two rules it has to keep, because it runs on a page that is not ours:
  *
@@ -96,11 +95,9 @@
   ];
 
   var card = null, pill = null;
-  var offeredStarter = false;   /* the downsell, shown once, on the first close */
 
-  /* Join links: Business is the plan; Starter only when they signal less. */
-  var BUSINESS_LINE = 'Bookings, payments, forms and live chat. Reviews asked for automatically. Unlimited changes within 48 hours. Live on your address today.';
-  var STARTER_LINE = 'This page live on your own address, found on Google, and customers able to call or email you. No bookings, forms or chat. A change a month.';
+  var STARTER_LINE = 'This page, live on your address today. Contact form and click to call. Found on Google. A change a month, made by me.';
+  var BUSINESS_LINE = 'Everything in Starter, plus bookings, payments and live chat. Unlimited changes.';
 
   function button(text, href, filled) {
     var a = make('a', {
@@ -188,21 +185,29 @@
     }
     wrap.appendChild(box);
 
-    /* One plan, one button. */
-    var plan = make('div', { margin: '0 0 10px', padding: '14px', borderRadius: '14px', border: '2px solid ' + INK });
+    /* Starter, the plan. Business under it in a line. */
+    var plan = make('div', { margin: '0 0 8px', padding: '14px', borderRadius: '14px', border: '2px solid ' + INK });
     var head = make('div', { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '10px' });
-    var left = make('span', { fontSize: '16px', fontWeight: '600', letterSpacing: '-.01em' }, 'Business');
+    var left = make('span', { fontSize: '16px', fontWeight: '600', letterSpacing: '-.01em' }, 'Starter');
     left.appendChild(make('span', { display: 'inline-block', marginLeft: '8px', padding: '2px 8px', borderRadius: '980px',
       background: GOOD_BG, border: '1px solid ' + GOOD_LINE, fontSize: '11px', fontWeight: '600', color: GOOD,
-      verticalAlign: 'middle' }, 'Everything included'));
+      verticalAlign: 'middle' }, 'No setup fee'));
     var right = make('span', { fontSize: '15px', whiteSpace: 'nowrap' });
-    right.appendChild(make('b', { fontSize: '17px' }, '\u00a350'));
+    right.appendChild(make('b', { fontSize: '17px' }, '\u00a325'));
     right.appendChild(make('span', { color: INK3 }, '/month'));
     head.appendChild(left); head.appendChild(right);
     plan.appendChild(head);
-    plan.appendChild(make('p', { margin: '6px 0 10px', fontSize: '13.5px', lineHeight: '1.45', color: INK2 }, BUSINESS_LINE));
-    plan.appendChild(button('Make it my site', joinHref('business'), true));
+    plan.appendChild(make('p', { margin: '6px 0 10px', fontSize: '13.5px', lineHeight: '1.45', color: INK2 }, STARTER_LINE));
+    plan.appendChild(button('Make it my site', joinHref('starter'), true));
     wrap.appendChild(plan);
+
+    var up = make('p', { margin: '0 0 10px', padding: '0 4px', fontSize: '13px', lineHeight: '1.45', color: INK2 });
+    var upLink = make('a', { color: INK, fontWeight: '600', textDecoration: 'underline', textUnderlineOffset: '3px' },
+      'Business, \u00a325 more');
+    upLink.href = joinHref('business'); upLink.target = '_blank'; upLink.rel = 'noopener';
+    up.appendChild(upLink);
+    up.appendChild(document.createTextNode(': ' + BUSINESS_LINE));
+    wrap.appendChild(up);
 
     /* What else it could do, behind a line. */
     var more = make('button', { display: 'block', width: '100%', padding: '6px 0', border: '0', background: 'transparent',
@@ -217,28 +222,8 @@
     wrap.appendChild(ul);
 
     wrap.appendChild(make('p', { margin: '8px 0 0', fontSize: '12.5px', lineHeight: '1.5', textAlign: 'center', color: INK3 },
-      '50% off your first month with ' + code + ' \u00b7 No setup fee \u00b7 Cancel any month'));
+      '50% off your first month \u00b7 Or annual: 2 months free + the Launch Boost \u00b7 Cancel any month'));
 
-    return reveal(wrap);
-  }
-
-  /* The downsell, on the first close: for the person who just wants to be
-     online. Said once; the second close goes straight to the pill. */
-  function buildStarter(freeDomain) {
-    var wrap = sheet();
-    wrap.appendChild(closeButton(function () { fold(); }));
-    wrap.appendChild(make('p', { margin: '0 0 6px', fontSize: '11px', fontWeight: '600', letterSpacing: '.08em',
-      textTransform: 'uppercase', color: GOOD }, 'Just want to be online?'));
-    wrap.appendChild(make('p', { margin: '0 0 6px 0', paddingRight: '34px', fontSize: '20px', fontWeight: '600',
-      letterSpacing: '-.02em', lineHeight: '1.2', color: INK }, 'Starter, \u00a325 a month.'));
-    wrap.appendChild(make('p', { margin: '0 0 12px', fontSize: '14px', lineHeight: '1.5', color: INK2 },
-      STARTER_LINE + (freeDomain ? ' On ' + freeDomain + '.' : '')));
-    wrap.appendChild(button('Start on Starter', joinHref('starter'), true));
-    var no = make('button', { display: 'block', width: '100%', margin: '8px 0 0', padding: '8px 0', border: '0', background: 'transparent',
-      color: INK3, font: '500 13.5px/1.4 ' + FONT, cursor: 'pointer' }, 'No thanks');
-    no.type = 'button';
-    no.addEventListener('click', function () { fold(); });
-    wrap.appendChild(no);
     return reveal(wrap);
   }
 
@@ -278,7 +263,7 @@
     }
     text.appendChild(top);
     text.appendChild(make('span', { color: 'rgba(255,255,255,.82)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
-      freeDomain ? 'Claim it: Business \u00a350, or Starter \u00a325' : 'Business \u00a350, or Starter \u00a325'));
+      freeDomain ? 'Claim it: \u00a325 a month, no setup fee' : '\u00a325 a month, no setup fee'));
     text.addEventListener('click', function () { unfold(); });
 
     var go = make('a', {
@@ -288,7 +273,7 @@
       textDecoration: 'none', fontWeight: '600',
       fontSize: small ? '12.5px' : '13px', lineHeight: '1.2'
     }, 'Join');
-    go.href = joinHref('business');
+    go.href = joinHref('starter');
     go.target = '_blank';
     go.rel = 'noopener';
 
@@ -320,11 +305,6 @@
   function fold() {
     if (card && card.parentNode) card.parentNode.removeChild(card);
     card = null;
-    if (!offeredStarter) {
-      offeredStarter = true;
-      card = buildStarter(known);
-      return;
-    }
     if (!pill) pill = buildPill(known);
   }
   function unfold() {

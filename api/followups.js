@@ -68,11 +68,12 @@ function whatDidYouThink(lead, site) {
         'Be honest &mdash; did it look like you? If something is off, just reply '
           + 'and say so. Changes are free, and I&rsquo;d rather get it right than guess.',
         'And if you liked it, it can be your real site today: live on your own '
-          + 'web address, looked after for you, &pound;50 a month with no setup fee.'
+          + 'web address with a contact form and click to call, looked after for you, '
+          + '&pound;25 a month with no setup fee.'
       ],
       offer: offerBox(site),
       ctaText: 'Make it my site',
-      ctaHref: joinHref(site, lead, 'business'),
+      ctaHref: joinHref(site, lead, 'starter'),
       footer: 'You&rsquo;re getting this because you asked for a free example at '
             + 'kanvas.one. If we don&rsquo;t hear from you, one more email follows '
             + 'and then we&rsquo;ll leave you be.',
@@ -82,45 +83,48 @@ function whatDidYouThink(lead, site) {
         + `Be honest - did it look like you? If something is off, just reply and say so. `
         + `Changes are free, and I'd rather get it right than guess.\n\n`
         + `And if you liked it, it can be your real site today: live on your own web `
-        + `address, looked after for you, GBP 50 a month with no setup fee.\n`
-        + `${joinHref(site, lead, 'business')}\n\n`
+        + `address with a contact form and click to call, looked after for you, GBP 25 a month `
+        + `with no setup fee.\n`
+        + `${joinHref(site, lead, 'starter')}\n\n`
         + `50% off your first month with ${PREVIEW_OFFER.code}:\n`
         + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n`
   };
 }
 
-/* The last email, and the downsell: for the person whose real objection
-   is "I don't need all that", the page they saw, live, for less. */
+/* The last email: the page they saw, live, for £25, with the year's
+   bonus named for the person who was waiting for a reason. */
 function lastOne(lead, site) {
   return {
     to: lead.email,
     subject: `Last one from me, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
     html: emailHtml({
-      preheader: 'If bookings and chat aren’t for you, there is a simpler way to have the page you saw.',
+      preheader: 'The page you saw, live on your own address, for £25 a month.',
       heading: 'Last one from me',
       lines: [
         `The free page I made for <strong>${esc(lead.business)}</strong> is still up.`,
-        'If bookings, forms and live chat aren&rsquo;t for you, there&rsquo;s a simpler way to '
-          + 'have it: <strong>Starter, &pound;25 a month</strong>. The page you saw, live on your '
-          + 'own address, found on Google, and customers able to call or email you. No bookings, '
-          + 'forms or chat; a change a month, made by me.',
-        'Want the lot? Business is &pound;50 with everything in. Either way, this is the last '
-          + 'email about it, and nothing else will follow.'
+        '<strong>Starter, &pound;25 a month</strong>: the page you saw, live on your own address '
+          + 'today, with a contact form and click to call, found on Google, a change a month made '
+          + 'by me. No setup fee.',
+        'Pay for the year and it&rsquo;s 2 months free plus the Launch Boost: your first month '
+          + 'spent getting you found on Google. Pay monthly and your first month is half price.',
+        'Want bookings, payments and live chat? Business is &pound;25 more. Either way, this is '
+          + 'the last email about it, and nothing else will follow.'
       ],
       offer: offerBox(site),
       ctaText: 'Start on Starter — £25 a month',
       ctaHref: joinHref(site, lead, 'starter'),
-      ctaNote: `Or <a href="${esc(joinHref(site, lead, 'business'))}" style="color:inherit;">Business, &pound;50, with everything in</a>.`,
+      ctaNote: `Or <a href="${esc(joinHref(site, lead, 'business'))}" style="color:inherit;">Business, &pound;25 more, with bookings and payments</a>.`,
       footer: 'You&rsquo;re getting this because you asked for a free example at '
             + 'kanvas.one. This is the last email about it.',
       footerLinks: standardFooter(site)
     }),
     text: `The free page I made for ${lead.business} is still up.\n\n`
-        + `If bookings, forms and live chat aren't for you, there's a simpler way to have it: `
-        + `Starter, GBP 25 a month. The page you saw, live on your own address, found on Google, `
-        + `and customers able to call or email you. No bookings, forms or chat; a change a month, made by me.\n`
+        + `Starter, GBP 25 a month: the page you saw, live on your own address today, with a `
+        + `contact form and click to call, found on Google, a change a month made by me. No setup fee.\n`
         + `${joinHref(site, lead, 'starter')}\n\n`
-        + `Want the lot? Business is GBP 50 with everything in.\n`
+        + `Pay for the year and it's 2 months free plus the Launch Boost: your first month spent `
+        + `getting you found on Google. Pay monthly and your first month is half price.\n\n`
+        + `Want bookings, payments and live chat? Business is GBP 25 more.\n`
         + `${joinHref(site, lead, 'business')}\n\n`
         + `50% off your first month with ${PREVIEW_OFFER.code}:\n`
         + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n\n`
