@@ -16,8 +16,28 @@ const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { notifyAdmin } = require('./_notify.js');
+const { candidates: domainCandidates, lookup: domainLookup } = require('./domains.js');
 
-const PLAN_INTEREST = ['business', 'pro', 'max', 'unsure'];
+const PLAN_INTEREST = ['business', 'starter', 'max', 'unsure'];
+
+/* The web address a free example is offered with: the closest free one to
+   the business name, asked of the registry now so the admin, the pill on
+   the example and the ready email all carry the same address from the
+   start. Never guessed: nothing reachable or everything taken means no
+   address, and the ready email tries again then. */
+const SUGGEST_BUDGET = 6;
+async function suggestDomain(business) {
+  try {
+    const list = domainCandidates(business).slice(0, SUGGEST_BUDGET);
+    if (!list.length) return '';
+    const states = await Promise.all(list.map(domainLookup));
+    const i = states.indexOf('free');
+    return i === -1 ? '' : list[i];
+  } catch (e) {
+    console.error('lead: domain suggest failed:', e && e.message);
+    return '';
+  }
+}
 
 /* Deliberately loose - a real address this rejects is worse than a fake one
    it lets through, since the fake one just sits in a list we ignore. */
@@ -90,7 +110,7 @@ module.exports = async function handler(req, res) {
     const free = source === 'free-preview';
 
     const handle = tidyLink(clean(body.handle, 200));
-    const requested_domain = clean(body.domain, 253).toLowerCase();
+    let requested_domain = clean(body.domain, 253).toLowerCase();
 
     if (!name || !business) return res.status(400).json({ error: 'Tell us your name and business.' });
     if (!looksLikeEmail(email)) return res.status(400).json({ error: 'That email does not look right.' });
@@ -122,6 +142,12 @@ module.exports = async function handler(req, res) {
       auth: { persistSession: false, autoRefreshToken: false }
     });
 
+    /* A free example with no address chosen gets one found for it, before
+       the row is written, so everything downstream sees it. A few seconds
+       of registry lookups, in the one request that is already waiting on
+       two emails. */
+    if (free && !requested_domain) requested_domain = await suggestDomain(business);
+
     const { data: row, error } = await db.from('leads').insert({
       name, business, email, about: about || null,
       plan_interest, want_app: Boolean(body.wantApp),
@@ -141,9 +167,9 @@ module.exports = async function handler(req, res) {
         ? `${name} at ${business} wants a free example.\n\n`
           + `Email:   ${email}\n`
           + `Find them: ${handle || 'not given'}\n`
-          + `Address: ${requested_domain || 'not picked'}\n\n`
+          + `Address: ${requested_domain || 'none free for that name'}\n\n`
           + `Anything they added:\n${about || '-'}\n\n`
-          + `Nothing is registered - the address above is only what they chose.\n\n`
+          + `Nothing is registered - the address above is the one they will be offered.\n\n`
           + `Admin: ${site}/admin.html`
         : `${name} at ${business} got in touch.\n\n`
           + `Email:     ${email}\n`
@@ -157,7 +183,7 @@ module.exports = async function handler(req, res) {
     await notifyAdmin(db,
       free ? 'Free example wanted' : 'New enquiry',
       business + (free
-        ? (requested_domain ? ' \u2014 wants ' + requested_domain : '')
+        ? (requested_domain ? ' \u2014 ' + requested_domain : '')
         : (plan_interest ? ' \u2014 interested in ' + plan_interest : '')));
 
     /* And a word back to them, for a free example only. An enquiry gets a

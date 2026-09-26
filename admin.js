@@ -1617,25 +1617,30 @@ function previewSender(row) {
   row2.appendChild(input);
   row2.appendChild(btn);
   wrap.appendChild(row2);
-  wrap.appendChild(el('p', 'hint', 'They get the design on the button, and '
-    + 'WELCOME26 for 50% off their first month.'));
+  wrap.appendChild(el('p', 'hint', 'They get the design on the button, '
+    + (row.requested_domain ? row.requested_domain + ' to claim, ' : '')
+    + 'what the site could do, the three plans with Max first, and WELCOME26 for 50% off their first month.'));
   wrap.appendChild(note);
   wrap.appendChild(badgeSnippet(row));
   return wrap;
 }
 
-/* The tag that puts the pill on the example itself. Built here with their
-   address already in it, because the one moment worth asking is while they
-   are looking at their own business on their own phone - and the example is
-   the only page that happens on. */
+/* The tag that puts the card on the example itself. Built here with their
+   business and address already in it, because the one moment worth asking
+   is while they are looking at their own business on their own phone - and
+   the example is the only page that happens on. Ten seconds after the page
+   opens, the card slides up: the shell, what it could do, the address to
+   claim and the three plans. */
 function badgeSnippet(row) {
   var wrap = el('details', 'badge-snippet');
   var head = document.createElement('summary');
-  head.textContent = 'Pill for the example site';
+  head.textContent = 'Card for the example site';
   wrap.appendChild(head);
 
+  var attr = function (s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); };
   var tag = '<script src="' + location.origin + '/preview-badge.js"'
-          + (row.requested_domain ? '\n        data-domain="' + row.requested_domain + '"' : '')
+          + '\n        data-business="' + attr(row.business) + '"'
+          + (row.requested_domain ? '\n        data-domain="' + attr(row.requested_domain) + '"' : '')
           + ' defer><\/script>';
 
   var pre = el('pre', 'badge-code');
