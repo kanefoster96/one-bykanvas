@@ -647,7 +647,7 @@ module.exports = async function handler(req, res) {
 
     if (action === 'listLeads') {
       const COLS = 'id, name, business, email, about, plan_interest, want_app, '
-                 + 'source, handle, requested_domain, preview_url, preview_sent_at, created_at';
+                 + 'source, handle, requested_domain, campaign, preview_url, preview_sent_at, created_at';
       /* Two reads on purpose. The recent page is capped, and once enquiries
          pass the cap the oldest rows fall off it - which must never include a
          free example still waiting to be made. Those are fetched outright. */

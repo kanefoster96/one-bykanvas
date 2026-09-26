@@ -52,6 +52,7 @@
           business: biz,
           email: mail,
           handle: soc,
+          campaign: (window.oneFrom && window.oneFrom()) || '',
           website: hp ? hp.value : '',
           elapsed: Date.now() - shownAt
         })
@@ -62,9 +63,10 @@
       /* Handed over rather than kept, so the address never rides in the URL.
          The confirmation page uses it to say where the email is going, and
          its presence is also what tells that page a real submission happened
-         rather than somebody arriving on the link. */
+         rather than somebody arriving on the link. The id lets that page
+         fire the same Lead event the server did. */
       try {
-        sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail }));
+        sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: data.id || '' }));
       } catch (e) { /* private mode: the page just says less */ }
 
       form.reset();

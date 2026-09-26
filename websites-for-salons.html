@@ -23,7 +23,7 @@
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"I already take bookings on Instagram and Facebook.","acceptedAnswer":{"@type":"Answer","text":"Keep them. Instagram doesn’t show up for “hairdresser near me”. Your site does, and takes the booking while you’re with a client."}},{"@type":"Question","name":"I use a booking app already. Will this replace it?","acceptedAnswer":{"@type":"Answer","text":"It can, or link to the one you have. Either way, clients book from your own site."}},{"@type":"Question","name":"Can I change prices myself?","acceptedAnswer":{"@type":"Answer","text":"Yes, from your dashboard, or message me and I do it for you."}},{"@type":"Question","name":"What if I don’t like it?","acceptedAnswer":{"@type":"Answer","text":"You see your page within 24 hours, before you pay. Don’t love it? You owe nothing."}},{"@type":"Question","name":"Do I have to take card payments?","acceptedAnswer":{"@type":"Answer","text":"No. Cash and bank transfer work too."}},{"@type":"Question","name":"How do the bookings and payments actually work?","acceptedAnswer":{"@type":"Answer","text":"I set them up with you after you join, the way you already work. Five minutes."}},{"@type":"Question","name":"Do I need Max?","acceptedAnswer":{"@type":"Answer","text":"Only if you want to climb Google every month. Business includes local SEO at launch."}},{"@type":"Question","name":"What happens if I cancel?","acceptedAnswer":{"@type":"Answer","text":"No exit fee. Your site goes offline and your domain transfers to you free."}}]}
 </script>
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=86">
+<link rel="stylesheet" href="styles.css?v=88">
 </head>
 <body>
 
@@ -46,10 +46,11 @@
 
 <section class="page-hero">
   <div class="wrap center">
-    <a class="hero-pill hero-pill-link reveal" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
+    <a class="hero-pill hero-pill-link reveal" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">Websites for salons that fill the diary.</h1>
     <p class="lede reveal">Found by clients nearby on Google.<br>Appointments booked and paid through your site, day or night.<br>Reviews asked for after every visit.</p>
     <p class="micro reveal hero-note">Free page within 24 hours. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.</p>
+    <p class="by-line reveal"><img class="by-photo" src="assets/kane.jpg" alt="" width="36" height="36" loading="lazy" onerror="this.remove()"><span>Designed and built by <b>Kane</b>. One person, and you can message him.</span></p>
 
     <!-- A request being typed, as this trade would type it. Decorative: the
          copy around it says the same things, so screen readers skip the
@@ -60,6 +61,48 @@
     </div>
     <ul class="assure trust reveal"><li>No VAT</li><li>No setup fees</li><li>Live the same day</li><li>Cancel anytime</li></ul>
     <p class="micro reveal trust-line">All included. Send your price list and your best photos. I do the rest.</p>
+  </div>
+</section>
+
+<!-- The free example, on the page the ad lands on: three things, one at a
+     time. Same endpoint and thank-you page as /free.html; script.js runs
+     it wherever #miniFree is. -->
+<section class="section pt0">
+  <div class="wrap center">
+    <form class="free-mini reveal" id="miniFree" novalidate>
+      <p class="hero-pill"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free</p>
+      <h3>See your site within 24 hours. Free.</h3>
+      <p class="lede">Three things, and a real page lands in your inbox within 24 hours.<br>No card.</p>
+
+      <div class="hp" aria-hidden="true">
+        <label for="mini_extra">Leave this empty</label>
+        <input id="mini_extra" name="mini_extra" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="mini-step wait" id="miniStep1">
+        <label for="miniBusiness">Your business name</label>
+        <input id="miniBusiness" type="text" autocomplete="organization" placeholder="e.g. Fade Room Barbers" enterkeyhint="next">
+      </div>
+
+      <div class="mini-step" id="miniStep2" hidden>
+        <label for="miniHandle">Your business anywhere online</label>
+        <input id="miniHandle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@yourbusiness or a link" enterkeyhint="next">
+        <p class="hint">Instagram, Facebook, your current site, Trust a Trader &mdash; anywhere.</p>
+      </div>
+
+      <div class="mini-step" id="miniStep3" hidden>
+        <label for="miniEmail">Where should I send it? You&rsquo;ll have it within 24 hours.</label>
+        <div class="mini-row">
+          <input id="miniEmail" type="email" autocomplete="email" placeholder="you@example.com" enterkeyhint="send">
+          <button class="mini-go" id="miniSend" type="submit" aria-label="Send my free example">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <p class="note" id="miniNote" role="status" aria-live="polite"></p>
+      <p class="mini-alt">Already decided? <a href="/get-started.html">Get started &rsaquo;</a></p>
+    </form>
   </div>
 </section>
 
@@ -128,7 +171,7 @@
     <p class="also-title">Also included, no extra cost</p>
     <div class="also-pills"><span class="use-chip">Stylist profiles</span><span class="use-chip">Treatment menu by category</span><span class="use-chip">Instagram feed on the site</span><span class="use-chip">Gift vouchers</span><span class="use-chip">Google reviews on your site</span><span class="use-chip">Late availability banner</span><span class="use-chip">Google Calendar link</span></div>
     <div class="cta-row">
-      <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free &rsaquo;</a>
+      <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free &rsaquo;</a>
     </div>
   </div>
 </section>
@@ -194,16 +237,23 @@
     <h2 class="reveal">Want to show up higher every month?</h2>
     <p class="lede reveal">The salons top for &ldquo;hairdresser near me&rdquo; keep adding pages, reviews and photos.<br>Business gets you there.<br>Max keeps you there.</p>
   </div>
-  <div class="wrap plans reveal">
+  <div class="wrap plans three reveal">
+    <article class="plan featured">
+      <div class="badge">The site</div>
+      <h3>Starter</h3>
+      <p class="price"><span class="cur">&pound;</span>25<span class="per">/month</span></p>
+      <p class="plan-note">Designed and hosted for you. Contact form and click to call. No setup fee.</p>
+      <a class="btn btn-primary full" href="/get-started.html?plan=starter">Choose Starter &rsaquo;</a>
+    </article>
     <article class="plan">
-      <div class="badge">Most popular</div>
+      <div class="badge">+&pound;25: get booked</div>
       <h3>Business</h3>
       <p class="price"><span class="cur">&pound;</span>50<span class="per">/month</span></p>
-      <p class="plan-note">Everything above, with local SEO built in at launch.</p>
-      <a class="btn btn-primary full" href="/get-started.html">Get started &rsaquo;</a>
+      <p class="plan-note">Everything above: bookings, payments, live chat, unlimited changes.</p>
+      <a class="btn btn-ghost full" href="/get-started.html?plan=business">Choose Business &rsaquo;</a>
     </article>
-    <article class="plan featured">
-      <div class="badge">Optional</div>
+    <article class="plan">
+      <div class="badge">Add growth</div>
       <h3>Max</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">Everything in Business, plus:</p>
@@ -211,12 +261,12 @@
         <li>Your Google ranking worked on every month</li>
         <li>Missed calls answered by text in seconds</li>
         <li>Booking reminders texted to customers</li>
-        <li>Business email at your own address</li>
       </ul>
-      <p class="plan-up">Run it for the launch months, then step down to Business. The ranking stays.</p>
+      <p class="plan-up">Run it for the launch months, then step down. The ranking stays.</p>
       <a class="btn btn-ghost full" href="/plans.html#max">Learn more about Max &rsaquo;</a>
     </article>
   </div>
+  <p class="wrap center micro reveal">50% off your first month. Or pay for the year: 2 months free and the Launch Boost.</p>
 </section>
 <section class="section grey">
   <div class="wrap center">
@@ -266,9 +316,9 @@
       <ul class="promise-lines"><li>I design a real page for your business within 24 hours, free, before you join. Don&rsquo;t love it? You owe nothing.</li><li>Live on your own address the same day you join. Your features built within 14 days, or your next month is free.</li><li>Cancel anytime. Your site comes down, your domain stays yours, and there is no exit fee.</li></ul>
     </div>
     <p class="micro reveal price-line">From &pound;25 a month. No setup fees. Cancel anytime.</p>
-    <p class="micro reveal">Business is &pound;50 a month. One colour appointment a month covers it. Under &pound;12 a week, no VAT.</p>
+    <p class="micro reveal">Starter is &pound;25 a month, no setup fee. One colour appointment a month covers it twice over. Under &pound;6 a week, no VAT.</p>
     <div class="cta-row reveal">
-      <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>See your free example page &rsaquo;</a>
+      <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>See your free example page &rsaquo;</a>
     </div>
     <p class="ask reveal">Got a question? Email <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20salon">hello@kanvas.one</a> and I reply.</p>
     <nav class="ind-links reveal" aria-label="Websites for other business types">
@@ -282,7 +332,7 @@
 <!-- One Try-it-free that follows a phone down the page once the hero has
      gone, and steps aside when the closing offer is on screen. -->
 <div class="sticky-cta" id="stickyCta" hidden>
-  <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free &rsaquo;</a>
+  <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free &rsaquo;</a>
 </div>
 <footer class="foot">
   <div class="wrap">
@@ -299,10 +349,10 @@
   </div>
 </footer>
 
-<script src="consent.js?v=7"></script>
+<script src="consent.js?v=8"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="script.js?v=29"></script>
+<script src="script.js?v=30"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

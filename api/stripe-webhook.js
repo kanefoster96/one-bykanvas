@@ -11,6 +11,7 @@ const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { PLANS } = require('./_plans.js');
 const { notify, notifyAdmin } = require('./_notify.js');
+const { sendMetaEvent } = require('./_meta.js');
 
 const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' }; // must match admin.js/account.js
 
@@ -287,7 +288,8 @@ module.exports = async function handler(req, res) {
                 + `Changes included: ${QUEUE_LINE[patch.active_plan] || 'Unlimited'}\n`
                 + `Started:          ${started}\n\n`
               : '')
-          + `Here's what happens now. Today I register your web address and put your page live on it. `
+          + `Here's what happens now. Today I register your web address and put your page live on it, `
+          + `and you get an email the moment it is. `
           + `Then I build the features you asked for, within 14 days - or your next month is free. `
           + `If I need anything from you - photos, prices, an offer - I'll ask.\n\n`
           + `One thing that helps now: send me photos, your services and prices, and anything about `
@@ -297,7 +299,7 @@ module.exports = async function handler(req, res) {
         heading: `Welcome to Kanvas One${who2} 👋`,
         lines: [
           `Your <strong>${esc(planName)}</strong> plan is now active &mdash; thanks for signing up.`,
-          `Here&rsquo;s what happens now. <strong>Today</strong> I register your web address and put your page live on it. <strong>Then</strong> I build the features you asked for, within 14 days &mdash; or your next month is free. If I need anything from you &mdash; photos, prices, an offer &mdash; I&rsquo;ll ask.`,
+          `Here&rsquo;s what happens now. <strong>Today</strong> I register your web address and put your page live on it, and you get an email the moment it is. <strong>Then</strong> I build the features you asked for, within 14 days &mdash; or your next month is free. If I need anything from you &mdash; photos, prices, an offer &mdash; I&rsquo;ll ask.`,
           `One thing that helps now: send me photos, your services and prices, and anything about your business that isn&rsquo;t already online. Everything lives in your account from here: your plan, your requests, and your site.`
         ],
         details: facts,
@@ -639,6 +641,18 @@ module.exports = async function handler(req, res) {
     const { data: who } = await admin.auth.admin.getUserById(id);
     const email = (who && who.user && who.user.email) || 'unknown';
     const name = (p && p.business_name) || 'A new customer';
+
+    /* Meta hears about the purchase from here, cookies or not. The plan's
+       monthly price is the value; the subscription id keeps it to one. */
+    const plan = PLANS[patch.active_plan];
+    if (plan && email !== 'unknown') {
+      sendMetaEvent({
+        name: 'Purchase', eventId: patch.stripe_subscription_id || undefined, email,
+        url: `${ourSiteUrl()}/account.html`,
+        value: plan.amount / 100, currency: 'GBP',
+        custom: { content_name: patch.active_plan }
+      }).catch(() => {});
+    }
 
     const domainLine = p && p.requested_domain
       ? `${p.requested_domain}${p.domain_owned ? ' (they already own it - move it across)' : ' (to register)'}`

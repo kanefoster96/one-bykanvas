@@ -21,7 +21,6 @@
   (function preselectPlan() {
     var want = new URLSearchParams(location.search).get('plan');
     if (['starter', 'business', 'max'].indexOf(want) === -1) return;
-    if (want === 'starter') { var row = document.getElementById('pickStarter'); if (row) row.hidden = false; }
     var radio = document.querySelector('input[name="plan"][value="' + want + '"]');
     if (!radio) return;
     radio.checked = true;
@@ -105,10 +104,10 @@
   var answers = {};
 
   var PLANS = {
-    starter:  { label: 'Starter',  price: '£25', yearly: '£250' },
-    business: { label: 'Business', price: '£50', yearly: '£500' },
+    starter:  { label: 'Starter',  price: '£25', half: '£12.50', yearly: '£250' },
+    business: { label: 'Business', price: '£50', half: '£25',    yearly: '£500' },
     pro:      { label: 'Pro',      price: '£120' },
-    max:      { label: 'Max',      price: '£250', yearly: '£2,500' }
+    max:      { label: 'Max',      price: '£250', half: '£125',   yearly: '£2,500' }
   };
 
   /* Monthly or annual, shared with the plans page through the same stash;
@@ -217,7 +216,7 @@
     var mail = val('email');
     var pass = $('password').value;
 
-    if (!name) return say(note, 'Please tell us your name.', 'bad');
+    /* The name is optional: the business is who we are building for. */
     if (!biz)  return say(note, 'Please tell us your business name.', 'bad');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) return say(note, 'Enter a valid email address.', 'bad');
 
@@ -440,20 +439,44 @@
     document.addEventListener('one:ideas-loaded', function () { if (open !== null) paint(open); });
   })();
 
+  /* Back to Starter from the pay step: the radio moves and the summary is
+     rebuilt from it. */
+  function offerStarter() {
+    var radio = document.querySelector('input[name="plan"][value="starter"]');
+    if (radio) radio.checked = true;
+    document.querySelectorAll('#pick .pick-row').forEach(function (r) {
+      var input = r.querySelector('input');
+      if (input) r.classList.toggle('is-on', input.checked);
+    });
+    var pick = document.getElementById('pick');
+    if (pick) pick.dispatchEvent(new Event('change'));
+  }
+
   function step2() {
     var note = $('note2');
     var type = val('business_type');
     var uses = [val('use1'), val('use2'), val('use3')].filter(Boolean);
 
     if (!type) return say(note, 'What sort of business is it?', 'bad');
-    if (!uses.length) return say(note, 'Give us at least one thing you want the site to do.', 'bad');
 
+    /* Nothing here is fine: on Starter the page is the site, and the first
+       change can be asked for from day one. */
     answers.business_type = type;
     answers.site_uses = uses;
     say(note, '');
     show(3);
     askDomains();
   }
+
+  (function wireDownsell() {
+    var down = $('payDown');
+    if (down) down.addEventListener('click', function () { offerStarter(); stepPlan(); });
+    var more = $('boostMore'), list = $('boostList');
+    if (more && list) more.addEventListener('click', function () {
+      list.hidden = !list.hidden;
+      more.textContent = list.hidden ? 'What\u2019s in it?' : 'Hide';
+    });
+  })();
 
   /* 3 — web address.
    *
@@ -667,24 +690,26 @@
   /* 4 — plan */
   function stepPlan() {
     var chosen = document.querySelector('input[name="plan"]:checked');
-    answers.selected_plan = chosen ? chosen.value : 'business';
+    answers.selected_plan = chosen ? chosen.value : 'starter';
     var plan = PLANS[answers.selected_plan];
     var annual = billingMode() === 'annual' && plan.yearly;
-    $('sumPlan').textContent = plan.label + (annual ? ' — Annual (2 months free)' : '');
+    $('sumPlan').textContent = plan.label + (annual ? ' — Annual' : '');
     $('sumPrice').textContent = annual ? plan.yearly + '/year' : plan.price + '/month';
     $('sumEmail').textContent = answers.email || '—';
-    $('sumDue').textContent = annual ? plan.yearly : plan.price;
 
-    /* If they arrived with a code, say so before the price - a discount they
-       cannot see is a discount they think never happened. Stripe applies it
-       on the payment page; this line only promises what that page will show. */
+    /* What this way of paying includes, next to the price. Monthly: the
+       first month at half price, applied at checkout whether or not they
+       carried the code, so "due today" is the half (a partner or referral
+       code they brought is named instead, and Stripe shows what it takes
+       off). Annual: two months free and the Launch Boost. */
     var offer = (window.ONE_SESSION && window.ONE_SESSION.offerCode
                  && window.ONE_SESSION.offerCode()) || '';
+    var other = offer && offer !== 'WELCOME26';
+    $('sumDue').textContent = annual ? plan.yearly : (other || !plan.half ? plan.price : plan.half);
     if ($('sumOfferRow')) {
-      /* Promo codes are monthly-only (WELCOME26 on one yearly invoice would
-         halve the year) - never promise one next to an annual price. */
-      $('sumOfferRow').hidden = !offer || !!annual;
-      if (offer) $('sumOffer').textContent = offer + ' applied at checkout';
+      $('sumOffer').textContent = annual
+        ? '2 months free + the Launch Boost'
+        : (other ? offer + ' applied at checkout' : '50% off your first month');
     }
 
     /* The address they chose, shown in a browser bar so the thing they are
@@ -720,14 +745,19 @@
       var strong = document.createElement('b');
       strong.textContent = domain ? 'Live on ' + domain + ' today.' : 'Live on your own address today.';
       promise.appendChild(strong);
-      promise.appendChild(document.createTextNode(' Then I build the features you asked for within 14 days \u2014 or your next month is free.'));
+      promise.appendChild(document.createTextNode(answers.selected_plan === 'starter'
+        ? ' With your contact form and click to call. Your first change of the month, whenever you like.'
+        : ' Then I build the features you asked for within 14 days \u2014 or your next month is free.'));
+      if (annual) promise.appendChild(document.createTextNode(' Your first month: the Launch Boost.'));
     }
 
     /* The payment button is always offered. If the session is not there yet
        the click recovers it, so an unconfirmed address is something to sort out
        after paying rather than a gate in front of it. */
     $('payThen').hidden = Boolean(answers.hasSession);
-    $('skipPay').textContent = 'Skip for now — do it later';
+    /* The downsell only makes sense from above Starter. */
+    var down = $('payDown');
+    if (down) down.hidden = answers.selected_plan === 'starter';
 
     show(5);
   }
@@ -918,74 +948,6 @@
     });
   });
 
-  /* The two wants above the plans. Ticking one selects the cheapest plan
-   * that covers everything ticked, moves the Recommended flag there and
-   * opens its included list. They can still pick any plan afterwards -
-   * choosing one that misses a ticked want just gets the orange note, so
-   * nobody lands on Business expecting an inbox we never set up.
-   */
-  (function wirePlanSteer() {
-    var email = $('wantEmail'), seo = $('wantSeo'), warnEl = $('planSteer');
-    if (!email || !seo || !warnEl) return;
-
-    var COVERS = { starter: [], business: [], max: ['email', 'seo'] };
-
-    function pickedPlan() {
-      var chosen = document.querySelector('input[name="plan"]:checked');
-      return chosen ? chosen.value : 'business';
-    }
-
-    function warn() {
-      /* Nothing ticked: nothing to say. Ticked and covered: a quiet
-         confirmation. Ticked and missing: the orange note, with the plan
-         that has it - and that skipping is fine, upgrades are one click. */
-      if (!email.checked && !seo.checked) {
-        warnEl.hidden = true; warnEl.textContent = ''; return;
-      }
-      var has = COVERS[pickedPlan()];
-      var missing = [];
-      if (email.checked && has.indexOf('email') === -1) missing.push('the business email address');
-      if (seo.checked && has.indexOf('seo') === -1) missing.push('monthly SEO updates');
-      if (!missing.length) {
-        warnEl.className = 'pick-ok';
-        warnEl.textContent = PLANS[pickedPlan()].label + ' includes everything you ticked.';
-        warnEl.hidden = false;
-        return;
-      }
-      var covers = 'Max';
-      warnEl.className = 'pick-warn';
-      warnEl.textContent = 'Just so you know — ' + PLANS[pickedPlan()].label
-        + ' doesn’t include ' + missing.join(' or ') + ' you ticked. '
-        + covers + ' does — or carry on without it and upgrade any time.';
-      warnEl.hidden = false;
-    }
-
-    function steer() {
-      var rec = (email.checked || seo.checked) ? 'max' : 'business';
-
-      var radio = document.querySelector('input[name="plan"][value="' + rec + '"]');
-      if (radio) radio.checked = true;
-      document.querySelectorAll('#pick .pick-row').forEach(function (row) {
-        var input = row.querySelector('input');
-        if (input) row.classList.toggle('is-on', input.checked);
-      });
-
-      var flag = document.querySelector('#pick .pick-flag');
-      var note = document.querySelector('.pick-row[data-plan="' + rec + '"] .pick-note');
-      if (flag && note && flag.parentNode !== note) note.insertBefore(flag, note.firstChild);
-      if (flag) flag.textContent = rec === 'max' ? 'Recommended' : 'Most popular';
-
-      /* No open/close to do here: the selected row's feature list expands
-         itself - .pick-row.is-on + .pick-feats in the stylesheet. */
-
-      warn();
-    }
-
-    email.addEventListener('change', steer);
-    seo.addEventListener('change', steer);
-    document.getElementById('pick').addEventListener('change', warn);
-  })();
-
   /* The step up, offered once at the moment they are choosing. Starter
    * sees what £25 more unlocks. Business sees Max framed as the launch
    * months - SEO and texts while the site is new, then step down to
@@ -1012,21 +974,21 @@
         ],
         note: 'Starter gets you found. Business gets you booked.',
         btn: 'Switch to Business — £50 a month',
-        line: 'Want bookings, forms and live chat? '
+        line: 'Changed your mind about bookings and chat? '
       },
       business: {
         to: 'max',
-        tag: 'The launch months',
-        head: 'Max gets you ranking and texting from day one.',
+        tag: 'Add growth',
+        head: 'Max: your site worked on every month, and your customers texted.',
         list: [
-          'Your Google ranking worked on every month, from the first',
-          'Your own business number — rings your mobile, missed calls answered by text',
-          'Booking reminders and confirmations texted to your customers',
+          'Your Google ranking worked on every month',
+          'Missed calls answered by text in seconds',
+          'Booking reminders texted to your customers',
           'Business email, and first in the queue'
         ],
-        note: 'A new site ranks fastest when the work starts straight away. Run Max while it climbs, then step down to Business any month once you’re where you want to be. <strong>You keep the ranking.</strong> The texts stop on Business unless you ask us to keep them on as an add-on.',
-        btn: 'Start on Max — £250 a month',
-        line: 'Want SEO and texts from day one? '
+        note: 'A new site climbs fastest when the work starts on day one. Run Max for the launch months, then step down to Business any month. <strong>You keep the ranking.</strong>',
+        btn: 'Add growth — Max, £250 a month',
+        line: 'Want the site worked on every month? '
       }
     };
 

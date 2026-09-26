@@ -8,7 +8,7 @@
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
-const { PLANS } = require('./_plans.js');
+const { PLANS, PREVIEW_OFFER } = require('./_plans.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -183,7 +183,10 @@ module.exports = async function handler(req, res) {
        and the code box withheld on the Stripe page for annual sessions. */
     const annual = String(body.billing || '').toLowerCase() === 'annual'
       && Number.isFinite(PLANS[plan].yearly);
-    const wanted = annual ? '' : String(body.offer || '').trim().toUpperCase();
+    /* Every new monthly customer gets the first month at half price: the
+       site says so, so it is applied whether or not they carried a code.
+       A partner or referral code they did bring wins. */
+    const wanted = annual ? '' : (String(body.offer || '').trim().toUpperCase() || PREVIEW_OFFER.code);
     if (wanted && /^[A-Z0-9._-]{3,40}$/.test(wanted)) {
       try {
         const found = await stripe.promotionCodes.list({ code: wanted, active: true, limit: 1 });

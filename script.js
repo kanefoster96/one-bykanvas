@@ -105,6 +105,28 @@
     apply(current());
   })();
 
+  /* ---------- Where they came from ----------
+   * The ad's tags and the page they landed on, kept for the visit so the
+   * free-example form can say which ad produced the lead even when it is
+   * filled in two pages later. First page wins; nothing personal in it. */
+  var FROM_KEY = 'one.from';
+  (function rememberFrom() {
+    try {
+      if (sessionStorage.getItem(FROM_KEY)) return;
+      var q = new URLSearchParams(location.search);
+      var bits = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content']
+        .map(function (k) { return String(q.get(k) || '').trim().slice(0, 40); })
+        .filter(Boolean);
+      if (!bits.length && q.get('fbclid')) bits.push('facebook');
+      if (!bits.length) return;
+      var page = location.pathname.replace(/\.html$/, '').replace(/^\/$/, '/home');
+      sessionStorage.setItem(FROM_KEY, (bits.join(' / ') + ' · ' + page).slice(0, 200));
+    } catch (e) { /* private mode: the lead simply has no campaign */ }
+  })();
+  window.oneFrom = function () {
+    try { return sessionStorage.getItem(FROM_KEY) || ''; } catch (e) { return ''; }
+  };
+
   /* ---------- Menu ---------- */
   // One source of truth for the nav. Pages only need an empty #menu element;
   // the header itself stays in the markup so it renders without JavaScript.
@@ -527,6 +549,7 @@
             business: biz,
             email: mail,
             handle: soc,
+            campaign: (window.oneFrom && window.oneFrom()) || '',
             website: hp ? hp.value : '',
             elapsed: Date.now() - shownAt
           })
@@ -534,7 +557,7 @@
         var data = await res.json().catch(function () { return {}; });
         if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
 
-        try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail })); } catch (err) { /* private mode */ }
+        try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: data.id || '' })); } catch (err) { /* private mode */ }
         mini.reset();
         location.assign('/thanks.html');
         return;

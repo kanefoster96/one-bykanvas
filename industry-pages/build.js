@@ -17,8 +17,8 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 86;
-const SCRIPT_V = 29;
+const CSS_V = 88;
+const SCRIPT_V = 30;
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -169,11 +169,12 @@ ${JSON.stringify({
 
 <section class="page-hero">
   <div class="wrap center">
-    <a class="hero-pill hero-pill-link reveal" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
+    <a class="hero-pill hero-pill-link reveal" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">${b.h1}</h1>
     <p class="lede reveal">${lines(b.lede)}</p>
 ${b.heroNote ? `    <p class="micro reveal hero-note">${b.heroNote}</p>
-` : ''}
+` : ''}    <p class="by-line reveal"><img class="by-photo" src="assets/kane.jpg" alt="" width="36" height="36" loading="lazy" onerror="this.remove()"><span>Designed and built by <b>Kane</b>. One person, and you can message him.</span></p>
+
     <!-- A request being typed, as this trade would type it. Decorative: the
          copy around it says the same things, so screen readers skip the
          animation rather than hearing it letter by letter. -->
@@ -184,6 +185,48 @@ ${b.heroNote ? `    <p class="micro reveal hero-note">${b.heroNote}</p>
 ${b.trust ? `    <ul class="assure trust reveal">${b.trust.map((t) => `<li>${t}</li>`).join('')}</ul>
     <p class="micro reveal trust-line">${b.trustLine}</p>
 ` : ''}  </div>
+</section>
+
+<!-- The free example, on the page the ad lands on: three things, one at a
+     time. Same endpoint and thank-you page as /free.html; script.js runs
+     it wherever #miniFree is. -->
+<section class="section pt0">
+  <div class="wrap center">
+    <form class="free-mini reveal" id="miniFree" novalidate>
+      <p class="hero-pill"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free</p>
+      <h3>See your site within 24 hours. Free.</h3>
+      <p class="lede">Three things, and a real page lands in your inbox within 24 hours.<br>No card.</p>
+
+      <div class="hp" aria-hidden="true">
+        <label for="mini_extra">Leave this empty</label>
+        <input id="mini_extra" name="mini_extra" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="mini-step wait" id="miniStep1">
+        <label for="miniBusiness">Your business name</label>
+        <input id="miniBusiness" type="text" autocomplete="organization" placeholder="${b.placeholder || 'e.g. Fade Room Barbers'}" enterkeyhint="next">
+      </div>
+
+      <div class="mini-step" id="miniStep2" hidden>
+        <label for="miniHandle">Your business anywhere online</label>
+        <input id="miniHandle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@yourbusiness or a link" enterkeyhint="next">
+        <p class="hint">Instagram, Facebook, your current site, Trust a Trader &mdash; anywhere.</p>
+      </div>
+
+      <div class="mini-step" id="miniStep3" hidden>
+        <label for="miniEmail">Where should I send it? You&rsquo;ll have it within 24 hours.</label>
+        <div class="mini-row">
+          <input id="miniEmail" type="email" autocomplete="email" placeholder="you@example.com" enterkeyhint="send">
+          <button class="mini-go" id="miniSend" type="submit" aria-label="Send my free example">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <p class="note" id="miniNote" role="status" aria-live="polite"></p>
+      <p class="mini-alt">Already decided? <a href="/get-started.html">Get started &rsaquo;</a></p>
+    </form>
+  </div>
 </section>
 
 <section class="section pt0">
@@ -198,7 +241,7 @@ ${b.also ? `  <div class="wrap center also reveal">
     <p class="also-title">${b.alsoTitle || 'Also included, if you want them'}</p>
     <div class="also-pills">${b.also.map((t) => `<span class="use-chip">${t}</span>`).join('')}</div>
     <div class="cta-row">
-      <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
+      <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
     </div>
   </div>
 ` : ''}</section>
@@ -238,16 +281,23 @@ ${CASES.map((c) => `    <article class="case">
     <h2 class="reveal">${b.maxPitch.heading}</h2>
     <p class="lede reveal">${lines(b.maxPitch.text)}</p>
   </div>
-  <div class="wrap plans reveal">
+  <div class="wrap plans three reveal">
+    <article class="plan featured">
+      <div class="badge">The site</div>
+      <h3>Starter</h3>
+      <p class="price"><span class="cur">&pound;</span>25<span class="per">/month</span></p>
+      <p class="plan-note">Designed and hosted for you. Contact form and click to call. No setup fee.</p>
+      <a class="btn btn-primary full" href="/get-started.html?plan=starter">Choose Starter &rsaquo;</a>
+    </article>
     <article class="plan">
-      <div class="badge">Most popular</div>
+      <div class="badge">+&pound;25: get booked</div>
       <h3>Business</h3>
       <p class="price"><span class="cur">&pound;</span>50<span class="per">/month</span></p>
-      <p class="plan-note">Everything above, with local SEO built in at launch.</p>
-      <a class="btn btn-primary full" href="/get-started.html">Get started &rsaquo;</a>
+      <p class="plan-note">Everything above: bookings, payments, live chat, unlimited changes.</p>
+      <a class="btn btn-ghost full" href="/get-started.html?plan=business">Choose Business &rsaquo;</a>
     </article>
-    <article class="plan featured">
-      <div class="badge">Optional</div>
+    <article class="plan">
+      <div class="badge">Add growth</div>
       <h3>Max</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">Everything in Business, plus:</p>
@@ -255,12 +305,12 @@ ${CASES.map((c) => `    <article class="case">
         <li>Your Google ranking worked on every month</li>
         <li>Missed calls answered by text in seconds</li>
         <li>Booking reminders texted to customers</li>
-        <li>Business email at your own address</li>
       </ul>
-      <p class="plan-up">Run it for the launch months, then step down to Business. The ranking stays.</p>
+      <p class="plan-up">Run it for the launch months, then step down. The ranking stays.</p>
       <a class="btn btn-ghost full" href="/plans.html#max">Learn more about Max &rsaquo;</a>
     </article>
   </div>
+  <p class="wrap center micro reveal">50% off your first month. Or pay for the year: 2 months free and the Launch Boost.</p>
 </section>
 ` : ''}${b.faq ? `<section class="section grey">
   <div class="wrap center">
@@ -284,11 +334,11 @@ ${b.rich ? `${b.promise ? `    <div class="promise reveal">
 ` : ''}    <p class="micro reveal price-line">From &pound;25 a month. No setup fees. Cancel anytime.</p>
 ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join('\n')}
     <div class="cta-row reveal">
-      <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
+      <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
     </div>
     <p class="ask reveal">${b.endLine}</p>
 ` : `    <div class="cta-row reveal">
-      <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free</a>
+      <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free</a>
       <a class="btn btn-ghost" href="/get-started.html">Get started &rsaquo;</a>
     </div>
     <p class="micro reveal">From &pound;25 a month. No setup fees. Cancel anytime. <a href="/plans.html">See all plans</a></p>
@@ -304,7 +354,7 @@ ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join
 ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the hero has
      gone, and steps aside when the closing offer is on screen. -->
 <div class="sticky-cta" id="stickyCta" hidden>
-  <a class="btn btn-free" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
+  <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
 </div>
 ` : ''}<footer class="foot">
   <div class="wrap">
@@ -321,7 +371,7 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
   </div>
 </footer>
 
-<script src="consent.js?v=7"></script>
+<script src="consent.js?v=8"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>

@@ -23,9 +23,52 @@ const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 
+const { notifyAdmin } = require('./_notify.js');
+
 const QUIET_MINUTES = 10;
 const GIVE_UP_DAYS = 2;
 const LINK_SECONDS = 7 * 24 * 3600;
+
+/* The 24-hour promise on a free example, chased before it is missed: a
+   push to the admin at 18 hours and again at 22, for any example not yet
+   sent. Each chase is a notification row keyed by lead and stage, so a
+   five-minute cron never sends the same one twice. Older than 30 hours is
+   left alone - that promise is already missed, and the queue in admin
+   shows it. */
+const CHASE_HOURS = [18, 22];
+const CHASE_CEILING_HOURS = 30;
+
+async function chaseExamples(db) {
+  const now = Date.now();
+  const H = 3600000;
+  const { data: leads, error } = await db.from('leads')
+    .select('id, business, created_at')
+    .eq('source', 'free-preview')
+    .is('preview_sent_at', null)
+    .gte('created_at', new Date(now - CHASE_CEILING_HOURS * H).toISOString())
+    .lte('created_at', new Date(now - CHASE_HOURS[0] * H).toISOString())
+    .limit(50);
+  if (error) { console.error('request-mail: chase query failed:', error.message); return 0; }
+
+  let sent = 0;
+  for (const lead of leads || []) {
+    const age = (now - new Date(lead.created_at).getTime()) / H;
+    const stage = age >= CHASE_HOURS[1] ? CHASE_HOURS[1] : CHASE_HOURS[0];
+    const key = `/admin.html#lead/${lead.id}/chase${stage}`;
+    const { data: already } = await db.from('notifications')
+      .select('id').eq('kind', 'chase').eq('href', key).limit(1).maybeSingle();
+    if (already) continue;
+
+    const left = Math.max(0, Math.round(24 - age));
+    await notifyAdmin(db,
+      `${left} hour${left === 1 ? '' : 's'} left: ${lead.business}`,
+      `Their free example is not sent yet. Promised within 24 hours of `
+        + new Date(lead.created_at).toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }) + '.',
+      key, { kind: 'chase' });
+    sent++;
+  }
+  return sent;
+}
 
 function firstName(profile, email) {
   const name = String((profile && profile.contact_name) || '').trim().split(/\s+/)[0];
@@ -73,6 +116,11 @@ module.exports = async function handler(req, res) {
     const cutoff = new Date(Date.now() - QUIET_MINUTES * 60000).toISOString();
     const giveUp = new Date(Date.now() - GIVE_UP_DAYS * 86400000).toISOString();
 
+    /* Before the notes, and whether or not there are any. */
+    let chased = 0;
+    try { chased = await chaseExamples(db); }
+    catch (e) { console.error('request-mail: chase failed:', e && e.message); }
+
     const { data: notes, error } = await db.from('request_notes')
       .select('id, request_id, author, body, attachment_paths, created_at')
       .is('emailed_at', null).eq('private', false)
@@ -80,7 +128,7 @@ module.exports = async function handler(req, res) {
       .order('created_at', { ascending: true })
       .limit(200);
     if (error) throw new Error(error.message);
-    if (!notes || !notes.length) return res.status(200).json({ sent: 0 });
+    if (!notes || !notes.length) return res.status(200).json({ sent: 0, chased });
 
     // Group: one email per request per author.
     const groups = {};
@@ -184,7 +232,7 @@ module.exports = async function handler(req, res) {
       if (result === 'sent') sent += ids.length; else dropped += ids.length;
     }
 
-    return res.status(200).json({ sent, failed, dropped });
+    return res.status(200).json({ sent, failed, dropped, chased });
   } catch (err) {
     console.error('request-mail:', err && err.message);
     return res.status(500).json({ error: 'Something went wrong.' });

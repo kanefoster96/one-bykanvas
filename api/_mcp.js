@@ -462,11 +462,11 @@ const readTools = {
     description: 'Admin: free example page enquiries. stage: waiting | sent | all.',
     input: { type: 'object', properties: { stage: { type: 'string', enum: ['waiting', 'sent', 'all'] } } },
     async run(ctx, caller, a) {
-      const { data, error } = await ctx.db.from('leads').select('id, business, email, source, handle, requested_domain, preview_url, preview_sent_at, created_at').order('created_at', { ascending: false }).limit(300);
+      const { data, error } = await ctx.db.from('leads').select('id, business, email, source, handle, requested_domain, campaign, preview_url, preview_sent_at, created_at').order('created_at', { ascending: false }).limit(300);
       if (error) throw new Error(error.message);
       const stage = a.stage || 'all';
       return (data || []).filter((l) => stage === 'all' ? true : stage === 'sent' ? !!l.preview_sent_at : (l.source === 'free-preview' && !l.preview_sent_at))
-        .map((l) => ({ lead_id: l.id, business: l.business, email: l.email, source: l.source, handle: l.handle, wanted_domain: l.requested_domain, example_url: l.preview_url, example_sent: l.preview_sent_at, asked: l.created_at }));
+        .map((l) => ({ lead_id: l.id, business: l.business, email: l.email, source: l.source, handle: l.handle, wanted_domain: l.requested_domain, campaign: l.campaign, example_url: l.preview_url, example_sent: l.preview_sent_at, asked: l.created_at }));
     }
   },
 

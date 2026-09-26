@@ -17,6 +17,7 @@ const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { notifyAdmin } = require('./_notify.js');
 const { candidates: domainCandidates, lookup: domainLookup } = require('./domains.js');
+const { sendMetaEvent } = require('./_meta.js');
 
 const PLAN_INTEREST = ['business', 'starter', 'max', 'unsure'];
 
@@ -111,6 +112,9 @@ module.exports = async function handler(req, res) {
 
     const handle = tidyLink(clean(body.handle, 200));
     let requested_domain = clean(body.domain, 253).toLowerCase();
+    /* Where they came from: the ad's tags and the landing page, as the
+       browser kept them from the first page of the visit. */
+    const campaign = clean(body.campaign, 200);
 
     if (!name || !business) return res.status(400).json({ error: 'Tell us your name and business.' });
     if (!looksLikeEmail(email)) return res.status(400).json({ error: 'That email does not look right.' });
@@ -151,11 +155,24 @@ module.exports = async function handler(req, res) {
     const { data: row, error } = await db.from('leads').insert({
       name, business, email, about: about || null,
       plan_interest, want_app: Boolean(body.wantApp),
-      source, handle: handle || null, requested_domain: requested_domain || null
+      source, handle: handle || null, requested_domain: requested_domain || null,
+      campaign: campaign || null
     }).select().single();
     if (error) throw new Error(error.message);
 
     const site = ourSiteUrl();
+
+    /* Meta hears about the lead from here whether or not cookies were
+       accepted; the thanks page fires the same event id, and Meta dedupes. */
+    if (free) {
+      const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+      sendMetaEvent({
+        name: 'Lead', eventId: row.id, email,
+        url: `${site}/thanks.html`,
+        ip: fwd || undefined, userAgent: req.headers['user-agent'] || undefined,
+        custom: { content_category: 'free-preview', campaign: campaign || undefined }
+      }).catch(() => {});
+    }
 
     /* Two different jobs arrive here, so they read differently in an inbox: an
        enquiry is a conversation to start, a free example is a piece of work to
@@ -167,7 +184,8 @@ module.exports = async function handler(req, res) {
         ? `${name} at ${business} wants a free example.\n\n`
           + `Email:   ${email}\n`
           + `Find them: ${handle || 'not given'}\n`
-          + `Address: ${requested_domain || 'none free for that name'}\n\n`
+          + `Address: ${requested_domain || 'none free for that name'}\n`
+          + `From:    ${campaign || 'no campaign tags'}\n\n`
           + `Anything they added:\n${about || '-'}\n\n`
           + `Nothing is registered - the address above is the one they will be offered.\n\n`
           + `Admin: ${site}/admin.html`
@@ -217,44 +235,34 @@ module.exports = async function handler(req, res) {
       }
 
       if (allowed) {
-      const perks = [
-        'Nothing technical to set up. You send us your details, we do the rest.',
-        'No time lost. We build it while you get on with the job.',
-        'If anything breaks, we fix it. Included.',
-        'Your web address and hosting are in the monthly price, with nothing else to buy.'
-      ];
-
+      /* No price and no plans here: they have not seen their page yet, and
+         a number before the reason is a number they decide on. */
       const facts = [{ label: 'Business', value: business }];
       if (handle) facts.push({ label: 'Designing from', value: handle });
-      if (requested_domain) facts.push({ label: 'Address', value: requested_domain });
 
       const theirs = await sendEmail({
         to: email,
         subject: 'Your free page is on its way - within 24 hours',
         html: emailHtml({
           preheader: 'We have your details. Your free page lands in this inbox within 24 hours.',
-          heading: 'We’re on it 👍',
+          heading: 'I’m on it 👍',
           lines: [
-            `Thanks &mdash; we&rsquo;ve got your details and we&rsquo;re designing a page for `
+            `Thanks &mdash; I&rsquo;ve got your details and I&rsquo;m designing a page for `
               + `<strong>${esc(business)}</strong>. It&rsquo;ll land in this inbox within 24 hours.`,
-            'It&rsquo;s designed by hand, for you. Nothing for you to do in the meantime.'
+            'Designed by hand, for you. Nothing for you to do in the meantime.',
+            'When it lands: like it, and it can be live on your own address the same day. '
+              + 'Anything off, just reply &mdash; changes are free. Not for you? No hard feelings.'
           ],
           details: facts,
-          perks: perks,
-          ctaText: 'See the plans',
-          ctaHref: `${site}/plans.html`,
-          ctaNote: 'From £25 a month. Cancel anytime.',
           footer: 'You&rsquo;re getting this because you asked for a free example at '
                 + 'kanvas.one. No account has been created and nothing has been charged.',
           footerLinks: standardFooter(site)
         }),
-        text: `Thanks - we've got your details and we're designing a page for ${business}.\n\n`
-            + `It'll land in this inbox within 24 hours. It's designed by hand, for you. `
+        text: `Thanks - I've got your details and I'm designing a page for ${business}.\n\n`
+            + `It'll land in this inbox within 24 hours. Designed by hand, for you. `
             + `Nothing for you to do in the meantime.\n\n`
-            + `What joining gets you:\n`
-            + perks.map((t) => '- ' + t.replace(/<[^>]+>/g, '')).join('\n') + '\n\n'
-            + `See the plans: ${site}/plans.html\n`
-            + `From GBP 25 a month. Cancel anytime.\n`
+            + `When it lands: like it, and it can be live on your own address the same day. `
+            + `Anything off, just reply - changes are free. Not for you? No hard feelings.\n`
       });
       console.log('lead: confirmation email', theirs);
       }
