@@ -859,6 +859,27 @@ a.hero-pill:hover .pill-go{opacity:1}
   font-weight:600;margin:0 0 clamp(16px,2.4vw,22px);
 }
 
+/* The 24 hours, counting down on the thanks page. Tabular digits so the
+   face does not jitter as the numbers change; the colons blink like a
+   clock's, unless motion is reduced. */
+.clock{margin:clamp(22px,3.4vw,30px) auto 0;opacity:0}
+.clock.in{animation:clock-in .5s var(--ease) both}
+@keyframes clock-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.clock-label,.clock-sub{margin:0;font-size:13px;line-height:1.5;color:var(--ink-3)}
+.clock-label{font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.clock-face{
+  margin:6px 0 8px;font-size:clamp(46px,9vw,76px);line-height:1;font-weight:600;
+  letter-spacing:-.03em;color:var(--ink);font-variant-numeric:tabular-nums;
+}
+.clock-sep{display:inline-block;padding:0 .04em;color:var(--ink-3);animation:clock-blink 1s steps(1,end) infinite}
+@keyframes clock-blink{50%{opacity:.25}}
+.clock.is-due .clock-face{color:var(--good)}
+.clock.is-due .clock-sep{animation:none}
+@media (prefers-reduced-motion:reduce){
+  .clock.in{animation:none;opacity:1}
+  .clock-sep{animation:none}
+}
+
 /* Ticks centred under the promise, and wide enough that none of the three
    wraps onto a lonely second line on a phone. */
 .offer-ticks{

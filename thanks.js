@@ -36,5 +36,40 @@
   if (stash) {
     try { sessionStorage.removeItem(KEY); } catch (e) {}
     if (window.oneTrack) window.oneTrack('Lead', { content_category: 'free-preview' });
+    startClock();
+  }
+
+  /* The 24 hours, counting down from now. Nothing is stored: the flag above
+     is already gone, so a refresh or a return visit shows the page without
+     the clock. The end time is fixed once and the display is worked out from
+     it each tick, so a throttled background tab catches up rather than
+     drifting when they come back. */
+  function startClock() {
+    var box = document.getElementById('clock');
+    var h = document.getElementById('clockH');
+    var m = document.getElementById('clockM');
+    var s = document.getElementById('clockS');
+    var sub = document.getElementById('clockSub');
+    if (!box || !h || !m || !s) return;
+
+    var end = Date.now() + 24 * 60 * 60 * 1000;
+    var two = function (n) { return (n < 10 ? '0' : '') + n; };
+
+    function tick() {
+      var left = Math.max(0, Math.round((end - Date.now()) / 1000));
+      h.textContent = two(Math.floor(left / 3600));
+      m.textContent = two(Math.floor(left / 60) % 60);
+      s.textContent = two(left % 60);
+      if (left === 0) {
+        clearInterval(timer);
+        box.classList.add('is-due');
+        if (sub) sub.textContent = 'Any moment now. Check your inbox.';
+      }
+    }
+
+    tick();
+    box.hidden = false;
+    box.classList.add('in');
+    var timer = setInterval(tick, 1000);
   }
 })();

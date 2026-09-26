@@ -17,7 +17,7 @@
 <meta property="og:image:alt" content="Kanvas One — the right website for your business. A request being typed: add online payments to my site.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=83">
+<link rel="stylesheet" href="styles.css?v=84">
 </head>
 <body>
 
@@ -44,6 +44,15 @@
     <h1 class="reveal">Your page will be with you<br>within 24 hours.</h1>
     <p class="lede reveal" id="thanksLede">We&rsquo;ve got your details. Your page will land
        in your inbox within 24 hours.</p>
+
+    <!-- The 24 hours, counting. Shown only after a real submission (thanks.js
+         turns it on), and it counts from this moment: leave the page and it is
+         gone, because the promise is the email, not the clock. -->
+    <div class="clock" id="clock" hidden>
+      <p class="clock-label">Your page lands within</p>
+      <p class="clock-face" role="timer" aria-live="off" aria-atomic="true"><span id="clockH">24</span><span class="clock-sep" aria-hidden="true">:</span><span id="clockM">00</span><span class="clock-sep" aria-hidden="true">:</span><span id="clockS">00</span></p>
+      <p class="clock-sub" id="clockSub">Counting from the moment you pressed send.</p>
+    </div>
 
     <ul class="ticks offer-ticks reveal">
       <li>Nothing else to do &mdash; it comes to you, within 24 hours</li>
@@ -95,8 +104,8 @@
 <script src="consent.js?v=7"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="script.js?v=28"></script>
-<script src="thanks.js?v=1"></script>
+<script src="script.js?v=29"></script>
+<script src="thanks.js?v=2"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
