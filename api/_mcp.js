@@ -712,7 +712,7 @@ const writeTools = {
       const url = String(a.preview_url || '').trim();
       if (!/^https:\/\/[^\s]+\.[^\s]{2,}/i.test(url)) throw fail('The example needs a full https:// address.');
       if (lead.preview_sent_at && !a.again) throw fail('This one was already sent on ' + when(lead.preview_sent_at) + '. Pass again: true if you mean to send it twice.');
-      return { preview: 'Email ' + lead.email + ' (' + lead.business + ') their free example at ' + url + ', with the 50% off first month code. Marks the lead as sent.', args: { lead_id: lead.id, preview_url: url, again: !!a.again } };
+      return { preview: 'Email ' + lead.email + ' (' + lead.business + ') their free example at ' + url + ', with a web address they can claim, what the site could do, the three plans (Max first) and the 50% off first month code. Marks the lead as sent.', args: { lead_id: lead.id, preview_url: url, again: !!a.again } };
     },
     async execute(ctx, caller, a) {
       const out = await sendLeadPreview(ctx.db, a.lead_id, a.preview_url, { again: a.again });

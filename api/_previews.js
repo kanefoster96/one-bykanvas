@@ -1,12 +1,114 @@
 /* Sending somebody their finished example - the admin page's Send button
  * and the MCP lead_send_preview tool both come here. Everything in the
  * email comes from the lead row; the only thing supplied is where the
- * example lives. Returns { sentAt } or { error, status }. */
+ * example lives. Returns { sentAt } or { error, status }.
+ *
+ * The email is the offer. In order: the page itself, the web address that
+ * could be theirs, what the page could become once they say yes, and the
+ * three plans best first - Max, then Business for those who do not need
+ * the monthly work, then Starter for those who love the page as it is.
+ */
 const { ourSiteUrl } = require('./_env.js');
 const { PREVIEW_OFFER } = require('./_plans.js');
 const { sendEmail } = require('./_email.js');
 const { html: emailHtml, standardFooter, esc } = require('./_email_template.js');
-const { lookup: domainLookup } = require('./domains.js');
+const { lookup: domainLookup, candidates: domainCandidates } = require('./domains.js');
+
+/* At most this many registry lookups when finding them an address. */
+const SUGGEST_BUDGET = 6;
+
+/* The address that goes in the email. One they asked for is re-checked;
+   otherwise the closest free one to their business name is found now and
+   kept on the lead, so a resend, the admin and the MCP all see the same
+   address they were offered. Returns { domain, state } with state one of
+   free | taken | unknown, or null when there is nothing to say. */
+async function addressFor(db, lead) {
+  if (lead.requested_domain) {
+    let state = 'unknown';
+    try { state = await domainLookup(lead.requested_domain); }
+    catch (e) { console.error('previews: domain re-check failed:', e && e.message); }
+    return { domain: lead.requested_domain, state };
+  }
+
+  let list = [];
+  try { list = domainCandidates(lead.business).slice(0, SUGGEST_BUDGET); }
+  catch (e) { return null; }
+  if (!list.length) return null;
+
+  let states = [];
+  try { states = await Promise.all(list.map(domainLookup)); }
+  catch (e) {
+    console.error('previews: domain suggest failed:', e && e.message);
+    return null;
+  }
+  const i = states.indexOf('free');
+  if (i === -1) return null;                 /* all taken, or nothing reachable */
+
+  const domain = list[i];
+  const { error } = await db.from('leads').update({ requested_domain: domain }).eq('id', lead.id);
+  if (error) console.error('previews: could not keep suggested domain:', error.message);
+  return { domain, state: 'free' };
+}
+
+/* What the page could do once they join. "Could", not "will": some of it
+   is in the build from the start and the rest they ask for, any time. */
+const COULD = [
+  'Take bookings, deposits and card payments, straight to your bank',
+  'Show your services, prices and opening hours, and let you change them yourself',
+  'Ask every customer for a Google review, automatically, a day after the job',
+  'A page for every service you offer and every town you cover',
+  'Live chat and an enquiry form that reach your phone',
+  'Keep every customer’s bookings, payments and notes against their name',
+  'Business email at your own address, and a business number that texts back missed calls'
+];
+
+function joinHref(site, plan, domain) {
+  const q = ['plan=' + plan, 'offer=' + encodeURIComponent(PREVIEW_OFFER.code)];
+  if (domain) q.push('domain=' + encodeURIComponent(domain));
+  return `${site}/get-started.html?${q.join('&')}`;
+}
+
+function planLadder(site, domain) {
+  return {
+    title: 'Three ways to have it',
+    intro: 'I design and build every one of them for you. Start with the top one; the two under it are for if you need less.',
+    cards: [
+      {
+        name: 'Max', price: '£250', tag: 'Best value', featured: true,
+        text: 'The whole thing. Built, found on Google, and worked on every month without you asking. Your customers texted when you miss their call and reminded before their booking. Business email at your own address. First in the queue.',
+        items: [
+          'Everything in Business',
+          'SEO and site improvements every month',
+          'Missed calls answered by text in seconds',
+          'Booking reminders texted to your customers',
+          'you@yourbusiness.co.uk on Google Workspace'
+        ],
+        ctaText: 'Start on Max', ctaHref: joinHref(site, 'max', domain)
+      },
+      {
+        name: 'Business', price: '£50', tag: 'Most popular',
+        text: 'If you want to be online and don’t need me working on the site every month or texting your customers, Business is for you. The full site, and unlimited changes made by me within 48 hours.',
+        items: [
+          'Bookings, payments, forms and live chat',
+          'Reviews asked for automatically',
+          'Unlimited changes and new features, within 48 hours'
+        ],
+        ctaText: 'Start on Business', ctaHref: joinHref(site, 'business', domain)
+      },
+      {
+        name: 'Starter', price: '£25',
+        text: 'If you love the page as it is and just want somewhere customers can visit you online and call or email you, Starter is for you. The page, your web address, found on Google in your town, and a change a month.',
+        items: [
+          'The page you’re looking at, live on your own address',
+          'Your details, hours, photos and socials',
+          'Me to message, and a change every month'
+        ],
+        ctaText: 'Start on Starter', ctaHref: joinHref(site, 'starter', domain)
+      }
+    ],
+    note: 'No setup fees on any of them. Move up or down any month. Cancel any month.'
+  };
+}
 
 async function sendLeadPreview(db, id, url, opts) {
   const again = !!(opts && opts.again);
@@ -28,87 +130,97 @@ async function sendLeadPreview(db, id, url, opts) {
   }
 
   const site = ourSiteUrl();
-  const facts = [{ label: 'Business', value: lead.business }];
+  const address = await addressFor(db, lead);
+  const claimable = address && address.state !== 'taken' ? address.domain : '';
 
-  /* Asked again, not assumed. They picked this days ago and nothing was
-     reserved, so "still available" has to be checked at the moment we say
-     it - and when the registries cannot be reached, it says nothing at all
-     rather than guessing in either direction. */
-  let domainState = 'unknown';
-  if (lead.requested_domain) {
-    try {
-      domainState = await domainLookup(lead.requested_domain);
-    } catch (e) {
-      console.error('admin: domain re-check failed:', e && e.message);
-    }
-    facts.push({
-      label: 'Address',
-      value: lead.requested_domain,
-      tag: domainState === 'free'  ? { text: 'Still available' }
-         : domainState === 'taken' ? { text: 'Now taken', tone: 'warn' }
-         : null
-    });
+  /* The address block. A free one is theirs to claim; one that has gone
+     since they asked says so and points at choosing another. */
+  let domainBlock = null;
+  if (address) {
+    const gone = address.state === 'taken';
+    domainBlock = {
+      label: gone ? 'The address you asked for' : 'Your web address',
+      domain: address.domain,
+      tag: address.state === 'free' ? { text: 'Available now' }
+         : gone ? { text: 'Now taken', tone: 'warn' }
+         : null,
+      text: gone
+        ? `Somebody registered it since you asked. Join and pick another at signup &mdash; there&rsquo;s always a good one, and I&rsquo;ll check it&rsquo;s free with you.`
+        : `Claim it today: it&rsquo;s registered for you and included in your plan the moment you join &mdash; nothing to pay for it separately. Or choose your own at signup.`
+    };
   }
 
-  const perks = [
-    'Nothing technical to set up. We put it live for you.',
-    'No time lost. We build and look after it while you get on with the job.',
-    'If anything breaks, we fix it. Included, and it never costs you a point.',
-    'Your web address and hosting are in the monthly price, with nothing else to buy.'
-  ];
+  const from = !lead.handle ? 'what you sent me'
+    : /^@/.test(lead.handle) ? 'your ' + esc(lead.handle)
+    : 'the link you sent me';
 
   const sent = await sendEmail({
     to: lead.email,
-    subject: `Your website is ready to look at, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
+    subject: `Your website is ready, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
     html: emailHtml({
-      preheader: 'Here it is - the free one-page example you asked for.',
+      preheader: 'Here it is - the page I designed for you, and what it could become.',
       heading: 'Your website is ready 🎁',
       lines: [
-        `Here it is. We designed this for <strong>${esc(lead.business)}</strong> from `
-          + `${!lead.handle ? 'what you sent us' : /^@/.test(lead.handle) ? 'your ' + esc(lead.handle) : 'the link you sent us'}, so it should `
-          + `already look like you.`
-      ].concat(domainState === 'taken'
-        ? [`One thing: <strong>${esc(lead.requested_domain)}</strong> has been `
-           + `registered by somebody else since you asked. Join and we&rsquo;ll find `
-           + `you a good one that is free.`]
-        : []),
-      details: facts,
+        `Here it is. I designed this for <strong>${esc(lead.business)}</strong> from ${from}, `
+          + `so it should already look like you.`
+      ],
       ctaText: '🎁 See your website',
       ctaHref: url,
       /* The address bar will not say their name, and an unexplained one
          looks like a mistake. Said under the button, where they are about
          to see it. */
-      ctaNote: lead.requested_domain && domainState !== 'taken'
-        ? `This opens on a temporary address. ${esc(lead.requested_domain)} is yours when you join.`
+      ctaNote: claimable
+        ? `This opens on a temporary address. ${esc(claimable)} is yours when you join.`
         : 'This opens on a temporary address while it&rsquo;s an example.',
+      domain: domainBlock,
+      could: {
+        title: 'Right now it&rsquo;s a shell. Here&rsquo;s what it could do.',
+        intro: 'What you&rsquo;re looking at is one page: the look and the feel. Once you say yes, I build the rest around it. Some of this goes in from the start; the rest you ask for whenever you want it, and I add it, included.',
+        items: COULD
+      },
+      plans: planLadder(site, claimable),
+      offerLast: true,
       offer: {
         code: PREVIEW_OFFER.code,
         href: `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}`,
-        text: '<strong>Want it online, properly?</strong><br>'
-            + 'Tap the code for 50% off your first month.',
-        note: 'It comes with you &mdash; nothing to copy, and it is already '
-            + 'on the bill when you pay. Works on any plan.'
+        text: '<strong>50% off your first month, on any plan.</strong><br>'
+            + 'Tap the code and it&rsquo;s applied when you join.',
+        note: 'It comes with you &mdash; nothing to copy, and it is already on the bill when you pay.'
       },
-      perks: perks,
-      footer: 'You&rsquo;re getting this because you asked us for a free example at '
+      closing: 'Anything you&rsquo;d change on the page, just reply and say so. Changes are free, before and after you join. &mdash; Kane',
+      footer: 'You&rsquo;re getting this because you asked me for a free example at '
             + 'kanvas.one. No account has been created and nothing has been charged.',
       footerLinks: standardFooter(site)
     }),
-    text: `Here it is - the free example we made for ${lead.business}.\n\n`
+    text: `Here it is - the page I designed for ${lead.business}.\n\n`
         + `${url}\n\n`
-        + (lead.requested_domain && domainState !== 'taken'
-            ? `This opens on a temporary address. ${lead.requested_domain} is yours `
-              + `when you join${domainState === 'free' ? ' - it is still available' : ''}.\n\n`
+        + (claimable
+            ? `This opens on a temporary address. ${claimable} is yours when you join`
+              + (address.state === 'free' ? ' - it is available now' : '') + `. Claim it today, `
+              + `or choose your own at signup. Either way it is included in your plan.\n\n`
             : `This opens on a temporary address while it's an example.\n\n`)
-        + (domainState === 'taken'
-            ? `${lead.requested_domain} has been registered by somebody else since you `
-              + `asked. Join and we'll find you a good one that is free.\n\n`
+        + (address && address.state === 'taken'
+            ? `${address.domain} has been registered by somebody else since you asked. `
+              + `Join and pick another at signup.\n\n`
             : '')
-        + `Want it online properly? 50% off your first month with `
-        + `${PREVIEW_OFFER.code}, on any plan:\n`
+        + `Right now it's a shell: one page, the look and the feel. Once you say yes, `
+        + `here's what it could do. Some goes in from the start; the rest you ask for, any time, included:\n`
+        + COULD.map((t) => '- ' + t).join('\n') + '\n\n'
+        + `Three ways to have it. I build every one of them for you.\n\n`
+        + `MAX - GBP 250 a month. The whole thing: built, found on Google, and worked on every `
+        + `month without you asking. Missed calls texted back, booking reminders texted, business `
+        + `email at your own address, first in the queue.\n${joinHref(site, 'max', claimable)}\n\n`
+        + `BUSINESS - GBP 50 a month. If you want to be online and don't need me working on the `
+        + `site every month or texting your customers, Business is for you. The full site, and `
+        + `unlimited changes made by me within 48 hours.\n${joinHref(site, 'business', claimable)}\n\n`
+        + `STARTER - GBP 25 a month. If you love the page as it is and just want somewhere `
+        + `customers can visit you online and call or email you, Starter is for you.\n`
+        + `${joinHref(site, 'starter', claimable)}\n\n`
+        + `No setup fees. Move up or down any month. Cancel any month.\n\n`
+        + `50% off your first month with ${PREVIEW_OFFER.code}, on any plan:\n`
         + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`
-        + perks.map((t) => '- ' + t).join('\n') + '\n\n'
-        + `See the plans: ${site}/plans.html\n`
+        + `Anything you'd change on the page, just reply and say so. Changes are free, `
+        + `before and after you join.\n\nKane\n`
   });
 
   /* sendEmail answers 'sent', 'skipped' or 'failed', and only the first

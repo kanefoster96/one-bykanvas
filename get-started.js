@@ -31,6 +31,16 @@
     });
   })();
 
+  /* ?domain= from the ready email: the address they were offered with their
+     example. It goes first in the list on the address step, selected, and
+     is checked again there like any other - nothing was reserved. */
+  var wantDomain = '';
+  try {
+    var d = String(new URLSearchParams(location.search).get('domain') || '').trim().toLowerCase()
+      .replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
+    if (/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z]{2,63})+$/.test(d) && d.length <= 253) wantDomain = d;
+  } catch (e) {}
+
   function referralCode() {
     var typed = document.getElementById('refCode');
     if (typed && typed.value.trim()) return typed.value.trim().toUpperCase();
@@ -489,8 +499,29 @@
         })
       });
       var data = await res.json().catch(function () { return {}; });
-      if (data.suggestions && data.suggestions.length) {
-        paintDomains(data.suggestions);
+      var found = (data.suggestions || []).slice();
+      /* The one from their example goes first, if it is still free. Taken
+         since? Then it is left out and the note says so. */
+      if (wantDomain) {
+        var still = 'unknown';
+        try {
+          var chk = await fetch('/api/domains', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'check', domain: wantDomain })
+          });
+          var cd = await chk.json().catch(function () { return {}; });
+          if (chk.ok && cd.state) still = cd.state;
+        } catch (e) {}
+        if (still !== 'taken') {
+          found = [wantDomain].concat(found.filter(function (x) { return x !== wantDomain; }));
+          answers.requested_domain = wantDomain;
+        } else {
+          say($('noteDomain'), wantDomain + ' was registered by somebody else since your example. Pick another below.');
+        }
+      }
+      if (found.length) {
+        paintDomains(found.slice(0, 4), wantDomain && found[0] === wantDomain ? wantDomain : undefined);
         return;
       }
       /* Every name we tried being taken is a different problem from not being
