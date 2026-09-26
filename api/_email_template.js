@@ -147,6 +147,68 @@ function offerBox(offer) {
           </table>`;
 }
 
+/* A plain list under a short title: things the site could do, in the
+   ready email. Dots rather than ticks on purpose - a tick reads as
+   "included from day one", and these are what they can ask for. Title and
+   intro are raw HTML; items are escaped. */
+function couldList(block) {
+  const items = block.items.map((t) => `<tr>
+      <td width="18" valign="top" style="padding:6px 0 0;font-size:15px;line-height:1.5;color:${INK_3};font-family:${FONT};">&bull;</td>
+      <td valign="top" style="padding:6px 0 0;font-size:15px;line-height:1.5;color:${INK_2};font-family:${FONT};">${esc(t)}</td>
+    </tr>`).join('');
+  const intro = block.intro
+    ? `<p style="margin:0 0 6px;font-size:15px;line-height:1.55;color:${INK_2};font-family:${FONT};">${block.intro}</p>` : '';
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0;">
+            <tr><td>
+              <h2 style="margin:0 0 10px;font-size:18px;font-weight:600;letter-spacing:-.02em;line-height:1.25;color:${INK};font-family:${FONT};">${block.title}</h2>
+              ${intro}
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${items}</table>
+            </td></tr>
+          </table>`;
+}
+
+/* The web address they could have, set apart like the discount is: the
+   address in mono, its state as a chip, and what claiming it means. */
+function domainClaim(d) {
+  const chip = d.tag && d.tag.text ? tagChip(d.tag) : '';
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 0;background:${SUNK};border:1px solid ${LINE};border-radius:14px;">
+            <tr><td style="padding:18px 22px 4px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${INK_3};font-family:${FONT};">${esc(d.label || 'Your web address')}</td></tr>
+            <tr><td style="padding:0 22px 8px;font-size:17px;font-weight:600;color:${INK};font-family:${MONO};">${esc(d.domain)}${chip}</td></tr>
+            <tr><td style="padding:0 22px 18px;font-size:14px;line-height:1.55;color:${INK_2};font-family:${FONT};">${d.text}</td></tr>
+          </table>`;
+}
+
+/* The plans, stacked, best first. One card is featured: ink border and a
+   filled button. The others carry a ghost button so the eye lands on the
+   first. Each card is: who it is for (text, raw HTML), then the price. */
+function planCards(cards) {
+  return cards.map((c) => {
+    const border = c.featured ? INK : LINE;
+    const btn = c.featured
+      ? `<a href="${esc(c.ctaHref)}" style="display:block;padding:13px 20px;border-radius:980px;background:${INK};font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;text-align:center;font-family:${FONT};">${esc(c.ctaText)}</a>`
+      : `<a href="${esc(c.ctaHref)}" style="display:block;padding:12px 20px;border-radius:980px;border:1px solid ${INK};font-size:15px;font-weight:600;color:${INK};text-decoration:none;text-align:center;font-family:${FONT};">${esc(c.ctaText)}</a>`;
+    const tag = c.tag ? `<span style="display:inline-block;margin-left:10px;padding:3px 9px;border-radius:980px;background:${GOOD_BG};border:1px solid ${GOOD_LINE};font-size:11px;font-weight:600;color:${GOOD};font-family:${FONT};vertical-align:middle;">${esc(c.tag)}</span>` : '';
+    const items = (c.items || []).map((t) => `<tr>
+        <td width="22" valign="top" style="padding:5px 0 0;font-size:14px;line-height:1.5;color:${GOOD};font-family:${FONT};">&#10003;</td>
+        <td valign="top" style="padding:5px 0 0;font-size:14px;line-height:1.5;color:${INK_2};font-family:${FONT};">${esc(t)}</td>
+      </tr>`).join('');
+    const list = items ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:10px 0 4px;">${items}</table>` : '';
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:14px 0 0;border:${c.featured ? '2px' : '1px'} solid ${border};border-radius:16px;">
+              <tr><td style="padding:20px 22px 22px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td valign="middle" style="font-size:19px;font-weight:600;letter-spacing:-.02em;color:${INK};font-family:${FONT};">${esc(c.name)}${tag}</td>
+                    <td valign="middle" align="right" style="font-size:15px;color:${INK};font-family:${FONT};white-space:nowrap;"><b style="font-size:19px;">${esc(c.price)}</b><span style="color:${INK_3};">/month</span></td>
+                  </tr>
+                </table>
+                <p style="margin:12px 0 0;font-size:15px;line-height:1.55;color:${INK_2};font-family:${FONT};">${c.text}</p>
+                ${list}
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0 0;"><tr><td>${btn}</td></tr></table>
+              </td></tr>
+            </table>`;
+  }).join('');
+}
+
 /* lines and callout.text are raw HTML, not escaped here - callers
  * interpolating a dynamic value (a business name, a domain) must esc() that
  * value themselves first, same rule as every other bit of user-supplied text
@@ -155,7 +217,15 @@ function offerBox(offer) {
  */
 function html({
   preheader, heading, lines = [], details = [], image, perks = [], offer,
-  ctaText, ctaHref, ctaNote, callout, footer, footerLinks = []
+  ctaText, ctaHref, ctaNote, callout, footer, footerLinks = [],
+  /* Blocks that follow the button, in this order: the web address they
+     could claim, what the site could do, the plans, and a closing heading
+     and lines. Only the ready email uses them. */
+  domain, could, plans, closing,
+  /* The discount normally sits above the button, where it decides the
+     press. The ready email's button is "see your page", which needs no
+     deciding, so there the discount waits until after the plans. */
+  offerLast = false
 }) {
   /* What the inbox list shows beside the subject. Without it the client
      picks the first text it finds, which is the wordmark. */
@@ -195,6 +265,20 @@ function html({
 
   const warn = callout ? calloutBox(callout) : '';
 
+  const claim = domain && domain.domain ? domainClaim(domain) : '';
+  const might = could && could.items && could.items.length ? couldList(could) : '';
+  const ladder = plans && plans.cards && plans.cards.length ? `
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:30px 0 0;">
+          <tr><td>
+            <h2 style="margin:0 0 6px;font-size:18px;font-weight:600;letter-spacing:-.02em;line-height:1.25;color:${INK};font-family:${FONT};">${plans.title || 'Pick a plan'}</h2>
+            ${plans.intro ? `<p style="margin:0 0 4px;font-size:15px;line-height:1.55;color:${INK_2};font-family:${FONT};">${plans.intro}</p>` : ''}
+            ${planCards(plans.cards)}
+            ${plans.note ? `<p style="margin:14px 0 0;font-size:13px;line-height:1.5;text-align:center;color:${INK_3};font-family:${FONT};">${plans.note}</p>` : ''}
+          </td></tr>
+        </table>` : '';
+  const close = closing ? `
+        <p style="margin:28px 0 8px;font-size:16px;line-height:1.55;color:${INK};font-family:${FONT};">${closing}</p>` : '';
+
   const links = footerLinks.length ? `
             <tr><td style="padding-top:10px;font-size:12.5px;line-height:1.6;color:${INK_3};font-family:${FONT};">${
               footerLinks.map((l) => `<a href="${esc(l.href)}" style="color:${INK_3};text-decoration:underline;">${esc(l.text)}</a>`).join(`<span style="color:${LINE};"> &nbsp;&bull;&nbsp; </span>`)
@@ -212,7 +296,7 @@ function html({
         </td></tr>
         <tr><td style="padding:26px 36px 0;">
           <h1 style="margin:0 0 16px;font-size:25px;font-weight:600;letter-spacing:-.025em;line-height:1.2;color:${INK};font-family:${FONT};">${esc(heading)}</h1>
-          ${body}${picture}${facts}${deal}${cta}${note}${good}${warn}
+          ${body}${picture}${facts}${offerLast ? '' : deal}${cta}${note}${claim}${might}${ladder}${offerLast ? deal : ''}${good}${warn}${close}
         </td></tr>
         <tr><td style="padding:30px 36px 34px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid ${LINE};">

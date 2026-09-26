@@ -60,7 +60,7 @@ function whatDidYouThink(lead, site) {
           + `<strong>${esc(lead.business)}</strong>.`,
         'Be honest &mdash; did it look like you? If something is off, just reply '
           + 'and say so. Changes are free, and we&rsquo;d rather get it right than guess.',
-        'And if you liked it, it can be your real site this week: live on your own '
+        'And if you liked it, it can be your real site today: live on your own '
           + 'web address, looked after for you, from &pound;25 a month with no setup fees.'
       ],
       offer: offerBox(site),
@@ -74,7 +74,7 @@ function whatDidYouThink(lead, site) {
     text: `A few days ago we sent the free example page we designed for ${lead.business}.\n\n`
         + `Be honest - did it look like you? If something is off, just reply and say so. `
         + `Changes are free, and we'd rather get it right than guess.\n\n`
-        + `And if you liked it, it can be your real site this week: live on your own web `
+        + `And if you liked it, it can be your real site today: live on your own web `
         + `address, looked after for you, from GBP 50 a month with no setup fees.\n\n`
         + `50% off your first month with ${PREVIEW_OFFER.code}, on any plan:\n`
         + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n\n`
@@ -94,7 +94,7 @@ function beforeWeTidyUp(lead, site) {
           + `&mdash; but example pages don&rsquo;t stay online forever. We clear them out `
           + `to make room for new ones.`,
         'If you want it to become your real site, now&rsquo;s the moment: join and we '
-          + 'put it live on your own web address, usually within days, and keep building '
+          + 'put it live on your own web address the same day, and keep building '
           + 'on it from there. Anything you&rsquo;d change, we change &mdash; that&rsquo;s '
           + 'included.',
         'Not for you? No hard feelings &mdash; this is the last email about it, and '
@@ -110,7 +110,7 @@ function beforeWeTidyUp(lead, site) {
     text: `The free example we made for ${lead.business} is still up - but example pages `
         + `don't stay online forever. We clear them out to make room for new ones.\n\n`
         + `If you want it to become your real site, now's the moment: join and we put it `
-        + `live on your own web address, usually within days, and keep building on it from `
+        + `live on your own web address the same day, and keep building on it from `
         + `there. Anything you'd change, we change - that's included.\n\n`
         + `50% off your first month with ${PREVIEW_OFFER.code}, on any plan:\n`
         + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n\n`

@@ -31,6 +31,46 @@
     });
   })();
 
+  /* ?domain= from the ready email: the address they were offered with their
+     example. It goes first in the list on the address step, selected, and
+     is checked again there like any other - nothing was reserved. The lead
+     prefill below may set it too. */
+  var wantDomain = '';
+  try {
+    var d = String(new URLSearchParams(location.search).get('domain') || '').trim().toLowerCase()
+      .replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
+    if (/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z]{2,63})+$/.test(d) && d.length <= 253) wantDomain = d;
+  } catch (e) {}
+
+  /* ?lead= from the ready email or the card on their example: what they
+     told us when they asked for it, filled in so the first screen is a
+     check rather than a form. The password is still theirs to choose. */
+  (function prefillFromLead() {
+    var id = '';
+    try { id = String(new URLSearchParams(location.search).get('lead') || '').trim(); } catch (e) {}
+    if (!/^[0-9a-f-]{36}$/i.test(id)) return;
+    fetch('/api/lead-prefill?id=' + encodeURIComponent(id))
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d) return;
+        var set = function (fieldId, v) {
+          var el = document.getElementById(fieldId);
+          if (el && v && !el.value) el.value = v;
+        };
+        set('contact_name', d.name);
+        set('business_name', d.business);
+        set('email', d.email);
+        if (d.domain && !wantDomain) wantDomain = d.domain;
+        var sub = document.querySelector('.wiz-step[data-step="1"] .wiz-sub');
+        if (sub && (d.business || d.email)) {
+          sub.textContent = 'Your details from your free example are filled in. Check them, choose a password, and you’re in.';
+        }
+        var pw = document.getElementById(d.name ? 'password' : 'contact_name');
+        if (pw && !document.activeElement.value) { try { pw.focus({ preventScroll: true }); } catch (e) {} }
+      })
+      .catch(function () { /* the form still works empty */ });
+  })();
+
   function referralCode() {
     var typed = document.getElementById('refCode');
     if (typed && typed.value.trim()) return typed.value.trim().toUpperCase();
@@ -489,8 +529,29 @@
         })
       });
       var data = await res.json().catch(function () { return {}; });
-      if (data.suggestions && data.suggestions.length) {
-        paintDomains(data.suggestions);
+      var found = (data.suggestions || []).slice();
+      /* The one from their example goes first, if it is still free. Taken
+         since? Then it is left out and the note says so. */
+      if (wantDomain) {
+        var still = 'unknown';
+        try {
+          var chk = await fetch('/api/domains', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'check', domain: wantDomain })
+          });
+          var cd = await chk.json().catch(function () { return {}; });
+          if (chk.ok && cd.state) still = cd.state;
+        } catch (e) {}
+        if (still !== 'taken') {
+          found = [wantDomain].concat(found.filter(function (x) { return x !== wantDomain; }));
+          answers.requested_domain = wantDomain;
+        } else {
+          say($('noteDomain'), wantDomain + ' was registered by somebody else since your example. Pick another below.');
+        }
+      }
+      if (found.length) {
+        paintDomains(found.slice(0, 4), wantDomain && found[0] === wantDomain ? wantDomain : undefined);
         return;
       }
       /* Every name we tried being taken is a different problem from not being
@@ -645,10 +706,22 @@
       var free = document.createElement('b');
       free.textContent = 'Free with your plan.';
       note.appendChild(free);
-      note.appendChild(document.createTextNode(' We register it when your site is ready.'));
+      note.appendChild(document.createTextNode(' Registered for you today, and your page is live on it the same day.'));
     }
     $('sumDomainRow').hidden = !domain;
     $('sumDomain').textContent = domain || '\u2014';
+
+    /* The promise, next to the price: live today, features within 14 days
+       or the next month is free. Built from parts so the address they
+       typed never lands in markup. */
+    var promise = $('payPromise');
+    if (promise) {
+      promise.textContent = '';
+      var strong = document.createElement('b');
+      strong.textContent = domain ? 'Live on ' + domain + ' today.' : 'Live on your own address today.';
+      promise.appendChild(strong);
+      promise.appendChild(document.createTextNode(' Then I build the features you asked for within 14 days \u2014 or your next month is free.'));
+    }
 
     /* The payment button is always offered. If the session is not there yet
        the click recovers it, so an unconfirmed address is something to sort out
@@ -933,13 +1006,13 @@
         head: 'Business turns a website into a way to get booked.',
         list: [
           'Bookings, payments and forms on your site',
-          'KeepBook — every customer reminded when they’re due',
-          'Live chat, customer records and reviews asked for automatically',
+          'Reviews asked for automatically after every job',
+          'Live chat and customer records',
           'Unlimited changes, made by us within 48 hours'
         ],
-        note: 'Starter gets you found. Business gets you booked, and keeps the customer afterwards.',
+        note: 'Starter gets you found. Business gets you booked.',
         btn: 'Switch to Business — £50 a month',
-        line: 'Want bookings, forms and KeepBook? '
+        line: 'Want bookings, forms and live chat? '
       },
       business: {
         to: 'max',
