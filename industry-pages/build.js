@@ -86,10 +86,9 @@ function stepCards(b) {
     </article>`).join('\n');
 }
 
-/* The page's questions, with the KeepBook ones added wherever the page
-   has a KeepBook section - they only make sense under it. */
+/* The page's questions. */
 function faqFor(b) {
-  return b.keepBook ? b.faq.concat(INDUSTRIES.KEEP_BOOK_FAQ || []) : b.faq;
+  return b.faq;
 }
 
 /* A subheading with each sentence on its own line, as the hand-written
@@ -204,32 +203,7 @@ ${b.also ? `  <div class="wrap center also reveal">
   </div>
 ` : ''}</section>
 
-${b.keepBook ? `<!-- KeepBook, in this trade's words: one customer, the moment they could
-     not find you again, and the reminder that would have kept them. -->
-<section class="section" id="keepbook">
-  <div class="wrap center">
-    <p class="kb-app reveal"><img class="kb-app-mark" src="assets/keepbook.svg" alt="" width="44" height="44"><span class="kb-app-text"><span class="kb-app-name">KeepBook<span class="kb-app-free">Free on Business and Max</span></span><span class="kb-app-sub">The app that brings your customers back</span></span></p>
-    <h2 class="reveal">${b.keepBook.heading}</h2>
-    <p class="lede reveal">${lines(b.keepBook.lede)}</p>
-  </div>
-  <div class="wrap kb reveal">
-    <div class="kb-story">
-${b.keepBook.story.map((p, i) => `      <p${i === 1 ? ' class="kb-turn"' : ''}>${p}</p>`).join('\n')}
-    </div>
-    <div class="kb-how">
-      <h3>How it works</h3>
-      <ol class="kb-steps">
-        <li><strong>Add them after the job</strong>Name, email, what you did and the date. About thirty seconds on your phone.</li>
-        <li><strong>They&rsquo;re reminded when they&rsquo;re due</strong>${b.keepBook.due} They tap it, and the job is in your diary.</li>
-        <li><strong>A short note every three months</strong>In your name, from you. ${b.keepBook.note}</li>
-      </ol>
-      <p class="kb-price"><strong>Included on Business, &pound;50 a month. Nothing extra.</strong> ${b.keepBook.close}</p>
-      <a class="btn btn-primary" href="/get-started.html">Get started &rsaquo;</a>
-    </div>
-  </div>
-</section>
-
-` : ''}<section class="section grey">
+<section class="section grey">
   <div class="wrap center">
     <h2 class="reveal">How it works.</h2>
     <p class="lede reveal">${lines(b.buildNote)}</p>

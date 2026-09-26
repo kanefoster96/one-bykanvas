@@ -14,10 +14,6 @@
  *   also      the extras, named. Small, real, quick to add.
  *   promise   the guarantee, with a name so it is remembered.
  *   pricingExtra  the price anchored to one job they already do.
- *   keepBook  one named customer, the moment they could not find you, the
- *             reminder that would have kept them - then the interval this
- *             trade is reminded at (due), the quarterly note in its words
- *             (note), and the close. Left out where nothing repeats.
  *   faq       the objections we hear, answered straight.
  *
  * Prices and claims here are the real ones: from £25 a month, no VAT, live in
@@ -81,14 +77,6 @@ const COMMON_FAQ = [
 
 const MAX_HEADING = 'Want to show up higher every month?';
 
-/* KeepBook: the customer you already won, kept. Every trade page with
-   repeat custom carries a keepBook block - one named customer, the moment
-   they could not find you, the reminder that would have kept them - and
-   this question under it. Coffee shops have no per-customer job date to
-   remind from, so that page has neither. */
-const KEEP_BOOK_FAQ = [
-  ['KeepBook: do I have to write the emails?', 'No. They&rsquo;re written for you and sent in your name; you can change any of them. Your part is adding the customer after the job, about thirty seconds on your phone. The reminder and the note go out on their own, and it&rsquo;s all within UK rules for emailing your own customers, with an opt-out on every one.']
-];
 
 module.exports = [
   {
@@ -118,18 +106,6 @@ module.exports = [
     buildNote: 'Send me the photos on your phone and a list of what you do. I write the pages, sort the web address and have you online within 7 days. No evenings lost to a website builder.',
     steps: steps(['Tell me your trade, your patch and how you like to work', 'Five minutes of questions: what you do, where you cover, how customers book and pay. That&rsquo;s your part done.']),
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
-    keepBook: {
-      heading: 'Stop renting your own customers.',
-      lede: 'Checkatrade, Trust a Trader, Bark: they get you found once, then hand your customer straight back to the list. A year later they need you again, can&rsquo;t remember your name, and pick someone else. KeepBook keeps them.',
-      story: [
-        'Remember the boiler you fitted last November? She was made up with it. Then a year went by, the service light came on, and she couldn&rsquo;t remember your name. So she went back on Checkatrade, scrolled the list, and rang someone with a nicer photo.',
-        'You did the hard bit and lost her anyway, because there was nowhere for her to find you again.',
-        'With KeepBook, she goes in your book the day you fit it. Eleven months later a reminder lands with a button that says <strong>Book my service</strong>. Every few months, a short note from you: still here if you need anything. She never has to remember your name, because you never quite leave. Electrician? The same for an EICR due in five years, an EV charger check, and the jobs they&rsquo;ve been putting off.'
-      ],
-      due: 'Eleven months after a boiler install, five years after an EICR, a year after a service: a reminder lands with a one-tap Book button.',
-      note: '&ldquo;Still here if you need a service, a repair, or you&rsquo;re thinking about a new boiler. No obligation.&rdquo;',
-      close: 'Every customer you&rsquo;ve ever done a job for, reminded when they&rsquo;re due and checked in on, coming back year after year &mdash; with nobody paying a directory to take them.'
-    },
     maxPitch: { heading: MAX_HEADING, text: 'Google keeps changing and your competitors keep adding pages. The trades who keep working on their site are the ones who stay on page one for &ldquo;electrician Cramlington&rdquo;. Business gets you there at launch. Max keeps you there, with new pages, reviews and updates every month.' },
     promise: PROMISE,
     pricingExtra: ['Business, with everything above, is &pound;50. One callout a month covers it. Less than &pound;12 a week, no VAT.'],
@@ -169,18 +145,6 @@ module.exports = [
     buildNote: 'Tell me your treatments and prices and send your best photos. I build the site and the booking, and you&rsquo;re online within 7 days.',
     steps: steps(['Tell me your treatments, your prices and your team', 'Five minutes of questions: what you offer, who does what, how you want bookings to work. That&rsquo;s your part done.']),
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
-    keepBook: {
-      heading: 'The client who meant to rebook.',
-      lede: 'Booksy and Treatwell get you found once, then show your client the whole list next time. KeepBook keeps her coming back to your chair.',
-      story: [
-        'Remember Sophie, the balayage in March? She loved it, said she&rsquo;d be back in ten weeks. Ten weeks came and went. Her roots came through, she opened Instagram, an ad for the new place on the high street came up, and that was that.',
-        'Nothing was wrong with you. There was just nothing from you.',
-        'With KeepBook, Sophie goes in your book after her appointment. When her ten weeks are up, a reminder lands with a button that says <strong>Book my next one</strong>. Nails and lashes? Infills reminded at two or three weeks. And every few months a short note in your name: still here, and there&rsquo;s a quiet week coming if you want a slot. She never has to remember to rebook, because you remember for her.'
-      ],
-      due: 'Ten weeks after a colour, six after a cut, two or three after a set of nails or lashes: a reminder lands with a one-tap Book button.',
-      note: '&ldquo;Still here if you&rsquo;re due a refresh, or fancy trying something new. No obligation.&rdquo;',
-      close: 'Every client who has ever sat in your chair, reminded at her usual interval and checked in on, coming back to you &mdash; with no booking app paying to show her someone else.'
-    },
     maxPitch: { heading: MAX_HEADING, text: 'Every salon in town is on Google. The ones that keep adding pages, reviews and photos are the ones that stay top for &ldquo;hairdresser near me&rdquo;. Business gets you there at launch. Max keeps you there, month after month.' },
     promise: PROMISE,
     pricingExtra: ['Business, with everything above, is &pound;50. One colour appointment a month covers it. Less than &pound;12 a week, no VAT.'],
@@ -220,18 +184,6 @@ module.exports = [
     buildNote: 'Send your price list, your hours and a dozen photos. I do the rest and you&rsquo;re online within 7 days, usually sooner.',
     steps: steps(['Tell me your prices, your hours and your barbers', 'Five minutes of questions: what you charge, when you open, who works which days. That&rsquo;s your part done.']),
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
-    keepBook: {
-      heading: 'The regular who drifted.',
-      lede: 'A booking app gets you found once, then shows your client every chair in town next time. KeepBook keeps him coming back to yours.',
-      story: [
-        'Remember Dan, the skin fade every four weeks? Regular as clockwork, until he wasn&rsquo;t. Work got busy, five weeks became eight, and one Saturday he walked into the place next to his gym because it was there.',
-        'You never lost him to a better cut. You lost him to a gap.',
-        'With KeepBook, Dan goes in your book after his first cut. When his four weeks are up, a reminder lands with a button that says <strong>Book my chair</strong>. Every few months, a line from you: still here, same chair. He doesn&rsquo;t have to remember when he was last in, because you do.'
-      ],
-      due: 'At the client&rsquo;s usual gap, four weeks or six, a reminder lands with a one-tap Book button.',
-      note: '&ldquo;Still here if you&rsquo;re due a tidy-up. Same chair, same time if you want it.&rdquo;',
-      close: 'Every client who has ever sat in your chair, reminded at his usual interval and checked in on, coming back to you &mdash; with no app paying to show him the shop next door.'
-    },
     maxPitch: { heading: MAX_HEADING, text: 'There are six barbers within a mile of you and all of them are on Google. The one that keeps adding reviews, photos and pages stays top for &ldquo;barber near me&rdquo;. Business gets you there at launch. Max keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['Business, with everything above, is &pound;50. Three cuts a month covers it. Less than &pound;12 a week, no VAT.'],
@@ -310,18 +262,6 @@ module.exports = [
     buildNote: 'Tell me your classes, prices and how memberships work. I build the site and you&rsquo;re online within 7 days.',
     steps: steps(['Tell me your classes, your prices and how memberships work', 'Five minutes of questions: what you run, what it costs, whether there is a trial. That&rsquo;s your part done.']),
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
-    keepBook: {
-      heading: 'The client whose block ran out.',
-      lede: 'Memberships renew themselves. It&rsquo;s the block of sessions that ends, and the member who lapses, that slip away with nowhere to find you. KeepBook keeps them.',
-      story: [
-        'Remember Claire, the ten-session block in February? Lost half a stone, loved it, then the block ran out and life got in the way. By June she was searching &ldquo;personal trainer near me&rdquo; as if she&rsquo;d never met you.',
-        'She didn&rsquo;t stop because of you. She stopped because nothing reminded her to start again.',
-        'With KeepBook, Claire goes in your book when the block ends. A few weeks later a reminder lands with a button that says <strong>Book my next block</strong>. Every few months, a short note from you: still here when you&rsquo;re ready, no pressure. Lapsed members get the same &mdash; a nudge when their pass runs out, and a line now and then, from you, not a marketing team.'
-      ],
-      due: 'When a block of sessions ends, or a pass runs out, a reminder lands with a one-tap Book button.',
-      note: '&ldquo;Still here when you&rsquo;re ready to get back into it. No pressure.&rdquo;',
-      close: 'Every client and member you&rsquo;ve ever trained, reminded when they&rsquo;re due and checked in on, coming back to you &mdash; not to whoever is top of Google in January.'
-    },
     maxPitch: { heading: MAX_HEADING, text: 'January is decided in December. The gyms that keep adding pages, reviews and results are the ones people find when the resolutions start. Business gets you ranking at launch. Max keeps you climbing every month.' },
     promise: PROMISE,
     pricingExtra: ['Business, with everything above, is &pound;50. One membership a month covers it. Less than &pound;12 a week, no VAT.'],
@@ -361,18 +301,6 @@ module.exports = [
     buildNote: 'Tell me your services, prices and areas. I write the pages and you&rsquo;re online within 7 days.',
     steps: steps(['Tell me your services, your prices and your patch', 'Five minutes of questions: what you clean, what you charge, where you go. That&rsquo;s your part done.']),
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
-    keepBook: {
-      heading: 'The one-off job that comes round again.',
-      lede: 'Your regular round looks after itself. It&rsquo;s the deep cleans, the ovens, the carpets and the end-of-tenancy jobs that come round again with nowhere to find you. KeepBook keeps them.',
-      story: [
-        'Remember the end-of-tenancy clean in Cramlington? The landlord was over the moon. Six months later the next tenants moved out, he needed it done again, and he typed &ldquo;end of tenancy clean near me&rdquo; into Google like he&rsquo;d never met you.',
-        'He would have booked you in a heartbeat. He just couldn&rsquo;t find you.',
-        'With KeepBook, he goes in your book the day you finish. When the job is due again, a reminder lands with a button that says <strong>Book it again</strong>. Every few months, a short note from you: still here if you need a one-off doing. The oven, the carpets, the spring deep clean &mdash; they all come round, and now they come round to you.'
-      ],
-      due: 'Six months after a deep clean, a year after the oven or the carpets, whenever a tenancy turns over: a reminder lands with a one-tap Book button.',
-      note: '&ldquo;Still here if you need a deep clean, the oven doing, or a one-off before guests. No obligation.&rdquo;',
-      close: 'Every customer you&rsquo;ve ever cleaned for, reminded when they&rsquo;re due and checked in on, coming back to you &mdash; with no directory paying to show them someone else.'
-    },
     maxPitch: { heading: MAX_HEADING, text: 'The cleaners at the top for &ldquo;cleaner near me&rdquo; are not the best cleaners. They are the ones whose sites keep growing: new areas, new reviews, new pages. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
     pricingExtra: ['Business, with everything above, is &pound;50. One regular clean a month covers it. Less than &pound;12 a week, no VAT.'],
@@ -412,18 +340,6 @@ module.exports = [
     buildNote: 'Tell me your subjects, levels and rates. I write the pages and you&rsquo;re online within 7 days.',
     steps: steps(['Tell me your subjects, your levels and your rates', 'Five minutes of questions: what you teach, to whom, what it costs, how you take bookings. That&rsquo;s your part done.']),
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
-    keepBook: {
-      heading: 'The family who went back to the directory.',
-      lede: 'A tutoring directory gets you found once, then lists you beside fifty others the next time that family needs someone. KeepBook keeps them.',
-      story: [
-        'Remember Amir, GCSE maths, passed in June? His mum told everyone. In September his younger sister started Year 10, and his mum went back on the directory, because that&rsquo;s where she found you the first time.',
-        'She&rsquo;d have chosen you again. She just didn&rsquo;t have your number to hand.',
-        'With KeepBook, the family goes in your book at the end of term. When the new school year comes round, a note lands in your name with a button that says <strong>Book a lesson</strong>. Every term, a line from you: still here, spaces for mocks season. The parents never have to hunt for you, because you come to them.'
-      ],
-      due: 'At the start of the next school year, or before mocks and exam season, a reminder lands with a one-tap Book button.',
-      note: '&ldquo;Still here if a lesson or two would help this term, or for a younger one coming up. No obligation.&rdquo;',
-      close: 'Every family you&rsquo;ve ever taught, reminded when the next term or the next child comes round, coming back to you &mdash; not to the directory.'
-    },
     maxPitch: { heading: MAX_HEADING, text: 'September and January are decided on Google. The tutors who keep adding subject pages, reviews and results are the ones parents find first. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
     pricingExtra: ['Business, with everything above, is &pound;50. One lesson a month covers it. Less than &pound;12 a week, no VAT.'],
@@ -463,18 +379,6 @@ module.exports = [
     buildNote: 'Send me your best shots and your packages. I build the galleries and you&rsquo;re online within 7 days.',
     steps: steps(['Send your best work, your packages and your genres', 'Five minutes of questions and a folder of photos: what you shoot, what it costs, how you want enquiries to work. That&rsquo;s your part done.']),
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
-    keepBook: {
-      heading: 'The family who&rsquo;d have booked you again.',
-      lede: 'A Facebook group or a directory gets you found once, then shows that family whoever posted last when they want photos again. KeepBook keeps them.',
-      story: [
-        'Remember the newborn shoot last spring? They cried at the gallery, in a good way. A year on, the first birthday came round, they wanted photos again, and went back to the group where they first found you and picked whoever had posted that morning.',
-        'You&rsquo;d already won them. Nothing brought them back.',
-        'With KeepBook, they go in your book when the gallery goes out. Eleven months later a reminder lands with a button that says <strong>Book our next shoot</strong>. Every few months, a short note from you: still here, and there are mini sessions this autumn. Families come back every year. Now they come back to you.'
-      ],
-      due: 'A year after a family or newborn shoot, two years after headshots, before the anniversary of a wedding: a reminder lands with a one-tap Book button.',
-      note: '&ldquo;Still here if you&rsquo;d like photos again this year, or something for the wall. No obligation.&rdquo;',
-      close: 'Every family and couple you&rsquo;ve ever photographed, reminded when they&rsquo;re due and checked in on, coming back to you &mdash; not to whoever posted last.'
-    },
     maxPitch: { heading: MAX_HEADING, text: 'Couples book photographers a year out, from a Google search they do once. The photographers who keep adding galleries, venue pages and reviews are the ones in that search. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
     pricingExtra: ['Business, with everything above, is &pound;50. A fraction of one booking covers the year. Less than &pound;12 a week, no VAT.'],
@@ -514,18 +418,6 @@ module.exports = [
     buildNote: 'Send job photos and a list of services. I write the pages and you&rsquo;re online within 7 days.',
     steps: steps(['Tell me your services, your patch and send the job photos', 'Five minutes of questions and the photos on your phone: what you do, where you go, how you like to quote. That&rsquo;s your part done.']),
     stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
-    keepBook: {
-      heading: 'The hedges that grew back.',
-      lede: 'Checkatrade and Bark get you found once, then show that customer the whole list when the job comes round again. KeepBook keeps them.',
-      story: [
-        'Remember the hedges in Ponteland last September? Sharp as a ruler. Twelve months later they&rsquo;d grown out, the owner wanted them done again, and searched &ldquo;hedge cutting near me&rdquo; because your number was on a van that had long since driven off.',
-        'He wanted you. He got whoever came up first.',
-        'With KeepBook, he goes in your book the day you finish. When autumn comes round, a reminder lands with a button that says <strong>Book my hedges</strong>. Same for the spring lawn treatment and the patio wash. Every few months, a line from you: still here if the garden needs anything. Seasonal work comes round every year. Now it comes round to you.'
-      ],
-      due: 'A year after the hedges, the spring after a lawn treatment, when the patio needs its wash: a reminder lands with a one-tap Book button.',
-      note: '&ldquo;Still here if the garden needs anything, or you&rsquo;re thinking about that patio. No obligation.&rdquo;',
-      close: 'Every garden you&rsquo;ve ever worked on, reminded when it&rsquo;s due and checked in on, coming back to you &mdash; with nobody paying a directory to take the job.'
-    },
     maxPitch: { heading: MAX_HEADING, text: 'Spring is decided in February, when everyone searches &ldquo;landscaper near me&rdquo; at once. The gardeners who keep adding projects, pages and reviews are the ones that search finds. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
     pricingExtra: ['Business, with everything above, is &pound;50. One lawn cut a week covers it. Less than &pound;12 a week, no VAT.'],
@@ -540,4 +432,3 @@ module.exports = [
 ];
 
 module.exports.CASES = CASES;
-module.exports.KEEP_BOOK_FAQ = KEEP_BOOK_FAQ;

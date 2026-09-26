@@ -1336,7 +1336,7 @@
     if (isStarter()) { $('navChat').hidden = true; return; }
     var chat = hasModule('chat'), people = contactsAllowed();
     $('navChat').hidden = !(chat || people);
-    $('navChat').querySelector('span:not(.nav-count)').textContent = chat ? 'Chat' : 'KeepBook';
+    $('navChat').querySelector('span:not(.nav-count)').textContent = chat ? 'Chat' : 'Contacts';
     $('chatMode').hidden = !(chat && people);
     setChatMode(!chat ? 'contacts' : (people && chatMode === 'contacts') ? 'contacts' : 'inbox', true);
   }
@@ -1345,7 +1345,7 @@
     $('chatMode').querySelectorAll('.oa-pill').forEach(function (p) { var on = p.dataset.mode === m; p.classList.toggle('is-on', on); p.setAttribute('aria-selected', String(on)); });
     $('inboxView').hidden = m !== 'inbox';
     $('contactsView').hidden = m !== 'contacts';
-    $('chatHeading').textContent = m === 'inbox' ? 'Inbox' : 'My KeepBook';
+    $('chatHeading').textContent = m === 'inbox' ? 'Inbox' : 'Contacts';
     renderOnlineBar();
     if (m === 'contacts' && !quiet && !contactsLoaded) loadContacts();
   }
