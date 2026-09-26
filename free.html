@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://kanvas.one/free">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=89">
+<link rel="stylesheet" href="styles.css?v=90">
 </head>
 <body>
 
@@ -82,13 +82,20 @@
          Free, no card, and nothing else to do.</p>
     </form>
 
-    <!-- Two real sites, so "a real page" has a picture before they type. -->
-    <div class="examples reveal">
-      <p class="examples-title">Two I made, now live</p>
-      <div class="examples-grid">
-        <a class="example" href="https://kanvasacademy.com" target="_blank" rel="noopener"><img src="assets/desktop-dance.jpg" alt="kanvasacademy.com, a dance school site" width="1640" height="846" loading="lazy"><span>kanvasacademy.com</span></a>
-        <a class="example" href="https://nellyandnova.co.uk" target="_blank" rel="noopener"><img src="assets/desktop-dogs.jpg" alt="nellyandnova.co.uk, a dog trainer site" width="1640" height="828" loading="lazy"><span>nellyandnova.co.uk</span></a>
-      </div>
+    <!-- Proof under the form: what customers say, then the sites, by name,
+         as links rather than screenshots (a cropped screenshot sells nothing;
+         the site itself does). Reviews come from reviews.js: Google once
+         /api/reviews is configured, the placeholders until then. -->
+    <div class="proof reveal">
+      <p class="proof-title">What customers say</p>
+      <div class="proof-quotes" data-reviews="3" role="region" aria-label="Customer reviews"></div>
+      <p class="proof-more"><a href="/reviews.html">Read all reviews &rsaquo;</a></p>
+
+      <p class="proof-title">Sites I&rsquo;ve made</p>
+      <ul class="made">
+        <li><a href="https://kanvasacademy.com" target="_blank" rel="noopener"><b>Kanvas Academy</b><span>Dance school &middot; kanvasacademy.com</span></a></li>
+        <li><a href="https://nellyandnova.co.uk" target="_blank" rel="noopener"><b>Nelly &amp; Nova</b><span>Dog trainer &middot; nellyandnova.co.uk</span></a></li>
+      </ul>
     </div>
 
     <div class="offer-after">
@@ -130,6 +137,7 @@
 <script src="session.js?v=3"></script>
 <script src="script.js?v=30"></script>
 <script src="free.js?v=6"></script>
+<script src="reviews.js?v=2"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
