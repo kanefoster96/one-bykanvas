@@ -287,20 +287,23 @@ module.exports = async function handler(req, res) {
                 + `Changes included: ${QUEUE_LINE[patch.active_plan] || 'Unlimited'}\n`
                 + `Started:          ${started}\n\n`
               : '')
-          + `We'll be in touch as we start building your site. In the meantime, you can see `
-          + `everything from your account - your plan, your requests, and your site once it's live.\n\n`
-          + `Your account: ${site}/account.html`,
+          + `Here's what happens now. Today I register your web address and put your page live on it. `
+          + `Then I build the features you asked for, within 14 days - or your next month is free. `
+          + `If I need anything from you - photos, prices, an offer - I'll ask.\n\n`
+          + `One thing that helps now: send me photos, your services and prices, and anything about `
+          + `your business that isn't already online. From your account: ${site}/account.html`,
       html: emailHtml({
         preheader: `Your ${planName} plan is active. Here's what happens next.`,
         heading: `Welcome to Kanvas One${who2} 👋`,
         lines: [
           `Your <strong>${esc(planName)}</strong> plan is now active &mdash; thanks for signing up.`,
-          `We&rsquo;ll be in touch shortly as we start building your site. Everything lives in your account from here: your plan, the changes you ask for, and your site once it&rsquo;s live.`
+          `Here&rsquo;s what happens now. <strong>Today</strong> I register your web address and put your page live on it. <strong>Then</strong> I build the features you asked for, within 14 days &mdash; or your next month is free. If I need anything from you &mdash; photos, prices, an offer &mdash; I&rsquo;ll ask.`,
+          `One thing that helps now: send me photos, your services and prices, and anything about your business that isn&rsquo;t already online. Everything lives in your account from here: your plan, your requests, and your site.`
         ],
         details: facts,
-        ctaText: 'Go to your account',
+        ctaText: 'Send photos and details',
         ctaHref: `${site}/account.html`,
-        ctaNote: 'Nothing else to do for now &mdash; we&rsquo;ll come to you.',
+        ctaNote: 'Two minutes now saves a week later.',
         footer: 'You&rsquo;re getting this because you started a plan with Kanvas One.',
         footerLinks: standardFooter(site)
       })

@@ -1641,6 +1641,7 @@ function badgeSnippet(row) {
   var tag = '<script src="' + location.origin + '/preview-badge.js"'
           + '\n        data-business="' + attr(row.business) + '"'
           + (row.requested_domain ? '\n        data-domain="' + attr(row.requested_domain) + '"' : '')
+          + '\n        data-lead="' + attr(row.id) + '"'
           + ' defer><\/script>';
 
   var pre = el('pre', 'badge-code');

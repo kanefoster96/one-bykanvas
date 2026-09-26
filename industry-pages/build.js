@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 84;
+const CSS_V = 85;
 const SCRIPT_V = 29;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -72,7 +72,7 @@ function card([h, p], iconKey, color) {
 const DEFAULT_STEPS = [
   ['Tell me about the business', 'Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.'],
   ['I build it for you', 'Design, writing, web address, hosting and security &mdash; all done by me, all in the monthly price.'],
-  ['Online within 7 days', 'Then it stays ours to look after: unlimited changes and new features, made for you whenever you ask.']
+  ['Live the same day, features within 14 days', 'Your page goes live on your own address the day you join, and what you asked for is built within 14 days or your next month is free. Then it stays ours to look after: unlimited changes, made for you whenever you ask.']
 ];
 const STEP_COLORS = ['ico-blue', 'ico-purple', 'ico-green'];
 
@@ -309,7 +309,7 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
     <nav class="foot-legal-links" aria-label="Legal">
       <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
     </nav>
-    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Website build begins once your completed form is received; the 10-day estimate is measured from that date and depends on how many changes are requested. Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. Cancel anytime &mdash; no further payments are taken.</p>
+    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Your page goes live on your own address the same day you join; the features you ask for are built within 14 days of joining, or your next month is free (see terms). Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. Cancel anytime &mdash; no further payments are taken.</p>
     <p class="foot-copy">© <span id="year">2026</span> Kanvas One. All rights reserved.</p>
   </div>
 </footer>

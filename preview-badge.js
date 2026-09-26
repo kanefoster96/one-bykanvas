@@ -4,7 +4,8 @@
  *
  *   <script src="https://kanvas.one/preview-badge.js"
  *           data-business="Fade Room Barbers"
- *           data-domain="faderoombarbers.co.uk" defer></script>
+ *           data-domain="faderoombarbers.co.uk"
+ *           data-lead="<lead id>" defer></script>
  *
  * They open the page from the ready email and get ten seconds with it,
  * alone. Then a card slides up from the bottom and says, in order: this is
@@ -47,6 +48,9 @@
 
   var business = (tag.getAttribute('data-business') || '').trim();
   var domain = (tag.getAttribute('data-domain') || '').trim().toLowerCase();
+  /* The lead's id, so the wizard can fill in what they already told us. */
+  var lead = (tag.getAttribute('data-lead') || '').trim();
+  if (!/^[0-9a-f-]{36}$/i.test(lead)) lead = '';
   var code = (tag.getAttribute('data-code') || CODE).trim().toUpperCase();
   var home = (tag.getAttribute('data-home') || HOME).replace(/\/+$/, '');
   var delay = Number(tag.getAttribute('data-delay'));
@@ -76,6 +80,7 @@
   function joinHref(plan) {
     var q = 'plan=' + plan + '&offer=' + encodeURIComponent(code);
     if (domain) q += '&domain=' + encodeURIComponent(domain);
+    if (lead) q += '&lead=' + encodeURIComponent(lead);
     return home + '/get-started.html?' + q;
   }
 

@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Get started — Kanvas One</title>
-<meta name="description" content="Tell me about your business and I'll build your site. Online within 7 days, no setup cost.">
+<meta name="description" content="Tell me about your business and I'll build your site. Live on your own address the same day you join, your features built within 14 days, no setup cost.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=84">
+<link rel="stylesheet" href="styles.css?v=85">
 </head>
 <body class="auth-body">
 
@@ -179,7 +179,7 @@
 
       <section class="wiz-step" data-step="4" aria-label="Choose a plan" hidden>
         <h1>Pick your plan.</h1>
-        <p class="wiz-sub">Business covers everything you need &mdash; Max adds monthly SEO, texts to your customers and business email. Move up or down any time.</p>
+        <p class="wiz-sub">Max is the whole thing: built, found, and worked on every month. Business if you don&rsquo;t need the monthly work or the texts. Starter if you just want to be found and called. Move up or down any time.</p>
 
         <!-- Tapping a plan expands its full list right under it; the ticks
              from the last step pre-select the plan that covers them, and the
@@ -217,7 +217,7 @@
           </label>
           <div class="pick-feats" data-plan="business">
             <ul class="ticks">
-              <li>Built and online within 7 days</li>
+              <li>Live on your own address the same day you join</li>
               <li>Bookings, payments, forms and live chat</li>
               <li>Domain, hosting and SSL included</li>
               <li>Everything you ask for in the build, however big</li>
@@ -272,7 +272,7 @@
       <!-- ============ 4. payment ============ -->
       <section class="wiz-step" data-step="5" aria-label="Payment" hidden>
         <h1>Your plan.</h1>
-        <p class="wiz-sub">Your first month starts the build.</p>
+        <p class="wiz-sub">Your first month puts you live today.</p>
 
         <!-- Their address in a browser bar, so the thing they are buying is on
              screen before they pay for it. -->
@@ -298,8 +298,16 @@
           <div class="sumrow" id="sumOfferRow" hidden><span>Offer</span><b class="sum-free" id="sumOffer">—</b></div>
         </div>
 
-        <div class="field"><label for="refCode">Referral code (optional)</label>
-          <input id="refCode" type="text" autocomplete="off" autocapitalize="characters" placeholder="Got one from another business? It goes here"></div>
+        <!-- The promise, where the price is: live today, features within 14
+             days or the next month is free. Filled in with their address. -->
+        <p class="pay-promise" id="payPromise"><b>Live on your own address today.</b> Then I build the features you asked for within 14 days &mdash; or your next month is free.</p>
+
+        <!-- Most people have no code, so the box waits behind a line. -->
+        <details class="dom-have ref-have">
+          <summary>Got a referral code?</summary>
+          <div class="field"><label for="refCode">Referral code</label>
+            <input id="refCode" type="text" autocomplete="off" autocapitalize="characters" placeholder="From another business on Kanvas One"></div>
+        </details>
 
         <!-- One line, last chance, only when there is a step up to take. -->
         <p class="pay-up" id="payUp" hidden></p>
@@ -314,14 +322,14 @@
         <ul class="assure">
           <li>No setup fee</li>
           <li>Cancel anytime</li>
-          <li>Online within 7 days</li>
+          <li>Live the same day</li>
         </ul>
 
         <!-- Card details are collected by Stripe Checkout on Stripe's own
              pages. We never see or handle a card number. -->
         <div class="paynote" id="payNow">
           <p><strong>Card handled by Stripe.</strong></p>
-          <p>You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month starts the build; a draft follows within a few days.</p>
+          <p>You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month puts your page live on your own address today; your features follow within 14 days.</p>
         </div>
         <button class="linkish wiz-next" data-next type="button" id="skipPay">Skip for now — do it later</button>
         <button class="linkish" id="fixEmail" type="button">That email isn't right</button>
@@ -338,12 +346,15 @@
 
         <ol class="next-list">
           <li><b id="doneHead">Check your email.</b> <span id="confirmLine">Confirm your address so you can get into your account.</span></li>
-          <li><b>Your draft, within a few days.</b> Have a look and tell me what to change.</li>
-          <li><b>Online within 7 days.</b> Then we look after it for you.</li>
+          <li><b>Live today.</b> I register your web address and put your page on it the same day.</li>
+          <li><b>Your features, within 14 days.</b> Bookings, payments, reviews &mdash; whatever you asked for, built while you&rsquo;re already online. Or your next month is free.</li>
         </ol>
 
+        <div class="paynote">
+          <p><strong>One thing that helps now:</strong> photos, your services and prices, and anything about your business that isn&rsquo;t already online. Send it from your account and I get ahead. If I need something else, I&rsquo;ll ask.</p>
+        </div>
+
         <a class="btn btn-primary full" href="/account.html">Go to your account</a>
-        <p class="wiz-foot">Anything to add in the meantime? Put it on your account page — menus, photos, opening hours.</p>
       </section>
 
     </div>
@@ -364,7 +375,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=19"></script>
+<script src="get-started.js?v=20"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

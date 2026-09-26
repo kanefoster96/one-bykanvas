@@ -62,13 +62,17 @@ const COULD = [
   'Business email at your own address, and a business number that texts back missed calls'
 ];
 
-function joinHref(site, plan, domain) {
+/* Into the wizard with the plan picked, the code applied, the address
+   selected and their details filled in (the lead id, which api/lead-prefill
+   answers for). */
+function joinHref(site, plan, domain, leadId) {
   const q = ['plan=' + plan, 'offer=' + encodeURIComponent(PREVIEW_OFFER.code)];
   if (domain) q.push('domain=' + encodeURIComponent(domain));
+  if (leadId) q.push('lead=' + encodeURIComponent(leadId));
   return `${site}/get-started.html?${q.join('&')}`;
 }
 
-function planLadder(site, domain) {
+function planLadder(site, domain, leadId) {
   return {
     title: 'Three ways to have it',
     intro: 'I design and build every one of them for you. Start with the top one; the two under it are for if you need less.',
@@ -83,7 +87,7 @@ function planLadder(site, domain) {
           'Booking reminders texted to your customers',
           'you@yourbusiness.co.uk on Google Workspace'
         ],
-        ctaText: 'Start on Max', ctaHref: joinHref(site, 'max', domain)
+        ctaText: 'Start on Max', ctaHref: joinHref(site, 'max', domain, leadId)
       },
       {
         name: 'Business', price: '£50', tag: 'Most popular',
@@ -93,7 +97,7 @@ function planLadder(site, domain) {
           'Reviews asked for automatically',
           'Unlimited changes and new features, within 48 hours'
         ],
-        ctaText: 'Start on Business', ctaHref: joinHref(site, 'business', domain)
+        ctaText: 'Start on Business', ctaHref: joinHref(site, 'business', domain, leadId)
       },
       {
         name: 'Starter', price: '£25',
@@ -103,7 +107,7 @@ function planLadder(site, domain) {
           'Your details, hours, photos and socials',
           'Me to message, and a change every month'
         ],
-        ctaText: 'Start on Starter', ctaHref: joinHref(site, 'starter', domain)
+        ctaText: 'Start on Starter', ctaHref: joinHref(site, 'starter', domain, leadId)
       }
     ],
     note: 'No setup fees on any of them. Move up or down any month. Cancel any month.'
@@ -178,7 +182,7 @@ async function sendLeadPreview(db, id, url, opts) {
         intro: 'What you&rsquo;re looking at is one page: the look and the feel. Once you say yes, I build the rest around it. Some of this goes in from the start; the rest you ask for whenever you want it, and I add it, included.',
         items: COULD
       },
-      plans: planLadder(site, claimable),
+      plans: planLadder(site, claimable, lead.id),
       offerLast: true,
       offer: {
         code: PREVIEW_OFFER.code,
@@ -209,13 +213,13 @@ async function sendLeadPreview(db, id, url, opts) {
         + `Three ways to have it. I build every one of them for you.\n\n`
         + `MAX - GBP 250 a month. The whole thing: built, found on Google, and worked on every `
         + `month without you asking. Missed calls texted back, booking reminders texted, business `
-        + `email at your own address, first in the queue.\n${joinHref(site, 'max', claimable)}\n\n`
+        + `email at your own address, first in the queue.\n${joinHref(site, 'max', claimable, lead.id)}\n\n`
         + `BUSINESS - GBP 50 a month. If you want to be online and don't need me working on the `
         + `site every month or texting your customers, Business is for you. The full site, and `
-        + `unlimited changes made by me within 48 hours.\n${joinHref(site, 'business', claimable)}\n\n`
+        + `unlimited changes made by me within 48 hours.\n${joinHref(site, 'business', claimable, lead.id)}\n\n`
         + `STARTER - GBP 25 a month. If you love the page as it is and just want somewhere `
         + `customers can visit you online and call or email you, Starter is for you.\n`
-        + `${joinHref(site, 'starter', claimable)}\n\n`
+        + `${joinHref(site, 'starter', claimable, lead.id)}\n\n`
         + `No setup fees. Move up or down any month. Cancel any month.\n\n`
         + `50% off your first month with ${PREVIEW_OFFER.code}, on any plan:\n`
         + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`

@@ -880,6 +880,12 @@ a.hero-pill:hover .pill-go{opacity:1}
   .clock-sep{animation:none}
 }
 
+/* The promise on the payment step, under the sum: live today, features in
+   14 days or the next month free. */
+.pay-promise{margin:14px 0 4px;padding:13px 15px;border-radius:14px;background:var(--good-soft);color:var(--good);font-size:14px;line-height:1.5}
+.pay-promise b{color:var(--good);font-weight:600}
+.ref-have{margin-top:6px}
+
 /* Ticks centred under the promise, and wide enough that none of the three
    wraps onto a lonely second line on a phone. */
 .offer-ticks{
