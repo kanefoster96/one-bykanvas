@@ -268,7 +268,7 @@ ${faqFor(b).map(([q, a]) => `    <details>
 </section>
 ` : ''}<section class="section grey cta-end">
   <div class="wrap center">
-    <h2 class="reveal">See yours free, first.</h2>
+    <h2 class="reveal">See yours free, within 24 hours.</h2>
     <p class="lede reveal">${b.promise ? 'No pressure and no contract. Here&rsquo;s our side of the deal, in writing.' : b.freeLede}</p>
 ${b.rich ? `${b.promise ? `    <div class="promise reveal">
       <p class="promise-name">${b.promise.name}</p>

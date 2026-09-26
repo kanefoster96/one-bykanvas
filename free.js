@@ -1,16 +1,10 @@
 /* one — the free example offer.
  *
- * Three things typed and one thing chosen. The choosing is the point: picking
- * an address that is genuinely free is what turns "a website, one day" into
- * "my website", and somebody who has named theirs is a different prospect from
- * somebody who has read about ours.
- *
- * Nothing here reserves anything. Suggestions come from api/domains.js, which
- * asks the registries over RDAP - so a name is never handed to a registrar who
- * might go and register it - and the page says plainly that it is first come,
- * first served until a plan starts. Getting that wrong would mean somebody's
- * first real experience of us is losing the name we let them believe was
- * theirs.
+ * Three things typed, nothing chosen: business name, email, and a link to
+ * the business anywhere online. The promise on the page is a page in their
+ * inbox within 24 hours, so the form asks for the least that lets that be
+ * kept. Posts to the same /api/lead as the homepage mini form and lands on
+ * the same thanks page.
  */
 (function () {
   'use strict';
@@ -25,101 +19,12 @@
   var btn      = document.getElementById('offerSend');
   var note     = document.getElementById('offerNote');
 
-  var field = document.getElementById('domainField');
-  var list  = document.getElementById('domainList');
-  var dnote = document.getElementById('domainNote');
-
   var shownAt = Date.now();
-  var picked = '';
-  var lastAsked = '';
 
   function say(msg, kind) {
     note.textContent = msg || '';
     note.className = 'note' + (kind ? ' ' + kind : '');
   }
-
-  /* ---------------------------------------------------------- the picker */
-
-  function row(domain) {
-    var label = document.createElement('label');
-    label.className = 'pick-row';
-
-    var input = document.createElement('input');
-    input.type = 'radio';
-    input.name = 'domain';
-    input.value = domain;
-    input.addEventListener('change', function () {
-      picked = domain;
-      [].forEach.call(list.querySelectorAll('.pick-row'), function (r) {
-        r.classList.remove('is-on');
-      });
-      label.classList.add('is-on');
-      dnote.textContent = domain + ' is free right now. We’ll use it for your '
-        + 'example. It’s yours once you join — until then anyone can take it.';
-    });
-
-    var text = document.createElement('span');
-    text.className = 'pick-name';
-    text.textContent = domain;
-
-    label.appendChild(input);
-    label.appendChild(text);
-    return label;
-  }
-
-  function clearPicker() {
-    list.textContent = '';
-    picked = '';
-    dnote.textContent = '';
-  }
-
-  async function suggest() {
-    var name = business.value.trim();
-    /* Nothing to go on, or nothing new since the last look. */
-    if (name.length < 2 || name === lastAsked) return;
-    lastAsked = name;
-
-    field.hidden = false;
-    clearPicker();
-    dnote.textContent = 'Looking…';
-
-    var data;
-    try {
-      var res = await fetch('/api/domains', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'suggest', business: name })
-      });
-      data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Could not check just now.');
-    } catch (e) {
-      /* The address is a bonus, never a blocker: the form still sends without
-         one, so a registry being down must not stop somebody asking. */
-      dnote.textContent = 'We couldn’t check addresses just now. Send the form '
-        + 'anyway and we’ll find you one.';
-      return;
-    }
-
-    var found = (data && data.suggestions) || [];
-    if (!found.length) {
-      dnote.textContent = data && data.reachable === false
-        ? 'We couldn’t check addresses just now. Send the form anyway and we’ll '
-          + 'find you one.'
-        : 'Nothing free for that name yet. Send the form anyway and we’ll find '
-          + 'you some.';
-      return;
-    }
-
-    dnote.textContent = 'Pick one, or leave it to us.';
-    found.forEach(function (d) { list.appendChild(row(d)); });
-  }
-
-  /* Once they have moved on from the name, not on every keystroke: each look
-     is up to eight registry lookups. */
-  business.addEventListener('blur', suggest);
-  business.addEventListener('change', suggest);
-
-  /* --------------------------------------------------------------- submit */
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -130,7 +35,7 @@
 
     if (!biz)  return say('Tell us your business name.', 'bad');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) return say('Enter a valid email address.', 'bad');
-    if (!soc)  return say('Add your Instagram, Facebook or a link to your business.', 'bad');
+    if (!soc)  return say('Add a link to your business anywhere online - Instagram, Facebook, anything.', 'bad');
 
     btn.disabled = true;
     say('Sending…');
@@ -147,7 +52,6 @@
           business: biz,
           email: mail,
           handle: soc,
-          domain: picked,
           website: hp ? hp.value : '',
           elapsed: Date.now() - shownAt
         })

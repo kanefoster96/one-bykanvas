@@ -28,8 +28,8 @@
   if (stash && stash.email) {
     var lede = document.getElementById('thanksLede');
     if (lede) {
-      lede.textContent = 'We’ve got your details. We’ll email ' + stash.email
-        + ' as soon as your page is ready.';
+      lede.textContent = 'We’ve got your details. Your page will land at ' + stash.email
+        + ' within 24 hours.';
     }
   }
 

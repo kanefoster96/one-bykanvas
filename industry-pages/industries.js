@@ -24,7 +24,7 @@
 const PROMISE = {
   name: 'The See It First Promise',
   lines: [
-    'I design a real page for your business before you join. Don&rsquo;t love it? You owe nothing.',
+    'I design a real page for your business within 24 hours, free, before you join. Don&rsquo;t love it? You owe nothing.',
     'Live in 7 days. After that, unlimited changes, made by me within 48 hours.',
     'Cancel anytime. Your site comes down, your domain stays yours, and there is no exit fee.'
   ]
@@ -68,7 +68,7 @@ function endLine(subject) {
 }
 
 const COMMON_FAQ = [
-  ['What if I don&rsquo;t like it?', 'You see a real example page before you pay anything. If you don&rsquo;t love it, you owe nothing and nobody chases you.'],
+  ['What if I don&rsquo;t like it?', 'You see a real example page within 24 hours, before you pay anything. If you don&rsquo;t love it, you owe nothing and nobody chases you.'],
   ['Do I have to take card payments?', 'No. Cash and bank transfer work too. Online payment is there if you want it.'],
   ['How do the bookings and payments actually work?', 'I set them up with you after you join, the way you already work. Most people tell me in five minutes and it is done.'],
   ['Do I need Max?', 'Only if you want to climb Google every month. Business already includes local SEO at launch.'],
@@ -88,7 +88,7 @@ module.exports = [
     title: 'Trades',
     h1: 'Websites for trades that win the next job.',
     lede: 'Found on Google in the towns you cover. Callouts booked and paid through your site. Reviews asked for after every job. Built for you, live in 7 days.',
-    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
+    heroNote: 'See a free page for your business within 24 hours. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. You send photos from your phone. I do the rest.',
     desc: 'Websites for plumbers, electricians, builders and roofers. Found on Google locally, callouts booked and paid online, reviews asked for automatically. Built for you, live in 7 days, from £25 a month, no VAT.',
@@ -115,7 +115,7 @@ module.exports = [
       ['Can customers still just ring or WhatsApp me?', 'Yes. That is how most trades use it. The site handles the confirmation and the paperwork.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my trade'),
-    freeLede: 'I design a real page for your trade business before you pay anything. If you don&rsquo;t like it, you owe nothing.'
+    freeLede: 'I design a real page for your trade business before you pay anything, in your inbox within 24 hours. If you don&rsquo;t like it, you owe nothing.'
   },
 
   {
@@ -127,7 +127,7 @@ module.exports = [
     title: 'Salons',
     h1: 'Websites for salons that fill the diary.',
     lede: 'Found by clients nearby on Google. Appointments booked and paid through your site, day or night. Reviews asked for after every visit. Built for you, live in 7 days.',
-    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
+    heroNote: 'See a free page for your business within 24 hours. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Send your price list and your best photos. I do the rest.',
     desc: 'Websites for hair and beauty salons. Found on Google nearby, appointments booked and paid online, reviews asked for automatically. Built for you, live in 7 days, from £25 a month, no VAT.',
@@ -154,7 +154,7 @@ module.exports = [
       ['Can I change prices myself?', 'Yes, from your dashboard, or message me and I do it for you.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my salon'),
-    freeLede: 'I design a real page for your salon before you pay anything. If you don&rsquo;t love it, you owe nothing.'
+    freeLede: 'I design a real page for your salon before you pay anything, in your inbox within 24 hours. If you don&rsquo;t love it, you owe nothing.'
   },
 
   {
@@ -166,7 +166,7 @@ module.exports = [
     title: 'Barbers',
     h1: 'Websites for barbers that keep the chair full.',
     lede: 'Found on Google Maps by people looking for a barber right now. A chair booked and paid through your site. Reviews asked for after every cut. Built for you, live in 7 days.',
-    heroNote: 'See your free example page first. If you don&rsquo;t rate it, you owe nothing. From &pound;25 a month, no VAT.',
+    heroNote: 'See a free page for your business within 24 hours. If you don&rsquo;t rate it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Send your price list, your hours and a dozen photos. I do the rest.',
     desc: 'Websites for barbershops. Found on Google Maps, a chair booked and paid online, reviews asked for automatically. Built for you, live in 7 days, from £25 a month, no VAT.',
@@ -193,7 +193,7 @@ module.exports = [
       ['Can I change prices and hours myself?', 'Yes, from your dashboard, or message me and I do it.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my barbershop'),
-    freeLede: 'I design a real page for your shop before you pay anything. Don&rsquo;t rate it? You owe nothing.'
+    freeLede: 'I design a real page for your shop before you pay anything, in your inbox within 24 hours. Don&rsquo;t rate it? You owe nothing.'
   },
 
   {
@@ -205,7 +205,7 @@ module.exports = [
     title: 'Coffee shops',
     h1: 'Websites for coffee shops that bring people back.',
     lede: '&ldquo;Are they open, what&rsquo;s on?&rdquo; answered on Google before they ask. Orders paid through your site. Reviews asked for automatically. Built for you, live in 7 days.',
-    heroNote: 'See your free example page first. If it&rsquo;s not your cup, you owe nothing. From &pound;25 a month, no VAT.',
+    heroNote: 'See a free page for your business within 24 hours. If it&rsquo;s not your cup, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Send your menu and some photos. I do the rest.',
     desc: 'Websites for coffee shops. Found on Google nearby, menu and hours always right, orders paid online, reviews asked for automatically. Built for you, live in 7 days, from £25 a month, no VAT.',
@@ -232,7 +232,7 @@ module.exports = [
       ['What about delivery apps?', 'Keep them if they work for you. Orders through your own site have no commission, and the customer&rsquo;s email is yours.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my coffee shop'),
-    freeLede: 'I design a real page for your coffee shop before you pay anything. Not your cup? You owe nothing.'
+    freeLede: 'I design a real page for your coffee shop before you pay anything, in your inbox within 24 hours. Not your cup? You owe nothing.'
   },
 
   {
@@ -244,7 +244,7 @@ module.exports = [
     title: 'Gyms &amp; personal trainers',
     h1: 'Websites for gyms that sign members up.',
     lede: 'Found on Google by people looking for a gym or a trainer nearby. Memberships and sessions paid through your site. Reviews asked for automatically. Built for you, live in 7 days.',
-    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
+    heroNote: 'See a free page for your business within 24 hours. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Tell me your classes and prices. I do the rest.',
     desc: 'Websites for gyms and personal trainers. Found on Google nearby, memberships and sessions paid online, reviews asked for automatically. Built for you, live in 7 days, from £25 a month, no VAT.',
@@ -271,7 +271,7 @@ module.exports = [
       ['Can I change the timetable myself?', 'Yes, from your dashboard, or message me and I do it.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my gym'),
-    freeLede: 'I design a real page for your gym before you pay anything. No commitment. That part comes later.'
+    freeLede: 'I design a real page for your gym before you pay anything, in your inbox within 24 hours. No commitment. That part comes later.'
   },
 
   {
@@ -283,7 +283,7 @@ module.exports = [
     title: 'Cleaners',
     h1: 'Websites for cleaners that win the regular round.',
     lede: 'Found on Google in the areas you cover. Cleans booked and paid through your site. Reviews asked for after every visit, where nervous first timers look. Built for you, live in 7 days.',
-    heroNote: 'See your free example page first. If it&rsquo;s not spotless, you owe nothing. From &pound;25 a month, no VAT.',
+    heroNote: 'See a free page for your business within 24 hours. If it&rsquo;s not spotless, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Tell me your services, prices and areas. I do the rest.',
     desc: 'Websites for cleaning businesses. Found on Google in your areas, cleans booked and paid online, reviews asked for automatically. Built for you, live in 7 days, from £25 a month, no VAT.',
@@ -310,7 +310,7 @@ module.exports = [
       ['I&rsquo;m a one person business. Is a site overkill?', 'It is one person businesses that need it most. It answers the questions while you are cleaning, so you are not losing jobs to the phone going to voicemail.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my cleaning business'),
-    freeLede: 'I design a real page for your cleaning business before you pay anything. Not spotless? You owe nothing.'
+    freeLede: 'I design a real page for your cleaning business before you pay anything, in your inbox within 24 hours. Not spotless? You owe nothing.'
   },
 
   {
@@ -322,7 +322,7 @@ module.exports = [
     title: 'Tutors',
     h1: 'Websites for tutors that parents choose.',
     lede: 'Found on Google by parents searching for your subject in your town. Lessons booked and paid through your site. Reviews asked for at the end of term. Built for you, live in 7 days.',
-    heroNote: 'See your free example page first. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
+    heroNote: 'See a free page for your business within 24 hours. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Tell me your subjects, levels and rates. I do the rest.',
     desc: 'Websites for tutors and tuition centres. Found on Google locally, lessons booked and paid online, reviews asked for automatically. Built for you, live in 7 days, from £25 a month, no VAT.',
@@ -349,7 +349,7 @@ module.exports = [
       ['Can I show results without naming students?', 'Yes. Grades improved, first names or initials, and quotes from parents with their permission.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my tutoring'),
-    freeLede: 'I design a real page for your tutoring before you pay anything. Full marks or you owe nothing.'
+    freeLede: 'I design a real page for your tutoring before you pay anything, in your inbox within 24 hours. Full marks or you owe nothing.'
   },
 
   {
@@ -361,7 +361,7 @@ module.exports = [
     title: 'Photographers',
     h1: 'Websites for photographers that book the shoot.',
     lede: 'Found on Google for the kind of photography they are searching for. Shoots booked and deposits paid through your site. Reviews asked for after every gallery. Built for you, live in 7 days.',
-    heroNote: 'See your free example page first. If it&rsquo;s not picture perfect, you owe nothing. From &pound;25 a month, no VAT.',
+    heroNote: 'See a free page for your business within 24 hours. If it&rsquo;s not picture perfect, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Send your best shots and your packages. I do the rest.',
     desc: 'Websites for photographers. Found on Google for your genre, shoots booked and deposits paid online, reviews asked for automatically. Built for you, live in 7 days, from £25 a month, no VAT.',
@@ -388,7 +388,7 @@ module.exports = [
       ['Will the galleries load fast on phones?', 'Yes. Photos are sized for the screen they are on, so a wedding gallery opens in a second on a phone at the venue.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my photography'),
-    freeLede: 'I design a real page around your photos before you pay anything. If it&rsquo;s not picture perfect, you owe nothing.'
+    freeLede: 'I design a real page around your photos before you pay anything, in your inbox within 24 hours. If it&rsquo;s not picture perfect, you owe nothing.'
   },
 
   {
@@ -400,7 +400,7 @@ module.exports = [
     title: 'Gardeners &amp; landscapers',
     h1: 'Websites for gardeners that land the bigger jobs.',
     lede: 'Found on Google in the villages you cover. Jobs quoted, booked and paid through your site. Reviews asked for after every job. Built for you, live in 7 days.',
-    heroNote: 'See your free example page first. If it doesn&rsquo;t grow on you, you owe nothing. From &pound;25 a month, no VAT.',
+    heroNote: 'See a free page for your business within 24 hours. If it doesn&rsquo;t grow on you, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
     trustLine: 'Everything below is included and set up the way you already work. Send job photos and a list of services. I do the rest.',
     desc: 'Websites for gardeners and landscapers. Found on Google in your areas, jobs quoted and paid online, reviews asked for automatically. Built for you, live in 7 days, from £25 a month, no VAT.',
@@ -427,7 +427,7 @@ module.exports = [
       ['Can I show prices?', 'A price guide for the regular work, and a quote form for the rest. You decide how much to show.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my gardening business'),
-    freeLede: 'I design a real page for your gardening business before you pay anything. If it doesn&rsquo;t grow on you, you owe nothing.'
+    freeLede: 'I design a real page for your gardening business before you pay anything, in your inbox within 24 hours. If it doesn&rsquo;t grow on you, you owe nothing.'
   }
 ];
 

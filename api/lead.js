@@ -194,7 +194,7 @@ module.exports = async function handler(req, res) {
       const perks = [
         'Nothing technical to set up. You send us your details, we do the rest.',
         'No time lost. We build it while you get on with the job.',
-        'If anything breaks, we fix it. Included, and it never costs you a point.',
+        'If anything breaks, we fix it. Included.',
         'Your web address and hosting are in the monthly price, with nothing else to buy.'
       ];
 
@@ -204,15 +204,14 @@ module.exports = async function handler(req, res) {
 
       const theirs = await sendEmail({
         to: email,
-        subject: 'Your free example is on its way',
+        subject: 'Your free page is on its way - within 24 hours',
         html: emailHtml({
-          preheader: 'We have your details. Your free one-page example is being made.',
+          preheader: 'We have your details. Your free page lands in this inbox within 24 hours.',
           heading: 'We’re on it 👍',
           lines: [
             `Thanks &mdash; we&rsquo;ve got your details and we&rsquo;re designing a page for `
-              + `<strong>${esc(business)}</strong>. It&rsquo;ll land in this inbox when it&rsquo;s ready.`,
-            'We make these by hand, one at a time, so at busy moments it can take a '
-              + 'little longer. Nothing for you to do in the meantime.'
+              + `<strong>${esc(business)}</strong>. It&rsquo;ll land in this inbox within 24 hours.`,
+            'It&rsquo;s designed by hand, for you. Nothing for you to do in the meantime.'
           ],
           details: facts,
           perks: perks,
@@ -224,12 +223,12 @@ module.exports = async function handler(req, res) {
           footerLinks: standardFooter(site)
         }),
         text: `Thanks - we've got your details and we're designing a page for ${business}.\n\n`
-            + `It'll land in this inbox when it's ready. We make these by hand, one at a `
-            + `time, so at busy moments it can take a little longer.\n\n`
+            + `It'll land in this inbox within 24 hours. It's designed by hand, for you. `
+            + `Nothing for you to do in the meantime.\n\n`
             + `What joining gets you:\n`
             + perks.map((t) => '- ' + t.replace(/<[^>]+>/g, '')).join('\n') + '\n\n'
             + `See the plans: ${site}/plans.html\n`
-            + `From GBP 50 a month. Cancel anytime.\n`
+            + `From GBP 25 a month. Cancel anytime.\n`
       });
       console.log('lead: confirmation email', theirs);
       }

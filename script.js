@@ -512,7 +512,7 @@
       var mail = email.value.trim();
 
       if (!filled(business)) { show(step2); business.classList.add('err'); business.focus(); return say('Tell us your business name.', 'bad'); }
-      if (!filled(handle))   { show(step3); handle.classList.add('err'); handle.focus(); return say('Add your Instagram, Facebook or a link to your business.', 'bad'); }
+      if (!filled(handle))   { show(step3); handle.classList.add('err'); handle.focus(); return say('Add a link to your business anywhere online - Instagram, Facebook, anything.', 'bad'); }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { email.classList.add('err'); email.focus(); return say('Enter a valid email address.', 'bad'); }
 
       send.disabled = true;
