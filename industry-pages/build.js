@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 85;
+const CSS_V = 86;
 const SCRIPT_V = 29;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -70,9 +70,9 @@ function card([h, p], iconKey, color) {
 }
 
 const DEFAULT_STEPS = [
-  ['Tell me about the business', 'Five minutes of questions &mdash; what you do, your prices, your photos. That&rsquo;s your part done.'],
-  ['I build it for you', 'Design, writing, web address, hosting and security &mdash; all done by me, all in the monthly price.'],
-  ['Live the same day, features within 14 days', 'Your page goes live on your own address the day you join, and what you asked for is built within 14 days or your next month is free. Then it stays ours to look after: unlimited changes, made for you whenever you ask.']
+  ['Tell me about the business', 'What you do, your prices, your photos. Five minutes.'],
+  ['I build it for you', 'Design, writing, web address, hosting and security. All in the price.'],
+  ['Live the same day, features in 14', 'Live on your own address the day you join. Features within 14 days, or your next month is free.']
 ];
 const STEP_COLORS = ['ico-blue', 'ico-purple', 'ico-green'];
 
@@ -250,7 +250,14 @@ ${CASES.map((c) => `    <article class="case">
       <div class="badge">Optional</div>
       <h3>Max</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
-      <p class="plan-note">Everything in Business, plus I work on your Google ranking every month &mdash; new service and area pages, refreshed content, and a short monthly note on what changed. You get your own business number that rings your mobile, missed calls are answered by text in seconds, and your customers are texted their booking reminders. Run it for the launch months, then step down to Business any month: the ranking stays.</p>
+      <p class="plan-note">Everything in Business, plus:</p>
+      <ul class="ticks">
+        <li>Your Google ranking worked on every month</li>
+        <li>Missed calls answered by text in seconds</li>
+        <li>Booking reminders texted to customers</li>
+        <li>Business email at your own address</li>
+      </ul>
+      <p class="plan-up">Run it for the launch months, then step down to Business. The ranking stays.</p>
       <a class="btn btn-ghost full" href="/plans.html#max">Learn more about Max &rsaquo;</a>
     </article>
   </div>
@@ -269,7 +276,7 @@ ${faqFor(b).map(([q, a]) => `    <details>
 ` : ''}<section class="section grey cta-end">
   <div class="wrap center">
     <h2 class="reveal">See yours free, within 24 hours.</h2>
-    <p class="lede reveal">${b.promise ? 'No pressure and no contract. Here&rsquo;s our side of the deal, in writing.' : b.freeLede}</p>
+    <p class="lede reveal">${b.promise ? 'Our side of the deal, in writing.' : b.freeLede}</p>
 ${b.rich ? `${b.promise ? `    <div class="promise reveal">
       <p class="promise-name">${b.promise.name}</p>
       <ul class="promise-lines">${b.promise.lines.map((l) => `<li>${l}</li>`).join('')}</ul>
