@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 90;
+const CSS_V = 91;
 const SCRIPT_V = 30;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -95,7 +95,7 @@ function faqFor(b) {
    pages have them. Only for what is shown; the structured data keeps
    the plain sentence. */
 function lines(html) {
-  return String(html || '').replace(/([.!?]) (?=[A-Z&])/g, '$1<br>');
+  return String(html || '').replace(/([.!?]) (?=[A-Z&])/g, '$1<span class="gap"></span>');
 }
 
 /* Entities out, for the structured data Google reads as plain text. */
@@ -195,7 +195,7 @@ ${b.trust ? `    <ul class="assure trust reveal">${b.trust.map((t) => `<li>${t}<
     <form class="free-mini reveal" id="miniFree" novalidate>
       <p class="hero-pill"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free</p>
       <h3>See your site within 24 hours. Free.</h3>
-      <p class="lede">Three things, and a real page lands in your inbox within 24 hours.<br>No card.</p>
+      <p class="lede">Three things, and a real page lands in your inbox within 24 hours.<span class="gap"></span>No card.</p>
 
       <div class="hp" aria-hidden="true">
         <label for="mini_extra">Leave this empty</label>
