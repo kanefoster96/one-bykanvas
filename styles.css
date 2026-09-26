@@ -2604,13 +2604,23 @@ a.hero-pill:hover .pill-go{opacity:1}
 .by-line b{color:var(--ink);font-weight:600}
 
 /* Two real sites under the free form, so the promise has a picture. */
-.examples{max-width:520px;margin:clamp(28px,4vw,40px) auto 0}
-.examples-title{margin:0 0 12px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);text-align:center}
-.examples-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.example{display:block;text-decoration:none;color:var(--ink-2);font-size:13px}
-.example img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top;border-radius:12px;border:1px solid var(--line-soft);margin-bottom:6px}
-.example span{display:block;text-align:center}
-@media (max-width:420px){.examples-grid{gap:8px}.example{font-size:12px}}
+/* Proof under the free form: three quotes stacked, then the sites made,
+   by name, as links. */
+.proof{max-width:520px;margin:clamp(28px,4vw,40px) auto 0}
+.proof-title{margin:0 0 12px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);text-align:center}
+.proof-quotes{display:grid;gap:12px}
+.proof-quotes .quote{flex:none;padding:20px 22px;border:1px solid var(--line-soft);box-shadow:none}
+.proof-quotes .quote blockquote{font-size:15.5px;margin-bottom:14px}
+.proof-quotes .stars{font-size:13px;margin-bottom:10px}
+.proof-quotes .avatar{width:34px;height:34px;flex-basis:34px;font-size:12px}
+.proof-more{margin:12px 0 26px;text-align:center;font-size:14px}
+.proof-more a{color:var(--ink-2)}
+.made{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.made a{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid var(--line-soft);text-decoration:none;color:var(--ink);transition:border-color .2s var(--ease),background .2s var(--ease)}
+.made a:hover{border-color:var(--ink);background:#fafafa}
+.made b{font-weight:600;font-size:15px}
+.made span{font-size:13px;color:var(--ink-3);text-align:right}
+@media (max-width:420px){.made a{flex-direction:column;gap:2px}.made span{text-align:left}}
 .seo-pitch-copy .ticks{margin:10px 0 14px}
 
 /* Starter on the plans page and in the wizard: the crosses are the point. */
