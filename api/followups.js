@@ -48,6 +48,13 @@ function offerBox(site) {
   };
 }
 
+/* Into the wizard with their details, address and the code already in. */
+function joinHref(site, lead, plan) {
+  const q = ['plan=' + plan, 'offer=' + encodeURIComponent(PREVIEW_OFFER.code), 'lead=' + encodeURIComponent(lead.id)];
+  if (lead.requested_domain) q.push('domain=' + encodeURIComponent(lead.requested_domain));
+  return `${site}/get-started.html?${q.join('&')}`;
+}
+
 function whatDidYouThink(lead, site) {
   return {
     to: lead.email,
@@ -56,67 +63,68 @@ function whatDidYouThink(lead, site) {
       preheader: 'Be honest - did the example look like you?',
       heading: 'What did you think?',
       lines: [
-        `A few days ago we sent the free example page we designed for `
+        `A few days ago I sent the free example page I designed for `
           + `<strong>${esc(lead.business)}</strong>.`,
         'Be honest &mdash; did it look like you? If something is off, just reply '
-          + 'and say so. Changes are free, and we&rsquo;d rather get it right than guess.',
+          + 'and say so. Changes are free, and I&rsquo;d rather get it right than guess.',
         'And if you liked it, it can be your real site today: live on your own '
-          + 'web address, looked after for you, from &pound;25 a month with no setup fees.'
+          + 'web address, looked after for you, &pound;50 a month with no setup fee.'
       ],
       offer: offerBox(site),
-      ctaText: 'Make it my real site',
-      ctaHref: `${site}/get-started.html`,
+      ctaText: 'Make it my site',
+      ctaHref: joinHref(site, lead, 'business'),
       footer: 'You&rsquo;re getting this because you asked for a free example at '
             + 'kanvas.one. If we don&rsquo;t hear from you, one more email follows '
             + 'and then we&rsquo;ll leave you be.',
       footerLinks: standardFooter(site)
     }),
-    text: `A few days ago we sent the free example page we designed for ${lead.business}.\n\n`
+    text: `A few days ago I sent the free example page I designed for ${lead.business}.\n\n`
         + `Be honest - did it look like you? If something is off, just reply and say so. `
-        + `Changes are free, and we'd rather get it right than guess.\n\n`
+        + `Changes are free, and I'd rather get it right than guess.\n\n`
         + `And if you liked it, it can be your real site today: live on your own web `
-        + `address, looked after for you, from GBP 50 a month with no setup fees.\n\n`
-        + `50% off your first month with ${PREVIEW_OFFER.code}, on any plan:\n`
-        + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n\n`
-        + `Get started: ${site}/get-started.html\n`
+        + `address, looked after for you, GBP 50 a month with no setup fee.\n`
+        + `${joinHref(site, lead, 'business')}\n\n`
+        + `50% off your first month with ${PREVIEW_OFFER.code}:\n`
+        + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n`
   };
 }
 
-function beforeWeTidyUp(lead, site) {
+/* The last email, and the downsell: for the person whose real objection
+   is "I don't need all that", the page they saw, live, for less. */
+function lastOne(lead, site) {
   return {
     to: lead.email,
-    subject: `Last one - shall we keep your example, ${String(lead.business).replace(/[\r\n]+/g, ' ')}?`,
+    subject: `Last one from me, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
     html: emailHtml({
-      preheader: 'Example pages don’t stay online forever - this is the last email about yours.',
-      heading: 'Before we tidy up&hellip;',
+      preheader: 'If bookings and chat aren’t for you, there is a simpler way to have the page you saw.',
+      heading: 'Last one from me',
       lines: [
-        `The free example we made for <strong>${esc(lead.business)}</strong> is still up `
-          + `&mdash; but example pages don&rsquo;t stay online forever. We clear them out `
-          + `to make room for new ones.`,
-        'If you want it to become your real site, now&rsquo;s the moment: join and we '
-          + 'put it live on your own web address the same day, and keep building '
-          + 'on it from there. Anything you&rsquo;d change, we change &mdash; that&rsquo;s '
-          + 'included.',
-        'Not for you? No hard feelings &mdash; this is the last email about it, and '
-          + 'nothing else will follow.'
+        `The free page I made for <strong>${esc(lead.business)}</strong> is still up.`,
+        'If bookings, forms and live chat aren&rsquo;t for you, there&rsquo;s a simpler way to '
+          + 'have it: <strong>Starter, &pound;25 a month</strong>. The page you saw, live on your '
+          + 'own address, found on Google, and customers able to call or email you. No bookings, '
+          + 'forms or chat; a change a month, made by me.',
+        'Want the lot? Business is &pound;50 with everything in. Either way, this is the last '
+          + 'email about it, and nothing else will follow.'
       ],
       offer: offerBox(site),
-      ctaText: 'Keep my site',
-      ctaHref: `${site}/get-started.html`,
+      ctaText: 'Start on Starter — £25 a month',
+      ctaHref: joinHref(site, lead, 'starter'),
+      ctaNote: `Or <a href="${esc(joinHref(site, lead, 'business'))}" style="color:inherit;">Business, &pound;50, with everything in</a>.`,
       footer: 'You&rsquo;re getting this because you asked for a free example at '
             + 'kanvas.one. This is the last email about it.',
       footerLinks: standardFooter(site)
     }),
-    text: `The free example we made for ${lead.business} is still up - but example pages `
-        + `don't stay online forever. We clear them out to make room for new ones.\n\n`
-        + `If you want it to become your real site, now's the moment: join and we put it `
-        + `live on your own web address the same day, and keep building on it from `
-        + `there. Anything you'd change, we change - that's included.\n\n`
-        + `50% off your first month with ${PREVIEW_OFFER.code}, on any plan:\n`
+    text: `The free page I made for ${lead.business} is still up.\n\n`
+        + `If bookings, forms and live chat aren't for you, there's a simpler way to have it: `
+        + `Starter, GBP 25 a month. The page you saw, live on your own address, found on Google, `
+        + `and customers able to call or email you. No bookings, forms or chat; a change a month, made by me.\n`
+        + `${joinHref(site, lead, 'starter')}\n\n`
+        + `Want the lot? Business is GBP 50 with everything in.\n`
+        + `${joinHref(site, lead, 'business')}\n\n`
+        + `50% off your first month with ${PREVIEW_OFFER.code}:\n`
         + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n\n`
-        + `Get started: ${site}/get-started.html\n\n`
-        + `Not for you? No hard feelings - this is the last email about it, and nothing `
-        + `else will follow.\n`
+        + `Either way, this is the last email about it, and nothing else will follow.\n`
   };
 }
 
@@ -144,7 +152,7 @@ module.exports = async function handler(req, res) {
     const now = Date.now();
 
     const { data: leads, error } = await db.from('leads')
-      .select('id, business, email, preview_sent_at, followup1_sent_at, followup2_sent_at')
+      .select('id, business, email, requested_domain, preview_sent_at, followup1_sent_at, followup2_sent_at')
       .eq('source', 'free-preview')
       .not('preview_sent_at', 'is', null)
       .is('followup2_sent_at', null)
@@ -177,7 +185,7 @@ module.exports = async function handler(req, res) {
         message = whatDidYouThink(lead, site);
         stamp = 'followup1_sent_at';
       } else if (lead.followup1_sent_at && age >= F2_AFTER && age <= F2_UNTIL) {
-        message = beforeWeTidyUp(lead, site);
+        message = lastOne(lead, site);
         stamp = 'followup2_sent_at';
       }
       if (!message) continue;

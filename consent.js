@@ -127,15 +127,19 @@
     if (!loaded) return;
     while (pending.length) {
       var e = pending.shift();
-      try { window.fbq('track', e[0], e[1]); } catch (err) {}
+      try {
+        if (e[2]) window.fbq('track', e[0], e[1], { eventID: e[2] });
+        else window.fbq('track', e[0], e[1]);
+      } catch (err) {}
     }
   }
 
   /* The only tracking call the rest of the site makes. Safe to call anywhere:
-     it does nothing at all unless consent has been given. */
-  window.oneTrack = function (event, params) {
+     it does nothing at all unless consent has been given. An event id, when
+     given, is the same one the server sends, so Meta counts the two once. */
+  window.oneTrack = function (event, params, eventId) {
     if (read() !== 'all') return;
-    pending.push([event, params || {}]);
+    pending.push([event, params || {}, eventId || null]);
     if (loaded) flush(); else loadPixel();
   };
 

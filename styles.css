@@ -2578,6 +2578,28 @@ a.hero-pill:hover .pill-go{opacity:1}
 }
 .cta-end .promise + .price-line{margin-top:26px}
 .promise .promise-cta-line{margin:14px 0 0}
+
+/* Wizard: the optional tag on a label, the proof under the pay button, and
+   the Starter hint on an empty step 2. */
+.field label .opt{font-weight:400;color:var(--ink-3)}
+.pay-proof{margin:12px 0 0;font-size:13px;line-height:1.5;text-align:center;color:var(--ink-3)}
+.starter-hint{margin:14px 0 0}
+.starter-hint .cta-row{margin-top:12px;justify-content:flex-start}
+.starter-hint .btn{padding:10px 16px;font-size:14px}
+
+/* Who builds it, on the page the ad lands on: a small photo and one line. */
+.by-line{display:inline-flex;align-items:center;gap:10px;margin:16px 0 0;font-size:14px;line-height:1.4;color:var(--ink-2);text-align:left}
+.by-photo{width:36px;height:36px;border-radius:50%;object-fit:cover;flex:0 0 36px}
+.by-line b{color:var(--ink);font-weight:600}
+
+/* Two real sites under the free form, so the promise has a picture. */
+.examples{max-width:520px;margin:clamp(28px,4vw,40px) auto 0}
+.examples-title{margin:0 0 12px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);text-align:center}
+.examples-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.example{display:block;text-decoration:none;color:var(--ink-2);font-size:13px}
+.example img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top;border-radius:12px;border:1px solid var(--line-soft);margin-bottom:6px}
+.example span{display:block;text-align:center}
+@media (max-width:420px){.examples-grid{gap:8px}.example{font-size:12px}}
 .seo-pitch-copy .ticks{margin:10px 0 14px}
 
 /* Starter on the plans page and in the wizard: the crosses are the point. */

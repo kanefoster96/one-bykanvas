@@ -1539,6 +1539,7 @@ function leadCard(row) {
   if (row.handle) reach.appendChild(el('span', 'cust-sub', ' · ' + row.handle));
   if (row.requested_domain) reach.appendChild(el('span', 'cust-sub', ' · ' + row.requested_domain));
   card.appendChild(reach);
+  if (row.campaign) card.appendChild(el('p', 'cust-sub', 'From: ' + row.campaign));
 
   if (row.about) card.appendChild(el('p', 'queue-what', row.about));
   if (!free && row.plan_interest) {

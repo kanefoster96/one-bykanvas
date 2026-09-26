@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=86">
+<link rel="stylesheet" href="styles.css?v=87">
 </head>
 <body class="auth-body">
 
@@ -32,7 +32,7 @@
       <section class="wiz-step" data-step="1" aria-label="About you">
         <h1>Let's get you online.</h1>
         <p class="wiz-sub">First, the basics. Takes about two minutes.</p>
-        <div class="field"><label for="contact_name">Your full name</label><input id="contact_name" type="text" autocomplete="name"></div>
+        <div class="field"><label for="contact_name">Your name <span class="opt">(optional)</span></label><input id="contact_name" type="text" autocomplete="name"></div>
       <div class="hp" aria-hidden="true">
         <label for="wiz_extra">Leave this empty</label>
         <input id="wiz_extra" name="wiz_extra" type="text" tabindex="-1" autocomplete="off">
@@ -42,7 +42,7 @@
         <div class="field" id="passwordField">
           <label for="password">Create a password</label>
           <input id="password" type="password" autocomplete="new-password">
-          <p class="hint">At least 8 characters.</p>
+          <p class="hint">At least 8 characters. So you can log in and see your site.</p>
         </div>
         <p class="note" id="note1" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
@@ -99,9 +99,20 @@
           <ul class="combo-list" id="useList3" role="listbox" hidden></ul>
         </div>
 
-        <p class="hint">One is enough to get going &mdash; fill in what you know.
-           Once your site&rsquo;s built you can ask for new features and updates
-           at any time, so these just get it started.</p>
+        <p class="hint">One is enough to get going. These are built within 14 days of joining;
+           anything else you can ask for any time.</p>
+
+        <!-- Nothing filled in is a signal: they may just want to be found and
+             called. Shown once, on Next with all three empty. -->
+        <div class="pick-up starter-hint" id="starterHint" hidden>
+          <p class="pick-up-tag">Nothing to add?</p>
+          <p class="pick-up-head">If you just want to be found and called, Starter is &pound;25 a month.</p>
+          <p class="pick-up-note">The page you saw, live on your own address, found on Google, and customers able to call or email you. No bookings, forms or chat.</p>
+          <div class="cta-row">
+            <button class="btn btn-ghost" id="starterPick" type="button">Switch to Starter</button>
+            <button class="btn btn-primary" id="starterKeep" type="button">Carry on with Business</button>
+          </div>
+        </div>
 
         <p class="note" id="note2" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
@@ -150,21 +161,7 @@
         </details>
 
         <div class="paynote">
-          <p>Nothing is bought yet. We register whichever address you settle on when your site is ready, and it&rsquo;s included in your plan &mdash; you never pay for it separately.</p>
-        </div>
-
-        <!-- Two small ticks, so the next step can open on the plan that
-             covers what they want. -->
-        <div class="wants-mini">
-          <p class="wants-mini-title">While we&rsquo;re here &mdash; would you like any of these?</p>
-          <label class="want-mini">
-            <input type="checkbox" id="wantEmail">
-            <span>A business email address &mdash; you@yourbusiness.co.uk, set up for you on Google Workspace</span>
-          </label>
-          <label class="want-mini">
-            <input type="checkbox" id="wantSeo">
-            <span>My Google ranking worked on monthly &mdash; SEO updates for Google and AI search</span>
-          </label>
+          <p>Registered for you the day you join, and included in your plan &mdash; you never pay for it separately. Change it any time before then.</p>
         </div>
 
         <p class="note" id="noteDomain" role="status" aria-live="polite"></p>
@@ -178,74 +175,72 @@
       </section>
 
       <section class="wiz-step" data-step="4" aria-label="Choose a plan" hidden>
-        <h1>Pick your plan.</h1>
-        <p class="wiz-sub">Max is the whole thing: built, found, and worked on every month. Business if you don&rsquo;t need the monthly work or the texts. Starter if you just want to be found and called. Move up or down any time.</p>
+        <h1>Your plan.</h1>
+        <p class="wiz-sub">Business is everything you need. Add growth with Max any month, or step down to Starter if you just want to be found and called.</p>
 
-        <!-- Tapping a plan expands its full list right under it; the ticks
-             from the last step pre-select the plan that covers them, and the
-             note under the list says when a choice misses a ticked want. -->
+        <!-- Business first, and chosen. Max is the step up, under it. Starter
+             stays hidden unless they came in on it, left step 2 empty, or
+             ask for it with the link below. -->
         <div class="bill-toggle bill-toggle-wiz" role="group" aria-label="Billing period">
           <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
           <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free</span></button>
         </div>
 
         <div class="pick" id="pick">
-          <label class="pick-row" data-plan="max">
-            <input type="radio" name="plan" value="max">
-            <span class="pick-main">
-              <span class="pick-head"><b>Max</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
-              <span class="pick-note">Growth mode &mdash; improved monthly, and your customers texted, without you asking.</span>
-            </span>
-          </label>
-          <div class="pick-feats" data-plan="max">
-            <ul class="ticks">
-              <li>Everything in Business</li>
-              <li>SEO and site improvements every month</li>
-              <li>Your own business number &mdash; rings your mobile, missed calls answered by text</li>
-              <li>Booking reminders and confirmations texted to your customers</li>
-              <li>Business email &mdash; you@yourbusiness.co.uk, on Google Workspace</li>
-              <li>Top priority &mdash; first in the queue</li>
-            </ul>
-          </div>
-
           <label class="pick-row is-on" data-plan="business">
             <input type="radio" name="plan" value="business" checked>
             <span class="pick-main">
               <span class="pick-head"><b>Business</b><em data-m="£50|/mo" data-y="£500|/yr">£50<span>/mo</span></em></span>
-              <span class="pick-note"><b class="pick-flag">Most popular</b>Everything you need to be online.</span>
+              <span class="pick-note"><b class="pick-flag">Everything included</b>Live today, features within 14 days.</span>
             </span>
           </label>
           <div class="pick-feats" data-plan="business">
             <ul class="ticks">
               <li>Live on your own address the same day you join</li>
               <li>Bookings, payments, forms and live chat</li>
+              <li>Reviews asked for automatically</li>
               <li>Domain, hosting and SSL included</li>
-              <li>Everything you ask for in the build, however big</li>
-              <li>Unlimited changes and new features, made by me within 48 hours</li>
+              <li>Unlimited changes, made by me within 48 hours</li>
             </ul>
           </div>
 
-          <!-- Only shown to someone who chose Starter on the plans page:
-               it is never offered here first. -->
+          <label class="pick-row" data-plan="max">
+            <input type="radio" name="plan" value="max">
+            <span class="pick-main">
+              <span class="pick-head"><b>Max</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
+              <span class="pick-note"><b class="pick-flag">Add growth</b>Everything in Business, worked on every month.</span>
+            </span>
+          </label>
+          <div class="pick-feats" data-plan="max">
+            <ul class="ticks">
+              <li>Your Google ranking worked on every month</li>
+              <li>Missed calls answered by text in seconds</li>
+              <li>Booking reminders texted to your customers</li>
+              <li>Business email at your own address</li>
+              <li>First in the queue. Step down any month; the ranking stays</li>
+            </ul>
+          </div>
+
+          <!-- Hidden unless asked for: the plans page link, an empty step 2,
+               or the line under the plans. -->
           <label class="pick-row" data-plan="starter" id="pickStarter" hidden>
             <input type="radio" name="plan" value="starter">
             <span class="pick-main">
               <span class="pick-head"><b>Starter</b><em data-m="£25|/mo" data-y="£250|/yr">£25<span>/mo</span></em></span>
-              <span class="pick-note">DIY-builder money, except we design and build it for you.</span>
+              <span class="pick-note">Found and called. No bookings, forms or chat.</span>
             </span>
           </label>
           <div class="pick-feats" data-plan="starter">
             <ul class="ticks">
-              <li>Designed and built for you &mdash; no website builder to learn</li>
-              <li>Contact details, opening hours, socials, photos, meet the team</li>
-              <li>Domain, hosting and SSL included</li>
-              <li>A change every month, made by me, and me to message</li>
+              <li>The page you saw, live on your own address</li>
+              <li>Your details, hours, photos and socials</li>
+              <li>Found on Google in your town</li>
+              <li>A change every month, made by me</li>
             </ul>
           </div>
         </div>
-        </div>
 
-        <p class="pick-warn" id="planSteer" role="status" aria-live="polite" hidden></p>
+        <button class="linkish" id="showStarter" type="button">Just want to be online and contactable? See Starter, &pound;25</button>
 
         <!-- The step up from whichever plan is picked, said once, optional.
              Starter is shown what £25 more unlocks; Business is shown Max
@@ -317,6 +312,10 @@
         <!-- Shown while their address is still unconfirmed: the next thing to do
              after paying, not a gate in front of it. -->
         <p class="pay-then" id="payThen" hidden>Next, please confirm your email &mdash; we&rsquo;ve sent you a link.</p>
+        <p class="pay-proof">kanvasacademy.com and nellyandnova.co.uk run on this. Built by Kane, who you can message.</p>
+        <!-- The downsell, for the person hesitating at the card: keep the page,
+             lose the features, for less. Hidden once they are on Starter. -->
+        <button class="linkish" id="payDown" type="button">Not sure you need bookings and chat? Switch to Starter, &pound;25, and keep this page live.</button>
 
         <!-- The three things someone hesitates over, answered on the way past. -->
         <ul class="assure">
@@ -331,7 +330,6 @@
           <p><strong>Card handled by Stripe.</strong></p>
           <p>You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month puts your page live on your own address today; your features follow within 14 days.</p>
         </div>
-        <button class="linkish wiz-next" data-next type="button" id="skipPay">Skip for now — do it later</button>
         <button class="linkish" id="fixEmail" type="button">That email isn't right</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
@@ -346,7 +344,7 @@
 
         <ol class="next-list">
           <li><b id="doneHead">Check your email.</b> <span id="confirmLine">Confirm your address so you can get into your account.</span></li>
-          <li><b>Live today.</b> I register your web address and put your page on it the same day.</li>
+          <li><b>Live today.</b> I register your web address and put your page on it, and email you the moment it&rsquo;s live.</li>
           <li><b>Your features, within 14 days.</b> Bookings, payments, reviews &mdash; whatever you asked for, built while you&rsquo;re already online. Or your next month is free.</li>
         </ol>
 
@@ -370,12 +368,12 @@
 </main>
 
 <script src="vendor/supabase.js?v=1"></script>
-<script src="consent.js?v=7"></script>
+<script src="consent.js?v=8"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=20"></script>
+<script src="get-started.js?v=21"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

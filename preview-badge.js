@@ -8,11 +8,12 @@
  *           data-lead="<lead id>" defer></script>
  *
  * They open the page from the ready email and get ten seconds with it,
- * alone. Then a card slides up from the bottom and says, in order: this is
- * your designed shell; features are what build your business online, and
- * here is what it could do once you join; this address is yours to claim;
- * and the three plans, Max first. Close it and it folds to a small pill
- * that brings it back. The pill's own × hides it for the visit.
+ * alone. Then a card slides up from the bottom: this is your designed
+ * shell, features are what build your business online, this address is
+ * yours to claim, and one button for Business. What else it could do waits
+ * behind a line. The first close offers Starter once, for the person who
+ * just wants to be online; after that it folds to a small pill that brings
+ * the card back. The pill's own × hides it for the visit.
  *
  * Two rules it has to keep, because it runs on a page that is not ours:
  *
@@ -94,72 +95,83 @@
     'Every customer’s bookings and notes against their name'
   ];
 
-  var PLANS = [
-    { plan: 'max', name: 'Max', price: '£250', tag: 'Best value', featured: true,
-      text: 'The whole thing: built, found on Google, worked on every month. Missed calls texted back, booking reminders texted, business email.' },
-    { plan: 'business', name: 'Business', price: '£50', tag: 'Most popular',
-      text: 'Online without the monthly work or the texts. The full site, and unlimited changes made for you within 48 hours.' },
-    { plan: 'starter', name: 'Starter', price: '£25',
-      text: 'Love this page as it is? Somewhere customers can visit you online and call or email you.' }
-  ];
-
   var card = null, pill = null;
+  var offeredStarter = false;   /* the downsell, shown once, on the first close */
 
-  /* ------------------------------------------------------------ the card */
+  /* Join links: Business is the plan; Starter only when they signal less. */
+  var BUSINESS_LINE = 'Bookings, payments, forms and live chat. Reviews asked for automatically. Unlimited changes within 48 hours. Live on your address today.';
+  var STARTER_LINE = 'This page live on your own address, found on Google, and customers able to call or email you. No bookings, forms or chat. A change a month.';
 
-  function buildCard(freeDomain) {
+  function button(text, href, filled) {
+    var a = make('a', {
+      display: 'block', padding: '12px 16px', borderRadius: '980px', textAlign: 'center', textDecoration: 'none',
+      fontSize: '15px', fontWeight: '600',
+      background: filled ? INK : 'transparent', color: filled ? '#fff' : INK,
+      border: filled ? '0' : '1px solid ' + INK
+    }, text);
+    a.href = href; a.target = '_blank'; a.rel = 'noopener';
+    return a;
+  }
+
+  function sheet() {
     var small = narrow();
     var wrap = make('div', {
       position: 'fixed', zIndex: '2147483000', boxSizing: 'border-box',
       left: small ? '0' : 'auto', right: small ? '0' : '16px', bottom: small ? '0' : '16px',
-      width: small ? '100%' : '400px', maxHeight: small ? '86vh' : 'calc(100vh - 32px)',
+      width: small ? '100%' : '380px', maxHeight: small ? '80vh' : 'calc(100vh - 32px)',
       overflowY: 'auto', WebkitOverflowScrolling: 'touch',
       background: '#fff', color: INK,
       borderRadius: small ? '22px 22px 0 0' : '22px',
       boxShadow: '0 -8px 40px rgba(0,0,0,.18), 0 20px 60px rgba(0,0,0,.18)',
-      padding: small ? '18px 20px calc(20px + env(safe-area-inset-bottom))' : '22px 24px 24px',
+      padding: small ? '18px 20px calc(18px + env(safe-area-inset-bottom))' : '22px 24px 22px',
       font: '400 15px/1.5 ' + FONT,
       transform: 'translateY(24px)', opacity: '0',
       transition: still ? 'none' : 'opacity .45s ease, transform .45s ease'
     });
     wrap.setAttribute('role', 'dialog');
     wrap.setAttribute('aria-label', 'About this example');
+    return wrap;
+  }
 
-    /* Close, top right, folds the card to the pill. */
+  function closeButton(onClick) {
     var shut = make('button', {
       position: 'absolute', top: '12px', right: '12px', width: '30px', height: '30px', padding: '0',
       borderRadius: '980px', border: '0', background: '#f5f5f7', color: INK2,
       fontSize: '18px', lineHeight: '1', cursor: 'pointer', font: '400 18px/1 ' + FONT
-    }, '×');
+    }, '\u00d7');
     shut.type = 'button';
     shut.setAttribute('aria-label', 'Close');
-    shut.addEventListener('click', function () { fold(); });
-    wrap.appendChild(shut);
+    shut.addEventListener('click', onClick);
+    return shut;
+  }
 
-    var eyebrow = make('p', { margin: '0 0 6px', fontSize: '11px', fontWeight: '600', letterSpacing: '.08em',
-      textTransform: 'uppercase', color: GOOD }, 'Your free example' + (business ? ' · ' + business : ''));
-    wrap.appendChild(eyebrow);
+  function reveal(wrap) {
+    document.body.appendChild(wrap);
+    requestAnimationFrame(function () {
+      wrap.style.opacity = '1';
+      wrap.style.transform = 'translateY(0)';
+    });
+    return wrap;
+  }
 
-    var h = make('p', { margin: '0 0 8px 0', paddingRight: '34px', fontSize: '21px', fontWeight: '600',
-      letterSpacing: '-.02em', lineHeight: '1.2', color: INK }, 'This is your designed shell.');
-    wrap.appendChild(h);
+  /* ------------------------------------------------------------ the card */
 
-    var p = make('p', { margin: '0 0 10px', fontSize: '14.5px', lineHeight: '1.5', color: INK2 },
-      'What you’re looking at is the look and the feel. Features are what build your business online — and once you join, I build them in. Here’s what it could do:');
-    wrap.appendChild(p);
+  function buildCard(freeDomain) {
+    var wrap = sheet();
+    wrap.appendChild(closeButton(function () { fold(); }));
 
-    var ul = make('ul', { margin: '0 0 14px', padding: '0 0 0 18px', fontSize: '14px', lineHeight: '1.45', color: INK2 });
-    for (var i = 0; i < COULD.length; i++) {
-      ul.appendChild(make('li', { margin: '0 0 4px' }, COULD[i]));
-    }
-    wrap.appendChild(ul);
+    wrap.appendChild(make('p', { margin: '0 0 6px', fontSize: '11px', fontWeight: '600', letterSpacing: '.08em',
+      textTransform: 'uppercase', color: GOOD }, 'Your free example' + (business ? ' \u00b7 ' + business : '')));
+    wrap.appendChild(make('p', { margin: '0 0 6px 0', paddingRight: '34px', fontSize: '21px', fontWeight: '600',
+      letterSpacing: '-.02em', lineHeight: '1.2', color: INK }, 'This is your designed shell.'));
+    wrap.appendChild(make('p', { margin: '0 0 12px', fontSize: '14.5px', lineHeight: '1.5', color: INK2 },
+      'The look and the feel. Features are what build your business online, and once you join, I build them in.'));
 
     /* The address. Available only if the registry said so a moment ago. */
-    var box = make('div', { margin: '0 0 14px', padding: '12px 14px', borderRadius: '14px',
+    var box = make('div', { margin: '0 0 12px', padding: '12px 14px', borderRadius: '14px',
       background: freeDomain ? GOOD_BG : '#fafafa', border: '1px solid ' + (freeDomain ? GOOD_LINE : LINE) });
-    var lab = make('p', { margin: '0 0 3px', fontSize: '11px', fontWeight: '600', letterSpacing: '.08em',
-      textTransform: 'uppercase', color: INK3 }, 'Your web address');
-    box.appendChild(lab);
+    box.appendChild(make('p', { margin: '0 0 3px', fontSize: '11px', fontWeight: '600', letterSpacing: '.08em',
+      textTransform: 'uppercase', color: INK3 }, 'Your web address'));
     if (freeDomain) {
       var name = make('p', { margin: '0 0 4px', fontSize: '16px', fontWeight: '600', color: INK,
         fontFamily: 'ui-monospace,SFMono-Regular,Menlo,Consolas,monospace', wordBreak: 'break-all' });
@@ -169,57 +181,65 @@
         fontFamily: FONT, verticalAlign: 'middle' }, 'Available now'));
       box.appendChild(name);
       box.appendChild(make('p', { margin: '0', fontSize: '13px', lineHeight: '1.45', color: INK2 },
-        'Claim it when you join and it’s registered for you, included in your plan. Or choose your own.'));
+        'Registered for you the day you join, included. Or choose your own.'));
     } else {
       box.appendChild(make('p', { margin: '0', fontSize: '13.5px', lineHeight: '1.45', color: INK2 },
-        'Your own web address, registered for you and included in your plan. Pick it when you join.'));
+        'Your own web address, registered for you and included in your plan.'));
     }
     wrap.appendChild(box);
 
-    /* The plans, Max first. One line each and a button. */
-    wrap.appendChild(make('p', { margin: '0 0 8px', fontSize: '11px', fontWeight: '600', letterSpacing: '.08em',
-      textTransform: 'uppercase', color: INK3 }, 'Three ways to have it'));
-    for (var j = 0; j < PLANS.length; j++) {
-      var pl = PLANS[j];
-      var row = make('a', {
-        display: 'block', margin: '0 0 8px', padding: '12px 14px', borderRadius: '14px', textDecoration: 'none',
-        border: (pl.featured ? '2px solid ' + INK : '1px solid ' + LINE), color: INK
-      });
-      row.href = joinHref(pl.plan);
-      row.target = '_blank';
-      row.rel = 'noopener';
-      var head = make('span', { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '10px' });
-      var left = make('span', { fontSize: '16px', fontWeight: '600', letterSpacing: '-.01em' }, pl.name);
-      if (pl.tag) {
-        left.appendChild(make('span', { display: 'inline-block', marginLeft: '8px', padding: '2px 8px', borderRadius: '980px',
-          background: GOOD_BG, border: '1px solid ' + GOOD_LINE, fontSize: '11px', fontWeight: '600', color: GOOD,
-          verticalAlign: 'middle' }, pl.tag));
-      }
-      var right = make('span', { fontSize: '15px', whiteSpace: 'nowrap' });
-      right.appendChild(make('b', { fontSize: '17px' }, pl.price));
-      right.appendChild(make('span', { color: INK3 }, '/month'));
-      head.appendChild(left);
-      head.appendChild(right);
-      row.appendChild(head);
-      row.appendChild(make('span', { display: 'block', margin: '5px 0 0', fontSize: '13.5px', lineHeight: '1.45', color: INK2 }, pl.text));
-      row.appendChild(make('span', {
-        display: 'block', margin: '10px 0 0', padding: '10px 14px', borderRadius: '980px', textAlign: 'center',
-        fontSize: '14px', fontWeight: '600',
-        background: pl.featured ? INK : 'transparent', color: pl.featured ? '#fff' : INK,
-        border: pl.featured ? '0' : '1px solid ' + INK
-      }, 'Start on ' + pl.name));
-      wrap.appendChild(row);
-    }
+    /* One plan, one button. */
+    var plan = make('div', { margin: '0 0 10px', padding: '14px', borderRadius: '14px', border: '2px solid ' + INK });
+    var head = make('div', { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '10px' });
+    var left = make('span', { fontSize: '16px', fontWeight: '600', letterSpacing: '-.01em' }, 'Business');
+    left.appendChild(make('span', { display: 'inline-block', marginLeft: '8px', padding: '2px 8px', borderRadius: '980px',
+      background: GOOD_BG, border: '1px solid ' + GOOD_LINE, fontSize: '11px', fontWeight: '600', color: GOOD,
+      verticalAlign: 'middle' }, 'Everything included'));
+    var right = make('span', { fontSize: '15px', whiteSpace: 'nowrap' });
+    right.appendChild(make('b', { fontSize: '17px' }, '\u00a350'));
+    right.appendChild(make('span', { color: INK3 }, '/month'));
+    head.appendChild(left); head.appendChild(right);
+    plan.appendChild(head);
+    plan.appendChild(make('p', { margin: '6px 0 10px', fontSize: '13.5px', lineHeight: '1.45', color: INK2 }, BUSINESS_LINE));
+    plan.appendChild(button('Make it my site', joinHref('business'), true));
+    wrap.appendChild(plan);
 
-    wrap.appendChild(make('p', { margin: '10px 0 0', fontSize: '12.5px', lineHeight: '1.5', textAlign: 'center', color: INK3 },
-      '50% off your first month with ' + code + ', applied when you join · No setup fees · Cancel any month'));
+    /* What else it could do, behind a line. */
+    var more = make('button', { display: 'block', width: '100%', padding: '6px 0', border: '0', background: 'transparent',
+      color: INK2, font: '500 13.5px/1.4 ' + FONT, textDecoration: 'underline', textUnderlineOffset: '3px', cursor: 'pointer' },
+      'See what else it could do');
+    more.type = 'button';
+    var ul = make('ul', { margin: '6px 0 4px', padding: '0 0 0 18px', fontSize: '13.5px', lineHeight: '1.45', color: INK2 });
+    for (var i = 0; i < COULD.length; i++) ul.appendChild(make('li', { margin: '0 0 4px' }, COULD[i]));
+    ul.hidden = true;
+    more.addEventListener('click', function () { ul.hidden = !ul.hidden; more.textContent = ul.hidden ? 'See what else it could do' : 'Fewer'; });
+    wrap.appendChild(more);
+    wrap.appendChild(ul);
 
-    document.body.appendChild(wrap);
-    requestAnimationFrame(function () {
-      wrap.style.opacity = '1';
-      wrap.style.transform = 'translateY(0)';
-    });
-    return wrap;
+    wrap.appendChild(make('p', { margin: '8px 0 0', fontSize: '12.5px', lineHeight: '1.5', textAlign: 'center', color: INK3 },
+      '50% off your first month with ' + code + ' \u00b7 No setup fee \u00b7 Cancel any month'));
+
+    return reveal(wrap);
+  }
+
+  /* The downsell, on the first close: for the person who just wants to be
+     online. Said once; the second close goes straight to the pill. */
+  function buildStarter(freeDomain) {
+    var wrap = sheet();
+    wrap.appendChild(closeButton(function () { fold(); }));
+    wrap.appendChild(make('p', { margin: '0 0 6px', fontSize: '11px', fontWeight: '600', letterSpacing: '.08em',
+      textTransform: 'uppercase', color: GOOD }, 'Just want to be online?'));
+    wrap.appendChild(make('p', { margin: '0 0 6px 0', paddingRight: '34px', fontSize: '20px', fontWeight: '600',
+      letterSpacing: '-.02em', lineHeight: '1.2', color: INK }, 'Starter, \u00a325 a month.'));
+    wrap.appendChild(make('p', { margin: '0 0 12px', fontSize: '14px', lineHeight: '1.5', color: INK2 },
+      STARTER_LINE + (freeDomain ? ' On ' + freeDomain + '.' : '')));
+    wrap.appendChild(button('Start on Starter', joinHref('starter'), true));
+    var no = make('button', { display: 'block', width: '100%', margin: '8px 0 0', padding: '8px 0', border: '0', background: 'transparent',
+      color: INK3, font: '500 13.5px/1.4 ' + FONT, cursor: 'pointer' }, 'No thanks');
+    no.type = 'button';
+    no.addEventListener('click', function () { fold(); });
+    wrap.appendChild(no);
+    return reveal(wrap);
   }
 
   /* ------------------------------------------------------------ the pill */
@@ -258,7 +278,7 @@
     }
     text.appendChild(top);
     text.appendChild(make('span', { color: 'rgba(255,255,255,.82)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
-      freeDomain ? 'Claim it, and see what your site could do' : 'See what it could do once you join'));
+      freeDomain ? 'Claim it: Business \u00a350, or Starter \u00a325' : 'Business \u00a350, or Starter \u00a325'));
     text.addEventListener('click', function () { unfold(); });
 
     var go = make('a', {
@@ -268,7 +288,7 @@
       textDecoration: 'none', fontWeight: '600',
       fontSize: small ? '12.5px' : '13px', lineHeight: '1.2'
     }, 'Join');
-    go.href = joinHref('max');
+    go.href = joinHref('business');
     go.target = '_blank';
     go.rel = 'noopener';
 
@@ -300,6 +320,11 @@
   function fold() {
     if (card && card.parentNode) card.parentNode.removeChild(card);
     card = null;
+    if (!offeredStarter) {
+      offeredStarter = true;
+      card = buildStarter(known);
+      return;
+    }
     if (!pill) pill = buildPill(known);
   }
   function unfold() {

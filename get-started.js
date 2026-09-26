@@ -217,7 +217,7 @@
     var mail = val('email');
     var pass = $('password').value;
 
-    if (!name) return say(note, 'Please tell us your name.', 'bad');
+    /* The name is optional: the business is who we are building for. */
     if (!biz)  return say(note, 'Please tell us your business name.', 'bad');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) return say(note, 'Enter a valid email address.', 'bad');
 
@@ -440,20 +440,63 @@
     document.addEventListener('one:ideas-loaded', function () { if (open !== null) paint(open); });
   })();
 
+  /* Starter, when they ask for it: the row appears, is chosen, and the
+     plan step opens on it. Called from the empty-step-2 hint, the line
+     under the plans, and the downsell on the pay step. */
+  function offerStarter() {
+    var row = $('pickStarter');
+    if (row) row.hidden = false;
+    var radio = document.querySelector('input[name="plan"][value="starter"]');
+    if (radio) radio.checked = true;
+    document.querySelectorAll('#pick .pick-row').forEach(function (r) {
+      var input = r.querySelector('input');
+      if (input) r.classList.toggle('is-on', input.checked);
+    });
+    var pick = document.getElementById('pick');
+    if (pick) pick.dispatchEvent(new Event('change'));
+  }
+
+  var hintedStarter = false;
   function step2() {
     var note = $('note2');
     var type = val('business_type');
     var uses = [val('use1'), val('use2'), val('use3')].filter(Boolean);
 
     if (!type) return say(note, 'What sort of business is it?', 'bad');
-    if (!uses.length) return say(note, 'Give us at least one thing you want the site to do.', 'bad');
+
+    /* Nothing filled in is a signal, not a mistake: offer Starter once,
+       then let them carry on either way. */
+    var hint = $('starterHint');
+    if (!uses.length && hint && !hintedStarter) {
+      hintedStarter = true;
+      hint.hidden = false;
+      say(note, '');
+      hint.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      return;
+    }
 
     answers.business_type = type;
     answers.site_uses = uses;
     say(note, '');
+    if (hint) hint.hidden = true;
     show(3);
     askDomains();
   }
+
+  (function wireStarterHint() {
+    var pickBtn = $('starterPick'), keep = $('starterKeep');
+    if (pickBtn) pickBtn.addEventListener('click', function () { offerStarter(); step2(); });
+    if (keep) keep.addEventListener('click', function () { step2(); });
+    var link = $('showStarter');
+    if (link) link.addEventListener('click', function () {
+      offerStarter();
+      link.hidden = true;
+      var row = $('pickStarter');
+      if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
+    var down = $('payDown');
+    if (down) down.addEventListener('click', function () { offerStarter(); stepPlan(); });
+  })();
 
   /* 3 — web address.
    *
@@ -727,7 +770,9 @@
        the click recovers it, so an unconfirmed address is something to sort out
        after paying rather than a gate in front of it. */
     $('payThen').hidden = Boolean(answers.hasSession);
-    $('skipPay').textContent = 'Skip for now — do it later';
+    /* The downsell only makes sense from above Starter. */
+    var down = $('payDown');
+    if (down) down.hidden = answers.selected_plan === 'starter';
 
     show(5);
   }
@@ -918,74 +963,6 @@
     });
   });
 
-  /* The two wants above the plans. Ticking one selects the cheapest plan
-   * that covers everything ticked, moves the Recommended flag there and
-   * opens its included list. They can still pick any plan afterwards -
-   * choosing one that misses a ticked want just gets the orange note, so
-   * nobody lands on Business expecting an inbox we never set up.
-   */
-  (function wirePlanSteer() {
-    var email = $('wantEmail'), seo = $('wantSeo'), warnEl = $('planSteer');
-    if (!email || !seo || !warnEl) return;
-
-    var COVERS = { starter: [], business: [], max: ['email', 'seo'] };
-
-    function pickedPlan() {
-      var chosen = document.querySelector('input[name="plan"]:checked');
-      return chosen ? chosen.value : 'business';
-    }
-
-    function warn() {
-      /* Nothing ticked: nothing to say. Ticked and covered: a quiet
-         confirmation. Ticked and missing: the orange note, with the plan
-         that has it - and that skipping is fine, upgrades are one click. */
-      if (!email.checked && !seo.checked) {
-        warnEl.hidden = true; warnEl.textContent = ''; return;
-      }
-      var has = COVERS[pickedPlan()];
-      var missing = [];
-      if (email.checked && has.indexOf('email') === -1) missing.push('the business email address');
-      if (seo.checked && has.indexOf('seo') === -1) missing.push('monthly SEO updates');
-      if (!missing.length) {
-        warnEl.className = 'pick-ok';
-        warnEl.textContent = PLANS[pickedPlan()].label + ' includes everything you ticked.';
-        warnEl.hidden = false;
-        return;
-      }
-      var covers = 'Max';
-      warnEl.className = 'pick-warn';
-      warnEl.textContent = 'Just so you know — ' + PLANS[pickedPlan()].label
-        + ' doesn’t include ' + missing.join(' or ') + ' you ticked. '
-        + covers + ' does — or carry on without it and upgrade any time.';
-      warnEl.hidden = false;
-    }
-
-    function steer() {
-      var rec = (email.checked || seo.checked) ? 'max' : 'business';
-
-      var radio = document.querySelector('input[name="plan"][value="' + rec + '"]');
-      if (radio) radio.checked = true;
-      document.querySelectorAll('#pick .pick-row').forEach(function (row) {
-        var input = row.querySelector('input');
-        if (input) row.classList.toggle('is-on', input.checked);
-      });
-
-      var flag = document.querySelector('#pick .pick-flag');
-      var note = document.querySelector('.pick-row[data-plan="' + rec + '"] .pick-note');
-      if (flag && note && flag.parentNode !== note) note.insertBefore(flag, note.firstChild);
-      if (flag) flag.textContent = rec === 'max' ? 'Recommended' : 'Most popular';
-
-      /* No open/close to do here: the selected row's feature list expands
-         itself - .pick-row.is-on + .pick-feats in the stylesheet. */
-
-      warn();
-    }
-
-    email.addEventListener('change', steer);
-    seo.addEventListener('change', steer);
-    document.getElementById('pick').addEventListener('change', warn);
-  })();
-
   /* The step up, offered once at the moment they are choosing. Starter
    * sees what £25 more unlocks. Business sees Max framed as the launch
    * months - SEO and texts while the site is new, then step down to
@@ -1012,21 +989,21 @@
         ],
         note: 'Starter gets you found. Business gets you booked.',
         btn: 'Switch to Business — £50 a month',
-        line: 'Want bookings, forms and live chat? '
+        line: 'Changed your mind about bookings and chat? '
       },
       business: {
         to: 'max',
-        tag: 'The launch months',
-        head: 'Max gets you ranking and texting from day one.',
+        tag: 'Add growth',
+        head: 'Max: your site worked on every month, and your customers texted.',
         list: [
-          'Your Google ranking worked on every month, from the first',
-          'Your own business number — rings your mobile, missed calls answered by text',
-          'Booking reminders and confirmations texted to your customers',
+          'Your Google ranking worked on every month',
+          'Missed calls answered by text in seconds',
+          'Booking reminders texted to your customers',
           'Business email, and first in the queue'
         ],
-        note: 'A new site ranks fastest when the work starts straight away. Run Max while it climbs, then step down to Business any month once you’re where you want to be. <strong>You keep the ranking.</strong> The texts stop on Business unless you ask us to keep them on as an add-on.',
-        btn: 'Start on Max — £250 a month',
-        line: 'Want SEO and texts from day one? '
+        note: 'A new site climbs fastest when the work starts on day one. Run Max for the launch months, then step down to Business any month. <strong>You keep the ranking.</strong>',
+        btn: 'Add growth — Max, £250 a month',
+        line: 'Want the site worked on every month? '
       }
     };
 

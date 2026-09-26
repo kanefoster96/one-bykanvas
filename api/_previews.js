@@ -72,47 +72,39 @@ function joinHref(site, plan, domain, leadId) {
   return `${site}/get-started.html?${q.join('&')}`;
 }
 
-function planLadder(site, domain, leadId) {
+/* The one thing to press: Business, with everything in it. Max is offered
+   after they have said yes, in the wizard; Starter only when they signal
+   they want less. Neither belongs in this email. */
+function businessCard(site, domain, leadId) {
   return {
-    title: 'Three ways to have it',
-    intro: 'I design and build every one of them for you. Start with the top one; the two under it are for if you need less.',
-    cards: [
-      {
-        name: 'Max', price: '£250', tag: 'Best value', featured: true,
-        text: 'The whole thing. Built, found on Google, and worked on every month without you asking. Your customers texted when you miss their call and reminded before their booking. Business email at your own address. First in the queue.',
-        items: [
-          'Everything in Business',
-          'SEO and site improvements every month',
-          'Missed calls answered by text in seconds',
-          'Booking reminders texted to your customers',
-          'you@yourbusiness.co.uk on Google Workspace'
-        ],
-        ctaText: 'Start on Max', ctaHref: joinHref(site, 'max', domain, leadId)
-      },
-      {
-        name: 'Business', price: '£50', tag: 'Most popular',
-        text: 'If you want to be online and don’t need me working on the site every month or texting your customers, Business is for you. The full site, and unlimited changes made by me within 48 hours.',
-        items: [
-          'Bookings, payments, forms and live chat',
-          'Reviews asked for automatically',
-          'Unlimited changes and new features, within 48 hours'
-        ],
-        ctaText: 'Start on Business', ctaHref: joinHref(site, 'business', domain, leadId)
-      },
-      {
-        name: 'Starter', price: '£25',
-        text: 'If you love the page as it is and just want somewhere customers can visit you online and call or email you, Starter is for you. The page, your web address, found on Google in your town, and a change a month.',
-        items: [
-          'The page you’re looking at, live on your own address',
-          'Your details, hours, photos and socials',
-          'Me to message, and a change every month'
-        ],
-        ctaText: 'Start on Starter', ctaHref: joinHref(site, 'starter', domain, leadId)
-      }
-    ],
-    note: 'No setup fees on any of them. Move up or down any month. Cancel any month.'
+    title: 'Make it your site',
+    intro: 'Business, £50 a month, everything in it. I build the rest around the page you are looking at.',
+    cards: [{
+      name: 'Business', price: '£50', tag: 'Everything included', featured: true,
+      text: (domain ? 'Live on ' + esc(domain) + ' today.' : 'Live on your own address today.')
+          + ' No setup fee. Cancel any month.',
+      items: [
+        'Bookings, payments, forms and live chat',
+        'Reviews asked for automatically after every job',
+        'Unlimited changes, made by me within 48 hours',
+        'Your web address, hosting and security included'
+      ],
+      ctaText: 'Make it my site — £50 a month', ctaHref: joinHref(site, 'business', domain, leadId)
+    }],
+    note: 'kanvasacademy.com and nellyandnova.co.uk run on this. Built by me, and you can message me.'
   };
 }
+
+/* What happens after the button, in three lines. Ticks: these will happen. */
+const NEXT = {
+  title: 'What happens when you say yes',
+  ticks: true,
+  items: [
+    'Today: I register your web address and put this page live on it',
+    'Within 14 days: the three features you choose at signup, or your next month is free',
+    'Any time: changes are free, before and after, within 48 hours'
+  ]
+};
 
 async function sendLeadPreview(db, id, url, opts) {
   const again = !!(opts && opts.again);
@@ -162,7 +154,7 @@ async function sendLeadPreview(db, id, url, opts) {
     to: lead.email,
     subject: `Your website is ready, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
     html: emailHtml({
-      preheader: 'Here it is - the page I designed for you, and what it could become.',
+      preheader: 'Here it is - the page I designed for you, and what happens if you say yes.',
       heading: 'Your website is ready 🎁',
       lines: [
         `Here it is. I designed this for <strong>${esc(lead.business)}</strong> from ${from}, `
@@ -177,12 +169,15 @@ async function sendLeadPreview(db, id, url, opts) {
         ? `This opens on a temporary address. ${esc(claimable)} is yours when you join.`
         : 'This opens on a temporary address while it&rsquo;s an example.',
       domain: domainBlock,
-      could: {
-        title: 'Right now it&rsquo;s a shell. Here&rsquo;s what it could do.',
-        intro: 'What you&rsquo;re looking at is one page: the look and the feel. Once you say yes, I build the rest around it. Some of this goes in from the start; the rest you ask for whenever you want it, and I add it, included.',
-        items: COULD
-      },
-      plans: planLadder(site, claimable, lead.id),
+      could: [
+        {
+          title: 'Right now it&rsquo;s a shell. Here&rsquo;s what it could do.',
+          intro: 'What you&rsquo;re looking at is one page: the look and the feel. Once you say yes, I build the rest around it. Some of this goes in from the start; the rest you ask for whenever you want it, and I add it, included.',
+          items: COULD
+        },
+        NEXT
+      ],
+      plans: businessCard(site, claimable, lead.id),
       offerLast: true,
       offer: {
         code: PREVIEW_OFFER.code,
@@ -210,17 +205,13 @@ async function sendLeadPreview(db, id, url, opts) {
         + `Right now it's a shell: one page, the look and the feel. Once you say yes, `
         + `here's what it could do. Some goes in from the start; the rest you ask for, any time, included:\n`
         + COULD.map((t) => '- ' + t).join('\n') + '\n\n'
-        + `Three ways to have it. I build every one of them for you.\n\n`
-        + `MAX - GBP 250 a month. The whole thing: built, found on Google, and worked on every `
-        + `month without you asking. Missed calls texted back, booking reminders texted, business `
-        + `email at your own address, first in the queue.\n${joinHref(site, 'max', claimable, lead.id)}\n\n`
-        + `BUSINESS - GBP 50 a month. If you want to be online and don't need me working on the `
-        + `site every month or texting your customers, Business is for you. The full site, and `
-        + `unlimited changes made by me within 48 hours.\n${joinHref(site, 'business', claimable, lead.id)}\n\n`
-        + `STARTER - GBP 25 a month. If you love the page as it is and just want somewhere `
-        + `customers can visit you online and call or email you, Starter is for you.\n`
-        + `${joinHref(site, 'starter', claimable, lead.id)}\n\n`
-        + `No setup fees. Move up or down any month. Cancel any month.\n\n`
+        + `What happens when you say yes:\n`
+        + NEXT.items.map((t) => '- ' + t).join('\n') + '\n\n'
+        + `Make it your site. Business, GBP 50 a month, everything in it: bookings, payments, `
+        + `forms and live chat, reviews asked for automatically, unlimited changes within 48 hours, `
+        + `your web address, hosting and security. No setup fee. Cancel any month.\n`
+        + `${joinHref(site, 'business', claimable, lead.id)}\n\n`
+        + `kanvasacademy.com and nellyandnova.co.uk run on this. Built by me, and you can message me.\n\n`
         + `50% off your first month with ${PREVIEW_OFFER.code}, on any plan:\n`
         + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`
         + `Anything you'd change on the page, just reply and say so. Changes are free, `

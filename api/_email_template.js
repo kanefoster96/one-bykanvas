@@ -147,13 +147,16 @@ function offerBox(offer) {
           </table>`;
 }
 
-/* A plain list under a short title: things the site could do, in the
-   ready email. Dots rather than ticks on purpose - a tick reads as
-   "included from day one", and these are what they can ask for. Title and
-   intro are raw HTML; items are escaped. */
+/* A list under a short title. Dots for things the site could do (a tick
+   reads as "included from day one", and these are what they can ask for);
+   ticks, with block.ticks, for what will happen. Title and intro are raw
+   HTML; items are escaped. */
 function couldList(block) {
+  const mark = block.ticks
+    ? `<td width="22" valign="top" style="padding:6px 0 0;font-size:15px;line-height:1.5;color:${GOOD};font-family:${FONT};">&#10003;</td>`
+    : `<td width="18" valign="top" style="padding:6px 0 0;font-size:15px;line-height:1.5;color:${INK_3};font-family:${FONT};">&bull;</td>`;
   const items = block.items.map((t) => `<tr>
-      <td width="18" valign="top" style="padding:6px 0 0;font-size:15px;line-height:1.5;color:${INK_3};font-family:${FONT};">&bull;</td>
+      ${mark}
       <td valign="top" style="padding:6px 0 0;font-size:15px;line-height:1.5;color:${INK_2};font-family:${FONT};">${esc(t)}</td>
     </tr>`).join('');
   const intro = block.intro
@@ -266,7 +269,10 @@ function html({
   const warn = callout ? calloutBox(callout) : '';
 
   const claim = domain && domain.domain ? domainClaim(domain) : '';
-  const might = could && could.items && could.items.length ? couldList(could) : '';
+  /* One block or several, in order. */
+  const might = [].concat(could || [])
+    .filter((c) => c && c.items && c.items.length)
+    .map(couldList).join('');
   const ladder = plans && plans.cards && plans.cards.length ? `
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:30px 0 0;">
           <tr><td>
