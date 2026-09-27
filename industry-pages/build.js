@@ -237,7 +237,9 @@ ${JSON.stringify({
   mainEntity: faqFor(b).map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
-` : ''}<link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
+` : ''}<link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=3">
 <link rel="stylesheet" href="styles.css?v=${CSS_V}">
 </head>
 <body>
@@ -486,7 +488,9 @@ ${JSON.stringify({
   mainEntity: f.faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
-<link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=3">
 <link rel="stylesheet" href="styles.css?v=${CSS_V}">
 </head>
 <body>
