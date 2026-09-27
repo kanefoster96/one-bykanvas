@@ -709,6 +709,7 @@ body.dialog-open{overflow:hidden}
 .ticks li.tick-hero{color:var(--good);font-weight:600}
 .ticks li.tick-hero::before{border-color:var(--good);border-width:2.5px}
 .ticks li.tick-hero a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.pick-feats .ticks li.tick-hero{color:var(--good);font-weight:600}
 
 /* And the case for it, under the three cards rather than crammed into one. */
 .seo-pitch{
