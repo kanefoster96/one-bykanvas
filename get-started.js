@@ -981,14 +981,14 @@
         tag: 'Add growth',
         head: 'Max: your site worked on every month, and your customers texted.',
         list: [
+          'Your Facebook and Instagram ads, set up, run and tracked by me. You set the budget',
           'Your Google ranking worked on every month',
           'Missed calls answered by text in seconds',
-          'Booking reminders texted to your customers',
-          'Business email, and first in the queue'
+          'Business email, a business number, and first in the queue'
         ],
-        note: 'A new site climbs fastest when the work starts on day one. Run Max for the launch months, then step down to Business any month. <strong>You keep the ranking.</strong>',
+        note: 'I need a photo or a line of text; I do the rest. <strong>Ten businesses at a time, £250 for the first ten.</strong> Step down any month; you keep the ranking.',
         btn: 'Add growth — Max, £250 a month',
-        line: 'Want the site worked on every month? '
+        line: 'Want me to go and get you customers? '
       }
     };
 

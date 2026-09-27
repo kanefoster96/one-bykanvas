@@ -75,7 +75,7 @@ const COMMON_FAQ = [
   ['What happens if I cancel?', 'No exit fee. Your site goes offline and your domain transfers to you free.']
 ];
 
-const MAX_HEADING = 'Want to show up higher every month?';
+const MAX_HEADING = 'Want me to go and get you customers?';
 
 
 module.exports = [
