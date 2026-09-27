@@ -28,6 +28,13 @@
       var input = r.querySelector('input');
       if (input) r.classList.toggle('is-on', input.checked);
     });
+    /* Starter arrivals are not asked for three features: on Starter the
+       page is the site. The block hides and a line says so. */
+    if (want === 'starter') {
+      var block = document.getElementById('useBlock'), line = document.getElementById('starterUses');
+      if (block) block.hidden = true;
+      if (line) line.hidden = false;
+    }
   })();
 
   /* ?domain= from the ready email: the address they were offered with their

@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 93;
+const CSS_V = 94;
 const SCRIPT_V = 30;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -286,7 +286,7 @@ ${CASES.map((c) => `    <article class="case">
       <div class="badge">The site</div>
       <h3>Starter</h3>
       <p class="price"><span class="cur">&pound;</span>25<span class="per">/month</span></p>
-      <p class="plan-note">Designed and hosted for you. Contact form and click to call. No setup fee.</p>
+      <p class="plan-note">Found on Google, called and messaged. Designed and hosted for you. No setup fee.</p>
       <a class="btn btn-primary full" href="/get-started.html?plan=starter">Choose Starter &rsaquo;</a>
     </article>
     <article class="plan">

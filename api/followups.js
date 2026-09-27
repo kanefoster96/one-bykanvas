@@ -36,6 +36,82 @@ const F2_UNTIL = 30 * DAY;
    restart window (terms §8.4) is still comfortably open. */
 const WB_AFTER = 30 * DAY;
 const WB_UNTIL = 60 * DAY;
+/* The month-in note: a month after a plan goes live, one email about the
+   plan above theirs. Said once, and not at all if the month is long gone. */
+const PN_AFTER = 30 * DAY;
+const PN_UNTIL = 45 * DAY;
+
+/* Informative, not a pitch: what the next plan does and why a business
+   might want it, in case any of it is useful. One email, ever. */
+function planNote(plan, name, site) {
+  const who = name ? esc(name) : 'your business';
+  if (plan === 'starter') {
+    return {
+      subject: 'A month in: what the site could do next',
+      html: emailHtml({
+        preheader: 'No ask here. Just what the next plan does, in case any of it is useful.',
+        heading: 'A month in',
+        lines: [
+          `The site for <strong>${who}` + '</strong> has been live a month now. No ask here, just what the plan above yours does, in case any of it is useful.',
+          'Business is the same site with the work that comes in from it handled by the site instead of your phone:'
+        ],
+        perks: [
+          '<strong>Bookings.</strong> Customers pick a slot themselves, so the back-and-forth texts stop.',
+          '<strong>Deposits and payments.</strong> Taken at booking, which is what cuts no-shows.',
+          '<strong>Live chat.</strong> Questions answered from your phone, and kept with the customer.',
+          '<strong>Reviews asked for automatically.</strong> A message after each job asking for a Google review. Reviews are what move you up the map.',
+          '<strong>Unlimited changes.</strong> Anything you want changed, done within 48 hours.'
+        ],
+        ctaText: 'See what Business does',
+        ctaHref: `${site}/plans.html#business`,
+        ctaNote: 'It is &pound;25 more a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.',
+        footer: 'You&rsquo;re getting this because your Kanvas One plan went live about a month ago. It is the only email like it.',
+        footerLinks: standardFooter(site)
+      }),
+      text: `The site for ${name || 'your business'} has been live a month now. No ask here, just what `
+          + `the plan above yours does, in case any of it is useful.\n\n`
+          + `Business is the same site with the work that comes in from it handled by the site instead of your phone:\n`
+          + `- Bookings: customers pick a slot themselves, so the back-and-forth texts stop.\n`
+          + `- Deposits and payments: taken at booking, which is what cuts no-shows.\n`
+          + `- Live chat: questions answered from your phone, and kept with the customer.\n`
+          + `- Reviews asked for automatically: a message after each job asking for a Google review.\n`
+          + `- Unlimited changes, done within 48 hours.\n\n`
+          + `It is GBP 25 more a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.\n`
+          + `${site}/plans.html#business\n`
+    };
+  }
+  return {
+    subject: 'A month in: getting more people to find you',
+    html: emailHtml({
+      preheader: 'No ask here. Just what Max does, in case any of it is useful.',
+      heading: 'A month in',
+      lines: [
+        `The site for <strong>${who}` + '</strong> has been live a month now. No ask here, just what the plan above yours does, in case any of it is useful.',
+        'Max is your site plus me going and getting customers for it:'
+      ],
+      perks: [
+        '<strong>Your Facebook and Instagram ads, run for you.</strong> You set the budget and change it whenever you like. I write the offer, build the ad and the form, and send you a note each month saying what it cost and what came in.',
+        '<strong>Your Google ranking worked on every month.</strong> The words on your pages, what Google and AI assistants read first, the questions customers actually type.',
+        '<strong>Missed calls answered by text in seconds</strong>, on a business number of your own.',
+        '<strong>Booking reminders texted</strong> to your customers, and business email at your own address.'
+      ],
+      ctaText: 'See what Max does',
+      ctaHref: `${site}/plans.html#max`,
+      ctaNote: 'It is &pound;250 a month, ten businesses at a time. If you ever want it, switch from your account. If not, nothing changes.',
+      footer: 'You&rsquo;re getting this because your Kanvas One plan went live about a month ago. It is the only email like it.',
+      footerLinks: standardFooter(site)
+    }),
+    text: `The site for ${name || 'your business'} has been live a month now. No ask here, just what `
+        + `the plan above yours does, in case any of it is useful.\n\n`
+        + `Max is your site plus me going and getting customers for it:\n`
+        + `- Your Facebook and Instagram ads, run for you. You set the budget and change it whenever you like.\n`
+        + `- Your Google ranking worked on every month.\n`
+        + `- Missed calls answered by text in seconds, on a business number of your own.\n`
+        + `- Booking reminders texted to your customers, and business email at your own address.\n\n`
+        + `It is GBP 250 a month, ten businesses at a time. If you ever want it, switch from your account. If not, nothing changes.\n`
+        + `${site}/plans.html#max\n`
+  };
+}
 
 function offerBox(site) {
   return {
@@ -271,9 +347,39 @@ module.exports = async function handler(req, res) {
       if (outcome === 'sent') sentWb++;
     }
 
-    if (sentF1 + sentF2 + sentWb > 0) {
+    /* ---- the month-in note: one email about the plan above theirs ----- */
+    let sentPn = 0;
+    const { data: month, error: pnErr } = await db.from('profiles')
+      .select('id, business_name, active_plan, subscribed_at, plan_note_sent_at, subscription_status')
+      .in('subscription_status', ['active', 'trialing'])
+      .in('active_plan', ['starter', 'business'])
+      .not('subscribed_at', 'is', null)
+      .is('plan_note_sent_at', null)
+      .limit(100);
+    if (pnErr) console.error('followups: plan-note query failed:', pnErr.message);
+
+    for (const p of month || []) {
+      const age = now - new Date(p.subscribed_at).getTime();
+      if (age < PN_AFTER || age > PN_UNTIL) continue;
+
+      const { error: pnStamp } = await db.from('profiles')
+        .update({ plan_note_sent_at: new Date().toISOString() })
+        .eq('id', p.id).is('plan_note_sent_at', null);
+      if (pnStamp) { console.error('followups: plan-note stamp failed:', pnStamp.message); continue; }
+
+      const { data: who } = await db.auth.admin.getUserById(p.id);
+      const email = who && who.user && who.user.email;
+      if (!email) continue;
+
+      const note = planNote(p.active_plan, p.business_name, site);
+      const outcome = await sendEmail({ to: email, subject: note.subject, html: note.html, text: note.text });
+      console.log('followups: plan note (%s) to %s -> %s', p.active_plan, email, outcome);
+      if (outcome === 'sent') sentPn++;
+    }
+
+    if (sentF1 + sentF2 + sentWb + sentPn > 0) {
       await notifyAdmin(db, 'Follow-ups sent',
-        `${sentF1} "what did you think", ${sentF2} final follow-ups, and ${sentWb} win-backs went out.`);
+        `${sentF1} "what did you think", ${sentF2} final follow-ups, ${sentWb} win-backs and ${sentPn} month-in notes went out.`);
     }
 
     /* ---- retention: what the privacy notice promises, kept true ------- */
@@ -291,3 +397,5 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Something went wrong.' });
   }
 };
+
+module.exports.planNote = planNote;
