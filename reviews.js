@@ -4,29 +4,19 @@
  * GOOGLE_PLACE_ID are set in Vercel) and falls back to the list below. The
  * shapes match, so nothing else has to change when Google is switched on.
  *
- * NOTE: these fallbacks are placeholders. Replace them with real, attributed
- * quotes, or connect Google, before relying on them.
+ * Until Google is connected, the two businesses running on Kanvas One speak
+ * for it, each in their own voice, about what the site does for them. The
+ * dance school is our own; the dog trainer is a customer. Each card links
+ * to the live site so the claim can be checked.
  */
 (function () {
   'use strict';
 
   var FALLBACK = [
-    { author: 'Priya Shah',       trade: 'Independent café',  rating: 5, when: 'placeholder',
-      text: 'been live about a week now and i’ve already changed the menu twice myself, so much easier than i thought it’d be' },
-    { author: 'Jamie Ellis',      trade: 'Barber shop',       rating: 5, when: 'placeholder',
-      text: 'no idea why i left it so long tbh. up and running in about 10 days and bookings just come straight through now' },
-    { author: 'Craig Whitfield',  trade: 'Landscaping',       rating: 5, when: 'placeholder',
-      text: 'we’re actually showing up when people search for gardeners near us now, wasn’t expecting that so quick' },
-    { author: 'Sophie Marsh',     trade: 'Dog groomer',       rating: 5, when: 'placeholder',
-      text: 'i just message if i want something changed and it’s sorted, no faffing about with invoices or waiting around' },
-    { author: 'Faisal Ahmed',     trade: 'Takeaway',          rating: 5, when: 'placeholder',
-      text: 'the ordering thing has genuinely been huge for us, loads of regulars order ahead now instead of ringing up' },
-    { author: 'Liam Doyle',       trade: 'Personal trainer',  rating: 5, when: 'placeholder',
-      text: 'clients book and pay for their own sessions now, honestly saved me so much time chasing people about it' },
-    { author: 'Chloe Bennett',    trade: 'Nail salon',        rating: 5, when: 'placeholder',
-      text: 'deposits have pretty much stopped the no shows, should’ve set this up ages ago' },
-    { author: 'Dave Sutton',      trade: 'Plumber',           rating: 5, when: 'placeholder',
-      text: 'not great with computers if i’m honest but they just sorted the whole thing for me, dead easy' }
+    { author: 'Kanvas Academy', trade: 'Dance school, North Tyneside', url: 'https://kanvasacademy.com', rating: 5, when: '',
+      text: 'New families find us on Google, book a free trial on the site, and by the time they walk in they’ve read what to bring, paid, and signed the forms. We used to spend evenings answering the same questions in messages. Now the site answers them before anyone asks, and every enquiry, chat and booking is in one place. Our shows and our dancers are on our own site, not just on Instagram, so parents can see what they’re joining.' },
+    { author: 'Nelly & Nova', trade: 'Dog trainer, Newcastle', url: 'https://nellyandnova.co.uk', rating: 5, when: '',
+      text: 'I started with nothing. Now people searching for dog training near me find the site, read how I work, and book themselves in. The questions I used to answer ten times a day are answered on the site before I get the message. Chats, enquiries and bookings all land in the same place, so nothing gets lost while I’m out with a dog. Having my work on my own site, not just social, is what makes people trust me before we’ve met. I’ve got a waiting list.' }
   ];
 
   var AV = ['av1', 'av2', 'av3', 'av4', 'av5'];
@@ -55,6 +45,9 @@
   function card(review, i) {
     var stars = '★★★★★'.slice(0, Math.round(review.rating || 5));
     var sub = review.trade || review.when || '';
+    var site = safePhoto(review.url) && /^https:\/\//i.test(review.url)
+      ? '<a href="' + esc(review.url) + '" target="_blank" rel="noopener">' + esc(review.url.replace(/^https?:\/\//, '')) + '</a>'
+      : '';
     var avatar = safePhoto(review.photo)
       ? '<img class="avatar" src="' + esc(safePhoto(review.photo)) + '" alt="" loading="lazy" width="42" height="42">'
       : '<span class="avatar ' + AV[i % AV.length] + '" aria-hidden="true">' + esc(initials(review.author)) + '</span>';
@@ -63,7 +56,7 @@
       + '<div class="stars" aria-label="' + Math.round(review.rating || 5) + ' out of 5">' + stars + '</div>'
       + '<blockquote>“' + esc(review.text) + '”</blockquote>'
       + '<footer>' + avatar + '<div><strong>' + esc(review.author) + '</strong>'
-      + (sub ? '<span>' + esc(sub) + '</span>' : '') + '</div></footer>'
+      + (sub ? '<span>' + esc(sub) + '</span>' : '') + (site ? '<span>' + site + '</span>' : '') + '</div></footer>'
       + '</article>';
   }
 
