@@ -262,21 +262,17 @@ ${b.stepsLine ? `  <div class="wrap center reveal">
   </div>
 ` : ''}</section>
 
-${CASES.length ? `<section class="section grey cases-section">
+<section class="section grey">
   <div class="wrap center">
     <h2 class="reveal">Built by me. Working for them.</h2>
-    <p class="lede reveal">Two of ours, doing what they were built to do.</p>
   </div>
-  <div class="wrap cases reveal">
-${CASES.map((c) => `    <article class="case">
-      <p class="case-tag">${c.tag}</p>
-      <h3>${c.title}</h3>
-      <p>${c.text}</p>
-      <a href="${c.url}" target="_blank" rel="noopener">${c.host} &rsaquo;</a>
-    </article>`).join('\n')}
+  <div class="rail" id="rail" data-reviews="2" role="region" aria-label="Customer reviews"></div>
+  <div class="rail-nav">
+    <button class="rail-btn" data-dir="-1" aria-label="Previous reviews">&lsaquo;</button>
+    <button class="rail-btn" data-dir="1" aria-label="Next reviews">&rsaquo;</button>
   </div>
 </section>
-` : ''}${b.maxPitch ? `<section class="section">
+${b.maxPitch ? `<section class="section">
   <div class="wrap center">
     <h2 class="reveal">${b.maxPitch.heading}</h2>
     <p class="lede reveal">${lines(b.maxPitch.text)}</p>
@@ -380,6 +376,7 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>
+<script src="reviews.js?v=3"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
