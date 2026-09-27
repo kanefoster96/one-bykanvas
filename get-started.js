@@ -28,13 +28,6 @@
       var input = r.querySelector('input');
       if (input) r.classList.toggle('is-on', input.checked);
     });
-    /* Starter arrivals are not asked for three features: on Starter the
-       page is the site. The block hides and a line says so. */
-    if (want === 'starter') {
-      var block = document.getElementById('useBlock'), line = document.getElementById('starterUses');
-      if (block) block.hidden = true;
-      if (line) line.hidden = false;
-    }
   })();
 
   /* ?domain= from the ready email: the address they were offered with their
@@ -208,10 +201,12 @@
 
   /* ------------------------------------------------------------- steps */
   async function advance(button) {
+    /* Account, plan, business, address, pay. The plan comes second so a
+       Starter buyer is never asked for features the plan does not build. */
     if (current === 1) return step1(button);
-    if (current === 2) return step2();
-    if (current === 3) return stepDomain();
-    if (current === 4) return stepPlan();
+    if (current === 2) return stepPlan();
+    if (current === 3) return stepBusiness();
+    if (current === 4) return stepDomain();
     if (current === 5) return stepPay(button);
   }
 
@@ -459,7 +454,7 @@
     if (pick) pick.dispatchEvent(new Event('change'));
   }
 
-  function step2() {
+  function stepBusiness() {
     var note = $('note2');
     var type = val('business_type');
     var uses = [val('use1'), val('use2'), val('use3')].filter(Boolean);
@@ -471,13 +466,13 @@
     answers.business_type = type;
     answers.site_uses = uses;
     say(note, '');
-    show(3);
+    show(4);
     askDomains();
   }
 
   (function wireDownsell() {
     var down = $('payDown');
-    if (down) down.addEventListener('click', function () { offerStarter(); stepPlan(); });
+    if (down) down.addEventListener('click', function () { offerStarter(); paintPay(); });
     var more = $('boostMore'), list = $('boostList');
     if (more && list) more.addEventListener('click', function () {
       list.hidden = !list.hidden;
@@ -668,7 +663,8 @@
     answers.requested_domain = null;
     answers.domain_owned = false;
     say($('noteDomain'), '');
-    show(4);
+    paintPay();
+    show(5);
   });
 
   function stepDomain() {
@@ -691,11 +687,26 @@
     }
 
     say($('noteDomain'), '');
-    show(4);
+    paintPay();
+    show(5);
   }
 
-  /* 4 — plan */
+  /* 2 — plan. Chosen before anything about the business, so the business
+     step can leave out what the plan does not build: on Starter the page
+     is the site, and the three features are not asked for. */
   function stepPlan() {
+    var chosen = document.querySelector('input[name="plan"]:checked');
+    answers.selected_plan = chosen ? chosen.value : 'starter';
+    var starter = answers.selected_plan === 'starter';
+    var block = $('useBlock'), line = $('starterUses');
+    if (block) block.hidden = starter;
+    if (line) line.hidden = !starter;
+    show(3);
+  }
+
+  /* 5 — the pay step's summary, painted on the way in from the address
+     step (and again if they step down to Starter there). */
+  function paintPay() {
     var chosen = document.querySelector('input[name="plan"]:checked');
     answers.selected_plan = chosen ? chosen.value : 'starter';
     var plan = PLANS[answers.selected_plan];
@@ -765,8 +776,6 @@
     /* The downsell only makes sense from above Starter. */
     var down = $('payDown');
     if (down) down.hidden = answers.selected_plan === 'starter';
-
-    show(5);
   }
 
 
