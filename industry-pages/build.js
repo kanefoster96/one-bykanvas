@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 91;
+const CSS_V = 92;
 const SCRIPT_V = 30;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -302,11 +302,11 @@ ${CASES.map((c) => `    <article class="case">
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">Everything in Business, plus:</p>
       <ul class="ticks">
+        <li>Your Facebook and Instagram ads, run by me. You set the budget</li>
         <li>Your Google ranking worked on every month</li>
         <li>Missed calls answered by text in seconds</li>
-        <li>Booking reminders texted to customers</li>
       </ul>
-      <p class="plan-up">Run it for the launch months, then step down. The ranking stays.</p>
+      <p class="plan-up">Ten businesses at a time. &pound;250 for the first ten.</p>
       <a class="btn btn-ghost full" href="/plans.html#max">Learn more about Max &rsaquo;</a>
     </article>
   </div>
