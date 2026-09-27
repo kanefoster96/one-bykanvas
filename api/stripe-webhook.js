@@ -204,6 +204,12 @@ module.exports = async function handler(req, res) {
         : startedAt;
     }
 
+    /* The first time a plan is live, remember when: the month-in email
+       about the plan above theirs counts from here (followups.js). */
+    if (isLive(sub.status) && !(before && before.subscribed_at)) {
+      patch.subscribed_at = new Date().toISOString();
+    }
+
     const { error } = await admin.from('profiles').upsert(patch, { onConflict: 'id' });
     if (error) throw new Error(error.message);
     console.log('webhook: %s -> %s (live: %s)', id, sub.status, isLive(sub.status));

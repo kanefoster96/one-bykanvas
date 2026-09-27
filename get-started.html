@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=93">
+<link rel="stylesheet" href="styles.css?v=94">
 </head>
 <body class="auth-body">
 
@@ -70,6 +70,7 @@
           </datalist>
         </div>
 
+        <div id="useBlock">
         <p class="wiz-label">Three things you want the site to do</p>
         <!-- A combobox: type your own, or open the list and pick. The list
              is the shared feature library, filtered as they type, minus
@@ -98,6 +99,11 @@
           <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           <ul class="combo-list" id="useList3" role="listbox" hidden></ul>
         </div>
+        </div>
+        <!-- Starter arrivals (from the ready email, the card, the plans page)
+             skip the features: on Starter the page is the site. Shown by
+             get-started.js in their place. -->
+        <p class="hint starter-uses" id="starterUses" hidden>On Starter the page you saw is the site, with your contact form and click to call. Pick Business later and I&rsquo;ll ask what three things to build first.</p>
 
         <p class="hint">On Starter these are what you&rsquo;d change first. On Business, all three are built within 14 days of joining.</p>
 
@@ -369,7 +375,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=23"></script>
+<script src="get-started.js?v=24"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
