@@ -56,118 +56,7 @@
       </section>
 
       <!-- ============ 2. the business ============ -->
-      <section class="wiz-step" data-step="2" aria-label="Your business" hidden>
-        <h1>What do you do?</h1>
-        <p class="wiz-sub">So we build the right kind of site for you.</p>
-        <div class="field">
-          <label for="business_type">Type of business</label>
-          <input id="business_type" type="text" list="types" placeholder="Café, barber, landscaping…">
-          <datalist id="types">
-            <option value="Café"></option><option value="Restaurant"></option><option value="Takeaway"></option>
-            <option value="Barber"></option><option value="Hair &amp; beauty salon"></option><option value="Gym or personal trainer"></option>
-            <option value="Trades (plumber, electrician, builder)"></option><option value="Landscaping or gardening"></option>
-            <option value="Cleaning"></option><option value="Retail shop"></option><option value="Professional services"></option>
-          </datalist>
-        </div>
-
-        <div id="useBlock">
-        <p class="wiz-label">Three things you want the site to do</p>
-        <!-- A combobox: type your own, or open the list and pick. The list
-             is the shared feature library, filtered as they type, minus
-             anything already in another box. -->
-        <div class="field combo">
-          <input id="use1" type="text" placeholder="Show customers my live menu" aria-label="First thing you want the site to do"
-                 autocomplete="off" role="combobox" aria-expanded="false" aria-controls="useList1" aria-autocomplete="list">
-          <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-          <ul class="combo-list" id="useList1" role="listbox" hidden></ul>
-        </div>
-        <!-- A combobox: type your own, or open the list and pick. The list
-             is the shared feature library, filtered as they type, minus
-             anything already in another box. -->
-        <div class="field combo">
-          <input id="use2" type="text" placeholder="Take bookings without phone calls" aria-label="Second thing you want the site to do"
-                 autocomplete="off" role="combobox" aria-expanded="false" aria-controls="useList2" aria-autocomplete="list">
-          <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-          <ul class="combo-list" id="useList2" role="listbox" hidden></ul>
-        </div>
-        <!-- A combobox: type your own, or open the list and pick. The list
-             is the shared feature library, filtered as they type, minus
-             anything already in another box. -->
-        <div class="field combo">
-          <input id="use3" type="text" placeholder="Get found by people searching nearby" aria-label="Third thing you want the site to do"
-                 autocomplete="off" role="combobox" aria-expanded="false" aria-controls="useList3" aria-autocomplete="list">
-          <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-          <ul class="combo-list" id="useList3" role="listbox" hidden></ul>
-        </div>
-        </div>
-        <!-- Starter arrivals (from the ready email, the card, the plans page)
-             skip the features: on Starter the page is the site. Shown by
-             get-started.js in their place. -->
-        <p class="hint starter-uses" id="starterUses" hidden>On Starter the page you saw is the site, with your contact form and click to call. Pick Business later and I&rsquo;ll ask what three things to build first.</p>
-
-        <p class="hint">On Starter these are what you&rsquo;d change first. On Business, all three are built within 14 days of joining.</p>
-
-        <p class="note" id="note2" role="status" aria-live="polite"></p>
-        <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
-        <ul class="assure">
-          <li>Nothing here is final</li>
-          <li>We fill in the gaps with you</li>
-        </ul>
-        <button class="linkish wiz-back" data-back type="button">Back</button>
-      </section>
-
-      <!-- ============ 3. plan ============ -->
-      <!-- ============ web address ============ -->
-      <section class="wiz-step" data-step="3" aria-label="Your web address" hidden>
-        <h1>Your web address.</h1>
-        <p class="wiz-sub">Here are three that are free right now. Pick one, or type the address you want and we&rsquo;ll check it.</p>
-
-        <!-- Three placeholder rows stand in while the registries are asked, so
-             the step has its final shape from the first frame and nobody is
-             left looking at an empty box. -->
-        <div class="pick" id="domList" aria-live="polite" aria-busy="true">
-          <div class="pick-row is-waiting"><span class="dom-bar"></span><span class="dom-searching">Searching&hellip;</span></div>
-          <div class="pick-row is-waiting"><span class="dom-bar"></span></div>
-          <div class="pick-row is-waiting"><span class="dom-bar"></span></div>
-        </div>
-        <p class="dom-state" id="domState" hidden></p>
-
-        <div class="field">
-          <label for="domOwn">Or type the one you want</label>
-          <div class="dom-own">
-            <input id="domOwn" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="yourbusiness.co.uk">
-            <button class="btn btn-ghost" id="domCheck" type="button">Check</button>
-          </div>
-          <p class="hint" id="domOwnNote">&nbsp;</p>
-        </div>
-
-        <!-- Someone who already owns a domain is a different job: it gets moved
-             across, not registered, and "already taken" is the right answer for
-             it rather than a problem. -->
-        <details class="dom-have">
-          <summary>Have a domain already?</summary>
-          <div class="field">
-            <label for="domHave">Your current web address</label>
-            <input id="domHave" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="yourbusiness.co.uk">
-            <p class="hint">We&rsquo;ll request the move and point it at your new site when it&rsquo;s ready. Nothing goes offline in the meantime.</p>
-          </div>
-        </details>
-
-        <div class="paynote">
-          <p>Registered for you the day you join, and included in your plan &mdash; you never pay for it separately. Change it any time before then.</p>
-        </div>
-
-        <p class="note" id="noteDomain" role="status" aria-live="polite"></p>
-        <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
-        <ul class="assure">
-          <li>Included in your plan</li>
-          <li>Change it before we buy it</li>
-        </ul>
-        <button class="linkish" id="domSkip" type="button">Help me choose later</button>
-        <button class="linkish wiz-back" data-back type="button">Back</button>
-      </section>
-
-      <section class="wiz-step" data-step="4" aria-label="Choose a plan" hidden>
+      <section class="wiz-step" data-step="2" aria-label="Choose a plan" hidden>
         <h1>Your plan.</h1>
         <p class="wiz-sub">Starter is the site. Business, for &pound;25 more, gets you booked. Max adds growth. Move between them any month.</p>
 
@@ -263,6 +152,111 @@
           <li>Move up or down any time</li>
           <li>Cancel anytime</li>
         </ul>
+        <button class="linkish wiz-back" data-back type="button">Back</button>
+      </section>
+      <section class="wiz-step" data-step="3" aria-label="Your business" hidden>
+        <h1>What do you do?</h1>
+        <p class="wiz-sub">So we build the right kind of site for you.</p>
+        <div class="field">
+          <label for="business_type">Type of business</label>
+          <input id="business_type" type="text" list="types" placeholder="Café, barber, landscaping…">
+          <datalist id="types">
+            <option value="Café"></option><option value="Restaurant"></option><option value="Takeaway"></option>
+            <option value="Barber"></option><option value="Hair &amp; beauty salon"></option><option value="Gym or personal trainer"></option>
+            <option value="Trades (plumber, electrician, builder)"></option><option value="Landscaping or gardening"></option>
+            <option value="Cleaning"></option><option value="Retail shop"></option><option value="Professional services"></option>
+          </datalist>
+        </div>
+
+        <div id="useBlock">
+        <p class="wiz-label">Three things you want the site to do</p>
+        <!-- A combobox: type your own, or open the list and pick. The list
+             is the shared feature library, filtered as they type, minus
+             anything already in another box. -->
+        <div class="field combo">
+          <input id="use1" type="text" placeholder="Show customers my live menu" aria-label="First thing you want the site to do"
+                 autocomplete="off" role="combobox" aria-expanded="false" aria-controls="useList1" aria-autocomplete="list">
+          <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <ul class="combo-list" id="useList1" role="listbox" hidden></ul>
+        </div>
+        <!-- A combobox: type your own, or open the list and pick. The list
+             is the shared feature library, filtered as they type, minus
+             anything already in another box. -->
+        <div class="field combo">
+          <input id="use2" type="text" placeholder="Take bookings without phone calls" aria-label="Second thing you want the site to do"
+                 autocomplete="off" role="combobox" aria-expanded="false" aria-controls="useList2" aria-autocomplete="list">
+          <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <ul class="combo-list" id="useList2" role="listbox" hidden></ul>
+        </div>
+        <!-- A combobox: type your own, or open the list and pick. The list
+             is the shared feature library, filtered as they type, minus
+             anything already in another box. -->
+        <div class="field combo">
+          <input id="use3" type="text" placeholder="Get found by people searching nearby" aria-label="Third thing you want the site to do"
+                 autocomplete="off" role="combobox" aria-expanded="false" aria-controls="useList3" aria-autocomplete="list">
+          <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <ul class="combo-list" id="useList3" role="listbox" hidden></ul>
+        </div>
+        <p class="hint">All three built within 14 days of joining, or your next month is free.</p>
+        </div>
+        <!-- On Starter the features block above is hidden (the plan step
+             does it) and this line stands in: the page is the site. -->
+        <p class="hint starter-uses" id="starterUses" hidden>On Starter the page you saw is the site, with your contact form and click to call. Nothing to pick here.</p>
+
+        <p class="note" id="note2" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <ul class="assure">
+          <li>Nothing here is final</li>
+          <li>We fill in the gaps with you</li>
+        </ul>
+        <button class="linkish wiz-back" data-back type="button">Back</button>
+      </section>
+      <section class="wiz-step" data-step="4" aria-label="Your web address" hidden>
+        <h1>Your web address.</h1>
+        <p class="wiz-sub">Here are three that are free right now. Pick one, or type the address you want and we&rsquo;ll check it.</p>
+
+        <!-- Three placeholder rows stand in while the registries are asked, so
+             the step has its final shape from the first frame and nobody is
+             left looking at an empty box. -->
+        <div class="pick" id="domList" aria-live="polite" aria-busy="true">
+          <div class="pick-row is-waiting"><span class="dom-bar"></span><span class="dom-searching">Searching&hellip;</span></div>
+          <div class="pick-row is-waiting"><span class="dom-bar"></span></div>
+          <div class="pick-row is-waiting"><span class="dom-bar"></span></div>
+        </div>
+        <p class="dom-state" id="domState" hidden></p>
+
+        <div class="field">
+          <label for="domOwn">Or type the one you want</label>
+          <div class="dom-own">
+            <input id="domOwn" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="yourbusiness.co.uk">
+            <button class="btn btn-ghost" id="domCheck" type="button">Check</button>
+          </div>
+          <p class="hint" id="domOwnNote">&nbsp;</p>
+        </div>
+
+        <!-- Someone who already owns a domain is a different job: it gets moved
+             across, not registered, and "already taken" is the right answer for
+             it rather than a problem. -->
+        <details class="dom-have">
+          <summary>Have a domain already?</summary>
+          <div class="field">
+            <label for="domHave">Your current web address</label>
+            <input id="domHave" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="yourbusiness.co.uk">
+            <p class="hint">We&rsquo;ll request the move and point it at your new site when it&rsquo;s ready. Nothing goes offline in the meantime.</p>
+          </div>
+        </details>
+
+        <div class="paynote">
+          <p>Registered for you the day you join, and included in your plan &mdash; you never pay for it separately. Change it any time before then.</p>
+        </div>
+
+        <p class="note" id="noteDomain" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <ul class="assure">
+          <li>Included in your plan</li>
+          <li>Change it before we buy it</li>
+        </ul>
+        <button class="linkish" id="domSkip" type="button">Help me choose later</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
 
@@ -375,7 +369,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=24"></script>
+<script src="get-started.js?v=25"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
