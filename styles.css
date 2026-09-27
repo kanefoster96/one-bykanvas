@@ -66,6 +66,7 @@ h3{font-size:21px;letter-spacing:-.02em}
    above it, so two sentences that each wrap on a phone do not run into one
    block. (A styled <br> does not take a margin, so it is a spacer span.) */
 .gap{display:block;height:.45em}
+.lede.pain{max-width:46ch;font-size:clamp(16px,2vw,18px);color:var(--ink-3)}
 .lede.left{margin-left:0;text-align:left}
 .eyebrow{margin:0 0 10px;font-size:14px;font-weight:600;letter-spacing:.02em;color:var(--blue);text-transform:none}
 .micro{margin-top:34px;font-size:13px;line-height:1.5;color:var(--ink-3);max-width:52ch;margin-left:auto;margin-right:auto}

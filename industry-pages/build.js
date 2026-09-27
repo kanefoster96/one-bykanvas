@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 96;
+const CSS_V = 97;
 const SCRIPT_V = 30;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -45,6 +45,7 @@ const ICONS = {
 const ICO_COLORS = ['ico-blue', 'ico-green', 'ico-purple', 'ico-orange', 'ico-pink', 'ico-grey'];
 
 const INDUSTRIES = require('./industries.js');
+const FEATURES = require('./features.js');
 const CASES = INDUSTRIES.CASES || [];
 
 /* The cross-link strip: every industry page links the other nine, and the
@@ -105,6 +106,97 @@ function plain(html) {
     .replace(/&pound;/g, '\u00a3').replace(/&amp;/g, '&').replace(/&eacute;/g, '\u00e9');
 }
 
+
+/* Shared between the trade pages and the feature pages. */
+const NAV = `<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one.</a>
+    <button class="nav-chat" id="navChat" type="button" aria-label="Chat with us" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="menu" id="menu" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+
+<main id="main">
+
+`;
+
+function miniForm(placeholder) {
+  return `<!-- The free example, on the page the ad lands on: three things, one at a
+     time. Same endpoint and thank-you page as /free.html; script.js runs
+     it wherever #miniFree is. -->
+<section class="section pt0">
+  <div class="wrap center">
+    <form class="free-mini reveal" id="miniFree" novalidate>
+      <p class="hero-pill"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free</p>
+      <h3>See your site within 24 hours. Free.</h3>
+      <p class="lede">Three things, and a real page lands in your inbox within 24 hours.<span class="gap"></span>No card.</p>
+
+      <div class="hp" aria-hidden="true">
+        <label for="mini_extra">Leave this empty</label>
+        <input id="mini_extra" name="mini_extra" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="mini-step wait" id="miniStep1">
+        <label for="miniBusiness">Your business name</label>
+        <input id="miniBusiness" type="text" autocomplete="organization" placeholder="${placeholder || 'e.g. Fade Room Barbers'}" enterkeyhint="next">
+      </div>
+
+      <div class="mini-step" id="miniStep2" hidden>
+        <label for="miniHandle">Your business anywhere online</label>
+        <input id="miniHandle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@yourbusiness or a link" enterkeyhint="next">
+        <p class="hint">Instagram, Facebook, your current site, Trust a Trader &mdash; anywhere.</p>
+      </div>
+
+      <div class="mini-step" id="miniStep3" hidden>
+        <label for="miniEmail">Where should I send it? You&rsquo;ll have it within 24 hours.</label>
+        <div class="mini-row">
+          <input id="miniEmail" type="email" autocomplete="email" placeholder="you@example.com" enterkeyhint="send">
+          <button class="mini-go" id="miniSend" type="submit" aria-label="Send my free example">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <p class="note" id="miniNote" role="status" aria-live="polite"></p>
+      <p class="mini-alt">Already decided? <a href="/get-started.html">Get started &rsaquo;</a></p>
+    </form>
+  </div>
+</section>
+`;
+}
+
+const FOOT = `<footer class="foot">
+  <div class="wrap">
+    <p class="foot-logo">one.</p>
+    <p class="foot-by">by Kanvas</p>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="/how-it-works.html">How it works</a><a href="/whats-included.html">What&rsquo;s included</a><a href="/features.html">Features</a><a href="/reviews.html">Reviews</a><a href="/plans.html">Plans</a><a href="/get-started.html">Get started</a>
+    </nav>
+    <nav class="foot-legal-links" aria-label="Legal">
+      <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
+    </nav>
+    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Your page goes live on your own address the same day you join; the features you ask for are built within 14 days of joining, or your next month is free (see terms). Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. Cancel anytime &mdash; no further payments are taken.</p>
+    <p class="foot-copy">© <span id="year">2026</span> Kanvas One. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="consent.js?v=8"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="session.js?v=3"></script>
+<script src="script.js?v=${SCRIPT_V}"></script>
+<script src="reviews.js?v=3"></script>
+<script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
+<script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
+<script src="admin-pill.js?v=8"></script>
+</body>
+</html>
+`;
+
 function page(b) {
   const url = `https://kanvas.one/websites-for-${b.slug}`;
   const plainTitle = b.title.replace(/&amp;/g, '&').replace(/&eacute;/g, 'é');
@@ -152,22 +244,7 @@ ${JSON.stringify({
 
 <a class="skip" href="#main">Skip to content</a>
 
-<header class="nav" id="nav">
-  <div class="nav-inner">
-    <a class="logo" href="/" aria-label="Kanvas One — home">one.</a>
-    <button class="nav-chat" id="navChat" type="button" aria-label="Chat with us" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
-    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
-      <span></span><span></span>
-    </button>
-  </div>
-</header>
-
-<div class="menu" id="menu" hidden></div>
-<div class="scrim" id="scrim" hidden></div>
-
-<main id="main">
-
-<section class="page-hero">
+${NAV}<section class="page-hero">
   <div class="wrap center">
     <a class="hero-pill hero-pill-link reveal" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">${b.h1}</h1>
@@ -187,48 +264,7 @@ ${b.trust ? `    <ul class="assure trust reveal">${b.trust.map((t) => `<li>${t}<
 ` : ''}  </div>
 </section>
 
-<!-- The free example, on the page the ad lands on: three things, one at a
-     time. Same endpoint and thank-you page as /free.html; script.js runs
-     it wherever #miniFree is. -->
-<section class="section pt0">
-  <div class="wrap center">
-    <form class="free-mini reveal" id="miniFree" novalidate>
-      <p class="hero-pill"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free</p>
-      <h3>See your site within 24 hours. Free.</h3>
-      <p class="lede">Three things, and a real page lands in your inbox within 24 hours.<span class="gap"></span>No card.</p>
-
-      <div class="hp" aria-hidden="true">
-        <label for="mini_extra">Leave this empty</label>
-        <input id="mini_extra" name="mini_extra" type="text" tabindex="-1" autocomplete="off">
-      </div>
-
-      <div class="mini-step wait" id="miniStep1">
-        <label for="miniBusiness">Your business name</label>
-        <input id="miniBusiness" type="text" autocomplete="organization" placeholder="${b.placeholder || 'e.g. Fade Room Barbers'}" enterkeyhint="next">
-      </div>
-
-      <div class="mini-step" id="miniStep2" hidden>
-        <label for="miniHandle">Your business anywhere online</label>
-        <input id="miniHandle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@yourbusiness or a link" enterkeyhint="next">
-        <p class="hint">Instagram, Facebook, your current site, Trust a Trader &mdash; anywhere.</p>
-      </div>
-
-      <div class="mini-step" id="miniStep3" hidden>
-        <label for="miniEmail">Where should I send it? You&rsquo;ll have it within 24 hours.</label>
-        <div class="mini-row">
-          <input id="miniEmail" type="email" autocomplete="email" placeholder="you@example.com" enterkeyhint="send">
-          <button class="mini-go" id="miniSend" type="submit" aria-label="Send my free example">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <p class="note" id="miniNote" role="status" aria-live="polite"></p>
-      <p class="mini-alt">Already decided? <a href="/get-started.html">Get started &rsaquo;</a></p>
-    </form>
-  </div>
-</section>
-
+${miniForm(b.placeholder)}
 <section class="section pt0">
   <div class="wrap center">
     <h2 class="reveal">What your site can do.</h2>
@@ -357,36 +393,194 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
 <div class="sticky-cta" id="stickyCta" hidden>
   <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
 </div>
-` : ''}<footer class="foot">
-  <div class="wrap">
-    <p class="foot-logo">one.</p>
-    <p class="foot-by">by Kanvas</p>
-    <nav class="foot-links" aria-label="Footer">
-      <a href="/how-it-works.html">How it works</a><a href="/whats-included.html">What&rsquo;s included</a><a href="/features.html">Features</a><a href="/reviews.html">Reviews</a><a href="/plans.html">Plans</a><a href="/get-started.html">Get started</a>
-    </nav>
-    <nav class="foot-legal-links" aria-label="Legal">
-      <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
-    </nav>
-    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Your page goes live on your own address the same day you join; the features you ask for are built within 14 days of joining, or your next month is free (see terms). Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. Cancel anytime &mdash; no further payments are taken.</p>
-    <p class="foot-copy">© <span id="year">2026</span> Kanvas One. All rights reserved.</p>
-  </div>
-</footer>
-
-<script src="consent.js?v=8"></script>
-<script src="supabase-config.js?v=1"></script>
-<script src="session.js?v=3"></script>
-<script src="script.js?v=${SCRIPT_V}"></script>
-<script src="reviews.js?v=3"></script>
-<script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
-<script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
-<script src="admin-pill.js?v=8"></script>
-</body>
-</html>
-`;
+` : ''}${FOOT}`;
 }
 
 for (const b of INDUSTRIES) {
   const file = path.join(OUT, `websites-for-${b.slug}.html`);
   fs.writeFileSync(file, page(b));
+  console.log('wrote', path.basename(file));
+}
+
+/* ---------------------------------------------------------- feature pages */
+/* One per thing an owner searches for: the pain, how it works on their
+   site, what they get, the plan it lives on, the free example first. */
+function featureLinks(exceptSlug) {
+  return FEATURES.filter((f) => f.slug !== exceptSlug)
+    .map((f) => `<a href="/${f.slug}.html">${f.short}</a>`).join('');
+}
+
+function planCard(f) {
+  if (f.plan === 'max') return `    <article class="plan featured">
+      <div class="badge">Add growth</div>
+      <h3>Max</h3>
+      <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
+      <p class="plan-note">Your site, designed and built, plus me going and getting you customers every month.</p>
+      <p class="plan-free">No setup fees</p>
+      <a class="btn btn-primary full" href="/get-started.html?plan=max">Add growth</a>
+      <ul class="ticks">
+        <li>Your website, designed and built for you, live the day you join</li>
+        <li>Bookings, payments and live chat. Unlimited changes</li>
+        <li class="tick-hero">Your Facebook and Instagram ads, set up, run and tracked by me</li>
+        <li class="tick-hero">Your first ad live within 7 days</li>
+        <li class="tick-hero">Your Google ranking worked on every month</li>
+        <li class="tick-hero">Missed calls answered by text in seconds</li>
+        <li class="tick-hero">Business email and a business number</li>
+      </ul>
+      <p class="plan-up">Ten businesses at a time. &pound;250 for the first ten, then the price goes up.</p>
+    </article>`;
+  return `    <article class="plan featured">
+      <div class="badge">+&pound;25: get booked</div>
+      <h3>Business</h3>
+      <p class="price"><span class="cur">&pound;</span>50<span class="per">/month</span></p>
+      <p class="plan-note">Your site, designed and built for you, plus the features that take the work off your phone.</p>
+      <p class="plan-free">No setup fees</p>
+      <a class="btn btn-primary full" href="/get-started.html?plan=business">Choose Business</a>
+      <ul class="ticks">
+        <li>Live on your own address the day you join</li>
+        <li class="tick-hero">Bookings, payments and live chat</li>
+        <li class="tick-hero">Reviews asked for automatically</li>
+        <li class="tick-hero">Unlimited changes, made by me within 48 hours</li>
+        <li class="tick-hero">Your three features built within 14 days, or your next month is free</li>
+      </ul>
+      <p class="plan-up">Just want the site, with a contact form and click to call? <a href="/plans.html#starter">Starter is &pound;25</a>.</p>
+    </article>`;
+}
+
+function featurePage(f) {
+  const url = `https://kanvas.one/${f.slug}`;
+  const title = `${f.search} — Kanvas One`;
+  return `<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>${title}</title>
+<meta name="description" content="${f.desc}">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="${plain(f.h1)}">
+<meta property="og:description" content="${f.desc}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kanvas One">
+<meta property="og:image" content="https://kanvas.one/assets/og-image.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="${url}">
+<script type="application/ld+json">
+${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: plain(f.search),
+  serviceType: 'Website design and management',
+  provider: { '@type': 'Organization', name: 'Kanvas One', url: 'https://kanvas.one/' },
+  areaServed: 'GB',
+  url: url,
+  description: f.desc
+})}
+</script>
+<script type="application/ld+json">
+${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: f.faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
+})}
+</script>
+<link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=${CSS_V}">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+${NAV}<section class="page-hero">
+  <div class="wrap center">
+    <a class="hero-pill hero-pill-link reveal" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
+    <h1 class="reveal">${f.h1}</h1>
+    <p class="lede reveal">${lines(f.lede)}</p>
+    <p class="micro reveal hero-note">Built into your own website, set up for you. ${f.plan === 'max' ? '&pound;250 a month, ten businesses at a time.' : 'From &pound;50 a month, no setup fee.'}</p>
+
+    <div class="typebox reveal" aria-hidden="true">
+      <span class="typebox-text" id="typeDemo" data-lines="${JSON.stringify(f.lines).replace(/"/g, '&quot;')}"></span>
+      <span class="typebox-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></svg></span>
+    </div>
+  </div>
+</section>
+
+<!-- The pain, in the owner's words, then the free example: the page has
+     said what it understands before it asks for anything. -->
+<section class="section pt0">
+  <div class="wrap center">
+    <p class="lede reveal pain">${f.pain}</p>
+  </div>
+${miniForm(f.placeholder)}</section>
+
+<section class="section pt0">
+  <div class="wrap center">
+    <h2 class="reveal">How it works.</h2>
+  </div>
+  <div class="wrap grid steps reveal">
+${stepCards({ steps: f.how })}
+  </div>
+</section>
+
+<section class="section grey">
+  <div class="wrap center">
+    <h2 class="reveal">What you get.</h2>
+  </div>
+  <div class="wrap">
+    <aside class="boost reveal">
+      <ul class="ticks">
+${f.gets.map((g) => `        <li>${g}</li>`).join('\n')}
+      </ul>
+      <p>${f.planLine}</p>
+    </aside>
+  </div>
+  <div class="wrap plans reveal">
+${planCard(f)}
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap center">
+    <h2 class="reveal">Questions.</h2>
+  </div>
+  <div class="wrap faq reveal">
+${f.faq.map(([q, a]) => `    <details>
+      <summary>${q}</summary>
+      <div class="ans"><p>${a}</p></div>
+    </details>`).join('\n')}
+  </div>
+</section>
+
+<section class="section grey cta-end">
+  <div class="wrap center">
+    <h2 class="reveal">See yours free, within 24 hours.</h2>
+    <p class="lede reveal">A real page for your business, before you decide anything.</p>
+    <div class="cta-row reveal">
+      <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
+      <a class="btn btn-ghost" href="/plans.html">All the plans</a>
+    </div>
+    <p class="micro reveal">From &pound;25 a month. No setup fees. Cancel anytime.</p>
+    <nav class="ind-links reveal" aria-label="Other features">
+      <span>Also:</span>${featureLinks(f.slug)}
+    </nav>
+    <nav class="ind-links reveal" aria-label="Websites by business type">
+      <span>Websites for:</span>${linkStrip('')}
+    </nav>
+  </div>
+</section>
+
+</main>
+
+<div class="sticky-cta" id="stickyCta" hidden>
+  <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
+</div>
+${FOOT}`;
+}
+
+for (const f of FEATURES) {
+  const file = path.join(OUT, `${f.slug}.html`);
+  fs.writeFileSync(file, featurePage(f));
   console.log('wrote', path.basename(file));
 }
