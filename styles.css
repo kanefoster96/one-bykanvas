@@ -648,6 +648,7 @@ body.dialog-open{overflow:hidden}
 .quote footer{display:flex;align-items:center;gap:13px}
 .quote footer strong{display:block;font-size:15px;font-weight:600}
 .quote footer span:not(.avatar){display:block;font-size:13.5px;color:var(--ink-3)}
+.quote footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
 .avatar{
   width:42px;height:42px;border-radius:50%;flex:0 0 42px;display:grid;place-items:center;
   color:#fff;font-size:14px;font-weight:600;letter-spacing:.01em;
