@@ -399,6 +399,10 @@
         var back = document.querySelector('.ob-back'); if (back) { back.href = '/admin.html'; back.innerHTML = '&larr; Admin'; }
       }
       fill(data.answers);
+      /* They chose their Max on the way in: no need to ask again. The
+         radio stays set underneath, so the right add-ons show. */
+      var modelSec = document.querySelector('[data-section="model"]');
+      if (modelSec && data.maxModel && radio('model') === data.maxModel) modelSec.hidden = true;
       progress();
       dirty = false;
       loading.hidden = true;
