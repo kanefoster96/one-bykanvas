@@ -1002,7 +1002,7 @@
           'Reviews, referrals and follow-up emails, automatic',
           'Business email, and first in the queue'
         ],
-        note: 'I need a photo or a line of text; I do the rest. <strong>Ten businesses at a time, £250 for the first ten.</strong> Step down any month; you keep the ranking.',
+        note: 'I need a photo or a line of text; I do the rest. <strong>Your price is locked for as long as you stay.</strong> Step down any month; you keep the ranking.',
         btn: 'Add growth — Max, £250 a month',
         line: 'Want me to go and get you customers? '
       }
