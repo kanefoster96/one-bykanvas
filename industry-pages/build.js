@@ -422,7 +422,7 @@ function planCard(f) {
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">Your site, designed and built, plus us going and getting you customers every month.</p>
       <p class="plan-free">No setup fees</p>
-      <a class="btn btn-primary full" href="/get-started.html?plan=max">Add growth</a>
+      <a class="btn btn-primary full" href="/get-started.html?plan=max${maxParam(f.slug)}">Add growth</a>
       <ul class="ticks">
         <li>Your website, designed and built for you, live the day you join</li>
         <li>Bookings, payments and live chat. Unlimited changes</li>
@@ -600,6 +600,12 @@ function maxHref(slug) {
   if (slug === 'gyms') return '/max/clubs';
   return '/plans.html#max';
 }
+/* The type the wizard carries onto the profile, so the setup form need
+   not ask. Empty for a trade with no Max of its own. */
+function maxParam(slug) {
+  const h = maxHref(slug);
+  return h.startsWith('/max/') ? '&max=' + h.slice(5) : '';
+}
 function maxLabel(slug) {
   const h = maxHref(slug);
   return h === '/max/trades' ? 'See Trades Max' : h === '/max/salon' ? 'See Salon Max' : h === '/max/clubs' ? 'See Clubs Max' : 'See Max';
@@ -672,7 +678,7 @@ ${nav}<!-- 1. The promise, the price, the ask. -->
     <p class="lede reveal">&pound;250 a month. No setup fee. Live the same day you join.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="#miniFree">See your free preview</a>
-      <a class="btn btn-ghost" href="/get-started.html?plan=max">Start ${m.name} &rsaquo;</a>
+      <a class="btn btn-ghost" href="/get-started.html?plan=max&max=${m.slug}">Start ${m.name} &rsaquo;</a>
     </div>
     <p class="fineprint reveal">${MAX.AD_SPEND}</p>
   </div>

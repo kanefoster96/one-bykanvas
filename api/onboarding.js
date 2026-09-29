@@ -168,7 +168,7 @@ module.exports = async function handler(req, res) {
     const viewer = asked ? 'admin' : 'owner';
 
     const { data: profile, error: pErr } = await db.from('profiles')
-      .select('business_name, active_plan, subscription_status, public_email, phone, address, service_area, opening_hours')
+      .select('business_name, active_plan, subscription_status, max_model, public_email, phone, address, service_area, opening_hours')
       .eq('id', ownerId).maybeSingle();
     if (pErr) throw new Error(pErr.message);
     if (asked && !profile) return res.status(404).json({ error: 'No customer with that id.' });
@@ -185,12 +185,16 @@ module.exports = async function handler(req, res) {
       for (const [col, key] of Object.entries(MIRROR)) {
         if (!contact[key] && profile && profile[col]) contact[key] = profile[col];
       }
+      /* Which Max they bought, from the wizard: the form starts on it and
+         need not ask. */
+      const maxModel = (profile && profile.max_model) || null;
       return res.status(200).json({
-        answers: Object.assign({}, answers, { contact }),
+        answers: Object.assign({}, answers, { contact, model: answers.model || maxModel || '' }),
         updatedAt: row ? row.updated_at : null,
         plan,
         business: (profile && profile.business_name) || '',
-        viewer
+        viewer,
+        maxModel
       });
     }
 

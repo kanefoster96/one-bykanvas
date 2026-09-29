@@ -16,6 +16,13 @@
     var refParam = new URLSearchParams(location.search).get('ref');
     if (refParam) localStorage.setItem(REF_KEY, refParam.toUpperCase().slice(0, 20));
   } catch (e) {}
+  /* ?max= from a Max page's button: which Max they chose (trades, clubs,
+     salon, other). Saved on the profile with the rest, so the setup form
+     can skip the question. */
+  var MAX_MODEL = (function () {
+    var m = new URLSearchParams(location.search).get('max');
+    return ['trades', 'clubs', 'salon', 'other'].indexOf(m) === -1 ? null : m;
+  })();
   /* ?plan= from the plans page. Starter is only ever shown this way - it
      lives on the plans page, not in the wizard's first impression. */
   (function preselectPlan() {
@@ -787,6 +794,7 @@
       business_type:  answers.business_type || null,
       site_uses:      answers.site_uses && answers.site_uses.length ? answers.site_uses : null,
       selected_plan:  answers.selected_plan || null,
+      max_model:      answers.selected_plan === 'max' ? MAX_MODEL : null,
       requested_domain: answers.requested_domain || null,
       domain_owned:     Boolean(answers.domain_owned),
       site_goals:     answers.site_uses ? answers.site_uses.join('\n') : null
