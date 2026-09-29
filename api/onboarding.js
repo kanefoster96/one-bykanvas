@@ -31,9 +31,12 @@ const SECTIONS = [
   ['payments', 'How you get paid now'],
   ['online', 'What is already online'],
   ['photos', 'Photos'],
-  ['trades', 'Trades Max add-on'],
-  ['clubs', 'Clubs Max add-on'],
-  ['salon', 'Salon Max add-on'],
+  ['trades', 'The proof that comes with the work'],
+  ['trades_how', 'Emergencies and the next job'],
+  ['clubs', 'Classes and fees'],
+  ['clubs_how', 'First visits and terms'],
+  ['salon', 'The team and what else you sell'],
+  ['salon_how', 'No-shows, rebooking and first appointments'],
   ['extras', 'Anything else']
 ];
 
@@ -46,15 +49,18 @@ const MAX_BYTES = 60000;
    left blank or "not sure" is the admin's to decide, and the email says so
    under its own heading. Add-on sections count only for the Max picked. */
 const DECISIONS = {
-  contact: { reach: 'when customers can reach them', customers_live: 'where their customer details live now' },
+  contact: { area: 'areas covered', base: 'where they set off from', reach: 'when customers can reach them', customers_live: 'where their customer details live now' },
   offer: { job: 'the job to advertise', upsells: 'the upsells' },
   customers: { sources: 'how they get customers now', jobs_per_week: 'jobs a week', job_value: 'a small job\u2019s value', big_job_value: 'a big job\u2019s value' },
   bookings: { how: 'how a job gets booked now', lead_time: 'how soon a new customer gets them', want: 'straight in or ask first' },
   payments: { methods: 'how they get paid now', upfront: 'anything taken before the work', amount: 'the deposit or callout amount', when: 'when it is taken', big_job: 'what is taken before a big job', finance: 'finance' },
   online: { facebook: 'Facebook page or profile', gbp: 'Google Business Profile' },
-  trades: { gas_safe: 'Gas Safe number', insured: 'insurance', brands: 'brands installed and guarantee', emergency: 'emergency callouts', next_service: 'the next-service reminder', base: 'where they set off from' },
-  clubs: { classes: 'classes and ages', first_visit: 'how a first visit works', fees: 'fees', terms: 'term dates' },
-  salon: { team: 'the team', no_show: 'no-show policy', rebook: 'rebooking interval', before_first: 'before a first appointment' }
+  trades: { gas_safe: 'Gas Safe number', insured: 'insurance', brands: 'brands installed and guarantee' },
+  trades_how: { emergency: 'emergency callouts', next_service: 'the next-service reminder' },
+  clubs: { classes: 'classes and ages', fees: 'fees' },
+  clubs_how: { first_visit: 'how a first visit works', terms: 'term dates' },
+  salon: { team: 'the team' },
+  salon_how: { no_show: 'no-show policy', rebook: 'rebooking interval', before_first: 'before a first appointment' }
 };
 const JOB_FIELDS = { often: 'how often', price: 'price', pricing: 'how it is priced', flow: 'straight in or ask first' };
 
@@ -64,7 +70,7 @@ function undecided(answers) {
   const out = [];
   const model = answers.model || '';
   for (const [section, fields] of Object.entries(DECISIONS)) {
-    if (['trades', 'clubs', 'salon'].includes(section) && section !== model) continue;
+    if (/^(trades|clubs|salon)/.test(section) && section.replace(/_how$/, '') !== model) continue;
     const sec = answers[section] || {};
     const missing = Object.entries(fields).filter(([k]) => blank(sec[k])).map(([, label]) => label);
     if (missing.length) out.push(`  ${section}: ${missing.join(', ')}`);

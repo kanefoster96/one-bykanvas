@@ -191,7 +191,7 @@
   function read() {
     return {
       model: radio('model'),
-      contact: { phone: v('c_phone'), email: v('c_email'), whatsapp: on('c_whatsapp'), area: v('c_area'), address: v('c_address'), reach: v('c_reach'), customers_live: checks('custWhere') },
+      contact: { phone: v('c_phone'), email: v('c_email'), whatsapp: on('c_whatsapp'), area: v('c_area'), base: v('c_base'), address: v('c_address'), reach: v('c_reach'), customers_live: checks('custWhere') },
       services: services(),
       services_generated: on('svc_generated'),
       offer: { job: v('o_job'), upsells: v('o_upsell'), why: v('o_why') },
@@ -200,17 +200,21 @@
       payments: { methods: checks('payMethods'), upfront: radio('upfront'), amount: v('p_amount'), when: v('p_when'), offset: on('p_offset'), invoices: on('p_invoices'), big_job: v('p_bigjob'), finance: radio('finance') },
       online: { facebook: radio('fb'), facebook_link: v('a_fb'), instagram: v('a_ig'), directory: v('a_directory'), gbp: radio('gbp'), gbp_link: v('a_gbp'), domain: v('a_domain'), registrar: v('a_registrar'), existing_site: v('a_existing') },
       photos: photos.map(function (p) { return { path: p.path, url: p.url }; }),
-      trades: { gas_safe: v('t_gassafe'), registrations: v('t_regs'), insured: on('t_insured'), brands: v('t_brands'), works_on: v('t_workon'), emergency: radio('emerg'), emergency_terms: v('t_emerg'), next_service: v('t_repeat'), base: v('t_base') },
-      clubs: { classes: v('k_classes'), first_visit: v('k_trial'), fees: v('k_fees'), terms: v('k_terms'), extras: v('k_extras') },
-      salon: { team: v('s_team'), no_show: v('s_noshow'), rebook: v('s_rebook'), before_first: v('s_tests'), retail: v('s_retail') },
+      trades: { gas_safe: v('t_gassafe'), registrations: v('t_regs'), insured: on('t_insured'), brands: v('t_brands'), works_on: v('t_workon') },
+      trades_how: { emergency: radio('emerg'), emergency_terms: v('t_emerg'), next_service: v('t_repeat') },
+      clubs: { classes: v('k_classes'), fees: v('k_fees'), extras: v('k_extras') },
+      clubs_how: { first_visit: v('k_trial'), terms: v('k_terms') },
+      salon: { team: v('s_team'), retail: v('s_retail') },
+      salon_how: { no_show: v('s_noshow'), rebook: v('s_rebook'), before_first: v('s_tests') },
       extras: { reviews: v('x_reviews'), referral_reward: v('x_referral'), report_to: v('x_report'), anything: v('x_anything') }
     };
   }
   function fill(a) {
     a = a || {};
-    var c = a.contact || {}, o = a.offer || {}, cu = a.customers || {}, b = a.bookings || {}, p = a.payments || {}, ol = a.online || {}, t = a.trades || {}, k = a.clubs || {}, s = a.salon || {}, x = a.extras || {};
+    var c = a.contact || {}, o = a.offer || {}, cu = a.customers || {}, b = a.bookings || {}, p = a.payments || {}, ol = a.online || {}, x = a.extras || {};
+    var t = Object.assign({}, a.trades || {}, a.trades_how || {}), k = Object.assign({}, a.clubs || {}, a.clubs_how || {}), s = Object.assign({}, a.salon || {}, a.salon_how || {});
     setRadio('model', a.model); showAddon();
-    set('c_phone', c.phone); set('c_email', c.email); setOn('c_whatsapp', c.whatsapp); set('c_area', c.area); set('c_address', c.address); set('c_reach', c.reach); setChecks('custWhere', c.customers_live);
+    set('c_phone', c.phone); set('c_email', c.email); setOn('c_whatsapp', c.whatsapp); set('c_area', c.area); set('c_base', c.base || t.base); set('c_address', c.address); set('c_reach', c.reach); setChecks('custWhere', c.customers_live);
     var sv = (a.services && !Array.isArray(a.services)) ? a.services : { trade: '', jobs: Array.isArray(a.services) ? a.services : [], most: '' };
     var known = Object.keys(CATALOG).indexOf(sv.trade) !== -1;
     tradeSel.value = sv.trade ? (known ? sv.trade : 'Other') : '';
@@ -229,7 +233,7 @@
     setRadio('fb', ol.facebook); set('a_fb', ol.facebook_link); set('a_ig', ol.instagram); set('a_directory', ol.directory); setRadio('gbp', ol.gbp); set('a_gbp', ol.gbp_link); set('a_domain', ol.domain); set('a_registrar', ol.registrar); set('a_existing', ol.existing_site);
     photos = Array.isArray(a.photos) ? a.photos.filter(function (ph) { return ph && ph.url; }) : [];
     paintPhotos();
-    set('t_gassafe', t.gas_safe); set('t_regs', t.registrations); setOn('t_insured', t.insured); set('t_brands', t.brands); set('t_workon', t.works_on); setRadio('emerg', t.emergency); set('t_emerg', t.emergency_terms); set('t_repeat', t.next_service); set('t_base', t.base);
+    set('t_gassafe', t.gas_safe); set('t_regs', t.registrations); setOn('t_insured', t.insured); set('t_brands', t.brands); set('t_workon', t.works_on); setRadio('emerg', t.emergency); set('t_emerg', t.emergency_terms); set('t_repeat', t.next_service);
     set('k_classes', k.classes); set('k_trial', k.first_visit); set('k_fees', k.fees); set('k_terms', k.terms); set('k_extras', k.extras);
     set('s_team', s.team); set('s_noshow', s.no_show); set('s_rebook', s.rebook); set('s_tests', s.before_first); set('s_retail', s.retail);
     set('x_reviews', x.reviews); set('x_referral', x.referral_reward); set('x_report', x.report_to); set('x_anything', x.anything);
@@ -244,15 +248,27 @@
   }
   function progress() {
     var a = read();
-    var secs = Array.prototype.slice.call(document.querySelectorAll('.ob-section')).filter(function (s) { return !s.hidden && s.getAttribute('data-section') !== 'model'; });
-    var done = 0;
-    secs.forEach(function (sec) {
-      var key = sec.getAttribute('data-section');
+    var byStage = { 1: [0, 0], 2: [0, 0], 3: [0, 0] };
+    var stage = 0;
+    /* Walk the form in order: a stage header sets the stage for the
+       sections after it. */
+    Array.prototype.slice.call(document.querySelectorAll('.ob-stage, .ob-section')).forEach(function (el) {
+      if (el.classList.contains('ob-stage')) { stage = Number(el.id.replace('stage', '')); return; }
+      var key = el.getAttribute('data-section');
+      if (el.hidden || key === 'model' || !stage) return;
       var has = key === 'services' ? (filled(a.services.jobs) || !!a.services.trade || a.services_generated) : filled(a[key]);
-      sec.classList.toggle('is-filled', has);
-      if (has) done++;
+      el.classList.toggle('is-filled', has);
+      byStage[stage][1]++;
+      if (has) byStage[stage][0]++;
     });
-    $('obProgress').textContent = done + ' of ' + secs.length + ' sections have something in them.';
+    var parts = [];
+    [1, 2, 3].forEach(function (n) {
+      var d = byStage[n][0], t = byStage[n][1];
+      parts.push('Stage ' + n + ': ' + d + ' of ' + t);
+      var tick = document.querySelector('.ob-strip [data-stage="' + n + '"]');
+      if (tick) { tick.textContent = d === t && t > 0 ? '\u2713' : d + '/' + t; tick.classList.toggle('is-done', d === t && t > 0); }
+    });
+    $('obProgress').textContent = parts.join(' \u00b7 ');
   }
 
   document.addEventListener('input', function () { dirty = true; progress(); });
