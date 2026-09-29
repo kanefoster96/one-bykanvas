@@ -81,13 +81,14 @@ function undecided(answers) {
   return out;
 }
 
-/* Strings, numbers, booleans, and arrays/objects of those, two levels
+/* Strings, numbers, booleans, and arrays/objects of those, four levels
    deep. Anything else is dropped. */
 function clean(v, depth) {
   depth = depth || 0;
   if (typeof v === 'string') return v.slice(0, 4000);
   if (typeof v === 'number' || typeof v === 'boolean') return v;
-  if (depth > 2 || v === null || v === undefined) return undefined;
+  /* Four levels: answers > services > jobs > a job's fields. */
+  if (depth > 4 || v === null || v === undefined) return undefined;
   if (Array.isArray(v)) return v.slice(0, 40).map((x) => clean(x, depth + 1)).filter((x) => x !== undefined);
   if (typeof v === 'object') {
     const out = {};
