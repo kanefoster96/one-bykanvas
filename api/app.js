@@ -434,6 +434,24 @@ async function chatSet(db, site, id, patchIn) {
 
 /* A place inside the dashboard: a path only, so a deep link can never
    point the frame somewhere else. Anything odd becomes the front door. */
+/* The address the app opens a page at, signed in. When the app itself
+   runs on that page's origin (the web app at kanvas.one opening a
+   kanvas.one page) the session is already there and the plain address
+   will do. Otherwise a single-use magic-link token rides in the fragment
+   and kanvas-handoff.js on the page swaps it for a session of its own.
+   Minted for the caller, never for the site's owner on their behalf: the
+   admin arrives in a dashboard as themselves, and RLS there decides. */
+async function handoffUrl(db, caller, target, req) {
+  const origin = String((req && req.headers && req.headers.origin) || '');
+  let same = false;
+  try { same = !!origin && new URL(origin).origin === new URL(target).origin; } catch (e) { same = false; }
+  if (same) return target;
+  const { data, error } = await db.auth.admin.generateLink({ type: 'magiclink', email: caller.email });
+  const hashed = data && data.properties && data.properties.hashed_token;
+  if (error || !hashed) throw new Error('handoff: ' + ((error && error.message) || 'no token'));
+  return target + '#kanvas_handoff=' + encodeURIComponent(hashed);
+}
+
 function cleanPath(p) {
   const s = String(p || '/').trim();
   if (!/^\/(?!\/)[^\s#]*$/.test(s) || /[<>"'\\]/.test(s) || /^\/\S*:\/\//.test(s)) return '/';
@@ -805,37 +823,18 @@ module.exports = async function handler(req, res) {
       // link path then replaces the page, the front door keeps it.
       const base = site.dashboard_url.replace(/\/+$/, '');
       const target = path === '/' ? base : base.replace(/\/[^/]*\.html?$/i, '') + path;
-      // Our own pages share the app's origin, so the session is already
-      // there: no token to mint, nothing to hand off.
-      let sameOrigin = false;
-      try { sameOrigin = new URL(base).origin === new URL(ourSiteUrl()).origin; } catch (e) { sameOrigin = false; }
-      if (sameOrigin) return res.status(200).json({ url: target });
-      // Minted for the caller, never for the site's owner on their behalf:
-      // the admin arrives in a dashboard as themselves, and RLS there decides.
-      const { data, error } = await db.auth.admin.generateLink({ type: 'magiclink', email: caller.email });
-      const hashed = data && data.properties && data.properties.hashed_token;
-      if (error || !hashed) throw new Error('handoff: ' + ((error && error.message) || 'no token'));
-      return res.status(200).json({ url: target + '#kanvas_handoff=' + encodeURIComponent(hashed) });
+      return res.status(200).json({ url: await handoffUrl(db, caller, target, req) });
     }
 
-    /* One of our own pages, inside the app: the Max setup form. Same
-       handoff as a dashboard, but the base is our site, so the path is
-       the only input and only known pages open. The admin may name a
-       customer; the form itself checks that. */
+    /* One of our own pages, inside the app: the Max setup form. Only
+       known pages open. The admin may name a customer; the form itself
+       checks that. */
     if (action === 'page') {
       const path = cleanPath(body.path);
-      const m = /^\/onboarding\.html(\?user=([0-9a-f-]{36}))?$/.exec(path);
+      const m = /^\/onboarding\.html(\?user=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))?$/i.exec(path);
       if (!m) return res.status(400).json({ error: 'That page does not open in the app.' });
       if (m[2] && !caller.is_admin) return res.status(403).json({ error: 'That form is not yours.' });
-      const base = ourSiteUrl().replace(/\/+$/, '');
-      const origin = String(req.headers.origin || '');
-      let sameOrigin = false;
-      try { sameOrigin = origin && new URL(origin).origin === new URL(base).origin; } catch (e) { sameOrigin = false; }
-      if (sameOrigin) return res.status(200).json({ url: base + path });
-      const { data, error } = await db.auth.admin.generateLink({ type: 'magiclink', email: caller.email });
-      const hashed = data && data.properties && data.properties.hashed_token;
-      if (error || !hashed) throw new Error('handoff: ' + ((error && error.message) || 'no token'));
-      return res.status(200).json({ url: base + path + '#kanvas_handoff=' + encodeURIComponent(hashed) });
+      return res.status(200).json({ url: await handoffUrl(db, caller, ourSiteUrl().replace(/\/+$/, '') + path, req) });
     }
 
     if (action === 'seen') {

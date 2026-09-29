@@ -33,7 +33,10 @@
        itself when the data is on screen. */
     var told = false;
     window.kanvasReady = function () { if (told) return; told = true; try { window.parent.postMessage({ kanvas: 'ready' }, '*'); } catch (e) { /* nothing to tell */ } };
-    if (document.readyState === 'complete') window.kanvasReady(); else window.addEventListener('load', window.kanvasReady);
+    /* A page that fetches before it has anything to show says so with
+       data-wait on this script tag, and calls window.kanvasReady() itself. */
+    var waits = document.currentScript && document.currentScript.hasAttribute('data-wait');
+    if (!waits) { if (document.readyState === 'complete') window.kanvasReady(); else window.addEventListener('load', window.kanvasReady); }
   }
 
   /* Framed in the app, a pull down from the top of the page reloads it,

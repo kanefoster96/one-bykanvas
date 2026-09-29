@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
     const secret = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
     const siteId = String(body.site || '').trim();
     const kind = String(body.kind || '').trim();
-    if (!secret || !/^[0-9a-f-]{36}$/i.test(siteId)) return res.status(401).json({ error: 'Not allowed.' });
+    if (!secret || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(siteId)) return res.status(401).json({ error: 'Not allowed.' });
     if (!KINDS.includes(kind)) return res.status(400).json({ error: 'Unknown kind. One of: ' + KINDS.join(', ') + '.' });
 
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });

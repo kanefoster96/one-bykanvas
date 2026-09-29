@@ -380,7 +380,12 @@
 
   async function start() {
     var res = await ONE.db.auth.getSession();
-    if (!res.data.session) { location.replace('/login.html?next=/onboarding.html'); return; }
+    if (!res.data.session) {
+      /* Arriving from the One app on another origin: kanvas-handoff.js is
+         swapping the token in the hash for a session and will reload. */
+      if (/kanvas_handoff=/.test(location.hash)) return;
+      location.replace('/login.html?next=/onboarding.html'); return;
+    }
     userId = res.data.session.user.id;
     var bell = $('navBell'); if (bell) bell.hidden = false;
     try {
@@ -389,6 +394,7 @@
       if (!r.ok) throw new Error(data.error || 'Could not load the form.');
       if (data.plan !== 'max') {
         loading.innerHTML = '<p>The Max setup form is for Max customers. <a href="/plans.html#max">See Max</a>, or <a href="/account.html">go back to your account</a>.</p>';
+        if (window.kanvasReady) window.kanvasReady();
         return;
       }
       viewer = data.viewer || 'owner';
@@ -402,7 +408,7 @@
       /* They chose their Max on the way in: no need to ask again. The
          radio stays set underneath, so the right add-ons show. */
       var modelSec = document.querySelector('[data-section="model"]');
-      if (modelSec && data.maxModel && radio('model') === data.maxModel) modelSec.hidden = true;
+      if (modelSec && viewer === 'owner' && data.maxModel && radio('model') === data.maxModel) modelSec.hidden = true;
       progress();
       dirty = false;
       loading.hidden = true;
@@ -411,6 +417,7 @@
       if (window.kanvasReady) window.kanvasReady();
     } catch (err) {
       loading.innerHTML = '<p>' + (err.message || 'Could not load the form.') + '</p>';
+      if (window.kanvasReady) window.kanvasReady();
     }
   }
 

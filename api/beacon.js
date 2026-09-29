@@ -12,7 +12,6 @@
  */
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv } = require('./_env.js');
-const { event } = require('./_notify.js');
 
 const BOT = /bot|crawl|spider|slurp|preview|headless|lighthouse|pingdom|facebookexternalhit|whatsapp|telegram|curl|wget|python-requests|go-http-client|java\//i;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -92,13 +91,12 @@ module.exports = async function handler(req, res) {
     if (input && input.type === 'payment') {
       const pay = cleanPayment(input, req.headers || {});
       if (!pay) return res.status(204).end();
-      // ignoreDuplicates returns only the rows it wrote: a refreshed
-      // thank-you page is the same ref, so it is stored once and pushed once.
-      const { data: wrote, error: payErr } = await db.from('payments').upsert(pay, { onConflict: 'site_id,ref', ignoreDuplicates: true }).select('ref');
+      // Stored for Analytics only. The beacon is public (the site id is in
+      // every page's source), so nothing it receives may reach a phone;
+      // the push for money in comes from the dashboard's own event call,
+      // which carries the site's secret. See api/event.js.
+      const { error: payErr } = await db.from('payments').upsert(pay, { onConflict: 'site_id,ref', ignoreDuplicates: true });
       if (payErr && !/foreign key|violates/i.test(payErr.message)) console.error('beacon payment:', payErr.message);
-      if (!payErr && Array.isArray(wrote) && wrote.length) {
-        await event(db, pay.site_id, 'money_in', { amount: pay.amount_pence, currency: pay.currency, name: pay.customer_name, what: pay.description, method: 'on your site', record: 'payment', id: pay.ref });
-      }
       return res.status(204).end();
     }
     const row = clean(input, req.headers || {});
