@@ -21,19 +21,24 @@ const { notifyAdmin } = require('./_notify.js');
 
 /* The sections, in the order the form shows them, for the email. */
 const SECTIONS = [
-  ['contact', 'Contact and hours'],
-  ['services', 'Services and prices'],
+  ['model', 'Which Max'],
+  ['contact', 'How customers reach you'],
+  ['services', 'What you do and what it costs'],
+  ['services_generated', 'Generated images for now'],
   ['offer', 'The job you want more of'],
   ['customers', 'How you get customers now'],
-  ['serving', 'When and where you serve customers'],
-  ['bookings', 'How bookings work now'],
-  ['payments', 'How you take payment'],
-  ['access', 'Access we need'],
-  ['extras', 'Extras']
+  ['bookings', 'How a job gets booked now'],
+  ['payments', 'How you get paid now'],
+  ['online', 'What is already online'],
+  ['photos', 'Photos'],
+  ['trades', 'Trades Max add-on'],
+  ['clubs', 'Clubs Max add-on'],
+  ['salon', 'Salon Max add-on'],
+  ['extras', 'Anything else']
 ];
 
 /* Profile columns the contact section mirrors. */
-const MIRROR = { public_email: 'email', phone: 'phone', address: 'address', service_area: 'area', opening_hours: 'hours' };
+const MIRROR = { public_email: 'email', phone: 'phone', address: 'address', service_area: 'area', opening_hours: 'reach' };
 
 const MAX_BYTES = 60000;
 
