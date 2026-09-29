@@ -1,4 +1,4 @@
-/* one — the /new homepage's hero.
+/* one — the homepage hero.
  *
  * One row, three steps, each fading out as the next fades in:
  *   1. the business name, Title Cased as it is typed, and an arrow;
@@ -106,7 +106,7 @@
       steps[2].hidden = true;
       form.classList.add('is-sent');
       say(msg, 'ok');
-      var to = document.getElementById('pain');
+      var to = document.getElementById('offer');
       if (to) setTimeout(function () { to.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 900);
     }, 230);
   }
