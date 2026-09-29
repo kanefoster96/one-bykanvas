@@ -21,6 +21,16 @@
       "source": "/websites-for-florists",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/trades",
+      "destination": "/max/trades",
+      "permanent": true
+    },
+    {
+      "source": "/pricing",
+      "destination": "/plans",
+      "permanent": true
     }
   ],
   "headers": [

@@ -118,6 +118,10 @@
         .map(function (k) { return String(q.get(k) || '').trim().slice(0, 40); })
         .filter(Boolean);
       if (!bits.length && q.get('fbclid')) bits.push('facebook');
+      /* ?t= names which Max model (or "max-other") the free example is for,
+         so the lead carries it. */
+      var t = String(q.get('t') || '').trim().toLowerCase().slice(0, 20);
+      if (/^[a-z-]+$/.test(t)) bits.push('t=' + t);
       if (!bits.length) return;
       var page = location.pathname.replace(/\.html$/, '').replace(/^\/$/, '/home');
       sessionStorage.setItem(FROM_KEY, (bits.join(' / ') + ' · ' + page).slice(0, 200));
@@ -137,8 +141,56 @@
     { label: 'Features',        href: '/features.html' },
     { label: 'Reviews',         href: '/reviews.html' },
     { label: 'See all plans',   href: '/plans.html' },
+    { label: 'Max', children: [
+      { label: 'Trades Max', href: '/max/trades' },
+      { label: 'Clubs Max',  href: '/max/clubs' },
+      { label: 'Salon Max',  href: '/max/salon' },
+      { label: 'Other',      other: true }
+    ] },
     { label: 'Contact',         href: '/contact.html' }
   ];
+
+  /* ---------- Max for another business type ----------
+   * One modal, put on any page that asks for it: the Max card's "Other",
+   * and the menu's. Native <dialog>, no library. */
+  function maxOther() {
+    var d = document.getElementById('maxOther');
+    if (!d) {
+      d = document.createElement('dialog');
+      d.id = 'maxOther';
+      d.className = 'one-modal';
+      d.innerHTML =
+        '<button class="one-modal-x" type="button" aria-label="Close">\u00d7</button>' +
+        '<p class="one-modal-tag">Max</p>' +
+        '<h2>Max for your business</h2>' +
+        '<p>We\u2019ll build an end-to-end website model for your business. It gets you new customers through ads and SEO, ' +
+        'asks for more money at the right moments with upsells and add-ons, and prompts reviews and referrals automatically, ' +
+        'with payments, bookings and follow-up emails handling everything in between. All included for \u00a3250 a month.</p>' +
+        '<p class="one-modal-small">Tell us what you do and we\u2019ll show you how it would work for you.</p>' +
+        '<a class="btn btn-primary full" href="/free.html?t=max-other">Get your free preview</a>';
+      document.body.appendChild(d);
+      d.querySelector('.one-modal-x').addEventListener('click', function () { d.close(); });
+      d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+    }
+    if (typeof d.showModal === 'function') d.showModal(); else d.setAttribute('open', '');
+  }
+  window.oneMaxOther = maxOther;
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-max-other]');
+    if (t) {
+      e.preventDefault();
+      /* Chosen from the card's picker: fold the picker away first. */
+      var from = t.closest('.max-pick');
+      if (from) from.open = false;
+      maxOther();
+      return;
+    }
+    /* The picker folds when its scrim is tapped, or anywhere outside it. */
+    if (e.target.closest('.max-pick-scrim')) { e.target.closest('.max-pick').open = false; return; }
+    document.querySelectorAll('.max-pick[open]').forEach(function (d) {
+      if (!d.contains(e.target)) d.open = false;
+    });
+  });
 
   var burger = document.getElementById('burger');
   var menu = document.getElementById('menu');
@@ -151,6 +203,36 @@
     nav.setAttribute('aria-label', 'Main');
 
     MENU.forEach(function (item) {
+      if (item.children) {
+        /* A group: the label opens a short list under it. */
+        var group = document.createElement('div');
+        group.className = 'menu-group';
+        var head = document.createElement('button');
+        head.className = 'menu-link menu-group-head';
+        head.type = 'button';
+        head.setAttribute('aria-expanded', 'false');
+        head.innerHTML = item.label + '<span class="menu-caret" aria-hidden="true">\u203a</span>';
+        var list = document.createElement('div');
+        list.className = 'menu-sub';
+        list.hidden = true;
+        item.children.forEach(function (c) {
+          var el = document.createElement(c.other ? 'button' : 'a');
+          el.className = 'menu-sublink';
+          if (c.other) { el.type = 'button'; el.setAttribute('data-max-other', ''); }
+          else { el.href = c.href; if (c.href === here) el.setAttribute('aria-current', 'page'); }
+          el.textContent = c.label;
+          list.appendChild(el);
+        });
+        head.addEventListener('click', function () {
+          var open = list.hidden;
+          list.hidden = !open;
+          head.setAttribute('aria-expanded', String(open));
+          group.classList.toggle('is-open', open);
+        });
+        group.appendChild(head); group.appendChild(list);
+        nav.appendChild(group);
+        return;
+      }
       var a = document.createElement('a');
       a.className = 'menu-link';
       a.href = item.href;
@@ -197,8 +279,8 @@
   });
   scrim.addEventListener('click', function () { setMenu(false); });
   menu.addEventListener('click', function (e) {
-    // Closes on any item. The items do nothing else yet — they are placeholders
-    // until the pages exist.
+    /* Closes on any item, except the head of a group, which only opens it. */
+    if (e.target.closest('.menu-group-head')) return;
     if (e.target.closest('button, a')) setMenu(false);
   });
   document.addEventListener('keydown', function (e) {

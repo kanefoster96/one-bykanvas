@@ -59,7 +59,7 @@ const COULD = [
   'A page for every service you offer and every town you cover',
   'Live chat and an enquiry form that reach your phone',
   'Keep every customer’s bookings, payments and notes against their name',
-  'Business email at your own address, and a business number that texts back missed calls'
+  'Business email at your own address, and follow-up emails to customers sent for you'
 ];
 
 /* Into the wizard with the plan picked, the code applied, the address

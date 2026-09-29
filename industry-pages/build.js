@@ -17,8 +17,8 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 97;
-const SCRIPT_V = 30;
+const CSS_V = 99;
+const SCRIPT_V = 33;
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -46,6 +46,9 @@ const ICO_COLORS = ['ico-blue', 'ico-green', 'ico-purple', 'ico-orange', 'ico-pi
 
 const INDUSTRIES = require('./industries.js');
 const FEATURES = require('./features.js');
+const MAX = require('./max.js');
+/* The 90-day promise on the Max pages: written, not yet switched on. */
+const MAX_GUARANTEE = false;
 const CASES = INDUSTRIES.CASES || [];
 
 /* The cross-link strip: every industry page links the other nine, and the
@@ -339,14 +342,14 @@ ${b.maxPitch ? `<section class="section">
       <div class="badge">Add growth</div>
       <h3>Max</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
-      <p class="plan-note">Everything in Business, plus:</p>
+      <p class="plan-note">An end-to-end system for your kind of business, run for you:</p>
       <ul class="ticks">
         <li class="tick-hero">Your Facebook and Instagram ads, run by me. You set the budget</li>
         <li class="tick-hero">Your Google ranking worked on every month</li>
-        <li class="tick-hero">Missed calls answered by text in seconds</li>
+        <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
       </ul>
       <p class="plan-up">Ten businesses at a time. &pound;250 for the first ten.</p>
-      <a class="btn btn-ghost full" href="/plans.html#max">Learn more about Max &rsaquo;</a>
+      <a class="btn btn-ghost full" href="${maxHref(b.slug)}">${maxLabel(b.slug)} &rsaquo;</a>
     </article>
   </div>
   <p class="wrap center micro reveal">50% off your first month. Or pay for the year: 2 months free and the Launch Boost.</p>
@@ -426,10 +429,10 @@ function planCard(f) {
         <li class="tick-hero">Your Facebook and Instagram ads, set up, run and tracked by me</li>
         <li class="tick-hero">Your first ad live within 7 days</li>
         <li class="tick-hero">Your Google ranking worked on every month</li>
-        <li class="tick-hero">Missed calls answered by text in seconds</li>
-        <li class="tick-hero">Business email and a business number</li>
+        <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
+        <li class="tick-hero">Business email at your own address</li>
       </ul>
-      <p class="plan-up">Ten businesses at a time. &pound;250 for the first ten, then the price goes up.</p>
+      <p class="plan-up">Built for your kind of business: <a href="/max/trades">Trades</a>, <a href="/max/clubs">Clubs</a>, <a href="/max/salon">Salon</a>, or <a href="#" data-max-other>another</a>. Ten at a time.</p>
     </article>`;
   return `    <article class="plan featured">
       <div class="badge">+&pound;25: get booked</div>
@@ -587,4 +590,226 @@ for (const f of FEATURES) {
   const file = path.join(OUT, `${f.slug}.html`);
   fs.writeFileSync(file, featurePage(f));
   console.log('wrote', path.basename(file));
+}
+
+/* ---------------------------------------------------------- Max pages */
+/* Which model a trade page points at; the rest go to the picker. */
+function maxHref(slug) {
+  if (slug === 'trades' || slug === 'cleaners' || slug === 'gardeners') return '/max/trades';
+  if (slug === 'salons' || slug === 'barbers') return '/max/salon';
+  if (slug === 'gyms') return '/max/clubs';
+  return '/plans.html#max';
+}
+function maxLabel(slug) {
+  const h = maxHref(slug);
+  return h === '/max/trades' ? 'See Trades Max' : h === '/max/salon' ? 'See Salon Max' : h === '/max/clubs' ? 'See Clubs Max' : 'See Max';
+}
+
+function maxPage(m) {
+  const url = `https://kanvas.one/max/${m.slug}`;
+  const free = `/free.html?t=${m.tag}`;
+  /* Pages live in /max/, so every asset path is absolute. */
+  const nav = NAV.replace(/href="\/"/g, 'href="/"');
+  const form = miniForm('e.g. ' + (m.slug === 'trades' ? 'Dave the Plumber' : m.slug === 'clubs' ? 'Northside Dance' : 'Nova Nails'));
+  const foot = FOOT.replace(/src="([a-z-]+\.js)/g, 'src="/$1');
+  return `<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>${m.name} | Kanvas One</title>
+<meta name="description" content="${plain(m.promise)} ${m.desc}">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="${m.name} — ${plain(m.promise)}">
+<meta property="og:description" content="${m.desc}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kanvas One">
+<meta property="og:image" content="https://kanvas.one/assets/og-image.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="${url}">
+<script type="application/ld+json">
+${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: m.name,
+  serviceType: 'Website, advertising and marketing system, run for the business',
+  provider: { '@type': 'Organization', name: 'Kanvas One', url: 'https://kanvas.one/' },
+  areaServed: 'GB',
+  url: url,
+  description: m.desc,
+  offers: { '@type': 'Offer', price: '250', priceCurrency: 'GBP', description: 'Per month. Ad spend paid separately by the customer.' }
+})}
+</script>
+<script type="application/ld+json">
+${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: m.faq.filter(([q]) => !/TODO/.test(q)).map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
+})}
+</script>
+<link rel="icon" href="/assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
+<link rel="icon" href="/assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="/assets/favicon-180.png?v=3">
+<link rel="stylesheet" href="/styles.css?v=${CSS_V}">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+${nav}<!-- 1. The promise, the price, the ask. -->
+<section class="page-hero">
+  <div class="wrap center">
+    <p class="hero-pill reveal">${m.name}</p>
+    <h1 class="reveal">${m.promise}</h1>
+    <p class="lede reveal">&pound;250 a month. No setup fee. Live the same day you join.<span class="gap"></span>Ten businesses at a time.</p>
+    <div class="cta-row reveal">
+      <a class="btn btn-primary" href="#miniFree">See your free preview</a>
+      <a class="btn btn-ghost" href="/get-started.html?plan=max">Start ${m.name} &rsaquo;</a>
+    </div>
+    <p class="fineprint reveal">${MAX.AD_SPEND}</p>
+  </div>
+</section>
+
+<!-- 2. Who it is for. -->
+<section class="section pt0">
+  <div class="wrap center">
+    <h2 class="reveal">Who it&rsquo;s for.</h2>
+    <p class="lede reveal">${m.who}</p>
+  </div>
+</section>
+
+<!-- 3. The model, in the order the customer meets it. -->
+<section class="section pt0">
+  <div class="wrap center">
+    <h2 class="reveal">The model.</h2>
+    <p class="lede reveal">Four stages. Built once for your kind of business, tested, and repeated.</p>
+  </div>
+  <div class="wrap stages reveal">
+${m.stages.map((s, i) => `    <article class="stage">
+      <span class="stage-n">${i + 1}</span>
+      <h3>${s.name}</h3>
+      <p class="stage-intro">${s.intro}</p>
+      <ul class="ticks">
+${s.items.map((t) => `        <li>${t}</li>`).join('\n')}
+      </ul>
+    </article>`).join('\n')}
+  </div>
+</section>
+
+<!-- 4. What you do, what we do. -->
+<section class="section grey">
+  <div class="wrap center">
+    <h2 class="reveal">What you do. What we do.</h2>
+  </div>
+  <div class="wrap two-col reveal">
+    <div class="col">
+      <h3>You</h3>
+      <ul>${m.you.map((t) => `<li>${t}</li>`).join('')}</ul>
+    </div>
+    <div class="col">
+      <h3>We</h3>
+      <ul>${m.we.map((t) => `<li>${t}</li>`).join('')}</ul>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Everything you get, against what it costs bought separately. -->
+<section class="section">
+  <div class="wrap center">
+    <h2 class="reveal">Everything you get.</h2>
+  </div>
+  <div class="wrap vt-wrap reveal">
+    <table class="vt">
+      <thead><tr><th scope="col">What you get</th><th scope="col">What it does for you</th><th scope="col">Bought separately</th></tr></thead>
+      <tbody>
+${m.value.map(([a, c, d]) => `        <tr><th scope="row">${a}</th><td>${c}</td><td>${d}</td></tr>`).join('\n')}
+      </tbody>
+    </table>
+  </div>
+  <p class="wrap vt-total reveal">${m.valueTotal}</p>
+</section>
+
+<!-- 6. Why it works. -->
+<section class="section pt0">
+  <div class="wrap center">
+    <h2 class="reveal">Why it works.</h2>
+  </div>
+  <div class="wrap why reveal">
+${m.why.map(([lead, rest]) => `    <p><b>${lead}</b>${rest}</p>`).join('\n')}
+  </div>
+</section>
+
+<!-- 7. What it costs. -->
+<section class="section grey">
+  <div class="wrap center">
+    <h2 class="reveal">What it costs.</h2>
+  </div>
+  <div class="wrap cost reveal">
+    <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
+    <p>No setup fee. Same price whatever your business type.</p>
+    <p>${MAX.AD_SPEND}</p>
+    <p>An agency charges &pound;500 a month or more to run ads, before the budget. ${m.name} is &pound;250, with the website, the ranking work, the bookings and the follow-ups in it.</p>
+    <p><strong>Your price is locked</strong> for as long as you stay on it. Ten businesses at a time; after the first ten, the price goes up for new customers, not for you.</p>
+  </div>
+</section>
+
+<!-- 8. No risk to try it. -->
+<section id="offer" class="section">
+  <div class="wrap center">
+    <h2 class="reveal">No risk to try it.</h2>
+    <ul class="assure trust reveal"><li>Free preview in 24 hours</li><li>Live the same day you join</li><li>No setup fee</li><li>Cancel anytime</li></ul>
+  </div>
+${MAX_GUARANTEE ? `  <div class="wrap">
+    <div class="promise reveal">
+      <p class="promise-name">The 90-day promise</p>
+      <ul class="promise-lines"><li>Run ${m.name} for 90 days with ads at &pound;10 a day or more.</li><li>If you have not had more enquiries than in the 90 days before, the next three months of Max are free.</li></ul>
+    </div>
+  </div>
+` : ''}  <div class="wrap center">
+${form}  </div>
+</section>
+
+<!-- 9. Questions. -->
+<section class="section grey">
+  <div class="wrap center">
+    <h2 class="reveal">Questions.</h2>
+  </div>
+  <div class="wrap faq reveal">
+${m.faq.map(([q, a]) => `    <details>
+      <summary>${q}</summary>
+      <div class="ans"><p>${a}</p></div>
+    </details>`).join('\n')}
+  </div>
+</section>
+
+<!-- 10. The ask. -->
+<section class="section cta-end">
+  <div class="wrap center">
+    <h2 class="reveal">Start with the free example.</h2>
+    <p class="lede reveal">A real page for your business, within 24 hours.<span class="gap"></span>No card, no catch. Then decide.</p>
+    <div class="cta-row reveal">
+      <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
+      <a class="btn btn-ghost" href="/plans.html">All the plans</a>
+    </div>
+    <nav class="ind-links reveal" aria-label="Other Max models">
+      <span>Max for:</span>${MAX.filter((x) => x.slug !== m.slug).map((x) => `<a href="/max/${x.slug}">${x.name}</a>`).join('')}<a href="#" data-max-other>Another business</a>
+    </nav>
+  </div>
+</section>
+
+</main>
+
+<div class="sticky-cta" id="stickyCta" hidden>
+  <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
+</div>
+${foot}`;
+}
+
+fs.mkdirSync(path.join(OUT, 'max'), { recursive: true });
+for (const m of MAX) {
+  const file = path.join(OUT, 'max', `${m.slug}.html`);
+  fs.writeFileSync(file, maxPage(m));
+  console.log('wrote max/' + path.basename(file));
 }
