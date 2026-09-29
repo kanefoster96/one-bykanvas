@@ -2770,3 +2770,23 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .max-app{position:relative;width:88px;height:88px;margin:0 auto 18px;border-radius:24px;background:linear-gradient(160deg,#ffffff,#f2f4f2);border:1px solid var(--line-soft);box-shadow:0 10px 30px rgba(0,0,0,.08),inset 0 1px 0 #fff;display:grid;place-items:center;color:var(--ink)}
 .max-app svg{width:44px;height:44px}
 .max-app-pill{position:absolute;right:-10px;bottom:-10px;padding:5px 9px;border-radius:980px;background:var(--good);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;line-height:1;border:3px solid #fff;box-shadow:0 4px 12px rgba(26,127,55,.35)}
+
+/* ---------- The Max setup form ---------- */
+.panel-lede{margin:-8px 0 16px;font-size:15px;line-height:1.55;color:var(--ink-2)}
+.ob-wrap{max-width:720px}
+.ob-progress{margin:14px 0 0;font-size:14px;color:var(--good);font-weight:600}
+.ob-section{position:relative}
+.ob-section.is-filled .panel-title::before{content:"\2713";display:inline-grid;place-items:center;width:18px;height:18px;margin-right:8px;border-radius:980px;background:var(--good);color:#fff;font-size:11px;vertical-align:middle}
+.ob-tag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:980px;background:var(--good-soft);color:var(--good);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;vertical-align:middle}
+.ob-tag-soft{background:var(--bg-grey);color:var(--ink-3)}
+.ob-why{margin:-10px 0 18px;font-size:14.5px;line-height:1.5;color:var(--ink-3)}
+.ob-label{display:block;font-size:13.5px;font-weight:500;color:var(--ink-2);margin-bottom:8px}
+.ob-checks{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px}
+.ob-checks .check{font-size:14.5px}
+/* A lone tick inside a field: the box sits at the left, the words beside it. */
+.ob-section .field > .check{flex-direction:row;justify-content:flex-start;align-items:center;gap:10px;margin:0 0 16px;font-size:14.5px;color:var(--ink-2)}
+.ob-section .field > .check input{flex:0 0 18px;margin:0}
+.svc-row{position:relative;padding:16px 16px 4px;margin:0 0 12px;border:1px solid var(--line-soft);border-radius:14px;background:var(--bg-grey)}
+.svc-row .field label{font-size:13px}
+.svc-remove{position:absolute;top:10px;right:14px;font-size:13px;color:var(--ink-3)}
+.ob-save{position:sticky;bottom:0;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg-grey) 70%,transparent);margin-top:18px}

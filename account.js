@@ -123,6 +123,8 @@ async function start() {
   showBilling(profile.data);
   showReferral(profile.data);
   showClaude(profile.data);
+  var maxPanel = document.getElementById('maxPanel');
+  if (maxPanel) maxPanel.hidden = entitledPlan(profile.data) !== 'max';
   await showPoints(profile.data);
   await showFeatures();
 

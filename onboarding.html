@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Set up your Max site — Kanvas One</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=3">
+<link rel="stylesheet" href="styles.css?v=102">
+</head>
+<body class="auth-body">
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one.</a>
+    <a class="nav-icon" id="navBell" href="/notifications.html" hidden aria-label="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg>
+    </a>
+  </div>
+</header>
+
+<!-- The Max setup form. Everything on it is optional and can be saved as
+     often as they like: what is here shapes the build, what is empty is
+     built around. Sections run from what the site cannot go live without
+     to what makes the model sing. onboarding.js loads, saves and tells us. -->
+<main class="acct-wrap ob-wrap" id="app" hidden>
+  <a class="linkish" href="/account.html">&larr; Your account</a>
+  <h1 class="biz-title">Set up your Max site.</h1>
+  <p class="lede left">Everything here is optional, and you can come back and change any of it whenever you like. Anything you leave empty still works; it just might not be in the flow yet. Save as you go, and I get told what changed.</p>
+  <p class="ob-progress" id="obProgress"></p>
+
+  <form id="obForm" novalidate>
+
+    <!-- 1 -->
+    <section class="panel ob-section" data-section="contact">
+      <h2 class="panel-title">1. Contact and hours <span class="ob-tag">Essential</span></h2>
+      <p class="ob-why">What every page, email and form uses.</p>
+      <div class="acct-grid">
+        <div class="field"><label for="c_email">Email customers should see</label><input id="c_email" type="email" placeholder="hello@yourbusiness.co.uk"></div>
+        <div class="field"><label for="c_phone">Phone customers should call</label><input id="c_phone" type="tel"></div>
+        <div class="field full"><label class="check"><input id="c_whatsapp" type="checkbox"> Customers can WhatsApp that number</label></div>
+        <div class="field full"><label for="c_address">Address, if customers come to you</label><input id="c_address" type="text"></div>
+        <div class="field full"><label for="c_area">Areas or towns you cover</label><input id="c_area" type="text" placeholder="Whitley Bay, Tynemouth, North Shields&hellip;"></div>
+        <div class="field full"><label for="c_hours">Opening hours</label><textarea id="c_hours" rows="2" placeholder="Mon&ndash;Fri 8&ndash;5, Sat 9&ndash;1, closed Sunday"></textarea></div>
+        <div class="field full"><label for="c_best">Best time to reach you</label><input id="c_best" type="text" placeholder="Evenings after 6, or text any time"></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="panel ob-section" data-section="services">
+      <h2 class="panel-title">2. Services and prices <span class="ob-tag">Essential</span></h2>
+      <p class="ob-why">One row per service. A price can be &ldquo;from &pound;80&rdquo; or &ldquo;quote&rdquo;. No photo yet? Tick the box and I use a generated one until you send yours.</p>
+      <div id="svcRows"></div>
+      <button class="btn btn-ghost" id="svcAdd" type="button">Add a service</button>
+    </section>
+
+    <!-- 3 -->
+    <section class="panel ob-section" data-section="offer">
+      <h2 class="panel-title">3. The job you want more of <span class="ob-tag">Essential for ads</span></h2>
+      <p class="ob-why">This becomes the first ad and the first offer.</p>
+      <div class="acct-grid">
+        <div class="field full"><label for="o_job">The job</label><input id="o_job" type="text" placeholder="Boiler services, full rewires, fence panels&hellip;"></div>
+        <div class="field full"><label for="o_why">Why that one?</label><textarea id="o_why" rows="2" placeholder="Best margin, quickest, the one you enjoy, the one that leads to bigger jobs"></textarea></div>
+        <div class="field full"><label for="o_photo">A photo of it, if you have one <span class="opt">(a link is fine)</span></label><input id="o_photo" type="text" placeholder="Instagram post, Google Drive, anywhere"></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="panel ob-section" data-section="customers">
+      <h2 class="panel-title">4. How you get customers now</h2>
+      <p class="ob-why">So the model adds to what works and replaces what does not.</p>
+      <div class="ob-checks" id="custSources">
+        <label class="check"><input type="checkbox" value="Word of mouth"> Word of mouth</label>
+        <label class="check"><input type="checkbox" value="Facebook"> Facebook</label>
+        <label class="check"><input type="checkbox" value="Instagram"> Instagram</label>
+        <label class="check"><input type="checkbox" value="Google"> Google</label>
+        <label class="check"><input type="checkbox" value="Checkatrade or another directory"> Checkatrade or another directory</label>
+        <label class="check"><input type="checkbox" value="Flyers, the van, signs"> Flyers, the van, signs</label>
+        <label class="check"><input type="checkbox" value="Repeat customers"> Repeat customers</label>
+        <label class="check"><input type="checkbox" value="Nothing yet"> Nothing yet</label>
+      </div>
+      <div class="field full"><label for="cu_notes">Anything worth knowing about that</label><textarea id="cu_notes" rows="2" placeholder="Checkatrade costs &pound;90 a month and brings two jobs, Facebook posts get likes but no calls&hellip;"></textarea></div>
+    </section>
+
+    <!-- 5 -->
+    <section class="panel ob-section" data-section="serving">
+      <h2 class="panel-title">5. When and where you serve customers</h2>
+      <p class="ob-why">So the booking calendar and the ads match real life.</p>
+      <div class="acct-grid">
+        <div class="field full"><label for="s_days">Days and times you take jobs</label><input id="s_days" type="text" placeholder="Mon&ndash;Fri, first job 8am, last job 4pm"></div>
+        <div class="field full">
+          <span class="ob-label">How soon can a new customer usually get you?</span>
+          <div class="ob-checks" id="leadTime">
+            <label class="check"><input type="radio" name="lead" value="Same day"> Same day</label>
+            <label class="check"><input type="radio" name="lead" value="Next day or two"> Next day or two</label>
+            <label class="check"><input type="radio" name="lead" value="Within a week"> Within a week</label>
+            <label class="check"><input type="radio" name="lead" value="Booked weeks ahead"> Booked weeks ahead</label>
+          </div>
+        </div>
+        <div class="field full"><label class="check"><input id="s_emergency" type="checkbox"> I take emergency callouts</label></div>
+        <div class="field full"><label for="s_travel">How far you travel, or what you charge to</label><input id="s_travel" type="text" placeholder="Within 15 miles, further for bigger jobs"></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="panel ob-section" data-section="bookings">
+      <h2 class="panel-title">6. How bookings work now</h2>
+      <p class="ob-why">The site takes over from whatever this is, one step at a time.</p>
+      <div class="ob-checks" id="bookHow">
+        <label class="check"><input type="radio" name="book" value="Text and book as we go"> Text and book as we go</label>
+        <label class="check"><input type="radio" name="book" value="A diary or calendar"> A diary or calendar</label>
+        <label class="check"><input type="radio" name="book" value="An app"> An app</label>
+        <label class="check"><input type="radio" name="book" value="Customers just turn up"> Customers just turn up</label>
+      </div>
+      <div class="acct-grid">
+        <div class="field full"><label for="b_app">If an app, which one?</label><input id="b_app" type="text"></div>
+        <div class="field full"><label for="b_want">What would you like bookings to do instead?</label><textarea id="b_want" rows="2" placeholder="Customers pick a slot themselves, a deposit up front, a reminder so they are in"></textarea></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="panel ob-section" data-section="payments">
+      <h2 class="panel-title">7. How you take payment</h2>
+      <p class="ob-why">Card payments land in your own bank through Stripe. I send you a Stripe link; it asks for your bank details itself, securely. Never type a sort code or card number into this form.</p>
+      <div class="ob-checks" id="payMethods">
+        <label class="check"><input type="checkbox" value="Cash"> Cash</label>
+        <label class="check"><input type="checkbox" value="Bank transfer"> Bank transfer</label>
+        <label class="check"><input type="checkbox" value="Card machine"> Card machine</label>
+        <label class="check"><input type="checkbox" value="Invoice, paid later"> Invoice, paid later</label>
+        <label class="check"><input type="checkbox" value="An app"> An app</label>
+      </div>
+      <div class="acct-grid">
+        <div class="field full">
+          <span class="ob-label">Do you take a deposit?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="dep" value="Yes"> Yes</label>
+            <label class="check"><input type="radio" name="dep" value="Sometimes"> Sometimes</label>
+            <label class="check"><input type="radio" name="dep" value="No"> No</label>
+          </div>
+        </div>
+        <div class="field"><label for="p_deposit">Deposit amount</label><input id="p_deposit" type="text" placeholder="&pound;20, or 25%"></div>
+        <div class="field"><label for="p_callout">Callout fee, if any</label><input id="p_callout" type="text" placeholder="&pound;45, or none"></div>
+        <div class="field full"><label class="check"><input id="p_invoices" type="checkbox"> I send invoices for bigger jobs</label></div>
+        <div class="field full"><label class="check"><input id="p_plans" type="checkbox"> I offer payment plans or staged payments</label></div>
+        <div class="field full"><label class="check"><input id="p_stripe" type="checkbox"> I&rsquo;ve completed the Stripe link you sent me</label></div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="panel ob-section" data-section="access">
+      <h2 class="panel-title">8. Access I need</h2>
+      <p class="ob-why">For the ads, the Google listing and your web address. Nothing here gives me your passwords.</p>
+      <div class="acct-grid">
+        <div class="field"><label for="a_fb">Your Facebook page</label><input id="a_fb" type="text" placeholder="facebook.com/yourbusiness"></div>
+        <div class="field"><label for="a_ig">Your Instagram</label><input id="a_ig" type="text" placeholder="@yourbusiness"></div>
+        <div class="field full"><label class="check"><input id="a_meta" type="checkbox"> I&rsquo;ve added Kanvas One as a partner in Meta Business Manager (I send you the steps)</label></div>
+        <div class="field full">
+          <span class="ob-label">Google Business Profile, the listing on Maps</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="gbp" value="I have one"> I have one</label>
+            <label class="check"><input type="radio" name="gbp" value="I don't have one"> I don&rsquo;t have one</label>
+            <label class="check"><input type="radio" name="gbp" value="Not sure"> Not sure</label>
+          </div>
+        </div>
+        <div class="field full"><label for="a_gbp">Link to it, if you have one</label><input id="a_gbp" type="text" placeholder="The Google Maps link, or just the name it shows under"></div>
+        <div class="field"><label for="a_domain">A web address you already own</label><input id="a_domain" type="text" placeholder="yourbusiness.co.uk"></div>
+        <div class="field"><label for="a_registrar">Where it&rsquo;s registered</label><input id="a_registrar" type="text" placeholder="GoDaddy, 123 Reg, Wix, not sure"></div>
+        <div class="field full"><label for="a_existing">Anything else already online: a current site, a booking app with your customers in it</label><textarea id="a_existing" rows="2"></textarea></div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="panel ob-section" data-section="extras">
+      <h2 class="panel-title">9. Extras <span class="ob-tag ob-tag-soft">Makes it better</span></h2>
+      <p class="ob-why">None of this stops the build. All of it makes the site sell harder.</p>
+      <div class="acct-grid">
+        <div class="field full"><label for="x_photos">Photos of your work, the van, the team <span class="opt">(links are fine)</span></label><textarea id="x_photos" rows="2"></textarea></div>
+        <div class="field full"><label for="x_reviews">Reviews or nice messages from customers, pasted in</label><textarea id="x_reviews" rows="3"></textarea></div>
+        <div class="field full"><label for="x_next">The next thing a customer needs after a job <span class="opt">(for the reminder)</span></label><input id="x_next" type="text" placeholder="Annual boiler service, gutter clean in autumn, six-week rebook"></div>
+        <div class="field full"><label for="x_referral">What you&rsquo;d give a customer for sending a friend</label><input id="x_referral" type="text" placeholder="&pound;20 off their next job, a free callout"></div>
+        <div class="field full"><label for="x_report">Who should get the monthly note</label><input id="x_report" type="email" placeholder="Leave empty for your account email"></div>
+        <div class="field full"><label for="x_anything">Anything else</label><textarea id="x_anything" rows="3"></textarea></div>
+      </div>
+    </section>
+
+    <div class="acct-save ob-save">
+      <button class="btn btn-primary" id="obSave" type="submit">Save</button>
+      <p class="note" id="obNote" role="status" aria-live="polite"></p>
+    </div>
+  </form>
+</main>
+
+<div class="acct-loading" id="loading"><p>Loading&hellip;</p></div>
+
+<template id="svcRow">
+  <div class="svc-row">
+    <div class="acct-grid">
+      <div class="field"><label>Service</label><input type="text" data-k="name" placeholder="Boiler service"></div>
+      <div class="field"><label>Price</label><input type="text" data-k="price" placeholder="&pound;80, from &pound;120, or quote"></div>
+      <div class="field full"><label>What it includes</label><input type="text" data-k="includes" placeholder="Full check, parts cleaned, certificate"></div>
+      <div class="field"><label>How long it takes</label><input type="text" data-k="duration" placeholder="About an hour"></div>
+      <div class="field"><label>Photo <span class="opt">(a link)</span></label><input type="text" data-k="photo" placeholder="Optional"></div>
+      <div class="field full"><label class="check"><input type="checkbox" data-k="generated"> Use a generated image until I send one</label></div>
+    </div>
+    <button class="linkish svc-remove" type="button">Remove</button>
+  </div>
+</template>
+
+<script src="vendor/supabase.js?v=1"></script>
+<script src="consent.js?v=8"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="supabase-client.js?v=1"></script>
+<script src="session.js?v=3"></script>
+<script src="onboarding.js?v=1"></script>
+<script src="admin-pill.js?v=8"></script>
+</body>
+</html>
