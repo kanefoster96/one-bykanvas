@@ -2819,3 +2819,43 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .ob-strip a em{font-style:normal}
 .ob-strip a i{display:none;font-style:normal}
 @media (max-width:480px){.ob-strip a{font-size:12.5px;padding:8px 9px}.ob-strip a em{display:none}.ob-strip a i{display:inline}}
+
+/* ---- /new: the hero as the lead magnet ---- */
+.hero-points{list-style:none;margin:16px auto 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;max-width:640px}
+.hero-points li{font-size:15px;color:var(--ink-2);display:flex;align-items:center;gap:7px}
+.hero-points li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--good);flex:0 0 7px}
+.hero-form{max-width:440px;margin:26px auto 0;text-align:left}
+.hero-form .mini-step{margin-top:12px}
+.hero-form.is-sent .mini-step,.hero-form.is-sent .micro{display:none}
+.hero-form .note{text-align:center;min-height:1.4em}
+.hero-form .note.ok{font-size:16px;font-weight:500}
+.hero-form .micro{margin:10px 0 0;text-align:center}
+.hero .sub.plain{max-width:520px;margin-left:auto;margin-right:auto}
+/* The phone as theirs: the mock replaces the cycling sites while a name is typed. */
+.device-mock{display:none;position:absolute;inset:0;background:#fff;flex-direction:column;align-items:center;text-align:center;font-size:clamp(11px,1.7vw,16px);color:var(--ink)}
+.device-shots.is-mine .shots,.device-shots.is-mine .device-build{display:none}
+/* The mock is a light page: hold the dark status bar still on it. */
+.device-shots.is-mine .ios-bar{animation:none;opacity:0}
+.device-shots.is-mine .ios-bar[data-tone="dark"]{opacity:1}
+.device-shots.is-mine .device-mock{display:flex}
+.mock-url{margin:.8em auto 0;padding:.45em 1.1em;border-radius:980px;background:var(--bg-grey);color:var(--ink-3);font-size:.85em;max-width:80%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mock-name{margin:1.6em 0 0;font-size:1.9em;font-weight:700;letter-spacing:-.03em;line-height:1.1;max-width:88%;overflow-wrap:anywhere}
+.mock-line{margin:.6em 0 0;font-size:1em;color:var(--ink-2)}
+.mock-call{margin:1.1em 0 0;padding:.65em 1.5em;border-radius:980px;background:var(--ink);color:#fff;font-weight:600;font-size:.95em}
+.mock-blocks{display:flex;gap:.6em;margin:1.6em 0 0;width:80%}
+.mock-blocks span{flex:1;height:3.2em;border-radius:.6em;background:var(--bg-grey)}
+@media (max-width:640px){.device-mock{font-size:clamp(13px,3.6vw,16px)}}
+@media (max-width:600px){.device-mock{padding-top:14.5cqw}.mock-name{margin-top:1.4em}}
+/* Pain, ease and the Max anchor. */
+.plain-list{list-style:none;margin:18px auto 0;padding:0;max-width:560px}
+.plain-list li{padding:12px 0;border-top:1px solid var(--line-soft);font-size:17px;line-height:1.5;color:var(--ink-2)}
+.plain-list li:first-child{border-top:0}
+.plain-list li b{color:var(--ink);font-weight:600}
+.value-ticks{max-width:640px;margin:20px auto 0;columns:2;column-gap:28px}
+.value-ticks li{break-inside:avoid}
+@media (max-width:640px){.value-ticks{columns:1}}
+.max-anchor{max-width:560px;margin:0 auto;text-align:center}
+.max-anchor .ticks{display:inline-block;text-align:left;margin-top:14px}
+.max-anchor .price{margin:16px 0 4px}
+.max-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
+.max-links a,.max-links button{font:inherit;font-size:14px;font-weight:600;padding:9px 16px;border-radius:980px;border:1px solid var(--line);background:#fff;color:var(--ink);text-decoration:none;cursor:pointer}
