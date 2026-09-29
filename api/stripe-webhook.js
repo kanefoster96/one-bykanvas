@@ -298,19 +298,25 @@ module.exports = async function handler(req, res) {
           + `and you get an email the moment it is. `
           + `Then I build the features you asked for, within 14 days - or your next month is free. `
           + `If I need anything from you - photos, prices, an offer - I'll ask.\n\n`
-          + `One thing that helps now: send me photos, your services and prices, and anything about `
-          + `your business that isn't already online. From your account: ${site}/account.html`,
+          + (patch.active_plan === 'max'
+              ? `One thing that helps now: fill in the Max setup form. Your services and prices, how you get `
+                + `customers today, how you book and take payment, and the access I need. All optional, save any `
+                + `time, and I see what changed: ${site}/onboarding.html`
+              : `One thing that helps now: send me photos, your services and prices, and anything about `
+                + `your business that isn't already online. From your account: ${site}/account.html`),
       html: emailHtml({
         preheader: `Your ${planName} plan is active. Here's what happens next.`,
         heading: `Welcome to Kanvas One${who2} 👋`,
         lines: [
           `Your <strong>${esc(planName)}</strong> plan is now active &mdash; thanks for signing up.`,
           `Here&rsquo;s what happens now. <strong>Today</strong> I register your web address and put your page live on it, and you get an email the moment it is. <strong>Then</strong> I build the features you asked for, within 14 days &mdash; or your next month is free. If I need anything from you &mdash; photos, prices, an offer &mdash; I&rsquo;ll ask.`,
-          `One thing that helps now: send me photos, your services and prices, and anything about your business that isn&rsquo;t already online. Everything lives in your account from here: your plan, your requests, and your site.`
+          patch.active_plan === 'max'
+            ? `One thing that helps now: fill in the <strong>Max setup form</strong>. Your services and prices, how you get customers today, how you book and take payment, and the access I need. All optional, save any time, and I see what changed.`
+            : `One thing that helps now: send me photos, your services and prices, and anything about your business that isn&rsquo;t already online. Everything lives in your account from here: your plan, your requests, and your site.`
         ],
         details: facts,
-        ctaText: 'Send photos and details',
-        ctaHref: `${site}/account.html`,
+        ctaText: patch.active_plan === 'max' ? 'Open the Max setup form' : 'Send photos and details',
+        ctaHref: patch.active_plan === 'max' ? `${site}/onboarding.html` : `${site}/account.html`,
         ctaNote: 'Two minutes now saves a week later.',
         footer: 'You&rsquo;re getting this because you started a plan with Kanvas One.',
         footerLinks: standardFooter(site)
