@@ -42,13 +42,53 @@ const MIRROR = { public_email: 'email', phone: 'phone', address: 'address', serv
 
 const MAX_BYTES = 60000;
 
-/* Strings, numbers, booleans, and arrays/objects of those, two levels
+/* The answers that shape the build, in plain words. Anything on this list
+   left blank or "not sure" is the admin's to decide, and the email says so
+   under its own heading. Add-on sections count only for the Max picked. */
+const DECISIONS = {
+  contact: { reach: 'when customers can reach them', customers_live: 'where their customer details live now' },
+  offer: { job: 'the job to advertise', upsells: 'the upsells' },
+  customers: { sources: 'how they get customers now', jobs_per_week: 'jobs a week', job_value: 'a small job\u2019s value', big_job_value: 'a big job\u2019s value' },
+  bookings: { how: 'how a job gets booked now', lead_time: 'how soon a new customer gets them', want: 'straight in or ask first' },
+  payments: { methods: 'how they get paid now', upfront: 'anything taken before the work', amount: 'the deposit or callout amount', when: 'when it is taken', big_job: 'what is taken before a big job', finance: 'finance' },
+  online: { facebook: 'Facebook page or profile', gbp: 'Google Business Profile' },
+  trades: { gas_safe: 'Gas Safe number', insured: 'insurance', brands: 'brands installed and guarantee', emergency: 'emergency callouts', next_service: 'the next-service reminder', base: 'where they set off from' },
+  clubs: { classes: 'classes and ages', first_visit: 'how a first visit works', fees: 'fees', terms: 'term dates' },
+  salon: { team: 'the team', no_show: 'no-show policy', rebook: 'rebooking interval', before_first: 'before a first appointment' }
+};
+const JOB_FIELDS = { often: 'how often', price: 'price', pricing: 'how it is priced', flow: 'straight in or ask first' };
+
+function blank(v) { return v === undefined || v === null || v === '' || v === false || (Array.isArray(v) && !v.length); }
+
+function undecided(answers) {
+  const out = [];
+  const model = answers.model || '';
+  for (const [section, fields] of Object.entries(DECISIONS)) {
+    if (['trades', 'clubs', 'salon'].includes(section) && section !== model) continue;
+    const sec = answers[section] || {};
+    const missing = Object.entries(fields).filter(([k]) => blank(sec[k])).map(([, label]) => label);
+    if (missing.length) out.push(`  ${section}: ${missing.join(', ')}`);
+  }
+  const sv = answers.services || {};
+  if (!sv.trade) out.push('  services: the trade');
+  const jobs = Array.isArray(sv.jobs) ? sv.jobs : [];
+  if (!jobs.length) out.push('  services: no jobs ticked');
+  if (jobs.length > 1 && !sv.most) out.push('  services: which job they do most');
+  jobs.forEach((j) => {
+    const missing = Object.entries(JOB_FIELDS).filter(([k]) => blank(j[k])).map(([, label]) => label);
+    if (missing.length) out.push(`  ${j.name || 'a job'}: ${missing.join(', ')}`);
+  });
+  return out;
+}
+
+/* Strings, numbers, booleans, and arrays/objects of those, four levels
    deep. Anything else is dropped. */
 function clean(v, depth) {
   depth = depth || 0;
   if (typeof v === 'string') return v.slice(0, 4000);
   if (typeof v === 'number' || typeof v === 'boolean') return v;
-  if (depth > 2 || v === null || v === undefined) return undefined;
+  /* Four levels: answers > services > jobs > a job's fields. */
+  if (depth > 4 || v === null || v === undefined) return undefined;
   if (Array.isArray(v)) return v.slice(0, 40).map((x) => clean(x, depth + 1)).filter((x) => x !== undefined);
   if (typeof v === 'object') {
     const out = {};
@@ -165,8 +205,12 @@ module.exports = async function handler(req, res) {
        is the record and nobody has to open the database. */
     const name = (profile && profile.business_name) || user.email || 'A customer';
     const site = ourSiteUrl();
+    const decide = undecided(incoming);
     const text = [
       `${name} updated their Max setup: ${changed.join(', ')}.`,
+      '',
+      'YOU DECIDE (left blank or not sure):',
+      ...(decide.length ? decide : ['  nothing - every question has an answer']),
       '',
       ...SECTIONS.map(([key, label]) => `${changed.includes(label) ? '* ' : '  '}${label.toUpperCase()}\n${pretty(incoming[key])}`).join('\n\n').split('\n'),
       '',
