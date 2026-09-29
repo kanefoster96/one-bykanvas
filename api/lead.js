@@ -95,6 +95,22 @@ module.exports = async function handler(req, res) {
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
 
+    /* A link added to a free-example lead already sent: the homepage asks
+       for it after the name and email, once they have committed. The id is
+       the lead's own UUID, unguessable, and only the link can change. */
+    if (body.update) {
+      const id = String(body.update).trim();
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) return res.status(400).json({ error: 'Not a lead.' });
+      const link = tidyLink(clean(body.handle, 200));
+      if (!link) return res.status(400).json({ error: 'Nothing to add.' });
+      const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+      const { data: lead, error: upErr } = await db.from('leads').update({ handle: link }).eq('id', id).eq('source', 'free-preview').select('business').maybeSingle();
+      if (upErr) throw new Error(upErr.message);
+      if (!lead) return res.status(404).json({ error: 'Not a lead.' });
+      await notifyAdmin(db, 'Link added to a free example', `${lead.business}: ${link}`, '/admin.html');
+      return res.status(200).json({ ok: true });
+    }
+
     const name = clean(body.name, 200);
     const business = clean(body.business, 200);
     const email = clean(body.email, 320);
