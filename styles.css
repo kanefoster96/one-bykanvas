@@ -1090,7 +1090,7 @@ a.hero-pill:hover .pill-go{opacity:1}
    The site's own header, footer and cookie pill go, so the page reads as a
    screen of the app; the app has its own header and tabs around it. */
 .kanvas-embedded{scroll-padding-top:12px}
-.kanvas-embedded .nav,.kanvas-embedded .menu,.kanvas-embedded .scrim,.kanvas-embedded .foot,.kanvas-embedded .consent{display:none !important}
+.kanvas-embedded .nav,.kanvas-embedded .menu,.kanvas-embedded .scrim,.kanvas-embedded .foot,.kanvas-embedded .consent,.kanvas-embedded .ob-back{display:none !important}
 /* The app shows its own loading screen over the frame until this page is ready. */
 .kanvas-embedded .acct-loading{visibility:hidden}
 

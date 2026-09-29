@@ -17,6 +17,9 @@
   var dirty = false;
   var userId = null;
   var photos = [];   /* [{ path, url }] already uploaded */
+  /* The admin opens a customer's form with ?user=<id>; the API checks. */
+  var forUser = (new URLSearchParams(location.search).get('user') || '').trim();
+  var viewer = 'owner';
 
   function say(el, message, kind) {
     el.textContent = message || '';
@@ -362,12 +365,13 @@
       var res = await fetch('/api/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (await token()) },
-        body: JSON.stringify({ answers: read() })
+        body: JSON.stringify({ answers: read(), user: forUser || undefined })
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok) throw new Error(data.error || 'Could not save that.');
       dirty = false;
-      say(note, data.changed && data.changed.length ? 'Saved. Kane’s been told: ' + data.changed.join(', ') + '.' : 'Saved. Nothing changed since last time.', 'ok');
+      var who = viewer === 'admin' ? 'They’ve' : 'Kane’s';
+      say(note, data.changed && data.changed.length ? 'Saved. ' + who + ' been told: ' + data.changed.join(', ') + '.' : 'Saved. Nothing changed since last time.', 'ok');
     } catch (err) {
       say(note, err.message || 'Could not save that. Try again.', 'bad');
     }
@@ -380,18 +384,27 @@
     userId = res.data.session.user.id;
     var bell = $('navBell'); if (bell) bell.hidden = false;
     try {
-      var r = await fetch('/api/onboarding', { headers: { Authorization: 'Bearer ' + res.data.session.access_token } });
+      var r = await fetch('/api/onboarding' + (forUser ? '?user=' + encodeURIComponent(forUser) : ''), { headers: { Authorization: 'Bearer ' + res.data.session.access_token } });
       var data = await r.json();
       if (!r.ok) throw new Error(data.error || 'Could not load the form.');
       if (data.plan !== 'max') {
         loading.innerHTML = '<p>The Max setup form is for Max customers. <a href="/plans.html#max">See Max</a>, or <a href="/account.html">go back to your account</a>.</p>';
         return;
       }
+      viewer = data.viewer || 'owner';
+      if (viewer === 'admin') {
+        document.title = (data.business || 'A customer') + ': Max setup';
+        $('obTitle').textContent = (data.business || 'Their') + ' Max setup.';
+        $('obLede').textContent = 'Their answers, as they left them. Anything you change here, they hear about in the app the moment you save.';
+        var back = document.querySelector('.ob-back'); if (back) { back.href = '/admin.html'; back.innerHTML = '&larr; Admin'; }
+      }
       fill(data.answers);
       progress();
       dirty = false;
       loading.hidden = true;
       app.hidden = false;
+      /* Inside the One app, this tells the app to take its loading screen down. */
+      if (window.kanvasReady) window.kanvasReady();
     } catch (err) {
       loading.innerHTML = '<p>' + (err.message || 'Could not load the form.') + '</p>';
     }

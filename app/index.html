@@ -13,7 +13,7 @@
 <link rel="icon" href="../assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="../assets/favicon-180.png?v=3">
 <link rel="stylesheet" href="../styles.css?v=72">
-<link rel="stylesheet" href="app.css?v=16">
+<link rel="stylesheet" href="app.css?v=17">
 </head>
 <body class="oa-body">
 
@@ -324,6 +324,21 @@
   <!-- ---- Support (the Requests feature, unchanged) ---- -->
   <section class="oa-tab req-wrap" id="tabSupport" hidden>
 
+    <!-- Max: their setup form, the site's information, inside the app.
+         Kane hears the moment they save; they hear the moment he does. -->
+    <div class="oa-card oa-setup-card" id="setupCard" hidden>
+      <p class="oa-card-title">Your site information</p>
+      <p class="hint">What you sell, how you sell it, who you sell to. Kane builds from it, and hears the moment you change anything.</p>
+      <div class="oa-status-actions"><button class="oa-chip oa-chip-dark" id="setupOpen" type="button">Open your Max setup</button></div>
+    </div>
+    <section class="oa-screen oa-setup" id="setupScreen" hidden>
+      <div class="oa-setup-bar">
+        <button class="oa-chip" id="setupBack" type="button">&lsaquo; Support</button>
+        <p class="hint" id="setupHint">Loading&hellip;</p>
+      </div>
+      <iframe class="oa-setup-frame" id="setupFrame" title="Max setup" hidden></iframe>
+    </section>
+
     <!-- Every business: requests, and a chat straight to Kane. Kane's
          replies reach them as a notification in this app. -->
     <div class="oa-seg-wrap" id="supportModeWrap" hidden>
@@ -544,6 +559,6 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=19"></script>
+<script src="app.js?v=20"></script>
 </body>
 </html>

@@ -818,6 +818,26 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ url: target + '#kanvas_handoff=' + encodeURIComponent(hashed) });
     }
 
+    /* One of our own pages, inside the app: the Max setup form. Same
+       handoff as a dashboard, but the base is our site, so the path is
+       the only input and only known pages open. The admin may name a
+       customer; the form itself checks that. */
+    if (action === 'page') {
+      const path = cleanPath(body.path);
+      const m = /^\/onboarding\.html(\?user=([0-9a-f-]{36}))?$/.exec(path);
+      if (!m) return res.status(400).json({ error: 'That page does not open in the app.' });
+      if (m[2] && !caller.is_admin) return res.status(403).json({ error: 'That form is not yours.' });
+      const base = ourSiteUrl().replace(/\/+$/, '');
+      const origin = String(req.headers.origin || '');
+      let sameOrigin = false;
+      try { sameOrigin = origin && new URL(origin).origin === new URL(base).origin; } catch (e) { sameOrigin = false; }
+      if (sameOrigin) return res.status(200).json({ url: base + path });
+      const { data, error } = await db.auth.admin.generateLink({ type: 'magiclink', email: caller.email });
+      const hashed = data && data.properties && data.properties.hashed_token;
+      if (error || !hashed) throw new Error('handoff: ' + ((error && error.message) || 'no token'));
+      return res.status(200).json({ url: base + path + '#kanvas_handoff=' + encodeURIComponent(hashed) });
+    }
+
     if (action === 'seen') {
       await db.from('profiles').update({ notifications_seen_at: new Date().toISOString() }).eq('id', user.id);
       return res.status(200).json({ ok: true });

@@ -311,3 +311,10 @@
 .oa-chip-dark{background:var(--ink);color:#fff;border-color:var(--ink)}
 .oa-thread .msg.from-system{align-self:center;align-items:center;max-width:100%}
 .oa-thread .msg.from-system .msg-body{background:transparent;color:var(--ink-3);font-size:13px;padding:2px 10px}
+
+/* ---- Max setup: the form from the website, inside the Support tab ---- */
+.oa-setup-card{margin-top:0;margin-bottom:14px}
+.oa-setup-bar{display:flex;align-items:center;gap:12px;padding:0 0 10px}
+.oa-setup-bar .hint{margin:0;font-size:13.5px}
+.oa-setup-frame{width:100%;height:calc(100vh - 62px - 74px - 60px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border:0;border-radius:var(--radius);background:var(--bg-grey)}
+#tabSupport.is-setup>:not(#setupScreen){display:none}

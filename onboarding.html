@@ -9,7 +9,8 @@
 <link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=3">
-<link rel="stylesheet" href="styles.css?v=108">
+<link rel="stylesheet" href="styles.css?v=109">
+<script src="kanvas-handoff.js?v=5"></script>
 </head>
 <body class="auth-body">
 <header class="nav">
@@ -28,9 +29,9 @@
      phone, Notes and WhatsApp: every question has an answer they already
      know. onboarding.js loads, saves, uploads and tells us. -->
 <main class="acct-wrap ob-wrap" id="app" hidden>
-  <a class="linkish" href="/account.html">&larr; Your account</a>
-  <h1 class="biz-title">Set up your Max site.</h1>
-  <p class="lede left">Three stages: what you sell, how you sell it, who you sell to. Whichever is weakest is where we start. Nothing here is required: leave anything blank and we&rsquo;ll ask as we go. Save whenever you like, and Kane sees what changed.</p>
+  <a class="linkish ob-back" href="/account.html">&larr; Your account</a>
+  <h1 class="biz-title" id="obTitle">Set up your Max site.</h1>
+  <p class="lede left" id="obLede">Three stages: what you sell, how you sell it, who you sell to. Whichever is weakest is where we start. Nothing here is required: leave anything blank and we&rsquo;ll ask as we go. Save whenever you like, and Kane sees what changed.</p>
   <nav class="ob-strip" aria-label="Stages">
     <a href="#stage1"><b>1</b> <em>What you sell</em><i>What</i> <span data-stage="1"></span></a>
     <a href="#stage2"><b>2</b> <em>How you sell it</em><i>How</i> <span data-stage="2"></span></a>
@@ -504,7 +505,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="onboarding-trades.js?v=2"></script>
-<script src="onboarding.js?v=8"></script>
+<script src="onboarding.js?v=9"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>

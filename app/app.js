@@ -135,6 +135,7 @@
     if (next === 'Chat' && !hasModule('chat') && !contactsAllowed() && !isStarter()) next = homeTab();
     if (next === 'Website' && !isStarter()) next = homeTab();
     tab = next;
+    if (typeof closeSetup === 'function') closeSetup();
     TABS.forEach(function (t) {
       $('tab' + t).hidden = t !== tab;
     });
@@ -295,7 +296,43 @@
     $('navDash').hidden = s;
     document.querySelector('.oa-nav-btn[data-tab="Analytics"]').hidden = s;
     document.querySelector('.oa-nav-btn[data-tab="Payments"]').hidden = s;
+    $('setupCard').hidden = !(me && me.user && !me.user.is_admin && me.user.plan === 'max');
   }
+
+  /* -------------------------------------------------------- max setup -- */
+
+  /* The Max setup form, from the website, inside the Support tab. The
+     server hands off the session the way it does for a dashboard. The
+     admin arrives here from a "setup updated" notification, on the
+     customer's form. */
+  var setupReveal = null;
+  window.addEventListener('message', function (e) {
+    var frame = $('setupFrame');
+    if (e.source === frame.contentWindow && e.data && e.data.kanvas === 'ready' && setupReveal) setupReveal();
+  });
+  function openSetup(path) {
+    var frame = $('setupFrame'), hint = $('setupHint');
+    $('tabSupport').classList.add('is-setup');
+    $('setupScreen').hidden = false;
+    frame.hidden = true; hint.hidden = false; hint.textContent = 'Loading…';
+    var shown = false;
+    function reveal() { if (shown) return; shown = true; frame.hidden = false; hint.hidden = true; }
+    setupReveal = reveal;
+    api({ action: 'page', path: path || '/onboarding.html' }).then(function (res) {
+      frame.onload = function () { setTimeout(reveal, 3000); };
+      frame.src = res.url;
+    }).catch(function (err) {
+      hint.textContent = 'Could not open the form here (' + err.message + '). It is on your account at kanvas.one.';
+    });
+  }
+  function closeSetup() {
+    if (!$('tabSupport').classList.contains('is-setup')) return;
+    $('tabSupport').classList.remove('is-setup');
+    $('setupScreen').hidden = true;
+    $('setupFrame').src = 'about:blank';
+  }
+  $('setupOpen').addEventListener('click', function () { openSetup('/onboarding.html'); });
+  $('setupBack').addEventListener('click', function () { closeSetup(); loadRequests(); });
 
   async function renderWebsite() {
     var dot = $('siteDot'), title = $('siteStatusTitle'), hint = $('siteStatusHint');
@@ -468,6 +505,7 @@
   function openLink(n) {
     var link = n.deep_link || null;
     if (link && link.kind === 'support_chat') { showTab('Support'); setSupportMode('chat'); return; }
+    if (link && link.kind === 'max_setup') { showTab('Support'); openSetup(link.user ? '/onboarding.html?user=' + encodeURIComponent(link.user) : '/onboarding.html'); return; }
     if (link && link.kind === 'chat') { pendingConv = link.id || null; showTab('Chat'); return; }
     if (link && link.kind === 'support' && link.id) { location.hash = 'r/' + link.id; showTab('Support'); return; }
     if (n.href && /^\/requests\.html#(r\/.+)$/.test(n.href)) { location.hash = RegExp.$1; showTab('Support'); return; }
