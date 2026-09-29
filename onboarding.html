@@ -82,11 +82,12 @@
 
     <!-- 3 -->
     <section class="panel ob-section" data-section="offer">
-      <h2 class="panel-title">3. The job you want more of</h2>
-      <p class="ob-why">This becomes the first ad. It does not have to be the best-paying job: often the small one that leads to the big one.</p>
+      <h2 class="panel-title">3. What we advertise, and what we offer on top</h2>
+      <p class="ob-why">I run ads for the job you already do most, because more of what already works beats something new. The rest of your list gets offered to customers who are already paying you: a service to a repair customer, an install to a service customer. That is where the extra money is, and it costs nothing to ask.</p>
       <div class="acct-grid">
-        <div class="field full"><label for="o_job">The job</label><input id="o_job" type="text" placeholder="Boiler repairs, which lead to installs"></div>
-        <div class="field full"><label for="o_why">Why that one?</label><textarea id="o_why" rows="2" placeholder="Best margin, quickest, the one that leads to bigger work, the one you enjoy"></textarea></div>
+        <div class="field full"><label for="o_job">The job you do most weeks <span class="opt">(this is the ad)</span></label><input id="o_job" type="text" placeholder="Boiler repairs"></div>
+        <div class="field full"><label for="o_upsell">The jobs worth offering once someone is a customer <span class="opt">(the upsells)</span></label><input id="o_upsell" type="text" placeholder="Annual service, a new boiler when the old one is on its way out, a landlord certificate"></div>
+        <div class="field full"><label for="o_why">Anything about why customers pick you for that job</label><textarea id="o_why" rows="2" placeholder="Same-day when it&rsquo;s urgent, I don&rsquo;t push a new boiler when a part will do"></textarea></div>
       </div>
     </section>
 
@@ -108,8 +109,9 @@
       </div>
       <div class="acct-grid">
         <div class="field full"><label for="cu_notes">What each one costs you, and roughly what it brings</label><textarea id="cu_notes" rows="2" placeholder="Trust a Trader is &pound;40 a month and brings two or three jobs a week"></textarea></div>
-        <div class="field"><label for="cu_jobs">Jobs in a normal week, roughly</label><input id="cu_jobs" type="text" placeholder="8 to 10"></div>
-        <div class="field"><label for="cu_value">A typical job is worth about</label><input id="cu_value" type="text" placeholder="&pound;120"></div>
+        <div class="field full"><label for="cu_jobs">Jobs in a normal week, roughly</label><input id="cu_jobs" type="text" placeholder="8 to 10"></div>
+        <div class="field"><label for="cu_value">A typical small job is worth about</label><input id="cu_value" type="text" placeholder="&pound;120"></div>
+        <div class="field"><label for="cu_big">A typical big job is worth about</label><input id="cu_big" type="text" placeholder="&pound;2,500"></div>
       </div>
     </section>
 
@@ -170,6 +172,7 @@
         </div>
         <div class="field full"><label class="check"><input id="p_offset" type="checkbox"> It comes off the bill if the work goes ahead</label></div>
         <div class="field full"><label class="check"><input id="p_invoices" type="checkbox"> Bigger jobs are invoiced</label></div>
+        <div class="field full"><label for="p_bigjob">On a big job, what do you take before you start?</label><input id="p_bigjob" type="text" placeholder="Half up front on installs, the rest on the day"></div>
         <div class="field full">
           <span class="ob-label">Finance or paying in stages for big jobs</span>
           <div class="ob-checks">
@@ -230,7 +233,8 @@
         <div class="field"><label for="t_gassafe">Gas Safe number, if you have one</label><input id="t_gassafe" type="text"></div>
         <div class="field"><label for="t_regs">Other registrations <span class="opt">(NICEIC, NAPIT, OFTEC, HETAS)</span></label><input id="t_regs" type="text"></div>
         <div class="field full"><label class="check"><input id="t_insured" type="checkbox"> Public liability insurance in place</label></div>
-        <div class="field full"><label for="t_brands">Brands you install or work on, and the guarantee that comes with them</label><input id="t_brands" type="text" placeholder="Worcester, Vaillant, Ideal. 10-year guarantee on installs"></div>
+        <div class="field"><label for="t_brands">Brands you install, and the guarantee</label><input id="t_brands" type="text" placeholder="Worcester, Vaillant. 10-year guarantee"></div>
+        <div class="field"><label for="t_workon">Brands you work on</label><input id="t_workon" type="text" placeholder="Anything"></div>
         <div class="field full">
           <span class="ob-label">Emergency callouts</span>
           <div class="ob-checks">
@@ -303,6 +307,15 @@
       </div>
       <div class="field"><label>Amount, if there is one</label><input type="text" data-k="price" placeholder="&pound;80, from &pound;1,800"></div>
       <div class="field">
+        <label>How often</label>
+        <select data-k="often">
+          <option value="">Choose</option>
+          <option value="Most weeks">Most weeks</option>
+          <option value="Some weeks">Some weeks</option>
+          <option value="Now and then">Now and then</option>
+        </select>
+      </div>
+      <div class="field">
         <label>How customers get it</label>
         <select data-k="flow">
           <option value="">Choose</option>
@@ -321,7 +334,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="onboarding.js?v=2"></script>
+<script src="onboarding.js?v=3"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
