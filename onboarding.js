@@ -120,13 +120,13 @@
       contact: { phone: v('c_phone'), email: v('c_email'), whatsapp: on('c_whatsapp'), area: v('c_area'), address: v('c_address'), reach: v('c_reach'), customers_live: checks('custWhere') },
       services: services(),
       services_generated: on('svc_generated'),
-      offer: { job: v('o_job'), why: v('o_why') },
-      customers: { sources: checks('custSources'), notes: v('cu_notes'), jobs_per_week: v('cu_jobs'), job_value: v('cu_value') },
+      offer: { job: v('o_job'), upsells: v('o_upsell'), why: v('o_why') },
+      customers: { sources: checks('custSources'), notes: v('cu_notes'), jobs_per_week: v('cu_jobs'), job_value: v('cu_value'), big_job_value: v('cu_big') },
       bookings: { how: radio('book'), app: v('b_app'), lead_time: v('b_lead'), want: radio('bookwant') },
-      payments: { methods: checks('payMethods'), upfront: radio('upfront'), amount: v('p_amount'), when: v('p_when'), offset: on('p_offset'), invoices: on('p_invoices'), finance: radio('finance') },
+      payments: { methods: checks('payMethods'), upfront: radio('upfront'), amount: v('p_amount'), when: v('p_when'), offset: on('p_offset'), invoices: on('p_invoices'), big_job: v('p_bigjob'), finance: radio('finance') },
       online: { facebook: radio('fb'), facebook_link: v('a_fb'), instagram: v('a_ig'), directory: v('a_directory'), gbp: radio('gbp'), gbp_link: v('a_gbp'), domain: v('a_domain'), registrar: v('a_registrar'), existing_site: v('a_existing') },
       photos: photos.map(function (p) { return { path: p.path, url: p.url }; }),
-      trades: { gas_safe: v('t_gassafe'), registrations: v('t_regs'), insured: on('t_insured'), brands: v('t_brands'), emergency: radio('emerg'), emergency_terms: v('t_emerg'), next_service: v('t_repeat'), base: v('t_base') },
+      trades: { gas_safe: v('t_gassafe'), registrations: v('t_regs'), insured: on('t_insured'), brands: v('t_brands'), works_on: v('t_workon'), emergency: radio('emerg'), emergency_terms: v('t_emerg'), next_service: v('t_repeat'), base: v('t_base') },
       clubs: { classes: v('k_classes'), first_visit: v('k_trial'), fees: v('k_fees'), terms: v('k_terms'), extras: v('k_extras') },
       salon: { team: v('s_team'), no_show: v('s_noshow'), rebook: v('s_rebook'), before_first: v('s_tests'), retail: v('s_retail') },
       extras: { reviews: v('x_reviews'), referral_reward: v('x_referral'), report_to: v('x_report'), anything: v('x_anything') }
@@ -140,14 +140,14 @@
     rows.innerHTML = '';
     (Array.isArray(a.services) && a.services.length ? a.services : [null]).forEach(addService);
     setOn('svc_generated', a.services_generated);
-    set('o_job', o.job); set('o_why', o.why);
-    setChecks('custSources', cu.sources); set('cu_notes', cu.notes); set('cu_jobs', cu.jobs_per_week); set('cu_value', cu.job_value);
+    set('o_job', o.job); set('o_upsell', o.upsells); set('o_why', o.why);
+    setChecks('custSources', cu.sources); set('cu_notes', cu.notes); set('cu_jobs', cu.jobs_per_week); set('cu_value', cu.job_value); set('cu_big', cu.big_job_value);
     setRadio('book', b.how); set('b_app', b.app); set('b_lead', b.lead_time); setRadio('bookwant', b.want);
-    setChecks('payMethods', p.methods); setRadio('upfront', p.upfront); set('p_amount', p.amount); set('p_when', p.when); setOn('p_offset', p.offset); setOn('p_invoices', p.invoices); setRadio('finance', p.finance);
+    setChecks('payMethods', p.methods); setRadio('upfront', p.upfront); set('p_amount', p.amount); set('p_when', p.when); setOn('p_offset', p.offset); setOn('p_invoices', p.invoices); set('p_bigjob', p.big_job); setRadio('finance', p.finance);
     setRadio('fb', ol.facebook); set('a_fb', ol.facebook_link); set('a_ig', ol.instagram); set('a_directory', ol.directory); setRadio('gbp', ol.gbp); set('a_gbp', ol.gbp_link); set('a_domain', ol.domain); set('a_registrar', ol.registrar); set('a_existing', ol.existing_site);
     photos = Array.isArray(a.photos) ? a.photos.filter(function (ph) { return ph && ph.url; }) : [];
     paintPhotos();
-    set('t_gassafe', t.gas_safe); set('t_regs', t.registrations); setOn('t_insured', t.insured); set('t_brands', t.brands); setRadio('emerg', t.emergency); set('t_emerg', t.emergency_terms); set('t_repeat', t.next_service); set('t_base', t.base);
+    set('t_gassafe', t.gas_safe); set('t_regs', t.registrations); setOn('t_insured', t.insured); set('t_brands', t.brands); set('t_workon', t.works_on); setRadio('emerg', t.emergency); set('t_emerg', t.emergency_terms); set('t_repeat', t.next_service); set('t_base', t.base);
     set('k_classes', k.classes); set('k_trial', k.first_visit); set('k_fees', k.fees); set('k_terms', k.terms); set('k_extras', k.extras);
     set('s_team', s.team); set('s_noshow', s.no_show); set('s_rebook', s.rebook); set('s_tests', s.before_first); set('s_retail', s.retail);
     set('x_reviews', x.reviews); set('x_referral', x.referral_reward); set('x_report', x.report_to); set('x_anything', x.anything);

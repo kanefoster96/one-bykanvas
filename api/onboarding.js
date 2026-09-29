@@ -25,7 +25,7 @@ const SECTIONS = [
   ['contact', 'How customers reach you'],
   ['services', 'What you do and what it costs'],
   ['services_generated', 'Generated images for now'],
-  ['offer', 'The job you want more of'],
+  ['offer', 'What we advertise and what we offer on top'],
   ['customers', 'How you get customers now'],
   ['bookings', 'How a job gets booked now'],
   ['payments', 'How you get paid now'],
