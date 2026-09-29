@@ -57,6 +57,47 @@
   });
   var other = document.createElement('option'); other.value = 'Other'; other.textContent = 'Something else'; tradeSel.appendChild(other);
 
+  /* The catalogue entry for the chosen trade: jobs plus the suggestion
+     lists. An older catalogue was just the jobs array. */
+  function entry() {
+    var e = CATALOG[tradeSel.value];
+    if (!e) return { jobs: [] };
+    return Array.isArray(e) ? { jobs: e } : e;
+  }
+
+  /* A tick list from the catalogue. Anything saved that the list does not
+     suggest is added as its own tick, so nothing they chose is lost. */
+  function paintTicks(id, items, saved, tail) {
+    var box = $(id);
+    box.innerHTML = '';
+    var have = Array.isArray(saved) ? saved : [];
+    var list = (items || []).concat(tail || []);
+    have.forEach(function (s) { if (list.indexOf(s) === -1) list.push(s); });
+    list.forEach(function (name) {
+      var l = document.createElement('label'); l.className = 'check';
+      var c = document.createElement('input'); c.type = 'checkbox'; c.value = name; c.checked = have.indexOf(name) !== -1;
+      l.appendChild(c); l.appendChild(document.createTextNode(' ' + name));
+      box.appendChild(l);
+    });
+  }
+  function placeholder(id, text) { var el = $(id); if (el) el.placeholder = text || ''; }
+  /* The first form's "how often" scale, mapped onto the one that fits a
+     ten-week job as well as a ten-minute one. */
+  var OFTEN = { 'Most weeks': 'Every week', 'Some weeks': 'Most months', 'Now and then': 'A few times a year' };
+  function often(val) { return OFTEN[val] || val || ''; }
+
+  /* The suggestion lists and the examples, for the chosen trade. */
+  function paintPicks(a) {
+    a = a || {};
+    var e = entry(), t = a.trades || {}, o = a.offer || {}, l = a.later || {};
+    paintTicks('regPick', e.regs, t.registrations);
+    paintTicks('addonPick', e.addon, o.addons);
+    paintTicks('smallerPick', e.smaller, l.smaller);
+    paintTicks('againPick', e.again, l.again, ['Nothing comes round again']);
+    paintTicks('planPick', e.plan, l.plan, ['Nothing like that, one-off jobs']);
+    placeholder('t_brands', e.brands); placeholder('o_why', e.why); placeholder('t_emerg', e.urgent);
+  }
+
   /* The usual jobs for the chosen trade, as ticks. Ticking one opens its
      row, with the catalogue's pricing and flow already chosen. */
   function paintJobs(saved) {
@@ -65,7 +106,7 @@
     jobList.innerHTML = '';
     var have = {};
     (saved || []).forEach(function (j) { if (j && j.name) have[j.name] = j; });
-    (CATALOG[trade] || []).forEach(function (def) {
+    entry().jobs.forEach(function (def) {
       var frag = jobTpl.content.cloneNode(true);
       var item = frag.querySelector('.ob-job');
       item.setAttribute('data-name', def[0]);
@@ -77,7 +118,7 @@
       more.hidden = !was;
       item.querySelector('[data-k=pricing]').value = was ? (was.pricing || '') : def[1];
       item.querySelector('[data-k=flow]').value = was ? (was.flow || '') : (def[2] === 'book' ? 'Book straight in' : 'Ask me first');
-      item.querySelector('[data-k=often]').value = was ? (was.often || '') : '';
+      item.querySelector('[data-k=often]').value = was ? often(was.often) : '';
       item.querySelector('[data-k=price]').value = was ? (was.price || '') : '';
       box.addEventListener('change', function () { more.hidden = !box.checked; paintMost(); });
       jobList.appendChild(frag);
@@ -99,18 +140,20 @@
       pick.appendChild(l);
     });
     if (names.length === 1) { var only = pick.querySelector('input'); if (only) only.checked = true; }
-    /* The ad runs on it: section 3 starts from the same answer. */
+    /* The ad runs on it: section 2 starts from the same answer. */
     var most = radio('most');
     if (most && !v('o_job')) set('o_job', most);
     var others = names.filter(function (n) { return n !== most; });
     var up = $('o_upsell'); if (up && others.length) up.placeholder = others.slice(0, 3).join(', ');
+    /* "Jobs you'd rather not do" offers the same names. */
+    paintTicks('dontPick', names, checks('dontPick'));
   }
   function tickedJobs() {
     return Array.prototype.slice.call(jobList.querySelectorAll('.ob-job')).filter(function (i) { return i.querySelector('[data-k=on]').checked; }).map(function (i) {
       return { name: i.getAttribute('data-name'), often: i.querySelector('[data-k=often]').value, price: i.querySelector('[data-k=price]').value.trim(), pricing: i.querySelector('[data-k=pricing]').value, flow: i.querySelector('[data-k=flow]').value };
     });
   }
-  tradeSel.addEventListener('change', function () { paintJobs([]); });
+  tradeSel.addEventListener('change', function () { paintJobs([]); paintPicks(); });
   jobList.addEventListener('change', function (e) { if (e.target.name !== 'most') paintMost(); });
 
   /* ---- other jobs: repeatable rows ---- */
@@ -194,14 +237,16 @@
       contact: { phone: v('c_phone'), email: v('c_email'), whatsapp: on('c_whatsapp'), area: v('c_area'), base: v('c_base'), address: v('c_address'), reach: v('c_reach'), customers_live: checks('custWhere') },
       services: services(),
       services_generated: on('svc_generated'),
-      offer: { job: v('o_job'), upsells: v('o_upsell'), why: v('o_why') },
-      customers: { sources: checks('custSources'), notes: v('cu_notes'), jobs_per_week: v('cu_jobs'), job_value: v('cu_value'), big_job_value: v('cu_big') },
-      bookings: { how: radio('book'), app: v('b_app'), lead_time: v('b_lead'), want: radio('bookwant') },
+      offer: { job: v('o_job'), upsells: v('o_upsell'), addons: checks('addonPick'), addon_other: v('o_addon_other'), moment: v('o_moment'), why: v('o_why') },
+      customers: { sources: checks('custSources'), notes: v('cu_notes'), jobs_per_week: v('cu_jobs'), job_value: v('cu_value'), big_job_value: v('cu_big'), partners: checks('partnerPick'), partner_names: v('cu_partners') },
+      want: { capacity: v('w_capacity'), best: checks('bestPick'), dont: checks('dontPick'), dont_other: v('w_dont_other'), busiest: v('w_busy'), quietest: v('w_quiet') },
+      bookings: { first: radio('first'), how: radio('book'), app: v('b_app'), lead_time: v('b_lead'), want: radio('bookwant') },
       payments: { methods: checks('payMethods'), upfront: radio('upfront'), amount: v('p_amount'), when: v('p_when'), offset: on('p_offset'), invoices: on('p_invoices'), big_job: v('p_bigjob'), finance: radio('finance') },
+      later: { now: v('l_now'), smaller: checks('smallerPick'), smaller_other: v('l_smaller_other'), again: checks('againPick'), again_other: v('l_again_other'), plan: checks('planPick'), plan_other: v('l_plan_other') },
       online: { facebook: radio('fb'), facebook_link: v('a_fb'), instagram: v('a_ig'), directory: v('a_directory'), gbp: radio('gbp'), gbp_link: v('a_gbp'), domain: v('a_domain'), registrar: v('a_registrar'), existing_site: v('a_existing') },
       photos: photos.map(function (p) { return { path: p.path, url: p.url }; }),
-      trades: { gas_safe: v('t_gassafe'), registrations: v('t_regs'), insured: on('t_insured'), brands: v('t_brands'), works_on: v('t_workon') },
-      trades_how: { emergency: radio('emerg'), emergency_terms: v('t_emerg'), next_service: v('t_repeat') },
+      trades: { registrations: checks('regPick'), registrations_other: v('t_regs'), insured: on('t_insured'), guarantee: v('t_guarantee'), brands: v('t_brands') },
+      trades_how: { emergency: radio('emerg'), emergency_terms: v('t_emerg') },
       clubs: { classes: v('k_classes'), fees: v('k_fees'), extras: v('k_extras') },
       clubs_how: { first_visit: v('k_trial'), terms: v('k_terms') },
       salon: { team: v('s_team'), retail: v('s_retail') },
@@ -211,8 +256,13 @@
   }
   function fill(a) {
     a = a || {};
-    var c = a.contact || {}, o = a.offer || {}, cu = a.customers || {}, b = a.bookings || {}, p = a.payments || {}, ol = a.online || {}, x = a.extras || {};
+    var c = a.contact || {}, o = a.offer || {}, cu = a.customers || {}, w = a.want || {}, b = a.bookings || {}, p = a.payments || {}, l = a.later || {}, ol = a.online || {}, x = a.extras || {};
     var t = Object.assign({}, a.trades || {}, a.trades_how || {}), k = Object.assign({}, a.clubs || {}, a.clubs_how || {}), s = Object.assign({}, a.salon || {}, a.salon_how || {});
+    /* Answers from the first form: a typed Gas Safe number and a typed
+       reminder go in the "other" boxes, so they still show. */
+    if (t.gas_safe && !t.registrations_other) t.registrations_other = 'Gas Safe ' + t.gas_safe;
+    if (typeof t.registrations === 'string') { t.registrations_other = [t.registrations, t.registrations_other].filter(Boolean).join(', '); t.registrations = []; }
+    if (t.next_service && !l.again_other) l.again_other = t.next_service;
     setRadio('model', a.model); showAddon();
     set('c_phone', c.phone); set('c_email', c.email); setOn('c_whatsapp', c.whatsapp); set('c_area', c.area); set('c_base', c.base || t.base); set('c_address', c.address); set('c_reach', c.reach); setChecks('custWhere', c.customers_live);
     var sv = (a.services && !Array.isArray(a.services)) ? a.services : { trade: '', jobs: Array.isArray(a.services) ? a.services : [], most: '' };
@@ -225,15 +275,19 @@
     rows.innerHTML = '';
     (extra.length ? extra : [null]).forEach(addService);
     paintMost(sv.most);
+    paintTicks('dontPick', tickedJobs().map(function (j) { return j.name; }).concat(otherJobs().map(function (j) { return j.name; })), w.dont);
+    paintPicks(Object.assign({}, a, { trades: t, later: l }));
     setOn('svc_generated', a.services_generated);
-    set('o_job', o.job); set('o_upsell', o.upsells); set('o_why', o.why);
-    setChecks('custSources', cu.sources); set('cu_notes', cu.notes); set('cu_jobs', cu.jobs_per_week); set('cu_value', cu.job_value); set('cu_big', cu.big_job_value);
-    setRadio('book', b.how); set('b_app', b.app); set('b_lead', b.lead_time); setRadio('bookwant', b.want);
+    set('o_job', o.job); set('o_upsell', o.upsells); set('o_addon_other', o.addon_other); set('o_moment', o.moment); set('o_why', o.why);
+    setChecks('custSources', cu.sources); set('cu_notes', cu.notes); set('cu_jobs', cu.jobs_per_week); set('cu_value', cu.job_value); set('cu_big', cu.big_job_value); setChecks('partnerPick', cu.partners); set('cu_partners', cu.partner_names);
+    set('w_capacity', w.capacity); setChecks('bestPick', w.best); set('w_dont_other', w.dont_other); set('w_busy', w.busiest); set('w_quiet', w.quietest);
+    setRadio('first', b.first); setRadio('book', b.how); set('b_app', b.app); set('b_lead', b.lead_time); setRadio('bookwant', b.want);
     setChecks('payMethods', p.methods); setRadio('upfront', p.upfront); set('p_amount', p.amount); set('p_when', p.when); setOn('p_offset', p.offset); setOn('p_invoices', p.invoices); set('p_bigjob', p.big_job); setRadio('finance', p.finance);
+    set('l_now', l.now); set('l_smaller_other', l.smaller_other); set('l_again_other', l.again_other); set('l_plan_other', l.plan_other);
     setRadio('fb', ol.facebook); set('a_fb', ol.facebook_link); set('a_ig', ol.instagram); set('a_directory', ol.directory); setRadio('gbp', ol.gbp); set('a_gbp', ol.gbp_link); set('a_domain', ol.domain); set('a_registrar', ol.registrar); set('a_existing', ol.existing_site);
     photos = Array.isArray(a.photos) ? a.photos.filter(function (ph) { return ph && ph.url; }) : [];
     paintPhotos();
-    set('t_gassafe', t.gas_safe); set('t_regs', t.registrations); setOn('t_insured', t.insured); set('t_brands', t.brands); set('t_workon', t.works_on); setRadio('emerg', t.emergency); set('t_emerg', t.emergency_terms); set('t_repeat', t.next_service);
+    set('t_regs', t.registrations_other); setOn('t_insured', t.insured); set('t_guarantee', t.guarantee); set('t_brands', t.brands); setRadio('emerg', t.emergency); set('t_emerg', t.emergency_terms);
     set('k_classes', k.classes); set('k_trial', k.first_visit); set('k_fees', k.fees); set('k_terms', k.terms); set('k_extras', k.extras);
     set('s_team', s.team); set('s_noshow', s.no_show); set('s_rebook', s.rebook); set('s_tests', s.before_first); set('s_retail', s.retail);
     set('x_reviews', x.reviews); set('x_referral', x.referral_reward); set('x_report', x.report_to); set('x_anything', x.anything);
