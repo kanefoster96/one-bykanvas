@@ -25,7 +25,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=3">
-<link rel="stylesheet" href="styles.css?v=117">
+<link rel="stylesheet" href="styles.css?v=118">
 </head>
 <body>
 
@@ -49,8 +49,8 @@
 <main id="main">
 
 <!-- ============ HERO: the lead magnet itself ============
-     One thing to do: a name, then an email. The phone cycles real sites
-     until a name is typed, then shows theirs (new.js). -->
+     One row, three steps: the name, then the email that sends the free
+     page, then a link to the business for a better one (new.js). -->
 <section class="hero">
   <div class="wrap">
     <p class="hero-pill reveal"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>See it in 24 hours. Free, before you join.</p>
@@ -68,6 +68,7 @@
         <label for="new_extra">Leave this empty</label>
         <input id="new_extra" name="new_extra" type="text" tabindex="-1" autocomplete="off">
       </div>
+      <!-- One row, three steps: each fades out and the next fades in. -->
       <div class="mini-step" id="newStep1">
         <label for="newName">Your business name</label>
         <div class="mini-row">
@@ -75,20 +76,26 @@
           <button class="mini-go" id="newNext" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
         </div>
       </div>
+      <div class="mini-step" id="newStep2" hidden>
+        <label for="newEmail">Where should we send it?</label>
+        <div class="mini-row">
+          <input id="newEmail" type="email" autocomplete="email" placeholder="Email" enterkeyhint="send">
+          <button class="mini-go" id="newSend" type="submit" aria-label="Send my free page"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg></button>
+        </div>
+      </div>
+      <div class="mini-step" id="newStep3" hidden>
+        <label for="newHandle">Sent. One more thing helps us get it right: anywhere we can see your business</label>
+        <div class="mini-row">
+          <input id="newHandle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@instagram, Facebook, Checkatrade, a website" enterkeyhint="done">
+          <button class="mini-go" id="newHandleGo" type="button" aria-label="Add it"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+        </div>
+        <p class="hint mini-skip"><button class="linkish" id="newSkip" type="button">Nothing online yet? Skip this</button></p>
+      </div>
       <p class="note" id="newNote" role="status" aria-live="polite"></p>
-      <p class="micro">No card. Nothing to cancel.</p>
+      <p class="micro" id="newMicro">No card. Nothing to cancel.</p>
     </form>
   </div>
-  <div class="hero-art reveal">
-    <!-- The second step, over the top of the phone: same row as the name. -->
-    <div class="mini-step hero-email" id="newStep2" hidden>
-      <label for="newEmail">Where should we send it?</label>
-      <div class="mini-row">
-        <input id="newEmail" type="email" autocomplete="email" placeholder="Email" enterkeyhint="send" form="newFree">
-        <button class="mini-go" id="newSend" type="submit" form="newFree" aria-label="Send my free page"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg></button>
-      </div>
-      <p class="note" id="phoneNote" role="status" aria-live="polite"></p>
-    </div>
+  <div class="hero-art reveal" aria-hidden="true">
     <div class="device">
       <div class="device-bar"><span></span><span></span><span></span></div>
       <div class="device-screen">
@@ -98,7 +105,7 @@
              Both are lazy-loaded, so a visitor only fetches the set their own
              screen shows. The build beat sits last so it paints over whichever
              set is up, and so the images stay children 1 upwards. -->
-        <div class="device-shots" id="deviceShots">
+        <div class="device-shots">
           <div class="shots shots-wide">
             <img src="assets/desktop-fstr.jpg" alt="" width="1640" height="824" loading="lazy" decoding="async">
             <img src="assets/desktop-dogs.jpg" alt="" width="1640" height="828" loading="lazy" decoding="async">
@@ -118,25 +125,6 @@
             <div class="ios-bar" data-tone="dark" style="--bg:#fcfcfa"><span class="ios-time">12:00</span><span class="ios-right"><svg class="ios-sig" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="ios-net">5G</span><span class="ios-batt"></span></span></div>
             <div class="ios-bar" data-tone="light" style="--bg:#0a0a0a"><span class="ios-time">12:00</span><span class="ios-right"><svg class="ios-sig" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="ios-net">5G</span><span class="ios-batt"></span></span></div>
             <div class="ios-bar" data-tone="light" style="--bg:#08080a"><span class="ios-time">12:00</span><span class="ios-right"><svg class="ios-sig" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="ios-net">5G</span><span class="ios-batt"></span></span></div>
-          </div>
-          <!-- Theirs, the moment a name is typed: new.js fills it in. -->
-          <!-- Theirs, the moment a name is typed: a Google result for them,
-               and the second step of the box. new.js fills it in. -->
-          <div class="device-mock" id="deviceMock">
-            <div class="g-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg><span id="gQuery">your business</span></div>
-            <button class="g-result" id="gResult" type="button" aria-label="See your site free">
-              <div class="g-top">
-                <span class="g-fav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span>
-                <span class="g-site"><b id="gName">Your Business</b><i id="gUrl">https://yourbusiness.co.uk</i></span>
-              </div>
-              <p class="g-title" id="gTitle">Your Business</p>
-              <p class="g-desc">When a customer searches for you, we help you show up on Google and AI. Click to see your site for free!</p>
-            </button>
-            <div class="g-done" id="gDone" hidden>
-              <span class="g-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span>
-              <p class="g-done-line" id="gDoneLine">Sent. Your page lands within 24 hours.</p>
-              <p class="g-done-sub">Keep scrolling: this is what it does while you wait.</p>
-            </div>
           </div>
           <div class="device-build">
             <svg class="build-star" viewBox="0 0 24 24" aria-hidden="true">
@@ -376,7 +364,7 @@
 <script src="session.js?v=3"></script>
 <script src="script.js?v=33"></script>
 <script src="reviews.js?v=3"></script>
-<script src="new.js?v=4"></script>
+<script src="new.js?v=5"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

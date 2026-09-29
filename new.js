@@ -1,86 +1,80 @@
 /* one — the /new homepage's hero.
  *
- * One box: a business name, title-cased as it is typed. The phone under
- * it cycles real sites until the first letter, then becomes theirs: a
- * Google result for their business, with their name and their address,
- * and over the top of the phone the second step: the email, in the same
- * row as the name, with the gift button. Sending
- * posts to /api/lead like the free page does; the phone shows a green
- * tick and the page scrolls on to sell while they wait. Clear the name
- * and the real sites come back.
+ * One row, three steps, each fading out as the next fades in:
+ *   1. the business name, Title Cased as it is typed, and an arrow;
+ *   2. the email, and the gift button that sends the free page
+ *      (/api/lead, as the free page does);
+ *   3. a link to the business, added to the lead just sent, so the page
+ *      is designed from something real. Skippable.
+ * Then the page scrolls on to sell while they wait. The phone under the
+ * hero cycles real sites throughout.
  */
 (function () {
   'use strict';
 
-  var hero = document.getElementById('newFree');
-  if (!hero) return;
+  var form = document.getElementById('newFree');
+  if (!form) return;
   var name = document.getElementById('newName');
   var next = document.getElementById('newNext');
-  var note = document.getElementById('newNote');
-  var hp = document.getElementById('new_extra');
-  var shots = document.getElementById('deviceShots');
-  var step2 = document.getElementById('newStep2');
   var email = document.getElementById('newEmail');
   var send = document.getElementById('newSend');
-  var pnote = document.getElementById('phoneNote');
-  var done = document.getElementById('gDone');
+  var handle = document.getElementById('newHandle');
+  var handleGo = document.getElementById('newHandleGo');
+  var skip = document.getElementById('newSkip');
+  var steps = [document.getElementById('newStep1'), document.getElementById('newStep2'), document.getElementById('newStep3')];
+  var note = document.getElementById('newNote');
+  var micro = document.getElementById('newMicro');
+  var hp = document.getElementById('new_extra');
   var shownAt = Date.now();
-  var sent = false;
+  var leadId = null;
+  var at = 0;
 
-  function say(el, msg, kind) { el.textContent = msg || ''; el.className = 'note' + (kind ? ' ' + kind : ''); }
-  function filled() { return name.value.trim().length >= 2; }
+  function say(msg, kind) { note.textContent = msg || ''; note.className = 'note' + (kind ? ' ' + kind : ''); }
+  function filled(el) { return el.value.trim().length >= 2; }
 
   /* ---- the name, Title Cased as typed ---- */
-  /* Only the first letter of each word is touched, so "McDonald" and
-     "iPhone Repairs" survive; the caret stays where it was. */
   function titleCase(s) { return s.replace(/(^|[\s\-'&(]+)([a-z])/g, function (m, pre, ch) { return pre + ch.toUpperCase(); }); }
   name.addEventListener('input', function () {
-    var at = name.selectionStart, was = name.value, now = titleCase(was);
-    if (now !== was) { name.value = now; try { name.setSelectionRange(at, at); } catch (e) { /* not a text control state we can set */ } }
+    var pos = name.selectionStart, was = name.value, now = titleCase(was);
+    if (now !== was) { name.value = now; try { name.setSelectionRange(pos, pos); } catch (e) { /* not settable here */ } }
     name.classList.remove('err');
-    say(note, '');
-    paintMock();
-    /* The email row appears as soon as there is a name, over the phone. */
-    if (filled() && step2.hidden) { step2.hidden = false; step2.classList.add('in'); }
+    say('');
   });
 
-  /* ---- the phone becomes theirs ---- */
-  function slug(s) { return s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]/g, ''); }
-  function paintMock() {
-    var v = name.value.trim();
-    if (!v) { shots.classList.remove('is-mine'); return; }
-    shots.classList.add('is-mine');
-    document.getElementById('gQuery').textContent = v.toLowerCase();
-    document.getElementById('gName').textContent = v;
-    document.getElementById('gTitle').textContent = v;
-    document.getElementById('gUrl').textContent = 'https://' + (slug(v) || 'yourbusiness') + '.co.uk';
-    document.getElementById('gDoneLine').textContent = 'Sent. Your page for ' + v + ' lands within 24 hours.';
+  /* ---- one row, three steps ---- */
+  /* The step on screen fades out; the next fades in where it was, and
+     its box takes focus. */
+  function go(n, focusEl) {
+    var from = steps[at], to = steps[n];
+    at = n;
+    from.classList.add('out');
+    setTimeout(function () {
+      from.hidden = true; from.classList.remove('out', 'in');
+      to.hidden = false; to.classList.add('in');
+      if (focusEl) setTimeout(function () { focusEl.focus({ preventScroll: true }); }, 80);
+    }, 230);
   }
 
-  /* The arrow, or Enter: the email row appears over the phone. */
-  function advance() {
-    if (!filled()) { name.classList.add('err'); name.focus(); say(note, 'Tell us your business name.', 'bad'); return; }
-    paintMock();
-    if (step2.hidden) { step2.hidden = false; step2.classList.add('in'); }
-    email.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(function () { email.focus({ preventScroll: true }); }, 450);
+  function step2() {
+    if (!filled(name)) { name.classList.add('err'); name.focus(); say('Tell us your business name.', 'bad'); return; }
+    say('');
+    go(1, email);
   }
-  next.addEventListener('click', advance);
-  name.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); advance(); } });
-  document.getElementById('gResult').addEventListener('click', advance);
+  next.addEventListener('click', step2);
+  name.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); step2(); } });
   email.addEventListener('input', function () { email.classList.remove('err'); });
 
-  /* ---- send ---- */
-  hero.addEventListener('submit', async function (e) {
+  /* ---- send: the gift ---- */
+  form.addEventListener('submit', async function (e) {
     e.preventDefault();
-    if (sent) return;
-    if (step2.hidden) return advance();
+    if (at === 0) return step2();
+    if (at === 2) return addLink();
+    if (leadId) return;
     var biz = name.value.trim();
     var mail = email.value.trim();
-    if (!filled()) { name.classList.add('err'); name.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(function () { name.focus({ preventScroll: true }); }, 450); return say(pnote, 'Tell us your business name first, in the box above.', 'bad'); }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { email.classList.add('err'); email.focus(); return say(pnote, 'Enter a valid email address.', 'bad'); }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { email.classList.add('err'); email.focus(); return say('Enter a valid email address.', 'bad'); }
     send.disabled = true;
-    say(pnote, 'Sending…');
+    say('Sending…');
     try {
       var res = await fetch('/api/lead', {
         method: 'POST',
@@ -94,29 +88,50 @@
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
-      try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: data.id || '' })); } catch (err) { /* private mode */ }
-      sent = true;
-      step2.hidden = true;
-      done.hidden = false;
-      hero.classList.add('is-sent');
-      say(note, 'Sent to ' + mail + '.', 'ok');
-      name.readOnly = true;
-      var to = document.getElementById('pain');
-      if (to) setTimeout(function () { to.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 1400);
+      leadId = data.id || '';
+      try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: leadId })); } catch (err) { /* private mode */ }
+      say('');
+      micro.textContent = 'Your page for ' + biz + ' lands at ' + mail + ' within 24 hours.';
+      go(2, handle);
     } catch (err) {
-      say(pnote, err.message || 'Could not send that. Try again.', 'bad');
+      say(err.message || 'Could not send that. Try again.', 'bad');
       send.disabled = false;
     }
   });
+
+  /* ---- the link, on the lead already sent ---- */
+  function finish(msg) {
+    steps[2].classList.add('out');
+    setTimeout(function () {
+      steps[2].hidden = true;
+      form.classList.add('is-sent');
+      say(msg, 'ok');
+      var to = document.getElementById('pain');
+      if (to) setTimeout(function () { to.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 900);
+    }, 230);
+  }
+  async function addLink() {
+    var link = handle.value.trim();
+    if (!link) { handle.classList.add('err'); handle.focus(); return say('Paste a link, or skip.', 'bad'); }
+    if (!leadId) return finish('Thanks. Keep scrolling while we get to work.');
+    handleGo.disabled = true;
+    try {
+      await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ update: leadId, handle: link }) });
+    } catch (err) { /* the page is already on its way; the link was a bonus */ }
+    finish('Thanks, that helps. Keep scrolling while we get to work.');
+  }
+  handleGo.addEventListener('click', addLink);
+  handle.addEventListener('input', function () { handle.classList.remove('err'); });
+  handle.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addLink(); } });
+  skip.addEventListener('click', function () { finish('No problem. Keep scrolling while we get to work.'); });
 
   /* The close of the page points back at the box. */
   document.querySelectorAll('[data-to-form]').forEach(function (b) {
     b.addEventListener('click', function (e) {
       e.preventDefault();
-      if (sent) { shots.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
-      if (filled()) { advance(); return; }
-      hero.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(function () { name.focus({ preventScroll: true }); }, 500);
+      form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var target = at === 0 ? name : at === 1 ? email : handle;
+      setTimeout(function () { if (!form.classList.contains('is-sent')) target.focus({ preventScroll: true }); }, 500);
     });
   });
 })();
