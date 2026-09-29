@@ -2851,15 +2851,15 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .g-title{margin:.6em 0 0;font-size:1.3em;line-height:1.3;color:#1a0dab;font-weight:400;overflow-wrap:anywhere}
 .g-result:hover .g-title{text-decoration:underline}
 .g-desc{margin:.4em 0 0;font-size:.92em;line-height:1.5;color:#4d5156}
-/* The second step sits in the middle of the glass left under the result. */
-.g-form{flex:1;margin:1em 0 0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:.5em;width:100%;text-align:center}
-.g-form input,.g-form .btn{width:min(100%,360px)}
-.g-form label{font-size:12px;font-weight:500;color:var(--ink-2)}
-.g-form input{font:inherit;font-size:14px;padding:.6em .9em;border:1px solid var(--line);border-radius:.7em;background:#fff;color:var(--ink);width:min(100%,360px);box-sizing:border-box}
-.g-form input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(29,29,31,.13)}
-.g-form input.err{border-color:#d93025}
-.g-form .btn{justify-content:center;font-size:14px;padding:.7em 1.2em;margin-top:.2em}
-.g-form .note{margin:0;font-size:12px;text-align:center;min-height:1.2em}
+/* The second step, over the top edge of the phone: the same row as the
+   name, half on the page and half on the glass. */
+.hero-art{position:relative}
+.hero-email{position:absolute;z-index:4;left:0;right:0;top:-34px;width:min(440px,calc(100% - 44px));margin:0 auto;text-align:left}
+.hero-email label{background:var(--bg);align-self:flex-start;padding:0 6px;border-radius:6px;margin-left:-6px}
+.hero-email input{background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.14)}
+.hero-email .mini-go{box-shadow:0 10px 30px rgba(0,0,0,.14)}
+.hero-email .note{margin:8px 0 0;text-align:center;min-height:1.2em;font-size:13px}
+.hero-form.is-sent+.hero-art .hero-email{display:none}
 .g-done{flex:1;margin:1em 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .g-tick{width:4.4em;height:4.4em;border-radius:50%;background:var(--good);color:#fff;display:flex;align-items:center;justify-content:center;animation:g-pop .45s var(--ease) both}
 .g-tick svg{width:2.4em;height:2.4em}
@@ -2870,7 +2870,7 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 /* On a phone the mock is sized from the frame, like a screenshot would be:
    a result reads at about a third of the glass width in font terms. The
    email box and the button stay finger-sized whatever the frame. */
-@media (max-width:600px){.device-mock{font-size:3.3cqw;padding:calc(14.5cqw + 1em) 5cqw 2em}.g-form{font-size:14px}.g-form label{font-size:12px}}
+@media (max-width:600px){.device-mock{font-size:3.3cqw;padding:calc(14.5cqw + 1em) 5cqw 2em}.hero-email{top:-30px}}
 /* Pain, ease and the Max anchor. */
 .plain-list{list-style:none;margin:18px auto 0;padding:0;max-width:560px}
 .plain-list li{padding:12px 0;border-top:1px solid var(--line-soft);font-size:17px;line-height:1.5;color:var(--ink-2)}

@@ -3,7 +3,8 @@
  * One box: a business name, title-cased as it is typed. The phone under
  * it cycles real sites until the first letter, then becomes theirs: a
  * Google result for their business, with their name and their address,
- * and under it the second step, the email and the gift button. Sending
+ * and over the top of the phone the second step: the email, in the same
+ * row as the name, with the gift button. Sending
  * posts to /api/lead like the free page does; the phone shows a green
  * tick and the page scrolls on to sell while they wait. Clear the name
  * and the real sites come back.
@@ -18,7 +19,7 @@
   var note = document.getElementById('newNote');
   var hp = document.getElementById('new_extra');
   var shots = document.getElementById('deviceShots');
-  var phone = document.getElementById('phoneFree');
+  var step2 = document.getElementById('newStep2');
   var email = document.getElementById('newEmail');
   var send = document.getElementById('newSend');
   var pnote = document.getElementById('phoneNote');
@@ -54,23 +55,24 @@
     document.getElementById('gDoneLine').textContent = 'Sent. Your page for ' + v + ' lands within 24 hours.';
   }
 
-  /* The arrow, or Enter: over to the phone, on the email. */
+  /* The arrow, or Enter: the email row appears over the phone. */
   function advance() {
     if (!filled()) { name.classList.add('err'); name.focus(); say(note, 'Tell us your business name.', 'bad'); return; }
     paintMock();
+    if (step2.hidden) { step2.hidden = false; step2.classList.add('in'); }
     email.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setTimeout(function () { email.focus({ preventScroll: true }); }, 450);
   }
   next.addEventListener('click', advance);
   name.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); advance(); } });
-  hero.addEventListener('submit', function (e) { e.preventDefault(); advance(); });
-  document.getElementById('gResult').addEventListener('click', function () { email.focus(); });
+  document.getElementById('gResult').addEventListener('click', advance);
   email.addEventListener('input', function () { email.classList.remove('err'); });
 
-  /* ---- send, from the phone ---- */
-  phone.addEventListener('submit', async function (e) {
+  /* ---- send ---- */
+  hero.addEventListener('submit', async function (e) {
     e.preventDefault();
     if (sent) return;
+    if (step2.hidden) return advance();
     var biz = name.value.trim();
     var mail = email.value.trim();
     if (!filled()) { name.classList.add('err'); name.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(function () { name.focus({ preventScroll: true }); }, 450); return say(pnote, 'Tell us your business name first, in the box above.', 'bad'); }
@@ -92,7 +94,7 @@
       if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
       try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: data.id || '' })); } catch (err) { /* private mode */ }
       sent = true;
-      phone.hidden = true;
+      step2.hidden = true;
       done.hidden = false;
       hero.classList.add('is-sent');
       say(note, 'Sent to ' + mail + '.', 'ok');

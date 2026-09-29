@@ -25,7 +25,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=3">
-<link rel="stylesheet" href="styles.css?v=114">
+<link rel="stylesheet" href="styles.css?v=117">
 </head>
 <body>
 
@@ -80,6 +80,15 @@
     </form>
   </div>
   <div class="hero-art reveal">
+    <!-- The second step, over the top of the phone: same row as the name. -->
+    <div class="mini-step hero-email" id="newStep2" hidden>
+      <label for="newEmail">Where should we send it?</label>
+      <div class="mini-row">
+        <input id="newEmail" type="email" autocomplete="email" placeholder="Email" enterkeyhint="send" form="newFree">
+        <button class="mini-go" id="newSend" type="submit" form="newFree" aria-label="Send my free page"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg></button>
+      </div>
+      <p class="note" id="phoneNote" role="status" aria-live="polite"></p>
+    </div>
     <div class="device">
       <div class="device-bar"><span></span><span></span><span></span></div>
       <div class="device-screen">
@@ -123,12 +132,6 @@
               <p class="g-title" id="gTitle">Your Business</p>
               <p class="g-desc">When a customer searches for you, we help you show up on Google and AI. Click to see your site for free!</p>
             </button>
-            <form class="g-form" id="phoneFree" novalidate>
-              <label for="newEmail">Where should we send your free site design?</label>
-              <input id="newEmail" type="email" autocomplete="email" placeholder="you@example.com" enterkeyhint="send">
-              <button class="btn btn-free" id="newSend" type="submit"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>See it free &rsaquo;</button>
-              <p class="note" id="phoneNote" role="status" aria-live="polite"></p>
-            </form>
             <div class="g-done" id="gDone" hidden>
               <span class="g-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span>
               <p class="g-done-line" id="gDoneLine">Sent. Your page lands within 24 hours.</p>
@@ -373,7 +376,7 @@
 <script src="session.js?v=3"></script>
 <script src="script.js?v=33"></script>
 <script src="reviews.js?v=3"></script>
-<script src="new.js?v=2"></script>
+<script src="new.js?v=3"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
