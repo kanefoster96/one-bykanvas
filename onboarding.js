@@ -66,30 +66,49 @@
   }
 
   /* A tick list from the catalogue. Anything saved that the list does not
-     suggest is added as its own tick, so nothing they chose is lost. */
+     suggest is added as its own tick, so nothing they chose is lost. The
+     tail is the "none of these" answer: ticking it clears the rest, and
+     ticking any of the rest clears it. */
   function paintTicks(id, items, saved, tail) {
     var box = $(id);
     box.innerHTML = '';
     var have = Array.isArray(saved) ? saved : [];
-    var list = (items || []).concat(tail || []);
+    var none = tail || [];
+    var list = (items || []).concat(none);
     have.forEach(function (s) { if (list.indexOf(s) === -1) list.push(s); });
     list.forEach(function (name) {
       var l = document.createElement('label'); l.className = 'check';
       var c = document.createElement('input'); c.type = 'checkbox'; c.value = name; c.checked = have.indexOf(name) !== -1;
+      if (none.indexOf(name) !== -1) c.setAttribute('data-none', '');
       l.appendChild(c); l.appendChild(document.createTextNode(' ' + name));
       box.appendChild(l);
     });
+    if (none.length && !box.hasAttribute('data-exclusive')) {
+      box.setAttribute('data-exclusive', '');
+      box.addEventListener('change', function (e) {
+        if (!e.target.checked) return;
+        var isNone = e.target.hasAttribute('data-none');
+        box.querySelectorAll('input').forEach(function (i) {
+          if (i !== e.target && (isNone || i.hasAttribute('data-none'))) i.checked = false;
+        });
+      });
+    }
   }
   function placeholder(id, text) { var el = $(id); if (el) el.placeholder = text || ''; }
   /* The first form's "how often" scale, mapped onto the one that fits a
      ten-week job as well as a ten-minute one. */
   var OFTEN = { 'Most weeks': 'Every week', 'Some weeks': 'Most months', 'Now and then': 'A few times a year' };
   function often(val) { return OFTEN[val] || val || ''; }
+  /* The first form's "where bookings live" answers, mapped the same way. */
+  var BOOK = { 'They call or text, I tell them my next slot': 'My head and my phone', 'They just turn up': 'My head and my phone' };
 
-  /* The suggestion lists and the examples, for the chosen trade. */
+  /* The suggestion lists and the examples, for the chosen trade. With no
+     saved answers, whatever is ticked now is kept. */
   function paintPicks(a) {
-    a = a || {};
-    var e = entry(), t = a.trades || {}, o = a.offer || {}, l = a.later || {};
+    var e = entry();
+    var t = a ? (a.trades || {}) : { registrations: checks('regPick') };
+    var o = a ? (a.offer || {}) : { addons: checks('addonPick') };
+    var l = a ? (a.later || {}) : { smaller: checks('smallerPick'), again: checks('againPick'), plan: checks('planPick') };
     paintTicks('regPick', e.regs, t.registrations);
     paintTicks('addonPick', e.addon, o.addons);
     paintTicks('smallerPick', e.smaller, l.smaller);
@@ -126,8 +145,9 @@
     paintMost();
   }
   /* "Which one do you do most": the ticked jobs, and the other rows with
-     a name, as radios. */
-  function paintMost(keep) {
+     a name, as radios. "Jobs you'd rather not do" offers the same names,
+     and a tick there only survives while its job is still on the form. */
+  function paintMost(keep, dont) {
     var pick = $('mostPick');
     var current = keep || radio('most');
     pick.innerHTML = '';
@@ -145,8 +165,7 @@
     if (most && !v('o_job')) set('o_job', most);
     var others = names.filter(function (n) { return n !== most; });
     var up = $('o_upsell'); if (up && others.length) up.placeholder = others.slice(0, 3).join(', ');
-    /* "Jobs you'd rather not do" offers the same names. */
-    paintTicks('dontPick', names, checks('dontPick'));
+    paintTicks('dontPick', names, (dont || checks('dontPick')).filter(function (n) { return names.indexOf(n) !== -1; }));
   }
   function tickedJobs() {
     return Array.prototype.slice.call(jobList.querySelectorAll('.ob-job')).filter(function (i) { return i.querySelector('[data-k=on]').checked; }).map(function (i) {
@@ -165,7 +184,7 @@
     if (data) {
       row.querySelectorAll('[data-k]').forEach(function (el) {
         var k = el.getAttribute('data-k');
-        el.value = data[k] == null ? '' : String(data[k]);
+        el.value = k === 'often' ? often(data[k]) : (data[k] == null ? '' : String(data[k]));
       });
     }
     row.querySelector('.svc-remove').addEventListener('click', function () { row.remove(); dirty = true; progress(); });
@@ -237,7 +256,7 @@
       contact: { phone: v('c_phone'), email: v('c_email'), whatsapp: on('c_whatsapp'), area: v('c_area'), base: v('c_base'), address: v('c_address'), reach: v('c_reach'), customers_live: checks('custWhere') },
       services: services(),
       services_generated: on('svc_generated'),
-      offer: { job: v('o_job'), upsells: v('o_upsell'), addons: checks('addonPick'), addon_other: v('o_addon_other'), moment: v('o_moment'), why: v('o_why') },
+      offer: { job: v('o_job'), upsells: v('o_upsell'), addons: checks('addonPick'), addons_other: v('o_addon_other'), moment: v('o_moment'), why: v('o_why') },
       customers: { sources: checks('custSources'), notes: v('cu_notes'), jobs_per_week: v('cu_jobs'), job_value: v('cu_value'), big_job_value: v('cu_big'), partners: checks('partnerPick'), partner_names: v('cu_partners') },
       want: { capacity: v('w_capacity'), best: checks('bestPick'), dont: checks('dontPick'), dont_other: v('w_dont_other'), busiest: v('w_busy'), quietest: v('w_quiet') },
       bookings: { first: radio('first'), how: radio('book'), app: v('b_app'), lead_time: v('b_lead'), want: radio('bookwant') },
@@ -263,6 +282,8 @@
     if (t.gas_safe && !t.registrations_other) t.registrations_other = 'Gas Safe ' + t.gas_safe;
     if (typeof t.registrations === 'string') { t.registrations_other = [t.registrations, t.registrations_other].filter(Boolean).join(', '); t.registrations = []; }
     if (t.next_service && !l.again_other) l.again_other = t.next_service;
+    if (t.works_on && !/works on/i.test(t.brands || '')) t.brands = [t.brands, 'works on ' + t.works_on].filter(Boolean).join('; ');
+    if (BOOK[b.how]) b.how = BOOK[b.how];
     setRadio('model', a.model); showAddon();
     set('c_phone', c.phone); set('c_email', c.email); setOn('c_whatsapp', c.whatsapp); set('c_area', c.area); set('c_base', c.base || t.base); set('c_address', c.address); set('c_reach', c.reach); setChecks('custWhere', c.customers_live);
     var sv = (a.services && !Array.isArray(a.services)) ? a.services : { trade: '', jobs: Array.isArray(a.services) ? a.services : [], most: '' };
@@ -274,11 +295,10 @@
     paintJobs(mine);
     rows.innerHTML = '';
     (extra.length ? extra : [null]).forEach(addService);
-    paintMost(sv.most);
-    paintTicks('dontPick', tickedJobs().map(function (j) { return j.name; }).concat(otherJobs().map(function (j) { return j.name; })), w.dont);
+    paintMost(sv.most, w.dont);
     paintPicks(Object.assign({}, a, { trades: t, later: l }));
     setOn('svc_generated', a.services_generated);
-    set('o_job', o.job); set('o_upsell', o.upsells); set('o_addon_other', o.addon_other); set('o_moment', o.moment); set('o_why', o.why);
+    set('o_job', o.job); set('o_upsell', o.upsells); set('o_addon_other', o.addons_other || o.addon_other); set('o_moment', o.moment); set('o_why', o.why);
     setChecks('custSources', cu.sources); set('cu_notes', cu.notes); set('cu_jobs', cu.jobs_per_week); set('cu_value', cu.job_value); set('cu_big', cu.big_job_value); setChecks('partnerPick', cu.partners); set('cu_partners', cu.partner_names);
     set('w_capacity', w.capacity); setChecks('bestPick', w.best); set('w_dont_other', w.dont_other); set('w_busy', w.busiest); set('w_quiet', w.quietest);
     setRadio('first', b.first); setRadio('book', b.how); set('b_app', b.app); set('b_lead', b.lead_time); setRadio('bookwant', b.want);
