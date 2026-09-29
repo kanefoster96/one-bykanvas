@@ -50,15 +50,42 @@
 <!-- ============ HERO ============ -->
 <section class="hero">
   <div class="wrap">
-    <a class="hero-pill hero-pill-link reveal" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
+    <a class="hero-pill hero-pill-link reveal" href="#newFree" data-to-form><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">one.</h1>
     <p class="hero-by reveal">by <span>Kanvas</span></p>
     <p class="sub reveal">Websites for <span class="type-wrap"><span id="heroTrade">trades</span><span class="type-caret" aria-hidden="true"></span>.</span></p>
-    <div class="cta-row reveal">
-      <a class="btn btn-primary" href="/free.html">See your site free</a>
-      <a class="btn btn-ghost" href="/get-started.html">Get started &rsaquo;</a>
-    </div>
-    <p class="fineprint reveal">Designed for you, found on Google. &pound;25 a month, no setup fee.</p>
+    <form class="hero-form reveal" id="newFree" novalidate>
+      <div class="hp" aria-hidden="true">
+        <label for="new_extra">Leave this empty</label>
+        <input id="new_extra" name="new_extra" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <!-- One row, three steps: each fades out and the next fades in. -->
+      <div class="mini-step" id="newStep1">
+        <label for="newName">Your business name</label>
+        <div class="mini-row">
+          <input id="newName" type="text" autocomplete="organization" autocapitalize="words" placeholder="e.g. Fade Room Barbers" enterkeyhint="next">
+          <button class="mini-go" id="newNext" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+      <div class="mini-step" id="newStep2" hidden>
+        <label for="newEmail">Where should we send it?</label>
+        <div class="mini-row">
+          <input id="newEmail" type="email" autocomplete="email" placeholder="Email" enterkeyhint="send">
+          <button class="mini-go" id="newSend" type="submit" aria-label="Send my free page"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg></button>
+        </div>
+      </div>
+      <div class="mini-step" id="newStep3" hidden>
+        <label for="newHandle">Sent. One more thing helps us get it right: anywhere we can see your business</label>
+        <div class="mini-row">
+          <input id="newHandle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@instagram, Facebook, Checkatrade, a website" enterkeyhint="done">
+          <button class="mini-go" id="newHandleGo" type="button" aria-label="Add it"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+        </div>
+        <p class="hint mini-skip"><button class="linkish" id="newSkip" type="button">Nothing online yet? Skip this</button></p>
+      </div>
+      <p class="note" id="newNote" role="status" aria-live="polite"></p>
+      <p class="micro" id="newMicro">Designed for you, found on Google. &pound;25 a month, no setup fee.</p>
+    </form>
+
   </div>
   <div class="hero-art reveal" aria-hidden="true">
     <div class="device">
@@ -114,48 +141,9 @@
 </div>
 
 <!-- ============ THE OFFER ============ -->
-<!-- The free example, straight after the hero: the one thing we want a
-     visitor to do, before anything has to be explained. The promise sits
-     under it, where the risk is being weighed. Same endpoint and thank-you
-     page as /free.html - this is the short door, that is the full one. -->
+<!-- The promise, straight after the hero, where the risk is being weighed.
+     The ask itself is the row in the hero (hero.js). -->
 <section id="offer" class="section pt0">
-  <div class="wrap center">
-    <form class="free-mini reveal" id="miniFree" novalidate>
-      <p class="hero-pill"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free</p>
-      <h3>See your site within 24 hours. Free.</h3>
-      <p class="lede">Three things, and a real page lands in your inbox within 24 hours.<span class="gap"></span>No card.</p>
-
-      <div class="hp" aria-hidden="true">
-        <label for="mini_extra">Leave this empty</label>
-        <input id="mini_extra" name="mini_extra" type="text" tabindex="-1" autocomplete="off">
-      </div>
-
-      <div class="mini-step wait" id="miniStep1">
-        <label for="miniBusiness">Your business name</label>
-        <input id="miniBusiness" type="text" autocomplete="organization" placeholder="e.g. Fade Room Barbers" enterkeyhint="next">
-      </div>
-
-      <div class="mini-step" id="miniStep2" hidden>
-        <label for="miniHandle">Your business anywhere online</label>
-        <input id="miniHandle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@yourbusiness or a link" enterkeyhint="next">
-        <p class="hint">Instagram, Facebook, your current site, Trust a Trader &mdash; anywhere.</p>
-      </div>
-
-      <div class="mini-step" id="miniStep3" hidden>
-        <label for="miniEmail">Where should we send it? You&rsquo;ll have it within 24 hours.</label>
-        <div class="mini-row">
-          <input id="miniEmail" type="email" autocomplete="email" placeholder="you@example.com" enterkeyhint="send">
-          <button class="mini-go" id="miniSend" type="submit" aria-label="Send my free example">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <p class="note" id="miniNote" role="status" aria-live="polite"></p>
-      <p class="mini-alt">Already decided? <a href="/get-started.html">Get started &rsaquo;</a></p>
-    </form>
-  </div>
-
   <div class="wrap">
     <div class="promise reveal">
       <p class="promise-name">The See-It-First Promise</p>
@@ -355,7 +343,7 @@
         </div>
       </div>
       <p class="fiveyear-sum"><strong>Five years of Kanvas One is &pound;1,500.</strong> A traditional site costs twice that before hosting, changes, or the rebuild.
-         <a href="#miniFree">Get your free example page &rsaquo;</a></p>
+         <a href="#newFree" data-to-form>Get your free example page &rsaquo;</a></p>
     </div>
   </div>
 </section>
@@ -412,7 +400,7 @@
     <h2 class="reveal">See yours free, first.</h2>
     <p class="lede reveal">Your page, in your inbox within 24 hours.<span class="gap"></span>Then decide.</p>
     <div class="cta-row reveal">
-      <a class="btn btn-primary" href="#miniFree">See your site free</a>
+      <a class="btn btn-primary" href="#newFree" data-to-form>See your site free</a>
       <a class="btn btn-ghost" href="/get-started.html">Get started &rsaquo;</a>
     </div>
     <p class="micro reveal">No setup fees. Live the same day you join. Cancel anytime.</p>
@@ -450,6 +438,7 @@
 <script src="session.js?v=3"></script>
 <script src="script.js?v=33"></script>
 <script src="reviews.js?v=3"></script>
+<script src="hero.js?v=1"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
