@@ -1454,6 +1454,13 @@ function customerDetail(p) {
   if (p.active_plan === 'max') {
     wrap.appendChild(el('h3', 'req-list-title', 'SEO updates'));
     wrap.appendChild(seoLogPanel(p));
+    /* Their Max setup form, as they left it. A save here pushes them. */
+    wrap.appendChild(el('h3', 'req-list-title', 'Max setup'));
+    var setupLink = el('a', 'btn btn-ghost', 'Open their Max setup');
+    setupLink.href = '/onboarding.html?user=' + encodeURIComponent(p.id);
+    var setupNote = el('p', 'cust-sub', 'What they sell, how they sell it, who they sell to. Anything you change there, they hear about in the app.');
+    wrap.appendChild(setupLink);
+    wrap.appendChild(setupNote);
   }
 
   var onboarding = onboardingLines(p);

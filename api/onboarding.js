@@ -1,7 +1,12 @@
 /* The Max onboarding form: what a customer tells us to build their system.
  *
- *   GET   -> { answers, updatedAt, plan }   their saved answers
- *   POST  { answers }  -> { ok, changed }   save, and tell the admin what changed
+ *   GET   -> { answers, updatedAt, plan, business, viewer }   their saved answers
+ *   POST  { answers }  -> { ok, changed }   save, and tell the other side what changed
+ *
+ * The admin can open any Max customer's form with ?user=<id> (GET) or
+ * user in the body (POST). A save by the customer emails and pushes the
+ * admin; a save by the admin pushes the customer, so both hear the
+ * moment the other changes something.
  *
  * Everything is optional and can be saved as often as they like. The
  * questions are the same for every trade; onboarding-trades.js holds the
@@ -16,9 +21,9 @@
  * blob or the email.
  */
 const { createClient } = require('@supabase/supabase-js');
-const { missingEnv, ourSiteUrl } = require('./_env.js');
+const { missingEnv, ourSiteUrl, adminEmails } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
-const { notifyAdmin } = require('./_notify.js');
+const { notifyAdmin, notify } = require('./_notify.js');
 
 /* The sections, in the order the form shows them, for the email. */
 const SECTIONS = [
@@ -149,19 +154,28 @@ module.exports = async function handler(req, res) {
       return res.status(401).json({ error: 'Your session has expired.' });
     }
     const user = userData.user;
+    const isAdmin = !!user.email && adminEmails().includes(String(user.email).toLowerCase());
 
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false }
     });
 
+    /* Whose form: the caller's, or, for the admin, the customer named. */
+    const body = req.method === 'POST' ? (typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {})) : {};
+    const asked = String((req.method === 'GET' ? (req.query || {}).user : body.user) || '').trim();
+    if (asked && !isAdmin) return res.status(403).json({ error: 'That form is not yours.' });
+    const ownerId = asked || user.id;
+    const viewer = asked ? 'admin' : 'owner';
+
     const { data: profile, error: pErr } = await db.from('profiles')
       .select('business_name, active_plan, subscription_status, public_email, phone, address, service_area, opening_hours')
-      .eq('id', user.id).maybeSingle();
+      .eq('id', ownerId).maybeSingle();
     if (pErr) throw new Error(pErr.message);
+    if (asked && !profile) return res.status(404).json({ error: 'No customer with that id.' });
 
     const plan = profile && profile.active_plan;
     const { data: row, error: rErr } = await db.from('max_onboarding')
-      .select('answers, updated_at').eq('user_id', user.id).maybeSingle();
+      .select('answers, updated_at').eq('user_id', ownerId).maybeSingle();
     if (rErr) throw new Error(rErr.message);
 
     if (req.method === 'GET') {
@@ -175,7 +189,8 @@ module.exports = async function handler(req, res) {
         answers: Object.assign({}, answers, { contact }),
         updatedAt: row ? row.updated_at : null,
         plan,
-        business: (profile && profile.business_name) || ''
+        business: (profile && profile.business_name) || '',
+        viewer
       });
     }
 
@@ -183,7 +198,6 @@ module.exports = async function handler(req, res) {
     if (plan !== 'max') {
       return res.status(403).json({ error: 'The Max setup form is for Max customers.' });
     }
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
     const incoming = clean(body.answers) || {};
     if (JSON.stringify(incoming).length > MAX_BYTES) {
       return res.status(413).json({ error: 'That is more than the form can hold. Trim a section and try again.' });
@@ -194,13 +208,13 @@ module.exports = async function handler(req, res) {
 
     const now = new Date().toISOString();
     const { error: upErr } = await db.from('max_onboarding')
-      .upsert({ user_id: user.id, answers: incoming, updated_at: now }, { onConflict: 'user_id' });
+      .upsert({ user_id: ownerId, answers: incoming, updated_at: now }, { onConflict: 'user_id' });
     if (upErr) throw new Error(upErr.message);
 
     /* Mirror the contact fields onto the profile, so the account page and
        the live site say the same thing. */
     const contact = incoming.contact || {};
-    const patch = { id: user.id };
+    const patch = { id: ownerId };
     let mirrored = false;
     for (const [col, key] of Object.entries(MIRROR)) {
       if (typeof contact[key] === 'string' && contact[key].trim() && contact[key].trim() !== (profile && profile[col])) {
@@ -214,6 +228,13 @@ module.exports = async function handler(req, res) {
     }
 
     if (!changed.length) return res.status(200).json({ ok: true, changed: [] });
+
+    /* The admin changed it: the customer hears in the app, on their phone. */
+    if (viewer === 'admin') {
+      await notify(db, ownerId, 'Kane updated your Max setup', `Changed: ${changed.join(', ')}.`, '/onboarding.html',
+        { kind: 'max_setup', deepLink: { kind: 'max_setup' } });
+      return res.status(200).json({ ok: true, changed });
+    }
 
     /* Tell the admin: which sections moved, then everything, so the email
        is the record and nobody has to open the database. */
@@ -240,7 +261,8 @@ module.exports = async function handler(req, res) {
     });
     console.log('onboarding: notify email', result);
 
-    await notifyAdmin(db, 'Max setup updated', `${name} changed: ${changed.join(', ')}.`, '/admin.html');
+    await notifyAdmin(db, 'Max setup updated', `${name} changed: ${changed.join(', ')}.`, `/onboarding.html?user=${ownerId}`,
+      { kind: 'max_setup', deepLink: { kind: 'max_setup', user: ownerId } });
 
     return res.status(200).json({ ok: true, changed });
   } catch (err) {

@@ -109,10 +109,17 @@
     }).catch(function () { strip(); });
   }
 
-  if (window.supabase) { claim(); return; }
-  var s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-  s.onload = claim;
-  s.onerror = strip;
-  document.head.appendChild(s);
+  /* Our own pages carry no data attributes: the connection is in
+     supabase-config.js, which loads at the end of the body. Wait for it. */
+  function go() {
+    if ((!url || !key) && window.ONE_SUPABASE) { url = window.ONE_SUPABASE.url; key = window.ONE_SUPABASE.publishableKey; }
+    if (window.supabase) { claim(); return; }
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+    s.onload = claim;
+    s.onerror = strip;
+    document.head.appendChild(s);
+  }
+  if (url && key) { go(); return; }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
 })();
