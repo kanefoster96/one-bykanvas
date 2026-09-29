@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=3">
-<link rel="stylesheet" href="styles.css?v=103">
+<link rel="stylesheet" href="styles.css?v=104">
 </head>
 <body class="auth-body">
 <header class="nav">
@@ -73,8 +73,19 @@
 
     <!-- 2 -->
     <section class="panel ob-section" data-section="services">
-      <h2 class="panel-title">2. What you do, and what it costs</h2>
-      <p class="ob-why">One row per job. &ldquo;Quote&rdquo; and &ldquo;callout, then quote&rdquo; are proper answers: most of the work I build is for jobs with no fixed price.</p>
+      <h2 class="panel-title">2. What you do</h2>
+      <p class="ob-why">Pick your trade and tick the jobs you do. Prices are optional: an average is handy, &ldquo;not sure&rdquo; is fine.</p>
+      <div class="acct-grid">
+        <div class="field" id="tradeField">
+          <label for="svc_trade">Your trade</label>
+          <select id="svc_trade"><option value="">Choose</option></select>
+        </div>
+        <div class="field" id="tradeOtherField" hidden><label for="svc_trade_other">What do you call it?</label><input id="svc_trade_other" type="text" placeholder="Tiler, window fitter, drainage&hellip;"></div>
+      </div>
+      <div id="jobList" class="ob-jobs"></div>
+      <p class="ob-label ob-gap" id="mostLabel" hidden>Which one do you do most? <span class="opt">(this is what the ads run on)</span></p>
+      <div class="ob-checks" id="mostPick"></div>
+      <p class="ob-label ob-gap">Anything I&rsquo;ve missed</p>
       <div id="svcRows"></div>
       <button class="btn btn-ghost" id="svcAdd" type="button">Add another</button>
       <div class="field full ob-gap"><label class="check"><input id="svc_generated" type="checkbox"> Use generated images for now. I&rsquo;ll send my own photos when I can</label></div>
@@ -294,38 +305,46 @@
 <template id="svcRow">
   <div class="svc-row">
     <div class="acct-grid">
-      <div class="field"><label>The job</label><input type="text" data-k="name" placeholder="Boiler service"></div>
-      <div class="field">
-        <label>Price</label>
-        <select data-k="pricing">
-          <option value="">How it&rsquo;s priced</option>
-          <option value="Fixed price">Fixed price</option>
-          <option value="From">From a price</option>
-          <option value="Quote">Quote after a look</option>
-          <option value="Callout then quote">Callout fee, then quote</option>
-        </select>
-      </div>
-      <div class="field"><label>Amount, if there is one</label><input type="text" data-k="price" placeholder="&pound;80, from &pound;1,800"></div>
+      <div class="field full"><label>The job</label><input type="text" data-k="name" placeholder="What is it?"></div>
       <div class="field">
         <label>How often</label>
-        <select data-k="often">
-          <option value="">Choose</option>
-          <option value="Most weeks">Most weeks</option>
-          <option value="Some weeks">Some weeks</option>
-          <option value="Now and then">Now and then</option>
-        </select>
+        <select data-k="often"><option value="">Not sure</option><option value="Most weeks">Most weeks</option><option value="Some weeks">Some weeks</option><option value="Now and then">Now and then</option></select>
+      </div>
+      <div class="field">
+        <label>Price, roughly</label>
+        <input type="text" data-k="price" placeholder="Not sure is fine">
+      </div>
+      <div class="field">
+        <label>How it&rsquo;s priced</label>
+        <select data-k="pricing"><option value="">Not sure</option><option value="Fixed price">Fixed price</option><option value="From">From a price</option><option value="Quote">Quote after a look</option><option value="Callout then quote">Callout fee, then quote</option></select>
       </div>
       <div class="field">
         <label>How customers get it</label>
-        <select data-k="flow">
-          <option value="">Choose</option>
-          <option value="Book straight in">Book straight in</option>
-          <option value="Ask me first">Ask me first</option>
-        </select>
+        <select data-k="flow"><option value="">Not sure</option><option value="Book straight in">Book straight in</option><option value="Ask me first">Ask me first</option></select>
       </div>
-      <div class="field full"><label>What it includes, in a line <span class="opt">(optional)</span></label><input type="text" data-k="includes" placeholder="Full check, parts cleaned, certificate emailed"></div>
     </div>
     <button class="linkish svc-remove" type="button">Remove</button>
+  </div>
+</template>
+
+<template id="jobItem">
+  <div class="ob-job">
+    <label class="check ob-job-head"><input type="checkbox" data-k="on"> <span data-k="label"></span></label>
+    <div class="ob-job-more acct-grid" hidden>
+      <div class="field">
+        <label>How often</label>
+        <select data-k="often"><option value="">Not sure</option><option value="Most weeks">Most weeks</option><option value="Some weeks">Some weeks</option><option value="Now and then">Now and then</option></select>
+      </div>
+      <div class="field"><label>Price, roughly</label><input type="text" data-k="price" placeholder="Not sure is fine"></div>
+      <div class="field">
+        <label>How it&rsquo;s priced</label>
+        <select data-k="pricing"><option value="">Not sure</option><option value="Fixed price">Fixed price</option><option value="From">From a price</option><option value="Quote">Quote after a look</option><option value="Callout then quote">Callout fee, then quote</option></select>
+      </div>
+      <div class="field">
+        <label>How customers get it</label>
+        <select data-k="flow"><option value="">Not sure</option><option value="Book straight in">Book straight in</option><option value="Ask me first">Ask me first</option></select>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -334,7 +353,8 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="onboarding.js?v=3"></script>
+<script src="onboarding-trades.js?v=1"></script>
+<script src="onboarding.js?v=4"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
