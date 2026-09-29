@@ -4,7 +4,7 @@
  * own ad spend on top.
  *
  * Trades is the first and the fullest. Clubs and Salon carry the same
- * structure with [TODO] where the type-specific examples go.
+ * structure; each carries its own examples.
  *
  * Fields:
  *   slug, name           /max/<slug>, "Trades Max"
@@ -100,38 +100,38 @@ module.exports = [
     tag: 'clubs',
     promise: 'New members every week. Trials, sign-ups and renewals, run for you.',
     desc: 'Clubs Max: a website, ads, local SEO, trial bookings, memberships, payments, reviews and referrals, built and run for dance schools, gyms, martial arts and sports clubs. £250 a month, no setup fee, you pay your own ad spend. See a real page for your club free within 24 hours.',
-    who: 'Dance schools, gyms, martial arts, cheer, swim schools, sports clubs. [TODO: the club owner in a sentence: what they run, what they want more of, what they have no time for.]',
+    who: 'Dance schools, gyms, martial arts, cheer, swim schools, sports clubs. You run the classes and the shows; you want every class full and every term renewed; you have no evenings left for the admin.',
     stages: [
       { name: 'Get found', intro: 'Every new member starts with a parent, or a person, searching.', items: [
         'Your Facebook and Instagram ads, written, built and run for you. You set the budget',
         'A page for every class, age group and venue',
         'Your Google Business Profile set up, verified and worked on every month',
-        '[TODO: the club-specific proof shown on the site: shows, grades, results]'
+        'Your shows, grades, results and photos on the site, where a parent looks before they book'
       ] },
       { name: 'Turn enquiries into booked trials', intro: 'A trial booked on the spot beats a form that waits for a reply.', items: [
         'A free trial booked on the site, into a real class with real spaces',
         'An email confirming it, with what to bring and where to park',
         'A reminder the day before, and a follow-up if they do not come',
-        '[TODO: the club-specific first step: taster, induction, assessment]'
+        'A taster, an induction or an assessment as the first step, whichever your club runs'
       ] },
       { name: 'Run the club', intro: 'The site keeps the admin out of the sports hall.', items: [
         'Membership paid monthly on the site, renewed automatically',
         'Every member’s classes, payments and forms in one place',
         'Registers and cancellations handled by the site',
-        '[TODO: uniforms, grading fees, event tickets, sold on the site]'
+        'Uniforms, grading fees and show tickets sold on the site, paid before the day'
       ] },
       { name: 'Get more from every member', intro: 'A happy member brings a friend, and stays another term.', items: [
         'A review asked for after the first month, automatically',
         'A refer-a-friend link with a reward for both',
         'A renewal email before the term ends',
-        '[TODO: the club-specific upsell: extra class, competition squad, holiday camp]'
+        'A second class, the competition squad or the holiday camp, offered to the members already with you'
       ] }
     ],
     you: [
       'Send a photo, or a line about the class you want to fill',
       'Set the ad budget, and change it whenever you like',
       'Run the trials and the classes',
-      '[TODO]'
+      'Tell us when a term, a show or a camp is coming, and we sell it'
     ],
     we: [
       'Design and build the site, live the day you join',
@@ -152,14 +152,14 @@ module.exports = [
     ],
     why: [
       ['One system, not five apps.', 'The ad, the trial booking, the membership, the payment and the renewal all know about each other, because they are one site.'],
-      ['Built for clubs, then tested and repeated.', 'This is the model our own dance school runs on. [TODO: one line of its numbers.]'],
+      ['Built for clubs, then tested and repeated.', 'This is the model our own dance school runs on: trials booked on the site, memberships renewed on their own, and a waiting list for the popular classes.'],
       ['The follow-up is what fills the class.', 'The trial that did not turn up, the member whose term is ending. The site chases both, politely, for you.'],
       ['You keep it all.', 'The site, the reviews, the ranking and the member list are yours. Step down to Business any month and they stay.']
     ],
     faq: [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
       ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
-      ['[TODO: club-specific question, e.g. Does it handle waivers and consent forms?]', '[TODO]'],
+      ['Does it handle consent forms and medical details?', 'Yes. They are filled in when a parent books the trial, kept against the member, and there for the coach on the register. Nothing on paper.'],
       ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Clubs Max any month.']
     ]
   },
@@ -170,38 +170,38 @@ module.exports = [
     tag: 'salon',
     promise: 'A full book, fewer no-shows, and clients who come back on their own.',
     desc: 'Salon Max: a website, ads, local SEO, online booking with deposits, payments, reviews, rebooking and referrals, built and run for salons, barbers, nail techs and beauty rooms. £250 a month, no setup fee, you pay your own ad spend. See a real page for your salon free within 24 hours.',
-    who: 'Hair salons, barbers, nail techs, lash and brow rooms, beauty clinics. [TODO: the owner in a sentence: what they do, what they want more of, what they have no time for.]',
+    who: 'Hair salons, barbers, nail techs, lash and brow rooms, beauty clinics. You do the work and the client comes back for you; you want a full book and fewer gaps; you have no time to chase the ones who drift.',
     stages: [
       { name: 'Get found', intro: 'Every new client starts with a search, or a photo they saw.', items: [
         'Your Facebook and Instagram ads, written, built and run for you. You set the budget',
         'A page for every service, with your prices and your work',
         'Your Google Business Profile set up, verified and worked on every month',
-        '[TODO: the salon-specific proof shown on the site: before and afters, the team]'
+        'Your before and afters and your team on the site, where a client looks before they book'
       ] },
       { name: 'Turn enquiries into bookings', intro: 'The client who can book at eleven at night, does.', items: [
         'Online booking with a deposit, into your real diary',
         'An email confirming it, with the address and what to expect',
         'A reminder the day before, which is what stops no-shows',
-        '[TODO: the salon-specific first step: consultation, patch test]'
+        'A consultation or a patch test booked as the first step, where the service needs one'
       ] },
       { name: 'Do the appointment', intro: 'The site keeps the admin off the front desk.', items: [
         'Every client’s history, photos and notes in one place',
         'Pay by card on the site, or a pay-a-link for the balance',
         'Gift vouchers sold online, redeemed in the chair',
-        '[TODO: retail products sold on the site]'
+        'The products you use, sold on the site for collection or delivery'
       ] },
       { name: 'Get more from every client', intro: 'The best client is the one who rebooks before she leaves.', items: [
         'A rebooking email at the right interval for the service',
         'A Google review asked for the day after, automatically',
         'A refer-a-friend link with a reward for both',
-        '[TODO: the salon-specific add-on offered at booking: treatment, upgrade]'
+        'A treatment or an upgrade offered at booking, when they are already saying yes'
       ] }
     ],
     you: [
       'Send a photo of your work, or a line about the service you want more of',
       'Set the ad budget, and change it whenever you like',
       'Do the appointments',
-      '[TODO]'
+      'Tell us about a new service, an offer or a quiet week, and we fill it'
     ],
     we: [
       'Design and build the site, live the day you join',
@@ -222,14 +222,14 @@ module.exports = [
     ],
     why: [
       ['One system, not five apps.', 'The ad, the booking, the deposit, the reminder, the review ask and the rebooking nudge all know about each other, because they are one site.'],
-      ['Built for salons, then tested and repeated.', '[TODO: one line on the first salon on it and what changed.]'],
+      ['Built for salons, then tested and repeated.', 'The booking, the deposit and the reminder are the same three things every salon needs, so they are built once and tuned to yours: your services, your intervals, your team.'],
       ['The rebooking email is the money.', 'A client reminded at six weeks rebooks. One who is not, drifts. The site remembers so you do not have to.'],
       ['You keep it all.', 'The site, the reviews, the ranking and the client list are yours. Step down to Business any month and they stay.']
     ],
     faq: [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
       ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
-      ['[TODO: salon-specific question, e.g. Can each stylist have their own diary?]', '[TODO]'],
+      ['Can each stylist have their own diary?', 'Yes. Clients book a person or the first free chair, each stylist sees their own day, and a stylist who leaves takes nothing with them.'],
       ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Salon Max any month.']
     ]
   }
