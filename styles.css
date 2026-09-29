@@ -2833,7 +2833,7 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .hero .sub.plain{max-width:520px;margin-left:auto;margin-right:auto}
 /* The phone as theirs: a Google result for them replaces the cycling
    sites while a name is typed, with the second step of the box under it. */
-.device-mock{display:none;position:absolute;inset:0;overflow:auto;background:#fff;flex-direction:column;align-items:stretch;text-align:left;font-size:clamp(11px,1.5vw,15px);color:#202124;padding:1.2em 1.4em 1.6em}
+.device-mock{display:none;position:absolute;inset:0;overflow:auto;background:#fff;flex-direction:column;align-items:stretch;text-align:left;font-size:12px;color:#202124;padding:1.2em 1.4em 1.6em}
 .device-shots.is-mine .shots,.device-shots.is-mine .device-build{display:none}
 /* The mock is a light page: hold the dark status bar still on it. */
 .device-shots.is-mine .ios-bar{animation:none;opacity:0}
@@ -2852,12 +2852,12 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .g-result:hover .g-title{text-decoration:underline}
 .g-desc{margin:.4em 0 0;font-size:.92em;line-height:1.5;color:#4d5156}
 .g-form{margin:1.4em 0 0;display:flex;flex-direction:column;gap:.5em;max-width:560px}
-.g-form label{font-size:.85em;font-weight:500;color:var(--ink-2)}
-.g-form input{font:inherit;font-size:1em;padding:.6em .9em;border:1px solid var(--line);border-radius:.7em;background:#fff;color:var(--ink);width:100%;box-sizing:border-box}
+.g-form label{font-size:12px;font-weight:500;color:var(--ink-2)}
+.g-form input{font:inherit;font-size:14px;padding:.6em .9em;border:1px solid var(--line);border-radius:.7em;background:#fff;color:var(--ink);width:100%;box-sizing:border-box}
 .g-form input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(29,29,31,.13)}
 .g-form input.err{border-color:#d93025}
-.g-form .btn{justify-content:center;font-size:1em;padding:.7em 1.2em;margin-top:.2em}
-.g-form .note{margin:0;font-size:.85em;text-align:center;min-height:1.2em}
+.g-form .btn{justify-content:center;font-size:14px;padding:.7em 1.2em;margin-top:.2em}
+.g-form .note{margin:0;font-size:12px;text-align:center;min-height:1.2em}
 .g-done{margin:1.6em 0 0;display:flex;flex-direction:column;align-items:center;text-align:center}
 .g-tick{width:4.4em;height:4.4em;border-radius:50%;background:var(--good);color:#fff;display:flex;align-items:center;justify-content:center;animation:g-pop .45s var(--ease) both}
 .g-tick svg{width:2.4em;height:2.4em}
@@ -2865,8 +2865,10 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .g-done-line{margin:1em 0 0;font-size:1.1em;font-weight:600;color:var(--ink)}
 .g-done-sub{margin:.4em 0 0;font-size:.9em;color:var(--ink-2)}
 .hero-form.is-sent .mini-step{display:none}
-@media (max-width:640px){.device-mock{font-size:clamp(13px,3.7vw,16px)}}
-@media (max-width:600px){.device-mock{padding-top:calc(14.5cqw + 1em)}}
+/* On a phone the mock is sized from the frame, like a screenshot would be:
+   a result reads at about a third of the glass width in font terms. The
+   email box and the button stay finger-sized whatever the frame. */
+@media (max-width:600px){.device-mock{font-size:3.3cqw;padding:calc(14.5cqw + 1em) 5cqw 2em}.g-form{font-size:14px}.g-form label{font-size:12px}}
 /* Pain, ease and the Max anchor. */
 .plain-list{list-style:none;margin:18px auto 0;padding:0;max-width:560px}
 .plain-list li{padding:12px 0;border-top:1px solid var(--line-soft);font-size:17px;line-height:1.5;color:var(--ink-2)}
