@@ -14,8 +14,7 @@
  *   who                  who it is for, one paragraph
  *   stages               four: { name, intro (italic), items }
  *   you / we             the two columns of what each side does
- *   value                rows of [what you get, what it does for you, bought separately]
- *   valueTotal           the bold total line
+ *   value                rows of [what you get, what it does for you]
  *   why                  four [bold lead, sentence] pairs
  *   faq                  [question, answer] pairs; also structured data
  *   tag                  the ?t= value for the free page
@@ -71,16 +70,15 @@ module.exports = [
       'Send you a note every month: what ran, what it cost, what came in'
     ],
     value: [
-      ['Your website, designed, built and hosted', 'Found, trusted, and contacted in one tap', '&pound;1,500 to build, then &pound;20 a month'],
-      ['Facebook and Instagram ads, run for you', 'New enquiries every week, on a budget you set', '&pound;500 a month at an agency'],
-      ['Local SEO, worked on every month', 'Higher on Google and Maps in your towns, for good', '&pound;300 a month'],
-      ['Quotes, bookings, deposits and payments', 'Jobs booked and paid without a phone call', '&pound;40 a month in apps'],
-      ['Review and referral requests, automatic', 'More reviews, and customers who bring the next one', '&pound;50 a month'],
-      ['Follow-up emails, written and sent for you', 'Nobody forgotten, nothing missed', '&pound;30 a month'],
-      ['Business email at your own address', 'Looks like a business, not a hotmail', '&pound;12 a month'],
-      ['A dashboard with every customer, job and payment', 'One place, not five apps', 'Included']
+      ['Your website, designed, built and hosted', 'Found, trusted, and contacted in one tap'],
+      ['Facebook and Instagram ads, run for you', 'New enquiries every week, on a budget you set'],
+      ['Local SEO, worked on every month', 'Higher on Google and Maps in your towns, for good'],
+      ['Quotes, bookings, deposits and payments', 'Jobs booked and paid without a phone call'],
+      ['Review and referral requests, automatic', 'More reviews, and customers who bring the next one'],
+      ['Follow-up emails, written and sent for you', 'Nobody forgotten, nothing missed'],
+      ['Business email at your own address', 'Looks like a business, not a hotmail'],
+      ['A dashboard with every customer, job and payment', 'One place, not five apps']
     ],
-    valueTotal: 'Bought separately: about &pound;950 a month, plus a build fee. Trades Max: &pound;250 a month, no setup fee.',
     why: [
       ['One system, not five apps.', 'The ad, the form, the booking, the payment, the review ask and the follow-up all know about each other, because they are one site.'],
       ['Built for trades, then tested and repeated.', 'The same model runs for every trade on it. What works for one plumber is already in the next one’s site.'],
@@ -92,7 +90,8 @@ module.exports = [
       ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['Will it definitely bring jobs?', 'No one honest can promise that. What I promise is the work: a proper offer, a proper ad, a page that converts, the follow-ups, and a note every month showing what it brought in, so you decide with numbers.'],
       ['What if I already have a website?', 'I build the new one, move your address across, and nothing goes offline in between. Your reviews and ranking come with you.'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Trades Max any month, if there is a place.']    ]
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Trades Max any month.']
+    ]
   },
   {
     slug: 'clubs',
@@ -142,16 +141,15 @@ module.exports = [
       'Send you a note every month: what ran, what it cost, who joined'
     ],
     value: [
-      ['Your website, designed, built and hosted', 'Found, trusted, and a trial booked in one tap', '&pound;1,500 to build, then &pound;20 a month'],
-      ['Facebook and Instagram ads, run for you', 'New trials every week, on a budget you set', '&pound;500 a month at an agency'],
-      ['Local SEO, worked on every month', 'Higher on Google and Maps for your area, for good', '&pound;300 a month'],
-      ['Trial bookings, memberships and payments', 'Members signed up and paid without a form to chase', '&pound;60 a month in club software'],
-      ['Review and referral requests, automatic', 'More reviews, and members who bring a friend', '&pound;50 a month'],
-      ['Follow-up and renewal emails, sent for you', 'Nobody forgotten at the end of term', '&pound;30 a month'],
-      ['Business email at your own address', 'Looks like a club, not a gmail', '&pound;12 a month'],
-      ['A dashboard with every member, class and payment', 'One place, not five apps', 'Included']
+      ['Your website, designed, built and hosted', 'Found, trusted, and a trial booked in one tap'],
+      ['Facebook and Instagram ads, run for you', 'New trials every week, on a budget you set'],
+      ['Local SEO, worked on every month', 'Higher on Google and Maps for your area, for good'],
+      ['Trial bookings, memberships and payments', 'Members signed up and paid without a form to chase'],
+      ['Review and referral requests, automatic', 'More reviews, and members who bring a friend'],
+      ['Follow-up and renewal emails, sent for you', 'Nobody forgotten at the end of term'],
+      ['Business email at your own address', 'Looks like a club, not a gmail'],
+      ['A dashboard with every member, class and payment', 'One place, not five apps']
     ],
-    valueTotal: 'Bought separately: about &pound;970 a month, plus a build fee. Clubs Max: &pound;250 a month, no setup fee.',
     why: [
       ['One system, not five apps.', 'The ad, the trial booking, the membership, the payment and the renewal all know about each other, because they are one site.'],
       ['Built for clubs, then tested and repeated.', 'This is the model my own dance school runs on. [TODO: one line of its numbers.]'],
@@ -162,7 +160,8 @@ module.exports = [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
       ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['[TODO: club-specific question, e.g. Does it handle waivers and consent forms?]', '[TODO]'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Clubs Max any month, if there is a place.']    ]
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Clubs Max any month.']
+    ]
   },
   {
     slug: 'salon',
@@ -212,16 +211,15 @@ module.exports = [
       'Send you a note every month: what ran, what it cost, who booked'
     ],
     value: [
-      ['Your website, designed, built and hosted', 'Found, trusted, and booked in one tap', '&pound;1,500 to build, then &pound;20 a month'],
-      ['Facebook and Instagram ads, run for you', 'New clients every week, on a budget you set', '&pound;500 a month at an agency'],
-      ['Local SEO, worked on every month', 'Higher on Google and Maps in your town, for good', '&pound;300 a month'],
-      ['Online booking, deposits and payments', 'A full book, fewer no-shows, no booking app taking a cut', '&pound;40 a month in apps'],
-      ['Review, rebooking and referral emails, automatic', 'More reviews, and clients who come back on their own', '&pound;50 a month'],
-      ['Gift vouchers and products, sold online', 'Money in while the chair is empty', '&pound;30 a month'],
-      ['Business email at your own address', 'Looks like a salon, not a gmail', '&pound;12 a month'],
-      ['A dashboard with every client, appointment and payment', 'One place, not five apps', 'Included']
+      ['Your website, designed, built and hosted', 'Found, trusted, and booked in one tap'],
+      ['Facebook and Instagram ads, run for you', 'New clients every week, on a budget you set'],
+      ['Local SEO, worked on every month', 'Higher on Google and Maps in your town, for good'],
+      ['Online booking, deposits and payments', 'A full book, fewer no-shows, no booking app taking a cut'],
+      ['Review, rebooking and referral emails, automatic', 'More reviews, and clients who come back on their own'],
+      ['Gift vouchers and products, sold online', 'Money in while the chair is empty'],
+      ['Business email at your own address', 'Looks like a salon, not a gmail'],
+      ['A dashboard with every client, appointment and payment', 'One place, not five apps']
     ],
-    valueTotal: 'Bought separately: about &pound;950 a month, plus a build fee. Salon Max: &pound;250 a month, no setup fee.',
     why: [
       ['One system, not five apps.', 'The ad, the booking, the deposit, the reminder, the review ask and the rebooking nudge all know about each other, because they are one site.'],
       ['Built for salons, then tested and repeated.', '[TODO: one line on the first salon on it and what changed.]'],
@@ -232,7 +230,8 @@ module.exports = [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
       ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['[TODO: salon-specific question, e.g. Can each stylist have their own diary?]', '[TODO]'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Salon Max any month, if there is a place.']    ]
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Salon Max any month.']
+    ]
   }
 ];
 
