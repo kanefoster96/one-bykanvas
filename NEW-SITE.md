@@ -105,7 +105,8 @@ shows "refused to connect", the frame-ancestors header is missing.
 
 Whenever a record changes in the dashboard (a booking made, a job done,
 money in or refunded, a review left), one server-side call puts it on the
-owner's phone. The secret is on the customer's admin page under One app.
+owner's phone. This is also the only thing that pushes money in: the
+beacon's payment call is public and counts for Analytics only. The secret is on the customer's admin page under One app.
 
 ```
 POST https://kanvas.one/api/event

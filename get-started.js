@@ -788,17 +788,19 @@
 
   /* 5 — finish: save now if we can, otherwise stash for first login */
   function buildRow() {
-    return {
+    var row = {
       business_name:  answers.business_name || null,
       contact_name:   answers.contact_name || null,
       business_type:  answers.business_type || null,
       site_uses:      answers.site_uses && answers.site_uses.length ? answers.site_uses : null,
       selected_plan:  answers.selected_plan || null,
-      max_model:      answers.selected_plan === 'max' ? MAX_MODEL : null,
       requested_domain: answers.requested_domain || null,
       domain_owned:     Boolean(answers.domain_owned),
       site_goals:     answers.site_uses ? answers.site_uses.join('\n') : null
     };
+    /* Only written when known: a later run of the wizard must not wipe it. */
+    if (MAX_MODEL && answers.selected_plan === 'max') row.max_model = MAX_MODEL;
+    return row;
   }
 
   /* Returns true when it reached the database, false when it had to stash. */

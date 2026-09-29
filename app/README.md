@@ -70,8 +70,10 @@ site) talks to the app through five lines, and nothing else:
 1. The beacon on every page of the site (above): analytics, who is on the
    site now.
 2. The chat line, if the type has live chat (below).
-3. `k1.payment(...)` on the thank-you page (above): stored for Analytics
-   and pushed as "£80 from Sam" the first time a ref is seen.
+3. `k1.payment(...)` on the thank-you page (above): stored for Analytics.
+   It is public, like every page's source, so it never reaches a phone on
+   its own; the push for money in is the event call below, from the
+   dashboard, with the secret.
 4. An event call, server-side, whenever a record changes:
 
    ```

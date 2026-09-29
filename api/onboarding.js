@@ -164,6 +164,7 @@ module.exports = async function handler(req, res) {
     const body = req.method === 'POST' ? (typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {})) : {};
     const asked = String((req.method === 'GET' ? (req.query || {}).user : body.user) || '').trim();
     if (asked && !isAdmin) return res.status(403).json({ error: 'That form is not yours.' });
+    if (asked && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(asked)) return res.status(400).json({ error: 'That is not a customer id.' });
     const ownerId = asked || user.id;
     const viewer = asked ? 'admin' : 'owner';
 
@@ -207,7 +208,10 @@ module.exports = async function handler(req, res) {
       return res.status(413).json({ error: 'That is more than the form can hold. Trim a section and try again.' });
     }
 
-    const before = (row && row.answers) || {};
+    const before = Object.assign({}, (row && row.answers) || {});
+    /* The Max they bought was shown as already answered: saving it back is
+       not a change worth telling anyone about. */
+    if (!before.model && profile && profile.max_model && incoming.model === profile.max_model) before.model = profile.max_model;
     const changed = SECTIONS.filter(([key]) => JSON.stringify(before[key] || null) !== JSON.stringify(incoming[key] || null)).map(([, label]) => label);
 
     const now = new Date().toISOString();
