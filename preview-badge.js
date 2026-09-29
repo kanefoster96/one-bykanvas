@@ -96,7 +96,7 @@
 
   var card = null, pill = null;
 
-  var STARTER_LINE = 'This page, live on your address today. Contact form and click to call. Found on Google. A change a month, made by me.';
+  var STARTER_LINE = 'This page, live on your address today. Contact form and click to call. Found on Google. A change a month, made by us.';
   var BUSINESS_LINE = 'Everything in Starter, plus bookings, payments and live chat. Unlimited changes.';
 
   function button(text, href, filled) {
@@ -162,7 +162,7 @@
     wrap.appendChild(make('p', { margin: '0 0 6px 0', paddingRight: '34px', fontSize: '21px', fontWeight: '600',
       letterSpacing: '-.02em', lineHeight: '1.2', color: INK }, 'This is your designed shell.'));
     wrap.appendChild(make('p', { margin: '0 0 12px', fontSize: '14.5px', lineHeight: '1.5', color: INK2 },
-      'The look and the feel. Features are what build your business online, and once you join, I build them in.'));
+      'The look and the feel. Features are what build your business online, and once you join, we build them in.'));
 
     /* The address. Available only if the registry said so a moment ago. */
     var box = make('div', { margin: '0 0 12px', padding: '12px 14px', borderRadius: '14px',

@@ -33,8 +33,8 @@ module.exports = [
     lines: ['Let customers book a slot on my site', 'Take a £10 deposit when they book', 'Text them a reminder the day before', 'Show my availability so they stop asking'],
     placeholder: 'e.g. Fade Room Barbers',
     how: [
-      ['Tell me how you work', 'Your services, how long each takes, when you are open, what deposit you want. Five minutes.'],
-      ['I build it into your site', 'The calendar, the deposit, the confirmation and the reminder. On your own address, matching your site, within 14 days of joining.'],
+      ['Tell us how you work', 'Your services, how long each takes, when you are open, what deposit you want. Five minutes.'],
+      ['We build it into your site', 'The calendar, the deposit, the confirmation and the reminder. On your own address, matching your site, within 14 days of joining.'],
       ['Bookings arrive on your phone', 'Each one with the name, the service and the deposit paid. Change your hours yourself, any time.']
     ],
     gets: [
@@ -66,8 +66,8 @@ module.exports = [
     lines: ['Take deposits on my site', 'Let people pay an invoice by card', 'Sell gift vouchers online', 'Add a small shop to my site'],
     placeholder: 'e.g. Nova Nails',
     how: [
-      ['Tell me what people pay you for', 'Deposits, a price list, products, vouchers, invoices. Whatever it is, and how you want the money to land.'],
-      ['I connect it to your bank', 'Stripe, set up for you, paid into your account. No monthly fee for the card machine you do not use.'],
+      ['Tell us what people pay you for', 'Deposits, a price list, products, vouchers, invoices. Whatever it is, and how you want the money to land.'],
+      ['We connect it to your bank', 'Stripe, set up for you, paid into your account. No monthly fee for the card machine you do not use.'],
       ['Customers pay on your site', 'On their phone, in a minute, at any hour. You get a message; they get a receipt.']
     ],
     gets: [
@@ -79,12 +79,12 @@ module.exports = [
       'Every payment against the customer’s name'
     ],
     plan: 'business',
-    planLine: 'Payments are part of Business: &pound;50 a month, no setup fee. Card fees are Stripe&rsquo;s, about 1.5% plus 20p per payment, and nothing on top from me.',
+    planLine: 'Payments are part of Business: &pound;50 a month, no setup fee. Card fees are Stripe&rsquo;s, about 1.5% plus 20p per payment, and nothing on top from us.',
     faq: [
       ['What does it cost per payment?', 'Stripe&rsquo;s fee, about 1.5% plus 20p for a UK card. Nothing on top. There is no monthly fee for taking payments.'],
       ['When does the money arrive?', 'In your bank account a few days after the payment, on a rolling basis. Stripe sets the exact schedule.'],
       ['Can I still take cash?', 'Of course. This is for the customer who wants to pay now and the deposit that makes a booking real.'],
-      ['Is it safe?', 'The card details go to Stripe, never to your site or to me. Stripe is what most online shops in the UK run on.'],
+      ['Is it safe?', 'The card details go to Stripe, never to your site or to us. Stripe is what most online shops in the UK run on.'],
       ['Can I sell products?', 'Yes. A shop page with your products, stock and postage, built in. Ask for it and it gets made.']
     ]
   },
@@ -93,15 +93,15 @@ module.exports = [
     short: 'Facebook and Instagram ads',
     search: 'Facebook and Instagram ads for local businesses, run for you',
     h1: 'Facebook and Instagram ads, run for you.',
-    lede: 'You set the budget. I write the offer, build the ad and the form, run it, and tell you each month what it cost and what came in.',
-    desc: 'Facebook and Instagram ads for local businesses, set up, run and tracked for you. You set the budget and change it any time; I write the offer, build the ad and the form, and report every month. Part of Max, £250 a month, no setup fee.',
+    lede: 'You set the budget. We write the offer, build the ad and the form, run it, and tell you each month what it cost and what came in.',
+    desc: 'Facebook and Instagram ads for local businesses, set up, run and tracked for you. You set the budget and change it any time; We write the offer, build the ad and the form, and report every month. Part of Max, £250 a month, no setup fee.',
     pain: 'You boosted a post once and got likes from people three hundred miles away. An agency wanted &pound;600 a month before the budget. So the ads never got done, and the phone stays as quiet as it was.',
     lines: ['Run a Facebook ad for my boiler service offer', 'Get me more customers in my town', 'Put a form on my site the ad can send people to', 'Tell me what the ads brought in this month'],
     placeholder: 'e.g. Dave the Plumber',
     how: [
-      ['A photo, or a line of text', 'The job you want more of, and a picture of it. That is all I need from you, plus access to your Facebook page.'],
-      ['I build the offer, the ad and the form', 'Written for your town and your trade, pointing at a page on your own site that turns a click into a call. Live within 7 days.'],
-      ['You set the budget, I run it', 'Paid by you straight to Meta, changed whenever you like. Every month, a note: what ran, what it cost, what came in.']
+      ['A photo, or a line of text', 'The job you want more of, and a picture of it. That is all we need from you, plus access to your Facebook page.'],
+      ['We build the offer, the ad and the form', 'Written for your town and your trade, pointing at a page on your own site that turns a click into a call. Live within 7 days.'],
+      ['You set the budget, we run it', 'Paid by you straight to Meta, changed whenever you like. Every month, a note: what ran, what it cost, what came in.']
     ],
     gets: [
       'The offer, the ad and the landing form, written and built for you',
@@ -114,10 +114,10 @@ module.exports = [
     plan: 'max',
     planLine: 'Ads are part of Max: &pound;250 a month with the website, the ranking work and the follow-up emails in it. No setup fee, and your price is locked for as long as you stay.',
     faq: [
-      ['How much should the budget be?', 'Your call, and you can change it any time. Below about &pound;10 a day there is not enough to learn from, so that is where I suggest starting.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
-      ['Will it definitely bring customers?', 'No one honest can promise that. What I promise is the work: a proper offer, a proper ad, a page that converts, and a note every month showing what it brought in, so you can decide with numbers.'],
-      ['What do you need from me?', 'A photo or a line about the job you want more of, and admin access to your Facebook page. I do the rest.']
+      ['How much should the budget be?', 'Your call, and you can change it any time. Below about &pound;10 a day there is not enough to learn from, so that is where we suggest starting.'],
+      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
+      ['Will it definitely bring customers?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, and a note every month showing what it brought in, so you can decide with numbers.'],
+      ['What do you need from me?', 'A photo or a line about the job you want more of, and admin access to your Facebook page. We do the rest.']
     ]
   },
   {
@@ -131,7 +131,7 @@ module.exports = [
     lines: ['Add live chat to my site', 'Answer questions from my phone', 'Keep every enquiry in one place', 'Let people send me a photo of the job'],
     placeholder: 'e.g. Bright Sparks Electrical',
     how: [
-      ['I add the chat to your site', 'A small button on every page. Customers type, and can send a photo of the job.'],
+      ['We add the chat to your site', 'A small button on every page. Customers type, and can send a photo of the job.'],
       ['It comes to your phone', 'A notification, and the whole conversation. Reply when you are off the ladder. If they left an email, they hear back there too.'],
       ['Everything in one place', 'Chats, enquiries, bookings and payments, against the customer’s name. Nothing missed, nothing to search five apps for.']
     ],
@@ -164,7 +164,7 @@ module.exports = [
     lines: ['Ask every customer for a Google review', 'Send the review link the day after the job', 'Show my reviews on my site', 'Get me higher on Google Maps in my town'],
     placeholder: 'e.g. Green & Tidy Gardens',
     how: [
-      ['Your Google listing, linked', 'I connect your Google Business Profile to your site, or set one up if you have none.'],
+      ['Your Google listing, linked', 'We connect your Google Business Profile to your site, or set one up if you have none.'],
       ['The ask, sent for you', 'The day after each booking or payment, the customer gets a short message from your business with the review link. Written once, sent every time.'],
       ['Reviews on your site too', 'The good ones show on your own pages, so the next customer sees them before they ring.']
     ],
@@ -182,7 +182,7 @@ module.exports = [
       ['Is it allowed?', 'Yes. Asking every customer for an honest review is what Google recommends. What is not allowed is paying for reviews or filtering out the unhappy ones, and this does neither.'],
       ['What does the message say?', 'A short thank-you from your business and the link. You see it before it goes live and can change the wording any time.'],
       ['What if someone leaves a bad one?', 'You get a nudge, and you reply. A calm reply to a bad review is read by more people than the review itself.'],
-      ['Do I need a Google Business Profile?', 'Yes, and if you have none I set it up and verify it with you. It is the listing that appears on Maps.'],
+      ['Do I need a Google Business Profile?', 'Yes, and if you have none we set it up and verify it with you. It is the listing that appears on Maps.'],
       ['How long does it take?', 'Your site is live the day you join. The review requests are running within 14 days, or your next month is free.']
     ]
   }

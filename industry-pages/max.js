@@ -87,9 +87,9 @@ module.exports = [
     ],
     faq: [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works. Below about &pound;10 a day there is not enough to learn from.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
-      ['Will it definitely bring jobs?', 'No one honest can promise that. What I promise is the work: a proper offer, a proper ad, a page that converts, the follow-ups, and a note every month showing what it brought in, so you decide with numbers.'],
-      ['What if I already have a website?', 'I build the new one, move your address across, and nothing goes offline in between. Your reviews and ranking come with you.'],
+      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
+      ['Will it definitely bring jobs?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, the follow-ups, and a note every month showing what it brought in, so you decide with numbers.'],
+      ['What if I already have a website?', 'We build the new one, move your address across, and nothing goes offline in between. Your reviews and ranking come with you.'],
       ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Trades Max any month.']
     ]
   },
@@ -152,13 +152,13 @@ module.exports = [
     ],
     why: [
       ['One system, not five apps.', 'The ad, the trial booking, the membership, the payment and the renewal all know about each other, because they are one site.'],
-      ['Built for clubs, then tested and repeated.', 'This is the model my own dance school runs on. [TODO: one line of its numbers.]'],
+      ['Built for clubs, then tested and repeated.', 'This is the model our own dance school runs on. [TODO: one line of its numbers.]'],
       ['The follow-up is what fills the class.', 'The trial that did not turn up, the member whose term is ending. The site chases both, politely, for you.'],
       ['You keep it all.', 'The site, the reviews, the ranking and the member list are yours. Step down to Business any month and they stay.']
     ],
     faq: [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
+      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['[TODO: club-specific question, e.g. Does it handle waivers and consent forms?]', '[TODO]'],
       ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Clubs Max any month.']
     ]
@@ -228,7 +228,7 @@ module.exports = [
     ],
     faq: [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
+      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['[TODO: salon-specific question, e.g. Can each stylist have their own diary?]', '[TODO]'],
       ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Salon Max any month.']
     ]

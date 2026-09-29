@@ -367,7 +367,7 @@
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok) throw new Error(data.error || 'Could not save that.');
       dirty = false;
-      say(note, data.changed && data.changed.length ? 'Saved. I’ve been told: ' + data.changed.join(', ') + '.' : 'Saved. Nothing changed since last time.', 'ok');
+      say(note, data.changed && data.changed.length ? 'Saved. Kane’s been told: ' + data.changed.join(', ') + '.' : 'Saved. Nothing changed since last time.', 'ok');
     } catch (err) {
       say(note, err.message || 'Could not save that. Try again.', 'bad');
     }

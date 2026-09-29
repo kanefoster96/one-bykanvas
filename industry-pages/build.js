@@ -74,8 +74,8 @@ function card([h, p], iconKey, color) {
 }
 
 const DEFAULT_STEPS = [
-  ['Tell me about the business', 'What you do, your prices, your photos. Five minutes.'],
-  ['I build it for you', 'Design, writing, web address, hosting and security. All in the price.'],
+  ['Tell us about the business', 'What you do, your prices, your photos. Five minutes.'],
+  ['We build it for you', 'Design, writing, web address, hosting and security. All in the price.'],
   ['Live the same day, features in 14', 'Live on your own address the day you join. Features within 14 days, or your next month is free.']
 ];
 const STEP_COLORS = ['ico-blue', 'ico-purple', 'ico-green'];
@@ -156,7 +156,7 @@ function miniForm(placeholder) {
       </div>
 
       <div class="mini-step" id="miniStep3" hidden>
-        <label for="miniEmail">Where should I send it? You&rsquo;ll have it within 24 hours.</label>
+        <label for="miniEmail">Where should we send it? You&rsquo;ll have it within 24 hours.</label>
         <div class="mini-row">
           <input id="miniEmail" type="email" autocomplete="email" placeholder="you@example.com" enterkeyhint="send">
           <button class="mini-go" id="miniSend" type="submit" aria-label="Send my free example">
@@ -305,7 +305,7 @@ ${b.stepsLine ? `  <div class="wrap center reveal">
 
 <section class="section grey">
   <div class="wrap center">
-    <h2 class="reveal">Built by me. Working for them.</h2>
+    <h2 class="reveal">Built by us. Working for them.</h2>
   </div>
   <div class="rail" id="rail" data-reviews="2" role="region" aria-label="Customer reviews"></div>
   <div class="rail-nav">
@@ -344,7 +344,7 @@ ${b.maxPitch ? `<section class="section">
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">An end-to-end system for your kind of business, run for you:</p>
       <ul class="ticks">
-        <li class="tick-hero">Your Facebook and Instagram ads, run by me. You set the budget</li>
+        <li class="tick-hero">Your Facebook and Instagram ads, run by us. You set the budget</li>
         <li class="tick-hero">Your Google ranking worked on every month</li>
         <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
       </ul>
@@ -384,7 +384,7 @@ ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join
       <a class="btn btn-ghost" href="/get-started.html">Get started &rsaquo;</a>
     </div>
     <p class="micro reveal">From &pound;25 a month. No setup fees. Cancel anytime. <a href="/plans.html">See all plans</a></p>
-    <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email me</a> and you&rsquo;ll get an answer &mdash; usually the same working day.</p>
+    <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email us</a> and Kane answers &mdash; usually the same working day.</p>
 `}    <nav class="ind-links reveal" aria-label="Websites for other business types">
       <span>We also build for:</span>${linkStrip(b.slug)}
     </nav>
@@ -420,13 +420,13 @@ function planCard(f) {
       <div class="badge">Add growth</div>
       <h3>Max</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
-      <p class="plan-note">Your site, designed and built, plus me going and getting you customers every month.</p>
+      <p class="plan-note">Your site, designed and built, plus us going and getting you customers every month.</p>
       <p class="plan-free">No setup fees</p>
       <a class="btn btn-primary full" href="/get-started.html?plan=max">Add growth</a>
       <ul class="ticks">
         <li>Your website, designed and built for you, live the day you join</li>
         <li>Bookings, payments and live chat. Unlimited changes</li>
-        <li class="tick-hero">Your Facebook and Instagram ads, set up, run and tracked by me</li>
+        <li class="tick-hero">Your Facebook and Instagram ads, set up, run and tracked by us</li>
         <li class="tick-hero">Your first ad live within 7 days</li>
         <li class="tick-hero">Your Google ranking worked on every month</li>
         <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
@@ -445,7 +445,7 @@ function planCard(f) {
         <li>Live on your own address the day you join</li>
         <li class="tick-hero">Bookings, payments and live chat</li>
         <li class="tick-hero">Reviews asked for automatically</li>
-        <li class="tick-hero">Unlimited changes, made by me within 48 hours</li>
+        <li class="tick-hero">Unlimited changes, made by us within 48 hours</li>
         <li class="tick-hero">Your three features built within 14 days, or your next month is free</li>
       </ul>
       <p class="plan-up">Just want the site, with a contact form and click to call? <a href="/plans.html#starter">Starter is &pound;25</a>.</p>

@@ -765,7 +765,7 @@
       promise.appendChild(strong);
       promise.appendChild(document.createTextNode(answers.selected_plan === 'starter'
         ? ' With your contact form and click to call. Your first change of the month, whenever you like.'
-        : ' Then I build the features you asked for within 14 days \u2014 or your next month is free.'));
+        : ' Then we build the features you asked for within 14 days \u2014 or your next month is free.'));
       if (annual) promise.appendChild(document.createTextNode(' Your first month: the Launch Boost.'));
     }
 
@@ -997,14 +997,14 @@
         tag: 'Add growth',
         head: 'Max: the whole thing run for you, from ads to reviews.',
         list: [
-          'Your Facebook and Instagram ads, set up, run and tracked by me. You set the budget',
+          'Your Facebook and Instagram ads, set up, run and tracked by us. You set the budget',
           'Your Google ranking worked on every month',
           'Reviews, referrals and follow-up emails, automatic',
           'Business email, and first in the queue'
         ],
-        note: 'I need a photo or a line of text; I do the rest. <strong>Your price is locked for as long as you stay.</strong> Step down any month; you keep the ranking.',
+        note: 'We need a photo or a line of text; we do the rest. <strong>Your price is locked for as long as you stay.</strong> Step down any month; you keep the ranking.',
         btn: 'Add growth — Max, £250 a month',
-        line: 'Want me to go and get you customers? '
+        line: 'Want us to go and get you customers? '
       }
     };
 

@@ -24,7 +24,7 @@
 const PROMISE = {
   name: 'The See It First Promise',
   lines: [
-    'I design a real page for your business within 24 hours, free, before you join. Don&rsquo;t love it? You owe nothing.',
+    'We design a real page for your business within 24 hours, free, before you join. Don&rsquo;t love it? You owe nothing.',
     'Live on your own address the same day you join. Your features built within 14 days, or your next month is free.',
     'Cancel anytime. Your site comes down, your domain stays yours, and there is no exit fee.'
   ]
@@ -58,24 +58,24 @@ function features(t) {
 function steps(one) {
   return [
     one,
-    ['I build it for you', 'Design, writing, web address, hosting and security. All done by me, all in the price.'],
+    ['We build it for you', 'Design, writing, web address, hosting and security. All done by us, all in the price.'],
     ['Live the same day, features in 14', 'Live on your own address the day you join. Your features within 14 days, or your next month is free. Then unlimited changes, within 48 hours.']
   ];
 }
 
 function endLine(subject) {
-  return 'Got a question? Email <a href="mailto:hello@kanvas.one?subject=' + encodeURIComponent(subject) + '">hello@kanvas.one</a> and I reply.';
+  return 'Got a question? Email <a href="mailto:hello@kanvas.one?subject=' + encodeURIComponent(subject) + '">hello@kanvas.one</a> and Kane replies.';
 }
 
 const COMMON_FAQ = [
   ['What if I don&rsquo;t like it?', 'You see your page within 24 hours, before you pay. Don&rsquo;t love it? You owe nothing.'],
   ['Do I have to take card payments?', 'No. Cash and bank transfer work too.'],
-  ['How do the bookings and payments actually work?', 'I set them up with you after you join, the way you already work. Five minutes.'],
+  ['How do the bookings and payments actually work?', 'We set them up with you after you join, the way you already work. Five minutes.'],
   ['Do I need Max?', 'Only if you want to climb Google every month. Business includes local SEO at launch.'],
   ['What happens if I cancel?', 'No exit fee. Your site goes offline and your domain transfers to you free.']
 ];
 
-const MAX_HEADING = 'Want me to go and get you customers?';
+const MAX_HEADING = 'Want us to go and get you customers?';
 
 
 module.exports = [
@@ -90,7 +90,7 @@ module.exports = [
     lede: 'Found on Google in the towns you cover. Callouts booked and paid through your site. Reviews asked for after every job.',
     heroNote: 'Free page within 24 hours. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
-    trustLine: 'All included. You send photos from your phone. I do the rest.',
+    trustLine: 'All included. You send photos from your phone. We do the rest.',
     desc: 'Websites for plumbers, electricians, builders and roofers. Found on Google locally, callouts booked and paid online, reviews asked for automatically. Built for you, live the same day you join, from £25 a month, no VAT.',
     features: features({
       live: 'Click to call and WhatsApp on every page, and your trade badges where people look for them.',
@@ -103,9 +103,9 @@ module.exports = [
     }),
     alsoTitle: ALSO_TITLE,
     also: ['Trade badges (Gas Safe, NICEIC)', 'Photo galleries of finished jobs', 'Google reviews on your site', 'Areas covered', 'Emergency callout banner', 'Team page', 'Google Calendar link'],
-    buildNote: 'Send me the photos on your phone and a list of what you do. I write the pages and you&rsquo;re live the same day.',
-    steps: steps(['Tell me your trade, your patch and how you like to work', 'What you do, where you cover, how customers book and pay.']),
-    stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
+    buildNote: 'Send us the photos on your phone and a list of what you do. We write the pages and you&rsquo;re live the same day.',
+    steps: steps(['Tell us your trade, your patch and how you like to work', 'What you do, where you cover, how customers book and pay.']),
+    stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'The trades on page one for &ldquo;electrician Cramlington&rdquo; keep adding pages and reviews. Business gets you there. Max keeps you there, every month.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;25 a month, no setup fee. One callout a month covers it twice over. Under &pound;6 a week, no VAT.'],
@@ -115,7 +115,7 @@ module.exports = [
       ['Can customers still just ring or WhatsApp me?', 'Yes. The site handles the confirmation and the paperwork.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my trade'),
-    freeLede: 'I design a real page for your trade business, in your inbox within 24 hours, before you pay. If you don&rsquo;t like it, you owe nothing.'
+    freeLede: 'We design a real page for your trade business, in your inbox within 24 hours, before you pay. If you don&rsquo;t like it, you owe nothing.'
   },
 
   {
@@ -129,7 +129,7 @@ module.exports = [
     lede: 'Found by clients nearby on Google. Appointments booked and paid through your site, day or night. Reviews asked for after every visit.',
     heroNote: 'Free page within 24 hours. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
-    trustLine: 'All included. Send your price list and your best photos. I do the rest.',
+    trustLine: 'All included. Send your price list and your best photos. We do the rest.',
     desc: 'Websites for hair and beauty salons. Found on Google nearby, appointments booked and paid online, reviews asked for automatically. Built for you, live the same day you join, from £25 a month, no VAT.',
     features: features({
       live: 'Your treatment menu and prices, your stylists, and the photos winning you clients on Instagram.',
@@ -142,19 +142,19 @@ module.exports = [
     }),
     alsoTitle: ALSO_TITLE,
     also: ['Stylist profiles', 'Treatment menu by category', 'Instagram feed on the site', 'Gift vouchers', 'Google reviews on your site', 'Late availability banner', 'Google Calendar link'],
-    buildNote: 'Tell me your treatments and prices and send your best photos. I build the site and the booking, and you&rsquo;re live the same day.',
-    steps: steps(['Tell me your treatments, your prices and your team', 'What you offer, who does what, how you want bookings to work.']),
-    stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
+    buildNote: 'Tell us your treatments and prices and send your best photos. We build the site and the booking, and you&rsquo;re live the same day.',
+    steps: steps(['Tell us your treatments, your prices and your team', 'What you offer, who does what, how you want bookings to work.']),
+    stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'The salons top for &ldquo;hairdresser near me&rdquo; keep adding pages, reviews and photos. Business gets you there. Max keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;25 a month, no setup fee. One colour appointment a month covers it twice over. Under &pound;6 a week, no VAT.'],
     faq: [
       ['I already take bookings on Instagram and Facebook.', 'Keep them. Instagram doesn&rsquo;t show up for &ldquo;hairdresser near me&rdquo;. Your site does, and takes the booking while you&rsquo;re with a client.'],
       ['I use a booking app already. Will this replace it?', 'It can, or link to the one you have. Either way, clients book from your own site.'],
-      ['Can I change prices myself?', 'Yes, from your dashboard, or message me and I do it for you.']
+      ['Can I change prices myself?', 'Yes, from your dashboard, or message us and we do it for you.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my salon'),
-    freeLede: 'I design a real page for your salon, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
+    freeLede: 'We design a real page for your salon, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
   },
 
   {
@@ -168,7 +168,7 @@ module.exports = [
     lede: 'Found on Google Maps by people looking for a barber right now. A chair booked and paid through your site. Reviews asked for after every cut.',
     heroNote: 'Free page within 24 hours. If you don&rsquo;t rate it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
-    trustLine: 'All included. Send your price list, your hours and a dozen photos. I do the rest.',
+    trustLine: 'All included. Send your price list, your hours and a dozen photos. We do the rest.',
     desc: 'Websites for barbershops. Found on Google Maps, a chair booked and paid online, reviews asked for automatically. Built for you, live the same day you join, from £25 a month, no VAT.',
     features: features({
       live: 'Your price board, your hours, your barbers, and the fades and beards from your Instagram.',
@@ -181,19 +181,19 @@ module.exports = [
     }),
     alsoTitle: ALSO_TITLE,
     also: ['Barber profiles', 'Price board', 'Instagram feed on the site', 'Gift vouchers', 'Google reviews on your site', 'Walk-in wait time banner', 'Google Calendar link'],
-    buildNote: 'Send your price list, your hours and a dozen photos. I do the rest and you&rsquo;re live the same day.',
-    steps: steps(['Tell me your prices, your hours and your barbers', 'What you charge, when you open, who works which days.']),
-    stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
+    buildNote: 'Send your price list, your hours and a dozen photos. We do the rest and you&rsquo;re live the same day.',
+    steps: steps(['Tell us your prices, your hours and your barbers', 'What you charge, when you open, who works which days.']),
+    stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'Six barbers within a mile, all on Google. The one that keeps adding reviews and pages stays top. Business gets you there. Max keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;25 a month, no setup fee. Two cuts a month covers it. Under &pound;6 a week, no VAT.'],
     faq: [
       ['I&rsquo;m walk-in only. Do I need bookings?', 'No. Plenty of shops stay walk-in and use the site for hours, prices and Google. Bookings are there if you want them.'],
       ['I&rsquo;ve got Instagram. Isn&rsquo;t that enough?', 'Instagram is where your work gets seen. Google is where someone finds a barber right now. The site gives you both.'],
-      ['Can I change prices and hours myself?', 'Yes, from your dashboard, or message me and I do it.']
+      ['Can I change prices and hours myself?', 'Yes, from your dashboard, or message us and we do it.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my barbershop'),
-    freeLede: 'I design a real page for your shop, in your inbox within 24 hours, before you pay. Don&rsquo;t rate it? You owe nothing.'
+    freeLede: 'We design a real page for your shop, in your inbox within 24 hours, before you pay. Don&rsquo;t rate it? You owe nothing.'
   },
 
   {
@@ -207,7 +207,7 @@ module.exports = [
     lede: '&ldquo;Are they open, what&rsquo;s on?&rdquo; answered on Google before they ask. Orders paid through your site. Reviews asked for automatically.',
     heroNote: 'Free page within 24 hours. If it&rsquo;s not your cup, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
-    trustLine: 'All included. Send your menu and some photos. I do the rest.',
+    trustLine: 'All included. Send your menu and some photos. We do the rest.',
     desc: 'Websites for coffee shops. Found on Google nearby, menu and hours always right, orders paid online, reviews asked for automatically. Built for you, live the same day you join, from £25 a month, no VAT.',
     features: features({
       live: 'Your menu, your hours, holiday hours changed once and right everywhere, and the photos that sell the room.',
@@ -220,19 +220,19 @@ module.exports = [
     }),
     alsoTitle: ALSO_TITLE,
     also: ['Menu with allergen labels', 'Opening and holiday hours', 'Instagram feed on the site', 'Gift cards', 'Google reviews on your site', 'Catering enquiry form', 'Wholesale or beans page'],
-    buildNote: 'Send your menu and some photos. I build the site and you&rsquo;re live the same day.',
-    steps: steps(['Tell me your menu, your hours and what you want to sell online', 'What&rsquo;s on the board, when you open, whether you want orders online.']),
-    stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
+    buildNote: 'Send your menu and some photos. We build the site and you&rsquo;re live the same day.',
+    steps: steps(['Tell us your menu, your hours and what you want to sell online', 'What&rsquo;s on the board, when you open, whether you want orders online.']),
+    stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'Visitors search &ldquo;coffee near me&rdquo; and pick from the top three. Business gets you in the running. Max keeps you there, every season.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;25 a month, no setup fee. Eight flat whites a month covers it. Under &pound;6 a week, no VAT.'],
     faq: [
       ['People find us on Instagram. Do we need a site?', 'Your regulars do. The person who just parked up and typed &ldquo;coffee near me&rdquo; doesn&rsquo;t. The site puts you in that list.'],
-      ['Can I change the menu myself?', 'Yes, from your dashboard, or message me and I do it.'],
+      ['Can I change the menu myself?', 'Yes, from your dashboard, or message us and we do it.'],
       ['What about delivery apps?', 'Keep them if they work. Orders through your own site have no commission.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my coffee shop'),
-    freeLede: 'I design a real page for your coffee shop, in your inbox within 24 hours, before you pay. Not your cup? You owe nothing.'
+    freeLede: 'We design a real page for your coffee shop, in your inbox within 24 hours, before you pay. Not your cup? You owe nothing.'
   },
 
   {
@@ -246,7 +246,7 @@ module.exports = [
     lede: 'Found on Google by people looking for a gym or a trainer nearby. Memberships and sessions paid through your site. Reviews asked for automatically.',
     heroNote: 'Free page within 24 hours. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
-    trustLine: 'All included. Tell me your classes and prices. I do the rest.',
+    trustLine: 'All included. Tell us your classes and prices. We do the rest.',
     desc: 'Websites for gyms and personal trainers. Found on Google nearby, memberships and sessions paid online, reviews asked for automatically. Built for you, live the same day you join, from £25 a month, no VAT.',
     features: features({
       live: 'Your classes, your prices, your trainers, and the before and after photos that sell the first session.',
@@ -259,19 +259,19 @@ module.exports = [
     }),
     alsoTitle: ALSO_TITLE,
     also: ['Trainer profiles', 'Class timetable', 'Members area', 'Free trial booking', 'Google reviews on your site', 'Transformation gallery', 'Google Calendar link'],
-    buildNote: 'Tell me your classes, prices and how memberships work. I build the site and you&rsquo;re live the same day.',
-    steps: steps(['Tell me your classes, your prices and how memberships work', 'What you run, what it costs, whether there is a trial.']),
-    stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
+    buildNote: 'Tell us your classes, prices and how memberships work. We build the site and you&rsquo;re live the same day.',
+    steps: steps(['Tell us your classes, your prices and how memberships work', 'What you run, what it costs, whether there is a trial.']),
+    stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'January is decided in December. Business gets you ranking at launch. Max keeps you climbing every month.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;25 a month, no setup fee. One membership a month covers it twice over. Under &pound;6 a week, no VAT.'],
     faq: [
       ['I use a gym app for memberships already.', 'Keep it, or let the site take memberships with no per-member fees. Either way, new members find you on Google.'],
       ['I&rsquo;m a personal trainer, not a gym. Is this for me?', 'Yes. Sessions booked and paid online, a page that ranks for &ldquo;personal trainer near me&rdquo;. Same price.'],
-      ['Can I change the timetable myself?', 'Yes, from your dashboard, or message me and I do it.']
+      ['Can I change the timetable myself?', 'Yes, from your dashboard, or message us and we do it.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my gym'),
-    freeLede: 'I design a real page for your gym, in your inbox within 24 hours, before you pay. No commitment. That part comes later.'
+    freeLede: 'We design a real page for your gym, in your inbox within 24 hours, before you pay. No commitment. That part comes later.'
   },
 
   {
@@ -285,7 +285,7 @@ module.exports = [
     lede: 'Found on Google in the areas you cover. Cleans booked and paid through your site. Reviews asked for after every visit, where nervous first timers look.',
     heroNote: 'Free page within 24 hours. If it&rsquo;s not spotless, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
-    trustLine: 'All included. Tell me your services, prices and areas. I do the rest.',
+    trustLine: 'All included. Tell us your services, prices and areas. We do the rest.',
     desc: 'Websites for cleaning businesses. Found on Google in your areas, cleans booked and paid online, reviews asked for automatically. Built for you, live the same day you join, from £25 a month, no VAT.',
     features: features({
       live: 'Your services and prices, the areas you cover, insured and DBS checked said clearly, and before and after photos.',
@@ -298,9 +298,9 @@ module.exports = [
     }),
     alsoTitle: ALSO_TITLE,
     also: ['Price guide by property size', 'What a clean includes', 'Areas covered', 'Before and after gallery', 'Google reviews on your site', 'Team page', 'Landlord and letting agent page'],
-    buildNote: 'Tell me your services, prices and areas. I write the pages and you&rsquo;re live the same day.',
-    steps: steps(['Tell me your services, your prices and your patch', 'What you clean, what you charge, where you go.']),
-    stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
+    buildNote: 'Tell us your services, prices and areas. We write the pages and you&rsquo;re live the same day.',
+    steps: steps(['Tell us your services, your prices and your patch', 'What you clean, what you charge, where you go.']),
+    stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'The cleaners top for &ldquo;cleaner near me&rdquo; are the ones whose sites keep growing. Business gets you ranking. Max keeps you climbing.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;25 a month, no setup fee. One regular clean a month covers it twice over. Under &pound;6 a week, no VAT.'],
@@ -310,7 +310,7 @@ module.exports = [
       ['I&rsquo;m a one person business. Is a site overkill?', 'One-person businesses need it most. It answers the questions while you&rsquo;re cleaning.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my cleaning business'),
-    freeLede: 'I design a real page for your cleaning business, in your inbox within 24 hours, before you pay. Not spotless? You owe nothing.'
+    freeLede: 'We design a real page for your cleaning business, in your inbox within 24 hours, before you pay. Not spotless? You owe nothing.'
   },
 
   {
@@ -324,7 +324,7 @@ module.exports = [
     lede: 'Found on Google by parents searching for your subject in your town. Lessons booked and paid through your site. Reviews asked for at the end of term.',
     heroNote: 'Free page within 24 hours. If you don&rsquo;t love it, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
-    trustLine: 'All included. Tell me your subjects, levels and rates. I do the rest.',
+    trustLine: 'All included. Tell us your subjects, levels and rates. We do the rest.',
     desc: 'Websites for tutors and tuition centres. Found on Google locally, lessons booked and paid online, reviews asked for automatically. Built for you, live the same day you join, from £25 a month, no VAT.',
     features: features({
       live: 'Your subjects and levels, your rates, DBS and qualifications where parents check, and your results.',
@@ -337,9 +337,9 @@ module.exports = [
     }),
     alsoTitle: ALSO_TITLE,
     also: ['Subject and level pages', 'Results and testimonials', 'Online lesson links', 'Term dates', 'Google reviews on your site', 'Free assessment booking', 'Google Calendar link'],
-    buildNote: 'Tell me your subjects, levels and rates. I write the pages and you&rsquo;re live the same day.',
-    steps: steps(['Tell me your subjects, your levels and your rates', 'What you teach, to whom, what it costs, how you take bookings.']),
-    stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
+    buildNote: 'Tell us your subjects, levels and rates. We write the pages and you&rsquo;re live the same day.',
+    steps: steps(['Tell us your subjects, your levels and your rates', 'What you teach, to whom, what it costs, how you take bookings.']),
+    stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'September and January are decided on Google. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;25 a month, no setup fee. One lesson a month covers it twice over. Under &pound;6 a week, no VAT.'],
@@ -349,7 +349,7 @@ module.exports = [
       ['Can I show results without naming students?', 'Yes. Grades improved, initials, and quotes from parents with permission.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my tutoring'),
-    freeLede: 'I design a real page for your tutoring, in your inbox within 24 hours, before you pay. Full marks or you owe nothing.'
+    freeLede: 'We design a real page for your tutoring, in your inbox within 24 hours, before you pay. Full marks or you owe nothing.'
   },
 
   {
@@ -363,7 +363,7 @@ module.exports = [
     lede: 'Found on Google for the kind of photography they are searching for. Shoots booked and deposits paid through your site. Reviews asked for after every gallery.',
     heroNote: 'Free page within 24 hours. If it&rsquo;s not picture perfect, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
-    trustLine: 'All included. Send your best shots and your packages. I do the rest.',
+    trustLine: 'All included. Send your best shots and your packages. We do the rest.',
     desc: 'Websites for photographers. Found on Google for your genre, shoots booked and deposits paid online, reviews asked for automatically. Built for you, live the same day you join, from £25 a month, no VAT.',
     features: features({
       live: 'Galleries that do your work justice, your packages and prices, and a page for each kind of shoot.',
@@ -376,9 +376,9 @@ module.exports = [
     }),
     alsoTitle: ALSO_TITLE,
     also: ['Portfolio galleries', 'Packages and prices', 'Instagram feed on the site', 'Client galleries with a login', 'Google reviews on your site', 'Gift vouchers', 'Google Calendar link'],
-    buildNote: 'Send me your best shots and your packages. I build the galleries and you&rsquo;re live the same day.',
+    buildNote: 'Send us your best shots and your packages. We build the galleries and you&rsquo;re live the same day.',
     steps: steps(['Send your best work, your packages and your genres', 'A folder of photos, and what you shoot, what it costs, how you want enquiries to work.']),
-    stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
+    stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'Couples book a year out, from one Google search. Business gets you ranking at launch. Max keeps you in that search, every month.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;25 a month, no setup fee. One booking covers the year. Under &pound;6 a week, no VAT.'],
@@ -388,7 +388,7 @@ module.exports = [
       ['Will the galleries load fast on phones?', 'Yes. Photos are sized for the screen, so a gallery opens in a second at the venue.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my photography'),
-    freeLede: 'I design a real page around your photos, in your inbox within 24 hours, before you pay. If it&rsquo;s not picture perfect, you owe nothing.'
+    freeLede: 'We design a real page around your photos, in your inbox within 24 hours, before you pay. If it&rsquo;s not picture perfect, you owe nothing.'
   },
 
   {
@@ -402,7 +402,7 @@ module.exports = [
     lede: 'Found on Google in the villages you cover. Jobs quoted, booked and paid through your site. Reviews asked for after every job.',
     heroNote: 'Free page within 24 hours. If it doesn&rsquo;t grow on you, you owe nothing. From &pound;25 a month, no VAT.',
     trust: TRUST,
-    trustLine: 'All included. Send job photos and a list of services. I do the rest.',
+    trustLine: 'All included. Send job photos and a list of services. We do the rest.',
     desc: 'Websites for gardeners and landscapers. Found on Google in your areas, jobs quoted and paid online, reviews asked for automatically. Built for you, live the same day you join, from £25 a month, no VAT.',
     features: features({
       live: 'Your services and prices, the areas you cover, and finished gardens shown start to finish.',
@@ -415,19 +415,19 @@ module.exports = [
     }),
     alsoTitle: ALSO_TITLE,
     also: ['Project galleries', 'Before and after photos', 'Areas covered', 'Trade and insurance badges', 'Google reviews on your site', 'Seasonal services', 'Google Calendar link'],
-    buildNote: 'Send job photos and a list of services. I write the pages and you&rsquo;re live the same day.',
-    steps: steps(['Tell me your services, your patch and send the job photos', 'The photos on your phone, and what you do, where you go, how you like to quote.']),
-    stepsLine: 'Unlimited changes included. Message me from your phone and it&rsquo;s done within 48 hours.',
+    buildNote: 'Send job photos and a list of services. We write the pages and you&rsquo;re live the same day.',
+    steps: steps(['Tell us your services, your patch and send the job photos', 'The photos on your phone, and what you do, where you go, how you like to quote.']),
+    stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
     maxPitch: { heading: MAX_HEADING, text: 'Spring is decided in February, when everyone searches at once. Business gets you ranking at launch. Max keeps you climbing.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;25 a month, no setup fee. One lawn cut a fortnight covers it. Under &pound;6 a week, no VAT.'],
     faq: [
       ['I get plenty of work from Facebook and word of mouth.', 'The small jobs, yes. The patio and the makeover are researched on Google first. That is the job the site wins you.'],
-      ['I&rsquo;m out on jobs all day. Who updates it?', 'I do. Send the photos from your phone and they are on the site.'],
+      ['I&rsquo;m out on jobs all day. Who updates it?', 'We do. Send the photos from your phone and they are on the site.'],
       ['Can I show prices?', 'A price guide for the regular work, and a quote form for the rest.']
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my gardening business'),
-    freeLede: 'I design a real page for your gardening business, in your inbox within 24 hours, before you pay. If it doesn&rsquo;t grow on you, you owe nothing.'
+    freeLede: 'We design a real page for your gardening business, in your inbox within 24 hours, before you pay. If it doesn&rsquo;t grow on you, you owe nothing.'
   }
 ];
 

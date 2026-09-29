@@ -245,9 +245,9 @@ module.exports = async function handler(req, res) {
         subject: 'Your free page is on its way - within 24 hours',
         html: emailHtml({
           preheader: 'We have your details. Your free page lands in this inbox within 24 hours.',
-          heading: 'I’m on it 👍',
+          heading: 'We’re on it 👍',
           lines: [
-            `Thanks &mdash; I&rsquo;ve got your details and I&rsquo;m designing a page for `
+            `Thanks &mdash; we&rsquo;ve got your details and we&rsquo;re designing a page for `
               + `<strong>${esc(business)}</strong>. It&rsquo;ll land in this inbox within 24 hours.`,
             'Designed by hand, for you. Nothing for you to do in the meantime.',
             'When it lands: like it, and it can be live on your own address the same day. '
@@ -258,7 +258,7 @@ module.exports = async function handler(req, res) {
                 + 'kanvas.one. No account has been created and nothing has been charged.',
           footerLinks: standardFooter(site)
         }),
-        text: `Thanks - I've got your details and I'm designing a page for ${business}.\n\n`
+        text: `Thanks - we've got your details and we're designing a page for ${business}.\n\n`
             + `It'll land in this inbox within 24 hours. Designed by hand, for you. `
             + `Nothing for you to do in the meantime.\n\n`
             + `When it lands: like it, and it can be live on your own address the same day. `
