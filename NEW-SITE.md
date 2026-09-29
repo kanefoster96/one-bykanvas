@@ -100,3 +100,19 @@ page is framed):
 If step 3 shows their login screen, the handoff line is missing from the
 dashboard page or the dashboard is not on Kanvas One's accounts. If it
 shows "refused to connect", the frame-ancestors header is missing.
+
+## Events from the dashboard
+
+Whenever a record changes in the dashboard (a booking made, a job done,
+money in or refunded, a review left), one server-side call puts it on the
+owner's phone. The secret is on the customer's admin page under One app.
+
+```
+POST https://kanvas.one/api/event
+Authorization: Bearer <event secret>
+{ "site": "<site id>", "kind": "booking", "data": { "name": "Sam", "what": "Boiler service", "when": "Tue 10am", "record": "booking", "id": "bk_12" } }
+```
+
+Kinds: booking, work, person, review, money_in, money_failed, money_refund,
+money_cancelled. With no deep link set for the record, the notification
+opens the dashboard's front door. See app/README.md, "What a dashboard sends".

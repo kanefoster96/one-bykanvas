@@ -62,6 +62,43 @@ random per browser tab, gone when the tab closes, never a cookie. chat.js
 sends it when a conversation starts and the thank-you page sends it with
 the payment, so the app can say "9 of the 38 who messaged went on to pay".
 
+## What a dashboard sends
+
+Every dashboard we build (one template per business type, copied per
+site) talks to the app through five lines, and nothing else:
+
+1. The beacon on every page of the site (above): analytics, who is on the
+   site now.
+2. The chat line, if the type has live chat (below).
+3. `k1.payment(...)` on the thank-you page (above): stored for Analytics
+   and pushed as "£80 from Sam" the first time a ref is seen.
+4. An event call, server-side, whenever a record changes:
+
+   ```
+   POST https://kanvas.one/api/event
+   Authorization: Bearer <the site's event secret>
+   { "site": "<site id>", "kind": "booking",
+     "data": { "name": "Sam", "what": "Boiler service", "when": "Tue 10am", "record": "booking", "id": "bk_12" } }
+   ```
+
+   Kinds: `booking`, `work`, `person`, `review`, `money_in`, `money_failed`,
+   `money_refund`, `money_cancelled`. The kind picks the wording and the
+   site's labels finish it ("New job" for a plumber, "New order" for a
+   cafe). `record` + `id` become the deep link from the site's deep_links
+   map on the admin page; with no map, the notification opens the
+   dashboard's front door, which is enough to start with. Data keys:
+   amount (pence), currency, name, what, when, where, detail, title,
+   method, reason, email, phone, source, stars, text.
+
+   The secret is on the admin page under One app, with a **New secret**
+   button that revokes the old one. It lives in the dashboard's server
+   config, never in the browser.
+5. The handoff script and the frame-ancestors header on the dashboard
+   (below), so a tap on a notification opens it signed in.
+
+Chats, texts, missed calls and enquiries need none of this: the widget,
+the Twilio hooks and the enquiry endpoint raise them on their own.
+
 ## Live chat
 
 Sites with the chat module get one more line:

@@ -465,6 +465,27 @@ function appConfigRow(p) {
     var dash = el('pre', 'app-config-code');
     dash.textContent = '<script src="https://kanvas.one/kanvas-handoff.js" data-url="' + ((window.ONE_SUPABASE && ONE_SUPABASE.url) || '') + '" data-key="' + ((window.ONE_SUPABASE && ONE_SUPABASE.publishableKey) || '') + '"></script>';
     code.appendChild(dash);
+    // The dashboard raising events on their phone: server-side, with the
+    // site's secret as the bearer. One call per thing that happens.
+    code.appendChild(el('p', 'hint', 'From the dashboard, server-side, whenever something happens: a booking, a job, money in or back, a review. The kind picks the wording, record and id the place it opens. Keep the secret out of the browser.'));
+    var ev = el('pre', 'app-config-code');
+    function evText() {
+      return 'POST https://kanvas.one/api/event\nAuthorization: Bearer ' + (c.event_secret || '(save the app settings first)') + '\n'
+        + '{ "site": "' + p.id + '", "kind": "booking", "data": { "name": "Sam", "what": "Boiler service", "when": "Tue 10am", "record": "booking", "id": "bk_12" } }\n'
+        + 'kinds: booking, work, person, review, money_in, money_failed, money_refund, money_cancelled';
+    }
+    ev.textContent = evText();
+    code.appendChild(ev);
+    var rotate = el('button', 'btn btn-ghost', 'New secret');
+    rotate.type = 'button';
+    rotate.addEventListener('click', async function () {
+      if (!confirm('A new secret stops the old one working the moment it is made. Update the dashboard straight after. Go on?')) return;
+      rotate.disabled = true;
+      try { var r = await api({ action: 'newEventSecret', userId: p.id }); c.event_secret = r.secret; ev.textContent = evText(); say('New secret made. Put it in the dashboard.', 'ok'); }
+      catch (err) { say(err.message, 'bad'); }
+      rotate.disabled = false;
+    });
+    code.appendChild(rotate);
     wrap.appendChild(code);
 
     var mods = el('div', 'app-config-mods');
