@@ -92,8 +92,8 @@ function planNote(plan, name, site) {
       perks: [
         '<strong>Your Facebook and Instagram ads, run for you.</strong> You set the budget and change it whenever you like. I write the offer, build the ad and the form, and send you a note each month saying what it cost and what came in.',
         '<strong>Your Google ranking worked on every month.</strong> The words on your pages, what Google and AI assistants read first, the questions customers actually type.',
-        '<strong>Missed calls answered by text in seconds</strong>, on a business number of your own.',
-        '<strong>Booking reminders texted</strong> to your customers, and business email at your own address.'
+        '<strong>Reviews, referrals and upsells asked for automatically</strong>, and the follow-up emails written and sent for you.',
+        '<strong>Business email at your own address.</strong> Built per business type: Trades, Clubs, Salon, or yours.'
       ],
       ctaText: 'See what Max does',
       ctaHref: `${site}/plans.html#max`,
@@ -106,8 +106,8 @@ function planNote(plan, name, site) {
         + `Max is your site plus me going and getting customers for it:\n`
         + `- Your Facebook and Instagram ads, run for you. You set the budget and change it whenever you like.\n`
         + `- Your Google ranking worked on every month.\n`
-        + `- Missed calls answered by text in seconds, on a business number of your own.\n`
-        + `- Booking reminders texted to your customers, and business email at your own address.\n\n`
+        + `- Reviews, referrals and upsells asked for automatically, and the follow-up emails written and sent for you.\n`
+        + `- Business email at your own address. Built per business type: Trades, Clubs, Salon, or yours.\n\n`
         + `It is GBP 250 a month, ten businesses at a time. If you ever want it, switch from your account. If not, nothing changes.\n`
         + `${site}/plans.html#max\n`
   };

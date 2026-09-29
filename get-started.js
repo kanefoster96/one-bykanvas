@@ -995,12 +995,12 @@
       business: {
         to: 'max',
         tag: 'Add growth',
-        head: 'Max: your site worked on every month, and your customers texted.',
+        head: 'Max: the whole thing run for you, from ads to reviews.',
         list: [
           'Your Facebook and Instagram ads, set up, run and tracked by me. You set the budget',
           'Your Google ranking worked on every month',
-          'Missed calls answered by text in seconds',
-          'Business email, a business number, and first in the queue'
+          'Reviews, referrals and follow-up emails, automatic',
+          'Business email, and first in the queue'
         ],
         note: 'I need a photo or a line of text; I do the rest. <strong>Ten businesses at a time, £250 for the first ten.</strong> Step down any month; you keep the ranking.',
         btn: 'Add growth — Max, £250 a month',

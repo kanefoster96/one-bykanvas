@@ -752,7 +752,7 @@ function showBilling(row) {
       starter: 'your live site with a contact form, click to call and one change a month. Bookings, payments, chat and customer records are part of Business',
       business: 'unlimited changes made by us, plus bookings, forms, chat, customer records and automated emails',
       pro: 'priority requests and business email',   // legacy, no longer sold
-      max: 'your Facebook and Instagram ads run by us on a budget you set, SEO work every month, business email and a business number, missed calls answered by text, booking reminders texted to your customers, and top priority'
+      max: 'your Facebook and Instagram ads run by us on a budget you set, SEO work every month, review, referral and follow-up emails sent for you, business email, and top priority'
     };
     var head = (up ? 'Upgrading' : 'Downgrading') + ' from ' + PLAN_NAME[current] +
       ' to ' + PLAN_NAME[chosen] + ' \u2014 ' + (PERK[chosen] || '') + '.';
@@ -826,7 +826,7 @@ function showBilling(row) {
   var upEl = document.getElementById('billUp');
   var UP = {
     starter: { to: 'business', text: 'For £25 more, Business adds bookings, payments, reviews asked for automatically, live chat, and unlimited changes made by us within 48 hours. ' },
-    business: { to: 'max', text: 'For £200 more, Max gets you customers: your Facebook and Instagram ads set up, run and tracked by us on a budget you set, your Google ranking worked on every month, missed calls answered by text, and a business email and number. Ten businesses at a time. Step down any month — you keep the ranking. ' }
+    business: { to: 'max', text: 'For £200 more, Max gets you customers: your Facebook and Instagram ads set up, run and tracked by us on a budget you set, your Google ranking worked on every month, review, referral and follow-up emails sent for you, and business email. Built per business type; ten at a time. Step down any month — you keep the ranking. ' }
   };
   var step = subscribed && UP[current];
   upEl.hidden = !step;

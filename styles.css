@@ -119,7 +119,7 @@ h3{font-size:21px;letter-spacing:-.02em}
   backdrop-filter:saturate(180%) blur(20px);
   -webkit-backdrop-filter:saturate(180%) blur(20px);
   border-bottom:1px solid var(--line-soft);
-  overflow:hidden;
+  max-height:calc(100vh - var(--nav-h));overflow-x:hidden;overflow-y:auto;
 }
 .menu[hidden]{display:none}
 .menu-inner{max-width:var(--wrap);margin:0 auto;padding:14px 22px 34px;display:flex;flex-direction:column}
@@ -2693,3 +2693,75 @@ a.hero-pill:hover .pill-go{opacity:1}
 .case a{margin-top:18px;font-weight:600;color:var(--ink);text-decoration:none}
 .case a:hover{text-decoration:underline}
 @media (max-width:720px){.cases{grid-template-columns:1fr}}
+
+/* ---------- Max: the type picker, the Other modal, the model pages ---------- */
+/* The picker on the Max card: a dropdown under the button on a desk, a
+   sheet from the bottom on a phone. <details>, so it works without script. */
+.max-pick{position:relative;margin:0 0 18px}
+.max-pick summary{list-style:none;cursor:pointer}
+.max-pick summary::-webkit-details-marker{display:none}
+.max-pick summary .btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.max-pick summary .btn::after{content:"\203a";display:inline-block;transform:rotate(90deg);font-size:18px;line-height:1;opacity:.7}
+.max-pick[open] summary .btn::after{transform:rotate(-90deg)}
+.max-pick-list{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:30;background:#fff;border:1px solid var(--line-soft);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.12);padding:6px;display:grid;gap:2px}
+.max-pick-list a,.max-pick-list button{appearance:none;-webkit-appearance:none;display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 14px;border:0;border-radius:10px;background:transparent;font:inherit;font-size:15px;font-weight:500;color:var(--ink);text-align:left;text-decoration:none;cursor:pointer}
+.max-pick-list a::after{content:"\203a";color:var(--ink-3)}
+.max-pick-list a:hover,.max-pick-list button:hover{background:var(--bg-grey)}
+.max-pick-list button{color:var(--ink-2)}
+.max-pick-scrim{display:none}
+@media (max-width:600px){
+  .max-pick[open] .max-pick-scrim{display:block;position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.35)}
+  .max-pick-list{position:fixed;left:0;right:0;top:auto;bottom:0;z-index:99;border-radius:22px 22px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -8px 40px rgba(0,0,0,.18)}
+  .max-pick-list::before{content:"Choose your business type";display:block;padding:6px 14px 10px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+  .max-pick-list a,.max-pick-list button{padding:15px 14px;font-size:16px}
+}
+
+/* The Other modal. */
+dialog.one-modal{width:min(92vw,460px);border:0;border-radius:22px;padding:28px 26px 24px;box-shadow:0 30px 80px rgba(0,0,0,.25);font-family:inherit;color:var(--ink)}
+dialog.one-modal::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(6px)}
+dialog.one-modal:not([open]){display:none}
+.one-modal-x{position:absolute;top:12px;right:12px;width:32px;height:32px;padding:0;border:0;border-radius:980px;background:var(--bg-grey);color:var(--ink-2);font-size:20px;line-height:1;cursor:pointer}
+.one-modal-tag{margin:0 0 6px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--good)}
+dialog.one-modal h2{margin:0 0 10px;font-size:24px;letter-spacing:-.02em}
+dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+.one-modal-small{font-size:13.5px;color:var(--ink-3)}
+
+/* The menu's Max group. */
+.menu-group{border-bottom:1px solid var(--line-soft)}
+.menu-group .menu-link{border-bottom:0;display:flex;justify-content:space-between;align-items:center}
+.menu-caret{display:inline-block;transform:rotate(90deg);transition:transform .2s var(--ease);font-size:24px;color:var(--ink-3)}
+.menu-group.is-open .menu-caret{transform:rotate(-90deg)}
+.menu-sub{display:grid;gap:0;padding:0 0 12px 14px}
+.menu-sublink{appearance:none;-webkit-appearance:none;background:none;border:0;padding:9px 0;font:inherit;font-size:19px;font-weight:500;color:var(--ink-2);text-align:left;cursor:pointer;text-decoration:none}
+.menu-sublink:hover{color:var(--ink)}
+
+/* The model pages: four stages, two columns, the value table. */
+.stages{display:grid;gap:16px;margin-top:clamp(28px,4vw,40px)}
+.stage{background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg);padding:clamp(20px,3vw,28px) clamp(20px,3.5vw,30px)}
+.stage-n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:980px;background:var(--ink);color:#fff;font-size:14px;font-weight:700;margin-bottom:10px}
+.stage h3{margin:0 0 4px;font-size:clamp(19px,2.6vw,22px);letter-spacing:-.02em}
+.stage-intro{margin:0 0 12px;font-style:italic;color:var(--ink-3);font-size:15px}
+.stage .ticks{margin:0}
+.stage .ticks li{margin-bottom:7px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:clamp(28px,4vw,40px)}
+.two-col .col{background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg);padding:22px 24px}
+.two-col h3{margin:0 0 12px;font-size:17px}
+.two-col ul{margin:0;padding:0 0 0 18px;color:var(--ink-2);font-size:15px;line-height:1.5}
+.two-col li{margin-bottom:8px}
+@media (max-width:600px){.two-col{grid-template-columns:1fr}}
+.vt-wrap{margin-top:clamp(28px,4vw,40px);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.vt{width:100%;min-width:560px;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg);overflow:hidden}
+.vt th,.vt td{padding:13px 16px;text-align:left;font-size:14.5px;line-height:1.45;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.vt thead th{font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);background:var(--bg-grey)}
+.vt tbody th{font-weight:600;color:var(--ink)}
+.vt td{color:var(--ink-2)}
+.vt td:last-child{white-space:nowrap;color:var(--ink-3)}
+.vt tbody tr:last-child th,.vt tbody tr:last-child td{border-bottom:0}
+.vt-total{margin:16px 0 0;font-size:17px;font-weight:600;text-align:center}
+.why{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:clamp(28px,4vw,40px)}
+.why p{margin:0;padding:20px 22px;background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg);font-size:15px;line-height:1.55;color:var(--ink-2)}
+.why p b{display:block;color:var(--ink);margin-bottom:4px}
+@media (max-width:600px){.why{grid-template-columns:1fr}}
+.cost{max-width:560px;margin:clamp(28px,4vw,40px) auto 0;text-align:center}
+.cost .price{margin:0 0 8px}
+.cost p{margin:0 0 10px;font-size:15px;line-height:1.55;color:var(--ink-2)}

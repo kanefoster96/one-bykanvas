@@ -109,7 +109,7 @@ module.exports = [
       'A budget you set and can change or pause any time, from &pound;10 a day',
       'Your first ad live within 7 days',
       'A monthly note: spend, enquiries, cost per enquiry, what changed',
-      'Missed calls from the ads answered by text in seconds'
+      'Every enquiry from the ads followed up by email if it goes quiet'
     ],
     plan: 'max',
     planLine: 'Ads are part of Max: &pound;250 a month with the website, the ranking work and the texts in it. Ten businesses at a time; &pound;250 for the first ten, then the price goes up.',
@@ -133,21 +133,21 @@ module.exports = [
     placeholder: 'e.g. Bright Sparks Electrical',
     how: [
       ['I add the chat to your site', 'A small button on every page. Customers type, and can send a photo of the job.'],
-      ['It comes to your phone', 'A notification, and the whole conversation. Reply when you are off the ladder. If they left a number, they hear back by text too.'],
+      ['It comes to your phone', 'A notification, and the whole conversation. Reply when you are off the ladder. If they left an email, they hear back there too.'],
       ['Everything in one place', 'Chats, enquiries, bookings and payments, against the customer’s name. Nothing missed, nothing to search five apps for.']
     ],
     gets: [
       'Live chat on every page of your site',
       'Answered from your phone, not a desk',
       'Photos of the job sent in the chat',
-      'A reply by text or email if they stepped away',
+      'A reply by email if they stepped away',
       'The common questions answered on the site before they ask',
       'Every conversation kept with the customer’s bookings and payments'
     ],
     plan: 'business',
     planLine: 'Live chat is part of Business: &pound;50 a month, no setup fee, with the site, hosting and web address in it.',
     faq: [
-      ['Do I have to answer straight away?', 'No. It is a message, not a phone call. They see that you will reply, and if they leave a number they get your reply by text.'],
+      ['Do I have to answer straight away?', 'No. It is a message, not a phone call. They see that you will reply, and if they leave an email they get your reply there too.'],
       ['Is it a bot?', 'No. It is you, from your phone. The site answers the common questions in the page itself, so the chat is for the ones that need you.'],
       ['Can they send photos?', 'Yes. A photo of the boiler, the garden, the nails they want. It saves the first visit for most trades.'],
       ['Where do the messages go?', 'Your phone, and your account on Kanvas One, where every customer&rsquo;s chats, bookings and payments sit together.'],
