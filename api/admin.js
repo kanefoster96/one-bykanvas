@@ -404,8 +404,19 @@ module.exports = async function handler(req, res) {
     if (action === 'appConfig') {
       const userId = String(body.userId || '');
       if (!userId) return res.status(400).json({ error: 'Which customer?' });
-      const { data } = await db.from('sites').select('id, dashboard_url, modules, labels, deep_links, phone_number, forward_to, missed_call_text').eq('id', userId).maybeSingle();
-      return res.status(200).json({ config: data || { id: userId, dashboard_url: null, modules: [], labels: {}, deep_links: {}, phone_number: null, forward_to: null, missed_call_text: null } });
+      const { data } = await db.from('sites').select('id, dashboard_url, modules, labels, deep_links, phone_number, forward_to, missed_call_text, event_secret').eq('id', userId).maybeSingle();
+      return res.status(200).json({ config: data || { id: userId, dashboard_url: null, modules: [], labels: {}, deep_links: {}, phone_number: null, forward_to: null, missed_call_text: null, event_secret: null } });
+    }
+
+    // A fresh event secret for the site: the old one stops working at once.
+    if (action === 'newEventSecret') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      const secret = require('crypto').randomBytes(24).toString('hex');
+      const { data: updated, error: sErr } = await db.from('sites').update({ event_secret: secret }).eq('id', userId).select('id').maybeSingle();
+      if (sErr) throw new Error(sErr.message);
+      if (!updated) return res.status(404).json({ error: 'Save the app settings first, so the site exists.' });
+      return res.status(200).json({ secret });
     }
 
     // ---- write: how the One app sees this site -------------------------
