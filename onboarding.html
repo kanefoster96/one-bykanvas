@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=3">
-<link rel="stylesheet" href="styles.css?v=104">
+<link rel="stylesheet" href="styles.css?v=106">
 </head>
 <body class="auth-body">
 <header class="nav">
@@ -30,13 +30,17 @@
 <main class="acct-wrap ob-wrap" id="app" hidden>
   <a class="linkish" href="/account.html">&larr; Your account</a>
   <h1 class="biz-title">Set up your Max site.</h1>
-  <p class="lede left">Ten minutes, all of it about how you work now. Nothing here is required: leave anything blank and I&rsquo;ll ask as we go. Save whenever you like, and I see what changed.</p>
+  <p class="lede left">Three stages: what you sell, how you sell it, who you sell to. Whichever is weakest is where I start. Nothing here is required: leave anything blank and I&rsquo;ll ask as we go. Save whenever you like, and I see what changed.</p>
+  <nav class="ob-strip" aria-label="Stages">
+    <a href="#stage1"><b>1</b> <em>What you sell</em><i>What</i> <span data-stage="1"></span></a>
+    <a href="#stage2"><b>2</b> <em>How you sell it</em><i>How</i> <span data-stage="2"></span></a>
+    <a href="#stage3"><b>3</b> <em>Who you sell to</em><i>Who</i> <span data-stage="3"></span></a>
+  </nav>
   <p class="ob-progress" id="obProgress"></p>
 
   <form id="obForm" novalidate>
 
-    <!-- Which Max: decides which add-on appears at the end. -->
-    <section class="panel ob-section" data-section="model">
+<section class="panel ob-section" data-section="model">
       <h2 class="panel-title">Your Max</h2>
       <div class="ob-checks" id="modelPick">
         <label class="check"><input type="radio" name="model" value="trades"> Trades Max</label>
@@ -45,35 +49,13 @@
         <label class="check"><input type="radio" name="model" value="other"> Something else</label>
       </div>
     </section>
-
-    <!-- 1 -->
-    <section class="panel ob-section" data-section="contact">
-      <h2 class="panel-title">1. How customers reach you</h2>
-      <p class="ob-why">Goes on every page and every email the site sends.</p>
-      <div class="acct-grid">
-        <div class="field"><label for="c_phone">The number customers use</label><input id="c_phone" type="tel" placeholder="07700 900000"></div>
-        <div class="field"><label for="c_email">Your email <span class="opt">(a Gmail is fine for now)</span></label><input id="c_email" type="email"></div>
-        <div class="field full"><label class="check"><input id="c_whatsapp" type="checkbox"> Customers can WhatsApp that number</label></div>
-        <div class="field full"><label for="c_area">Areas or towns you cover</label><input id="c_area" type="text" placeholder="Whitley Bay, Tynemouth, North Shields, 15 miles from NE26"></div>
-        <div class="field full"><label for="c_address">Address, only if customers come to you</label><input id="c_address" type="text"></div>
-        <div class="field full"><label for="c_reach">When can customers reach you?</label><input id="c_reach" type="text" placeholder="Mon&ndash;Sat 8 till 6, texts any time"></div>
-        <div class="field full">
-          <span class="ob-label">Where do your customers&rsquo; details live at the moment?</span>
-          <div class="ob-checks" id="custWhere">
-            <label class="check"><input type="checkbox" value="WhatsApp or text threads"> WhatsApp or text threads</label>
-            <label class="check"><input type="checkbox" value="Notes on my phone"> Notes on my phone</label>
-            <label class="check"><input type="checkbox" value="A paper diary"> A paper diary</label>
-            <label class="check"><input type="checkbox" value="A spreadsheet"> A spreadsheet</label>
-            <label class="check"><input type="checkbox" value="An app"> An app</label>
-            <label class="check"><input type="checkbox" value="Nowhere really"> Nowhere really</label>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2 -->
-    <section class="panel ob-section" data-section="services">
-      <h2 class="panel-title">2. What you do</h2>
+    <header class="ob-stage" id="stage1">
+      <p class="ob-stage-n">Stage 1</p>
+      <h2>What you sell.</h2>
+      <p>So I know what to build, and what the first ad is about.</p>
+    </header>
+<section class="panel ob-section" data-section="services">
+      <h2 class="panel-title">1. What you do </h2>
       <p class="ob-why">Pick your trade and tick the jobs you do. Prices are optional: an average is handy, &ldquo;not sure&rdquo; is fine.</p>
       <div class="acct-grid">
         <div class="field" id="tradeField">
@@ -90,10 +72,8 @@
       <button class="btn btn-ghost" id="svcAdd" type="button">Add another</button>
       <div class="field full ob-gap"><label class="check"><input id="svc_generated" type="checkbox"> Use generated images for now. I&rsquo;ll send my own photos when I can</label></div>
     </section>
-
-    <!-- 3 -->
-    <section class="panel ob-section" data-section="offer">
-      <h2 class="panel-title">3. What we advertise, and what we offer on top</h2>
+<section class="panel ob-section" data-section="offer">
+      <h2 class="panel-title">2. What we advertise, and what we offer on top </h2>
       <p class="ob-why">I run ads for the job you already do most, because more of what already works beats something new. The rest of your list gets offered to customers who are already paying you: a service to a repair customer, an install to a service customer. That is where the extra money is, and it costs nothing to ask.</p>
       <div class="acct-grid">
         <div class="field full"><label for="o_job">The job you do most weeks <span class="opt">(this is the ad)</span></label><input id="o_job" type="text" placeholder="Boiler repairs"></div>
@@ -101,34 +81,47 @@
         <div class="field full"><label for="o_why">Anything about why customers pick you for that job</label><textarea id="o_why" rows="2" placeholder="Same-day when it&rsquo;s urgent, I don&rsquo;t push a new boiler when a part will do"></textarea></div>
       </div>
     </section>
-
-    <!-- 4 -->
-    <section class="panel ob-section" data-section="customers">
-      <h2 class="panel-title">4. How you get customers now</h2>
-      <p class="ob-why">So the site adds to what works and replaces what costs you.</p>
-      <div class="ob-checks" id="custSources">
-        <label class="check"><input type="checkbox" value="Word of mouth"> Word of mouth</label>
-        <label class="check"><input type="checkbox" value="Repeat customers"> Repeat customers</label>
-        <label class="check"><input type="checkbox" value="Trust a Trader"> Trust a Trader</label>
-        <label class="check"><input type="checkbox" value="Checkatrade"> Checkatrade</label>
-        <label class="check"><input type="checkbox" value="Rated People, Bark, MyBuilder"> Rated People, Bark, MyBuilder</label>
-        <label class="check"><input type="checkbox" value="Facebook"> Facebook</label>
-        <label class="check"><input type="checkbox" value="Instagram"> Instagram</label>
-        <label class="check"><input type="checkbox" value="Google"> Google</label>
-        <label class="check"><input type="checkbox" value="Flyers, the van, signs"> Flyers, the van, signs</label>
-        <label class="check"><input type="checkbox" value="Nothing yet"> Nothing yet</label>
-      </div>
+<section class="panel ob-section" data-section="photos">
+      <h2 class="panel-title">3. Photos </h2>
+      <p class="ob-why">Your work, the van, you. Straight from your phone; big files are fine. Skip it and I use generated images until you send some.</p>
+      <div class="ob-photos" id="photoGrid"></div>
+      <label class="btn btn-ghost" for="photoInput">Add photos</label>
+      <input id="photoInput" type="file" accept="image/*" multiple hidden>
+      <p class="note" id="photoNote" role="status" aria-live="polite"></p>
+    </section>
+    <section class="panel ob-section ob-addon" data-section="trades" data-model="trades" hidden>
+      <h2 class="panel-title">4. The proof that comes with the work</h2>
+      <p class="ob-why">What a trade&rsquo;s site shows that a salon&rsquo;s does not.</p>
       <div class="acct-grid">
-        <div class="field full"><label for="cu_notes">What each one costs you, and roughly what it brings</label><textarea id="cu_notes" rows="2" placeholder="Trust a Trader is &pound;40 a month and brings two or three jobs a week"></textarea></div>
-        <div class="field full"><label for="cu_jobs">Jobs in a normal week, roughly</label><input id="cu_jobs" type="text" placeholder="8 to 10"></div>
-        <div class="field"><label for="cu_value">A typical small job is worth about</label><input id="cu_value" type="text" placeholder="&pound;120"></div>
-        <div class="field"><label for="cu_big">A typical big job is worth about</label><input id="cu_big" type="text" placeholder="&pound;2,500"></div>
+        <div class="field"><label for="t_gassafe">Gas Safe number, if you have one</label><input id="t_gassafe" type="text"></div>
+        <div class="field"><label for="t_regs">Other registrations <span class="opt">(NICEIC, NAPIT, OFTEC, HETAS)</span></label><input id="t_regs" type="text"></div>
+        <div class="field full"><label class="check"><input id="t_insured" type="checkbox"> Public liability insurance in place</label></div>
+        <div class="field"><label for="t_brands">Brands you install, and the guarantee</label><input id="t_brands" type="text" placeholder="Worcester, Vaillant. 10-year guarantee"></div>
+        <div class="field"><label for="t_workon">Brands you work on</label><input id="t_workon" type="text" placeholder="Anything"></div>
       </div>
     </section>
-
-    <!-- 5 -->
-    <section class="panel ob-section" data-section="bookings">
-      <h2 class="panel-title">5. How a job gets booked now</h2>
+    <section class="panel ob-section ob-addon" data-section="clubs" data-model="clubs" hidden>
+      <h2 class="panel-title">4. Classes and fees</h2>
+      <div class="acct-grid">
+        <div class="field full"><label for="k_classes">Classes or sessions, with ages and days</label><textarea id="k_classes" rows="3" placeholder="Mini Movers, 3&ndash;5, Saturdays 9am. Street, 8&ndash;12, Tuesdays 5pm"></textarea></div>
+        <div class="field"><label for="k_fees">Membership or term fees</label><input id="k_fees" type="text" placeholder="&pound;32 a month, or &pound;90 a term"></div>
+        <div class="field"><label for="k_extras">Things members buy on top <span class="opt">(uniform, grading, shows, camps)</span></label><input id="k_extras" type="text"></div>
+      </div>
+    </section>
+    <section class="panel ob-section ob-addon" data-section="salon" data-model="salon" hidden>
+      <h2 class="panel-title">4. The team and what else you sell</h2>
+      <div class="acct-grid">
+        <div class="field full"><label for="s_team">Who works there, and what each person does</label><textarea id="s_team" rows="3" placeholder="Jess: colour and cuts, Tue&ndash;Sat. Amy: nails, Thu&ndash;Sat"></textarea></div>
+        <div class="field full"><label for="s_retail">Products or vouchers you sell</label><input id="s_retail" type="text"></div>
+      </div>
+    </section>
+    <header class="ob-stage" id="stage2">
+      <p class="ob-stage-n">Stage 2</p>
+      <h2>How you sell it.</h2>
+      <p>So the bookings, the payments and the follow-ups work the way you already do, only without your phone in the middle.</p>
+    </header>
+<section class="panel ob-section" data-section="bookings">
+      <h2 class="panel-title">5. How a job gets booked now </h2>
       <p class="ob-why">The site takes this over one step at a time. Nothing changes until you have seen it work.</p>
       <div class="ob-checks" id="bookHow">
         <label class="check"><input type="radio" name="book" value="They call or text, I tell them my next slot"> They call or text, I tell them my next slot</label>
@@ -150,10 +143,8 @@
         </div>
       </div>
     </section>
-
-    <!-- 6 -->
-    <section class="panel ob-section" data-section="payments">
-      <h2 class="panel-title">6. How you get paid now</h2>
+<section class="panel ob-section" data-section="payments">
+      <h2 class="panel-title">6. How you get paid now </h2>
       <p class="ob-why">Card payments on the site land in your own bank through Stripe. When your services are in, I send you a Stripe link; it asks for your bank details itself, securely. Never type a sort code or card number into this form.</p>
       <div class="ob-checks" id="payMethods">
         <label class="check"><input type="checkbox" value="Cash"> Cash</label>
@@ -194,10 +185,8 @@
         </div>
       </div>
     </section>
-
-    <!-- 7 -->
-    <section class="panel ob-section" data-section="online">
-      <h2 class="panel-title">7. What&rsquo;s already online</h2>
+<section class="panel ob-section" data-section="online">
+      <h2 class="panel-title">7. What&rsquo;s already online </h2>
       <p class="ob-why">Links, not logins. I ask for access separately, with the steps, once I need it.</p>
       <div class="acct-grid">
         <div class="field full">
@@ -225,27 +214,9 @@
         <div class="field full"><label for="a_existing">A current website, if any</label><input id="a_existing" type="text"></div>
       </div>
     </section>
-
-    <!-- 8 -->
-    <section class="panel ob-section" data-section="photos">
-      <h2 class="panel-title">8. Photos</h2>
-      <p class="ob-why">Your work, the van, you. Straight from your phone; big files are fine. Skip it and I use generated images until you send some.</p>
-      <div class="ob-photos" id="photoGrid"></div>
-      <label class="btn btn-ghost" for="photoInput">Add photos</label>
-      <input id="photoInput" type="file" accept="image/*" multiple hidden>
-      <p class="note" id="photoNote" role="status" aria-live="polite"></p>
-    </section>
-
-    <!-- Add-ons: one shows, by the Max picked at the top. -->
-    <section class="panel ob-section ob-addon" data-section="trades" data-model="trades" hidden>
-      <h2 class="panel-title">Trades Max: a few more</h2>
-      <p class="ob-why">The things a trade&rsquo;s site needs that a salon&rsquo;s does not.</p>
+    <section class="panel ob-section ob-addon" data-section="trades_how" data-model="trades" hidden>
+      <h2 class="panel-title">8. Emergencies and the next job</h2>
       <div class="acct-grid">
-        <div class="field"><label for="t_gassafe">Gas Safe number, if you have one</label><input id="t_gassafe" type="text"></div>
-        <div class="field"><label for="t_regs">Other registrations <span class="opt">(NICEIC, NAPIT, OFTEC, HETAS)</span></label><input id="t_regs" type="text"></div>
-        <div class="field full"><label class="check"><input id="t_insured" type="checkbox"> Public liability insurance in place</label></div>
-        <div class="field"><label for="t_brands">Brands you install, and the guarantee</label><input id="t_brands" type="text" placeholder="Worcester, Vaillant. 10-year guarantee"></div>
-        <div class="field"><label for="t_workon">Brands you work on</label><input id="t_workon" type="text" placeholder="Anything"></div>
         <div class="field full">
           <span class="ob-label">Emergency callouts</span>
           <div class="ob-checks">
@@ -256,35 +227,76 @@
         </div>
         <div class="field full"><label for="t_emerg">What counts as an emergency, and what it costs</label><input id="t_emerg" type="text" placeholder="No heating or hot water, evenings and weekends, &pound;90 callout"></div>
         <div class="field full"><label for="t_repeat">The next thing a customer needs after a job <span class="opt">(for the reminder)</span></label><input id="t_repeat" type="text" placeholder="Annual boiler service, landlord certificate every 12 months"></div>
-        <div class="field full"><label for="t_base">Where you set off from each day <span class="opt">(postcode area, for the ads)</span></label><input id="t_base" type="text" placeholder="NE26"></div>
       </div>
     </section>
-
-    <section class="panel ob-section ob-addon" data-section="clubs" data-model="clubs" hidden>
-      <h2 class="panel-title">Clubs Max: a few more</h2>
+    <section class="panel ob-section ob-addon" data-section="clubs_how" data-model="clubs" hidden>
+      <h2 class="panel-title">8. First visits and terms</h2>
       <div class="acct-grid">
-        <div class="field full"><label for="k_classes">Classes or sessions, with ages and days</label><textarea id="k_classes" rows="3" placeholder="Mini Movers, 3&ndash;5, Saturdays 9am. Street, 8&ndash;12, Tuesdays 5pm"></textarea></div>
         <div class="field"><label for="k_trial">How a first visit works</label><input id="k_trial" type="text" placeholder="Free trial, &pound;5 taster, watch first"></div>
-        <div class="field"><label for="k_fees">Membership or term fees</label><input id="k_fees" type="text" placeholder="&pound;32 a month, or &pound;90 a term"></div>
-        <div class="field full"><label for="k_terms">Term dates or when new members can start</label><input id="k_terms" type="text"></div>
-        <div class="field full"><label for="k_extras">Things members buy on top <span class="opt">(uniform, grading, shows, camps)</span></label><input id="k_extras" type="text"></div>
+        <div class="field"><label for="k_terms">Term dates or when new members can start</label><input id="k_terms" type="text"></div>
       </div>
     </section>
-
-    <section class="panel ob-section ob-addon" data-section="salon" data-model="salon" hidden>
-      <h2 class="panel-title">Salon Max: a few more</h2>
+    <section class="panel ob-section ob-addon" data-section="salon_how" data-model="salon" hidden>
+      <h2 class="panel-title">8. No-shows, rebooking and first appointments</h2>
       <div class="acct-grid">
-        <div class="field full"><label for="s_team">Who works there, and what each person does</label><textarea id="s_team" rows="3" placeholder="Jess: colour and cuts, Tue&ndash;Sat. Amy: nails, Thu&ndash;Sat"></textarea></div>
         <div class="field"><label for="s_noshow">What happens when someone doesn&rsquo;t turn up</label><input id="s_noshow" type="text" placeholder="Lose the deposit, charged 50%, nothing"></div>
         <div class="field"><label for="s_rebook">How often a regular should rebook</label><input id="s_rebook" type="text" placeholder="Cuts every 6 weeks, colour every 8"></div>
         <div class="field full"><label for="s_tests">Anything that needs doing before a first appointment <span class="opt">(patch test, consultation)</span></label><input id="s_tests" type="text"></div>
-        <div class="field full"><label for="s_retail">Products or vouchers you sell</label><input id="s_retail" type="text"></div>
       </div>
     </section>
-
-    <!-- 9 -->
-    <section class="panel ob-section" data-section="extras">
-      <h2 class="panel-title">9. Anything else</h2>
+    <header class="ob-stage" id="stage3">
+      <p class="ob-stage-n">Stage 3</p>
+      <h2>Who you sell to.</h2>
+      <p>So the ads reach the right streets and the site speaks to the right people.</p>
+    </header>
+<section class="panel ob-section" data-section="contact">
+      <h2 class="panel-title">10. Where, when, and how they reach you</h2>
+      <p class="ob-why">Decides where the ads run and what every page says at the bottom.</p>
+      <div class="acct-grid">
+        <div class="field"><label for="c_area">Areas or towns you cover</label><input id="c_area" type="text" placeholder="Whitley Bay, Tynemouth, North Shields, 15 miles"></div>
+        <div class="field"><label for="c_base">Where you set off from <span class="opt">(postcode area, for the ads)</span></label><input id="c_base" type="text" placeholder="NE26"></div>
+        <div class="field full"><label for="c_reach">When can customers reach you?</label><input id="c_reach" type="text" placeholder="Mon&ndash;Sat 8 till 6, texts any time"></div>
+        <div class="field"><label for="c_phone">The number customers use</label><input id="c_phone" type="tel" placeholder="07700 900000"></div>
+        <div class="field"><label for="c_email">Your email <span class="opt">(a Gmail is fine for now)</span></label><input id="c_email" type="email"></div>
+        <div class="field full"><label class="check"><input id="c_whatsapp" type="checkbox"> Customers can WhatsApp that number</label></div>
+        <div class="field full"><label for="c_address">Address, only if customers come to you</label><input id="c_address" type="text"></div>
+        <div class="field full">
+          <span class="ob-label">Where do your customers&rsquo; details live at the moment?</span>
+          <div class="ob-checks" id="custWhere">
+            <label class="check"><input type="checkbox" value="WhatsApp or text threads"> WhatsApp or text threads</label>
+            <label class="check"><input type="checkbox" value="Notes on my phone"> Notes on my phone</label>
+            <label class="check"><input type="checkbox" value="A paper diary"> A paper diary</label>
+            <label class="check"><input type="checkbox" value="A spreadsheet"> A spreadsheet</label>
+            <label class="check"><input type="checkbox" value="An app"> An app</label>
+            <label class="check"><input type="checkbox" value="Nowhere really"> Nowhere really</label>
+          </div>
+        </div>
+      </div>
+    </section>
+<section class="panel ob-section" data-section="customers">
+      <h2 class="panel-title">11. How you get customers now </h2>
+      <p class="ob-why">So the site adds to what works and replaces what costs you.</p>
+      <div class="ob-checks" id="custSources">
+        <label class="check"><input type="checkbox" value="Word of mouth"> Word of mouth</label>
+        <label class="check"><input type="checkbox" value="Repeat customers"> Repeat customers</label>
+        <label class="check"><input type="checkbox" value="Trust a Trader"> Trust a Trader</label>
+        <label class="check"><input type="checkbox" value="Checkatrade"> Checkatrade</label>
+        <label class="check"><input type="checkbox" value="Rated People, Bark, MyBuilder"> Rated People, Bark, MyBuilder</label>
+        <label class="check"><input type="checkbox" value="Facebook"> Facebook</label>
+        <label class="check"><input type="checkbox" value="Instagram"> Instagram</label>
+        <label class="check"><input type="checkbox" value="Google"> Google</label>
+        <label class="check"><input type="checkbox" value="Flyers, the van, signs"> Flyers, the van, signs</label>
+        <label class="check"><input type="checkbox" value="Nothing yet"> Nothing yet</label>
+      </div>
+      <div class="acct-grid">
+        <div class="field full"><label for="cu_notes">What each one costs you, and roughly what it brings</label><textarea id="cu_notes" rows="2" placeholder="Trust a Trader is &pound;40 a month and brings two or three jobs a week"></textarea></div>
+        <div class="field full"><label for="cu_jobs">Jobs in a normal week, roughly</label><input id="cu_jobs" type="text" placeholder="8 to 10"></div>
+        <div class="field"><label for="cu_value">A typical small job is worth about</label><input id="cu_value" type="text" placeholder="&pound;120"></div>
+        <div class="field"><label for="cu_big">A typical big job is worth about</label><input id="cu_big" type="text" placeholder="&pound;2,500"></div>
+      </div>
+    </section>
+<section class="panel ob-section" data-section="extras">
+      <h2 class="panel-title">12. Anything else </h2>
       <div class="acct-grid">
         <div class="field full"><label for="x_reviews">Good reviews or messages from customers <span class="opt">(paste them, or a link to where they are)</span></label><textarea id="x_reviews" rows="3"></textarea></div>
         <div class="field full"><label for="x_referral">What you&rsquo;d give a customer for sending a friend</label><input id="x_referral" type="text" placeholder="&pound;20 off their next job, a free service"></div>
@@ -354,7 +366,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="onboarding-trades.js?v=1"></script>
-<script src="onboarding.js?v=4"></script>
+<script src="onboarding.js?v=5"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
