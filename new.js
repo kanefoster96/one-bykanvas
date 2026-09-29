@@ -40,6 +40,8 @@
     name.classList.remove('err');
     say(note, '');
     paintMock();
+    /* The email row appears as soon as there is a name, over the phone. */
+    if (filled() && step2.hidden) { step2.hidden = false; step2.classList.add('in'); }
   });
 
   /* ---- the phone becomes theirs ---- */
