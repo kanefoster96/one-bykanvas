@@ -652,7 +652,7 @@ ${JSON.stringify({
 ${JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: m.faq.filter(([q]) => !/TODO/.test(q)).map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
+  mainEntity: m.faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
 <link rel="icon" href="/assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
