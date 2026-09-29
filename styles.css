@@ -2750,14 +2750,12 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .two-col li{margin-bottom:8px}
 @media (max-width:600px){.two-col{grid-template-columns:1fr}}
 .vt-wrap{margin-top:clamp(28px,4vw,40px);overflow-x:auto;-webkit-overflow-scrolling:touch}
-.vt{width:100%;min-width:560px;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg);overflow:hidden}
+.vt{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg);overflow:hidden}
 .vt th,.vt td{padding:13px 16px;text-align:left;font-size:14.5px;line-height:1.45;border-bottom:1px solid var(--line-soft);vertical-align:top}
 .vt thead th{font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);background:var(--bg-grey)}
 .vt tbody th{font-weight:600;color:var(--ink)}
 .vt td{color:var(--ink-2)}
-.vt td:last-child{white-space:nowrap;color:var(--ink-3)}
 .vt tbody tr:last-child th,.vt tbody tr:last-child td{border-bottom:0}
-.vt-total{margin:16px 0 0;font-size:17px;font-weight:600;text-align:center}
 .why{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:clamp(28px,4vw,40px)}
 .why p{margin:0;padding:20px 22px;background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg);font-size:15px;line-height:1.55;color:var(--ink-2)}
 .why p b{display:block;color:var(--ink);margin-bottom:4px}

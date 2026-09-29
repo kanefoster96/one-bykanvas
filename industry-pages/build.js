@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 106;
+const CSS_V = 107;
 const SCRIPT_V = 33;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -721,20 +721,19 @@ ${s.items.map((t) => `        <li>${t}</li>`).join('\n')}
   </div>
 </section>
 
-<!-- 5. Everything you get, against what it costs bought separately. -->
+<!-- 5. Everything you get, and what each part does. -->
 <section class="section">
   <div class="wrap center">
     <h2 class="reveal">Everything you get.</h2>
   </div>
   <div class="wrap vt-wrap reveal">
     <table class="vt">
-      <thead><tr><th scope="col">What you get</th><th scope="col">What it does for you</th><th scope="col">Bought separately</th></tr></thead>
+      <thead><tr><th scope="col">What you get</th><th scope="col">What it does for you</th></tr></thead>
       <tbody>
-${m.value.map(([a, c, d]) => `        <tr><th scope="row">${a}</th><td>${c}</td><td>${d}</td></tr>`).join('\n')}
+${m.value.map(([a, c]) => `        <tr><th scope="row">${a}</th><td>${c}</td></tr>`).join('\n')}
       </tbody>
     </table>
   </div>
-  <p class="wrap vt-total reveal">${m.valueTotal}</p>
 </section>
 
 <!-- 6. Why it works. -->
@@ -756,7 +755,7 @@ ${m.why.map(([lead, rest]) => `    <p><b>${lead}</b>${rest}</p>`).join('\n')}
     <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
     <p>No setup fee. Same price whatever your business type.</p>
     <p>${MAX.AD_SPEND}</p>
-    <p>An agency charges &pound;500 a month or more to run ads, before the budget. ${m.name} is &pound;250, with the website, the ranking work, the bookings and the follow-ups in it.</p>
+    <p>One price, with the website, the ads, the ranking work, the bookings and the follow-ups in it.</p>
     <p><strong>Your price is locked</strong> for as long as you stay on it. If the price goes up later, it goes up for new customers, not for you.</p>
   </div>
 </section>
