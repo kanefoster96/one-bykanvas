@@ -97,7 +97,7 @@ function planNote(plan, name, site) {
       ],
       ctaText: 'See what Max does',
       ctaHref: `${site}/plans.html#max`,
-      ctaNote: 'It is &pound;250 a month, ten businesses at a time. If you ever want it, switch from your account. If not, nothing changes.',
+      ctaNote: 'It is &pound;250 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.',
       footer: 'You&rsquo;re getting this because your Kanvas One plan went live about a month ago. It is the only email like it.',
       footerLinks: standardFooter(site)
     }),
@@ -108,7 +108,7 @@ function planNote(plan, name, site) {
         + `- Your Google ranking worked on every month.\n`
         + `- Reviews, referrals and upsells asked for automatically, and the follow-up emails written and sent for you.\n`
         + `- Business email at your own address. Built per business type: Trades, Clubs, Salon, or yours.\n\n`
-        + `It is GBP 250 a month, ten businesses at a time. If you ever want it, switch from your account. If not, nothing changes.\n`
+        + `It is GBP 250 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.\n`
         + `${site}/plans.html#max\n`
   };
 }

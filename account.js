@@ -828,7 +828,7 @@ function showBilling(row) {
   var upEl = document.getElementById('billUp');
   var UP = {
     starter: { to: 'business', text: 'For £25 more, Business adds bookings, payments, reviews asked for automatically, live chat, and unlimited changes made by us within 48 hours. ' },
-    business: { to: 'max', text: 'For £200 more, Max gets you customers: your Facebook and Instagram ads set up, run and tracked by us on a budget you set, your Google ranking worked on every month, review, referral and follow-up emails sent for you, and business email. Built per business type; ten at a time. Step down any month — you keep the ranking. ' }
+    business: { to: 'max', text: 'For £200 more, Max gets you customers: your Facebook and Instagram ads set up, run and tracked by us on a budget you set, your Google ranking worked on every month, review, referral and follow-up emails sent for you, and business email. Built per business type. Step down any month — you keep the ranking. ' }
   };
   var step = subscribed && UP[current];
   upEl.hidden = !step;

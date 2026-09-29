@@ -348,7 +348,7 @@ ${b.maxPitch ? `<section class="section">
         <li class="tick-hero">Your Google ranking worked on every month</li>
         <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
       </ul>
-      <p class="plan-up">Ten businesses at a time. &pound;250 for the first ten.</p>
+      <p class="plan-up">Same price whatever the type. You pay your own ad spend.</p>
       <a class="btn btn-ghost full" href="${maxHref(b.slug)}">${maxLabel(b.slug)} &rsaquo;</a>
     </article>
   </div>
@@ -432,7 +432,7 @@ function planCard(f) {
         <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
         <li class="tick-hero">Business email at your own address</li>
       </ul>
-      <p class="plan-up">Built for your kind of business: <a href="/max/trades">Trades</a>, <a href="/max/clubs">Clubs</a>, <a href="/max/salon">Salon</a>, or <a href="#" data-max-other>another</a>. Ten at a time.</p>
+      <p class="plan-up">Built for your kind of business: <a href="/max/trades">Trades</a>, <a href="/max/clubs">Clubs</a>, <a href="/max/salon">Salon</a>, or <a href="#" data-max-other>another</a>.</p>
     </article>`;
   return `    <article class="plan featured">
       <div class="badge">+&pound;25: get booked</div>
@@ -505,7 +505,7 @@ ${NAV}<section class="page-hero">
     <a class="hero-pill hero-pill-link reveal" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">${f.h1}</h1>
     <p class="lede reveal">${lines(f.lede)}</p>
-    <p class="micro reveal hero-note">Built into your own website, set up for you. ${f.plan === 'max' ? '&pound;250 a month, ten businesses at a time.' : 'From &pound;50 a month, no setup fee.'}</p>
+    <p class="micro reveal hero-note">Built into your own website, set up for you. ${f.plan === 'max' ? '&pound;250 a month, no setup fee.' : 'From &pound;50 a month, no setup fee.'}</p>
 
     <div class="typebox reveal" aria-hidden="true">
       <span class="typebox-text" id="typeDemo" data-lines="${JSON.stringify(f.lines).replace(/"/g, '&quot;')}"></span>
@@ -669,7 +669,7 @@ ${nav}<!-- 1. The promise, the price, the ask. -->
     </div>
     <p class="hero-pill reveal">${m.name}</p>
     <h1 class="reveal">${m.promise}</h1>
-    <p class="lede reveal">&pound;250 a month. No setup fee. Live the same day you join.<span class="gap"></span>Ten businesses at a time.</p>
+    <p class="lede reveal">&pound;250 a month. No setup fee. Live the same day you join.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="#miniFree">See your free preview</a>
       <a class="btn btn-ghost" href="/get-started.html?plan=max">Start ${m.name} &rsaquo;</a>
@@ -757,7 +757,7 @@ ${m.why.map(([lead, rest]) => `    <p><b>${lead}</b>${rest}</p>`).join('\n')}
     <p>No setup fee. Same price whatever your business type.</p>
     <p>${MAX.AD_SPEND}</p>
     <p>An agency charges &pound;500 a month or more to run ads, before the budget. ${m.name} is &pound;250, with the website, the ranking work, the bookings and the follow-ups in it.</p>
-    <p><strong>Your price is locked</strong> for as long as you stay on it. Ten businesses at a time; after the first ten, the price goes up for new customers, not for you.</p>
+    <p><strong>Your price is locked</strong> for as long as you stay on it. If the price goes up later, it goes up for new customers, not for you.</p>
   </div>
 </section>
 

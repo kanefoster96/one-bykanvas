@@ -94,7 +94,7 @@ module.exports = [
     search: 'Facebook and Instagram ads for local businesses, run for you',
     h1: 'Facebook and Instagram ads, run for you.',
     lede: 'You set the budget. I write the offer, build the ad and the form, run it, and tell you each month what it cost and what came in.',
-    desc: 'Facebook and Instagram ads for local businesses, set up, run and tracked for you. You set the budget and change it any time; I write the offer, build the ad and the form, and report every month. Part of Max, £250 a month, ten businesses at a time.',
+    desc: 'Facebook and Instagram ads for local businesses, set up, run and tracked for you. You set the budget and change it any time; I write the offer, build the ad and the form, and report every month. Part of Max, £250 a month, no setup fee.',
     pain: 'You boosted a post once and got likes from people three hundred miles away. An agency wanted &pound;600 a month before the budget. So the ads never got done, and the phone stays as quiet as it was.',
     lines: ['Run a Facebook ad for my boiler service offer', 'Get me more customers in my town', 'Put a form on my site the ad can send people to', 'Tell me what the ads brought in this month'],
     placeholder: 'e.g. Dave the Plumber',
@@ -112,13 +112,12 @@ module.exports = [
       'Every enquiry from the ads followed up by email if it goes quiet'
     ],
     plan: 'max',
-    planLine: 'Ads are part of Max: &pound;250 a month with the website, the ranking work and the texts in it. Ten businesses at a time; &pound;250 for the first ten, then the price goes up.',
+    planLine: 'Ads are part of Max: &pound;250 a month with the website, the ranking work and the follow-up emails in it. No setup fee, and your price is locked for as long as you stay.',
     faq: [
       ['How much should the budget be?', 'Your call, and you can change it any time. Below about &pound;10 a day there is not enough to learn from, so that is where I suggest starting.'],
       ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['Will it definitely bring customers?', 'No one honest can promise that. What I promise is the work: a proper offer, a proper ad, a page that converts, and a note every month showing what it brought in, so you can decide with numbers.'],
-      ['What do you need from me?', 'A photo or a line about the job you want more of, and admin access to your Facebook page. I do the rest.'],
-      ['Why only ten businesses?', 'Because running ads properly takes attention every week. Ten is what I can do well. The first ten pay &pound;250 and keep that price.']
+      ['What do you need from me?', 'A photo or a line about the job you want more of, and admin access to your Facebook page. I do the rest.']
     ]
   },
   {

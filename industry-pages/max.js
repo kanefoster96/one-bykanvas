@@ -92,9 +92,7 @@ module.exports = [
       ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['Will it definitely bring jobs?', 'No one honest can promise that. What I promise is the work: a proper offer, a proper ad, a page that converts, the follow-ups, and a note every month showing what it brought in, so you decide with numbers.'],
       ['What if I already have a website?', 'I build the new one, move your address across, and nothing goes offline in between. Your reviews and ranking come with you.'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Trades Max any month, if there is a place.'],
-      ['Why only ten businesses?', 'Because running ads properly takes attention every week. Ten is what I can do well. The first ten pay &pound;250 and keep that price.']
-    ]
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Trades Max any month, if there is a place.']    ]
   },
   {
     slug: 'clubs',
@@ -164,9 +162,7 @@ module.exports = [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
       ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['[TODO: club-specific question, e.g. Does it handle waivers and consent forms?]', '[TODO]'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Clubs Max any month, if there is a place.'],
-      ['Why only ten businesses?', 'Because running ads properly takes attention every week. Ten is what I can do well. The first ten pay &pound;250 and keep that price.']
-    ]
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Clubs Max any month, if there is a place.']    ]
   },
   {
     slug: 'salon',
@@ -236,9 +232,7 @@ module.exports = [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
       ['Who pays Meta?', 'You do, directly, on your own ad account. I never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['[TODO: salon-specific question, e.g. Can each stylist have their own diary?]', '[TODO]'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Salon Max any month, if there is a place.'],
-      ['Why only ten businesses?', 'Because running ads properly takes attention every week. Ten is what I can do well. The first ten pay &pound;250 and keep that price.']
-    ]
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Salon Max any month, if there is a place.']    ]
   }
 ];
 
