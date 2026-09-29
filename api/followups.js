@@ -87,10 +87,10 @@ function planNote(plan, name, site) {
       heading: 'A month in',
       lines: [
         `The site for <strong>${who}` + '</strong> has been live a month now. No ask here, just what the plan above yours does, in case any of it is useful.',
-        'Max is your site plus me going and getting customers for it:'
+        'Max is your site plus us going and getting customers for it:'
       ],
       perks: [
-        '<strong>Your Facebook and Instagram ads, run for you.</strong> You set the budget and change it whenever you like. I write the offer, build the ad and the form, and send you a note each month saying what it cost and what came in.',
+        '<strong>Your Facebook and Instagram ads, run for you.</strong> You set the budget and change it whenever you like. We write the offer, build the ad and the form, and send you a note each month saying what it cost and what came in.',
         '<strong>Your Google ranking worked on every month.</strong> The words on your pages, what Google and AI assistants read first, the questions customers actually type.',
         '<strong>Reviews, referrals and upsells asked for automatically</strong>, and the follow-up emails written and sent for you.',
         '<strong>Business email at your own address.</strong> Built per business type: Trades, Clubs, Salon, or yours.'
@@ -103,7 +103,7 @@ function planNote(plan, name, site) {
     }),
     text: `The site for ${name || 'your business'} has been live a month now. No ask here, just what `
         + `the plan above yours does, in case any of it is useful.\n\n`
-        + `Max is your site plus me going and getting customers for it:\n`
+        + `Max is your site plus us going and getting customers for it:\n`
         + `- Your Facebook and Instagram ads, run for you. You set the budget and change it whenever you like.\n`
         + `- Your Google ranking worked on every month.\n`
         + `- Reviews, referrals and upsells asked for automatically, and the follow-up emails written and sent for you.\n`
@@ -139,10 +139,10 @@ function whatDidYouThink(lead, site) {
       preheader: 'Be honest - did the example look like you?',
       heading: 'What did you think?',
       lines: [
-        `A few days ago I sent the free example page I designed for `
+        `A few days ago we sent the free example page we designed for `
           + `<strong>${esc(lead.business)}</strong>.`,
         'Be honest &mdash; did it look like you? If something is off, just reply '
-          + 'and say so. Changes are free, and I&rsquo;d rather get it right than guess.',
+          + 'and say so. Changes are free, and we&rsquo;d rather get it right than guess.',
         'And if you liked it, it can be your real site today: live on your own '
           + 'web address with a contact form and click to call, looked after for you, '
           + '&pound;25 a month with no setup fee.'
@@ -155,9 +155,9 @@ function whatDidYouThink(lead, site) {
             + 'and then we&rsquo;ll leave you be.',
       footerLinks: standardFooter(site)
     }),
-    text: `A few days ago I sent the free example page I designed for ${lead.business}.\n\n`
+    text: `A few days ago we sent the free example page we designed for ${lead.business}.\n\n`
         + `Be honest - did it look like you? If something is off, just reply and say so. `
-        + `Changes are free, and I'd rather get it right than guess.\n\n`
+        + `Changes are free, and we'd rather get it right than guess.\n\n`
         + `And if you liked it, it can be your real site today: live on your own web `
         + `address with a contact form and click to call, looked after for you, GBP 25 a month `
         + `with no setup fee.\n`
@@ -172,15 +172,15 @@ function whatDidYouThink(lead, site) {
 function lastOne(lead, site) {
   return {
     to: lead.email,
-    subject: `Last one from me, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
+    subject: `Last one from us, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
     html: emailHtml({
       preheader: 'The page you saw, live on your own address, for £25 a month.',
-      heading: 'Last one from me',
+      heading: 'Last one from us',
       lines: [
-        `The free page I made for <strong>${esc(lead.business)}</strong> is still up.`,
+        `The free page we made for <strong>${esc(lead.business)}</strong> is still up.`,
         '<strong>Starter, &pound;25 a month</strong>: the page you saw, live on your own address '
           + 'today, with a contact form and click to call, found on Google, a change a month made '
-          + 'by me. No setup fee.',
+          + 'by us. No setup fee.',
         'Pay for the year and it&rsquo;s 2 months free plus the Launch Boost: your first month '
           + 'spent getting you found on Google. Pay monthly and your first month is half price.',
         'Want bookings, payments and live chat? Business is &pound;25 more. Either way, this is '
@@ -194,9 +194,9 @@ function lastOne(lead, site) {
             + 'kanvas.one. This is the last email about it.',
       footerLinks: standardFooter(site)
     }),
-    text: `The free page I made for ${lead.business} is still up.\n\n`
+    text: `The free page we made for ${lead.business} is still up.\n\n`
         + `Starter, GBP 25 a month: the page you saw, live on your own address today, with a `
-        + `contact form and click to call, found on Google, a change a month made by me. No setup fee.\n`
+        + `contact form and click to call, found on Google, a change a month made by us. No setup fee.\n`
         + `${joinHref(site, lead, 'starter')}\n\n`
         + `Pay for the year and it's 2 months free plus the Launch Boost: your first month spent `
         + `getting you found on Google. Pay monthly and your first month is half price.\n\n`

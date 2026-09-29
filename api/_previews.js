@@ -87,7 +87,7 @@ function planCards(site, domain, leadId) {
         'Contact form and click to call',
         'Found on Google in your town',
         'Your web address, hosting and security included',
-        'A change every month, made by me'
+        'A change every month, made by us'
       ],
       ctaText: 'Make it my site — £25 a month', ctaHref: joinHref(site, 'starter', domain, leadId)
     }, {
@@ -96,14 +96,14 @@ function planCards(site, domain, leadId) {
       items: [
         'Bookings, payments and live chat',
         'Reviews asked for automatically after every job',
-        'Unlimited changes, made by me within 48 hours',
+        'Unlimited changes, made by us within 48 hours',
         'Your three features built within 14 days, or your next month is free'
       ],
       ctaText: 'Choose Business — £50 a month', ctaHref: joinHref(site, 'business', domain, leadId)
     }],
     note: '50% off your first month, on any plan. Or pay for the year: 2 months free and the Launch Boost, '
         + 'your first month spent getting you found on Google.<br>'
-        + 'kanvasacademy.com and nellyandnova.co.uk run on this. Built by me, and you can message me.'
+        + 'kanvasacademy.com and nellyandnova.co.uk run on this. Built by us, and you can message Kane.'
   };
 }
 
@@ -112,7 +112,7 @@ const NEXT = {
   title: 'What happens when you say yes',
   ticks: true,
   items: [
-    'Today: I register your web address and put this page live on it, with your contact form and click to call',
+    'Today: we register your web address and put this page live on it, with your contact form and click to call',
     'On Business: the three features you choose at signup, built within 14 days, or your next month is free',
     'Any time: changes are free, before and after you join'
   ]
@@ -153,23 +153,23 @@ async function sendLeadPreview(db, id, url, opts) {
          : gone ? { text: 'Now taken', tone: 'warn' }
          : null,
       text: gone
-        ? `Somebody registered it since you asked. Join and pick another at signup &mdash; there&rsquo;s always a good one, and I&rsquo;ll check it&rsquo;s free with you.`
+        ? `Somebody registered it since you asked. Join and pick another at signup &mdash; there&rsquo;s always a good one, and we&rsquo;ll check it&rsquo;s free with you.`
         : `Claim it today: it&rsquo;s registered for you and included in your plan the moment you join &mdash; nothing to pay for it separately. Or choose your own at signup.`
     };
   }
 
-  const from = !lead.handle ? 'what you sent me'
+  const from = !lead.handle ? 'what you sent us'
     : /^@/.test(lead.handle) ? 'your ' + esc(lead.handle)
-    : 'the link you sent me';
+    : 'the link you sent us';
 
   const sent = await sendEmail({
     to: lead.email,
     subject: `Your website is ready, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
     html: emailHtml({
-      preheader: 'Here it is - the page I designed for you, and what happens if you say yes.',
+      preheader: 'Here it is - the page we designed for you, and what happens if you say yes.',
       heading: 'Your website is ready 🎁',
       lines: [
-        `Here it is. I designed this for <strong>${esc(lead.business)}</strong> from ${from}, `
+        `Here it is. We designed this for <strong>${esc(lead.business)}</strong> from ${from}, `
           + `so it should already look like you.`
       ],
       ctaText: '🎁 See your website',
@@ -184,7 +184,7 @@ async function sendLeadPreview(db, id, url, opts) {
       could: [
         {
           title: 'Right now it&rsquo;s a shell. Here&rsquo;s what it could do.',
-          intro: 'What you&rsquo;re looking at is one page: the look and the feel. Once you say yes, I build the rest around it. Some of this goes in from the start; the rest you ask for whenever you want it, and I add it, included.',
+          intro: 'What you&rsquo;re looking at is one page: the look and the feel. Once you say yes, we build the rest around it. Some of this goes in from the start; the rest you ask for whenever you want it, and we add it, included.',
           items: COULD
         },
         NEXT
@@ -199,11 +199,11 @@ async function sendLeadPreview(db, id, url, opts) {
         note: 'Nothing to copy &mdash; it is already on the bill when you pay.'
       },
       closing: 'Anything you&rsquo;d change on the page, just reply and say so. Changes are free, before and after you join. &mdash; Kane',
-      footer: 'You&rsquo;re getting this because you asked me for a free example at '
+      footer: 'You&rsquo;re getting this because you asked us for a free example at '
             + 'kanvas.one. No account has been created and nothing has been charged.',
       footerLinks: standardFooter(site)
     }),
-    text: `Here it is - the page I designed for ${lead.business}.\n\n`
+    text: `Here it is - the page we designed for ${lead.business}.\n\n`
         + `${url}\n\n`
         + (claimable
             ? `This opens on a temporary address. ${claimable} is yours when you join`
@@ -220,13 +220,13 @@ async function sendLeadPreview(db, id, url, opts) {
         + `What happens when you say yes:\n`
         + NEXT.items.map((t) => '- ' + t).join('\n') + '\n\n'
         + `Make it your site. Starter, GBP 25 a month: this page live on your own address today, `
-        + `with a contact form and click to call, found on Google, a change a month made by me. `
+        + `with a contact form and click to call, found on Google, a change a month made by us. `
         + `No setup fee. Cancel any month.\n`
         + `${joinHref(site, 'starter', claimable, lead.id)}\n\n`
         + `Want bookings, payments and live chat? Business is GBP 25 more, with unlimited changes `
         + `and your three features built within 14 days or your next month is free.\n`
         + `${joinHref(site, 'business', claimable, lead.id)}\n\n`
-        + `kanvasacademy.com and nellyandnova.co.uk run on this. Built by me, and you can message me.\n\n`
+        + `kanvasacademy.com and nellyandnova.co.uk run on this. Built by us, and you can message Kane.\n\n`
         + `50% off your first month, on any plan, applied when you join. Or pay for the year: `
         + `2 months free and the Launch Boost, your first month spent getting you found on Google.\n`
         + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`
