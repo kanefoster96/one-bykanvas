@@ -47,7 +47,73 @@
   }
   document.querySelectorAll('input[name="model"]').forEach(function (i) { i.addEventListener('change', showAddon); });
 
-  /* ---- services: repeatable rows ---- */
+  /* ---- the trade, and its usual jobs ---- */
+  var CATALOG = window.ONE_TRADES || {};
+  var tradeSel = $('svc_trade');
+  var jobList = $('jobList');
+  var jobTpl = $('jobItem');
+  Object.keys(CATALOG).forEach(function (t) {
+    var o = document.createElement('option'); o.value = t; o.textContent = t; tradeSel.appendChild(o);
+  });
+  var other = document.createElement('option'); other.value = 'Other'; other.textContent = 'Something else'; tradeSel.appendChild(other);
+
+  /* The usual jobs for the chosen trade, as ticks. Ticking one opens its
+     row, with the catalogue's pricing and flow already chosen. */
+  function paintJobs(saved) {
+    var trade = tradeSel.value;
+    $('tradeOtherField').hidden = trade !== 'Other';
+    jobList.innerHTML = '';
+    var have = {};
+    (saved || []).forEach(function (j) { if (j && j.name) have[j.name] = j; });
+    (CATALOG[trade] || []).forEach(function (def) {
+      var frag = jobTpl.content.cloneNode(true);
+      var item = frag.querySelector('.ob-job');
+      item.setAttribute('data-name', def[0]);
+      item.querySelector('[data-k=label]').textContent = def[0];
+      var box = item.querySelector('[data-k=on]');
+      var more = item.querySelector('.ob-job-more');
+      var was = have[def[0]];
+      box.checked = !!was;
+      more.hidden = !was;
+      item.querySelector('[data-k=pricing]').value = was ? (was.pricing || '') : def[1];
+      item.querySelector('[data-k=flow]').value = was ? (was.flow || '') : (def[2] === 'book' ? 'Book straight in' : 'Ask me first');
+      item.querySelector('[data-k=often]').value = was ? (was.often || '') : '';
+      item.querySelector('[data-k=price]').value = was ? (was.price || '') : '';
+      box.addEventListener('change', function () { more.hidden = !box.checked; paintMost(); });
+      jobList.appendChild(frag);
+    });
+    paintMost();
+  }
+  /* "Which one do you do most": the ticked jobs, and the other rows with
+     a name, as radios. */
+  function paintMost(keep) {
+    var pick = $('mostPick');
+    var current = keep || radio('most');
+    pick.innerHTML = '';
+    var names = tickedJobs().map(function (j) { return j.name; }).concat(otherJobs().map(function (j) { return j.name; }));
+    $('mostLabel').hidden = names.length < 2;
+    names.forEach(function (n) {
+      var l = document.createElement('label'); l.className = 'check';
+      var r = document.createElement('input'); r.type = 'radio'; r.name = 'most'; r.value = n; r.checked = n === current;
+      l.appendChild(r); l.appendChild(document.createTextNode(' ' + n));
+      pick.appendChild(l);
+    });
+    if (names.length === 1) { var only = pick.querySelector('input'); if (only) only.checked = true; }
+    /* The ad runs on it: section 3 starts from the same answer. */
+    var most = radio('most');
+    if (most && !v('o_job')) set('o_job', most);
+    var others = names.filter(function (n) { return n !== most; });
+    var up = $('o_upsell'); if (up && others.length) up.placeholder = others.slice(0, 3).join(', ');
+  }
+  function tickedJobs() {
+    return Array.prototype.slice.call(jobList.querySelectorAll('.ob-job')).filter(function (i) { return i.querySelector('[data-k=on]').checked; }).map(function (i) {
+      return { name: i.getAttribute('data-name'), often: i.querySelector('[data-k=often]').value, price: i.querySelector('[data-k=price]').value.trim(), pricing: i.querySelector('[data-k=pricing]').value, flow: i.querySelector('[data-k=flow]').value };
+    });
+  }
+  tradeSel.addEventListener('change', function () { paintJobs([]); });
+  jobList.addEventListener('change', function (e) { if (e.target.name !== 'most') paintMost(); });
+
+  /* ---- other jobs: repeatable rows ---- */
   var rows = $('svcRows');
   var tpl = $('svcRow');
   function addService(data) {
@@ -62,14 +128,22 @@
     row.querySelector('.svc-remove').addEventListener('click', function () { row.remove(); dirty = true; progress(); });
     rows.appendChild(frag);
   }
-  function services() {
+  function otherJobs() {
     return Array.prototype.slice.call(rows.querySelectorAll('.svc-row')).map(function (row) {
-      var out = {};
+      var out = { other: true };
       row.querySelectorAll('[data-k]').forEach(function (el) { out[el.getAttribute('data-k')] = el.value.trim(); });
       return out;
-    }).filter(function (s) { return s.name || s.price || s.includes; });
+    }).filter(function (s) { return s.name; });
+  }
+  function services() {
+    return {
+      trade: tradeSel.value === 'Other' ? v('svc_trade_other') : tradeSel.value,
+      jobs: tickedJobs().concat(otherJobs()),
+      most: radio('most')
+    };
   }
   $('svcAdd').addEventListener('click', function () { addService(); dirty = true; });
+  rows.addEventListener('input', function () { paintMost(); });
 
   /* ---- photos: uploaded as they are chosen, kept as public URLs ---- */
   var grid = $('photoGrid');
@@ -137,8 +211,16 @@
     var c = a.contact || {}, o = a.offer || {}, cu = a.customers || {}, b = a.bookings || {}, p = a.payments || {}, ol = a.online || {}, t = a.trades || {}, k = a.clubs || {}, s = a.salon || {}, x = a.extras || {};
     setRadio('model', a.model); showAddon();
     set('c_phone', c.phone); set('c_email', c.email); setOn('c_whatsapp', c.whatsapp); set('c_area', c.area); set('c_address', c.address); set('c_reach', c.reach); setChecks('custWhere', c.customers_live);
+    var sv = (a.services && !Array.isArray(a.services)) ? a.services : { trade: '', jobs: Array.isArray(a.services) ? a.services : [], most: '' };
+    var known = Object.keys(CATALOG).indexOf(sv.trade) !== -1;
+    tradeSel.value = sv.trade ? (known ? sv.trade : 'Other') : '';
+    set('svc_trade_other', known ? '' : sv.trade);
+    var mine = (sv.jobs || []).filter(function (j) { return j && !j.other; });
+    var extra = (sv.jobs || []).filter(function (j) { return j && j.other; });
+    paintJobs(mine);
     rows.innerHTML = '';
-    (Array.isArray(a.services) && a.services.length ? a.services : [null]).forEach(addService);
+    (extra.length ? extra : [null]).forEach(addService);
+    paintMost(sv.most);
     setOn('svc_generated', a.services_generated);
     set('o_job', o.job); set('o_upsell', o.upsells); set('o_why', o.why);
     setChecks('custSources', cu.sources); set('cu_notes', cu.notes); set('cu_jobs', cu.jobs_per_week); set('cu_value', cu.job_value); set('cu_big', cu.big_job_value);
@@ -166,7 +248,7 @@
     var done = 0;
     secs.forEach(function (sec) {
       var key = sec.getAttribute('data-section');
-      var has = key === 'services' ? (filled(a.services) || a.services_generated) : filled(a[key]);
+      var has = key === 'services' ? (filled(a.services.jobs) || !!a.services.trade || a.services_generated) : filled(a[key]);
       sec.classList.toggle('is-filled', has);
       if (has) done++;
     });
