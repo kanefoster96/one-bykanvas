@@ -2780,7 +2780,11 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .ob-why{margin:-10px 0 18px;font-size:14.5px;line-height:1.5;color:var(--ink-3)}
 .ob-label{display:block;font-size:13.5px;font-weight:500;color:var(--ink-2);margin-bottom:8px}
 .ob-checks{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px}
-.ob-checks .check{font-size:14.5px}
+.ob-checks .check{font-size:14.5px;align-items:flex-start;line-height:1.35}
+.ob-checks .check input{flex:0 0 18px;margin-top:1px}
+/* A tick with a long label gets its own line on a phone. */
+@media (max-width:600px){.ob-checks .check{flex:1 1 100%}}
+.ob-checks+input{margin-top:-4px}
 /* A lone tick inside a field: the box sits at the left, the words beside it. */
 .ob-section .field > .check{flex-direction:row;justify-content:flex-start;align-items:center;gap:10px;margin:0 0 16px;font-size:14.5px;color:var(--ink-2)}
 .ob-section .field > .check input{flex:0 0 18px;margin:0}

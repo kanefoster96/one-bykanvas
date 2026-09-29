@@ -3,10 +3,11 @@
  *   GET   -> { answers, updatedAt, plan }   their saved answers
  *   POST  { answers }  -> { ok, changed }   save, and tell the admin what changed
  *
- * Everything is optional and can be saved as often as they like. The five
- * contact fields the account page also holds (public_email, phone, address,
- * service_area, opening_hours) are written through to the profile too, so
- * there is one truth for them. Every save that changes anything sends the
+ * Everything is optional and can be saved as often as they like. The
+ * questions are the same for every trade; onboarding-trades.js holds the
+ * suggestions under each one. The five contact fields the account page
+ * also holds (public_email, phone, address, service_area, opening_hours)
+ * are written through to the profile too, so there is one truth for them. Every save that changes anything sends the
  * admin an email naming the sections that changed, with the full answers
  * under it, and drops a notification row.
  *
@@ -27,12 +28,14 @@ const SECTIONS = [
   ['services_generated', 'Generated images for now'],
   ['offer', 'What we advertise and what we offer on top'],
   ['customers', 'How you get customers now'],
+  ['want', 'Who you want more of'],
   ['bookings', 'How a job gets booked now'],
   ['payments', 'How you get paid now'],
+  ['later', 'When it is too much, and what comes round again'],
   ['online', 'What is already online'],
   ['photos', 'Photos'],
   ['trades', 'The proof that comes with the work'],
-  ['trades_how', 'Emergencies and the next job'],
+  ['trades_how', 'Urgent jobs'],
   ['clubs', 'Classes and fees'],
   ['clubs_how', 'First visits and terms'],
   ['salon', 'The team and what else you sell'],
@@ -50,13 +53,15 @@ const MAX_BYTES = 60000;
    under its own heading. Add-on sections count only for the Max picked. */
 const DECISIONS = {
   contact: { area: 'areas covered', base: 'where they set off from', reach: 'when customers can reach them', customers_live: 'where their customer details live now' },
-  offer: { job: 'the job to advertise', upsells: 'the upsells' },
-  customers: { sources: 'how they get customers now', jobs_per_week: 'jobs a week', job_value: 'a small job\u2019s value', big_job_value: 'a big job\u2019s value' },
-  bookings: { how: 'how a job gets booked now', lead_time: 'how soon a new customer gets them', want: 'straight in or ask first' },
+  offer: { job: 'the job to advertise', upsells: 'the upsells', addons: 'the add-on for any visit', moment: 'when they mention extra work' },
+  customers: { sources: 'how they get customers now', jobs_per_week: 'jobs a week or month', job_value: 'a small job\u2019s value', big_job_value: 'a big job\u2019s value', partners: 'who sends them work' },
+  want: { capacity: 'how much more work they can take', best: 'their best kind of customer', busiest: 'busiest time of year', quietest: 'quietest time of year' },
+  bookings: { first: 'what happens first when someone gets in touch', how: 'where bookings live now', lead_time: 'how soon a new customer gets them', want: 'straight in or ask first' },
   payments: { methods: 'how they get paid now', upfront: 'anything taken before the work', amount: 'the deposit or callout amount', when: 'when it is taken', big_job: 'what is taken before a big job', finance: 'finance' },
+  later: { now: 'what happens when a quote is too much', smaller: 'the smaller version of the big job', again: 'what comes round again', plan: 'a monthly or yearly plan' },
   online: { facebook: 'Facebook page or profile', gbp: 'Google Business Profile' },
-  trades: { gas_safe: 'Gas Safe number', insured: 'insurance', brands: 'brands installed and guarantee' },
-  trades_how: { emergency: 'emergency callouts', next_service: 'the next-service reminder' },
+  trades: { registrations: 'registrations and checks', insured: 'insurance', guarantee: 'the guarantee' },
+  trades_how: { emergency: 'urgent jobs' },
   clubs: { classes: 'classes and ages', fees: 'fees' },
   clubs_how: { first_visit: 'how a first visit works', terms: 'term dates' },
   salon: { team: 'the team' },
@@ -66,13 +71,16 @@ const JOB_FIELDS = { often: 'how often', price: 'price', pricing: 'how it is pri
 
 function blank(v) { return v === undefined || v === null || v === '' || v === false || (Array.isArray(v) && !v.length); }
 
+/* A tick list counts as answered if a tick or its "other" box is. */
+function answered(sec, k) { return !blank(sec[k]) || !blank(sec[k + '_other']); }
+
 function undecided(answers) {
   const out = [];
   const model = answers.model || '';
   for (const [section, fields] of Object.entries(DECISIONS)) {
     if (/^(trades|clubs|salon)/.test(section) && section.replace(/_how$/, '') !== model) continue;
     const sec = answers[section] || {};
-    const missing = Object.entries(fields).filter(([k]) => blank(sec[k])).map(([, label]) => label);
+    const missing = Object.entries(fields).filter(([k]) => !answered(sec, k)).map(([, label]) => label);
     if (missing.length) out.push(`  ${section}: ${missing.join(', ')}`);
   }
   const sv = answers.services || {};

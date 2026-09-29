@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=3">
-<link rel="stylesheet" href="styles.css?v=107">
+<link rel="stylesheet" href="styles.css?v=108">
 </head>
 <body class="auth-body">
 <header class="nav">
@@ -56,7 +56,7 @@
     </header>
 <section class="panel ob-section" data-section="services">
       <h2 class="panel-title">1. What you do </h2>
-      <p class="ob-why">Pick your trade and tick the jobs you do. Prices are optional: an average is handy, &ldquo;not sure&rdquo; is fine.</p>
+      <p class="ob-why">Pick your trade and tick the jobs you do. The rest of the form fills its suggestions from that. Prices are optional: an average is handy, &ldquo;not sure&rdquo; is fine.</p>
       <div class="acct-grid">
         <div class="field" id="tradeField">
           <label for="svc_trade">Your trade</label>
@@ -74,11 +74,26 @@
     </section>
 <section class="panel ob-section" data-section="offer">
       <h2 class="panel-title">2. What we advertise, and what we offer on top </h2>
-      <p class="ob-why">I run ads for the job you already do most, because more of what already works beats something new. The rest of your list gets offered to customers who are already paying you: a service to a repair customer, an install to a service customer. That is where the extra money is, and it costs nothing to ask.</p>
+      <p class="ob-why">I run ads for the job you want more of, because more of what already works beats something new. The rest of your list gets offered to customers who are already paying you. That is where the extra money is, and it costs nothing to ask.</p>
       <div class="acct-grid">
-        <div class="field full"><label for="o_job">The job you do most weeks <span class="opt">(this is the ad)</span></label><input id="o_job" type="text" placeholder="Boiler repairs"></div>
-        <div class="field full"><label for="o_upsell">The jobs worth offering once someone is a customer <span class="opt">(the upsells)</span></label><input id="o_upsell" type="text" placeholder="Annual service, a new boiler when the old one is on its way out, a landlord certificate"></div>
-        <div class="field full"><label for="o_why">Anything about why customers pick you for that job</label><textarea id="o_why" rows="2" placeholder="Same-day when it&rsquo;s urgent, I don&rsquo;t push a new boiler when a part will do"></textarea></div>
+        <div class="field full"><label for="o_job">The job you want more of <span class="opt">(this is the ad)</span></label><input id="o_job" type="text" placeholder="Usually the one you ticked above"></div>
+        <div class="field full"><label for="o_upsell">The jobs worth offering once someone is a customer <span class="opt">(the upsells)</span></label><input id="o_upsell" type="text" placeholder="The rest of your list"></div>
+        <div class="field full">
+          <span class="ob-label">The small thing you could add to any visit <span class="opt">(the while-I&rsquo;m-there sale)</span></span>
+          <div class="ob-checks" id="addonPick"></div>
+          <input id="o_addon_other" type="text" placeholder="Something else" aria-label="Another add-on">
+        </div>
+        <div class="field full">
+          <label for="o_moment">When do you usually mention extra work?</label>
+          <select id="o_moment">
+            <option value="">Not sure</option>
+            <option value="On the quote">On the quote</option>
+            <option value="On the day, while I'm there">On the day, while I&rsquo;m there</option>
+            <option value="Afterwards, if I remember">Afterwards, if I remember</option>
+            <option value="Never, I don't like to push">Never, I don&rsquo;t like to push</option>
+          </select>
+        </div>
+        <div class="field full"><label for="o_why">Anything about why customers pick you for that job</label><textarea id="o_why" rows="2"></textarea></div>
       </div>
     </section>
 <section class="panel ob-section" data-section="photos">
@@ -91,13 +106,27 @@
     </section>
     <section class="panel ob-section ob-addon" data-section="trades" data-model="trades" hidden>
       <h2 class="panel-title">4. The proof that comes with the work</h2>
-      <p class="ob-why">What a trade&rsquo;s site shows that a salon&rsquo;s does not.</p>
+      <p class="ob-why">What goes on every page so a stranger trusts you before they ring.</p>
       <div class="acct-grid">
-        <div class="field"><label for="t_gassafe">Gas Safe number, if you have one</label><input id="t_gassafe" type="text"></div>
-        <div class="field"><label for="t_regs">Other registrations <span class="opt">(NICEIC, NAPIT, OFTEC, HETAS)</span></label><input id="t_regs" type="text"></div>
+        <div class="field full">
+          <span class="ob-label">Registrations, memberships and checks you hold</span>
+          <div class="ob-checks" id="regPick"></div>
+          <input id="t_regs" type="text" placeholder="Another one, or the number on it" aria-label="Another registration">
+        </div>
         <div class="field full"><label class="check"><input id="t_insured" type="checkbox"> Public liability insurance in place</label></div>
-        <div class="field"><label for="t_brands">Brands you install, and the guarantee</label><input id="t_brands" type="text" placeholder="Worcester, Vaillant. 10-year guarantee"></div>
-        <div class="field"><label for="t_workon">Brands you work on</label><input id="t_workon" type="text" placeholder="Anything"></div>
+        <div class="field">
+          <label for="t_guarantee">Guarantee on your work</label>
+          <select id="t_guarantee">
+            <option value="">Not sure</option>
+            <option value="None">None</option>
+            <option value="12 months">12 months</option>
+            <option value="2 years">2 years</option>
+            <option value="5 years">5 years</option>
+            <option value="10 years">10 years</option>
+            <option value="Insurance-backed">Insurance-backed</option>
+          </select>
+        </div>
+        <div class="field"><label for="t_brands">Brands or materials you use, if customers ask</label><input id="t_brands" type="text"></div>
       </div>
     </section>
     <section class="panel ob-section ob-addon" data-section="clubs" data-model="clubs" hidden>
@@ -123,15 +152,27 @@
 <section class="panel ob-section" data-section="bookings">
       <h2 class="panel-title">5. How a job gets booked now </h2>
       <p class="ob-why">The site takes this over one step at a time. Nothing changes until you have seen it work.</p>
-      <div class="ob-checks" id="bookHow">
-        <label class="check"><input type="radio" name="book" value="They call or text, I tell them my next slot"> They call or text, I tell them my next slot</label>
-        <label class="check"><input type="radio" name="book" value="A diary or calendar"> A diary or calendar</label>
-        <label class="check"><input type="radio" name="book" value="An app"> An app</label>
-        <label class="check"><input type="radio" name="book" value="They just turn up"> They just turn up</label>
-      </div>
       <div class="acct-grid">
+        <div class="field full">
+          <span class="ob-label">What happens first when someone gets in touch?</span>
+          <div class="ob-checks" id="bookFirst">
+            <label class="check"><input type="radio" name="first" value="I book them straight in"> I book them straight in</label>
+            <label class="check"><input type="radio" name="first" value="I go and look first, then quote"> I go and look first, then quote</label>
+            <label class="check"><input type="radio" name="first" value="I quote from photos or a call"> I quote from photos or a call</label>
+            <label class="check"><input type="radio" name="first" value="They come to me"> They come to me</label>
+          </div>
+        </div>
+        <div class="field full">
+          <span class="ob-label">Where do the bookings live?</span>
+          <div class="ob-checks" id="bookHow">
+            <label class="check"><input type="radio" name="book" value="My head and my phone"> My head and my phone</label>
+            <label class="check"><input type="radio" name="book" value="A diary or calendar"> A diary or calendar</label>
+            <label class="check"><input type="radio" name="book" value="An app"> An app</label>
+            <label class="check"><input type="radio" name="book" value="Someone in the office"> Someone in the office</label>
+          </div>
+        </div>
         <div class="field full"><label for="b_app">If an app, which one?</label><input id="b_app" type="text"></div>
-        <div class="field full"><label for="b_lead">How soon can a new customer usually get you?</label><input id="b_lead" type="text" placeholder="Next day or two. Same day if it&rsquo;s urgent"></div>
+        <div class="field full"><label for="b_lead">How soon can a new customer usually get you?</label><input id="b_lead" type="text" placeholder="Next day or two. Same day if it&rsquo;s urgent. Six weeks for a big job"></div>
         <div class="field full">
           <span class="ob-label">When the site takes bookings, which would you rather?</span>
           <div class="ob-checks">
@@ -168,6 +209,7 @@
           <select id="p_when">
             <option value="">Choose</option>
             <option value="When they book">When they book</option>
+            <option value="When they accept the quote">When they accept the quote</option>
             <option value="When I arrive">When I arrive</option>
             <option value="After the visit">After the visit</option>
           </select>
@@ -185,8 +227,39 @@
         </div>
       </div>
     </section>
+<section class="panel ob-section" data-section="later">
+      <h2 class="panel-title">7. When it&rsquo;s too much, and what comes round again</h2>
+      <p class="ob-why">A quote that&rsquo;s too much is not a lost job if there is a smaller one to offer. And anything a customer needs again is a reminder I can send for you.</p>
+      <div class="acct-grid">
+        <div class="field full">
+          <label for="l_now">When a quote is too much for someone, what happens now?</label>
+          <select id="l_now">
+            <option value="">Not sure</option>
+            <option value="I lose the job">I lose the job</option>
+            <option value="I offer a smaller version">I offer a smaller version</option>
+            <option value="I offer to split the payment">I offer to split the payment</option>
+            <option value="I say come back when you're ready">I say come back when you&rsquo;re ready</option>
+          </select>
+        </div>
+        <div class="field full">
+          <span class="ob-label">The smaller version of your big job <span class="opt">(what I offer when the full one is too much)</span></span>
+          <div class="ob-checks" id="smallerPick"></div>
+          <input id="l_smaller_other" type="text" placeholder="Something else" aria-label="Another smaller version">
+        </div>
+        <div class="field full">
+          <span class="ob-label">What a customer needs again later <span class="opt">(for the reminder)</span></span>
+          <div class="ob-checks" id="againPick"></div>
+          <input id="l_again_other" type="text" placeholder="Something else" aria-label="Another reminder">
+        </div>
+        <div class="field full">
+          <span class="ob-label">Anything customers could pay for monthly or yearly</span>
+          <div class="ob-checks" id="planPick"></div>
+          <input id="l_plan_other" type="text" placeholder="Something else" aria-label="Another plan">
+        </div>
+      </div>
+    </section>
 <section class="panel ob-section" data-section="online">
-      <h2 class="panel-title">7. What&rsquo;s already online </h2>
+      <h2 class="panel-title">8. What&rsquo;s already online </h2>
       <p class="ob-why">Links, not logins. I ask for access separately, with the steps, once I need it.</p>
       <div class="acct-grid">
         <div class="field full">
@@ -215,29 +288,28 @@
       </div>
     </section>
     <section class="panel ob-section ob-addon" data-section="trades_how" data-model="trades" hidden>
-      <h2 class="panel-title">8. Emergencies and the next job</h2>
+      <h2 class="panel-title">9. Urgent jobs</h2>
       <div class="acct-grid">
         <div class="field full">
-          <span class="ob-label">Emergency callouts</span>
+          <span class="ob-label">Do you take urgent, same-day jobs?</span>
           <div class="ob-checks">
             <label class="check"><input type="radio" name="emerg" value="Yes, same price"> Yes, same price</label>
             <label class="check"><input type="radio" name="emerg" value="Yes, costs more"> Yes, costs more</label>
             <label class="check"><input type="radio" name="emerg" value="No"> No</label>
           </div>
         </div>
-        <div class="field full"><label for="t_emerg">What counts as an emergency, and what it costs</label><input id="t_emerg" type="text" placeholder="No heating or hot water, evenings and weekends, &pound;90 callout"></div>
-        <div class="field full"><label for="t_repeat">The next thing a customer needs after a job <span class="opt">(for the reminder)</span></label><input id="t_repeat" type="text" placeholder="Annual boiler service, landlord certificate every 12 months"></div>
+        <div class="field full"><label for="t_emerg">What counts as urgent, and what it costs</label><input id="t_emerg" type="text"></div>
       </div>
     </section>
     <section class="panel ob-section ob-addon" data-section="clubs_how" data-model="clubs" hidden>
-      <h2 class="panel-title">8. First visits and terms</h2>
+      <h2 class="panel-title">9. First visits and terms</h2>
       <div class="acct-grid">
         <div class="field"><label for="k_trial">How a first visit works</label><input id="k_trial" type="text" placeholder="Free trial, &pound;5 taster, watch first"></div>
         <div class="field"><label for="k_terms">Term dates or when new members can start</label><input id="k_terms" type="text"></div>
       </div>
     </section>
     <section class="panel ob-section ob-addon" data-section="salon_how" data-model="salon" hidden>
-      <h2 class="panel-title">8. No-shows, rebooking and first appointments</h2>
+      <h2 class="panel-title">9. No-shows, rebooking and first appointments</h2>
       <div class="acct-grid">
         <div class="field"><label for="s_noshow">What happens when someone doesn&rsquo;t turn up</label><input id="s_noshow" type="text" placeholder="Lose the deposit, charged 50%, nothing"></div>
         <div class="field"><label for="s_rebook">How often a regular should rebook</label><input id="s_rebook" type="text" placeholder="Cuts every 6 weeks, colour every 8"></div>
@@ -290,13 +362,79 @@
       </div>
       <div class="acct-grid">
         <div class="field full"><label for="cu_notes">What each one costs you, and roughly what it brings</label><textarea id="cu_notes" rows="2" placeholder="Trust a Trader is &pound;40 a month and brings two or three jobs a week"></textarea></div>
-        <div class="field full"><label for="cu_jobs">Jobs in a normal week, roughly</label><input id="cu_jobs" type="text" placeholder="8 to 10"></div>
+        <div class="field full"><label for="cu_jobs">How many jobs in a normal week, or a normal month if they are big ones</label><input id="cu_jobs" type="text" placeholder="8 a week, or 2 a month"></div>
         <div class="field"><label for="cu_value">A typical small job is worth about</label><input id="cu_value" type="text" placeholder="&pound;120"></div>
         <div class="field"><label for="cu_big">A typical big job is worth about</label><input id="cu_big" type="text" placeholder="&pound;2,500"></div>
+        <div class="field full">
+          <span class="ob-label">Who sends you work now, or you send work to? <span class="opt">(they get their own referral link)</span></span>
+          <div class="ob-checks" id="partnerPick">
+            <label class="check"><input type="checkbox" value="Letting agents"> Letting agents</label>
+            <label class="check"><input type="checkbox" value="Estate agents"> Estate agents</label>
+            <label class="check"><input type="checkbox" value="Other trades"> Other trades</label>
+            <label class="check"><input type="checkbox" value="Builders"> Builders</label>
+            <label class="check"><input type="checkbox" value="Merchants or suppliers"> Merchants or suppliers</label>
+            <label class="check"><input type="checkbox" value="Architects or surveyors"> Architects or surveyors</label>
+            <label class="check"><input type="checkbox" value="Nobody yet"> Nobody yet</label>
+          </div>
+          <input id="cu_partners" type="text" placeholder="Their names, if you want them on the list" aria-label="Partner names">
+        </div>
+      </div>
+    </section>
+<section class="panel ob-section" data-section="want">
+      <h2 class="panel-title">12. Who you want more of </h2>
+      <p class="ob-why">The ads and the site can filter as well as attract. If you are already full, the job is better-paid work, not more of it.</p>
+      <div class="acct-grid">
+        <div class="field full">
+          <label for="w_capacity">How much more work could you take on?</label>
+          <select id="w_capacity">
+            <option value="">Not sure</option>
+            <option value="Plenty">Plenty, bring it on</option>
+            <option value="A bit">One or two more a week</option>
+            <option value="Full">I&rsquo;m full. Better jobs, not more of them</option>
+          </select>
+        </div>
+        <div class="field full">
+          <span class="ob-label">Your best kind of customer</span>
+          <div class="ob-checks" id="bestPick">
+            <label class="check"><input type="checkbox" value="Homeowners"> Homeowners</label>
+            <label class="check"><input type="checkbox" value="Landlords"> Landlords</label>
+            <label class="check"><input type="checkbox" value="Letting agents"> Letting agents</label>
+            <label class="check"><input type="checkbox" value="Businesses and shops"> Businesses and shops</label>
+            <label class="check"><input type="checkbox" value="Builders and other trades"> Builders and other trades</label>
+            <label class="check"><input type="checkbox" value="New builds and developers"> New builds and developers</label>
+          </div>
+        </div>
+        <div class="field full">
+          <span class="ob-label">Jobs you&rsquo;d rather not do <span class="opt">(from the ones you ticked)</span></span>
+          <div class="ob-checks" id="dontPick"></div>
+          <input id="w_dont_other" type="text" placeholder="Anything else you turn away" aria-label="Other jobs you turn away">
+        </div>
+        <div class="field">
+          <label for="w_busy">Busiest time of year</label>
+          <select id="w_busy">
+            <option value="">Not sure</option>
+            <option value="Spring">Spring</option>
+            <option value="Summer">Summer</option>
+            <option value="Autumn">Autumn</option>
+            <option value="Winter">Winter</option>
+            <option value="Same all year">Same all year</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="w_quiet">Quietest time of year</label>
+          <select id="w_quiet">
+            <option value="">Not sure</option>
+            <option value="Spring">Spring</option>
+            <option value="Summer">Summer</option>
+            <option value="Autumn">Autumn</option>
+            <option value="Winter">Winter</option>
+            <option value="Same all year">Same all year</option>
+          </select>
+        </div>
       </div>
     </section>
 <section class="panel ob-section" data-section="extras">
-      <h2 class="panel-title">12. Anything else </h2>
+      <h2 class="panel-title">13. Anything else </h2>
       <div class="acct-grid">
         <div class="field full"><label for="x_reviews">Good reviews or messages from customers <span class="opt">(paste them, or a link to where they are)</span></label><textarea id="x_reviews" rows="3"></textarea></div>
         <div class="field full"><label for="x_referral">What you&rsquo;d give a customer for sending a friend</label><input id="x_referral" type="text" placeholder="&pound;20 off their next job, a free service"></div>
@@ -320,7 +458,7 @@
       <div class="field full"><label>The job</label><input type="text" data-k="name" placeholder="What is it?"></div>
       <div class="field">
         <label>How often</label>
-        <select data-k="often"><option value="">Not sure</option><option value="Most weeks">Most weeks</option><option value="Some weeks">Some weeks</option><option value="Now and then">Now and then</option></select>
+        <select data-k="often"><option value="">Not sure</option><option value="Every week">Every week</option><option value="Most months">Most months</option><option value="A few times a year">A few times a year</option></select>
       </div>
       <div class="field">
         <label>Price, roughly</label>
@@ -345,7 +483,7 @@
     <div class="ob-job-more acct-grid" hidden>
       <div class="field">
         <label>How often</label>
-        <select data-k="often"><option value="">Not sure</option><option value="Most weeks">Most weeks</option><option value="Some weeks">Some weeks</option><option value="Now and then">Now and then</option></select>
+        <select data-k="often"><option value="">Not sure</option><option value="Every week">Every week</option><option value="Most months">Most months</option><option value="A few times a year">A few times a year</option></select>
       </div>
       <div class="field"><label>Price, roughly</label><input type="text" data-k="price" placeholder="Not sure is fine"></div>
       <div class="field">
@@ -365,8 +503,8 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="onboarding-trades.js?v=1"></script>
-<script src="onboarding.js?v=5"></script>
+<script src="onboarding-trades.js?v=2"></script>
+<script src="onboarding.js?v=6"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
