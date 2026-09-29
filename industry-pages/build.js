@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 99;
+const CSS_V = 100;
 const SCRIPT_V = 33;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -661,6 +661,12 @@ ${JSON.stringify({
 ${nav}<!-- 1. The promise, the price, the ask. -->
 <section class="page-hero">
   <div class="wrap center">
+    <!-- The product's own mark: an app-style icon with the model's tool in
+         it and the green MAX pill on its corner. -->
+    <div class="max-app reveal" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${m.icon}</svg>
+      <span class="max-app-pill">MAX</span>
+    </div>
     <p class="hero-pill reveal">${m.name}</p>
     <h1 class="reveal">${m.promise}</h1>
     <p class="lede reveal">&pound;250 a month. No setup fee. Live the same day you join.<span class="gap"></span>Ten businesses at a time.</p>
