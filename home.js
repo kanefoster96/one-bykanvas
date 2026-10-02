@@ -4,6 +4,8 @@
  *    buttons are pressed (the review rail keeps its own code in script.js).
  * 2. The "any trade" search types through the trades, lighting the
  *    matching pill; typing filters the pills; Enter opens the match.
+ * 3. The outcome cards' chips float in one card at a time: a card's chips
+ *    wait until that card is in view in the rail and the rail is on screen.
  */
 (function () {
   'use strict';
@@ -21,6 +23,47 @@
       });
     });
   });
+
+  /* ---------- 3. Outcome chips, one card at a time ----------
+   * Two observers, because one cannot see both things: the page one says
+   * whether the rail is on screen, the rail one says which cards are
+   * actually in view inside it (a card peeking at the edge is not). A card
+   * starts only when both are true. Cards that become ready together, as
+   * three do on a wide screen, go in turn rather than all at once. */
+  var ocRail = document.querySelector('.oc-rail');
+  if (ocRail && !reduce && 'IntersectionObserver' in window) (function () {
+    ocRail.classList.add('oc-anim');
+    var cards = [].slice.call(ocRail.querySelectorAll('.oc-card'));
+    var railOnScreen = false;
+    var inRail = new Set();
+    var nextFree = 0;               // when the next card may start, ms
+    var GAP = 750;                  // between one card's chips and the next
+
+    function go() {
+      if (!railOnScreen) return;
+      var now = performance.now();
+      cards.forEach(function (c) {
+        if (c.classList.contains('chips-in') || !inRail.has(c)) return;
+        var wait = Math.max(0, nextFree - now);
+        c.style.setProperty('--wait', (wait / 1000) + 's');
+        c.classList.add('chips-in');
+        nextFree = now + wait + GAP;
+      });
+    }
+
+    new IntersectionObserver(function (es) {
+      railOnScreen = es[0].isIntersecting;
+      go();
+    }, { threshold: 0.35 }).observe(ocRail);
+
+    var cardIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) inRail.add(e.target); else inRail.delete(e.target);
+      });
+      go();
+    }, { root: ocRail, threshold: 0.7 });
+    cards.forEach(function (c) { cardIO.observe(c); });
+  })();
 
   /* ---------- 2. Any trade ---------- */
   var form = document.getElementById('abSearch');
