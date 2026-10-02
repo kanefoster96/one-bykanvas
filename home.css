@@ -165,8 +165,12 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .hh-chip-2{right:-6px;top:26%;animation-delay:.8s}
 .hh-chip-3{left:8%;top:62%;animation-delay:1.1s}
 .hh-chip-3::after{top:auto;bottom:100%}
-.hh-mascot{position:absolute;right:24%;top:-40px;z-index:3;width:116px;height:116px;padding:10px;background:#fff}
-.hh-mascot .ph-tag{font-size:9.5px}
+.hh-frame{z-index:1}
+.hh-mascot{
+  position:absolute;right:22%;top:-72px;z-index:0;width:104px;height:104px;
+  transform:translateY(70px);animation:dotPeek .9s cubic-bezier(.2,.7,.2,1) 1.3s both;
+}
+@keyframes dotPeek{to{transform:translateY(0)}}
 
 @media (max-width:600px){
   .hh{padding-top:44px}
@@ -191,7 +195,8 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
   .hh-chip-1{left:-4px;top:30px}
   .hh-chip-2{right:-4px;top:38%}
   .hh-chip-3{left:4px;top:54%}
-  .hh-mascot{right:2%;top:auto;bottom:60px;width:92px;height:92px;padding:8px;font-size:10px;line-height:1.25;overflow:hidden}
+  .hh-phone-wrap{z-index:1}
+  .hh-mascot{right:14%;top:-54px;width:78px;height:78px}
 }
 
 /* ---------- Outcomes carousel ---------- */
@@ -468,5 +473,6 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
   .hh-cycle > img:first-child,.hh-cycle-3 > img:first-child{opacity:1}
   .hh-build i{animation:none}
   .hh-frame,.oc-card,.oc-card:hover,.ui,.hw-step:nth-child(even) .ui{transform:none}
+  .hh-mascot{animation:none;transform:none}
   .pill:hover{transform:none;transition:none}
 }
