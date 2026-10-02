@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 122;
+const CSS_V = 123;
 const SCRIPT_V = 33;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -113,7 +113,7 @@ function plain(html) {
 /* Shared between the trade pages and the feature pages. */
 const NAV = `<header class="nav" id="nav">
   <div class="nav-inner">
-    <a class="logo" href="/" aria-label="Kanvas One — home">one.</a>
+    <a class="logo" href="/" aria-label="Kanvas One — home">one<span class="wm-dot">.</span></a>
     <button class="nav-chat" id="navChat" type="button" aria-label="Chat with us" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
     <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
       <span></span><span></span>
@@ -179,7 +179,7 @@ function miniForm(placeholder) {
 
 const FOOT = `<footer class="foot">
   <div class="wrap">
-    <p class="foot-logo">one.</p>
+    <p class="foot-logo">one<span class="wm-dot">.</span></p>
     <p class="foot-by">by Kanvas</p>
     <nav class="foot-links" aria-label="Footer">
       <a href="/how-it-works.html">How it works</a><a href="/whats-included.html">What&rsquo;s included</a><a href="/features.html">Features</a><a href="/reviews.html">Reviews</a><a href="/plans.html">Plans</a><a href="/get-started.html">Get started</a>
