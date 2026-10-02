@@ -169,6 +169,12 @@ body.locked{overflow:hidden}
 
 .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px}
 
+/* ---------- Dot ----------
+   The full stop as a character (assets/dot.svg, which carries its own
+   blink). A friendly face where one does some work: the 404, the thanks. */
+.dot-mark{display:block;width:96px;height:96px;margin:0 auto 22px}
+.dot-mark-sm{width:72px;height:72px;margin-bottom:18px}
+
 /* ---------- The free-page banner ----------
    One pill under the nav, nearly full width, on every marketing page: the
    same soft green as "free" everywhere else. */
