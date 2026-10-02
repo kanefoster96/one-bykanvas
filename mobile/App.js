@@ -170,7 +170,7 @@ function Shell() {
       <StatusBar style="dark" backgroundColor="#ffffff" />
       {failed ? (
         <View style={styles.offline}>
-          <Text style={styles.logo}>one.</Text>
+          <Text style={styles.logo}>one<Text style={styles.logoDot}>.</Text></Text>
           <Text style={styles.offlineTitle}>Can&rsquo;t reach kanvas.one</Text>
           <Text style={styles.offlineText}>Check you&rsquo;re online and try again.</Text>
           <Pressable onPress={retry} style={({ pressed }) => [styles.btn, pressed && styles.btnPressed]} accessibilityRole="button">
@@ -212,7 +212,7 @@ function Shell() {
       />
       {loading && !failed ? (
         <View style={styles.loading} pointerEvents="none">
-          <Text style={styles.logo}>one.</Text>
+          <Text style={styles.logo}>one<Text style={styles.logoDot}>.</Text></Text>
           <ActivityIndicator color="#1d1d1f" style={styles.spinner} />
         </View>
       ) : null}
@@ -236,6 +236,7 @@ const styles = StyleSheet.create({
   spinner: { marginTop: 18 },
   offline: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, backgroundColor: '#ffffff' },
   logo: { fontSize: 34, fontWeight: '700', letterSpacing: -1.4, color: '#1d1d1f' },
+  logoDot: { color: '#1a7f37' },
   offlineTitle: { marginTop: 26, fontSize: 20, fontWeight: '600', letterSpacing: -0.4, color: '#1d1d1f' },
   offlineText: { marginTop: 6, fontSize: 15, color: '#6e6e73', textAlign: 'center' },
   btn: { marginTop: 22, backgroundColor: '#1d1d1f', paddingVertical: 12, paddingHorizontal: 22, borderRadius: 980 },
