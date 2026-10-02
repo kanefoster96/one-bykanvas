@@ -38,6 +38,8 @@ body.home h3{font-weight:700;letter-spacing:-.025em}
 [data-tone="light"]{background:var(--paper)}
 [data-tone="white"]{background:#fff}
 body.home .section{padding:clamp(72px,10vw,120px) 0}
+/* Phones: less air between sections, so the page is shorter to scroll. */
+@media (max-width:600px){body.home .section{padding:56px 0}}
 
 /* ---------- Components ---------- */
 /* Icon tile: the hint of colour. */
@@ -209,7 +211,7 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
   /* Inside the screen edge, never cut off by it. */
   .hh-chip-1{left:12px;top:30px}
   .hh-chip-2{right:12px;top:38%}
-  .hh-chip-3{left:12px;top:56%}
+  .hh-chip-3{display:none}
 }
 
 /* ---------- Outcomes carousel ---------- */
@@ -309,10 +311,9 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .ui-choice-no{background:#f1f1f4;color:var(--ink-2);font-weight:500}
 .ui-live{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;letter-spacing:-.01em}
 .ui-live i{width:10px;height:10px;border-radius:50%;background:var(--good);box-shadow:0 0 0 4px var(--good-soft)}
-.ui-list{list-style:none;margin:16px 0 14px;padding:0;display:flex;flex-direction:column;gap:9px}
-.ui-list li{display:flex;align-items:center;gap:10px;font-size:14.5px;line-height:1.35;color:var(--ink)}
-.ui-list li .tile-sm{width:24px;height:24px;flex-basis:24px}
-.ui-list li .tile-sm svg{width:12px;height:12px}
+.ui-chips{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:16px 0 16px}
+.ui-chips .chip:nth-child(1){transform:rotate(-1.5deg)}
+.ui-chips .chip:nth-child(2){transform:rotate(1deg);margin-left:22px}
 .ui-note{margin:0;font-size:13px;color:var(--ink-3)}
 .hw-more{margin-top:clamp(36px,5vw,56px);text-align:center;font-size:15px}
 .hw-more a{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
@@ -360,7 +361,19 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 }
 
 /* ---------- Promise + five-year ---------- */
-.pr-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:22px;margin-top:clamp(32px,5vw,52px);align-items:start}
+.pr .pr-tag{text-align:center;margin-bottom:12px}
+.pr-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:clamp(28px,4vw,40px)}
+.pr-item{
+  display:flex;flex-direction:column;gap:5px;text-align:left;
+  background:#fff;border:1px solid var(--line-soft);border-radius:22px;padding:20px;
+  box-shadow:0 10px 30px rgba(29,29,31,.05);
+}
+.pr-item .tile{width:42px;height:42px;flex:0 0 42px;border-radius:12px;margin-bottom:8px}
+.pr-item .tile svg{width:20px;height:20px}
+.pr-item b{font-size:16px;font-weight:700;letter-spacing:-.015em;line-height:1.25;color:var(--ink)}
+.pr-item > span:not(.tile){font-size:14px;line-height:1.4;color:var(--ink-2)}
+@media (max-width:860px){.pr-strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+@media (max-width:380px){.pr-item{padding:16px}.pr-item b{font-size:15px}}
 .pr-card{background:#fff;border-radius:var(--r-card);border:1px solid var(--line-soft);padding:clamp(24px,3.5vw,36px);box-shadow:0 12px 40px rgba(0,0,0,.05)}
 .pr-card h3{margin:0;font-size:clamp(22px,2.8vw,30px);letter-spacing:-.03em;text-wrap:balance}
 .pr-tag{margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--good)}
@@ -380,11 +393,8 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .fy-sum{margin:22px 0 0;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
 .fy-sum strong{color:var(--ink)}
 .fy-sum a{display:inline-block;margin-top:8px;font-weight:600;color:var(--good);text-decoration:underline;text-underline-offset:3px}
-.pr-ask{margin:18px auto 0;font-size:14px;color:var(--ink-3);text-align:center}
-.pr-ask a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
 body.home .cmp-dialog .pr-card{border:0;box-shadow:none;padding:clamp(20px,3vw,30px) clamp(24px,4vw,36px)}
 body.home .cmp-dialog .fy-sum a{display:none}
-@media (max-width:860px){.pr-grid{grid-template-columns:1fr}}
 @media (max-width:520px){.fy-cols{grid-template-columns:1fr}.rows li{font-size:14px;padding:8px 12px}}
 
 /* ---------- Plans ---------- */
@@ -411,6 +421,11 @@ body.home .boost{border-radius:var(--r-card);max-width:none;display:grid;grid-te
 body.home .boost h3{font-size:clamp(22px,2.8vw,28px);letter-spacing:-.03em;margin-bottom:8px}
 body.home .boost .ticks{margin:0}
 @media (max-width:760px){body.home .boost{grid-template-columns:1fr}}
+body.home .boost-line{display:block;max-width:960px;margin:22px auto 0;padding:18px 26px;border-radius:22px;text-align:center}
+body.home .boost-line p{margin:0;font-size:15px;line-height:1.55;color:var(--ink-2)}
+body.home .boost-line strong{color:var(--good);font-weight:700}
+.plan-cmp{margin-top:6px}
+.plan-cmp a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
 
 /* Starter, the one plan sold: a wide card, the price on the left and the
    ticks on the right. */
@@ -435,7 +450,10 @@ body.home .plan-wide-ticks li{font-size:16px;margin-bottom:14px}
 .up-text .plan-up{margin-top:14px}
 .up-side .ticks{margin:0}
 .up-side .ticks li{font-size:15.5px}
-.up-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.up-chips{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin:0}
+.up-chips .chip:nth-child(2){margin-left:34px}
+.up-chips .chip:nth-child(3){margin-left:14px}
+@media (max-width:600px){.up-chips .chip:nth-child(2){margin-left:18px}.up-chips .chip:nth-child(3){margin-left:6px}}
 .up-chips .chip:nth-child(1){transform:rotate(-2deg)}
 .up-chips .chip:nth-child(2){transform:rotate(1.5deg)}
 .up-chips .chip:nth-child(3){transform:rotate(-1deg)}
