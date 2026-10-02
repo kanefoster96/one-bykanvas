@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kanvas One — A website for your business, from £25 a month</title>
 <meta name="description" content="See a real page for your business within 24 hours, completely free. Kanvas One designs and builds your website for you, live the same day you join. No setup fees, from £25 a month.">
-<meta name="theme-color" content="#0b0b12">
+<meta name="theme-color" content="#ffffff">
 <meta property="og:title" content="Kanvas One — Websites for businesses">
 <meta property="og:description" content="See your site free, within 24 hours. Live the same day you join. No setup fees. One fixed monthly cost.">
 <meta property="og:type" content="website">
@@ -24,7 +24,6 @@
 <link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=3" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=3">
-<link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css?v=118">
 <link rel="stylesheet" href="home.css?v=1">
 </head>
@@ -32,15 +31,14 @@
 
 <a class="skip" href="#main">Skip to content</a>
 
-<!-- ============ NAV (Brief 1) ============
-     Round logo badge, the chat icon, the gradient pill, the burger. The
-     bar follows the tone of the section under it (home.js sets data-tone)
-     and the pill is outlined over the hero, filled after it. -->
-<header class="nav is-hero" id="nav" data-tone="dark">
+<!-- ============ NAV ============
+     The wordmark as it was, the chat icon, one small black pill for the
+     free page, the burger. -->
+<header class="nav" id="nav">
   <div class="nav-inner">
     <a class="logo" href="/" aria-label="Kanvas One — home">one.</a>
     <button class="nav-chat" id="navChat" type="button" aria-label="Chat with us" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
-    <a class="gbtn nav-cta" href="#newFree" data-to-form><span class="nav-cta-long">See yours free</span><span class="nav-cta-short">Free page</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a>
+    <a class="nav-cta" href="#newFree" data-to-form><span class="nav-cta-long">See yours free</span><span class="nav-cta-short">Free page</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a>
     <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
       <span></span><span></span>
     </button>
@@ -53,50 +51,18 @@
 
 <main id="main">
 
-<!-- ============ HERO (Brief 2) ============
-     Dark stage. Left: the scene, three devices showing real customer sites
-     with the outcomes floating round them. Right: the words and the
-     three-step form (hero.js). Under both: the fan of thumbnails, cut off
-     by the bottom edge. On a phone the scene comes first. -->
-<section class="hh" data-tone="dark">
-  <div class="wrap hh-grid">
-    <div class="hh-scene reveal" aria-hidden="true">
-      <div class="hh-dev hh-browser">
-        <div class="hh-bar"><i></i><i></i><i></i><i class="hh-url">yourbusiness.co.uk</i><span class="hh-build">Building<i>.</i><i>.</i><i>.</i></span></div>
-        <div class="hh-screen hh-cycle">
-          <img src="assets/desktop-fstr.jpg" alt="" width="1640" height="824" decoding="async">
-          <img src="assets/desktop-dogs.jpg" alt="" width="1640" height="828" loading="lazy" decoding="async">
-          <img src="assets/desktop-dance.jpg" alt="" width="1640" height="846" loading="lazy" decoding="async">
-          <img src="assets/desktop-triumph.jpg" alt="" width="1640" height="819" loading="lazy" decoding="async">
-        </div>
-      </div>
-      <div class="hh-dev hh-phone hh-phone-l">
-        <div class="hh-screen hh-cycle-3">
-          <img src="assets/IMG_5313.jpeg" alt="" style="background:#fcfcfa" width="1290" height="2061" decoding="async">
-          <img src="assets/IMG_5314.jpeg" alt="" style="background:#0a0a0a" width="1290" height="2286" loading="lazy" decoding="async">
-          <img src="assets/IMG_5315.jpeg" alt="" style="background:#08080a" width="1290" height="1928" loading="lazy" decoding="async">
-        </div>
-      </div>
-      <div class="hh-dev hh-phone hh-phone-r">
-        <div class="hh-screen">
-          <img src="assets/IMG_5315.jpeg" alt="" style="background:#08080a" width="1290" height="1928" loading="lazy" decoding="async">
-        </div>
-      </div>
-
-      <div class="chip chip-glass hh-chip hh-chip-1"><span class="tile tile-sm tile-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>Found on Google</b><small>“plumber near me” · Ranked #2</small></span></div>
-      <div class="chip chip-glass hh-chip hh-chip-2"><span class="tile tile-sm tile-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>New booking</b><small>Tue 10:00 · boiler service</small></span></div>
-      <div class="chip chip-glass hh-chip hh-chip-3"><span class="tile tile-sm tile-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 20h11M8.5 20V9a4 4 0 0 1 8 0M6 13h7"/></svg></span><span class="chip-text"><b>Deposit paid</b><small>£40 · on your site</small></span></div>
-      <div class="chip chip-glass hh-chip hh-chip-4"><span class="tile tile-sm tile-pink"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8 14.12 9.09 20.75 9.16 15.42 13.11 17.41 19.44 12 15.6 6.59 19.44 8.58 13.11 3.25 9.16 9.88 9.09Z"/></svg></span><span class="chip-text"><b>New 5-star review</b><small>asked for automatically</small></span></div>
-      <div class="chip chip-glass hh-chip hh-chip-5"><span class="tile tile-sm tile-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></span><span class="chip-text"><b>“Add a vouchers page”</b><small>Done · 31 hours</small></span></div>
-
-      <div class="ph hh-mascot" data-brief="mascot"><span class="ph-tag">Mascot slot</span>Dot, peeking over the phone. See “The mascot” in the plan.</div>
-    </div>
-
-    <div class="hh-copy">
-      <a class="hero-pill hero-pill-link reveal" href="#newFree" data-to-form><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
-      <h1 class="reveal">Websites for <span class="type-wrap"><span id="heroTrade">trades</span><span class="type-caret" aria-hidden="true"></span>.</span></h1>
-      <p class="sub reveal">See a real page for your business, free, within 24 hours. <span class="dim">Live the same day you join. From &pound;25 a month, no setup fee.</span></p>
-      <form class="hero-form reveal" id="newFree" novalidate>
+<!-- ============ HERO ============
+     The "one." block as it was, quiet and centred, with the three-step
+     form (hero.js). Under it, the frame cycling real customer sites, three
+     outcome chips floating round it on dotted leaders, and the mascot
+     peeking over its edge. On a phone the frame is a phone. -->
+<section class="hh" data-tone="white">
+  <div class="wrap">
+    <a class="hero-pill hero-pill-link reveal" href="#newFree" data-to-form><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
+    <h1 class="reveal">one.</h1>
+    <p class="hero-by reveal">by <span>Kanvas</span></p>
+    <p class="sub reveal">Websites for <span class="type-wrap"><span id="heroTrade">trades</span><span class="type-caret" aria-hidden="true"></span>.</span></p>
+    <form class="hero-form reveal" id="newFree" novalidate>
         <div class="hp" aria-hidden="true">
           <label for="new_extra">Leave this empty</label>
           <input id="new_extra" name="new_extra" type="text" tabindex="-1" autocomplete="off">
@@ -125,16 +91,31 @@
         <p class="note" id="newNote" role="status" aria-live="polite"></p>
         <p class="micro" id="newMicro">Designed for you, found on Google. &pound;25 a month, no setup fee.</p>
       </form>
-    </div>
   </div>
 
-  <!-- The fan: real sites, cut off by the bottom edge of the hero. -->
-  <div class="hh-fan" aria-hidden="true">
-    <div class="fan-wide"><img src="assets/desktop-dogs.jpg" alt="" width="1640" height="828" loading="lazy" decoding="async"></div>
-    <div class="fan-tall"><img src="assets/IMG_5313.jpeg" alt="" width="1290" height="2061" loading="lazy" decoding="async"></div>
-    <div class="fan-wide"><img src="assets/desktop-fstr.jpg" alt="" width="1640" height="824" loading="lazy" decoding="async"></div>
-    <div class="fan-tall"><img src="assets/IMG_5314.jpeg" alt="" width="1290" height="2286" loading="lazy" decoding="async"></div>
-    <div class="fan-wide"><img src="assets/desktop-triumph.jpg" alt="" width="1640" height="819" loading="lazy" decoding="async"></div>
+  <div class="hh-scene reveal" aria-hidden="true">
+    <div class="hh-frame">
+      <div class="hh-bar"><i></i><i></i><i></i><i class="hh-url">yourbusiness.co.uk</i><span class="hh-build">Building<i>.</i><i>.</i><i>.</i></span></div>
+      <div class="hh-screen hh-cycle">
+        <img src="assets/desktop-fstr.jpg" alt="" width="1640" height="824" decoding="async">
+        <img src="assets/desktop-dogs.jpg" alt="" width="1640" height="828" loading="lazy" decoding="async">
+        <img src="assets/desktop-dance.jpg" alt="" width="1640" height="846" loading="lazy" decoding="async">
+        <img src="assets/desktop-triumph.jpg" alt="" width="1640" height="819" loading="lazy" decoding="async">
+      </div>
+    </div>
+    <div class="hh-phone-wrap">
+      <div class="hh-screen hh-cycle-3">
+        <img src="assets/IMG_5313.jpeg" alt="" style="background:#fcfcfa" width="1290" height="2061" decoding="async">
+        <img src="assets/IMG_5314.jpeg" alt="" style="background:#0a0a0a" width="1290" height="2286" loading="lazy" decoding="async">
+        <img src="assets/IMG_5315.jpeg" alt="" style="background:#08080a" width="1290" height="1928" loading="lazy" decoding="async">
+      </div>
+    </div>
+
+    <div class="chip hh-chip hh-chip-1"><span class="tile tile-sm tile-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>Found on Google</b><small>&ldquo;plumber near me&rdquo; &middot; Ranked #2</small></span></div>
+    <div class="chip hh-chip hh-chip-2"><span class="tile tile-sm tile-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>New booking</b><small>Tue 10:00 &middot; deposit paid</small></span></div>
+    <div class="chip hh-chip hh-chip-3"><span class="tile tile-sm tile-pink"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8 14.12 9.09 20.75 9.16 15.42 13.11 17.41 19.44 12 15.6 6.59 19.44 8.58 13.11 3.25 9.16 9.88 9.09Z"/></svg></span><span class="chip-text"><b>New 5-star review</b><small>asked for automatically</small></span></div>
+
+    <div class="ph hh-mascot" data-brief="mascot"><span class="ph-tag">Mascot slot</span>Dot, peeking over the frame.</div>
   </div>
 </section>
 
@@ -142,7 +123,7 @@
      Found, Booked, Reviewed, Changed: four tilted cards, each with a tile,
      a title, today's one-line body, three chips that rise in, and a phone
      corner for the designed screen. The rail scrolls; the buttons step it. -->
-<section id="features" class="section oc" data-tone="dark">
+<section id="features" class="section oc" data-tone="light">
   <div class="wrap">
     <h2 class="reveal">What your site does <span class="dim">from the day it goes live.</span></h2>
   </div>
@@ -152,9 +133,9 @@
       <h3>Found on Google.</h3>
       <p>In search, in Maps, and in the AI chats people ask instead.</p>
       <div class="oc-chips">
-        <div class="chip chip-glass"><span class="tile tile-sm tile-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>“plumber in Leeds”</b><small>searched just now</small></span></div>
-        <div class="chip chip-glass"><span class="tile tile-sm tile-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/></svg></span><span class="chip-text"><b>Ranked #2 locally</b><small>Search and Maps</small></span></div>
-        <div class="chip chip-glass"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span><span class="chip-text"><b>+38 calls this month</b><small>from the site</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>“plumber in Leeds”</b><small>searched just now</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/></svg></span><span class="chip-text"><b>Ranked #2 locally</b><small>Search and Maps</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span><span class="chip-text"><b>+38 calls this month</b><small>from the site</small></span></div>
       </div>
       <div class="oc-phone"><div class="ph" data-brief="3"><span class="ph-tag">Claude Design · Brief 3</span>Phone corner, 390×300: a Google result card with the customer’s business at the top, cut off by the card edge.</div></div>
     </article>
@@ -164,9 +145,9 @@
       <h3>Booked while you work.</h3>
       <p>Bookings, deposits, card payments and enquiries, while you&rsquo;re on a job.</p>
       <div class="oc-chips">
-        <div class="chip chip-glass"><span class="tile tile-sm tile-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>New booking</b><small>Tue 10:00 · Sam R.</small></span></div>
-        <div class="chip chip-glass"><span class="tile tile-sm tile-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 20h11M8.5 20V9a4 4 0 0 1 8 0M6 13h7"/></svg></span><span class="chip-text"><b>Deposit paid</b><small>£40 · card</small></span></div>
-        <div class="chip chip-glass"><span class="tile tile-sm tile-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></span><span class="chip-text"><b>Reminder sent</b><small>Mon 18:00</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>New booking</b><small>Tue 10:00 · Sam R.</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 20h11M8.5 20V9a4 4 0 0 1 8 0M6 13h7"/></svg></span><span class="chip-text"><b>Deposit paid</b><small>£40 · card</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></span><span class="chip-text"><b>Reminder sent</b><small>Mon 18:00</small></span></div>
       </div>
       <div class="oc-phone"><div class="ph" data-brief="3"><span class="ph-tag">Claude Design · Brief 3</span>Phone corner, 390×300: the One app’s booking notification on the lock screen.</div></div>
     </article>
@@ -176,9 +157,9 @@
       <h3>Reviews that bring the next one.</h3>
       <p>A Google review asked for after every job, automatically. Every customer&rsquo;s history kept against their name.</p>
       <div class="oc-chips">
-        <div class="chip chip-glass"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Job done</b><small>marked in the app</small></span></div>
-        <div class="chip chip-glass"><span class="tile tile-sm tile-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></span><span class="chip-text"><b>Review request sent</b><small>two hours after</small></span></div>
-        <div class="chip chip-glass"><span class="tile tile-sm tile-yellow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8 14.12 9.09 20.75 9.16 15.42 13.11 17.41 19.44 12 15.6 6.59 19.44 8.58 13.11 3.25 9.16 9.88 9.09Z"/></svg></span><span class="chip-text"><b><span class="chip-stars">★★★★★</span></b><small>“Brilliant, on time”</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Job done</b><small>marked in the app</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></span><span class="chip-text"><b>Review request sent</b><small>two hours after</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-yellow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8 14.12 9.09 20.75 9.16 15.42 13.11 17.41 19.44 12 15.6 6.59 19.44 8.58 13.11 3.25 9.16 9.88 9.09Z"/></svg></span><span class="chip-text"><b><span class="chip-stars">★★★★★</span></b><small>“Brilliant, on time”</small></span></div>
       </div>
       <div class="oc-phone"><div class="ph" data-brief="3"><span class="ph-tag">Claude Design · Brief 3</span>Phone corner, 390×300: a Google review card with five stars and the first line of the quote.</div></div>
     </article>
@@ -188,9 +169,9 @@
       <h3>Changed within 48 hours.</h3>
       <p>Menus, galleries, vouchers, live chat, member logins: ask, and it&rsquo;s built in. Every change after launch included.</p>
       <div class="oc-chips">
-        <div class="chip chip-glass"><span class="tile tile-sm tile-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></span><span class="chip-text"><b>“Can you add a gift voucher page?”</b><small>you, Tuesday 9:12</small></span></div>
-        <div class="chip chip-glass"><span class="tile tile-sm tile-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="8.5"/></svg></span><span class="chip-text"><b>On it</b><small>Kane, Tuesday 9:40</small></span></div>
-        <div class="chip chip-glass"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Done · 31 hours</b><small>live on your site</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></span><span class="chip-text"><b>“Can you add a gift voucher page?”</b><small>you, Tuesday 9:12</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="8.5"/></svg></span><span class="chip-text"><b>On it</b><small>Kane, Tuesday 9:40</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Done · 31 hours</b><small>live on your site</small></span></div>
       </div>
       <div class="oc-phone"><div class="ph" data-brief="3"><span class="ph-tag">Claude Design · Brief 3</span>Phone corner, 390×300: the Requests thread in the One app, the voucher page marked done.</div></div>
     </article>
@@ -202,7 +183,7 @@
 </section>
 
 <!-- ============ HOW IT WORKS (Brief 4) ============ -->
-<section id="how" class="section hw" data-tone="dark">
+<section id="how" class="section hw" data-tone="white">
   <div class="wrap">
     <h2 class="reveal">How it works? <span class="dim">It&rsquo;s as easy as 1, 2, 3&hellip;</span></h2>
     <div class="hw-steps">
@@ -504,21 +485,20 @@
   </div>
 </section>
 
-<!-- ============ CLOSING ASK (Brief 8) ============
+<!-- ============ CLOSING ASK ============
      One ask, repeated: the free page. The field is a link back to the hero
      form (data-to-form), so the form lives once. -->
-<section id="start" class="section ce cta-end" data-tone="dark">
-  <div class="ce-art" aria-hidden="true">
-    <div class="hh-scene">
-      <div class="hh-dev hh-browser"><div class="hh-bar"><i></i><i></i><i></i><i class="hh-url">yourbusiness.co.uk</i></div><div class="hh-screen"><img src="assets/desktop-dance.jpg" alt="" width="1640" height="846" loading="lazy" decoding="async"></div></div>
-      <div class="hh-dev hh-phone hh-phone-l"><div class="hh-screen"><img src="assets/IMG_5314.jpeg" alt="" style="background:#0a0a0a" width="1290" height="2286" loading="lazy" decoding="async"></div></div>
-    </div>
-  </div>
+<section id="start" class="section ce cta-end" data-tone="white">
   <div class="wrap center">
     <h2 class="reveal">See yours free, <span class="dim">first.</span></h2>
     <p class="lede reveal">Your page, in your inbox within 24 hours.<span class="gap"></span>Then decide.</p>
     <a class="gfield reveal" href="#newFree" data-to-form><span class="gfield-text">What&rsquo;s your business name?</span><span class="gfield-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span></a>
     <p class="micro reveal">No setup fees. Live the same day you join. Cancel anytime.</p>
+    <div class="ce-chips reveal" aria-hidden="true">
+      <div class="chip"><span class="tile tile-sm tile-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>Found on Google</b><small>in your town</small></span></div>
+      <div class="chip"><span class="tile tile-sm tile-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>Booked</b><small>while you work</small></span></div>
+      <div class="chip"><span class="tile tile-sm tile-pink"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8 14.12 9.09 20.75 9.16 15.42 13.11 17.41 19.44 12 15.6 6.59 19.44 8.58 13.11 3.25 9.16 9.88 9.09Z"/></svg></span><span class="chip-text"><b>Reviewed</b><small>asked for automatically</small></span></div>
+    </div>
     <div class="ph ce-mascot" data-brief="mascot" aria-hidden="true"><span class="ph-tag">Mascot slot</span>Dot, waving.</div>
   </div>
 </section>
@@ -529,7 +509,7 @@
 <footer class="foot" data-tone="light">
   <div class="wrap">
     <div class="ft-top">
-      <p class="foot-logo ft-badge">one.</p>
+      <p class="foot-logo">one.</p>
       <p class="foot-by">by Kanvas</p>
     </div>
     <p class="ft-tag">A website for your business, designed, built and looked after. From &pound;25 a month.</p>

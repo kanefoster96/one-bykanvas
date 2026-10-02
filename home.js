@@ -1,11 +1,8 @@
 /* one — the homepage's own behaviour, on top of script.js and hero.js.
  *
- * 1. The nav follows the tone of the section under it (dark glass over the
- *    dark sections, white glass over the light ones), and its pill is
- *    outlined while the hero is on screen, filled after.
- * 2. Any rail with [data-rail] steps by a card when its prev and next
+ * 1. Any rail with [data-rail] steps by a card when its prev and next
  *    buttons are pressed (the review rail keeps its own code in script.js).
- * 3. The "any trade" search types through the trades, lighting the
+ * 2. The "any trade" search types through the trades, lighting the
  *    matching pill; typing filters the pills; Enter opens the match.
  */
 (function () {
@@ -13,33 +10,7 @@
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- 1. The nav's tone ---------- */
-  var nav = document.getElementById('nav');
-  var hero = document.querySelector('.hh');
-  if (nav) {
-    var toned = [].slice.call(document.querySelectorAll('main [data-tone], footer[data-tone]'));
-    var ticking = false;
-    function paintNav() {
-      ticking = false;
-      var line = nav.offsetHeight + 1;
-      var tone = 'light';
-      for (var i = 0; i < toned.length; i++) {
-        var r = toned[i].getBoundingClientRect();
-        if (r.top <= line && r.bottom > line) { tone = toned[i].getAttribute('data-tone') === 'dark' ? 'dark' : 'light'; break; }
-      }
-      if (nav.getAttribute('data-tone') !== tone) nav.setAttribute('data-tone', tone);
-      if (hero) {
-        var hr = hero.getBoundingClientRect();
-        nav.classList.toggle('is-hero', hr.bottom > line + 80);
-      }
-    }
-    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(paintNav); } }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    paintNav();
-  }
-
-  /* ---------- 2. Rails with their own buttons ---------- */
+  /* ---------- 1. Rails with their own buttons ---------- */
   document.querySelectorAll('[data-rail]').forEach(function (rail) {
     var section = rail.closest('section') || document;
     section.querySelectorAll('[data-rail-dir]').forEach(function (btn) {
@@ -51,7 +22,7 @@
     });
   });
 
-  /* ---------- 3. Any trade ---------- */
+  /* ---------- 2. Any trade ---------- */
   var form = document.getElementById('abSearch');
   var input = document.getElementById('abInput');
   var pills = [].slice.call(document.querySelectorAll('#abPills .pill'));
