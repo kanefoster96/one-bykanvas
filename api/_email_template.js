@@ -4,7 +4,7 @@
  * modern CSS are unreliable across mail clients (Outlook desktop especially),
  * so everything that matters is repeated per element rather than relying on
  * a <style> block. Matches styles.css: same font stack, same ink/grey tokens,
- * same full-width pill button as .btn, same "one." mark as assets/favicon.svg.
+ * same full-width pill button as .btn, same "one." mark as assets/icon.svg, green full stop and all.
  *
  * html() always needs a plain-text sibling from the caller - sendEmail()
  * sends both, since some clients and spam filters expect a text part to
@@ -43,7 +43,7 @@ function brand() {
      radius is round everywhere except Outlook desktop, which ignores the
      radius and lands on the square it would have drawn anyway. */
   const dot = `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                 <tr><td width="3" height="3" style="width:3px;height:3px;font-size:0;line-height:3px;background:#ffffff;border-radius:50%;">&nbsp;</td></tr>
+                 <tr><td width="3" height="3" style="width:3px;height:3px;font-size:0;line-height:3px;background:#34c17a;border-radius:50%;">&nbsp;</td></tr>
                </table>`;
 
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0">

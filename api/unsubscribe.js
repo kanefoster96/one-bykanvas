@@ -21,7 +21,7 @@ function page({ heading, body, form, token, marketing, list }) {
 <body style="margin:0;background:#f5f5f7;font-family:${FONT};">
   <div style="max-width:460px;margin:0 auto;padding:64px 20px;">
     <div style="background:#fff;border-radius:20px;padding:34px 32px;">
-      <div style="font-size:22px;font-weight:600;letter-spacing:-.045em;color:#1d1d1f;">one.</div>
+      <div style="font-size:22px;font-weight:600;letter-spacing:-.045em;color:#1d1d1f;">one<span style="color:#1a7f37;">.</span></div>
       <h1 style="margin:22px 0 12px;font-size:23px;font-weight:600;letter-spacing:-.02em;color:#1d1d1f;">${heading}</h1>
       <p style="margin:0 0 8px;font-size:16px;line-height:1.55;color:#6e6e73;">${body}</p>
       ${form ? `<form method="POST" action="/api/unsubscribe" style="margin-top:26px;">

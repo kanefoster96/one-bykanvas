@@ -527,7 +527,15 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 .ft-bottom .foot-copy{margin:0;font-size:13.5px;color:var(--ink-2)}
 .ft-made{margin:4px 0 0;font-size:13.5px}
 .ft-status{display:inline-flex;align-items:center;gap:8px}
-.ft-status i{width:9px;height:9px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--good-soft)}
+.ft-status{font-weight:500;color:var(--ink)}
+/* A status light: a steady green dot with a soft ring pulsing out from it. */
+.ft-status i{position:relative;width:9px;height:9px;border-radius:50%;background:#22a356;flex:0 0 9px}
+.ft-status i::after{
+  content:"";position:absolute;inset:0;border-radius:50%;background:#22a356;
+  animation:statusPulse 2s ease-out infinite;
+}
+@keyframes statusPulse{0%{transform:scale(1);opacity:.55}80%,100%{transform:scale(2.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){.ft-status i::after{animation:none;opacity:0}.ft-status i{box-shadow:0 0 0 3px var(--good-soft)}}
 @media (max-width:760px){.ft-cols{grid-template-columns:1fr 1fr;gap:22px}}
 @media (max-width:420px){.ft-cols{grid-template-columns:1fr}}
 
