@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 121;
+const CSS_V = 122;
 const SCRIPT_V = 33;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -123,7 +123,7 @@ const NAV = `<header class="nav" id="nav">
 
 <!-- The free page, as a banner under the nav: one pill, nearly full width,
      on every marketing page. -->
-<a class="free-banner" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg><span>Try it free: see your site within 24 hours</span><span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
+<a class="free-banner" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg><span>Try it free: see your site within 24 hours</span><span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
 
 <div class="menu" id="menu" hidden></div>
 <div class="scrim" id="scrim" hidden></div>
@@ -140,7 +140,7 @@ function miniForm(placeholder) {
   <div class="wrap center">
     <form class="free-mini reveal" id="miniFree" novalidate>
       <p class="hero-pill"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free</p>
-      <h3>See your site within 24 hours. Free.</h3>
+      <h3>See your site within 24 hours. <span class="g-free">Free.</span></h3>
       <p class="lede">Three things, and a real page lands in your inbox within 24 hours.<span class="gap"></span>No card.</p>
 
       <div class="hp" aria-hidden="true">
@@ -370,7 +370,7 @@ ${faqFor(b).map(([q, a]) => `    <details>
 </section>
 ` : ''}<section class="section grey cta-end">
   <div class="wrap center">
-    <h2 class="reveal">See yours free, within 24 hours.</h2>
+    <h2 class="reveal">See yours <span class="g-free">free</span>, within 24 hours.</h2>
     <p class="lede reveal">${b.promise ? 'Our side of the deal, in writing.' : b.freeLede}</p>
 ${b.rich ? `${b.promise ? `    <div class="promise reveal">
       <p class="promise-name">${b.promise.name}</p>
@@ -564,7 +564,7 @@ ${f.faq.map(([q, a]) => `    <details>
 
 <section class="section grey cta-end">
   <div class="wrap center">
-    <h2 class="reveal">See yours free, within 24 hours.</h2>
+    <h2 class="reveal">See yours <span class="g-free">free</span>, within 24 hours.</h2>
     <p class="lede reveal">A real page for your business, before you decide anything.</p>
     <div class="cta-row reveal">
       <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
@@ -800,7 +800,7 @@ ${m.faq.map(([q, a]) => `    <details>
 <!-- 10. The ask. -->
 <section class="section cta-end">
   <div class="wrap center">
-    <h2 class="reveal">Start with the free example.</h2>
+    <h2 class="reveal">Start with the <span class="g-free">free</span> example.</h2>
     <p class="lede reveal">A real page for your business, within 24 hours.<span class="gap"></span>No card, no catch. Then decide.</p>
     <div class="cta-row reveal">
       <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
