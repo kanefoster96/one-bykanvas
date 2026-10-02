@@ -178,6 +178,11 @@ body.locked{overflow:hidden}
    is set: the header, the footer, the homepage hero. Left to right across
    the dot, so the whole gradient shows on so small a mark. */
 .wm-dot{
+  /* Tight letter-spacing makes the full stop's box narrower than the glyph,
+     and a text gradient only paints inside the box, so the right of the dot
+     was cut off. Padding widens the painted area; the negative margin keeps
+     the spacing as it was. */
+  padding-right:.12em;margin-right:-.12em;
   background:linear-gradient(90deg,#1a7f37 0%,#2fb36a 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;
@@ -194,6 +199,7 @@ body.locked{overflow:hidden}
    reads at better than 3:1 on white. Plain green where text gradients are
    not supported, and the system colour in high-contrast modes. */
 .g-free{
+  padding-right:.08em;margin-right:-.08em;
   background:linear-gradient(100deg,#126b2c 0%,#1a7f37 42%,#22a356 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;
