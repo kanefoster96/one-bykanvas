@@ -291,7 +291,12 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
   border:1px solid var(--line);background:#fff;font-size:16px;
 }
 .ui-input svg{width:18px;height:18px;color:var(--ink-3)}
-.ui-input .type-caret{height:1em;background:var(--good)}
+/* An illustration, not a field: grey words and a still, grey cursor tight
+   against them, so nobody tries to type in it. */
+.ui-input{color:var(--ink-3);border-color:var(--line-soft);background:var(--paper);cursor:default;user-select:none}
+.ui-input .type-caret{height:1.05em;width:2px;margin:0 0 0 1px;background:#c7c7cc;animation:none}
+.ui-typed{white-space:nowrap}
+.ui-typed .type-caret{vertical-align:-.12em}
 .ui-sources{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
 .ui-src{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:999px;background:var(--paper);font-size:13.5px;font-weight:600;color:var(--ink-2)}
 .ui-src::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--grad)}
