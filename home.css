@@ -143,7 +143,7 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .hh-made a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
 
 /* The scene. */
-.hh-scene{position:relative;width:min(900px,100%);margin:clamp(24px,4vw,40px) auto 0;padding:0 22px}
+.hh-scene{position:relative;width:min(900px,100%);margin:clamp(44px,6vw,68px) auto 0;padding:0 22px}
 .hh-frame{
   position:relative;transform:rotate(-1.5deg);transform-origin:50% 100%;
   background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg) var(--radius-lg) 0 0;
@@ -175,7 +175,7 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .hh-chip-2{right:-6px;top:26%;animation-delay:.7s,1.6s}
 .hh-chip-3{left:8%;top:62%;animation-delay:1s,2.2s}
 .hh-chip-3::after{top:auto;bottom:100%}
-.hh-mascot{position:absolute;right:24%;top:-58px;z-index:3;width:116px;height:116px;padding:10px;background:#fff}
+.hh-mascot{position:absolute;right:24%;top:-40px;z-index:3;width:116px;height:116px;padding:10px;background:#fff}
 .hh-mascot .ph-tag{font-size:9.5px}
 
 @media (max-width:600px){
