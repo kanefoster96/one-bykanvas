@@ -91,7 +91,10 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .ph-tag{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--good)}
 
 /* ---------- Motion ---------- */
-@keyframes hFloat{0%,100%{transform:translateY(-5px)}50%{transform:translateY(5px)}}
+/* One animation per chip: it floats in once and stays put. The rotation
+   a chip carries rides along as --r, since an animated transform replaces
+   the base one. */
+@keyframes hIn{from{opacity:0;transform:translateY(16px) scale(.96) rotate(var(--r,0deg))}to{opacity:1;transform:translateY(0) scale(1) rotate(var(--r,0deg))}}
 @keyframes hPop{from{opacity:0;transform:scale(.92) translateY(8px)}to{opacity:1;transform:none}}
 @keyframes hDots{0%,100%{opacity:.25}40%{opacity:1}}
 /* Four seconds a site, no gap: one fades as the next arrives. */
@@ -139,11 +142,10 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .hh .mini-go{flex:0 0 50px;width:50px;height:50px;background:var(--grad)}
 .hh .mini-go:hover{box-shadow:0 6px 18px rgba(26,127,55,.3)}
 .hh .mini-step label{text-align:center}
-.hh-made{margin:clamp(28px,4vw,40px) auto 0;font-size:13.5px;color:var(--ink-3)}
-.hh-made a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+
 
 /* The scene. */
-.hh-scene{position:relative;width:min(900px,100%);margin:clamp(44px,6vw,68px) auto 0;padding:0 22px}
+.hh-scene{position:relative;width:min(900px,100%);margin:clamp(48px,7vw,76px) auto 0;padding:0 22px}
 .hh-frame{
   position:relative;transform:rotate(-1.5deg);transform-origin:50% 100%;
   background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius-lg) var(--radius-lg) 0 0;
@@ -169,11 +171,11 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .hh-cycle-3 > img:nth-child(3){animation-delay:8s}
 .hh-phone-wrap{display:none}
 /* Three chips on dotted leaders, floating; the mascot over the edge. */
-.hh-chip{position:absolute;z-index:4;opacity:0;animation:hPop .5s var(--ease) both,hFloat 6s ease-in-out .9s infinite}
+.hh-chip{position:absolute;z-index:4;opacity:0;animation:hIn .7s cubic-bezier(.2,.7,.2,1) both}
 .hh-chip::after{content:"";position:absolute;left:50%;top:100%;width:0;height:36px;border-left:1.5px dashed rgba(29,29,31,.3)}
-.hh-chip-1{left:0;top:-8px;animation-delay:.4s,1s}
-.hh-chip-2{right:-6px;top:26%;animation-delay:.7s,1.6s}
-.hh-chip-3{left:8%;top:62%;animation-delay:1s,2.2s}
+.hh-chip-1{left:0;top:-8px;animation-delay:.5s}
+.hh-chip-2{right:-6px;top:26%;animation-delay:.8s}
+.hh-chip-3{left:8%;top:62%;animation-delay:1.1s}
 .hh-chip-3::after{top:auto;bottom:100%}
 .hh-mascot{position:absolute;right:24%;top:-40px;z-index:3;width:116px;height:116px;padding:10px;background:#fff}
 .hh-mascot .ph-tag{font-size:9.5px}
@@ -221,15 +223,17 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .oc-card > .tile{background:var(--grad);color:#fff}
 .oc-card h3{margin:18px 0 8px;font-size:25px;letter-spacing:-.03em}
 .oc-card > p{margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)}
-.oc-chips{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:auto 0 0;padding-top:26px;position:relative;z-index:2}
+.oc-chips{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:0;padding-top:26px;position:relative;z-index:2}
 .oc-chips .chip{opacity:0;max-width:100%}
-.oc-chips .chip:nth-child(1){transform:rotate(-2deg);margin-left:6px}
-.oc-chips .chip:nth-child(2){transform:rotate(1.5deg);margin-left:38px}
-.oc-chips .chip:nth-child(3){transform:rotate(-1deg);margin-left:18px}
-.reveal.in .oc-chips .chip{animation:hPop .45s var(--ease) both,hFloat 6s ease-in-out 1s infinite}
-.reveal.in .oc-chips .chip:nth-child(1){animation-delay:.1s,1.2s}
-.reveal.in .oc-chips .chip:nth-child(2){animation-delay:.25s,1.9s}
-.reveal.in .oc-chips .chip:nth-child(3){animation-delay:.4s,2.6s}
+.oc-chips .chip:nth-child(1){--r:-2deg;transform:rotate(-2deg);margin-left:6px}
+.oc-chips .chip:nth-child(2){--r:1.5deg;transform:rotate(1.5deg);margin-left:38px}
+.oc-chips .chip:nth-child(3){--r:-1deg;transform:rotate(-1deg);margin-left:18px}
+/* They float in once the card has arrived (the reveal takes .7s), each a
+   beat after the last, and then stay still. */
+.reveal.in .oc-chips .chip{animation:hIn .7s cubic-bezier(.2,.7,.2,1) both}
+.reveal.in .oc-chips .chip:nth-child(1){animation-delay:.5s}
+.reveal.in .oc-chips .chip:nth-child(2){animation-delay:.68s}
+.reveal.in .oc-chips .chip:nth-child(3){animation-delay:.86s}
 .oc-nav{margin-top:26px;justify-content:flex-end;padding:0 max(22px,calc((100vw - var(--wrap))/2))}
 .oc .rail-btn{width:48px;height:48px;font-size:20px}
 @media (max-width:600px){
@@ -423,12 +427,14 @@ body.home .faq .ask{margin-top:18px;text-align:center}
 .ce{position:relative;overflow:hidden;text-align:center}
 .ce .gfield{max-width:480px;margin:30px auto 0;text-align:left}
 .ce-chips{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:34px auto 0}
-.ce-chips .chip:nth-child(1){transform:rotate(-3deg)}
-.ce-chips .chip:nth-child(2){transform:rotate(2deg)}
-.ce-chips .chip:nth-child(3){transform:rotate(-1.5deg)}
-.reveal.in .ce-chips .chip{animation:hFloat 6s ease-in-out infinite}
-.reveal.in .ce-chips .chip:nth-child(2){animation-delay:1.3s}
-.reveal.in .ce-chips .chip:nth-child(3){animation-delay:2.6s}
+.ce-chips .chip{opacity:0}
+.ce-chips .chip:nth-child(1){--r:-3deg;transform:rotate(-3deg)}
+.ce-chips .chip:nth-child(2){--r:2deg;transform:rotate(2deg)}
+.ce-chips .chip:nth-child(3){--r:-1.5deg;transform:rotate(-1.5deg)}
+.reveal.in .ce-chips .chip{animation:hIn .7s cubic-bezier(.2,.7,.2,1) both}
+.reveal.in .ce-chips .chip:nth-child(1){animation-delay:.5s}
+.reveal.in .ce-chips .chip:nth-child(2){animation-delay:.68s}
+.reveal.in .ce-chips .chip:nth-child(3){animation-delay:.86s}
 
 /* ---------- Footer ---------- */
 body.home .foot{border-top:0;padding-top:clamp(48px,7vw,72px)}
@@ -453,7 +459,7 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 
 /* ---------- Reduced motion: everything still, first frame shown ---------- */
 @media (prefers-reduced-motion:reduce){
-  .hh-chip,.oc-chips .chip,.reveal.in .oc-chips .chip,.reveal.in .ui-pin,.reveal.in .ce-chips .chip{animation:none;opacity:1}
+  .hh-chip,.oc-chips .chip,.reveal.in .oc-chips .chip,.reveal.in .ui-pin,.ce-chips .chip,.reveal.in .ce-chips .chip{animation:none;opacity:1}
   .hh-cycle > img,.hh-cycle-3 > img{animation:none;opacity:0}
   .hh-cycle > img:first-child,.hh-cycle-3 > img:first-child{opacity:1}
   .hh-build i{animation:none}
