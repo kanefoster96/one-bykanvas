@@ -173,6 +173,25 @@ body.locked{overflow:hidden}
 
 .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px}
 
+/* ---------- Free, in green ----------
+   The word "free" in a heading next to the free-page ask, and nowhere
+   else: green already means free on this site, so the gradient spends that
+   meaning where it earns a click. Dark green to a lighter green that still
+   reads at better than 3:1 on white. Plain green where text gradients are
+   not supported, and the system colour in high-contrast modes. */
+.g-free{
+  background:linear-gradient(100deg,#126b2c 0%,#1a7f37 42%,#22a356 100%);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone;
+}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  .g-free{background:none;color:var(--good);-webkit-text-fill-color:currentColor}
+}
+@media (forced-colors:active){
+  .g-free{background:none;color:CanvasText;-webkit-text-fill-color:CanvasText}
+}
+
 /* ---------- Dot ----------
    The full stop as a character (assets/dot.svg, which carries its own
    blink). A friendly face where one does some work: the 404, the thanks. */
