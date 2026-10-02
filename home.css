@@ -23,8 +23,18 @@ body.home{
 /* ---------- Type ---------- */
 body.home h2{font-weight:700;font-size:clamp(32px,5vw,50px);letter-spacing:-.035em;line-height:1.04;text-wrap:balance}
 body.home h3{font-weight:700;letter-spacing:-.025em}
-/* The second clause of a two-tone headline. */
-.dim{color:var(--dim)}
+/* The second clause of a two-tone headline: the emphasis, in the green
+   gradient (one emphasis colour per title, so nothing else in it is green). */
+.dim{
+  background:linear-gradient(100deg,#126b2c 0%,#1a7f37 42%,#22a356 100%);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone;
+}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  .dim{background:none;color:var(--good);-webkit-text-fill-color:currentColor}
+}
+@media (forced-colors:active){.dim{background:none;color:CanvasText;-webkit-text-fill-color:CanvasText}}
 [data-tone="light"]{background:var(--paper)}
 [data-tone="white"]{background:#fff}
 body.home .section{padding:clamp(72px,10vw,120px) 0}

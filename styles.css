@@ -173,6 +173,20 @@ body.locked{overflow:hidden}
 
 .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px}
 
+/* ---------- The wordmark's full stop ----------
+   "one." with the full stop in the green gradient, wherever the wordmark
+   is set: the header, the footer, the homepage hero. Left to right across
+   the dot, so the whole gradient shows on so small a mark. */
+.wm-dot{
+  background:linear-gradient(90deg,#1a7f37 0%,#2fb36a 100%);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  .wm-dot{background:none;color:var(--good);-webkit-text-fill-color:currentColor}
+}
+@media (forced-colors:active){.wm-dot{background:none;color:CanvasText;-webkit-text-fill-color:CanvasText}}
+
 /* ---------- Free, in green ----------
    The word "free" in a heading next to the free-page ask, and nowhere
    else: green already means free on this site, so the gradient spends that
