@@ -101,24 +101,12 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 @keyframes hCycle4{0%,22%{opacity:1}27%,95%{opacity:0}100%{opacity:1}}
 @keyframes hCycle3{0%,29%{opacity:1}35%,94%{opacity:0}100%{opacity:1}}
 
-/* ---------- Nav ---------- */
-/* The wordmark as it was; one small black pill for the free page. */
-.nav-cta{
-  display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 14px;margin-right:10px;
-  border-radius:999px;background:var(--grad);color:#fff;font-size:13.5px;font-weight:600;letter-spacing:-.01em;
-  transition:box-shadow .2s var(--ease),transform .2s var(--ease);
-}
-.nav-cta:hover{text-decoration:none;box-shadow:0 6px 18px rgba(26,127,55,.3);transform:translateY(-1px)}
-.nav-cta svg{width:14px;height:14px}
-.nav-cta-short{display:none}
-@media (max-width:380px){.nav-cta-long{display:none}.nav-cta-short{display:inline}.nav-cta{padding:0 12px}}
-
 /* ---------- Hero ----------
    The "one." block, centred and quiet, then the frame with three chips
    floating round it and the mascot peeking over its edge. */
 .hh{
   position:relative;overflow:hidden;text-align:center;
-  padding:clamp(56px,9vw,96px) 0 0;
+  padding:clamp(44px,7vw,80px) 0 0;
   background:linear-gradient(180deg,#fbfbfd 0%,#ffffff 62%);
 }
 .hh h1{font-size:clamp(76px,17vw,168px);letter-spacing:-.055em;line-height:.9;font-weight:600}
@@ -191,7 +179,7 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
   .hh-phone-wrap{
     display:block;width:min(260px,66vw);margin:0 auto -41%;aspect-ratio:556/1134;position:relative;
     background:url("assets/iphone-frame.webp") center/100% 100% no-repeat;
-    filter:drop-shadow(0 26px 40px rgba(0,0,0,.22));transform:rotate(-3deg);transform-origin:50% 100%;
+    filter:drop-shadow(0 26px 40px rgba(0,0,0,.22));
   }
   .hh-phone-wrap .hh-screen{
     position:absolute;left:5.2%;top:2.2%;right:5.2%;bottom:2.2%;aspect-ratio:auto;
@@ -463,6 +451,6 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
   .hh-cycle > img,.hh-cycle-3 > img{animation:none;opacity:0}
   .hh-cycle > img:first-child,.hh-cycle-3 > img:first-child{opacity:1}
   .hh-build i{animation:none}
-  .hh-frame,.hh-phone-wrap,.oc-card,.oc-card:hover,.ui,.hw-step:nth-child(even) .ui{transform:none}
-  .pill:hover,.nav-cta:hover{transform:none;transition:none}
+  .hh-frame,.oc-card,.oc-card:hover,.ui,.hw-step:nth-child(even) .ui{transform:none}
+  .pill:hover{transform:none;transition:none}
 }

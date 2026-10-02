@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 118;
+const CSS_V = 119;
 const SCRIPT_V = 33;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -120,6 +120,10 @@ const NAV = `<header class="nav" id="nav">
     </button>
   </div>
 </header>
+
+<!-- The free page, as a banner under the nav: one pill, nearly full width,
+     on every marketing page. -->
+<a class="free-banner" href="/free.html"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg><span>Try it free: see your site within 24 hours</span><span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
 
 <div class="menu" id="menu" hidden></div>
 <div class="scrim" id="scrim" hidden></div>
@@ -251,7 +255,6 @@ ${JSON.stringify({
 
 ${NAV}<section class="page-hero">
   <div class="wrap center">
-    <a class="hero-pill hero-pill-link reveal" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">${b.h1}</h1>
     <p class="lede reveal">${lines(b.lede)}</p>
 ${b.heroNote ? `    <p class="micro reveal hero-note">${b.heroNote}</p>
@@ -502,7 +505,6 @@ ${JSON.stringify({
 
 ${NAV}<section class="page-hero">
   <div class="wrap center">
-    <a class="hero-pill hero-pill-link reveal" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free<span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
     <h1 class="reveal">${f.h1}</h1>
     <p class="lede reveal">${lines(f.lede)}</p>
     <p class="micro reveal hero-note">Built into your own website, set up for you. ${f.plan === 'max' ? '&pound;250 a month, no setup fee.' : 'From &pound;50 a month, no setup fee.'}</p>
