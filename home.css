@@ -26,6 +26,7 @@ body.home h3{font-weight:700;letter-spacing:-.025em}
 /* The second clause of a two-tone headline: the emphasis, in the green
    gradient (one emphasis colour per title, so nothing else in it is green). */
 .dim{
+  padding-right:.08em;margin-right:-.08em;
   background:linear-gradient(100deg,#126b2c 0%,#1a7f37 42%,#22a356 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;
@@ -34,6 +35,8 @@ body.home h3{font-weight:700;letter-spacing:-.025em}
 @supports not ((-webkit-background-clip:text) or (background-clip:text)){
   .dim{background:none;color:var(--good);-webkit-text-fill-color:currentColor}
 }
+/* The green clause on a line of its own. */
+.dim-line{display:block;width:fit-content}
 @media (forced-colors:active){.dim{background:none;color:CanvasText;-webkit-text-fill-color:CanvasText}}
 [data-tone="light"]{background:var(--paper)}
 [data-tone="white"]{background:#fff}
