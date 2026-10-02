@@ -70,6 +70,14 @@
   var input = document.getElementById('abInput');
   var pills = [].slice.call(document.querySelectorAll('#abPills .pill'));
   if (form && input && pills.length) (function () {
+    var measure = document.getElementById('abMeasure');
+    var caret = document.getElementById('abCaret');
+    /* The drawn caret sits just after the typed words. */
+    function placeCaret() {
+      if (!measure || !caret) return;
+      measure.textContent = input.placeholder;
+      caret.style.setProperty('--cx', (measure.offsetWidth + 3) + 'px');
+    }
     var TRADES = ['Barbers', 'Salons', 'Trades', 'Coffee shops', 'Gyms', 'Cleaners', 'Tutors', 'Photographers', 'Gardeners', 'Dance schools'];
     var i = 0, typing = true, timer = null, visible = false;
 
@@ -94,6 +102,7 @@
     function type(text, at) {
       if (!typing) return;
       input.placeholder = text.slice(0, at);
+      placeCaret();
       if (at === 1) light(match(text));
       if (at < text.length) timer = setTimeout(function () { type(text, at + 1); }, 70);
       else timer = setTimeout(erase, 1500);
@@ -101,12 +110,13 @@
     function erase() {
       if (!typing) return;
       var t = input.placeholder;
-      if (t.length) { input.placeholder = t.slice(0, -1); timer = setTimeout(erase, 32); }
+      if (t.length) { input.placeholder = t.slice(0, -1); placeCaret(); timer = setTimeout(erase, 32); }
       else { i = (i + 1) % TRADES.length; timer = setTimeout(function () { type(TRADES[i], 0); }, 300); }
     }
     function start() {
       if (reduce || !typing || timer) return;
       form.classList.add('is-typing');
+      placeCaret();
       timer = setTimeout(erase, 1400);
     }
     function stop() {
