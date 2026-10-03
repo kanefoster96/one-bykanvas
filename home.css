@@ -121,9 +121,11 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 @keyframes hIn{from{opacity:0;transform:translateY(16px) scale(.96) rotate(var(--r,0deg))}to{opacity:1;transform:translateY(0) scale(1) rotate(var(--r,0deg))}}
 @keyframes hPop{from{opacity:0;transform:scale(.92) translateY(8px)}to{opacity:1;transform:none}}
 @keyframes hDots{0%,100%{opacity:.25}40%{opacity:1}}
-/* Four seconds a site, no gap: one fades as the next arrives. */
-@keyframes hCycle4{0%,22%{opacity:1}27%,95%{opacity:0}100%{opacity:1}}
-@keyframes hCycle3{0%,29%{opacity:1}35%,94%{opacity:0}100%{opacity:1}}
+/* Four seconds a site, one fading in as the last fades out. Every frame
+   starts hidden: a screenshot waiting its turn holds the first keyframe,
+   and if that were visible the last one in the stack would cover the rest. */
+@keyframes hCycle4{0%{opacity:0}3%,25%{opacity:1}28%,100%{opacity:0}}
+@keyframes hCycle5{0%{opacity:0}3%,20%{opacity:1}23%,100%{opacity:0}}
 
 /* ---------- Hero ----------
    The "one." block, centred and quiet, then the frame with three chips
@@ -178,9 +180,12 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .hh-cycle > img:nth-child(2){animation-delay:4s}
 .hh-cycle > img:nth-child(3){animation-delay:8s}
 .hh-cycle > img:nth-child(4){animation-delay:12s}
-.hh-cycle-3 > img{animation:hCycle3 12s linear infinite both}
-.hh-cycle-3 > img:nth-child(2){animation-delay:4s}
-.hh-cycle-3 > img:nth-child(3){animation-delay:8s}
+/* The phone: five sites, four seconds each, light and dark in turn. */
+.hh-cycle-5 > img{animation:hCycle5 20s linear infinite both}
+.hh-cycle-5 > img:nth-child(2){animation-delay:4s}
+.hh-cycle-5 > img:nth-child(3){animation-delay:8s}
+.hh-cycle-5 > img:nth-child(4){animation-delay:12s}
+.hh-cycle-5 > img:nth-child(5){animation-delay:16s}
 .hh-phone-wrap{display:none}
 /* Three chips on dotted leaders, floating; the mascot over the edge. */
 .hh-chip{position:absolute;z-index:4;opacity:0;animation:hIn .7s cubic-bezier(.2,.7,.2,1) both}
@@ -542,8 +547,8 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 /* ---------- Reduced motion: everything still, first frame shown ---------- */
 @media (prefers-reduced-motion:reduce){
   .hh-chip,.oc-chips .chip,.oc-anim .oc-chips .chip,.oc-anim .oc-card.chips-in .oc-chips .chip,.ce-chips .chip,.ce-chips.in .chip{animation:none;opacity:1}
-  .hh-cycle > img,.hh-cycle-3 > img{animation:none;opacity:0}
-  .hh-cycle > img:first-child,.hh-cycle-3 > img:first-child{opacity:1}
+  .hh-cycle > img,.hh-cycle-5 > img{animation:none;opacity:0}
+  .hh-cycle > img:first-child,.hh-cycle-5 > img:first-child{opacity:1}
   .hh-build i{animation:none}
   .hh-frame,.oc-card,.oc-card:hover,.ui,.hw-step:nth-child(even) .ui{transform:none}
   .pill:hover{transform:none;transition:none}
