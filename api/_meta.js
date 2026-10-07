@@ -12,7 +12,7 @@
  */
 const crypto = require('crypto');
 
-const PIXEL_DEFAULT = '1092399953329404';
+const PIXEL_DEFAULT = '1854004872420446';
 const TIMEOUT_MS = 4000;
 
 function sha256(s) {
