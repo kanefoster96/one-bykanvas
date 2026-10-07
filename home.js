@@ -78,7 +78,7 @@
       measure.textContent = input.placeholder;
       caret.style.setProperty('--cx', (measure.offsetWidth + 3) + 'px');
     }
-    var TRADES = ['Barbers', 'Salons', 'Trades', 'Coffee shops', 'Gyms', 'Cleaners', 'Tutors', 'Photographers', 'Gardeners', 'Dance schools'];
+    var TRADES = ['Barbers', 'Hairdressers', 'Lash artists', 'Cake makers', 'Electricians', 'Trades', 'Coffee shops', 'Gyms', 'Cleaners', 'Tutors', 'Photographers', 'Gardeners', 'Dance schools'];
     var i = 0, typing = true, timer = null, visible = false;
 
     function match(text) {

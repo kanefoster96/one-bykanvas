@@ -77,6 +77,42 @@ const COMMON_FAQ = [
 
 const MAX_HEADING = 'Want us to go and get you customers?';
 
+/* The Starter-first pages: one per business type we advertise to. Every
+   card here is on the £25 plan, so nothing on these pages needs Business
+   to be true. The offer reads the same as the ads and /free: a free design
+   in 24 hours, £12.50 today to go live, then £25 a month. */
+const STARTER_ICONS = ['layers', 'search', 'mail', 'photo', 'person', 'pencil'];
+const STARTER_TRUST = ['&pound;12.50 today', 'Web address included', 'Live the same day', 'Cancel anytime'];
+const STARTER_NOTE = 'Free design within 24 hours, no card. Love it? &pound;12.50 puts it live, then &pound;25 a month, no VAT.';
+const STARTER_ALSO_TITLE = 'Want bookings, payments or live chat too?';
+
+function starterFeatures(t) {
+  return [
+    ['A live website, built for you', t.live],
+    ['Found on Google and AI search', t.google + ' Your Google listing linked, so you show on the map too.'],
+    [t.formTitle, t.form],
+    ['Your work, shown off properly', t.gallery],
+    ['Click to call, WhatsApp and Instagram', 'One tap from any page to ring you, message you, or see your latest work on Instagram.'],
+    ['A change every month, made by us', 'New prices, new photos, new dates. Message us from your phone and it&rsquo;s done.']
+  ];
+}
+
+function starterSteps(one) {
+  return [
+    one,
+    ['We design it, free, within 24 hours', 'A real page for your business in your inbox. Nothing to pay to see it.'],
+    ['&pound;12.50 and you&rsquo;re live', 'Love it? Join for &pound;12.50 and it&rsquo;s live on your own web address the same day. Then &pound;25 a month, cancel any month.']
+  ];
+}
+
+const STARTER_FAQ = [
+  ['What does it cost?', 'Nothing to see your design. &pound;12.50 today puts it live, with your web address included. Then &pound;25 a month, no VAT, cancel any month.'],
+  ['What if I don&rsquo;t like it?', 'You see your page within 24 hours, before you pay. Don&rsquo;t love it? You owe nothing.'],
+  ['Can I add bookings or payments later?', 'Yes. Move to Business, &pound;50 a month, any month, and we add them for you.'],
+  ['What happens if I cancel?', 'No exit fee. Your site goes offline and your domain transfers to you free.']
+];
+
+
 
 module.exports = [
   {
@@ -428,6 +464,258 @@ module.exports = [
     ].concat(COMMON_FAQ),
     endLine: endLine('Website for my gardening business'),
     freeLede: 'We design a real page for your gardening business, in your inbox within 24 hours, before you pay. If it doesn&rsquo;t grow on you, you owe nothing.'
+  },
+  {
+    slug: 'hairdressers',
+    rich: true,
+    icons: STARTER_ICONS,
+    lines: ['add my price list', 'link my booking app', 'show my best colour work', 'add my Instagram', 'update my opening hours'],
+    link: 'Hairdressers',
+    title: 'Hairdressers',
+    h1: 'Websites for hairdressers who want to be picked first.',
+    lede: 'Your work, your reviews and your prices on your own site, not next to a cheaper salon on a booking app. Found on Google and AI search nearby. Designed for you within 24 hours.',
+    heroNote: STARTER_NOTE,
+    trust: STARTER_TRUST,
+    trustLine: 'Send your Instagram. We do the rest.',
+    desc: 'Websites for hairdressers. Your work, prices and reviews on your own site, found on Google and AI search nearby, with a button to your booking app. Free design in 24 hours, £12.50 to go live, then £25 a month.',
+    placeholder: 'e.g. Studio Nine Hair',
+    features: starterFeatures({
+      live: 'Your services and prices, your opening hours, and the work that wins you clients on Instagram.',
+      google: 'Written for what people search: &ldquo;hairdresser near me&rdquo;, &ldquo;balayage Morpeth&rdquo;.',
+      formTitle: 'A button straight to your booking app',
+      form: 'Clients see your work first, then book in the app you already use. Or send an enquiry straight to you.',
+      gallery: 'Your best cuts and colours in a proper gallery, not lost in a feed.'
+    }),
+    alsoTitle: STARTER_ALSO_TITLE,
+    also: ['Online booking', 'Deposits for appointments', 'Gift vouchers', 'Reviews asked for automatically', 'Live chat'],
+    buildNote: 'Send us your Instagram and your price list. We design the site and you see it within 24 hours.',
+    steps: starterSteps(['Send us your Instagram', 'Your work, your prices and where you are. That&rsquo;s all we need.']),
+    stepsLine: 'Business, &pound;50 a month, adds bookings, payments and unlimited changes, any month.',
+    maxPitch: { heading: MAX_HEADING, text: 'The salons top for &ldquo;hairdresser near me&rdquo; keep adding pages, reviews and photos. Starter gets you found. Max keeps you there.' },
+    promise: PROMISE,
+    pricingExtra: ['&pound;25 a month is less than one cut and colour. Under &pound;6 a week, no VAT.'],
+    faq: [
+      ['I already get bookings through Instagram and an app.', 'Keep them. Instagram doesn&rsquo;t show up for &ldquo;hairdresser near me&rdquo;, and on the app you sit next to someone cheaper. Your own site shows your work first.'],
+      ['Will it replace my booking app?', 'No need. Your site has a button straight to it.']
+    ].concat(STARTER_FAQ),
+    endLine: endLine('Website for my hair business'),
+    freeLede: 'We design a real page for your hair business, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
+  },
+  {
+    slug: 'lash-artists',
+    rich: true,
+    icons: STARTER_ICONS,
+    lines: ['add my lash menu', 'show my before and afters', 'link my booking app', 'add an enquiry form', 'add my aftercare guide'],
+    link: 'Lash artists',
+    title: 'Lash Artists',
+    h1: 'Websites for lash artists who want Google to send clients.',
+    lede: 'Your lashes look amazing on Instagram, but &ldquo;lash extensions near me&rdquo; shows someone else. Your own site puts your work where new clients search. Designed for you within 24 hours.',
+    heroNote: STARTER_NOTE,
+    trust: STARTER_TRUST,
+    trustLine: 'Send your Instagram. We do the rest.',
+    desc: 'Websites for lash artists and lash techs. Your work, prices and reviews on your own site, found on Google and AI search nearby, with an enquiry form. Free design in 24 hours, £12.50 to go live, then £25 a month.',
+    placeholder: 'e.g. Lashed by Amy',
+    features: starterFeatures({
+      live: 'Your lash menu and prices, where you work, and your best sets front and centre.',
+      google: 'Written for what people search: &ldquo;lash extensions near me&rdquo;, &ldquo;Russian volume lashes Whitley Bay&rdquo;.',
+      formTitle: 'Enquiries that come straight to you',
+      form: 'A simple form for new clients, or a button to the booking app you already use.',
+      gallery: 'Before and afters in a proper gallery, so clients see exactly what they&rsquo;re booking.'
+    }),
+    alsoTitle: STARTER_ALSO_TITLE,
+    also: ['Online booking', 'Deposits to stop no-shows', 'Patch test reminders', 'Reviews asked for automatically', 'Gift vouchers'],
+    buildNote: 'Send us your Instagram and your lash menu. We design the site and you see it within 24 hours.',
+    steps: starterSteps(['Send us your Instagram', 'Your work, your prices and where you are. That&rsquo;s all we need.']),
+    stepsLine: 'Business, &pound;50 a month, adds bookings, deposits and unlimited changes, any month.',
+    maxPitch: { heading: MAX_HEADING, text: 'The lash artists top on Google keep adding photos, pages and reviews. Starter gets you found. Max keeps you there.' },
+    promise: PROMISE,
+    pricingExtra: ['&pound;25 a month is less than one infill. Under &pound;6 a week, no VAT.'],
+    faq: [
+      ['My clients find me on Instagram already.', 'The ones who follow you, yes. New clients search Google and AI first, and Instagram doesn&rsquo;t show up there. Your site does.'],
+      ['I work from home. Do I have to show my address?', 'No. We show your area and give the full address once they book.']
+    ].concat(STARTER_FAQ),
+    endLine: endLine('Website for my lash business'),
+    freeLede: 'We design a real page for your lash business, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
+  },
+  {
+    slug: 'makeup-artists',
+    rich: true,
+    icons: STARTER_ICONS,
+    lines: ['add my bridal packages', 'show my portfolio', 'add a wedding date enquiry form', 'add my prices', 'add reviews from my brides'],
+    link: 'Makeup artists',
+    title: 'Makeup Artists',
+    h1: 'Websites for makeup artists brides can find.',
+    lede: 'Brides Google &ldquo;bridal makeup near me&rdquo; and book from what they find. Your own site shows your portfolio, your prices and a date enquiry form. Designed for you within 24 hours.',
+    heroNote: STARTER_NOTE,
+    trust: STARTER_TRUST,
+    trustLine: 'Send your Instagram. We do the rest.',
+    desc: 'Websites for makeup artists and bridal MUAs. Your portfolio, packages and reviews on your own site, found on Google and AI search, with a wedding date enquiry form. Free design in 24 hours, £12.50 to go live, then £25 a month.',
+    placeholder: 'e.g. Glow by Sophie',
+    features: starterFeatures({
+      live: 'Your bridal and occasion packages, your prices, and the areas you travel to.',
+      google: 'Written for what brides search: &ldquo;bridal makeup artist Newcastle&rdquo;, &ldquo;wedding makeup near me&rdquo;.',
+      formTitle: 'Wedding date enquiries, straight to you',
+      form: 'Brides send their date, venue and party size, so you can check the diary and reply with a quote.',
+      gallery: 'Your portfolio in a proper gallery, sorted by bridal, occasion and editorial.'
+    }),
+    alsoTitle: STARTER_ALSO_TITLE,
+    also: ['Deposits to secure the date', 'Online booking for trials', 'Reviews asked for automatically', 'Gift vouchers', 'Live chat'],
+    buildNote: 'Send us your Instagram and your packages. We design the site and you see it within 24 hours.',
+    steps: starterSteps(['Send us your Instagram', 'Your work, your packages and the areas you cover. That&rsquo;s all we need.']),
+    stepsLine: 'Business, &pound;50 a month, adds deposits, bookings and unlimited changes, any month.',
+    maxPitch: { heading: MAX_HEADING, text: 'The artists brides find first keep adding photos, pages and reviews. Starter gets you found. Max keeps you there.' },
+    promise: PROMISE,
+    pricingExtra: ['&pound;25 a month, and one bride a year pays for it many times over. Under &pound;6 a week, no VAT.'],
+    faq: [
+      ['Brides find me on Instagram.', 'Some do. Most start with Google or AI and book from what comes up. Instagram doesn&rsquo;t show up there. Your site does.'],
+      ['Can I show different packages?', 'Yes. Bridal, bridesmaids, occasion, lessons: each with its own price and photos.']
+    ].concat(STARTER_FAQ),
+    endLine: endLine('Website for my makeup business'),
+    freeLede: 'We design a real page for your makeup business, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
+  },
+  {
+    slug: 'cake-makers',
+    rich: true,
+    icons: STARTER_ICONS,
+    lines: ['show my wedding cakes', 'add a quote form for custom orders', 'add my flavours and prices', 'add my collection details', 'show my birthday cakes'],
+    link: 'Cake makers',
+    title: 'Cake Makers',
+    h1: 'Websites for cake makers that turn your designs into orders.',
+    lede: 'Your cakes are on Instagram, but &ldquo;wedding cakes near me&rdquo; and &ldquo;custom birthday cake&rdquo; show someone else. Your own site shows off your designs, with a quote form for new orders. Designed for you within 24 hours.',
+    heroNote: STARTER_NOTE,
+    trust: STARTER_TRUST,
+    trustLine: 'Send your Instagram. We do the rest.',
+    desc: 'Websites for cake makers and cake designers. Your designs, flavours and prices on your own site, found on Google and AI search nearby, with a quote form for custom orders. Free design in 24 hours, £12.50 to go live, then £25 a month.',
+    placeholder: 'e.g. Bake Me Happy',
+    features: starterFeatures({
+      live: 'Your cakes, your flavours, your starting prices and how collection or delivery works.',
+      google: 'Written for what people search: &ldquo;wedding cakes Durham&rdquo;, &ldquo;custom birthday cake near me&rdquo;.',
+      formTitle: 'A quote form for custom orders',
+      form: 'Customers send the date, the number of guests, the flavours and a photo of what they have in mind. You quote back.',
+      gallery: 'Your designs in a proper gallery: wedding, birthday, celebration, cupcakes. Not lost in a feed.'
+    }),
+    alsoTitle: STARTER_ALSO_TITLE,
+    also: ['Deposits on orders', 'Online ordering for set designs', 'Reviews asked for automatically', 'Gift vouchers', 'Live chat'],
+    buildNote: 'Send us your Instagram and your flavours. We design the site and you see it within 24 hours.',
+    steps: starterSteps(['Send us your Instagram', 'Your cakes, your flavours and how ordering works. That&rsquo;s all we need.']),
+    stepsLine: 'Business, &pound;50 a month, adds deposits, online ordering and unlimited changes, any month.',
+    maxPitch: { heading: MAX_HEADING, text: 'The cake makers top on Google keep adding photos, pages and reviews. Starter gets you found. Max keeps you there.' },
+    promise: PROMISE,
+    pricingExtra: ['&pound;25 a month is less than one birthday cake. Under &pound;6 a week, no VAT.'],
+    faq: [
+      ['I get plenty of orders through Instagram and Facebook.', 'Keep them. People planning a wedding or a big birthday search Google and AI first, and Instagram doesn&rsquo;t show up there. Your site does, and takes the quote request.'],
+      ['I bake from home. Do I need to show my address?', 'No. We show your area and how collection or delivery works.']
+    ].concat(STARTER_FAQ),
+    endLine: endLine('Website for my cake business'),
+    freeLede: 'We design a real page for your cake business, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
+  },
+  {
+    slug: 'kids-clubs',
+    rich: true,
+    icons: STARTER_ICONS,
+    lines: ['add our timetable', 'add a trial request form', 'show our prices', 'add photos from our classes', 'answer the questions parents ask'],
+    link: 'Kids&rsquo; clubs',
+    title: 'Kids&rsquo; Clubs',
+    h1: 'Websites for kids&rsquo; clubs parents can find.',
+    lede: 'Parents search &ldquo;kids clubs near me&rdquo;, and clubs without a website don&rsquo;t make the list. Your timetable, prices and a trial request form, on your own site. Designed for you within 24 hours.',
+    heroNote: STARTER_NOTE,
+    trust: STARTER_TRUST,
+    trustLine: 'Send your Facebook or Instagram. We do the rest.',
+    desc: 'Websites for kids&rsquo; clubs, classes and activities. Your timetable, prices and a trial request form on your own site, found on Google and AI search by local parents. Free design in 24 hours, £12.50 to go live, then £25 a month.',
+    placeholder: 'e.g. Little Kickers Morpeth',
+    features: starterFeatures({
+      live: 'Your classes, ages, timetable and prices, and where you meet.',
+      google: 'Written for what parents search: &ldquo;kids clubs near me&rdquo;, &ldquo;football for 5 year olds Gateshead&rdquo;.',
+      formTitle: 'A trial request form',
+      form: 'Parents pick a class and send their details for a trial. It comes straight to you.',
+      gallery: 'Photos from your sessions, so parents can see what their child would be doing.'
+    }),
+    alsoTitle: STARTER_ALSO_TITLE,
+    also: ['Trial bookings confirmed automatically', 'Monthly payments online', 'Reviews asked for automatically', 'Term reminders', 'Live chat'],
+    buildNote: 'Send us your Facebook or Instagram and your timetable. We design the site and you see it within 24 hours.',
+    steps: starterSteps(['Send us your Facebook or Instagram', 'Your classes, your timetable and where you are. That&rsquo;s all we need.']),
+    stepsLine: 'Business, &pound;50 a month, adds trial bookings confirmed automatically, payments and unlimited changes, any month.',
+    maxPitch: { heading: MAX_HEADING, text: 'The clubs parents find first keep adding pages, photos and reviews. Starter gets you found. Max keeps your classes full.' },
+    promise: PROMISE,
+    pricingExtra: ['&pound;25 a month is less than one child&rsquo;s monthly fees. Under &pound;6 a week, no VAT.'],
+    faq: [
+      ['Parents find us on Facebook.', 'The ones already in the local groups, yes. New families search Google and AI first, and a Facebook page rarely shows up. Your site does.'],
+      ['Have you built sites for clubs before?', 'Yes. Clubs and dance schools we work with now regularly get parents messaging about classes after finding them on Google and AI search. We know the questions parents ask, so we build the answers in.']
+    ].concat(STARTER_FAQ),
+    endLine: endLine('Website for my kids club'),
+    freeLede: 'We design a real page for your club, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
+  },
+  {
+    slug: 'electricians',
+    rich: true,
+    icons: STARTER_ICONS,
+    lines: ['add a quote form', 'add my NICEIC badge', 'add a page for every town I cover', 'show photos of my jobs', 'add a WhatsApp button'],
+    link: 'Electricians',
+    title: 'Electricians',
+    h1: 'Websites for electricians that win the job before you ring back.',
+    lede: 'They got your number, then looked you up. No website, so they rang someone else. A proper site shows you&rsquo;re the real deal, with a quote form ready to win the job. Designed for you within 24 hours.',
+    heroNote: STARTER_NOTE,
+    trust: STARTER_TRUST,
+    trustLine: 'Send your Facebook, Checkatrade or Trust a Trader link. We do the rest.',
+    desc: 'Websites for electricians. Found on Google and AI search in the towns you cover, your badges and reviews on show, with a quote form that sends you the job. Free design in 24 hours, £12.50 to go live, then £25 a month.',
+    placeholder: 'e.g. Bright Spark Electrical',
+    features: starterFeatures({
+      live: 'Your services, your badges, the towns you cover and the reviews that prove you&rsquo;re the real deal.',
+      google: 'Written for what people search: &ldquo;electrician near me&rdquo;, &ldquo;EICR Cramlington&rdquo;.',
+      formTitle: 'A quote form that sends you the job',
+      form: 'Customers describe the job and add photos. The details come straight to you, ready to quote.',
+      gallery: 'Photos of finished jobs, so customers trust you before they ring.'
+    }),
+    alsoTitle: STARTER_ALSO_TITLE,
+    also: ['Callouts booked online', 'Callout fees taken up front', 'Reviews asked for automatically', 'Service reminders', 'Live chat'],
+    buildNote: 'Send us your Facebook, Checkatrade or Trust a Trader link. We design the site and you see it within 24 hours.',
+    steps: starterSteps(['Send us your link', 'Your Facebook, Checkatrade or Trust a Trader page. That&rsquo;s all we need.']),
+    stepsLine: 'Business, &pound;50 a month, adds online bookings, payments and unlimited changes, any month.',
+    maxPitch: { heading: MAX_HEADING, text: 'The electricians on page one for &ldquo;electrician Cramlington&rdquo; keep adding pages and reviews. Starter gets you found. Max keeps you there.' },
+    promise: PROMISE,
+    pricingExtra: ['&pound;25 a month is less than one callout. Under &pound;6 a week, no VAT.'],
+    faq: [
+      ['I get my work from word of mouth.', 'Word of mouth ends with a search. They look you up before they ring. Your site is where the recommendation lands.'],
+      ['I&rsquo;m on Checkatrade already.', 'Keep it. There you sit next to every other electrician. Your own site is just you.']
+    ].concat(STARTER_FAQ),
+    endLine: endLine('Website for my electrical business'),
+    freeLede: 'We design a real page for your electrical business, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
+  },
+  {
+    slug: 'heating-engineers',
+    rich: true,
+    icons: STARTER_ICONS,
+    lines: ['add a quote form', 'add my Gas Safe badge', 'add boiler servicing', 'add a page for every town I cover', 'show photos of my installs'],
+    link: 'Heating engineers',
+    title: 'Heating Engineers',
+    h1: 'Websites for heating engineers who want a full diary.',
+    lede: 'You&rsquo;ve got gaps in the diary while he&rsquo;s booked for weeks. They just found him first. A site that gets you found, with a quote form ready to win the job. Designed for you within 24 hours.',
+    heroNote: STARTER_NOTE,
+    trust: STARTER_TRUST,
+    trustLine: 'Send your Facebook, Checkatrade or Trust a Trader link. We do the rest.',
+    desc: 'Websites for boiler and heating engineers. Found on Google and AI search in the towns you cover, your Gas Safe badge and reviews on show, with a quote form that sends you the job. Free design in 24 hours, £12.50 to go live, then £25 a month.',
+    placeholder: 'e.g. Warm Home Heating',
+    features: starterFeatures({
+      live: 'Your services, your Gas Safe badge, the towns you cover and the reviews that win the job.',
+      google: 'Written for what people search: &ldquo;boiler repair near me&rdquo;, &ldquo;new boiler Blyth&rdquo;.',
+      formTitle: 'A quote form that sends you the job',
+      form: 'Customers describe the problem and add photos of the boiler. The details come straight to you, ready to quote.',
+      gallery: 'Photos of finished installs, so customers trust you before they ring.'
+    }),
+    alsoTitle: STARTER_ALSO_TITLE,
+    also: ['Services booked online', 'Annual service reminders', 'Reviews asked for automatically', 'Callout fees taken up front', 'Live chat'],
+    buildNote: 'Send us your Facebook, Checkatrade or Trust a Trader link. We design the site and you see it within 24 hours.',
+    steps: starterSteps(['Send us your link', 'Your Facebook, Checkatrade or Trust a Trader page. That&rsquo;s all we need.']),
+    stepsLine: 'Business, &pound;50 a month, adds online bookings, service reminders and unlimited changes, any month.',
+    maxPitch: { heading: MAX_HEADING, text: 'The engineers booked for weeks keep adding pages and reviews. Starter gets you found. Max keeps you there, every month.' },
+    promise: PROMISE,
+    pricingExtra: ['&pound;25 a month is less than one boiler service. Under &pound;6 a week, no VAT.'],
+    faq: [
+      ['I get my work from word of mouth.', 'Word of mouth ends with a search. They look you up before they ring. Your site is where the recommendation lands.'],
+      ['Winter is busy anyway.', 'That&rsquo;s when they search. The site makes sure they find you, not the engineer down the road.']
+    ].concat(STARTER_FAQ),
+    endLine: endLine('Website for my heating business'),
+    freeLede: 'We design a real page for your heating business, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
   }
 ];
 

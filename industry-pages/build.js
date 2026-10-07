@@ -377,7 +377,7 @@ ${b.rich ? `${b.promise ? `    <div class="promise reveal">
       <p class="promise-name">${b.promise.name}</p>
       <ul class="promise-lines">${b.promise.lines.map((l) => `<li>${l}</li>`).join('')}</ul>
     </div>
-` : ''}    <p class="micro reveal price-line">From &pound;25 a month. No setup fees. Cancel anytime.</p>
+` : ''}    <p class="micro reveal price-line">&pound;12.50 today puts it live, web address included. Then &pound;25 a month. No setup fees. Cancel anytime.</p>
 ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join('\n')}
     <div class="cta-row reveal">
       <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
@@ -599,9 +599,9 @@ for (const f of FEATURES) {
 /* ---------------------------------------------------------- Max pages */
 /* Which model a trade page points at; the rest go to the picker. */
 function maxHref(slug) {
-  if (slug === 'trades' || slug === 'cleaners' || slug === 'gardeners') return '/max/trades';
-  if (slug === 'salons' || slug === 'barbers') return '/max/salon';
-  if (slug === 'gyms') return '/max/clubs';
+  if (['trades', 'cleaners', 'gardeners', 'electricians', 'heating-engineers'].includes(slug)) return '/max/trades';
+  if (['salons', 'barbers', 'hairdressers', 'lash-artists', 'makeup-artists'].includes(slug)) return '/max/salon';
+  if (slug === 'gyms' || slug === 'kids-clubs') return '/max/clubs';
   return '/plans.html#max';
 }
 /* The type the wizard carries onto the profile, so the setup form need
