@@ -895,7 +895,7 @@ function renderThread(wrap) {
   if (cust.active_plan === 'starter') {
     var up = el('p', 'starter-note');
     up.appendChild(el('strong', null, 'Starter customer. '));
-    up.appendChild(document.createTextNode('One change a month to what is on the site: photos, wording, numbers, hours, links. If this asks for a form, chat, bookings, records or automated emails, offer the switch: same site plus the feature, £25 more a month.'));
+    up.appendChild(document.createTextNode('Unlimited edits to what is on the site, done in turn: photos, wording, numbers, hours, links. If this asks for a form, chat, bookings, records or automated emails, offer the switch: same site plus the feature, £25 more a month.'));
     box.appendChild(up);
   }
 

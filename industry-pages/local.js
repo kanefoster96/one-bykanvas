@@ -18,7 +18,7 @@ function features(t) {
     ['Enquiries that come straight to you', 'A contact or quote form that lands in your inbox, and a button to ring you from any page.'],
     ['Your work, shown off properly', 'Photos, prices, reviews and opening hours, laid out so a customer decides in seconds.'],
     ['Click to call, WhatsApp and Instagram', 'One tap from any page to ring you, message you, or see your latest work.'],
-    ['A change every month, made by us', 'New prices, new photos, new dates. Message us from your phone and it&rsquo;s done.']
+    ['Edits whenever you need them', 'New prices, new photos, new dates. Send as many as you like from your phone and we make them for you.']
   ];
 }
 
@@ -45,7 +45,7 @@ function compare(area) {
     ['Paid up front', 'Often &pound;1,000 to &pound;3,000 or more', '&pound;12.50'],
     ['Each month', 'Hosting, the web address and changes often billed on top', '&pound;25. Web address, hosting, security and support included'],
     ['Time to go live', 'Usually weeks', 'Online tomorrow'],
-    ['Changes', 'Usually charged by the hour', 'One a month made by us. Unlimited on Business, &pound;50 a month'],
+    ['Changes', 'Usually charged by the hour', 'As many edits as you need, made by us. Within 48 hours on Business'],
     ['If you leave', 'Often a 12-month contract', 'Cancel any month. Your web address is transferred to you free']
   ];
   return `<section class="section">
@@ -83,7 +83,7 @@ function areas(title, intro, towns, other) {
 const LOCAL_FAQ_END = [
   ['Can I see my website before I pay?', 'Yes. Send us your business name and a link to you anywhere online, and we design a real page and email it to you within 24 hours. No card. If you don&rsquo;t love it, you owe nothing.'],
   ['I already have a website. Can you do better?', 'Send us the link and we&rsquo;ll design a new one free, so you can compare. If you switch and want to keep your web address, we move it over for you.'],
-  ['Can I add bookings or payments later?', 'Yes. Move to Business, &pound;50 a month, any month, and we add online bookings, payments, live chat and unlimited changes.'],
+  ['Can I add bookings or payments later?', 'Yes. Move to Business, &pound;50 a month, any month, and we add online bookings, payments, live chat and priority changes within 48 hours.'],
   ['What happens if I cancel?', 'No exit fee and no contract. Your site goes offline and your web address is transferred to you free.']
 ];
 
@@ -124,12 +124,12 @@ module.exports = [
     ),
     buildNote: 'Send us your business name and a link to you online. We design the site and you see it within 24 hours.',
     steps: STEPS,
-    stepsLine: 'Business, &pound;50 a month, adds bookings, payments, live chat and unlimited changes, any month.',
+    stepsLine: 'Business, &pound;50 a month, adds bookings, payments, live chat and priority changes within 48 hours, any month.',
     maxPitch: { heading: 'Want us to go and get you customers?', text: 'Starter gets you a proper site and found on Google. Max runs your ads and works on your Google ranking every month, for businesses that want to grow fast.' },
     promise: PROMISE,
     pricingExtra: ['&pound;25 a month is under &pound;6 a week, no VAT. Most agencies charge that for hosting alone.'],
     faq: [
-      ['How much does a website cost in Newcastle?', 'From a local agency, a small business website typically costs &pound;1,000 to &pound;3,000 or more up front, with hosting and changes often charged on top. With Kanvas One you see your design free, pay &pound;12.50 to go live, then &pound;25 a month with your web address, hosting, security, support and a change every month included. No VAT.'],
+      ['How much does a website cost in Newcastle?', 'From a local agency, a small business website typically costs &pound;1,000 to &pound;3,000 or more up front, with hosting and changes often charged on top. With Kanvas One you see your design free, pay &pound;12.50 to go live, then &pound;25 a month with your web address, hosting, security, support and unlimited edits included. No VAT.'],
       ['How quickly can my website be live?', 'You see your design within 24 hours. Once you join, it&rsquo;s live on your own web address the same day, so most businesses are online the day after they first message us.'],
       ['Is the web address included?', 'Yes. We register your web address (yourbusiness.co.uk or similar) and renew it for as long as you&rsquo;re with us. If you already own one, we use that instead.'],
       ['Will my site show up on Google in Newcastle?', 'Every site is written around what customers in your area search for, set up for Google and AI search, and linked to your Google listing. No honest company can promise you the top spot. Max, &pound;250 a month, works on your ranking every month.'],
@@ -177,12 +177,12 @@ module.exports = [
     ),
     buildNote: 'Send us your business name and your Facebook or Instagram. We design the site and you see it within 24 hours.',
     steps: STEPS,
-    stepsLine: 'Business, &pound;50 a month, adds bookings, payments, live chat and unlimited changes, any month.',
+    stepsLine: 'Business, &pound;50 a month, adds bookings, payments, live chat and priority changes within 48 hours, any month.',
     maxPitch: { heading: 'Want us to go and get you customers?', text: 'Starter gets you a proper site and found on Google. Max runs your ads and works on your Google ranking every month, for businesses that want to grow fast.' },
     promise: PROMISE,
     pricingExtra: ['&pound;25 a month is under &pound;6 a week, no VAT. No setup fee and no contract.'],
     faq: [
-      ['How much does a website cost in Northumberland?', 'A small business website from an agency typically costs &pound;1,000 to &pound;3,000 or more up front, plus hosting and changes. With Kanvas One you see your design free, pay &pound;12.50 to go live, then &pound;25 a month with your web address, hosting, security, support and a change every month included. No VAT.'],
+      ['How much does a website cost in Northumberland?', 'A small business website from an agency typically costs &pound;1,000 to &pound;3,000 or more up front, plus hosting and changes. With Kanvas One you see your design free, pay &pound;12.50 to go live, then &pound;25 a month with your web address, hosting, security, support and unlimited edits included. No VAT.'],
       ['I only have a Facebook page. Is that enough to start?', 'Yes. Plenty of businesses start from just a Facebook or Instagram page. We take your photos, services and reviews from it and design the site for you.'],
       ['I cover lots of towns. Will I show up in all of them?', 'Your site names every town you cover, written the way people search, and links to your Google listing. No honest company can promise the top spot. Max, &pound;250 a month, works on your ranking town by town every month.'],
       ['How quickly can my website be live?', 'You see your design within 24 hours. Once you join, it&rsquo;s live on your own web address the same day.'],

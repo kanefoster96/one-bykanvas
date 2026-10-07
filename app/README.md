@@ -190,7 +190,7 @@ hidden (not gated: the same page, `isStarter()` in `app.js`):
   the address from the server when the tab opens; under 500 is online),
   the address, **Open your website** in the phone's browser, their plan,
   and two shortcuts: make a request, chat to Kane.
-- **Support**: the Requests feature, where the monthly change is asked
+- **Support**: the Requests feature, where edits are asked
   for, and the chat with Kane (below).
 
 ## Chat with Kane (every plan)

@@ -87,7 +87,7 @@ function planCards(site, domain, leadId) {
         'Contact form and click to call',
         'Found on Google in your town',
         'Your web address, hosting and security included',
-        'A change every month, made by us'
+        'Edits whenever you need them, made by us'
       ],
       ctaText: 'Put it live — £12.50 today', ctaHref: joinHref(site, 'starter', domain, leadId)
     }, {
@@ -96,7 +96,7 @@ function planCards(site, domain, leadId) {
       items: [
         'Bookings, payments and live chat',
         'Reviews asked for automatically after every job',
-        'Unlimited changes, made by us within 48 hours',
+        'Priority changes, made by us within 48 hours',
         'Your three features built within 14 days, or your next month is free'
       ],
       ctaText: 'Choose Business — £25 today', ctaHref: joinHref(site, 'business', domain, leadId)
@@ -220,10 +220,10 @@ async function sendLeadPreview(db, id, url, opts) {
         + `What happens when you say yes:\n`
         + NEXT.items.map((t) => '- ' + t).join('\n') + '\n\n'
         + `Put it live. Starter, GBP 12.50 today then GBP 25 a month: this page live on your own address today, `
-        + `with a contact form and click to call, found on Google, a change a month made by us. `
+        + `with a contact form and click to call, found on Google, unlimited edits made by us. `
         + `No setup fee. Cancel any month.\n`
         + `${joinHref(site, 'starter', claimable, lead.id)}\n\n`
-        + `Want bookings, payments and live chat? Business is GBP 25 more, with unlimited changes `
+        + `Want bookings, payments and live chat? Business is GBP 25 more, with changes done within 48 hours `
         + `and your three features built within 14 days or your next month is free.\n`
         + `${joinHref(site, 'business', claimable, lead.id)}\n\n`
         + `Designed and built by our team to get your business more customers online. Message us any time.\n\n`

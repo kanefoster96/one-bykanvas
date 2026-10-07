@@ -96,8 +96,8 @@
 
   var card = null, pill = null;
 
-  var STARTER_LINE = 'This page, live on your address today. Contact form and click to call. Found on Google. A change a month, made by us.';
-  var BUSINESS_LINE = 'Everything in Starter, plus bookings, payments and live chat. Unlimited changes.';
+  var STARTER_LINE = 'This page, live on your address today. Contact form and click to call. Found on Google. Unlimited edits, made by us.';
+  var BUSINESS_LINE = 'Everything in Starter, plus bookings, payments and live chat. Changes within 48 hours.';
 
   function button(text, href, filled) {
     var a = make('a', {

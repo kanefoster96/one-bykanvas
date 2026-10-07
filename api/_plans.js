@@ -12,9 +12,9 @@
    free" framing rather than a percentage discount. pro has no yearly
    price because it is legacy and cannot be bought. */
 /* starter is the way in: a designed, hosted site with a contact form and
-   click to call, a change a month, no setup fee. Every page and email leads
+   click to call, unlimited edits, no setup fee. Every page and email leads
    with it. Business is the step up at checkout (+£25: bookings, payments,
-   chat, unlimited changes), Max is add growth. */
+   chat, changes within 48 hours), Max is add growth. */
 const PLANS = {
   starter:  { label: 'Kanvas One — Starter',  amount: 2500,  yearly: 25000,  points: 1 },
   business: { label: 'Kanvas One — Business', amount: 5000,  yearly: 50000,  points: 1 },

@@ -996,7 +996,7 @@
           'Bookings, payments and forms on your site',
           'Reviews asked for automatically after every job',
           'Live chat and customer records',
-          'Unlimited changes, made by us within 48 hours'
+          'Priority changes, made by us within 48 hours'
         ],
         note: 'Starter gets you found. Business gets you booked.',
         btn: 'Switch to Business — £50 a month',

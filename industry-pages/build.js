@@ -210,7 +210,7 @@ const FOOT = `<footer class="foot">
    price from here as well as from the page. */
 const OFFERS = [
   { '@type': 'Offer', name: 'Free website design', price: '0', priceCurrency: 'GBP', description: 'A real page for your business, designed and emailed within 24 hours, before you pay. No card.', url: 'https://kanvas.one/free' },
-  { '@type': 'Offer', name: 'Starter website plan', price: '25', priceCurrency: 'GBP', description: '£12.50 today to go live, then £25 a month. Web address, hosting, security, support and a change every month included. No setup fee, no VAT, cancel any month.', url: 'https://kanvas.one/plans',
+  { '@type': 'Offer', name: 'Starter website plan', price: '25', priceCurrency: 'GBP', description: '£12.50 today to go live, then £25 a month. Web address, hosting, security, support and unlimited edits included. No setup fee, no VAT, cancel any month.', url: 'https://kanvas.one/plans',
     priceSpecification: { '@type': 'UnitPriceSpecification', price: '25', priceCurrency: 'GBP', unitText: 'month', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' } } }
 ];
 
@@ -350,7 +350,7 @@ ${b.maxPitch ? `<section class="section">
       <ul class="ticks">
         <li class="tick-hero">Bookings, payments and live chat</li>
         <li class="tick-hero">Reviews asked for automatically</li>
-        <li class="tick-hero">Unlimited changes, within 48 hours</li>
+        <li class="tick-hero">Priority changes, within 48 hours</li>
       </ul>
       <a class="btn btn-ghost full" href="/get-started.html?plan=business">Choose Business &rsaquo;</a>
     </article>
@@ -442,7 +442,7 @@ function planCard(f) {
       <a class="btn btn-primary full" href="/get-started.html?plan=max${maxParam(f.slug)}">Add growth</a>
       <ul class="ticks">
         <li>Your website, designed and built for you, live the day you join</li>
-        <li>Bookings, payments and live chat. Unlimited changes</li>
+        <li>Bookings, payments and live chat. Changes within 48 hours</li>
         <li class="tick-hero">Your Facebook and Instagram ads, set up, run and tracked by us</li>
         <li class="tick-hero">Your first ad live within 7 days</li>
         <li class="tick-hero">Your Google ranking worked on every month</li>
@@ -462,7 +462,7 @@ function planCard(f) {
         <li>Live on your own address the day you join</li>
         <li class="tick-hero">Bookings, payments and live chat</li>
         <li class="tick-hero">Reviews asked for automatically</li>
-        <li class="tick-hero">Unlimited changes, made by us within 48 hours</li>
+        <li class="tick-hero">Priority changes, made by us within 48 hours</li>
         <li class="tick-hero">Your three features built within 14 days, or your next month is free</li>
       </ul>
       <p class="plan-up">Just want the site, with a contact form and click to call? <a href="/plans.html#starter">Starter is &pound;25</a>.</p>

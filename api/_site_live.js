@@ -34,7 +34,7 @@ async function notifySiteLive(db, userId, businessName, siteUrl) {
       heading: `${businessName || 'Your site'} is live 🎉`,
       lines: [
         `It&rsquo;s built, it&rsquo;s online, and it&rsquo;s yours.`,
-        `Have a look through, and let us know if there&rsquo;s anything you&rsquo;d like changed &mdash; that&rsquo;s what your monthly changes are for.`,
+        `Have a look through, and let us know if there&rsquo;s anything you&rsquo;d like changed &mdash; send as many edits as you like, whenever you need them.`,
         /* The referral ask lands at the happiest moment there is. Honoured
            by hand: a month's credit on both accounts in Stripe. */
         `One favour: know another business that could use a site like yours? `

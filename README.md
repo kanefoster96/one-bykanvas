@@ -40,8 +40,8 @@ build command, output directory `.`.
 
 | Plan     | Price   | Includes |
 |----------|---------|----------|
-| Starter  | £25/mo  | A live site built for you, contact details, hours, socials, photos, meet the team, found on Google. One change a month through the dashboard. |
-| Business | £50/mo  | Everything above plus unlimited changes, payments online, bookings or orders, customer logins and records, reviews asked for automatically, live chat and forms. |
+| Starter  | £25/mo  | A live site built for you, contact details, hours, socials, photos, meet the team, found on Google. Unlimited edits through the dashboard, worked through in turn. |
+| Business | £50/mo  | Everything above plus changes within 48 hours, payments online, bookings or orders, customer logins and records, reviews asked for automatically, live chat and forms. |
 | Max      | £250/mo | Everything in Business plus monthly SEO improvements, business email at their own address, first in the queue. |
 
 Annual is ten months' money for twelve. Prices live in `api/_plans.js` and
