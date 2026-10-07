@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 124;
+const CSS_V = 127;
 const SCRIPT_V = 33;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -184,6 +184,7 @@ const FOOT = `<footer class="foot">
     <nav class="foot-links" aria-label="Footer">
       <a href="/how-it-works.html">How it works</a><a href="/whats-included.html">What&rsquo;s included</a><a href="/features.html">Features</a><a href="/reviews.html">Reviews</a><a href="/plans.html">Plans</a><a href="/get-started.html">Get started</a>
     </nav>
+    <p class="foot-local">Web design in <a href="/web-design-newcastle">Newcastle</a> and <a href="/web-design-northumberland">Northumberland</a>, and websites for small businesses across the UK.</p>
     <nav class="foot-legal-links" aria-label="Legal">
       <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
     </nav>
@@ -204,18 +205,28 @@ const FOOT = `<footer class="foot">
 </html>
 `;
 
+/* What every plan page offers, for the structured data: the free design,
+   and Starter from £25 a month. Search engines and AI answers read the
+   price from here as well as from the page. */
+const OFFERS = [
+  { '@type': 'Offer', name: 'Free website design', price: '0', priceCurrency: 'GBP', description: 'A real page for your business, designed and emailed within 24 hours, before you pay. No card.', url: 'https://kanvas.one/free' },
+  { '@type': 'Offer', name: 'Starter website plan', price: '25', priceCurrency: 'GBP', description: '£12.50 today to go live, then £25 a month. Web address, hosting, security, support and a change every month included. No setup fee, no VAT, cancel any month.', url: 'https://kanvas.one/plans',
+    priceSpecification: { '@type': 'UnitPriceSpecification', price: '25', priceCurrency: 'GBP', unitText: 'month', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' } } }
+];
+
 function page(b) {
-  const url = `https://kanvas.one/websites-for-${b.slug}`;
+  const url = `https://kanvas.one/${b.file || 'websites-for-' + b.slug}`;
   const plainTitle = b.title.replace(/&amp;/g, '&').replace(/&eacute;/g, 'é');
+  const docTitle = b.docTitle || `Websites for ${plainTitle}: Free Design, From £25 a Month | Kanvas One`;
   return `<!DOCTYPE html>
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Websites for ${plainTitle} — Kanvas One</title>
+<title>${docTitle}</title>
 <meta name="description" content="${b.desc}">
 <meta name="theme-color" content="#ffffff">
-<meta property="og:title" content="Websites for ${plainTitle} — Kanvas One">
+<meta property="og:title" content="${b.ogTitle || docTitle}">
 <meta property="og:description" content="${b.desc}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Kanvas One">
@@ -229,12 +240,13 @@ function page(b) {
 ${JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: `Websites for ${plainTitle}`,
+  name: b.serviceName || `Websites for ${plainTitle}`,
   serviceType: 'Website design and management',
   provider: { '@type': 'Organization', name: 'Kanvas One', url: 'https://kanvas.one/' },
-  areaServed: 'GB',
+  areaServed: b.areaServed || 'GB',
   url: url,
-  description: b.desc
+  description: b.desc,
+  offers: OFFERS
 })}
 </script>
 ${b.faq ? `<script type="application/ld+json">
@@ -291,7 +303,7 @@ ${b.also ? `  <div class="wrap center also reveal">
   </div>
 ` : ''}</section>
 
-<section class="section grey">
+${b.extra || ''}<section class="section grey">
   <div class="wrap center">
     <h2 class="reveal">How it works.</h2>
     <p class="lede reveal">${lines(b.buildNote)}</p>
@@ -390,7 +402,7 @@ ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join
     <p class="micro reveal">From &pound;25 a month. No setup fees. Cancel anytime. <a href="/plans.html">See all plans</a></p>
     <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email us</a> and we answer &mdash; usually the same working day.</p>
 `}    <nav class="ind-links reveal" aria-label="Websites for other business types">
-      <span>We also build for:</span>${linkStrip(b.slug)}
+      <span>${b.linksLabel || 'We also build for:'}</span>${linkStrip(b.slug)}
     </nav>
   </div>
 </section>
@@ -405,8 +417,9 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
 ` : ''}${FOOT}`;
 }
 
-for (const b of INDUSTRIES) {
-  const file = path.join(OUT, `websites-for-${b.slug}.html`);
+const LOCAL = require('./local.js');
+for (const b of INDUSTRIES.concat(LOCAL)) {
+  const file = path.join(OUT, `${b.file || 'websites-for-' + b.slug}.html`);
   fs.writeFileSync(file, page(b));
   console.log('wrote', path.basename(file));
 }
