@@ -110,6 +110,36 @@
     click((btn && words(btn)) || form.getAttribute('aria-label') || 'Sent a form', ok ? 'form' : 'form-incomplete');
   }, true);
 
+  /* How far a visit got without pressing anything: the first tap into
+     each box of a form (by the box's label, never what is typed), and
+     the parts of the page marked data-k1-seen="..." coming into view. */
+  var started = {};
+  function fieldName(el) {
+    var lab = el.id && document.querySelector('label[for="' + el.id + '"]');
+    var t = (lab && lab.textContent) || el.getAttribute('aria-label') || el.getAttribute('placeholder') || el.name || 'a box';
+    return String(t).replace(/\s+/g, ' ').trim().slice(0, 60);
+  }
+  document.addEventListener('focusin', function (e) {
+    var el = e.target;
+    if (!el || !el.form || !/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
+    if (/^(hidden|submit|button|checkbox|radio)$/i.test(el.type || '') || el.tabIndex < 0) return;
+    var name = fieldName(el);
+    if (started[name]) return;
+    started[name] = true;
+    click(name, 'form-start');
+  }, true);
+  if (window.IntersectionObserver) {
+    var seen = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        seen.unobserve(en.target);
+        click(String(en.target.getAttribute('data-k1-seen')).slice(0, 60), 'seen');
+      });
+    }, { threshold: 0.6 });
+    var watch = function () { document.querySelectorAll('[data-k1-seen]').forEach(function (n) { seen.observe(n); }); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch); else watch();
+  }
+
   /* A payment the site took. Counted whether or not the visit is, since
      it is the business's own record; the visit is tied to it only when
      the visitor is being counted. */

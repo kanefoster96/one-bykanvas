@@ -193,7 +193,8 @@ function visits(views, clicks, convs, pays, days, now) {
       country: first.country || null,
       city: first.city || null,
       pages: vs.length,
-      clicks: by[s].clicks.length,
+      clicks: by[s].clicks.filter((x) => x.target !== 'seen' && x.target !== 'form-start').length,
+      started_form: by[s].clicks.some((x) => x.target === 'form-start'),
       sent_form: by[s].clicks.some((x) => x.target === 'form'),
       messaged: messaged.has(s),
       paid: paid.has(s),
@@ -207,7 +208,7 @@ function visits(views, clicks, convs, pays, days, now) {
   out.forEach((x) => { src[x.source] = src[x.source] || { source: x.source, visitors: 0, ad: x.from_ad }; src[x.source].visitors++; });
   // What was pressed, and by how many different visitors.
   const pressed = {};
-  c.forEach((r) => { if (!by[r.session]) return; (pressed[r.label] = pressed[r.label] || new Set()).add(r.session); });
+  c.forEach((r) => { if (!by[r.session] || r.target === 'seen' || r.target === 'form-start') return; (pressed[r.label] = pressed[r.label] || new Set()).add(r.session); });
 
   return {
     list: out.slice(0, MAX_VISITS),

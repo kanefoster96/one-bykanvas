@@ -2965,6 +2965,37 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 /* Dot under the /free form: the green full stop with eyes, glancing
    left, right and down at the form, blinking now and then. */
 .dot-look{display:flex;justify-content:center;margin:40px 0 0}
+/* Who /free is for: "Websites built for" and the trade in a green pill,
+   then everyone else on the line under it. */
+.built-for{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 8px;margin:0 0 16px;font-size:15px;font-weight:500;color:var(--ink-2)}
+.built-pill{display:inline-block;padding:5px 13px;border-radius:999px;background:var(--good-soft);color:var(--good);font-weight:700}
+.built-also{flex-basis:100%;font-size:13.5px;font-weight:400;color:var(--ink-3)}
+.built-also[hidden]{display:none}
+.offer-why{margin:12px auto 0;max-width:42ch;text-align:center;font-size:13.5px;line-height:1.5;color:var(--ink-3)}
+.offer-why b{color:var(--ink-2);font-weight:600}
+/* Proof under the box: real sites on a phone, Dot beside it. */
+.made{margin:38px auto 0;max-width:420px;text-align:center}
+.made-stage{position:relative;display:flex;justify-content:center}
+.made-phone{position:relative;width:190px;aspect-ratio:9/18.6;border:7px solid #1d1d1f;border-radius:32px;overflow:hidden;background:#111;box-shadow:0 18px 40px rgba(0,0,0,.16)}
+.made-cycle img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;animation:made-cycle 16s linear infinite}
+.made-cycle img:nth-child(2){animation-delay:4s}
+.made-cycle img:nth-child(3){animation-delay:8s}
+.made-cycle img:nth-child(4){animation-delay:12s}
+@keyframes made-cycle{0%{opacity:0}3%,25%{opacity:1}28%,100%{opacity:0}}
+.made .dot-look{position:absolute;left:calc(50% - 158px);bottom:26px;margin:0}
+.made .dot-face{width:76px;height:76px}
+.made .dot-eyes{gap:16px}
+.made .dot-eyes i{width:12px;height:19px}
+.made-title{margin:20px 0 6px;font-size:15.5px;font-weight:600;color:var(--ink)}
+.made-quote{margin:0 auto;max-width:38ch;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.made-quote span{display:block;margin-top:4px;font-size:12.5px;color:var(--ink-3)}
+@media (prefers-reduced-motion:reduce){.made-cycle img{animation:none}.made-cycle img:first-child{opacity:1}}
+/* The promise in the price box. */
+.today-promise{margin:18px auto 0;max-width:34ch;padding:16px 18px;border-radius:16px;background:#fff;border:1px solid rgba(26,127,55,.18);text-align:left}
+.today-promise-name{margin:0 0 8px;font-size:15px;font-weight:700;color:var(--ink)}
+.today-promise ul{list-style:none;margin:0;padding:0}
+.today-promise li{position:relative;padding:3px 0 3px 22px;font-size:14px;line-height:1.45;color:var(--ink-2)}
+.today-promise li::before{content:"";position:absolute;left:2px;top:9px;width:10px;height:6px;border-left:2px solid var(--good);border-bottom:2px solid var(--good);transform:rotate(-45deg)}
 .dot-face{position:relative;display:block;width:92px;height:92px;border-radius:50%;
   background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);box-shadow:0 12px 32px rgba(26,127,55,.22)}
 .dot-eyes{position:absolute;left:0;right:0;top:34%;display:flex;justify-content:center;gap:20px;animation:dot-look 7s ease-in-out infinite}

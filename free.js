@@ -14,6 +14,65 @@
 (function () {
   'use strict';
 
+  /* ---- who it is for ----
+     Meta puts the ad's id on the link (utm_content). Each ad is one trade,
+     so the page can say "Websites built for electricians" to someone who
+     tapped the electricians ad, and put the nearest example first. A
+     ?trade= on the link does the same for ads made later. Kept for the
+     visit, so it survives a refresh. */
+  var TRADES = {
+    elec:    ['electricians', 'mpe'],
+    boiler:  ['heating engineers', 'mpe'],
+    valet:   ['mobile car valeters', 'mpe'],
+    driving: ['driving instructors', 'mpe'],
+    kids:    ['kids\u2019 clubs', 'dance'],
+    hair:    ['hairdressers', 'fstr'],
+    lash:    ['lash artists', 'fstr'],
+    mua:     ['makeup artists', 'fstr'],
+    nails:   ['nail techs', 'fstr'],
+    cake:    ['cake makers', 'fstr']
+  };
+  var ADS = {
+    // Northumberland
+    '52515811686048': 'elec', '52515811738248': 'boiler', '52515811985848': 'kids', '52515811839448': 'hair', '52515812217648': 'mua',
+    '52515812703448': 'valet', '52515812126248': 'lash', '52515812419248': 'cake', '52515812789848': 'driving', '52515812575448': 'nails',
+    // Newcastle
+    '52515840461248': 'elec', '52515840476848': 'boiler', '52515840503648': 'kids', '52515840495448': 'hair', '52515840531048': 'mua',
+    '52515840572048': 'valet', '52515840517648': 'lash', '52515840544448': 'cake', '52515840587048': 'driving', '52515840559848': 'nails',
+    // North Tyneside
+    '52515840669848': 'elec', '52515840683248': 'boiler', '52515840709248': 'kids', '52515840697848': 'hair', '52515840726248': 'mua',
+    '52515840780448': 'valet', '52515840721248': 'lash', '52515840738448': 'cake', '52515840792448': 'driving', '52515840754248': 'nails'
+  };
+  function tradeKey() {
+    var q;
+    try { q = new URLSearchParams(location.search); } catch (e) { return null; }
+    var named = String(q.get('trade') || '').toLowerCase();
+    if (TRADES[named]) return named;
+    var key = ADS[String(q.get('utm_content') || '')] || null;
+    if (!key) q.forEach(function (v) { if (!key && ADS[v]) key = ADS[v]; });
+    try {
+      if (key) sessionStorage.setItem('one.trade', key);
+      else key = sessionStorage.getItem('one.trade');
+    } catch (e) { /* private mode: this page view only */ }
+    return TRADES[key] ? key : null;
+  }
+  (function showTrade() {
+    var key = tradeKey();
+    if (!key) return;
+    var t = TRADES[key];
+    var pill = document.getElementById('builtTrade');
+    var also = document.getElementById('builtAlso');
+    if (pill) pill.textContent = t[0];
+    if (also) also.hidden = false;
+    // The nearest example first; the order sets which one shows first.
+    var cycle = document.getElementById('madeCycle');
+    var first = cycle && cycle.querySelector('img[data-kind="' + t[1] + '"]');
+    if (first && first !== cycle.firstElementChild) {
+      first.removeAttribute('loading');
+      cycle.insertBefore(first, cycle.firstElementChild);
+    }
+  })();
+
   var form = document.getElementById('offer');
   if (!form) return;
   var name = document.getElementById('business');
