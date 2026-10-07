@@ -176,21 +176,17 @@
     pill.setAttribute('role', 'region');
     pill.setAttribute('aria-label', 'Cookies');
 
-    /* A card at the foot of the screen: a title, one plain sentence on what
-       the cookies do, the policy linked, and three buttons in one row.
+    /* A strip at the foot of the screen: one short sentence on what the
+       cookies do, the policy linked, and three buttons in one row.
        Customise goes to the cookie page, where every cookie is named and
        the same two choices are offered; Reject and Accept answer here. */
-    var title = document.createElement('p');
-    title.className = 'consent-title';
-    title.textContent = 'Cookie settings';
-
     var text = document.createElement('p');
     text.className = 'consent-text';
     text.appendChild(document.createTextNode(
-      'We use cookies to run the site and count visits. If you agree, they also help us improve our ads and learn how to get businesses like yours showing up first. You can read our cookie policy '));
+      'Cookies run the site. If you agree, they also help us improve our ads. '));
     var link = document.createElement('a');
     link.href = '/cookies.html';
-    link.textContent = 'here';
+    link.textContent = 'Cookie policy';
     text.appendChild(link);
     text.appendChild(document.createTextNode('.'));
 
@@ -212,7 +208,8 @@
       actions.appendChild(btn);
     });
 
-    pill.appendChild(title);
+    /* No title: the buttons say what it is, and on a phone every line it
+       takes is a line of the page it hides. */
     pill.appendChild(text);
     pill.appendChild(actions);
     document.body.appendChild(pill);

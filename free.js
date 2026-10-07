@@ -1,57 +1,83 @@
-/* one — the free example offer.
+/* /free - the page every ad lands on.
  *
- * Three things typed, nothing chosen: business name, email, and a link to
- * the business anywhere online. The promise on the page is a page in their
- * inbox within 24 hours, so the form asks for the least that lets that be
- * kept. Posts to the same /api/lead as the homepage mini form and lands on
- * the same thanks page.
+ * The same two steps as the homepage, in one row:
+ *   1. the business name, Title Cased as it is typed, and an arrow;
+ *   2. the email, and the gift button that sends it (/api/lead).
+ * Then, with the request already in, one optional step: a link to the
+ * business, added to the lead just sent, so the page is designed from
+ * something real. Added or skipped, they go on to /thanks.html.
+ *
+ * The Lead event fires the moment the request is in, not on the thank-you
+ * page, so someone who closes the tab at the optional step still counts.
+ * thanks.js sees `tracked` and does not fire it twice.
  */
 (function () {
   'use strict';
 
   var form = document.getElementById('offer');
   if (!form) return;
-
-  var business = document.getElementById('business');
-  var email    = document.getElementById('email');
-  var handle   = document.getElementById('handle');
-  var hp       = document.getElementById('offer_extra');
-  var btn      = document.getElementById('offerSend');
-  var note     = document.getElementById('offerNote');
-
+  var name = document.getElementById('business');
+  var next = document.getElementById('offerNext');
+  var email = document.getElementById('email');
+  var send = document.getElementById('offerSend');
+  var handle = document.getElementById('handle');
+  var handleGo = document.getElementById('offerHandleGo');
+  var skip = document.getElementById('offerSkip');
+  var steps = [document.getElementById('offerStep1'), document.getElementById('offerStep2'), document.getElementById('offerStep3')];
+  var note = document.getElementById('offerNote');
+  var hp = document.getElementById('offer_extra');
   var shownAt = Date.now();
+  var leadId = null;
+  var at = 0;
 
-  function say(msg, kind) {
-    note.textContent = msg || '';
-    note.className = 'note' + (kind ? ' ' + kind : '');
+  function say(msg, kind) { note.textContent = msg || ''; note.className = 'note' + (kind ? ' ' + kind : ''); }
+  function filled(el) { return el.value.trim().length >= 2; }
+
+  function titleCase(s) { return s.replace(/(^|[\s\-'&(]+)([a-z])/g, function (m, pre, ch) { return pre + ch.toUpperCase(); }); }
+  name.addEventListener('input', function () {
+    var pos = name.selectionStart, was = name.value, now = titleCase(was);
+    if (now !== was) { name.value = now; try { name.setSelectionRange(pos, pos); } catch (e) { /* not settable here */ } }
+    name.classList.remove('err');
+    say('');
+  });
+
+  /* The step on screen fades out; the next fades in where it was. */
+  function go(n, focusEl) {
+    var from = steps[at], to = steps[n];
+    at = n;
+    from.classList.add('out');
+    setTimeout(function () {
+      from.hidden = true; from.classList.remove('out', 'in');
+      to.hidden = false; to.classList.add('in');
+      if (focusEl) setTimeout(function () { focusEl.focus({ preventScroll: true }); }, 80);
+    }, 230);
   }
+
+  function step2() {
+    if (!filled(name)) { name.classList.add('err'); name.focus(); say('Tell us your business name.', 'bad'); return; }
+    say('');
+    go(1, email);
+  }
+  next.addEventListener('click', step2);
+  name.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); step2(); } });
+  email.addEventListener('input', function () { email.classList.remove('err'); });
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
-
-    var biz  = business.value.trim();
+    if (at === 0) return step2();
+    if (at === 2) return addLink();
+    if (leadId) return;
+    var biz = name.value.trim();
     var mail = email.value.trim();
-    var soc  = handle.value.trim();
-
-    if (!biz)  return say('Tell us your business name.', 'bad');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) return say('Enter a valid email address.', 'bad');
-    if (!soc)  return say('Add a link to your business anywhere online - Instagram, Facebook, anything.', 'bad');
-
-    btn.disabled = true;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { email.classList.add('err'); email.focus(); return say('Enter a valid email address.', 'bad'); }
+    send.disabled = true;
     say('Sending…');
-
     try {
       var res = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          source: 'free-preview',
-          /* The endpoint wants a name; on this form the business is all we
-             ask for, so it stands in rather than making them type twice. */
-          name: biz,
-          business: biz,
-          email: mail,
-          handle: soc,
+          source: 'free-preview', name: biz, business: biz, email: mail, handle: '',
           campaign: (window.oneFrom && window.oneFrom()) || '',
           website: hp ? hp.value : '',
           elapsed: Date.now() - shownAt
@@ -59,22 +85,33 @@
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
-
-      /* Handed over rather than kept, so the address never rides in the URL.
-         The confirmation page uses it to say where the email is going, and
-         its presence is also what tells that page a real submission happened
-         rather than somebody arriving on the link. The id lets that page
-         fire the same Lead event the server did. */
-      try {
-        sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: data.id || '' }));
-      } catch (e) { /* private mode: the page just says less */ }
-
-      form.reset();
-      location.assign('/thanks.html');
-      return;                       /* leaving; nothing to re-enable */
+      leadId = data.id || '';
+      if (window.oneTrack) window.oneTrack('Lead', { content_category: 'free-preview' }, leadId || null);
+      /* Handed to the thank-you page rather than put in its URL: an email
+         address in a link ends up in browser history. */
+      try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: leadId, tracked: true })); } catch (err) { /* private mode */ }
+      say('');
+      go(2, handle);
     } catch (err) {
       say(err.message || 'Could not send that. Try again.', 'bad');
-      btn.disabled = false;
+      send.disabled = false;
     }
   });
+
+  function done() { location.assign('/thanks.html'); }
+  async function addLink() {
+    var link = handle.value.trim();
+    if (!link) { handle.classList.add('err'); handle.focus(); return say('Paste a link, or skip.', 'bad'); }
+    handleGo.disabled = true;
+    if (leadId) {
+      try {
+        await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ update: leadId, handle: link }) });
+      } catch (err) { /* the page is already on its way; the link was a bonus */ }
+    }
+    done();
+  }
+  handleGo.addEventListener('click', addLink);
+  handle.addEventListener('input', function () { handle.classList.remove('err'); });
+  handle.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addLink(); } });
+  skip.addEventListener('click', done);
 })();
