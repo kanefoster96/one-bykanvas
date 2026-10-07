@@ -2962,6 +2962,22 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .offer-pill .mini-step label{font-size:14.5px;font-weight:500;color:var(--ink-2);margin:0 0 4px}
 .offer-micro{margin:12px 0 0;text-align:center;font-size:13.5px;color:var(--ink-3)}
 .today-fine{margin:16px 0 0;font-size:13.5px;color:var(--ink-3)}
+/* Dot under the /free form: the green full stop with eyes, glancing
+   left, right and down at the form, blinking now and then. */
+.dot-look{display:flex;justify-content:center;margin:40px 0 0}
+.dot-face{position:relative;display:block;width:92px;height:92px;border-radius:50%;
+  background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);box-shadow:0 12px 32px rgba(26,127,55,.22)}
+.dot-eyes{position:absolute;left:0;right:0;top:34%;display:flex;justify-content:center;gap:20px;animation:dot-look 7s ease-in-out infinite}
+.dot-eyes i{display:block;width:14px;height:23px;border-radius:50%;background:#fff;animation:dot-blink 4.2s ease-in-out infinite}
+@keyframes dot-look{0%,14%{transform:translate(0,0)}20%,36%{transform:translate(-9px,-2px)}42%,58%{transform:translate(9px,-2px)}64%,80%{transform:translate(0,6px)}86%,100%{transform:translate(0,0)}}
+@keyframes dot-blink{0%,91%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@media (prefers-reduced-motion:reduce){.dot-eyes,.dot-eyes i{animation:none}}
+/* On a phone the first screen is the promise, the box and Dot; the price
+   starts below it. */
+@media (max-width:600px){
+  .page-hero.offer-hero{min-height:calc(100svh - 60px);box-sizing:border-box}
+  .page-hero.offer-hero + .section{padding-top:8px}
+}
 /* Pain, ease and the Max anchor. */
 .plain-list{list-style:none;margin:18px auto 0;padding:0;max-width:560px}
 .plain-list li{padding:12px 0;border-top:1px solid var(--line-soft);font-size:17px;line-height:1.5;color:var(--ink-2)}
