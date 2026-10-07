@@ -9,7 +9,7 @@
 'use strict';
 
 const STARTER_ICONS = ['layers', 'search', 'mail', 'photo', 'person', 'pencil'];
-const STARTER_TRUST = ['Free design first', '&pound;12.50 today', 'Web address included', 'Cancel anytime'];
+const STARTER_TRUST = ['Free design first', '&pound;12.50 first month', 'Web address included', 'Cancel anytime'];
 
 function features(t) {
   return [
@@ -159,7 +159,7 @@ module.exports = [
     link: 'Northumberland',
     title: 'Northumberland',
     h1: 'Web design in Northumberland, from &pound;25 a month.',
-    lede: 'Your Facebook page doesn&rsquo;t show up when someone in Cramlington or Morpeth searches for what you do. A proper website does. See yours free within 24 hours, then it&rsquo;s online tomorrow for &pound;12.50.',
+    lede: 'Your Facebook page doesn&rsquo;t show up when someone in Cramlington or Morpeth searches for what you do. A proper website does. See yours free within 24 hours. Online tomorrow for &pound;12.50, then &pound;25 a month.',
     heroNote: 'Small business websites for Cramlington, Blyth, Morpeth, Ashington, Hexham, Alnwick and every town between. No card to see your design.',
     trust: STARTER_TRUST,
     trustLine: 'Send us your Facebook or Instagram. We do the rest.',

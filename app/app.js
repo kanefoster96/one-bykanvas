@@ -666,7 +666,7 @@
   }
   function sourceText(v) {
     if (v.from_ad === 'likely') return v.source + ' · likely an ad';
-    return v.source === 'Direct' ? 'Typed the address or a saved link' : v.source;
+    return v.source === 'Direct' ? 'Direct visit' : v.source;
   }
   function stepText(st, first) {
     if (st.kind === 'view') return (first ? 'Landed on ' : 'Opened ') + pageName(st.path);
@@ -733,6 +733,8 @@
     if (!vs.live.length) live.appendChild(el('li', 'oa-list-empty', 'Nobody on the site right now.' + (days === 'today' ? ' This updates on its own.' : '')));
     vs.live.forEach(function (v) { live.appendChild(visitRow(v)); });
 
+    var botNote = d.bots_hidden ? ' ' + d.bots_hidden + (d.bots_hidden === 1 ? ' visit' : ' visits') + ' from data centres (bots, not people) left out.' : '';
+    $('anVisitsHint').textContent = 'Tap a visitor to see where they came from, every page they opened and what they pressed.' + botNote;
     $('anVisitsTitle').textContent = days === 'today' ? 'Today\u2019s visitors' + (vs.total ? ' (' + vs.total + ')' : '') : 'Visitors, newest first' + (vs.total ? ' (' + vs.total + ')' : '');
     var box = $('anVisits');
     box.innerHTML = '';
