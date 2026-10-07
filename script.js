@@ -18,8 +18,8 @@
     if (!word) return;
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    var TRADES = ['trades', 'salons', 'cafés', 'gyms', 'barbers', 'cleaners',
-                  'florists', 'tutors', 'coaches', 'startups'];
+    var TRADES = ['trades', 'hairdressers', 'lash artists', 'cake makers', 'electricians',
+                  'cafés', 'gyms', 'barbers', 'cleaners', 'tutors', 'coaches'];
     var i = 0;
 
     function type(text, at) {
