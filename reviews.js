@@ -13,7 +13,7 @@
   'use strict';
 
   var FALLBACK = [
-    { author: 'Kanvas Academy', trade: 'Dance school, North Tyneside', url: 'https://kanvasacademy.com', rating: 5, when: '',
+    { author: 'Kanvas Academy', trade: 'Our own dance school, North Tyneside', own: true, url: 'https://kanvasacademy.com', rating: 5, when: '',
       text: 'New families find us on Google, book a free trial on the site, and by the time they walk in they’ve read what to bring, paid, and signed the forms. We used to spend evenings answering the same questions in messages. Now the site answers them before anyone asks, and every enquiry, chat and booking is in one place. Our shows and our dancers are on our own site, not just on Instagram, so parents can see what they’re joining.' },
     { author: 'Nelly & Nova', trade: 'Dog trainer, Newcastle', url: 'https://nellyandnova.co.uk', rating: 5, when: '',
       text: 'I started with nothing. Now people searching for dog training near me find the site, read how I work, and book themselves in. The questions I used to answer ten times a day are answered on the site before I get the message. Chats, enquiries and bookings all land in the same place, so nothing gets lost while I’m out with a dog. Having my work on my own site, not just social, is what makes people trust me before we’ve met. I’ve got a waiting list.' }
@@ -43,7 +43,11 @@
   }
 
   function card(review, i) {
-    var stars = '★★★★★'.slice(0, Math.round(review.rating || 5));
+    /* Stars only for a rating someone actually gave: Google reviews carry
+       one, the fallback quotes do not, and our own business never rates
+       itself. */
+    var rated = review.rating && !review.fallback;
+    var stars = rated ? '★★★★★'.slice(0, Math.round(review.rating)) : '';
     var sub = review.trade || review.when || '';
     var site = safePhoto(review.url) && /^https:\/\//i.test(review.url)
       ? '<a href="' + esc(review.url) + '" target="_blank" rel="noopener">' + esc(review.url.replace(/^https?:\/\//, '')) + '</a>'
@@ -53,7 +57,7 @@
       : '<span class="avatar ' + AV[i % AV.length] + '" aria-hidden="true">' + esc(initials(review.author)) + '</span>';
 
     return '<article class="quote">'
-      + '<div class="stars" aria-label="' + Math.round(review.rating || 5) + ' out of 5">' + stars + '</div>'
+      + (rated ? '<div class="stars" aria-label="' + Math.round(review.rating) + ' out of 5">' + stars + '</div>' : '')
       + '<blockquote>“' + esc(review.text) + '”</blockquote>'
       + '<footer>' + avatar + '<div><strong>' + esc(review.author) + '</strong>'
       + (sub ? '<span>' + esc(sub) + '</span>' : '') + (site ? '<span>' + site + '</span>' : '') + '</div></footer>'
@@ -86,6 +90,7 @@
 
   if (!document.querySelector('[data-reviews]')) return;
 
+  FALLBACK.forEach(function (r) { r.fallback = true; });
   paint(FALLBACK, 'fallback');   // show something immediately
 
   fetch('/api/reviews')
