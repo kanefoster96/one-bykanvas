@@ -77,6 +77,15 @@
           "value": "*"
         }
       ]
+    },
+    {
+      "source": "/media/ads/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ],
   "ignoreCommand": "if [ \"$VERCEL_ENV\" = \"production\" ]; then exit 1; fi; case \"$VERCEL_GIT_COMMIT_REF\" in claude/*) exit 0;; esac; exit 1",
