@@ -45,7 +45,7 @@ const HOURLY_LIMIT = 20;
 const TOKEN_PREFIX = 'k1_';
 const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' };
 const STATUS_WORD = { new: 'Open', waiting: 'Waiting on customer', in_progress: 'In progress', done: 'Done', declined: 'Done' };
-const CUSTOMER_STATUS = { new: 'Open', waiting: 'Kane has a question for you', in_progress: 'Being built', done: 'Done', declined: 'Done' };
+const CUSTOMER_STATUS = { new: 'Open', waiting: 'We have a question for you', in_progress: 'Being built', done: 'Done', declined: 'Done' };
 
 /* ------------------------------------------------------------- errors -- */
 
@@ -208,7 +208,7 @@ function threadOut(t, caller) {
   return {
     request: Object.assign({}, t.request, { status: (caller.is_admin ? STATUS_WORD : CUSTOMER_STATUS)[t.request.status] || t.request.status }),
     customer: caller.is_admin ? { customer_id: t.customer.id, business: t.customer.business_name, name: t.customer.contact_name, email: t.customer.email, plan: PLAN_NAME[t.customer.active_plan] || null } : undefined,
-    notes: notes.map((n) => ({ by: n.author === 'admin' ? (caller.is_admin ? 'me' : 'Kane') : (caller.is_admin ? 'customer' : 'you'), private: !!n.private || undefined, text: n.body, attachments: (n.attachments || []).map((x) => x.url), at: n.created_at }))
+    notes: notes.map((n) => ({ by: n.author === 'admin' ? (caller.is_admin ? 'me' : 'Kanvas One') : (caller.is_admin ? 'customer' : 'you'), private: !!n.private || undefined, text: n.body, attachments: (n.attachments || []).map((x) => x.url), at: n.created_at }))
   };
 }
 
@@ -338,8 +338,8 @@ const readTools = {
         .map((r) => ({
           request_id: r.id, title: r.title, kind: r.kind,
           status: (caller.is_admin ? STATUS_WORD : CUSTOMER_STATUS)[r.status] || r.status,
-          whose_turn: done(r) ? 'nobody' : myTurn(r) ? (caller.is_admin ? 'me' : 'you') : (caller.is_admin ? 'customer' : 'Kane'),
-          last_note: r.latest ? { by: r.latest.author === 'admin' ? (caller.is_admin ? 'me' : 'Kane') : (caller.is_admin ? 'customer' : 'you'), text: r.latest.body, at: r.latest.created_at } : null,
+          whose_turn: done(r) ? 'nobody' : myTurn(r) ? (caller.is_admin ? 'me' : 'you') : (caller.is_admin ? 'customer' : 'Kanvas One'),
+          last_note: r.latest ? { by: r.latest.author === 'admin' ? (caller.is_admin ? 'me' : 'Kanvas One') : (caller.is_admin ? 'customer' : 'you'), text: r.latest.body, at: r.latest.created_at } : null,
           last_activity: r.last_note_at
         }));
     }
@@ -347,7 +347,7 @@ const readTools = {
 
   request_get: {
     who: 'any', scope: 'site',
-    description: 'One request in full, the thread oldest first. Customers see their conversation with Kane; the admin also sees private notes.',
+    description: 'One request in full, the thread oldest first. Customers see their conversation with Kanvas One; the admin also sees private notes.',
     input: withSite({ request_id: { type: 'string' } }, ['request_id']),
     async run(ctx, caller, a, site) { return threadOut(await requestIn(ctx, site, a.request_id), caller); }
   },
@@ -486,7 +486,7 @@ const readTools = {
 const writeTools = {
   request_reply: {
     who: 'any', scope: 'site',
-    description: 'Reply on a request. A customer’s reply goes to Kane; Kane’s reply goes to the customer’s dashboard and, ten minutes later, their email. Admin only: status (waiting | in_progress | done) and private: true.',
+    description: 'Reply on a request. A customer’s reply goes to Kanvas One; Kanvas One’s reply goes to the customer’s dashboard and, ten minutes later, their email. Admin only: status (waiting | in_progress | done) and private: true.',
     input: withSite({ request_id: { type: 'string' }, body: { type: 'string' }, status: { type: 'string', enum: ['waiting', 'in_progress', 'done'] }, private: { type: 'boolean' } }, ['request_id', 'body']),
     async preview(ctx, caller, a, site) {
       const t = await requestIn(ctx, site, a.request_id);
@@ -494,7 +494,7 @@ const writeTools = {
       if (cleaned.error) throw fail(cleaned.error);
       const text = cleaned.body;
       if (!caller.is_admin) {
-        return { preview: 'Send this reply to Kane on “' + t.request.title + '”. He sees it in his inbox now and gets an email in about ten minutes.\n\n“' + text + '”', args: { request_id: t.request.id, body: text, author: 'customer' } };
+        return { preview: 'Send this reply to Kanvas One on “' + t.request.title + '”. The team sees it now and gets an email in about ten minutes.\n\n“' + text + '”', args: { request_id: t.request.id, body: text, author: 'customer' } };
       }
       const isPrivate = !!a.private;
       const status = isPrivate ? null : (a.status || 'waiting');
@@ -534,7 +534,7 @@ const writeTools = {
         const { count } = await ctx.db.from('requests').select('id', { count: 'exact', head: true }).eq('user_id', site.owner_id).eq('kind', 'edit').gte('created_at', since);
         if ((count || 0) >= 1) throw fail('That is this month’s change on Starter. The next one comes with the next payment, or Business has unlimited changes.');
       }
-      return { preview: 'Open a new ' + kind + ' request on ' + (site.name || who(site.profile)) + ' titled “' + title + '”' + (caller.is_admin ? ' on the customer’s behalf' : '') + '. Kane sees it in his inbox now and gets an email in about ten minutes.\n\n“' + cleaned.body + '”', args: { kind, title, body: cleaned.body, as_admin: caller.is_admin } };
+      return { preview: 'Open a new ' + kind + ' request on ' + (site.name || who(site.profile)) + ' titled “' + title + '”' + (caller.is_admin ? ' on the customer’s behalf' : '') + '. The team sees it now and gets an email in about ten minutes.\n\n“' + cleaned.body + '”', args: { kind, title, body: cleaned.body, as_admin: caller.is_admin } };
     },
     async execute(ctx, caller, a, site) {
       const { data: row, error } = await ctx.db.from('requests').insert({ user_id: site.owner_id, site_id: site.id, kind: a.kind, points: REQUEST_COST[a.kind].points, title: a.title, detail: a.body }).select().single();
@@ -653,7 +653,7 @@ const writeTools = {
       return { preview: 'Email ' + person(site.profile, site.email) + ' with the subject “' + subject + '”, in the kanvas.one template.\n\n' + body, args: { to: site.email, subject, body } };
     },
     async execute(ctx, caller, a) {
-      const result = await sendEmail({ to: a.to, subject: a.subject, text: a.body + '\n\n' + ctx.site + '\n', html: emailHtml({ preheader: a.body.slice(0, 120), heading: a.subject, lines: paragraphs(a.body), footer: 'From Kane at Kanvas One.', footerLinks: standardFooter(ctx.site) }) });
+      const result = await sendEmail({ to: a.to, subject: a.subject, text: a.body + '\n\n' + ctx.site + '\n', html: emailHtml({ preheader: a.body.slice(0, 120), heading: a.subject, lines: paragraphs(a.body), footer: 'From the Kanvas One team.', footerLinks: standardFooter(ctx.site) }) });
       if (result !== 'sent') throw fail('The email did not send (' + result + ').');
       return { sent: true, to: a.to };
     }

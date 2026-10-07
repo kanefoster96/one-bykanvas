@@ -213,7 +213,7 @@ module.exports = async function handler(req, res) {
           text: `${hi.replace(/&#?\w+;/g, '')}\n\n` + plainText(group, `${done ? 'See your site' : 'Reply in your dashboard'}: ${link}\n\n${tail}`),
           html: emailHtml({
             preheader: group[0].body.slice(0, 120),
-            heading: done ? 'Done' : waiting ? 'A quick question' : 'An update from Kane',
+            heading: done ? 'Done' : waiting ? 'A quick question' : 'An update on your request',
             lines: [hi].concat(noteBlocks(group)),
             ctaText: done ? 'See your site' : 'Reply in your dashboard',
             ctaHref: done && prof && prof.site_url ? prof.site_url : link,

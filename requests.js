@@ -69,7 +69,7 @@
     node.className = 'note' + (kind ? ' ' + kind : '');
   }
   function isDone(r) { return r.status === 'done' || r.status === 'declined'; }
-  function who(author) { return author === 'admin' ? 'Kane' : 'You'; }
+  function who(author) { return author === 'admin' ? 'Kanvas One' : 'You'; }
 
   /* "2 hours ago" on the page; the full date sits in the title and swaps
      in on tap, since phones have no hover. */

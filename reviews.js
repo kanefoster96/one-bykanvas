@@ -4,18 +4,17 @@
  * GOOGLE_PLACE_ID are set in Vercel) and falls back to the list below. The
  * shapes match, so nothing else has to change when Google is switched on.
  *
- * Until Google is connected, the two businesses running on Kanvas One speak
- * for it, each in their own voice, about what the site does for them. The
- * dance school is our own; the dog trainer is a customer. Each card links
- * to the live site so the claim can be checked.
+ * Until Google is connected, two businesses running on Kanvas One speak
+ * for it, each in their own voice, about what the site does for them. They
+ * are named by trade and area only, not by business.
  */
 (function () {
   'use strict';
 
   var FALLBACK = [
-    { author: 'Kanvas Academy', trade: 'Our own dance school, North Tyneside', own: true, url: 'https://kanvasacademy.com', rating: 5, when: '',
+    { author: 'A dance school', trade: 'North Tyneside', rating: 5, when: '',
       text: 'New families find us on Google, book a free trial on the site, and by the time they walk in they’ve read what to bring, paid, and signed the forms. We used to spend evenings answering the same questions in messages. Now the site answers them before anyone asks, and every enquiry, chat and booking is in one place. Our shows and our dancers are on our own site, not just on Instagram, so parents can see what they’re joining.' },
-    { author: 'Nelly & Nova', trade: 'Dog trainer, Newcastle', url: 'https://nellyandnova.co.uk', rating: 5, when: '',
+    { author: 'A dog trainer', trade: 'Newcastle', rating: 5, when: '',
       text: 'I started with nothing. Now people searching for dog training near me find the site, read how I work, and book themselves in. The questions I used to answer ten times a day are answered on the site before I get the message. Chats, enquiries and bookings all land in the same place, so nothing gets lost while I’m out with a dog. Having my work on my own site, not just social, is what makes people trust me before we’ve met. I’ve got a waiting list.' }
   ];
 
@@ -44,8 +43,7 @@
 
   function card(review, i) {
     /* Stars only for a rating someone actually gave: Google reviews carry
-       one, the fallback quotes do not, and our own business never rates
-       itself. */
+       one, the fallback quotes do not. */
     var rated = review.rating && !review.fallback;
     var stars = rated ? '★★★★★'.slice(0, Math.round(review.rating)) : '';
     var sub = review.trade || review.when || '';

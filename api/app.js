@@ -374,7 +374,7 @@ async function chatReply(db, site, id, bodyIn, via) {
   if (conv.app_user_id) {
     const devices = await devicesFor(db, conv.app_user_id).catch(() => []);
     if (devices.length) {
-      await notify(db, conv.app_user_id, 'Kane replied', text.slice(0, 140), null, { kind: 'support_chat', deepLink: { kind: 'support_chat' } });
+      await notify(db, conv.app_user_id, 'Kanvas One replied', text.slice(0, 140), null, { kind: 'support_chat', deepLink: { kind: 'support_chat' } });
       delivered.push('app'); pushed = true;
     }
   }

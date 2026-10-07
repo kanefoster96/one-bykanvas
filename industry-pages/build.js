@@ -259,7 +259,7 @@ ${NAV}<section class="page-hero">
     <h1 class="reveal">${b.h1}</h1>
     <p class="lede reveal">${lines(b.lede)}</p>
 ${b.heroNote ? `    <p class="micro reveal hero-note">${b.heroNote}</p>
-` : ''}    <p class="by-line reveal"><img class="by-photo" src="assets/kane.jpg" alt="" width="36" height="36" loading="lazy" onerror="this.remove()"><span>Designed and built by <b>Kane</b>. One person, and you can message him.</span></p>
+` : ''}    <p class="by-line reveal"><span>Designed and built by <b>our team</b>, specifically to get your business more customers online.</span></p>
 
     <!-- A request being typed, as this trade would type it. Decorative: the
          copy around it says the same things, so screen readers skip the
@@ -388,7 +388,7 @@ ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join
       <a class="btn btn-ghost" href="/get-started.html">Get started &rsaquo;</a>
     </div>
     <p class="micro reveal">From &pound;25 a month. No setup fees. Cancel anytime. <a href="/plans.html">See all plans</a></p>
-    <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email us</a> and Kane answers &mdash; usually the same working day.</p>
+    <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email us</a> and we answer &mdash; usually the same working day.</p>
 `}    <nav class="ind-links reveal" aria-label="Websites for other business types">
       <span>We also build for:</span>${linkStrip(b.slug)}
     </nav>

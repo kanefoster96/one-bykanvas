@@ -266,7 +266,8 @@ module.exports = async function handler(req, res) {
             `Thanks &mdash; we&rsquo;ve got your details and we&rsquo;re designing a page for `
               + `<strong>${esc(business)}</strong>. It&rsquo;ll land in this inbox within 24 hours.`,
             'Designed by hand, for you. Nothing for you to do in the meantime.',
-            'When it lands: like it, and it can be live on your own address the same day. '
+            'Want it to look even more like you? Reply with your logo and a few favourite photos. Optional, and it makes the design better.',
+            'When it lands: like it, and &pound;12.50 puts it live on your own address the same day. '
               + 'Anything off, just reply &mdash; changes are free. Not for you? No hard feelings.'
           ],
           details: facts,
@@ -277,7 +278,8 @@ module.exports = async function handler(req, res) {
         text: `Thanks - we've got your details and we're designing a page for ${business}.\n\n`
             + `It'll land in this inbox within 24 hours. Designed by hand, for you. `
             + `Nothing for you to do in the meantime.\n\n`
-            + `When it lands: like it, and it can be live on your own address the same day. `
+            + `Want it to look even more like you? Reply with your logo and a few favourite photos. Optional, and it makes the design better.\n\n`
+            + `When it lands: like it, and GBP 12.50 puts it live on your own address the same day. `
             + `Anything off, just reply - changes are free. Not for you? No hard feelings.\n`
       });
       console.log('lead: confirmation email', theirs);
