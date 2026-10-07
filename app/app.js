@@ -49,7 +49,7 @@
   var me = null;          // the /api/app me payload
   var site = null;        // the site in hand (first of theirs)
   var tab = 'Analytics';
-  var days = 30;
+  var days = 'today';
   var seenAt = 0;
   var pushToken = null;
   var requestsLoaded = false;
@@ -530,10 +530,15 @@
   /* -------------------------------------------------------- analytics -- */
 
   var anCache = {};
-  document.querySelectorAll('.oa-pill').forEach(function (p) {
+  var anTimer = null;
+  var anOpen = {};      // visits whose journey is open, kept open across refreshes
+  var anShown = 30;     // visits listed before "Show more"
+  var anLast = null;
+  document.querySelectorAll('#tabAnalytics .oa-pill').forEach(function (p) {
     p.addEventListener('click', function () {
-      days = Number(p.dataset.days) || 30;
-      document.querySelectorAll('.oa-pill').forEach(function (q) {
+      days = p.dataset.days === 'today' ? 'today' : (Number(p.dataset.days) || 30);
+      anShown = 30;
+      document.querySelectorAll('#tabAnalytics .oa-pill').forEach(function (q) {
         q.classList.toggle('is-on', q === p);
         q.setAttribute('aria-selected', String(q === p));
       });
@@ -628,18 +633,128 @@
     $('anFunnelNote').textContent = bits.join(' ');
   }
 
-  async function loadAnalytics() {
+  /* Today keeps itself up to date while it is on screen: who is on the
+     site now and the journeys as they happen, every 15 seconds. */
+  async function loadAnalytics(fresh) {
+    clearTimeout(anTimer);
     if (!site) { $('anEmpty').hidden = false; $('anEmpty').textContent = 'Analytics start the moment your site is live.'; return; }
     var key = site.site_id + ':' + days;
-    var data = anCache[key];
+    var data = fresh ? null : anCache[key];
     try {
-      if (!data) { data = await api({ action: 'analytics', site_id: site.site_id, days: days }); anCache[key] = data; setTimeout(function () { delete anCache[key]; }, 60000); }
-    } catch (err) { $('anEmpty').hidden = false; $('anEmpty').textContent = 'Could not load your numbers: ' + err.message; return; }
-    renderAnalytics(data);
+      if (!data) { data = await api({ action: 'analytics', site_id: site.site_id, days: days }); anCache[key] = data; setTimeout(function () { delete anCache[key]; }, days === 'today' ? 14000 : 60000); }
+    } catch (err) { if (!fresh) { $('anEmpty').hidden = false; $('anEmpty').textContent = 'Could not load your numbers: ' + err.message; } }
+    if (data && key === site.site_id + ':' + days) renderAnalytics(data);
+    if (tab === 'Analytics' && days === 'today') anTimer = setTimeout(anTick, 15000);
   }
+  function anTick() {
+    if (tab !== 'Analytics' || days !== 'today') return;
+    if (document.hidden) { anTimer = setTimeout(anTick, 15000); return; }
+    loadAnalytics(true);
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && tab === 'Analytics' && days === 'today') loadAnalytics(true); });
+
+  /* ---- each visit as a story ---- */
+  function clock(iso) { return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
+  function whenVisit(iso) {
+    var d = new Date(iso), today = new Date();
+    if (d.toDateString() === today.toDateString()) return clock(iso);
+    return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) + ' ' + clock(iso);
+  }
+  function minutesText(a, b) {
+    var m = Math.round((new Date(b) - new Date(a)) / 60000);
+    return m < 1 ? 'under a minute' : m === 1 ? '1 min' : m < 60 ? m + ' mins' : Math.floor(m / 60) + 'h ' + (m % 60) + 'm';
+  }
+  function sourceText(v) {
+    if (v.from_ad === 'likely') return v.source + ' · likely an ad';
+    return v.source === 'Direct' ? 'Typed the address or a saved link' : v.source;
+  }
+  function stepText(st, first) {
+    if (st.kind === 'view') return (first ? 'Landed on ' : 'Opened ') + pageName(st.path);
+    var label = '\u201c' + st.label + '\u201d';
+    var t = st.target || '';
+    if (t === 'form') return 'Sent the form ' + label;
+    if (t === 'form-incomplete') return 'Tried to send the form ' + label + ', something was missing';
+    if (t === 'phone') return 'Tapped to call ' + label;
+    if (t === 'email') return 'Tapped to email ' + label;
+    if (t === 'message') return 'Tapped to message ' + label;
+    if (t.charAt(0) === '/') return 'Pressed ' + label + (t !== st.path ? ' \u2192 ' + pageName(t) : '');
+    if (t) return 'Pressed ' + label + ' \u2192 left for ' + t;
+    return 'Pressed ' + label;
+  }
+  function visitRow(v) {
+    var li = el('li');
+    var det = el('details', 'oa-visit');
+    if (anOpen[v.session]) det.open = true;
+    det.addEventListener('toggle', function () { if (det.open) anOpen[v.session] = true; else delete anOpen[v.session]; });
+    var sum = el('summary');
+    sum.appendChild(el('span', 'oa-visit-dot' + (v.live ? ' is-live' : '')));
+    var main = el('div', 'oa-visit-main');
+    var top = el('div', 'oa-visit-top');
+    top.appendChild(el('span', 'oa-visit-who', 'Visitor #' + sessionNo(v.session)));
+    top.appendChild(el('span', 'oa-visit-when', v.live ? 'Now on ' + pageName(v.now_path) : whenVisit(v.first_at)));
+    main.appendChild(top);
+    var bits = ['Landed on ' + pageName(v.landing)];
+    bits.push(v.pages === 1 ? '1 page' : v.pages + ' pages');
+    if (v.clicks) bits.push(v.clicks === 1 ? '1 click' : v.clicks + ' clicks');
+    bits.push(minutesText(v.first_at, v.last_at));
+    var where = [v.city, v.city ? null : (v.country ? countryName(v.country) : null), v.device === 'phone' ? 'phone' : 'desktop'].filter(Boolean);
+    main.appendChild(el('p', 'oa-visit-line', bits.join(' · ') + ' · ' + where.join(', ')));
+    var chips = el('div', 'oa-chips');
+    chips.appendChild(el('span', 'oa-chip' + (v.from_ad ? ' is-ad' : ''), sourceText(v)));
+    if (v.sent_form) chips.appendChild(el('span', 'oa-chip is-good', 'Sent a form'));
+    if (v.messaged) chips.appendChild(el('span', 'oa-chip is-good', 'Messaged'));
+    if (v.paid) chips.appendChild(el('span', 'oa-chip is-good', 'Paid'));
+    main.appendChild(chips);
+    sum.appendChild(main);
+    det.appendChild(sum);
+
+    var ol = el('ol', 'oa-steps');
+    var from = el('li', 'oa-step-from');
+    from.appendChild(el('time', '', clock(v.first_at)));
+    from.appendChild(el('span', 'oa-step-from', 'From ' + (v.from_ad === 'yes' ? v.source : v.from_ad === 'likely' ? v.source + ' (likely an ad)' : sourceText(v)) + (v.campaign ? ': ' + v.campaign : '')));
+    ol.appendChild(from);
+    v.steps.forEach(function (st, i) {
+      var key = st.kind === 'click' && ['form', 'phone', 'email', 'message'].indexOf(st.target) >= 0;
+      var item = el('li', (st.kind === 'click' ? 'is-click' : '') + (key ? ' is-key' : ''));
+      item.appendChild(el('time', '', clock(st.at)));
+      item.appendChild(el('span', '', stepText(st, i === 0)));
+      ol.appendChild(item);
+    });
+    if (v.more_steps) ol.appendChild(el('li', '', '\u2026 and ' + v.more_steps + ' more'));
+    if (v.live) { var nowLi = el('li', 'is-key'); nowLi.appendChild(el('time', '', 'now')); nowLi.appendChild(el('span', '', 'Still on ' + pageName(v.now_path))); ol.appendChild(nowLi); }
+    det.appendChild(ol);
+    li.appendChild(det);
+    return li;
+  }
+  function renderVisits(d) {
+    var vs = d.visits || { list: [], live: [], total: 0, sources: [], clicks: [], from_ads: { yes: 0, likely: 0 }, sent_form: 0 };
+    var live = $('anLive');
+    live.innerHTML = '';
+    if (!vs.live.length) live.appendChild(el('li', 'oa-list-empty', 'Nobody on the site right now.' + (days === 'today' ? ' This updates on its own.' : '')));
+    vs.live.forEach(function (v) { live.appendChild(visitRow(v)); });
+
+    $('anVisitsTitle').textContent = days === 'today' ? 'Today\u2019s visitors' + (vs.total ? ' (' + vs.total + ')' : '') : 'Visitors, newest first' + (vs.total ? ' (' + vs.total + ')' : '');
+    var box = $('anVisits');
+    box.innerHTML = '';
+    if (!vs.list.length) box.appendChild(el('li', 'oa-list-empty', days === 'today' ? 'No visitors yet today.' : 'No visitors in this period.'));
+    vs.list.slice(0, anShown).forEach(function (v) { box.appendChild(visitRow(v)); });
+    var more = $('anVisitsMore');
+    more.hidden = vs.list.length <= anShown;
+    more.textContent = 'Show ' + Math.min(30, vs.list.length - anShown) + ' more';
+    if (vs.total > vs.list.length && vs.list.length <= anShown) { more.hidden = true; box.appendChild(el('li', 'oa-list-empty', 'Showing the latest ' + vs.list.length + ' of ' + vs.total + '.')); }
+
+    list('anRefs', vs.sources.map(function (x) { return { key: x.ad === 'likely' ? x.source + ' (likely ad)' : x.source, n: x.visitors }; }), 'key', 'n', 'Nothing yet.');
+    var ads = vs.from_ads.yes + vs.from_ads.likely;
+    $('anRefsNote').textContent = vs.total ? (ads ? ads + ' of ' + vs.total + ' visitors came from an ad.' + (vs.from_ads.likely ? ' Facebook and Instagram add the same tag to shared posts as to ads, so those count as likely.' : '') : 'None from an ad in this period.') : '';
+    list('anClicks', vs.clicks, 'label', 'visitors', 'No clicks yet. Buttons and links pressed show here.');
+    $('anClicksNote').textContent = vs.clicks.length ? 'By how many visitors pressed each one.' + (vs.sent_form ? ' ' + vs.sent_form + ' sent a form.' : '') : '';
+  }
+  $('anVisitsMore').addEventListener('click', function () { anShown += 30; if (anLast) renderVisits(anLast); });
 
   function renderAnalytics(d) {
-    $('anCompare').textContent = 'Last ' + d.days + ' days, against the ' + d.days + ' before.';
+    anLast = d;
+    $('anCompare').textContent = d.days === 'today' ? 'Today since midnight, against yesterday up to this time.' : 'Last ' + d.days + ' days, against the ' + d.days + ' before.';
+    $('anSparkTitle').textContent = d.days === 'today' ? 'Visitors an hour' : 'Visitors a day';
     $('anVisitors').textContent = fmt(d.visitors);
     $('anViews').textContent = fmt(d.views);
     delta($('anVisitorsDelta'), d.visitors, d.previous.visitors);
@@ -706,8 +821,9 @@
       jl.appendChild(li);
     });
     $('anJourneysNote').textContent = d.visitors ? 'About ' + j.pages_per_visit + ' pages a visit. ' + j.one_page_pct + '% of visits saw one page and left.' : '';
-    list('anRefs', d.referrers, 'host', 'visitors', d.visitors ? 'Everyone typed your address or came from Google with no referrer.' : 'Nothing yet.');
-    list('anCountries', d.countries || [], 'country', 'visitors', 'Nothing yet.', countryName);
+    renderVisits(d);
+    if ((d.cities || []).length) list('anCountries', d.cities, 'city', 'visitors', 'Nothing yet.');
+    else list('anCountries', d.countries || [], 'country', 'visitors', 'Nothing yet.', countryName);
     var total = d.devices.phone + d.devices.desktop;
     var bar = $('anDevices');
     bar.innerHTML = '';

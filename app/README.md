@@ -24,10 +24,26 @@ booking / client) and where records live in the dashboard.
 
 ## The numbers
 
-The Analytics tab is the same for every site: visitors, who is on the site
-now, page views, visitors a day, top pages, the routes visitors take
-through the site, where they came from, phone or desktop, and country. All
-of it comes from the beacon line above. Two more cards appear when the
+The Analytics tab is the same for every site, and opens on Today (from
+midnight, against yesterday up to the same time; it refreshes itself every
+15 seconds while on screen), with 7, 30 and 90 days a tap away: visitors,
+who is on the site now, page views, visitors an hour or a day, top pages,
+the routes visitors take through the site, where they came from, what they
+pressed, phone or desktop, and town or country.
+
+Every visit is listed newest first, and tapping one opens its journey:
+where it came from (an ad, Google, another site, or typed in), the page it
+landed on, then each page opened and each button or link pressed, in order
+with the time, ending in a form sent, a message or a payment where there
+was one. "From an ad" is certain when the link's utm tags say paid
+(`utm_medium=paid`, `cpc`, `paid_social`...) or it carries a Google,
+Microsoft or TikTok click id. A Facebook or Instagram click id alone counts
+as *likely* an ad, since Meta puts the same id on shared posts. Give Meta
+ads a URL parameter of
+`utm_source=facebook&utm_medium=paid&utm_campaign={{campaign.name}}&utm_content={{ad.name}}`
+to make them certain and name the ad on each visit.
+
+All of it comes from the beacon line above. Two more cards appear when the
 site has them:
 
 - **Money in**: taken, number of payments, paying customers, average

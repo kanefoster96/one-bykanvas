@@ -6,7 +6,9 @@
  * random string the browser made for this tab and forgets when it closes.
  *
  * Only the site id, path, referrer host and device class are kept, plus
- * the country Vercel already worked out from the connection. Bots by
+ * the country and town Vercel already worked out from the connection and
+ * where the visit came from (see sourceOf). A click keeps the words on
+ * the button and where it went, nothing typed. Bots by
  * user agent are dropped. A site id that is not a site is dropped too,
  * quietly: a beacon never gets an error a visitor could see.
  */
@@ -34,6 +36,56 @@ function hostOf(url) {
   try { return new URL(String(url)).hostname.replace(/^www\./, '').toLowerCase() || null; } catch (e) { return null; }
 }
 
+/* Names people know for the places traffic comes from. */
+const NAMES = {
+  facebook: 'Facebook', fb: 'Facebook', meta: 'Facebook', 'm.facebook.com': 'Facebook', 'l.facebook.com': 'Facebook', 'lm.facebook.com': 'Facebook', 'facebook.com': 'Facebook',
+  instagram: 'Instagram', ig: 'Instagram', 'instagram.com': 'Instagram', 'l.instagram.com': 'Instagram',
+  google: 'Google', 'google.com': 'Google', 'google.co.uk': 'Google', bing: 'Bing', 'bing.com': 'Bing',
+  tiktok: 'TikTok', 'tiktok.com': 'TikTok', linkedin: 'LinkedIn', 'linkedin.com': 'LinkedIn', 'lnkd.in': 'LinkedIn',
+  youtube: 'YouTube', 'youtube.com': 'YouTube', 'x.com': 'X', 't.co': 'X', twitter: 'X',
+  'chatgpt.com': 'ChatGPT', chatgpt: 'ChatGPT', 'perplexity.ai': 'Perplexity', 'duckduckgo.com': 'DuckDuckGo',
+  email: 'Email', newsletter: 'Email', resend: 'Email', whatsapp: 'WhatsApp'
+};
+const PAID = /^(cpc|ppc|cpm|paid|paid[_-]?social|paidsocial|social[_-]?paid|ads?|display|paid[_-]?search)$/i;
+
+function nameOf(raw) {
+  const k = String(raw || '').trim().toLowerCase().replace(/^www\./, '');
+  if (!k) return null;
+  if (NAMES[k]) return NAMES[k];
+  if (/(^|\.)google\./.test(k)) return 'Google';
+  if (/(^|\.)facebook\.com$/.test(k)) return 'Facebook';
+  if (/(^|\.)instagram\.com$/.test(k)) return 'Instagram';
+  return k.slice(0, 40);
+}
+
+/* Where a visit came from, from the address it landed on and the site
+   that sent it. An ad is certain when its tags say paid, or it carries a
+   click id only ads have (Google, Microsoft, TikTok). Facebook and
+   Instagram put their click id on every link, ads and shared posts alike,
+   so that is 'likely'. The click id itself is never kept. */
+function sourceOf(pageUrl, refHost, ua) {
+  let q;
+  try { q = new URL(String(pageUrl)).searchParams; } catch (e) { q = new URLSearchParams(''); }
+  const get = (k) => String(q.get(k) || '').trim().slice(0, 60);
+  const utmSource = get('utm_source'), utmMedium = get('utm_medium');
+  const campaign = [get('utm_campaign'), get('utm_content')].filter(Boolean).join(' · ').slice(0, 120) || null;
+  if (q.get('gclid') || q.get('gbraid') || q.get('wbraid')) return { source: 'Google', from_ad: 'yes', campaign };
+  if (q.get('msclkid')) return { source: 'Bing', from_ad: 'yes', campaign };
+  if (q.get('ttclid')) return { source: 'TikTok', from_ad: 'yes', campaign };
+  if (utmSource) return { source: nameOf(utmSource), from_ad: PAID.test(utmMedium) ? 'yes' : null, campaign };
+  if (q.get('fbclid')) {
+    const insta = /Instagram/i.test(String(ua || '')) || (refHost && /instagram/.test(refHost));
+    return { source: insta ? 'Instagram' : 'Facebook', from_ad: 'likely', campaign };
+  }
+  return { source: refHost ? nameOf(refHost) : null, from_ad: null, campaign };
+}
+
+function cityOf(headers) {
+  let c = String(headers['x-vercel-ip-city'] || '');
+  try { c = decodeURIComponent(c); } catch (e) { /* keep as sent */ }
+  return c.trim().slice(0, 60) || null;
+}
+
 /* What is kept of a view, or null if it is not worth a row. */
 function clean(input, headers) {
   if (!input || !UUID.test(String(input.site || ''))) return null;
@@ -48,7 +100,22 @@ function clean(input, headers) {
   const referrer = refHost && refHost !== pageHost ? refHost : null;
   const device = Number(input.width) > 0 && Number(input.width) < 768 ? 'phone' : 'desktop';
   const country = String(headers['x-vercel-ip-country'] || '').toUpperCase().slice(0, 2) || null;
-  return { site_id: String(input.site).toLowerCase(), session, path, referrer, device, country };
+  const from = sourceOf(input.url, referrer, headers['user-agent']);
+  return { site_id: String(input.site).toLowerCase(), session, path, referrer, device, country, city: cityOf(headers), source: from.source, from_ad: from.from_ad, campaign: from.campaign };
+}
+
+/* A button or link pressed, or null. The words on it and where it went. */
+function cleanClick(input, headers) {
+  if (!input || !UUID.test(String(input.site || ''))) return null;
+  if (BOT.test(String(headers['user-agent'] || ''))) return null;
+  const session = String(input.session || '').replace(/[^a-z0-9]/gi, '').slice(0, 32);
+  if (session.length < 8) return null;
+  const label = String(input.label || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+  if (!label) return null;
+  let path = String(input.path || '/').split('?')[0].split('#')[0].slice(0, 200) || '/';
+  if (path[0] !== '/') path = '/' + path;
+  const target = String(input.target || '').split('?')[0].split('#')[0].trim().slice(0, 200) || null;
+  return { site_id: String(input.site).toLowerCase(), session, path, label, target };
 }
 
 /* A payment the site reported from its thank-you page (k1.payment), or
@@ -99,6 +166,13 @@ module.exports = async function handler(req, res) {
       if (payErr && !/foreign key|violates/i.test(payErr.message)) console.error('beacon payment:', payErr.message);
       return res.status(204).end();
     }
+    if (input && input.type === 'click') {
+      const c = cleanClick(input, req.headers || {});
+      if (!c) return res.status(204).end();
+      const { error: clickErr } = await db.from('page_clicks').insert(c);
+      if (clickErr && !/foreign key|violates/i.test(clickErr.message)) console.error('beacon click:', clickErr.message);
+      return res.status(204).end();
+    }
     const row = clean(input, req.headers || {});
     if (!row) return res.status(204).end();
     // An unknown site id is not a site: the insert fails the foreign key
@@ -113,3 +187,5 @@ module.exports = async function handler(req, res) {
 
 module.exports.clean = clean;
 module.exports.cleanPayment = cleanPayment;
+module.exports.cleanClick = cleanClick;
+module.exports.sourceOf = sourceOf;

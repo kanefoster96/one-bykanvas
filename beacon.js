@@ -2,11 +2,12 @@
  *
  *   <script src="https://kanvas.one/beacon.js" data-site="<site id>" defer></script>
  *
- * Sends one hit per page view - the path, the referrer, and whether the
- * screen is a phone - to kanvas.one, where the site's owner sees it in
- * the One app. No cookie, nothing stored in the browser beyond a random
- * id for this tab that goes when the tab closes. Nothing about the
- * visitor is kept.
+ * Sends one hit per page view - the address, the referrer, and whether
+ * the screen is a phone - to kanvas.one, where the site's owner sees it
+ * in the One app, and one per button or link pressed: the words on it and
+ * where it went, never anything typed. No cookie, nothing stored in the
+ * browser beyond a random id for this tab that goes when the tab closes.
+ * Nothing about the visitor is kept.
  *
  * A site that takes payments adds one call on its thank-you page, and
  * the payment is counted against this visit in the Analytics tab:
@@ -60,6 +61,54 @@
     last = path;
     send({ site: site, session: sessionId(), path: path, url: location.href, referrer: document.referrer || '', width: window.innerWidth || 0 });
   }
+
+  /* What was pressed on the way: the words on the button or link and
+     where it went. A form counts once it is sent (the browser has let it
+     through), by the words on its send button. Nothing typed is read. */
+  var CLICKABLE = 'a[href],button,[role="button"],input[type="submit"],input[type="button"],summary';
+  var clicks = 0, lastClick = '', lastClickAt = 0;
+  function words(node) {
+    var t = node.getAttribute('aria-label') || node.innerText || node.value || node.title || '';
+    if (!String(t).trim()) { var img = node.querySelector && node.querySelector('img[alt]'); if (img) t = img.alt; }
+    return String(t || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+  }
+  function targetOf(node) {
+    var href = node.getAttribute && node.getAttribute('href');
+    if (!href || href.charAt(0) === '#') return '';
+    if (/^tel:/i.test(href)) return 'phone';
+    if (/^mailto:/i.test(href)) return 'email';
+    if (/^(sms|whatsapp):/i.test(href)) return 'message';
+    try {
+      var u = new URL(href, location.href);
+      return u.host === location.host ? (u.pathname || '/') : u.hostname.replace(/^www\./, '');
+    } catch (e) { return ''; }
+  }
+  function click(label, target) {
+    if (!counting || !label || clicks >= 100) return;
+    var key = label + '|' + target, now = Date.now();
+    if (key === lastClick && now - lastClickAt < 1500) return;
+    lastClick = key; lastClickAt = now; clicks++;
+    send({ site: site, type: 'click', session: sessionId(), path: location.pathname || '/', label: label, target: target || '' });
+  }
+  document.addEventListener('click', function (e) {
+    var node = e.target && e.target.closest && e.target.closest(CLICKABLE);
+    if (!node || node.disabled) return;
+    if (/^skip to/i.test(words(node))) return;
+    // A form's send button is counted when the form is actually sent.
+    if (node.form && (node.type === 'submit' || (node.tagName === 'BUTTON' && !node.getAttribute('type')))) return;
+    var target = targetOf(node);
+    click(words(node) || target, target);
+  }, true);
+  document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!form || form.tagName !== 'FORM') return;
+    var btn = e.submitter || form.querySelector('button[type="submit"],button:not([type]),input[type="submit"]');
+    // A form that checks itself (novalidate) still comes here when a box
+    // is empty; that is an attempt, not a send.
+    var ok = true;
+    try { ok = form.checkValidity(); } catch (err) { /* old browser: count it */ }
+    click((btn && words(btn)) || form.getAttribute('aria-label') || 'Sent a form', ok ? 'form' : 'form-incomplete');
+  }, true);
 
   /* A payment the site took. Counted whether or not the visit is, since
      it is the business's own record; the visit is tied to it only when
