@@ -89,7 +89,8 @@
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
       leadId = data.id || '';
-      try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: leadId })); } catch (err) { /* private mode */ }
+      if (window.oneTrack) window.oneTrack('Lead', { content_category: 'free-preview' }, leadId || null);
+      try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: leadId, tracked: true })); } catch (err) { /* private mode */ }
       say('');
       micro.textContent = 'Your page for ' + biz + ' lands at ' + mail + ' within 24 hours.';
       go(2, handle);

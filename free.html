@@ -20,7 +20,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
-<link rel="stylesheet" href="styles.css?v=127">
+<link rel="stylesheet" href="styles.css?v=128">
 </head>
 <body>
 
@@ -45,45 +45,45 @@
   <div class="wrap center">
     <p class="hero-pill reveal"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg> Free</p>
     <h1 class="reveal">See your website<br>within 24 hours. <span class="g-free">Free.</span></h1>
-    <p class="lede reveal">Send your business name and a link to your business anywhere
-       online.<span class="gap"></span>We design a real page and email it to you. No card, nothing else to do.</p>
-    <p class="hero-after reveal">Love it? <b>&pound;12.50</b> for your first month, then &pound;25 a month. Online tomorrow, web address included.</p>
+    <p class="lede reveal">Your business name and your email. That&rsquo;s it.<span class="gap"></span>We design a real page for you and email it within 24 hours. No card.</p>
+
+    <!-- The same two steps as the homepage: the name and an arrow, then the
+         email and the gift that sends it. A link to the business is asked
+         for after, and can be skipped. free.js. -->
+    <form class="hero-form offer-pill reveal" id="offer" novalidate>
+      <div class="hp" aria-hidden="true">
+        <label for="offer_extra">Leave this empty</label>
+        <input id="offer_extra" name="offer_extra" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <div class="mini-step" id="offerStep1">
+        <div class="mini-row">
+          <input id="business" type="text" autocomplete="organization" autocapitalize="words" placeholder="What&rsquo;s your business name?" aria-label="Your business name" enterkeyhint="next">
+          <button class="mini-go" id="offerNext" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+      <div class="mini-step" id="offerStep2" hidden>
+        <div class="mini-row">
+          <input id="email" type="email" autocomplete="email" placeholder="Your email, to send your free design to?" aria-label="Your email, to send your free design to" enterkeyhint="send">
+          <button class="mini-go" id="offerSend" type="submit" aria-label="Send my free page"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg></button>
+        </div>
+      </div>
+      <div class="mini-step" id="offerStep3" hidden>
+        <label for="handle">Sent. One more thing helps us get it right: anywhere we can see your business</label>
+        <div class="mini-row">
+          <input id="handle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@instagram, Facebook, Checkatrade, a website" enterkeyhint="done">
+          <button class="mini-go" id="offerHandleGo" type="button" aria-label="Add it"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+        </div>
+        <p class="hint mini-skip"><button class="linkish" id="offerSkip" type="button">Nothing online yet? Skip this</button></p>
+      </div>
+      <p class="note" id="offerNote" role="status" aria-live="polite"></p>
+    </form>
+
+    <p class="hero-after reveal">Free design. Only if you love it, your first month is just <b>&pound;12.50</b> to get you online tomorrow.</p>
   </div>
 </section>
 
 <section class="section pt0">
   <div class="wrap">
-    <form class="offer-form reveal" id="offer" novalidate>
-      <div class="hp" aria-hidden="true">
-        <label for="offer_extra">Leave this empty</label>
-        <input id="offer_extra" name="offer_extra" type="text" tabindex="-1" autocomplete="off">
-      </div>
-
-      <div class="field">
-        <label for="business">Business name</label>
-        <input id="business" type="text" autocomplete="organization" required>
-      </div>
-
-      <div class="field">
-        <label for="email">Email</label>
-        <input id="email" type="email" autocomplete="email" required>
-        <p class="hint">Where your page gets sent, within 24 hours.</p>
-      </div>
-
-      <div class="field">
-        <label for="handle">Your business anywhere online</label>
-        <input id="handle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false"
-               placeholder="@yourbusiness or a link" required>
-        <p class="hint">Instagram, Facebook, your current site, Trust a Trader, Checkatrade,
-           Booksy &mdash; anywhere at all. It&rsquo;s where we get your photos and your look.</p>
-      </div>
-
-      <button class="btn btn-primary full" id="offerSend" type="submit">Get my free page</button>
-      <p class="note" id="offerNote" role="status" aria-live="polite"></p>
-
-      <p class="hint offer-wait">Designed by hand and in your inbox within 24 hours.
-         Free, no card, and nothing else to do.</p>
-    </form>
 
     <!-- The price, straight under the form, so the question every ad click
          is quietly asking ("what does it cost after?") is answered before
@@ -91,10 +91,10 @@
          the monthly price follows it, and the big numbers either side are
          anchors: a traditional build above, Max below. -->
     <div class="today reveal" id="price">
-      <p class="today-tag">Like your page? Here&rsquo;s the cost</p>
-      <p class="today-due"><span class="cur">&pound;</span>12.50 <span class="today-word">today</span></p>
-      <p class="today-sub">Puts it live on your own web address the same day.<br>
-         Then &pound;25 a month. No setup fee. Cancel any month.</p>
+      <p class="today-tag">Love your page? Here&rsquo;s the cost</p>
+      <p class="today-due"><span class="cur">&pound;</span>12.50 <span class="today-word">first month</span></p>
+      <p class="today-sub">Puts it online on your own web address.<br>
+         Then renews at &pound;25 a month, everything below included. No setup fee. Cancel any month.</p>
       <ul class="ticks today-ticks">
         <li class="tick-hero">Your own web address, included</li>
         <li class="tick-hero">Contact form and click to call</li>
@@ -124,7 +124,7 @@
     <div class="offer-after">
       <h2>What happens next</h2>
       <ol class="offer-steps">
-        <li>We look at the link you sent.</li>
+        <li>We look at your business online.</li>
         <li>We design your page and email it within 24 hours.</li>
         <li>Like it? Pay &pound;12.50 and it&rsquo;s live on your own web address the same day.
             Then &pound;25 a month, cancel any month.</li>
@@ -159,11 +159,11 @@
   </div>
 </footer>
 
-<script src="consent.js?v=8"></script>
+<script src="consent.js?v=9"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=33"></script>
-<script src="free.js?v=6"></script>
+<script src="free.js?v=7"></script>
 <script src="reviews.js?v=4"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=2" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>

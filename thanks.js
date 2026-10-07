@@ -35,7 +35,7 @@
 
   if (stash) {
     try { sessionStorage.removeItem(KEY); } catch (e) {}
-    if (window.oneTrack) window.oneTrack('Lead', { content_category: 'free-preview' }, stash.id || null);
+    if (window.oneTrack && !stash.tracked) window.oneTrack('Lead', { content_category: 'free-preview' }, stash.id || null);
     startClock();
   }
 
