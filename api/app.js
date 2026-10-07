@@ -142,6 +142,16 @@ function sourceLabel(v) {
   return 'Direct';
 }
 
+/* Towns that are really server farms: a "visitor" from one is a crawler,
+   an uptime check or a link preview running on a cloud machine, not a
+   person. Their visits are left out of the numbers and counted apart. */
+const DATA_CENTRES = /^(boardman|ashburn|council bluffs|the dalles|moncks corner|prineville|lenoir|forest city|quincy|san jose|santa clara|north charleston)$/i;
+function botSessions(rows) {
+  const out = new Set();
+  rows.forEach((r) => { if (r.city && DATA_CENTRES.test(String(r.city).trim())) out.add(r.session); });
+  return out;
+}
+
 const LIVE_WINDOW = 5 * 60 * 1000;
 const MAX_VISITS = 150, MAX_STEPS = 40;
 
@@ -257,10 +267,12 @@ async function analytics(db, site, daysIn) {
     db.from('page_clicks').select('session, path, label, target, created_at').eq('site_id', site.id).gte('created_at', new Date(w.start).toISOString()).order('created_at', { ascending: false }).limit(MAX_ROWS)
   ]);
   if (views.error) throw new Error(views.error.message);
-  const rows = views.data || [], payRows = pays.data || [], convRows = (convs.data || []).filter((c) => !c.channel || c.channel === 'web');
+  const bots = botSessions(views.data || []);
+  const rows = (views.data || []).filter((r) => !bots.has(r.session)), payRows = pays.data || [], convRows = (convs.data || []).filter((c) => !c.channel || c.channel === 'web');
   const modules = site.modules || [];
   const out = summarise(rows, w);
   out.beacon_seen = rows.length > 0;
+  out.bots_hidden = new Set((views.data || []).filter((r) => bots.has(r.session) && new Date(r.created_at).getTime() >= w.start).map((r) => r.session)).size;
   // Clicks are newer than views: a site whose table is not there yet
   // still gets its visits, just without the clicks in them.
   out.visits = visits(rows, clicks.error ? [] : (clicks.data || []), convRows, payRows, w);

@@ -82,7 +82,7 @@ const MAX_HEADING = 'Want us to go and get you customers?';
    to be true. The offer reads the same as the ads and /free: a free design
    in 24 hours, £12.50 today to go live, then £25 a month. */
 const STARTER_ICONS = ['layers', 'search', 'mail', 'photo', 'person', 'pencil'];
-const STARTER_TRUST = ['&pound;12.50 today', 'Web address included', 'Live the same day', 'Cancel anytime'];
+const STARTER_TRUST = ['&pound;12.50 first month', 'Web address included', 'Live the same day', 'Cancel anytime'];
 const STARTER_NOTE = 'Free design within 24 hours, no card. Love it? &pound;12.50 puts it live, then &pound;25 a month, no VAT.';
 const STARTER_ALSO_TITLE = 'Want bookings, payments or live chat too?';
 
