@@ -928,6 +928,9 @@ a.hero-pill:focus-visible{outline:2px solid var(--good);outline-offset:3px}
 a.hero-pill:hover .pill-go{opacity:1}
 
 .offer-hero .hero-pill{margin-bottom:clamp(20px,3vw,28px)}
+/* Someone arriving from an ad on a phone should see the first box without
+   scrolling, so the hero gives up its top air on small screens. */
+@media (max-width:600px){.page-hero.offer-hero{padding-top:24px}.offer-hero .hero-pill{margin-bottom:14px}}
 .offer-hero h1{
   font-size:clamp(38px,6.4vw,64px);line-height:1.04;letter-spacing:-.035em;
   font-weight:600;margin:0 0 clamp(16px,2.4vw,22px);
