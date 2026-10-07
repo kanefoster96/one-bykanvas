@@ -672,6 +672,8 @@
     if (st.kind === 'view') return (first ? 'Landed on ' : 'Opened ') + pageName(st.path);
     var label = '\u201c' + st.label + '\u201d';
     var t = st.target || '';
+    if (t === 'form-start') return 'Tapped into ' + label;
+    if (t === 'seen') return 'Scrolled to ' + st.label;
     if (t === 'form') return 'Sent the form ' + label;
     if (t === 'form-incomplete') return 'Tried to send the form ' + label + ', something was missing';
     if (t === 'phone') return 'Tapped to call ' + label;
@@ -702,6 +704,7 @@
     var chips = el('div', 'oa-chips');
     chips.appendChild(el('span', 'oa-chip' + (v.from_ad ? ' is-ad' : ''), sourceText(v)));
     if (v.sent_form) chips.appendChild(el('span', 'oa-chip is-good', 'Sent a form'));
+    else if (v.started_form) chips.appendChild(el('span', 'oa-chip', 'Started the form'));
     if (v.messaged) chips.appendChild(el('span', 'oa-chip is-good', 'Messaged'));
     if (v.paid) chips.appendChild(el('span', 'oa-chip is-good', 'Paid'));
     main.appendChild(chips);
