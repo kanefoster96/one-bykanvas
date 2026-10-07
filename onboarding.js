@@ -370,7 +370,7 @@
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok) throw new Error(data.error || 'Could not save that.');
       dirty = false;
-      var who = viewer === 'admin' ? 'They’ve' : 'Kane’s';
+      var who = viewer === 'admin' ? 'They’ve' : 'We’ve';
       say(note, data.changed && data.changed.length ? 'Saved. ' + who + ' been told: ' + data.changed.join(', ') + '.' : 'Saved. Nothing changed since last time.', 'ok');
     } catch (err) {
       say(note, err.message || 'Could not save that. Try again.', 'bad');

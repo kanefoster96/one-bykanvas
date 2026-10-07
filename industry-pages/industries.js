@@ -31,11 +31,11 @@ const PROMISE = {
 };
 
 
-/* Two of ours, doing what they were built to do. Same two on the
+/* Two businesses on Kanvas One, named by trade only. Same two on the
    homepage and on every trade page: proof is proof. */
 const CASES = [
-  { tag: 'Dance school', title: 'Enquiries every day, onboarded without lifting a finger', text: 'Free trial classes are booked through the site. Each one is confirmed by email and the family is onboarded automatically, so the academy hears from new students daily and never chases a form.', host: 'kanvasacademy.com', url: 'https://kanvasacademy.com' },
-  { tag: 'Dog trainer', title: 'A new business. Fully booked, with a waiting list.', text: 'Started from nothing. Now near the top of Google locally for dog training, booked solid, and running a waiting list straight from the site.', host: 'nellyandnova.co.uk', url: 'https://nellyandnova.co.uk' }
+  { tag: 'Dance school', title: 'Enquiries every day, onboarded without lifting a finger', text: 'Free trial classes are booked through the site. Each one is confirmed by email and the family is onboarded automatically, so the academy hears from new students daily and never chases a form.' },
+  { tag: 'Dog trainer', title: 'A new business. Fully booked, with a waiting list.', text: 'Started from nothing. Now near the top of Google locally for dog training, booked solid, and running a waiting list straight from the site.' }
 ];
 
 const TRUST = ['No VAT', 'No setup fees', 'Live the same day', 'Cancel anytime'];
@@ -64,7 +64,7 @@ function steps(one) {
 }
 
 function endLine(subject) {
-  return 'Got a question? Email <a href="mailto:hello@kanvas.one?subject=' + encodeURIComponent(subject) + '">hello@kanvas.one</a> and Kane replies.';
+  return 'Got a question? Email <a href="mailto:hello@kanvas.one?subject=' + encodeURIComponent(subject) + '">hello@kanvas.one</a> and we reply.';
 }
 
 const COMMON_FAQ = [

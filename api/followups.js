@@ -144,11 +144,11 @@ function whatDidYouThink(lead, site) {
         'Be honest &mdash; did it look like you? If something is off, just reply '
           + 'and say so. Changes are free, and we&rsquo;d rather get it right than guess.',
         'And if you liked it, it can be your real site today: live on your own '
-          + 'web address with a contact form and click to call, looked after for you, '
-          + '&pound;25 a month with no setup fee.'
+          + 'web address with a contact form and click to call, looked after for you. '
+          + '<strong>&pound;12.50 today</strong>, then &pound;25 a month, no setup fee, cancel any month.'
       ],
       offer: offerBox(site),
-      ctaText: 'Make it my site',
+      ctaText: 'Put it live — £12.50 today',
       ctaHref: joinHref(site, lead, 'starter'),
       footer: 'You&rsquo;re getting this because you asked for a free example at '
             + 'kanvas.one. If we don&rsquo;t hear from you, one more email follows '
@@ -159,8 +159,8 @@ function whatDidYouThink(lead, site) {
         + `Be honest - did it look like you? If something is off, just reply and say so. `
         + `Changes are free, and we'd rather get it right than guess.\n\n`
         + `And if you liked it, it can be your real site today: live on your own web `
-        + `address with a contact form and click to call, looked after for you, GBP 25 a month `
-        + `with no setup fee.\n`
+        + `address with a contact form and click to call, looked after for you. GBP 12.50 today, `
+        + `then GBP 25 a month, no setup fee, cancel any month.\n`
         + `${joinHref(site, lead, 'starter')}\n\n`
         + `50% off your first month with ${PREVIEW_OFFER.code}:\n`
         + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n`
@@ -174,11 +174,11 @@ function lastOne(lead, site) {
     to: lead.email,
     subject: `Last one from us, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
     html: emailHtml({
-      preheader: 'The page you saw, live on your own address, for £25 a month.',
+      preheader: 'The page you saw, live on your own address, for £12.50 today.',
       heading: 'Last one from us',
       lines: [
         `The free page we made for <strong>${esc(lead.business)}</strong> is still up.`,
-        '<strong>Starter, &pound;25 a month</strong>: the page you saw, live on your own address '
+        '<strong>Starter, &pound;12.50 today, then &pound;25 a month</strong>: the page you saw, live on your own address '
           + 'today, with a contact form and click to call, found on Google, a change a month made '
           + 'by us. No setup fee.',
         'Pay for the year and it&rsquo;s 2 months free plus the Launch Boost: your first month '
@@ -187,7 +187,7 @@ function lastOne(lead, site) {
           + 'the last email about it, and nothing else will follow.'
       ],
       offer: offerBox(site),
-      ctaText: 'Start on Starter — £25 a month',
+      ctaText: 'Put it live — £12.50 today',
       ctaHref: joinHref(site, lead, 'starter'),
       ctaNote: `Or <a href="${esc(joinHref(site, lead, 'business'))}" style="color:inherit;">Business, &pound;25 more, with bookings and payments</a>.`,
       footer: 'You&rsquo;re getting this because you asked for a free example at '
@@ -195,7 +195,7 @@ function lastOne(lead, site) {
       footerLinks: standardFooter(site)
     }),
     text: `The free page we made for ${lead.business} is still up.\n\n`
-        + `Starter, GBP 25 a month: the page you saw, live on your own address today, with a `
+        + `Starter, GBP 12.50 today then GBP 25 a month: the page you saw, live on your own address today, with a `
         + `contact form and click to call, found on Google, a change a month made by us. No setup fee.\n`
         + `${joinHref(site, lead, 'starter')}\n\n`
         + `Pay for the year and it's 2 months free plus the Launch Boost: your first month spent `

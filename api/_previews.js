@@ -79,7 +79,7 @@ function planCards(site, domain, leadId) {
   const live = domain ? 'Live on ' + esc(domain) + ' today.' : 'Live on your own address today.';
   return {
     title: 'Make it your site',
-    intro: 'This page, designed and hosted for you, £25 a month. No setup fee. Cancel any month.',
+    intro: 'This page, live on your own web address: £12.50 today, then £25 a month. No setup fee. Cancel any month, no exit fee, and your web address stays yours.',
     cards: [{
       name: 'Starter', price: '£25', tag: 'The site', featured: true,
       text: live + ' Customers find you, call you and message you.',
@@ -89,7 +89,7 @@ function planCards(site, domain, leadId) {
         'Your web address, hosting and security included',
         'A change every month, made by us'
       ],
-      ctaText: 'Make it my site — £25 a month', ctaHref: joinHref(site, 'starter', domain, leadId)
+      ctaText: 'Put it live — £12.50 today', ctaHref: joinHref(site, 'starter', domain, leadId)
     }, {
       name: 'Business', price: '£50', tag: '+£25: get booked',
       text: 'Everything in Starter, plus the features that take the work off your phone.',
@@ -99,11 +99,11 @@ function planCards(site, domain, leadId) {
         'Unlimited changes, made by us within 48 hours',
         'Your three features built within 14 days, or your next month is free'
       ],
-      ctaText: 'Choose Business — £50 a month', ctaHref: joinHref(site, 'business', domain, leadId)
+      ctaText: 'Choose Business — £25 today', ctaHref: joinHref(site, 'business', domain, leadId)
     }],
     note: '50% off your first month, on any plan. Or pay for the year: 2 months free and the Launch Boost, '
         + 'your first month spent getting you found on Google.<br>'
-        + 'kanvasacademy.com and nellyandnova.co.uk run on this. Built by us, and you can message Kane.'
+        + 'Designed and built by our team to get your business more customers online. Message us any time.'
   };
 }
 
@@ -198,7 +198,7 @@ async function sendLeadPreview(db, id, url, opts) {
             + 'Applied when you join. Or pay for the year: 2 months free and the Launch Boost.',
         note: 'Nothing to copy &mdash; it is already on the bill when you pay.'
       },
-      closing: 'Anything you&rsquo;d change on the page, just reply and say so. Changes are free, before and after you join. &mdash; Kane',
+      closing: 'Anything you&rsquo;d change on the page, just reply and say so. Changes are free, before and after you join. &mdash; The Kanvas One team',
       footer: 'You&rsquo;re getting this because you asked us for a free example at '
             + 'kanvas.one. No account has been created and nothing has been charged.',
       footerLinks: standardFooter(site)
@@ -219,19 +219,19 @@ async function sendLeadPreview(db, id, url, opts) {
         + COULD.map((t) => '- ' + t).join('\n') + '\n\n'
         + `What happens when you say yes:\n`
         + NEXT.items.map((t) => '- ' + t).join('\n') + '\n\n'
-        + `Make it your site. Starter, GBP 25 a month: this page live on your own address today, `
+        + `Put it live. Starter, GBP 12.50 today then GBP 25 a month: this page live on your own address today, `
         + `with a contact form and click to call, found on Google, a change a month made by us. `
         + `No setup fee. Cancel any month.\n`
         + `${joinHref(site, 'starter', claimable, lead.id)}\n\n`
         + `Want bookings, payments and live chat? Business is GBP 25 more, with unlimited changes `
         + `and your three features built within 14 days or your next month is free.\n`
         + `${joinHref(site, 'business', claimable, lead.id)}\n\n`
-        + `kanvasacademy.com and nellyandnova.co.uk run on this. Built by us, and you can message Kane.\n\n`
+        + `Designed and built by our team to get your business more customers online. Message us any time.\n\n`
         + `50% off your first month, on any plan, applied when you join. Or pay for the year: `
         + `2 months free and the Launch Boost, your first month spent getting you found on Google.\n`
         + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`
         + `Anything you'd change on the page, just reply and say so. Changes are free, `
-        + `before and after you join.\n\nKane\n`
+        + `before and after you join.\n\nThe Kanvas One team\n`
   });
 
   /* sendEmail answers 'sent', 'skipped' or 'failed', and only the first

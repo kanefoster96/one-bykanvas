@@ -239,7 +239,7 @@ module.exports = async function handler(req, res) {
 
     /* The admin changed it: the customer hears in the app, on their phone. */
     if (viewer === 'admin') {
-      await notify(db, ownerId, 'Kane updated your Max setup', `Changed: ${changed.join(', ')}.`, '/onboarding.html',
+      await notify(db, ownerId, 'We updated your Max setup', `Changed: ${changed.join(', ')}.`, '/onboarding.html',
         { kind: 'max_setup', deepLink: { kind: 'max_setup' } });
       return res.status(200).json({ ok: true, changed });
     }
