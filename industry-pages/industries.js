@@ -716,6 +716,114 @@ module.exports = [
     ].concat(STARTER_FAQ),
     endLine: endLine('Website for my heating business'),
     freeLede: 'We design a real page for your heating business, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
+  },
+{
+    slug: 'nail-techs',
+    rich: true,
+    icons: STARTER_ICONS,
+    lines: ['add my nail menu', 'show my latest sets', 'link my booking app', 'add my prices', 'add my opening hours'],
+    link: 'Nail techs',
+    title: 'Nail Techs',
+    h1: 'Websites for nail techs new clients can find.',
+    lede: 'New clients search &ldquo;nails near me&rdquo; and book whoever Google shows them. Your own site puts your sets, your prices and a button to book where they search. Designed for you within 24 hours.',
+    heroNote: STARTER_NOTE,
+    trust: STARTER_TRUST,
+    trustLine: 'Send your Instagram. We do the rest.',
+    desc: 'Websites for nail techs and nail salons. Your sets, prices and reviews on your own site, found on Google and AI search nearby, with a button to book. Free design in 24 hours, £12.50 to go live, then £25 a month.',
+    placeholder: 'e.g. Polished by Jess',
+    features: starterFeatures({
+      live: 'Your nail menu and prices, your hours, and where to find you.',
+      google: 'Written for what people search: &ldquo;nails near me&rdquo;, &ldquo;BIAB nails Blyth&rdquo;.',
+      formTitle: 'A button straight to your booking app',
+      form: 'Clients see your sets first, then book in the app you already use. Or send an enquiry straight to you.',
+      gallery: 'Your latest sets in a proper gallery, so new clients can pick the look they want.'
+    }),
+    alsoTitle: STARTER_ALSO_TITLE,
+    also: ['Online booking', 'Deposits to stop no-shows', 'Infill reminders', 'Reviews asked for automatically', 'Gift vouchers'],
+    buildNote: 'Send us your Instagram and your nail menu. We design the site and you see it within 24 hours.',
+    steps: starterSteps(['Send us your Instagram', 'Your sets, your prices and where you are. That&rsquo;s all we need.']),
+    stepsLine: 'Business, &pound;50 a month, adds bookings, deposits and unlimited changes, any month.',
+    maxPitch: { heading: MAX_HEADING, text: 'The nail techs top for &ldquo;nails near me&rdquo; keep adding photos, pages and reviews. Starter gets you found. Max keeps you there.' },
+    promise: PROMISE,
+    pricingExtra: ['&pound;25 a month is less than one set of nails. Under &pound;6 a week, no VAT.'],
+    faq: [
+      ['My clients book through Instagram already.', 'The ones who follow you, yes. New clients search Google and AI first, and Instagram doesn&rsquo;t show up there. Your site does.'],
+      ['I work from home. Do I have to show my address?', 'No. We show your area and give the full address once they book.']
+    ].concat(STARTER_FAQ),
+    endLine: endLine('Website for my nail business'),
+    freeLede: 'We design a real page for your nail business, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
+  },
+  {
+    slug: 'mobile-car-valeters',
+    rich: true,
+    icons: STARTER_ICONS,
+    lines: ['add my valet packages', 'show my before and afters', 'add a quote form', 'add the areas I cover', 'add my prices'],
+    link: 'Mobile car valeters',
+    title: 'Mobile Car Valeters',
+    h1: 'Websites for mobile car valeters that book the job.',
+    lede: 'They want a price before they book. No website? They ask someone else. Your own site shows your before and afters, your packages and prices, with a quote form that books the job. Designed for you within 24 hours.',
+    heroNote: STARTER_NOTE,
+    trust: STARTER_TRUST,
+    trustLine: 'Send your Facebook or Instagram. We do the rest.',
+    desc: 'Websites for mobile car valeters and detailers. Your before and afters, packages and prices on your own site, found on Google and AI search nearby, with a quote form. Free design in 24 hours, £12.50 to go live, then £25 a month.',
+    placeholder: 'e.g. Shine On Valeting',
+    features: starterFeatures({
+      live: 'Your valet packages and prices, the areas you cover and how booking works.',
+      google: 'Written for what people search: &ldquo;mobile car valeting near me&rdquo;, &ldquo;car detailing Cramlington&rdquo;.',
+      formTitle: 'A quote form that books the job',
+      form: 'Customers pick a package, tell you the car and where it is, and send it straight to you.',
+      gallery: 'Before and afters in a proper gallery. Nothing sells a valet faster.'
+    }),
+    alsoTitle: STARTER_ALSO_TITLE,
+    also: ['Online booking', 'Deposits taken up front', 'Maintenance valet reminders', 'Reviews asked for automatically', 'Gift vouchers'],
+    buildNote: 'Send us your Facebook or Instagram and your packages. We design the site and you see it within 24 hours.',
+    steps: starterSteps(['Send us your Facebook or Instagram', 'Your packages, your prices and where you cover. That&rsquo;s all we need.']),
+    stepsLine: 'Business, &pound;50 a month, adds bookings, deposits and unlimited changes, any month.',
+    maxPitch: { heading: MAX_HEADING, text: 'The valeters booked for weeks keep adding photos, pages and reviews. Starter gets you found. Max keeps you there.' },
+    promise: PROMISE,
+    pricingExtra: ['&pound;25 a month is less than one full valet. Under &pound;6 a week, no VAT.'],
+    faq: [
+      ['I get my work from Facebook.', 'Some of it. People searching &ldquo;car valeting near me&rdquo; never see your Facebook page. Your site shows up, with your prices.'],
+      ['Can I show different packages?', 'Yes. Mini, full, interior, detailing: each with its own price and photos.']
+    ].concat(STARTER_FAQ),
+    endLine: endLine('Website for my valeting business'),
+    freeLede: 'We design a real page for your valeting business, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
+  },
+  {
+    slug: 'driving-instructors',
+    rich: true,
+    icons: STARTER_ICONS,
+    lines: ['add my lesson prices', 'add the areas I cover', 'add a form for new learners', 'add my block booking deals', 'show my pass photos'],
+    link: 'Driving instructors',
+    title: 'Driving Instructors',
+    h1: 'Websites for driving instructors parents trust.',
+    lede: 'Parents check you out before they book lessons. No website? They pick someone else. Your prices, the areas you cover and a form for new learners, on your own site. Designed for you within 24 hours.',
+    heroNote: STARTER_NOTE,
+    trust: STARTER_TRUST,
+    trustLine: 'Send your Facebook or Instagram. We do the rest.',
+    desc: 'Websites for driving instructors and driving schools. Your prices, areas and pass photos on your own site, found on Google and AI search nearby, with a form for new learners. Free design in 24 hours, £12.50 to go live, then £25 a month.',
+    placeholder: 'e.g. Pass First Time Driving',
+    features: starterFeatures({
+      live: 'Your lesson prices and block deals, manual or automatic, and the areas you cover.',
+      google: 'Written for what people search: &ldquo;driving lessons near me&rdquo;, &ldquo;automatic driving instructor Morpeth&rdquo;.',
+      formTitle: 'A form for new learners',
+      form: 'Learners, or their parents, send their details, what they need and when they&rsquo;re free. It comes straight to you.',
+      gallery: 'Your pass photos and reviews, the proof parents look for before they book.'
+    }),
+    alsoTitle: STARTER_ALSO_TITLE,
+    also: ['Lessons booked online', 'Block bookings paid up front', 'Lesson reminders', 'Reviews asked for automatically', 'Gift vouchers'],
+    buildNote: 'Send us your Facebook or Instagram and your prices. We design the site and you see it within 24 hours.',
+    steps: starterSteps(['Send us your Facebook or Instagram', 'Your prices, your car and where you cover. That&rsquo;s all we need.']),
+    stepsLine: 'Business, &pound;50 a month, adds online booking, payments and unlimited changes, any month.',
+    maxPitch: { heading: MAX_HEADING, text: 'The instructors with a waiting list keep adding pages, pass photos and reviews. Starter gets you found. Max keeps the diary full.' },
+    promise: PROMISE,
+    pricingExtra: ['&pound;25 a month is less than one lesson. Under &pound;6 a week, no VAT.'],
+    faq: [
+      ['I already have a waiting list.', 'Then keep the quiet months full. Learners search Google and AI first, and parents check you out before they pay for a block.'],
+      ['I&rsquo;m listed on a driving school site.', 'Keep it. There you sit next to every other instructor. Your own site is just you.']
+    ].concat(STARTER_FAQ),
+    endLine: endLine('Website for my driving school'),
+    freeLede: 'We design a real page for your driving school, in your inbox within 24 hours, before you pay. If you don&rsquo;t love it, you owe nothing.'
   }
 ];
 
