@@ -15,6 +15,13 @@
  *     onPushToken(token) / onPushDenied(reason)
  *     openLink(data)                 a notification was tapped
  *     refresh()                      a notification arrived, or app resumed
+ *
+ * Coming back to the app: iOS may have killed the WebView's page while the
+ * app sat in the background, which leaves a white screen until a restart.
+ * So on every return the page is asked to answer ('alive'); if the page
+ * process is gone, or it answers that it is blank, it is reloaded. iOS and
+ * Android both also say outright when the page process dies, and that
+ * reloads it too.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, AppState, BackHandler, Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -79,6 +86,8 @@ function Shell() {
   const pendingLink = useRef(null);
   const [failed, setFailed] = useState(null);
   const [loading, setLoading] = useState(true);
+  const aliveAt = useRef(0);
+  const aliveTimer = useRef(null);
 
   const inject = useCallback((js) => {
     if (web.current) web.current.injectJavaScript(js + '; true;');
@@ -87,6 +96,24 @@ function Shell() {
   const call = useCallback((fn, arg) => {
     inject('window.ONE_NATIVE && typeof ONE_NATIVE.' + fn + ' === "function" && ONE_NATIVE.' + fn + '(' + (arg === undefined ? '' : JSON.stringify(arg)) + ')');
   }, [inject]);
+
+  /* The page is gone or blank: load it again, behind the splash. */
+  const reloadPage = useCallback(() => {
+    ready.current = false;
+    setFailed(null);
+    setLoading(true);
+    if (web.current) web.current.reload();
+  }, []);
+
+  /* Back in the app: is the page still there? A page whose process iOS
+     killed cannot answer, so no answer within a few seconds means reload. */
+  const checkAlive = useCallback(() => {
+    if (!ready.current) return;
+    const asked = Date.now();
+    clearTimeout(aliveTimer.current);
+    inject("window.ReactNativeWebView && window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'alive', blank: !(document.body && document.body.children.length && (document.body.innerText || '').trim()) }))");
+    aliveTimer.current = setTimeout(() => { if (aliveAt.current < asked) reloadPage(); }, 3500);
+  }, [inject, reloadPage]);
 
   /* A tapped notification: hand its data to the web app, or hold it until
      the web app says it is ready (a cold start). */
@@ -104,20 +131,22 @@ function Shell() {
       if (r && r.notification) openLink(r.notification.request.content.data);
     }).catch(() => {});
     const state = AppState.addEventListener('change', (s) => {
-      if (s === 'active') { Notifications.setBadgeCountAsync(0).catch(() => {}); if (ready.current) call('refresh'); }
+      if (s === 'active') { Notifications.setBadgeCountAsync(0).catch(() => {}); checkAlive(); if (ready.current) call('refresh'); }
     });
     const back = BackHandler.addEventListener('hardwareBackPress', () => {
       if (web.current) { web.current.goBack(); return true; }
       return false;
     });
-    return () => { tapped.remove(); arrived.remove(); state.remove(); back.remove(); };
-  }, [call, openLink]);
+    return () => { tapped.remove(); arrived.remove(); state.remove(); back.remove(); clearTimeout(aliveTimer.current); };
+  }, [call, openLink, checkAlive]);
 
   const onMessage = useCallback(async (e) => {
     let msg = null;
     try { msg = JSON.parse(e.nativeEvent.data); } catch (err) { return; }
     if (!msg || typeof msg !== 'object') return;
-    if (msg.type === 'ready') {
+    if (msg.type === 'alive') {
+      if (msg.blank) reloadPage(); else aliveAt.current = Date.now();
+    } else if (msg.type === 'ready') {
       ready.current = true;
       SplashScreen.hideAsync().catch(() => {});
       setLoading(false);
@@ -128,7 +157,7 @@ function Shell() {
     } else if (msg.type === 'open' && msg.url) {
       openOutside(String(msg.url));
     }
-  }, [call]);
+  }, [call, reloadPage]);
 
   /* Which navigations stay inside the app. Our own host: yes. A frame
      inside the page (the customer's dashboard): yes. Anything else that
@@ -192,6 +221,8 @@ function Shell() {
         setSupportMultipleWindows={false}
         onLoadEnd={onLoadEnd}
         onError={onError}
+        onContentProcessDidTerminate={reloadPage}
+        onRenderProcessGone={reloadPage}
         onHttpError={(e) => { const s = e && e.nativeEvent && e.nativeEvent.statusCode; const top = e && e.nativeEvent && e.nativeEvent.url; if (s >= 500 && top && top.indexOf(APP_URL) === 0) onError({ nativeEvent: { description: 'kanvas.one is not responding (' + s + ').' } }); }}
         applicationNameForUserAgent={'KanvasOne/' + APP_VERSION}
         contentInsetAdjustmentBehavior="never"
