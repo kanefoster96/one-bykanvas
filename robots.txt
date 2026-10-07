@@ -8,5 +8,7 @@ Disallow: /requests.html
 Disallow: /notifications.html
 Disallow: /login.html
 Disallow: /api/
+# Ad videos, hosted here so Meta can fetch them. Not pages.
+Disallow: /media/ads/
 
 Sitemap: https://kanvas.one/sitemap.xml
