@@ -68,6 +68,11 @@
         var per = mode === 'annual' ? '/year' : '/month';
         p.innerHTML = '<span class="cur">£</span>' + amount + '<span class="per">' + per + '</span>';
       });
+      /* Lines that only hold on one billing, like "£12.50 today": the
+         half-price first month is monthly-only. */
+      root.querySelectorAll('[data-text-m]').forEach(function (el) {
+        el.textContent = mode === 'annual' ? el.dataset.textY : el.dataset.textM;
+      });
       paintKnob();
     }
 
