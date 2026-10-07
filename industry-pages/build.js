@@ -599,8 +599,8 @@ for (const f of FEATURES) {
 /* ---------------------------------------------------------- Max pages */
 /* Which model a trade page points at; the rest go to the picker. */
 function maxHref(slug) {
-  if (['trades', 'cleaners', 'gardeners', 'electricians', 'heating-engineers'].includes(slug)) return '/max/trades';
-  if (['salons', 'barbers', 'hairdressers', 'lash-artists', 'makeup-artists'].includes(slug)) return '/max/salon';
+  if (['trades', 'cleaners', 'gardeners', 'electricians', 'heating-engineers', 'mobile-car-valeters'].includes(slug)) return '/max/trades';
+  if (['salons', 'barbers', 'hairdressers', 'lash-artists', 'makeup-artists', 'nail-techs'].includes(slug)) return '/max/salon';
   if (slug === 'gyms' || slug === 'kids-clubs') return '/max/clubs';
   return '/plans.html#max';
 }
