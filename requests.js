@@ -41,23 +41,6 @@
   var current = null;       // the open request in the detail view
   var plan = null;          // active_plan from their profile
   var profile = null;       // points_reset_at / current_period_end, for Starter's window
-  var STARTER_CHANGES = 1;
-
-  /* Starter's window runs payment to payment, not month to month: it
-     starts when the last payment was taken (points_reset_at) and the next
-     change comes with the next one (current_period_end). */
-  function windowStart() {
-    var stamped = profile && profile.points_reset_at ? new Date(profile.points_reset_at) : null;
-    if (stamped && !isNaN(stamped)) return stamped;
-    var end = profile && profile.current_period_end ? new Date(profile.current_period_end) : null;
-    if (end && !isNaN(end)) { var s = new Date(end); s.setMonth(s.getMonth() - 1); return s; }
-    var start = new Date(); start.setDate(1); start.setHours(0, 0, 0, 0); return start;
-  }
-  function changesThisMonth() {
-    var start = windowStart();
-    return requests.filter(function (r) { return r.kind === 'edit' && new Date(r.created_at) >= start; }).length;
-  }
-
   function el(tag, cls, text) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
@@ -213,19 +196,8 @@
     var open = requests.filter(function (r) { return !isDone(r); });
     var done = requests.filter(isDone);
 
-    /* Starter: one change a month, counted here so the list says whether
-       it is used. Feature asks are not changes and do not count. */
-    var left = document.getElementById('starterLeft');
-    if (plan === 'starter') {
-      var n = STARTER_CHANGES - changesThisMonth();
-      var end = profile && profile.current_period_end ? new Date(profile.current_period_end) : null;
-      var when = end && !isNaN(end) ? ' on ' + end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
-      left.textContent = (n > 0 ? 'Your one change this month is ready to use.' : 'That\u2019s your change for this month.')
-        + ' The next one comes with your next payment' + when + '.';
-      left.hidden = false;
-    } else {
-      left.hidden = true;
-    }
+    /* Edits are unlimited on every plan, so there is no allowance to show. */
+    document.getElementById('starterLeft').hidden = true;
 
     var openWrap = document.getElementById('openCards');
     openWrap.textContent = '';

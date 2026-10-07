@@ -258,7 +258,7 @@ module.exports = async function handler(req, res) {
     const planName = PLAN_NAME[patch.active_plan] || 'your';
     const plan = PLANS[patch.active_plan];
     const QUEUE_LINE = {
-      starter: 'One change a month, from your dashboard',
+      starter: 'Unlimited edits, from your dashboard',
       business: 'Unlimited, done in turn',
       pro: 'Unlimited, with priority',
       max: 'Unlimited, top priority'

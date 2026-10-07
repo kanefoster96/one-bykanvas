@@ -33,7 +33,6 @@ const { sendEmail } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { notify } = require('./_notify.js');
 const { addNote, listInbox, getThread, cleanBody, siteForUser } = require('./_requests.js');
-const { pointsWindowStart } = require('./_billing.js');
 const { notifySiteLive } = require('./_site_live.js');
 const { sendLeadPreview } = require('./_previews.js');
 const { changePlan } = require('./_change_plan.js');
@@ -308,11 +307,6 @@ const readTools = {
           ? { me: open.filter((r) => r.last_note_by === 'customer').length, customer: open.filter((r) => r.last_note_by === 'admin').length }
           : { you: open.filter((r) => r.last_note_by === 'admin').length, kane: open.filter((r) => r.last_note_by === 'customer').length }
       };
-      if (site.profile.active_plan === 'starter') {
-        const since = pointsWindowStart(site.profile).toISOString();
-        const { count } = await ctx.db.from('requests').select('id', { count: 'exact', head: true }).eq('site_id', site.id).eq('kind', 'edit').gte('created_at', since);
-        out.starter_change_this_month = (count || 0) >= 1 ? 'used' : 'available';
-      }
       if (caller.is_admin) out.customer = { customer_id: site.owner_id, name: site.profile.contact_name, email: site.email, admin_notes: site.profile.admin_notes || null };
       return out;
     }
@@ -529,11 +523,6 @@ const writeTools = {
       if (cleaned.error) throw fail(cleaned.error);
       let title = String(a.title || '').replace(/\s+/g, ' ').trim().slice(0, 120);
       if (!title) title = cleaned.body.split('\n')[0].trim().slice(0, 80);
-      if (kind === 'edit' && site.profile.active_plan === 'starter') {
-        const since = pointsWindowStart(site.profile).toISOString();
-        const { count } = await ctx.db.from('requests').select('id', { count: 'exact', head: true }).eq('user_id', site.owner_id).eq('kind', 'edit').gte('created_at', since);
-        if ((count || 0) >= 1) throw fail('That is this month’s change on Starter. The next one comes with the next payment, or Business has unlimited changes.');
-      }
       return { preview: 'Open a new ' + kind + ' request on ' + (site.name || who(site.profile)) + ' titled “' + title + '”' + (caller.is_admin ? ' on the customer’s behalf' : '') + '. The team sees it now and gets an email in about ten minutes.\n\n“' + cleaned.body + '”', args: { kind, title, body: cleaned.body, as_admin: caller.is_admin } };
     },
     async execute(ctx, caller, a, site) {

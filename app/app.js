@@ -287,7 +287,7 @@
   /* ---------------------------------------------------------- starter -- */
 
   /* Starter has no dashboard, so its app is three tabs: the website and
-     whether it is up, Support for the monthly change, and a chat straight
+     whether it is up, Support for edits, and a chat straight
      to Kane. The other tabs are hidden, not gated. */
   function isStarter() { return !!(me && me.user && !me.user.is_admin && me.user.plan === 'starter'); }
   function applyPlanUi() {
@@ -340,7 +340,7 @@
     $('siteUrlText').textContent = url.replace(/^https?:\/\//, '');
     $('siteOpen').hidden = !url;
     $('sitePlanText').textContent = (site && site.plan) || 'Starter';
-    $('sitePlanHint').textContent = 'One change a month to what is on your site, fresh with every payment: photos, wording, numbers, hours, prices. Ask for it under Support.';
+    $('sitePlanHint').textContent = 'Unlimited edits to what is on your site: photos, wording, numbers, hours, prices. Ask under Support whenever you need one, as many as you like.';
     dot.className = 'oa-status-dot';
     if (!site) { title.textContent = 'We have not started your site yet.'; hint.textContent = 'It appears here the moment we do.'; return; }
     title.textContent = 'Checking your website…'; hint.textContent = '';

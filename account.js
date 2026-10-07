@@ -751,8 +751,8 @@ function showBilling(row) {
 
     var up = ORDER.indexOf(chosen) > ORDER.indexOf(current);
     var PERK = {
-      starter: 'your live site with a contact form, click to call and one change a month. Bookings, payments, chat and customer records are part of Business',
-      business: 'unlimited changes made by us, plus bookings, forms, chat, customer records and automated emails',
+      starter: 'your live site with a contact form, click to call and unlimited edits. Bookings, payments, chat and customer records are part of Business',
+      business: 'changes made by us within 48 hours, plus bookings, forms, chat, customer records and automated emails',
       pro: 'priority requests and business email',   // legacy, no longer sold
       max: 'your Facebook and Instagram ads run by us on a budget you set, SEO work every month, review, referral and follow-up emails sent for you, business email, and top priority'
     };
@@ -827,7 +827,7 @@ function showBilling(row) {
      the change, with its price preview first. */
   var upEl = document.getElementById('billUp');
   var UP = {
-    starter: { to: 'business', text: 'For £25 more, Business adds bookings, payments, reviews asked for automatically, live chat, and unlimited changes made by us within 48 hours. ' },
+    starter: { to: 'business', text: 'For £25 more, Business adds bookings, payments, reviews asked for automatically, live chat, and priority changes made by us within 48 hours. ' },
     business: { to: 'max', text: 'For £200 more, Max gets you customers: your Facebook and Instagram ads set up, run and tracked by us on a budget you set, your Google ranking worked on every month, review, referral and follow-up emails sent for you, and business email. Built per business type. Step down any month — you keep the ranking. ' }
   };
   var step = subscribed && UP[current];

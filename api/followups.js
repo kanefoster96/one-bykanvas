@@ -60,7 +60,7 @@ function planNote(plan, name, site) {
           '<strong>Deposits and payments.</strong> Taken at booking, which is what cuts no-shows.',
           '<strong>Live chat.</strong> Questions answered from your phone, and kept with the customer.',
           '<strong>Reviews asked for automatically.</strong> A message after each job asking for a Google review. Reviews are what move you up the map.',
-          '<strong>Unlimited changes.</strong> Anything you want changed, done within 48 hours.'
+          '<strong>Priority changes.</strong> Anything you want changed, done within 48 hours.'
         ],
         ctaText: 'See what Business does',
         ctaHref: `${site}/plans.html#business`,
@@ -75,7 +75,7 @@ function planNote(plan, name, site) {
           + `- Deposits and payments: taken at booking, which is what cuts no-shows.\n`
           + `- Live chat: questions answered from your phone, and kept with the customer.\n`
           + `- Reviews asked for automatically: a message after each job asking for a Google review.\n`
-          + `- Unlimited changes, done within 48 hours.\n\n`
+          + `- Priority changes, done within 48 hours.\n\n`
           + `It is GBP 25 more a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.\n`
           + `${site}/plans.html#business\n`
     };
@@ -179,7 +179,7 @@ function lastOne(lead, site) {
       lines: [
         `The free page we made for <strong>${esc(lead.business)}</strong> is still up.`,
         '<strong>Starter, &pound;12.50 today, then &pound;25 a month</strong>: the page you saw, live on your own address '
-          + 'today, with a contact form and click to call, found on Google, a change a month made '
+          + 'today, with a contact form and click to call, found on Google, unlimited edits made '
           + 'by us. No setup fee.',
         'Pay for the year and it&rsquo;s 2 months free plus the Launch Boost: your first month '
           + 'spent getting you found on Google. Pay monthly and your first month is half price.',
@@ -196,7 +196,7 @@ function lastOne(lead, site) {
     }),
     text: `The free page we made for ${lead.business} is still up.\n\n`
         + `Starter, GBP 12.50 today then GBP 25 a month: the page you saw, live on your own address today, with a `
-        + `contact form and click to call, found on Google, a change a month made by us. No setup fee.\n`
+        + `contact form and click to call, found on Google, unlimited edits made by us. No setup fee.\n`
         + `${joinHref(site, lead, 'starter')}\n\n`
         + `Pay for the year and it's 2 months free plus the Launch Boost: your first month spent `
         + `getting you found on Google. Pay monthly and your first month is half price.\n\n`

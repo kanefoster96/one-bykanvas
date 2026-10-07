@@ -56,6 +56,10 @@
   function step2() {
     if (!filled(name)) { name.classList.add('err'); name.focus(); say('Tell us your business name.', 'bad'); return; }
     say('');
+    /* The second step speaks to them by name, so it reads as the same
+       conversation and shows the name went in. */
+    var label = steps[1].querySelector('label');
+    if (label) label.textContent = 'Where should we send the design for ' + name.value.trim() + '?';
     go(1, email);
   }
   next.addEventListener('click', step2);
@@ -91,6 +95,8 @@
          address in a link ends up in browser history. */
       try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: leadId, tracked: true })); } catch (err) { /* private mode */ }
       say('');
+      var micro = form.querySelector('.offer-micro');
+      if (micro) micro.hidden = true;
       go(2, handle);
     } catch (err) {
       say(err.message || 'Could not send that. Try again.', 'bad');
