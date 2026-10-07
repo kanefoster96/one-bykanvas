@@ -14,7 +14,7 @@
 <link rel="icon" href="../assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="../assets/favicon-180.png?v=4">
 <link rel="stylesheet" href="../styles.css?v=72">
-<link rel="stylesheet" href="app.css?v=17">
+<link rel="stylesheet" href="app.css?v=18">
 </head>
 <body class="oa-body">
 
@@ -106,8 +106,9 @@
     <div class="oa-tab-head">
       <h2>Analytics</h2>
       <div class="oa-pills" role="tablist" aria-label="Period">
+        <button class="oa-pill is-on" type="button" data-days="today" role="tab" aria-selected="true">Today</button>
         <button class="oa-pill" type="button" data-days="7" role="tab">7 days</button>
-        <button class="oa-pill is-on" type="button" data-days="30" role="tab" aria-selected="true">30 days</button>
+        <button class="oa-pill" type="button" data-days="30" role="tab">30 days</button>
         <button class="oa-pill" type="button" data-days="90" role="tab">90 days</button>
       </div>
     </div>
@@ -120,8 +121,20 @@
       <div class="oa-tile" id="anFourth"><span class="oa-tile-label" id="anFourthLabel">Pages a visit</span><b id="anFourthN">–</b><span class="oa-delta" id="anFourthDelta"></span></div>
     </div>
 
+    <div class="oa-card oa-live-card">
+      <p class="oa-card-title"><span class="oa-live-dot" aria-hidden="true"></span>On the site now</p>
+      <ol class="oa-visits" id="anLive"></ol>
+    </div>
+
     <div class="oa-card">
-      <p class="oa-card-title">Visitors a day</p>
+      <p class="oa-card-title" id="anVisitsTitle">Today&rsquo;s visitors</p>
+      <p class="hint oa-visits-hint">Tap a visitor to see where they came from, every page they opened and what they pressed.</p>
+      <ol class="oa-visits" id="anVisits"></ol>
+      <button class="oa-more" type="button" id="anVisitsMore" hidden>Show more</button>
+    </div>
+
+    <div class="oa-card">
+      <p class="oa-card-title" id="anSparkTitle">Visitors a day</p>
       <div class="oa-spark" id="anSpark"></div>
       <p class="oa-empty" id="anEmpty" hidden>No visits recorded yet. The first visitors show here within minutes of your site going live.</p>
     </div>
@@ -171,6 +184,12 @@
     <div class="oa-card">
       <p class="oa-card-title">Where they came from</p>
       <ol class="oa-list" id="anRefs"></ol>
+      <p class="hint" id="anRefsNote"></p>
+    </div>
+    <div class="oa-card">
+      <p class="oa-card-title">What they pressed</p>
+      <ol class="oa-list" id="anClicks"></ol>
+      <p class="hint" id="anClicksNote"></p>
     </div>
     <div class="oa-card">
       <p class="oa-card-title">Phone or desktop</p>
@@ -178,7 +197,7 @@
       <p class="hint" id="anDevicesNote"></p>
     </div>
     <div class="oa-card">
-      <p class="oa-card-title">Where in the world</p>
+      <p class="oa-card-title">Where they are</p>
       <ol class="oa-list" id="anCountries"></ol>
     </div>
   </section>
@@ -560,6 +579,6 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=20"></script>
+<script src="app.js?v=21"></script>
 </body>
 </html>

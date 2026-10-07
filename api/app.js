@@ -32,25 +32,53 @@ const MAX_ROWS = 50000;
 
 function dayKey(iso) { return String(iso).slice(0, 10); }
 
+/* Midnight today in the UK, where every customer is, as a timestamp. */
+function ukMidnight(now) {
+  const d = new Date(now);
+  const p = {};
+  new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' })
+    .formatToParts(d).forEach((x) => { p[x.type] = x.value; });
+  return now - (((Number(p.hour) % 24) * 60 + Number(p.minute)) * 60 + Number(p.second)) * 1000 - d.getMilliseconds();
+}
+
+/* The period on screen and the one it is measured against. Today runs
+   from midnight and is set against yesterday up to the same time; the
+   others against the same number of days before. */
+function windowFor(days, now) {
+  const end = now || Date.now();
+  if (days && typeof days === 'object') return days;
+  if (days === 'today') { const start = ukMidnight(end); return { days: 'today', start, end, prevStart: start - DAY, prevEnd: end - DAY }; }
+  const start = end - days * DAY;
+  return { days, start, end, prevStart: start - days * DAY, prevEnd: start };
+}
+
+function inWindow(list, field, days, now) {
+  const w = windowFor(days, now);
+  const cur = [], prev = [];
+  list.forEach((r) => { const t = new Date(r[field]).getTime(); if (t >= w.start && t <= w.end) cur.push(r); else if (t >= w.prevStart && t < w.prevEnd) prev.push(r); });
+  return { cur, prev };
+}
+
 /* Two windows of page views, this one and the one before, into the
    numbers the Analytics tab shows. Pure, so it is tested on its own. */
 function summarise(rows, days, now) {
-  const end = now || Date.now();
-  const start = end - days * DAY;
-  const prevStart = start - days * DAY;
-  const cur = [], prev = [];
-  rows.forEach((r) => {
-    const t = new Date(r.created_at).getTime();
-    if (t >= start) cur.push(r); else if (t >= prevStart) prev.push(r);
-  });
+  const w = windowFor(days, now);
+  const end = w.end;
+  const { cur, prev } = inWindow(rows, 'created_at', w);
   const sessions = (list) => new Set(list.map((r) => r.session)).size;
 
-  const byDay = {};
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(end - i * DAY);
-    byDay[dayKey(d.toISOString())] = { day: dayKey(d.toISOString()), views: 0, sessions: new Set() };
+  // Visitors a day, or an hour at a time for today.
+  const buckets = {};
+  if (w.days === 'today') {
+    for (let t = w.start, h = 0; t <= end; t += 3600000, h++) buckets[h] = { day: String(h).padStart(2, '0') + ':00', views: 0, sessions: new Set() };
+    cur.forEach((r) => { const k = buckets[Math.floor((new Date(r.created_at).getTime() - w.start) / 3600000)]; if (k) { k.views++; k.sessions.add(r.session); } });
+  } else {
+    for (let i = w.days - 1; i >= 0; i--) {
+      const d = dayKey(new Date(end - i * DAY).toISOString());
+      buckets[d] = { day: d, views: 0, sessions: new Set() };
+    }
+    cur.forEach((r) => { const k = buckets[dayKey(r.created_at)]; if (k) { k.views++; k.sessions.add(r.session); } });
   }
-  cur.forEach((r) => { const k = byDay[dayKey(r.created_at)]; if (k) { k.views++; k.sessions.add(r.session); } });
 
   const count = (list, key, by) => {
     const m = {};
@@ -67,14 +95,15 @@ function summarise(rows, days, now) {
   cur.forEach((r) => { if (end - new Date(r.created_at).getTime() < 5 * 60000) online.add(r.session); });
 
   return {
-    days,
+    days: w.days,
     visitors: sessions(cur), views: cur.length,
     online_now: online.size,
     previous: { visitors: sessions(prev), views: prev.length },
-    series: Object.keys(byDay).map((k) => ({ day: k, views: byDay[k].views, visitors: byDay[k].sessions.size })),
+    series: Object.keys(buckets).map((k) => ({ day: buckets[k].day, views: buckets[k].views, visitors: buckets[k].sessions.size })),
     pages: count(cur, 'path').map((x) => ({ path: x.key, views: x.n })),
     referrers: count(cur, 'referrer', 'session').map((x) => ({ host: x.key, visitors: x.n })),
     countries: count(cur, 'country', 'session').map((x) => ({ country: x.key, visitors: x.n })),
+    cities: count(cur, 'city', 'session').map((x) => ({ city: x.key, visitors: x.n })),
     devices,
     journeys: journeys(cur)
   };
@@ -103,11 +132,82 @@ function journeys(list) {
   };
 }
 
-function inWindow(list, field, days, now) {
-  const end = now || Date.now(), start = end - days * DAY, prevStart = start - days * DAY;
-  const cur = [], prev = [];
-  list.forEach((r) => { const t = new Date(r[field]).getTime(); if (t >= start) cur.push(r); else if (t >= prevStart) prev.push(r); });
-  return { cur, prev };
+/* Where a visit came from, in words: "Facebook ad", "Google", "Direct".
+   Taken from the page it landed on, the first view of the visit. */
+function sourceLabel(v) {
+  if (!v) return 'Direct';
+  if (v.source && v.from_ad === 'yes') return v.source + ' ad';
+  if (v.source) return v.source;
+  if (v.referrer) return v.referrer;
+  return 'Direct';
+}
+
+const LIVE_WINDOW = 5 * 60 * 1000;
+const MAX_VISITS = 150, MAX_STEPS = 40;
+
+/* Every visit in the period as a story, newest first: where it came
+   from, the page it landed on, then each page and each click in order,
+   and whether it ended in a message or a payment. Pure. */
+function visits(views, clicks, convs, pays, days, now) {
+  const w = windowFor(days, now);
+  const v = inWindow(views, 'created_at', w).cur;
+  const c = inWindow(clicks || [], 'created_at', w).cur;
+  const by = {};
+  v.forEach((r) => { (by[r.session] = by[r.session] || { views: [], clicks: [] }).views.push(r); });
+  c.forEach((r) => { if (by[r.session]) by[r.session].clicks.push(r); });
+  const messaged = new Set((convs || []).map((x) => x.session).filter(Boolean));
+  const paid = new Set((pays || []).map((x) => x.session).filter(Boolean));
+
+  const out = Object.keys(by).map((s) => {
+    const vs = by[s].views.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    const first = vs[0], lastView = vs[vs.length - 1];
+    const steps = [];
+    vs.forEach((r) => steps.push({ at: r.created_at, kind: 'view', path: r.path }));
+    by[s].clicks.forEach((r) => steps.push({ at: r.created_at, kind: 'click', path: r.path, label: r.label, target: r.target || null }));
+    steps.sort((a, b) => new Date(a.at) - new Date(b.at) || (a.kind === 'view' ? -1 : 1));
+    // A refresh of the same page is not a step.
+    const story = steps.filter((x, i) => !(x.kind === 'view' && i && steps[i - 1].kind === 'view' && steps[i - 1].path === x.path));
+    const lastAt = story.length ? story[story.length - 1].at : lastView.created_at;
+    const ad = vs.find((r) => r.from_ad) || first;
+    return {
+      session: s,
+      first_at: first.created_at,
+      last_at: lastAt,
+      live: w.end - new Date(lastView.created_at).getTime() < LIVE_WINDOW,
+      now_path: lastView.path,
+      landing: first.path,
+      source: sourceLabel(ad),
+      from_ad: ad.from_ad || null,
+      campaign: ad.campaign || null,
+      device: first.device,
+      country: first.country || null,
+      city: first.city || null,
+      pages: vs.length,
+      clicks: by[s].clicks.length,
+      sent_form: by[s].clicks.some((x) => x.target === 'form'),
+      messaged: messaged.has(s),
+      paid: paid.has(s),
+      steps: story.slice(0, MAX_STEPS),
+      more_steps: Math.max(0, story.length - MAX_STEPS)
+    };
+  }).sort((a, b) => (a.last_at < b.last_at ? 1 : -1));
+
+  // Where they came from, by visit: the ad or site that brought them.
+  const src = {};
+  out.forEach((x) => { src[x.source] = src[x.source] || { source: x.source, visitors: 0, ad: x.from_ad }; src[x.source].visitors++; });
+  // What was pressed, and by how many different visitors.
+  const pressed = {};
+  c.forEach((r) => { if (!by[r.session]) return; (pressed[r.label] = pressed[r.label] || new Set()).add(r.session); });
+
+  return {
+    list: out.slice(0, MAX_VISITS),
+    total: out.length,
+    live: out.filter((x) => x.live),
+    from_ads: { yes: out.filter((x) => x.from_ad === 'yes').length, likely: out.filter((x) => x.from_ad === 'likely').length },
+    sources: Object.keys(src).map((k) => src[k]).sort((a, b) => b.visitors - a.visitors).slice(0, 10),
+    clicks: Object.keys(pressed).map((k) => ({ label: k, visitors: pressed[k].size })).sort((a, b) => b.visitors - a.visitors).slice(0, 10),
+    sent_form: out.filter((x) => x.sent_form).length
+  };
 }
 
 /* Who paid: one person per email where given, else per visit. */
@@ -147,29 +247,34 @@ function funnel(views, convs, pays, days, now) {
 }
 
 async function analytics(db, site, daysIn) {
-  const days = [7, 30, 90].includes(Number(daysIn)) ? Number(daysIn) : 30;
-  const since = new Date(Date.now() - 2 * days * DAY).toISOString();
-  const [views, pays, convs] = await Promise.all([
-    db.from('page_views').select('session, path, referrer, device, country, created_at').eq('site_id', site.id).gte('created_at', since).order('created_at', { ascending: false }).limit(MAX_ROWS),
+  const days = daysIn === 'today' ? 'today' : [7, 30, 90].includes(Number(daysIn)) ? Number(daysIn) : 30;
+  const w = windowFor(days, Date.now());
+  const since = new Date(w.prevStart).toISOString();
+  const [views, pays, convs, clicks] = await Promise.all([
+    db.from('page_views').select('session, path, referrer, device, country, city, source, from_ad, campaign, created_at').eq('site_id', site.id).gte('created_at', since).order('created_at', { ascending: false }).limit(MAX_ROWS),
     db.from('payments').select('ref, amount_pence, refunded_pence, currency, customer_email, session, paid_at').eq('site_id', site.id).gte('paid_at', since).order('paid_at', { ascending: false }).limit(MAX_ROWS),
-    db.from('conversations').select('id, session, visitor_email, channel, created_at').eq('site_id', site.id).gte('created_at', since).limit(MAX_ROWS)
+    db.from('conversations').select('id, session, visitor_email, channel, created_at').eq('site_id', site.id).gte('created_at', since).limit(MAX_ROWS),
+    db.from('page_clicks').select('session, path, label, target, created_at').eq('site_id', site.id).gte('created_at', new Date(w.start).toISOString()).order('created_at', { ascending: false }).limit(MAX_ROWS)
   ]);
   if (views.error) throw new Error(views.error.message);
   const rows = views.data || [], payRows = pays.data || [], convRows = (convs.data || []).filter((c) => !c.channel || c.channel === 'web');
   const modules = site.modules || [];
-  const out = summarise(rows, days);
+  const out = summarise(rows, w);
   out.beacon_seen = rows.length > 0;
+  // Clicks are newer than views: a site whose table is not there yet
+  // still gets its visits, just without the clicks in them.
+  out.visits = visits(rows, clicks.error ? [] : (clicks.data || []), convRows, payRows, w);
 
   // Payments and chat show only on sites that have them. A site with
   // payment rows has them whether or not the module was ticked.
   out.has_payments = modules.includes('payments') || payRows.length > 0;
   out.has_chat = modules.includes('chat') || convRows.length > 0;
-  out.money = out.has_payments ? money(payRows, days) : null;
+  out.money = out.has_payments ? money(payRows, w) : null;
   if (out.has_chat) {
-    const c = inWindow(convRows, 'created_at', days);
+    const c = inWindow(convRows, 'created_at', w);
     out.chat = { conversations: c.cur.length, previous: { conversations: c.prev.length } };
   } else out.chat = null;
-  out.funnel = (out.has_payments || out.has_chat) ? funnel(rows, convRows, payRows, days) : null;
+  out.funnel = (out.has_payments || out.has_chat) ? funnel(rows, convRows, payRows, w) : null;
   return out;
 }
 
@@ -873,4 +978,6 @@ module.exports = async function handler(req, res) {
 module.exports.summarise = summarise;
 module.exports.money = money;
 module.exports.funnel = funnel;
+module.exports.visits = visits;
+module.exports.windowFor = windowFor;
 module.exports.cleanPath = cleanPath;
