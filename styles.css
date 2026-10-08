@@ -3037,7 +3037,14 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .exg-card{display:flex;flex-direction:column;border-radius:22px;background:#fff;border:1px solid var(--line-soft);overflow:hidden;text-decoration:none;color:var(--ink);box-shadow:0 2px 10px rgba(0,0,0,.05);transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
 .exg-card:hover{transform:translateY(-3px);box-shadow:0 22px 44px -24px rgba(0,0,0,.28);text-decoration:none}
 .exg-shot{display:block;aspect-ratio:390/560;overflow:hidden;background:var(--bg-grey);border-bottom:1px solid var(--line-soft)}
-.exg-shot img{width:100%;height:100%;object-fit:cover;object-position:top}
+.exg-shot{position:relative}
+/* Blurred on purpose: enough to see the colours and the feel, not enough
+   to read it, so the way to see one is to open it. */
+.exg-shot img{width:100%;height:100%;object-fit:cover;object-position:top;filter:blur(7px) saturate(1.15);transform:scale(1.12);transition:filter .35s var(--ease)}
+.exg-card:hover .exg-shot img{filter:blur(4px) saturate(1.2)}
+.exg-peek{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--ink);font-size:14.5px;font-weight:600;box-shadow:0 10px 26px -10px rgba(0,0,0,.4);white-space:nowrap;transition:transform .25s var(--ease)}
+.exg-peek svg{width:18px;height:18px}
+.exg-card:hover .exg-peek{transform:translate(-50%,-50%) scale(1.05)}
 .exg-meta{display:flex;flex-direction:column;gap:2px;padding:14px 16px 0}
 .exg-meta b{font-size:16px;font-weight:600;letter-spacing:-.01em}
 .exg-meta span{font-size:13.5px;color:var(--ink-3)}

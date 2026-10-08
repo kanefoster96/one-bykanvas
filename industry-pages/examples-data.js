@@ -149,7 +149,7 @@ module.exports = [
     slug: 'nail-techs', key: 'nails', label: 'Nail techs', one: 'nail tech', icon: 'polish',
     name: 'The Polish Room', place: 'Whitley Bay', phone: '07700 900527', address: 'Park View, Whitley Bay',
     fonts: 'Outfit:wght@400;500;600;700',
-    theme: { bg: '#fff7f5', ink: '#2d1f2b', muted: '#7d6876', accent: '#d64c74', accent2: '#f7b5c8', soft: '#fde6ee', surface: '#ffffff', line: 'rgba(45,31,43,.1)', fh: "'Outfit', system-ui, sans-serif", fb: "'Outfit', system-ui, sans-serif", hw: 700, hls: '-.035em', radius: '24px', btnRadius: '999px', onAccent: '#fff',
+    theme: { bg: '#fff7f5', ink: '#2d1f2b', muted: '#7d6876', accent: '#d64c74', accent2: '#f7b5c8', soft: '#fde6ee', surface: '#ffffff', line: 'rgba(45,31,43,.1)', fh: "'Outfit', system-ui, sans-serif", fb: "'Outfit', system-ui, sans-serif", hw: 700, hls: '-.035em', radius: '24px', btnRadius: '999px', onAccent: '#fff', photoBg: '#e7e1e4', photoInk: '#2d1f2b',
       heroBg: 'radial-gradient(ellipse at 85% 10%, #f07ea0 0%, transparent 55%), radial-gradient(ellipse at 0% 100%, #6b2445 0%, transparent 60%), #2d1f2b', heroInk: '#fff7fa' },
     hero: {
       status: 'New clients welcome',

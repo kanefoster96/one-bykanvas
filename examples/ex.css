@@ -69,6 +69,23 @@ body:not(.hero-dark) .x-risk svg{color:var(--accent-text)}
   .x-hero.has-art .x-art{width:min(420px,40%);margin:0;flex:0 0 auto}
   .x-hero.has-art h1{max-width:13ch}
 }
+/* A light photo with a plain backdrop (has-split): on a phone the words
+   sit on the backdrop's own colour and the photo follows, fading in from
+   it; on a wide screen the wide photo fills the hero, the words on its
+   empty side. */
+.x-hero.has-split{background:var(--photo-bg);color:var(--photo-ink)}
+.x-hero.has-split .x-hero-in{min-height:0;padding-bottom:8px}
+.x-hero.has-split .x-status{background:rgba(255,255,255,.55)}
+.x-hero.has-split .x-risk svg{color:var(--accent-text)}
+.x-hero-photo{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;object-position:center bottom;margin-top:-8px;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 22%);mask-image:linear-gradient(to bottom,transparent 0,#000 22%)}
+@media (min-width:900px){
+  .x-hero.has-split{background:var(--photo-bg) var(--hero-img) right center/cover no-repeat}
+  .x-hero.has-split .x-hero-in{align-items:flex-start;text-align:left;min-height:min(760px,calc(86svh - 66px));padding-bottom:96px}
+  .x-hero.has-split .x-hero-copy{align-items:flex-start;max-width:min(560px,48%)}
+  .x-hero.has-split .x-risk{justify-content:flex-start}
+  .x-hero.has-split h1{max-width:13ch}
+  .x-hero-photo{display:none}
+}
 .T-kids .x-art{border-radius:36px;overflow:hidden;background:#fff;box-shadow:0 30px 60px -36px rgba(35,48,74,.4)}
 .T-elec .x-hero h1{font-size:clamp(48px,12vw,92px);line-height:.95}
 

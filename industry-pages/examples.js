@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
-const EX_CSS_V = 3;
+const EX_CSS_V = 4;
 const EX_JS_V = 2;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
@@ -23,14 +23,20 @@ const ROOT = path.join(__dirname, '..');
 const free = (e) => '/free?trade=' + e.key;
 const P = '#preview';   // every link on an example opens the pop-up
 
-/* A photo for the hero, once one is in assets/examples/hero/. */
-function heroImage(e) {
+/* A photo for the hero, once one is in assets/examples/hero/. With a
+   <slug>-mobile version beside it, the hero is "split": on a phone the
+   words sit on the photo's own plain backdrop with the mobile photo under
+   them; on a wide screen the wide photo fills the hero behind the words.
+   Without one, the photo sits behind the words, darkened so they read. */
+function findImage(name) {
   for (const ext of ['jpg', 'jpeg', 'webp', 'png']) {
-    const f = `assets/examples/hero/${e.slug}.${ext}`;
+    const f = `assets/examples/hero/${name}.${ext}`;
     if (fs.existsSync(path.join(ROOT, f))) return '/' + f;
   }
   return '';
 }
+const heroImage = (e) => findImage(e.slug);
+const heroMobile = (e) => (heroImage(e) ? findImage(e.slug + '-mobile') : '');
 
 /* ------------------------------------------------------------- symbols */
 /* The logo: the trade's symbol in a ring, the way our own sites do it. */
@@ -110,8 +116,11 @@ const ART = {
 /* ------------------------------------------------------------ sections */
 
 function hero(e) {
-  const h = e.hero, img = heroImage(e), art = !img && e.art && ART[e.art];
-  return `<section class="x-hero${img ? ' has-photo' : ''}${art ? ' has-art' : ''}"${img ? ` style="--hero-img:url('${img}')"` : ''}>
+  const h = e.hero, img = heroImage(e), mob = heroMobile(e), art = !img && e.art && ART[e.art];
+  const t = e.theme;
+  const cls = 'x-hero' + (img ? (mob ? ' has-split' : ' has-photo') : '') + (art ? ' has-art' : '');
+  const style = img ? ` style="--hero-img:url('${img}')${mob ? `;--photo-bg:${t.photoBg || '#eeeeee'};--photo-ink:${t.photoInk || t.ink}` : ''}"` : '';
+  return `<section class="${cls}"${style}>
   <div class="x-wrap x-hero-in">
     <div class="x-hero-copy">
       <p class="x-status"><span aria-hidden="true"></span>${h.status}</p>
@@ -122,6 +131,7 @@ function hero(e) {
     </div>
     ${art ? `<div class="x-art x-art-${e.art}">${art()}</div>` : ''}
   </div>
+  ${mob ? `<img class="x-hero-photo" src="${mob}" alt="" width="1536" height="2048" decoding="async" fetchpriority="high">` : ''}
 </section>`;
 }
 
@@ -251,7 +261,7 @@ function themeCss(t) {
 
 function page(e) {
   const one = strip(e.one).replace(/&rsquo;/g, '’');
-  const dark = !/^linear-gradient\(160deg, #(e|f)/.test(e.theme.heroBg) || heroImage(e);
+  const dark = heroImage(e) ? !heroMobile(e) : !/^linear-gradient\(160deg, #(e|f)/.test(e.theme.heroBg);
   return `<!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -373,7 +383,7 @@ ${o.body}
 
 function indexPage(v) {
   const cards = EXAMPLES.map((e) => `<a class="exg-card reveal" href="/examples/${e.slug}">
-        <span class="exg-shot"><img src="/assets/examples/${e.slug}.jpg" alt="" width="390" height="720" loading="lazy" decoding="async"></span>
+        <span class="exg-shot"><img src="/assets/examples/${e.slug}.jpg" alt="" width="390" height="720" loading="lazy" decoding="async"><span class="exg-peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>Preview</span></span>
         <span class="exg-meta"><b>${e.label}</b><span>${e.name}</span></span>
         <span class="exg-go">View example &rsaquo;</span>
       </a>`).join('\n      ');
