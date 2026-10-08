@@ -35,16 +35,6 @@ const LIVE = ['active', 'trialing', 'past_due', 'unpaid'];
 const SESSION_ID = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-/* The ad or trade page they came from names their trade; it goes on the
-   profile as the business type, so nobody has to ask. Same keys as free.js. */
-const TRADE = {
-  elec: 'Electrician', boiler: 'Heating engineer', valet: 'Mobile car valeter',
-  driving: 'Driving instructor', kids: "Kids' club", hair: 'Hairdresser',
-  lash: 'Lash artist', mua: 'Makeup artist', nails: 'Nail tech', cake: 'Cake maker',
-  trades: 'Trades', salons: 'Salon', barbers: 'Barber', cafes: 'Coffee shop',
-  gyms: 'Gym', cleaners: 'Cleaner', tutors: 'Tutor', photographers: 'Photographer',
-  gardeners: 'Gardener', dance: 'Dance school'
-};
 
 function clean(v, max) {
   return String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, max);
@@ -110,7 +100,6 @@ module.exports = async function handler(req, res) {
     const domain = clean(body.domain, 253).toLowerCase()
       .replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
     const link = clean(body.link, 400);
-    const tradeKey = String(body.trade || '').toLowerCase();
     const billing = String(body.billing || '') === 'annual' ? 'annual' : 'monthly';
 
     if (business.length < 2) return res.status(400).json({ error: 'Add your business name.', field: 'business' });
@@ -162,7 +151,8 @@ module.exports = async function handler(req, res) {
       selected_plan: 'starter',
       onboarded_at: new Date().toISOString()
     };
-    if (TRADE[tradeKey]) row.business_type = TRADE[tradeKey];
+    /* No business type from the ad they came through: an ad is not what
+       they do. We ask them once their site is under way. */
     const { error: rowErr } = await admin.from('profiles').upsert(row, { onConflict: 'id' });
     if (rowErr) throw new Error(rowErr.message);
 
