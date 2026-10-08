@@ -90,7 +90,7 @@ module.exports = [
       ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['Will it definitely bring jobs?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, the follow-ups, and a note every month showing what it brought in, so you decide with numbers.'],
       ['What if I already have a website?', 'We build the new one, move your address across, and nothing goes offline in between. Your reviews and ranking come with you.'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Trades Max any month.']
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;50. Move up to Trades Max any month.']
     ]
   },
   {
@@ -160,7 +160,7 @@ module.exports = [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
       ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['Does it handle consent forms and medical details?', 'Yes. They are filled in when a parent books the trial, kept against the member, and there for the coach on the register. Nothing on paper.'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Clubs Max any month.']
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;50. Move up to Clubs Max any month.']
     ]
   },
   {
@@ -230,7 +230,7 @@ module.exports = [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
       ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['Can each stylist have their own diary?', 'Yes. Clients book a person or the first free chair, each stylist sees their own day, and a stylist who leaves takes nothing with them.'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;25, Business adds bookings and payments for &pound;25 more. Move up to Salon Max any month.']
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;50. Move up to Salon Max any month.']
     ]
   }
 ];

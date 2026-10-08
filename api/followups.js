@@ -64,7 +64,7 @@ function planNote(plan, name, site) {
         ],
         ctaText: 'See what Business does',
         ctaHref: `${site}/plans.html#business`,
-        ctaNote: 'It is &pound;25 more a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.',
+        ctaNote: 'It is &pound;50 a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.',
         footer: 'You&rsquo;re getting this because your Kanvas One plan went live about a month ago. It is the only email like it.',
         footerLinks: standardFooter(site)
       }),
@@ -76,7 +76,7 @@ function planNote(plan, name, site) {
           + `- Live chat: questions answered from your phone, and kept with the customer.\n`
           + `- Reviews asked for automatically: a message after each job asking for a Google review.\n`
           + `- Priority changes, done within 48 hours.\n\n`
-          + `It is GBP 25 more a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.\n`
+          + `It is GBP 50 a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.\n`
           + `${site}/plans.html#business\n`
     };
   }
@@ -117,10 +117,10 @@ function offerBox(site) {
   return {
     code: PREVIEW_OFFER.code,
     href: `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}`,
-    text: '<strong>Ready to put it live?</strong><br>'
-        + 'Tap the code for 50% off your first month.',
+    text: '<strong>Want bookings and payments too?</strong><br>'
+        + 'Tap the code for 50% off your first month of Business.',
     note: 'It comes with you &mdash; nothing to copy, and it is already '
-        + 'on the bill when you pay. Works on any plan.'
+        + 'on the bill when you pay. Works on Business and Max. Starter is &pound;9.99 a month from day one.'
   };
 }
 
@@ -145,10 +145,10 @@ function whatDidYouThink(lead, site) {
           + 'and say so. Changes are free, and we&rsquo;d rather get it right than guess.',
         'And if you liked it, it can be your real site today: live on your own '
           + 'web address with a contact form and click to call, looked after for you. '
-          + '<strong>&pound;12.50 today</strong>, then &pound;25 a month, no setup fee, cancel any month.'
+          + '<strong>&pound;9.99 a month</strong>, no setup fee, cancel any month.'
       ],
       offer: offerBox(site),
-      ctaText: 'Put it live — £12.50 today',
+      ctaText: 'Put it live — £9.99 a month',
       ctaHref: joinHref(site, lead, 'starter'),
       footer: 'You&rsquo;re getting this because you asked for a free example at '
             + 'kanvas.one. If we don&rsquo;t hear from you, one more email follows '
@@ -159,51 +159,49 @@ function whatDidYouThink(lead, site) {
         + `Be honest - did it look like you? If something is off, just reply and say so. `
         + `Changes are free, and we'd rather get it right than guess.\n\n`
         + `And if you liked it, it can be your real site today: live on your own web `
-        + `address with a contact form and click to call, looked after for you. GBP 12.50 today, `
-        + `then GBP 25 a month, no setup fee, cancel any month.\n`
+        + `address with a contact form and click to call, looked after for you. GBP 9.99 a month, `
+        + `no setup fee, cancel any month.\n`
         + `${joinHref(site, lead, 'starter')}\n\n`
-        + `50% off your first month with ${PREVIEW_OFFER.code}:\n`
+        + `Want bookings and payments too? 50% off your first month of Business with ${PREVIEW_OFFER.code}:\n`
         + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n`
   };
 }
 
-/* The last email: the page they saw, live, for £25, with the year's
+/* The last email: the page they saw, live, for £9.99 a month, with the year's
    bonus named for the person who was waiting for a reason. */
 function lastOne(lead, site) {
   return {
     to: lead.email,
     subject: `Last one from us, ${String(lead.business).replace(/[\r\n]+/g, ' ')}`,
     html: emailHtml({
-      preheader: 'The page you saw, live on your own address, for £12.50 today.',
+      preheader: 'The page you saw, live on your own address, for £9.99 a month.',
       heading: 'Last one from us',
       lines: [
         `The free page we made for <strong>${esc(lead.business)}</strong> is still up.`,
-        '<strong>Starter, &pound;12.50 today, then &pound;25 a month</strong>: the page you saw, live on your own address '
-          + 'today, with a contact form and click to call, found on Google, unlimited edits made '
-          + 'by us. No setup fee.',
+        '<strong>Starter, &pound;9.99 a month</strong>: the page you saw, live on your own address '
+          + 'within 24 hours, with a contact form and click to call, found on Google, and changes to '
+          + 'your words and photos made by us. No setup fee.',
         'Pay for the year and it&rsquo;s 2 months free plus the Launch Boost: your first month '
-          + 'spent getting you found on Google. Pay monthly and your first month is half price.',
-        'Want bookings, payments and live chat? Business is &pound;25 more. Either way, this is '
+          + 'spent getting you found on Google.',
+        'Want bookings, payments and live chat? Business is &pound;50 a month, first month half price. Either way, this is '
           + 'the last email about it, and nothing else will follow.'
       ],
       offer: offerBox(site),
-      ctaText: 'Put it live — £12.50 today',
+      ctaText: 'Put it live — £9.99 a month',
       ctaHref: joinHref(site, lead, 'starter'),
-      ctaNote: `Or <a href="${esc(joinHref(site, lead, 'business'))}" style="color:inherit;">Business, &pound;25 more, with bookings and payments</a>.`,
+      ctaNote: `Or <a href="${esc(joinHref(site, lead, 'business'))}" style="color:inherit;">Business, &pound;50 a month, with bookings and payments</a>.`,
       footer: 'You&rsquo;re getting this because you asked for a free example at '
             + 'kanvas.one. This is the last email about it.',
       footerLinks: standardFooter(site)
     }),
     text: `The free page we made for ${lead.business} is still up.\n\n`
-        + `Starter, GBP 12.50 today then GBP 25 a month: the page you saw, live on your own address today, with a `
-        + `contact form and click to call, found on Google, unlimited edits made by us. No setup fee.\n`
+        + `Starter, GBP 9.99 a month: the page you saw, live on your own address within 24 hours, with a `
+        + `contact form and click to call, found on Google, and changes to your words and photos made by us. No setup fee.\n`
         + `${joinHref(site, lead, 'starter')}\n\n`
         + `Pay for the year and it's 2 months free plus the Launch Boost: your first month spent `
-        + `getting you found on Google. Pay monthly and your first month is half price.\n\n`
-        + `Want bookings, payments and live chat? Business is GBP 25 more.\n`
+        + `getting you found on Google.\n\n`
+        + `Want bookings, payments and live chat? Business is GBP 50 a month, first month half price.\n`
         + `${joinHref(site, lead, 'business')}\n\n`
-        + `50% off your first month with ${PREVIEW_OFFER.code}:\n`
-        + `${site}/plans.html?offer=${PREVIEW_OFFER.code}\n\n`
         + `Either way, this is the last email about it, and nothing else will follow.\n`
   };
 }

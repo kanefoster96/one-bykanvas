@@ -109,10 +109,56 @@
   var leadId = null;
   var at = 0;
 
+  /* Two ways in, one box. 'join' (the default) takes the name straight into
+     signing up for Starter; 'free' is the free design, for anyone unsure:
+     the name, then the email, then an optional link. ?mode=free (from the
+     trade pages' "Not sure?" links) starts on the free design. */
+  var label1 = document.getElementById('businessLabel');
+  var micro = document.getElementById('offerMicro');
+  var modeBtn = document.getElementById('offerMode');
+  var mode = 'join';
+  var touched = false;   // they have started; the not-sure prompt stays away
+  function setMode(m, focus) {
+    mode = m;
+    form.classList.toggle('is-free', m === 'free');
+    if (label1) label1.textContent = m === 'free' ? 'Your business name, for your free design' : 'Your business name, to get started';
+    next.setAttribute('aria-label', m === 'free' ? 'Next' : 'Get started');
+    if (micro) micro.textContent = m === 'free' ? 'Free, no card. In your inbox within 24 hours.' : 'Two minutes to sign up. Your site, live within 24 hours.';
+    if (modeBtn) modeBtn.textContent = m === 'free' ? 'Rather get started now? \u00a39.99 a month' : 'Not sure? See your free design first';
+    if (at === 1) go(0, focus ? name : null);
+    else if (focus) name.focus({ preventScroll: true });
+  }
+  try { if (new URLSearchParams(location.search).get('mode') === 'free') setMode('free'); } catch (e) { /* old browser: join */ }
+  if (modeBtn) modeBtn.addEventListener('click', function () { touched = true; setMode(mode === 'free' ? 'join' : 'free', true); });
+
+  /* Links further down the page back to the box: "Get started" as it is,
+     "See your free design first" switching it to the free design. */
+  function toBox(free) {
+    touched = true;
+    if (free && mode !== 'free') setMode('free');
+    else if (!free && mode !== 'join' && at === 0) setMode('join');
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function () { (at === 1 ? email : name).focus({ preventScroll: true }); }, 450);
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('[data-to-offer], [data-to-free]');
+    if (!a) return;
+    e.preventDefault();
+    toBox(a.hasAttribute('data-to-free'));
+  });
+
+  /* Joining: into the sign-up with the name they typed, on Starter. The
+     wizard takes it from there (account, trade, web address, payment). */
+  function join() {
+    var q = 'plan=starter&business=' + encodeURIComponent(name.value.trim());
+    location.assign('/get-started.html?' + q);
+  }
+
   function say(msg, kind) { note.textContent = msg || ''; note.className = 'note' + (kind ? ' ' + kind : ''); }
   function filled(el) { return el.value.trim().length >= 2; }
 
   function titleCase(s) { return s.replace(/(^|[\s\-'&(]+)([a-z])/g, function (m, pre, ch) { return pre + ch.toUpperCase(); }); }
+  name.addEventListener('focus', function () { touched = true; });
   name.addEventListener('input', function () {
     var pos = name.selectionStart, was = name.value, now = titleCase(was);
     if (now !== was) { name.value = now; try { name.setSelectionRange(pos, pos); } catch (e) { /* not settable here */ } }
@@ -135,6 +181,8 @@
   function step2() {
     if (!filled(name)) { name.classList.add('err'); name.focus(); say('Tell us your business name.', 'bad'); return; }
     say('');
+    touched = true;
+    if (mode === 'join') return join();
     /* The second step speaks to them by name, so it reads as the same
        conversation and shows the name went in. */
     var label = steps[1].querySelector('label');
@@ -174,8 +222,9 @@
          address in a link ends up in browser history. */
       try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: leadId, tracked: true })); } catch (err) { /* private mode */ }
       say('');
-      var micro = form.querySelector('.offer-micro');
       if (micro) micro.hidden = true;
+      var alt = document.getElementById('offerAlt');
+      if (alt) alt.hidden = true;
       go(2, handle);
     } catch (err) {
       say(err.message || 'Could not send that. Try again.', 'bad');
@@ -199,4 +248,58 @@
   handle.addEventListener('input', function () { handle.classList.remove('err'); });
   handle.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addLink(); } });
   skip.addEventListener('click', done);
+
+  /* ---- not sure? ----
+     The free design, offered once to someone about to leave without
+     starting: on a computer when the pointer leaves through the top of the
+     window, on a phone (where there is no such moment) once they have seen
+     the price and not touched the box for a while. Never if they have
+     started, never twice in a visit. */
+  var ns = document.getElementById('notSure');
+  if (ns) {
+    var NS_KEY = 'one.notsure';
+    var seenBefore = false;
+    try { seenBefore = !!sessionStorage.getItem(NS_KEY); } catch (e) { /* private mode */ }
+    var nsOpener = null;
+    var showNs = function () {
+      if (seenBefore || touched || mode === 'free' || leadId || !ns.hidden) return;
+      seenBefore = true;
+      try { sessionStorage.setItem(NS_KEY, '1'); } catch (e) { /* private mode */ }
+      nsOpener = document.activeElement;
+      ns.hidden = false;
+      var go2 = document.getElementById('notSureGo');
+      if (go2) go2.focus({ preventScroll: true });
+    };
+    var hideNs = function () {
+      ns.hidden = true;
+      if (nsOpener && nsOpener.focus) nsOpener.focus({ preventScroll: true });
+    };
+    ns.addEventListener('click', function (e) {
+      if (e.target === ns || (e.target.closest && e.target.closest('[data-notsure-close]'))) hideNs();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !ns.hidden) hideNs(); });
+    var nsGo = document.getElementById('notSureGo');
+    if (nsGo) nsGo.addEventListener('click', function () { ns.hidden = true; toBox(true); });
+
+    var fine = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+    if (fine) {
+      document.addEventListener('mouseout', function (e) {
+        if (e.relatedTarget || e.clientY > 0) return;
+        if (Date.now() - shownAt < 4000) return;
+        showNs();
+      });
+    } else {
+      var price = document.getElementById('price');
+      if (price && window.IntersectionObserver) {
+        var timer = null;
+        new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (en) {
+            if (en.intersectionRatio < 0.5 || timer) return;
+            obs.disconnect();
+            timer = setTimeout(showNs, 9000);
+          });
+        }, { threshold: [0.5] }).observe(price);
+      }
+    }
+  }
 })();

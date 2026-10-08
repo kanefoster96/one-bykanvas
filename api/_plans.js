@@ -11,12 +11,15 @@
 /* yearly = ten months' money for twelve months of service: "2 months
    free" framing rather than a percentage discount. pro has no yearly
    price because it is legacy and cannot be bought. */
-/* starter is the way in: a designed, hosted site with a contact form and
-   click to call, unlimited edits, no setup fee. Every page and email leads
-   with it. Business is the step up at checkout (+£25: bookings, payments,
+/* starter is the way in: £9.99 a month for a site built for them from one
+   of our designs, live within 24 hours, with their own address, words and
+   photos, a contact form and click to call, and changes to the text and
+   photos made by us. No setup fee, and no half-price first month: £9.99 is
+   the offer, and it covers the domain from the first payment. Every page
+   and email leads with it. Business is the step up (bookings, payments,
    chat, changes within 48 hours), Max is add growth. */
 const PLANS = {
-  starter:  { label: 'Kanvas One — Starter',  amount: 2500,  yearly: 25000,  points: 1 },
+  starter:  { label: 'Kanvas One — Starter',  amount: 999,   yearly: 9990,   points: 1 },
   business: { label: 'Kanvas One — Business', amount: 5000,  yearly: 50000,  points: 1 },
   pro:      { label: 'Kanvas One — Pro',      amount: 12000,                 points: 3 },
   max:      { label: 'Kanvas One — Max',      amount: 25000,  yearly: 250000, points: 5 }
@@ -28,8 +31,9 @@ const REQUEST_COST = {
   feature: { points: 3, amount: 12000 }
 };
 
-/* The code every new monthly customer gets (created in Stripe: 50% off,
-   first month only). Applied by default at checkout on a monthly plan;
+/* The code every new monthly Business or Max customer gets (created in
+   Stripe: 50% off, first month only). Applied by default at checkout on a
+   monthly plan; never on Starter, whose £9.99 is already the offer, and
    never on annual, where the bonus is the Launch Boost instead. */
 const PREVIEW_OFFER = { code: 'WELCOME26' };
 

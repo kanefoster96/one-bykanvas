@@ -183,10 +183,15 @@ module.exports = async function handler(req, res) {
        and the code box withheld on the Stripe page for annual sessions. */
     const annual = String(body.billing || '').toLowerCase() === 'annual'
       && Number.isFinite(PLANS[plan].yearly);
-    /* Every new monthly customer gets the first month at half price: the
-       site says so, so it is applied whether or not they carried a code.
+    /* Every new monthly Business or Max customer gets the first month at
+       half price: the site says so, so it is applied whether or not they
+       carried a code. Starter's £9.99 is the offer itself, so it never gets
+       the half-price code, but a partner or referral code still applies.
        A partner or referral code they did bring wins. */
-    const wanted = annual ? '' : (String(body.offer || '').trim().toUpperCase() || PREVIEW_OFFER.code);
+    const brought = String(body.offer || '').trim().toUpperCase();
+    const wanted = annual ? ''
+      : plan === 'starter' ? (brought === PREVIEW_OFFER.code ? '' : brought)
+      : (brought || PREVIEW_OFFER.code);
     if (wanted && /^[A-Z0-9._-]{3,40}$/.test(wanted)) {
       try {
         const found = await stripe.promotionCodes.list({ code: wanted, active: true, limit: 1 });
@@ -232,7 +237,10 @@ module.exports = async function handler(req, res) {
       metadata: { supabase_user_id: user.id, plan },
       success_url: `${origin}/account.html?checkout=success`,
       cancel_url: `${origin}/account.html?checkout=cancelled`,
-      ...(discounts ? { discounts } : annual ? {} : { allow_promotion_codes: true })
+      /* No code box on Starter: £9.99 is the offer, and the box would let
+         the half-price code be typed in by hand. A partner's code still
+         applies, from their link (body.offer, resolved above). */
+      ...(discounts ? { discounts } : (annual || plan === 'starter') ? {} : { allow_promotion_codes: true })
     });
 
     return res.status(200).json({ url: session.url });

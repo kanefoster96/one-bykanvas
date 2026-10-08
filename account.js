@@ -725,7 +725,7 @@ var STATUS_TEXT = {
   paused:             ['Paused', 'Your subscription is paused.']
 };
 
-var PLAN_LABEL = { starter: 'Starter — £25/month', business: 'Business — £50/month', pro: 'Pro — £120/month', max: 'Max — £250/month' };
+var PLAN_LABEL = { starter: 'Starter — £9.99/month', business: 'Business — £50/month', pro: 'Pro — £120/month', max: 'Max — £250/month' };
 
 function showBilling(row) {
   var badge = document.getElementById('billBadge');
@@ -827,7 +827,7 @@ function showBilling(row) {
      the change, with its price preview first. */
   var upEl = document.getElementById('billUp');
   var UP = {
-    starter: { to: 'business', text: 'For £25 more, Business adds bookings, payments, reviews asked for automatically, live chat, and priority changes made by us within 48 hours. ' },
+    starter: { to: 'business', text: 'Business, £50 a month, adds bookings, payments, reviews asked for automatically, live chat, and priority changes made by us within 48 hours. ' },
     business: { to: 'max', text: 'For £200 more, Max gets you customers: your Facebook and Instagram ads set up, run and tracked by us on a budget you set, your Google ranking worked on every month, review, referral and follow-up emails sent for you, and business email. Built per business type. Step down any month — you keep the ranking. ' }
   };
   var step = subscribed && UP[current];

@@ -10,7 +10,7 @@
  * They open the page from the ready email and get ten seconds with it,
  * alone. Then a card slides up from the bottom: this is your designed
  * shell, this address is yours to claim, one button for Starter (the page
- * live, £25) and a line for Business (£25 more). What else it could do
+ * live, £9.99 a month) and a line for Business (£50 a month). What else it could do
  * waits behind a line. Closing folds it to a small pill that brings the
  * card back. The pill's own × hides it for the visit.
  *
@@ -96,7 +96,7 @@
 
   var card = null, pill = null;
 
-  var STARTER_LINE = 'This page, live on your address today. Contact form and click to call. Found on Google. Unlimited edits, made by us.';
+  var STARTER_LINE = 'This page, live on your address within 24 hours. Contact form and click to call. Found on Google. Unlimited changes to your words and photos, made by us.';
   var BUSINESS_LINE = 'Everything in Starter, plus bookings, payments and live chat. Changes within 48 hours.';
 
   function button(text, href, filled) {
@@ -193,7 +193,7 @@
       background: GOOD_BG, border: '1px solid ' + GOOD_LINE, fontSize: '11px', fontWeight: '600', color: GOOD,
       verticalAlign: 'middle' }, 'No setup fee'));
     var right = make('span', { fontSize: '15px', whiteSpace: 'nowrap' });
-    right.appendChild(make('b', { fontSize: '17px' }, '\u00a325'));
+    right.appendChild(make('b', { fontSize: '17px' }, '\u00a39.99'));
     right.appendChild(make('span', { color: INK3 }, '/month'));
     head.appendChild(left); head.appendChild(right);
     plan.appendChild(head);
@@ -203,7 +203,7 @@
 
     var up = make('p', { margin: '0 0 10px', padding: '0 4px', fontSize: '13px', lineHeight: '1.45', color: INK2 });
     var upLink = make('a', { color: INK, fontWeight: '600', textDecoration: 'underline', textUnderlineOffset: '3px' },
-      'Business, \u00a325 more');
+      'Business, \u00a350 a month');
     upLink.href = joinHref('business'); upLink.target = '_blank'; upLink.rel = 'noopener';
     up.appendChild(upLink);
     up.appendChild(document.createTextNode(': ' + BUSINESS_LINE));
@@ -263,7 +263,7 @@
     }
     text.appendChild(top);
     text.appendChild(make('span', { color: 'rgba(255,255,255,.82)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
-      freeDomain ? 'Claim it: \u00a325 a month, no setup fee' : '\u00a325 a month, no setup fee'));
+      freeDomain ? 'Claim it: \u00a39.99 a month, no setup fee' : '\u00a39.99 a month, no setup fee'));
     text.addEventListener('click', function () { unfold(); });
 
     var go = make('a', {
