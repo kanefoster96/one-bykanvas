@@ -31,11 +31,10 @@ const PROMISE = {
 };
 
 
-/* Two businesses on Kanvas One, named by trade only. Same two on the
+/* A business on Kanvas One, named by trade only. The same one on the
    homepage and on every trade page: proof is proof. */
 const CASES = [
-  { tag: 'Dance school', title: 'Enquiries every day, onboarded without lifting a finger', text: 'Free trial classes are booked through the site. Each one is confirmed by email and the family is onboarded automatically, so the academy hears from new students daily and never chases a form.' },
-  { tag: 'Dog trainer', title: 'A new business. Fully booked, with a waiting list.', text: 'Started from nothing. Now near the top of Google locally for dog training, booked solid, and running a waiting list straight from the site.' }
+  { tag: 'Dance school', title: 'Enquiries every day, onboarded without lifting a finger', text: 'Free trial classes are booked through the site. Each one is confirmed by email and the family is onboarded automatically, so the academy hears from new students daily and never chases a form.' }
 ];
 
 const TRUST = ['No VAT', 'No setup fees', 'Live the same day', 'Cancel anytime'];
