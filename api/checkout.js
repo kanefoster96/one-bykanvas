@@ -237,7 +237,10 @@ module.exports = async function handler(req, res) {
       metadata: { supabase_user_id: user.id, plan },
       success_url: `${origin}/account.html?checkout=success`,
       cancel_url: `${origin}/account.html?checkout=cancelled`,
-      ...(discounts ? { discounts } : annual ? {} : { allow_promotion_codes: true })
+      /* No code box on Starter: £9.99 is the offer, and the box would let
+         the half-price code be typed in by hand. A partner's code still
+         applies, from their link (body.offer, resolved above). */
+      ...(discounts ? { discounts } : (annual || plan === 'starter') ? {} : { allow_promotion_codes: true })
     });
 
     return res.status(200).json({ url: session.url });
