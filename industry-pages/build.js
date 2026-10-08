@@ -17,8 +17,8 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 128;
-const SCRIPT_V = 33;
+const CSS_V = 134;
+const SCRIPT_V = 34;
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -199,7 +199,7 @@ const FOOT = `<footer class="foot">
 <script src="script.js?v=${SCRIPT_V}"></script>
 <script src="reviews.js?v=4"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
-<script src="beacon.js?v=3" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
+<script src="beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>
@@ -271,6 +271,7 @@ ${NAV}<section class="page-hero">
     <h1 class="reveal">${b.h1}</h1>
     <p class="lede reveal">${lines(b.lede)}</p>
 ${b.heroNote ? `    <p class="micro reveal hero-note">${b.heroNote}</p>
+` : ''}${EXAMPLE_SLUGS.includes(b.slug) ? `    <p class="micro reveal hero-example"><a href="/examples/${b.slug}">See an example website for ${b.title.toLowerCase()} &rsaquo;</a></p>
 ` : ''}    <p class="by-line reveal"><span>Designed and built by <b>our team</b>, specifically to get your business more customers online.</span></p>
 
     <!-- A request being typed, as this trade would type it. Decorative: the
@@ -418,6 +419,8 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
 }
 
 const LOCAL = require('./local.js');
+/* Trades with an example site at /examples/<slug>: their page links to it. */
+const EXAMPLE_SLUGS = require('./examples-data.js').map((e) => e.slug);
 for (const b of INDUSTRIES.concat(LOCAL)) {
   const file = path.join(OUT, `${b.file || 'websites-for-' + b.slug}.html`);
   fs.writeFileSync(file, page(b));
@@ -842,3 +845,7 @@ for (const m of MAX) {
   fs.writeFileSync(file, maxPage(m));
   console.log('wrote max/' + path.basename(file));
 }
+
+/* ------------------------------------------------------------- examples */
+/* /examples and one made-up business per trade: examples.js. */
+require('./examples.js').build(OUT, { cssV: 134, scriptV: 34 });

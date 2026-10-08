@@ -860,6 +860,8 @@
     if (!p || p === '/index.html' || p === '/index') return 'Homepage';
     var last = p.split('/').filter(Boolean).pop() || '';
     last = last.replace(/\.html?$/i, '').replace(/[-_]+/g, ' ').trim();
+    // The example sites read as what they are: "Example: Hairdressers".
+    if (/^\/examples\/[^/]/.test(p) && last) return 'Example: ' + last.charAt(0).toUpperCase() + last.slice(1);
     return last ? last.charAt(0).toUpperCase() + last.slice(1) : 'Homepage';
   }
 

@@ -144,6 +144,7 @@
     { label: 'How it works',    href: '/how-it-works.html' },
     { label: "What\u2019s included", href: '/whats-included.html' },
     { label: 'Features',        href: '/features.html' },
+    { label: 'Examples',        href: '/examples' },
     { label: 'Reviews',         href: '/reviews.html' },
     { label: 'See all plans',   href: '/plans.html' },
     { label: 'Max', children: [
