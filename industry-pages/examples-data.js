@@ -164,7 +164,7 @@ module.exports = [
     layout: { hero: 'photo', reviews: 'quote', order: ['trust', 'pains', 'steps', 'packages', 'gallery', 'reviews', 'faq', 'band'] },
     x: {
       heroNote: 'Imagine this whole background is your favourite bridal look.',
-      date: { label: 'Your wedding date', value: '2027-06-12' },
+      ask: { type: 'date', label: 'Your wedding date', value: '2027-06-12', say: 'On your site, this checks your diary and replies with your availability.' },
       trust: [['300+', 'brides'], ['8 years', 'of weddings'], ['A trial', 'before the day'], ['Mobile', 'across the North East']],
       steps: { h: 'Your wedding morning, planned', p: 'A timed plan, so nobody is waiting and you&rsquo;re ready with time to spare.', kind: 'timeline', items: [['Months before', 'Your trial', 'We try your look at home, take photos and tweak it until you love it.'], ['7.30am', 'The bridal party', 'Bridesmaids and mums first, each matched to your look.'], ['9.30am', 'You', 'Your makeup and lashes, and a calm half hour just for you.'], ['11am', 'Your touch-up kit', 'Your lipstick and powder to keep, for the speeches and the dance floor.']] },
       gallery: { h: 'Recent brides', p: 'Soft glam to barely-there.', note: 'Your favourite looks show here.', items: ['Soft glam', 'Natural bridal', 'Evening reception', 'The bridal party'] }
@@ -175,7 +175,7 @@ module.exports = [
     slug: 'nail-techs', key: 'nails', label: 'Nail techs', one: 'nail tech', icon: 'polish', art: 'nails',
     name: 'The Polish Room', place: 'Whitley Bay', phone: '07700 900527', address: 'Park View, Whitley Bay',
     fonts: 'Outfit:wght@400;500;600;700',
-    theme: { dark: false, bg: '#fffafc', ink: '#2d1f2b', muted: '#7d6876', accent: '#d64c74', accent2: '#c9a7ff', accent3: '#ffb3cf', accent4: '#7a5af8', accentText: '#b82a63', soft: '#fde6ee', surface: '#ffffff', line: 'rgba(45,31,43,.1)', fh: "'Outfit', system-ui, sans-serif", fb: "'Outfit', system-ui, sans-serif", hw: 700, hls: '-.035em', radius: '24px', btnRadius: '999px', onAccent: '#fff', photoBg: '#e7e1e4', photoInk: '#2d1f2b',
+    theme: { dark: false, bg: '#fffafc', ink: '#2d1f2b', muted: '#7d6876', accent: '#d64c74', accent2: '#c9a7ff', accent3: '#ffb3cf', accent4: '#e98aa8', accentText: '#b82a63', soft: '#fde6ee', surface: '#ffffff', line: 'rgba(45,31,43,.1)', fh: "'Outfit', system-ui, sans-serif", fb: "'Outfit', system-ui, sans-serif", hw: 700, hls: '-.035em', radius: '24px', btnRadius: '999px', onAccent: '#fff', photoBg: '#e7e1e4', photoInk: '#2d1f2b',
       heroBg: 'linear-gradient(160deg, #fff0f6 0%, #f1e7ff 100%)', heroInk: '#2d1f2b' },
     hero: {
       status: 'New clients welcome',
@@ -225,7 +225,7 @@ module.exports = [
     slug: 'cake-makers', key: 'cake', label: 'Cake makers', one: 'cake maker', icon: 'cake', art: 'cake',
     name: 'Sugar &amp; Crumb', place: 'Morpeth', phone: '07700 900684', address: 'Collection from Morpeth',
     fonts: 'Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700',
-    theme: { dark: false, bg: '#ffffff', ink: '#3a2a2f', muted: '#7d6d72', accent: '#e2557b', accentText: '#c13d62', accent2: '#ffd36e', accent3: '#9ad9c2', accent4: '#f7a6bd', soft: '#fff5f7', surface: '#ffffff', line: 'rgba(58,42,47,.1)', fh: "'Fraunces', Georgia, serif", fb: "'Nunito Sans', system-ui, sans-serif", hw: 600, hls: '-.02em', radius: '22px', btnRadius: '999px', onAccent: '#fff',
+    theme: { dark: false, bg: '#ffffff', ink: '#3a2a2f', muted: '#7d6d72', accent: '#e2557b', accentText: '#c13d62', accent2: '#f6dcb0', accent3: '#f4b8c8', accent4: '#f7a6bd', soft: '#fff5f7', surface: '#ffffff', line: 'rgba(58,42,47,.1)', fh: "'Fraunces', Georgia, serif", fb: "'Nunito Sans', system-ui, sans-serif", hw: 600, hls: '-.02em', radius: '22px', btnRadius: '999px', onAccent: '#fff',
       heroBg: 'linear-gradient(180deg, #ffffff 0%, #fff6f8 100%)', heroInk: '#3a2a2f' },
 
     hero: {
@@ -273,7 +273,7 @@ module.exports = [
     slug: 'kids-clubs', key: 'kids', label: 'Kids&rsquo; clubs', one: 'kids&rsquo; club', icon: 'star', art: 'kids',
     name: 'Little Movers', place: 'Cramlington', phone: '0191 498 0731', address: 'Community Centre, Cramlington',
     fonts: 'Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700',
-    theme: { dark: false, bg: '#fffcf3', ink: '#23304a', muted: '#5f6b82', accent: '#ff6b4a', accentText: '#c9391a', accent2: '#ffc93c', accent3: '#3fb8af', accent4: '#7c6cf2', soft: '#fff1d6', surface: '#ffffff', line: 'rgba(35,48,74,.1)', fh: "'Fredoka', system-ui, sans-serif", fb: "'Nunito', system-ui, sans-serif", hw: 600, hls: '-.01em', radius: '24px', btnRadius: '999px', onAccent: '#fff',
+    theme: { dark: false, bg: '#fffcf3', ink: '#23304a', muted: '#5f6b82', accent: '#ff6b4a', accentText: '#c9391a', accent2: '#ffc93c', accent3: '#3fb8af', accent4: '#ffb199', soft: '#fff1d6', surface: '#ffffff', line: 'rgba(35,48,74,.1)', fh: "'Fredoka', system-ui, sans-serif", fb: "'Nunito', system-ui, sans-serif", hw: 600, hls: '-.01em', radius: '24px', btnRadius: '999px', onAccent: '#fff',
       heroBg: 'linear-gradient(160deg, #fff4dc 0%, #ffe3c2 100%)', heroInk: '#23304a' },
     hero: {
       status: 'Now enrolling for October',
@@ -324,7 +324,7 @@ module.exports = [
     theme: { accent3: '#ffe27a', dark: true, bg: '#ffffff', ink: '#0f1b2d', muted: '#5b6678', accent: '#ffc400', accentText: '#0f1b2d', accent2: '#0f1b2d', soft: '#f2f4f7', surface: '#ffffff', line: 'rgba(15,27,45,.1)', fh: "'Barlow Condensed', 'Arial Narrow', sans-serif", fb: "'Barlow', system-ui, sans-serif", hw: 700, hls: '0', radius: '10px', btnRadius: '10px', onAccent: '#0f1b2d', upper: true,
       heroBg: 'radial-gradient(circle at 85% 10%, rgba(255,196,0,.16), transparent 50%), #0f1b2d', heroInk: '#ffffff' },
     hero: {
-      status: 'Same-day callouts across Northumberland',
+      status: 'Same-day callouts',
       h1: 'On time, tidy, and fixed first visit.',
       sub: 'Fault finding, rewires, consumer units and EV chargers for homes and landlords in Blyth and across Northumberland. A fixed price agreed before we start.',
       cta: 'Get a free quote',
@@ -359,6 +359,7 @@ module.exports = [
     layout: { hero: 'breaker', band: 'call', order: ['value', 'table', 'pains', 'steps', 'areas', 'reviews', 'faq', 'band'] },
     x: {
       heroNote: 'Imagine a photo of you and your van here.',
+      ask: { label: 'Get a fixed-price quote', placeholder: 'Enter your postcode', btn: 'Get my quote', say: 'On your site, this takes them straight to your quote form with their postcode filled in.' },
       fixed: 'Fixed first visit',
       value: { h: 'Four promises on every job', items: [['clock', 'On time', 'A two-hour arrival window, and a text when we&rsquo;re on the way.'], ['tag', 'Fixed price', 'Agreed before we start, and it doesn&rsquo;t change.'], ['tidy', 'Left tidy', 'Dust sheets down, hoovered up after.'], ['shield', '12-month guarantee', 'On all labour, and every job certified.']] },
       steps: { h: 'How a job goes', p: 'From the first call to the certificate.', items: [['Tell us the job', 'Call, or send a photo through the website.'], ['Get a fixed price', 'Usually within the hour.'], ['We turn up on time', 'With a text when we&rsquo;re on the way.'], ['Fixed and certified', 'Tested, certified and tidied up.']] },
@@ -373,7 +374,7 @@ module.exports = [
     theme: { accent3: '#ffc15e', dark: true, bg: '#fffaf6', ink: '#1d1a18', muted: '#6b625c', accent: '#e0501f', accentText: '#b83c0f', accent2: '#1d1a18', soft: '#f8ede4', surface: '#ffffff', line: 'rgba(29,26,24,.1)', fh: "'Archivo', system-ui, sans-serif", fb: "'Archivo', system-ui, sans-serif", hw: 800, hls: '-.03em', radius: '14px', btnRadius: '999px', onAccent: '#fff',
       heroBg: 'radial-gradient(ellipse at 85% 0%, rgba(234,90,42,.35), transparent 55%), radial-gradient(ellipse at 0% 100%, #3a2a22 0%, transparent 60%), #1d1a18', heroInk: '#fff8f3' },
     hero: {
-      status: 'Same-day boiler repairs in North Tyneside',
+      status: 'Same-day boiler repairs',
       h1: 'Heating and hot water back, usually the same day.',
       sub: 'Boiler repairs, servicing and new boilers across North Tyneside, from Gas Safe registered engineers who carry the common parts on the van.',
       cta: 'Book an engineer',
@@ -408,6 +409,7 @@ module.exports = [
     layout: { hero: 'outcome', band: 'call', order: ['value', 'compare', 'table', 'areas', 'reviews', 'faq', 'band'] },
     x: {
       heroNote: 'Imagine a photo of you on the job here.',
+      ask: { label: 'Find an engineer near you', placeholder: 'Enter your postcode', btn: 'Find an engineer', say: 'On your site, this shows their nearest free slot and books it with their postcode filled in.' },
       today: { h: 'Today in North Tyneside', btn: 'Book the 2.30pm slot', rows: [['Next engineer', 'Today, 2.30pm'], ['Callout', '&pound;60, fixed'], ['Common parts', 'On the van']] },
       stats: [['Same day', 'for no heating or hot water'], ['&pound;60', 'fixed callout, no fix no charge'], ['9 in 10', 'fixed on the first visit']],
       value: { h: 'Warm again tonight, with one call', p: 'Everything that makes a boiler breakdown a hassle, taken away.', items: [['home', 'Heat back today', 'Heating and hot water back, usually the same day.', 'The result'], ['wrench', 'Fixed first time', 'Common parts on the van, and 20 years on every make.', 'The proof'], ['clock', 'No waiting in', 'A two-hour slot, and a text when we&rsquo;re close.', 'The wait'], ['shield', 'No risk', 'No fix, no charge. The callout price is fixed.', 'The risk']] },
@@ -506,6 +508,7 @@ module.exports = [
     layout: { hero: 'road', reviews: 'passes', order: ['stats', 'steps', 'lessons', 'pains', 'solution', 'reviews', 'faq', 'band'] },
     x: {
       heroNote: 'Imagine you and your car here.',
+      ask: { label: 'Do you cover my area?', placeholder: 'Enter your postcode', btn: 'Check', say: 'On your site, this checks they&rsquo;re in your area and takes them straight to booking with their postcode filled in.' },
       badge: ['87%', 'passed first time last year'],
       featured: 2,
       stats: [['87%', 'first-time pass rate'], ['11 years', 'DVSA approved'], ['Manual', 'or automatic'], ['Door to door', 'picked up and dropped off']],

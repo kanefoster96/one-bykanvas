@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="/examples/ex.css?v=7">
+<link rel="stylesheet" href="/examples/ex.css?v=8">
 <style>:root{--bg:#f5faf6;--ink:#102a1c;--muted:#587163;--accent:#16874a;--accent2:#e53935;--accent3:#ffd23f;--accent4:#1f9d55;--soft:#e3f3e8;--surface:#ffffff;--accent-text:#147a43;--line:rgba(16,42,28,.1);--fh:'Plus Jakarta Sans', system-ui, sans-serif;--fb:'Plus Jakarta Sans', system-ui, sans-serif;--hw:800;--hls:-.04em;--radius:20px;--btn-radius:14px;--on-accent:#fff;--hero-bg:linear-gradient(160deg, #eaf7ee 0%, #d3eedc 100%);--hero-ink:#102a1c;--case:none}</style>
 </head>
 <body class="T-driving H-road">
@@ -29,7 +29,10 @@
       <p class="x-status"><span aria-hidden="true"></span>Booking lessons for November</p>
       <h1>Pass with an instructor who keeps you calm.</h1>
       <p class="x-sub">Manual and automatic lessons with a DVSA-approved instructor in Gosforth and Newcastle. Picked up from home, school or work.</p>
-      <a class="x-btn x-btn-hero" href="#preview">Book a lesson</a>
+      <form class="x-ask" data-preview-form data-say="On your site, this checks they&rsquo;re in your area and takes them straight to booking with their postcode filled in." novalidate>
+        <label for="xAsk">Do you cover my area?</label>
+        <div class="x-ask-row"><input id="xAsk" name="postcode" type="text" inputmode="text" autocomplete="postal-code" autocapitalize="characters" maxlength="8" placeholder="Enter your postcode"><button class="x-btn" type="submit">Check</button></div>
+      </form>
       <ul class="x-risk"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>First lesson half price</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>No block booking needed</span></li></ul>
     </div>
     <div class="x-hero-side">
@@ -106,9 +109,10 @@
   <div class="k1-modal-card" role="dialog" aria-modal="true" aria-labelledby="k1ModalH">
     <button class="k1-modal-x" type="button" data-k1-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <span class="k1-face" aria-hidden="true"><span><i></i><i></i></span></span>
-    <h2 id="k1ModalH">This site is a preview of how yours might look.</h2>
-    <p>We build yours from the page you already have. Like another site&rsquo;s style? Send it too.</p>
-    <p class="k1-modal-offer"><b>Live in 24 hours.</b> &pound;9.99 a month, cancel any month.</p>
+    <h2 id="k1ModalH">This is a preview of how yours could look.</h2>
+    <p class="k1-modal-say" id="k1Say" hidden></p>
+    <p>Join today and we build your full website from the page you already have.</p>
+    <p class="k1-modal-offer"><b>Live by tomorrow.</b> &pound;9.99 a month, cancel any month.</p>
     <a class="k1-modal-go" href="/join?trade=driving">Get started</a>
     <button class="k1-modal-keep" type="button" data-k1-close>Keep looking</button>
   </div>
@@ -127,7 +131,7 @@
   <a class="k1-x" href="/free?trade=driving" aria-label="Close the example"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
 </div>
 <script src="/consent.js?v=9"></script>
-<script src="/examples/ex.js?v=4"></script>
+<script src="/examples/ex.js?v=5"></script>
 <script src="/beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 </body>
 </html>
