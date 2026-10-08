@@ -8,7 +8,13 @@ Disallow: /requests.html
 Disallow: /notifications.html
 Disallow: /login.html
 Disallow: /api/
-# Ad videos, hosted here so Meta can fetch them. Not pages.
+# Ad videos and their covers, hosted here so Meta can fetch them. Not pages.
 Disallow: /media/ads/
 
 Sitemap: https://kanvas.one/sitemap.xml
+
+# Meta's fetchers read the ad media above when an ad is made.
+User-agent: facebookexternalhit
+User-agent: facebookcatalog
+Allow: /media/ads/
+Disallow: /api/
