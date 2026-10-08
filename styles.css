@@ -2974,7 +2974,7 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .offer-why{margin:12px auto 0;max-width:42ch;text-align:center;font-size:13.5px;line-height:1.5;color:var(--ink-3)}
 .offer-why b{color:var(--ink-2);font-weight:600}
 /* Proof under the box: real sites on a phone, Dot beside it. */
-.sb{margin:44px auto 0;max-width:420px;text-align:center}
+.sb{margin:40px auto 0;max-width:420px;text-align:center}
 .sb-tag{margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--good)}
 .sb-title{margin:0 0 26px;font-size:clamp(26px,6.4vw,34px);font-weight:700;letter-spacing:-.035em;line-height:1.06;text-wrap:balance}
 .sb-stage{position:relative;display:flex;justify-content:center}
@@ -3057,9 +3057,10 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 /* /free: the example for their trade, under the sites we've built. */
 .sb-example{margin-top:18px;font-size:14.5px;font-weight:600}
 /* From an ad: their trade's example site in the phone, and a button to it. */
-.sb-screen img.sb-example-shot{opacity:1;animation:none;object-fit:cover;object-position:top;padding-top:11%}
+.sb-screen img.sb-example-shot{object-fit:cover;object-position:top;padding-top:11%}
+.sb-screen.is-single img{opacity:1;animation:none}
 .sb-example .sb-preview{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:999px;background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);color:#fff;font-size:16px;font-weight:600;text-decoration:none;box-shadow:0 10px 24px -12px rgba(26,127,55,.6)}
 .sb-example .sb-preview:hover{text-decoration:none;color:#fff;transform:translateY(-1px)}
-.sb-note{margin:12px auto 0;max-width:34ch;font-size:14px;line-height:1.5;color:var(--ink-3)}
+.sb-note{margin:14px auto 0;max-width:34ch;font-size:14px;line-height:1.5;color:var(--ink-3)}
 .sb-example a{color:var(--good);text-decoration:none}
 .sb-example a:hover{text-decoration:underline;text-underline-offset:3px}
