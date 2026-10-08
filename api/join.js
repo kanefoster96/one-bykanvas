@@ -1,7 +1,7 @@
 /* Starter, paid first: the account comes after the money.
  *
  * The join page asks for four things - the business name, an email, one of
- * three free web addresses and a link to where the business already is
+ * three free web addresses and (optionally) a link to where the business already is
  * online - then sends them to Stripe for £9.99 a month or £99 a year. Only
  * once that is paid do they choose a password. Business and Max still go
  * through the get-started wizard, which makes the account first.
@@ -116,7 +116,6 @@ module.exports = async function handler(req, res) {
     if (business.length < 2) return res.status(400).json({ error: 'Add your business name.', field: 'business' });
     if (!EMAIL.test(email)) return res.status(400).json({ error: 'That email does not look right.', field: 'email' });
     if (!isValidDomain(domain)) return res.status(400).json({ error: 'Pick a web address.', field: 'domain' });
-    if (link.length < 3) return res.status(400).json({ error: 'Add a link to where you are online now.', field: 'link' });
 
     /* Free a minute ago is not free now. Taken is a clear no; a registry
        that does not answer is not a reason to lose the sale - we register
@@ -159,7 +158,7 @@ module.exports = async function handler(req, res) {
       business_name: business,
       requested_domain: domain,
       domain_owned: false,
-      existing_links: link,
+      existing_links: link || null,
       selected_plan: 'starter',
       onboarded_at: new Date().toISOString()
     };

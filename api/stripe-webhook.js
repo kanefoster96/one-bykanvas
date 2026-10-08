@@ -262,7 +262,7 @@ module.exports = async function handler(req, res) {
      password gets the link back to that step here. */
   async function welcomeCustomer(id, patch, sub) {
     const { data: p } = await admin
-      .from('profiles').select('business_name, requested_domain').eq('id', id).maybeSingle();
+      .from('profiles').select('business_name, requested_domain, existing_links').eq('id', id).maybeSingle();
     const { data: who } = await admin.auth.admin.getUserById(id);
     const email = who && who.user && who.user.email;
     if (!email) return;
@@ -285,6 +285,7 @@ module.exports = async function handler(req, res) {
       { day: 'numeric', month: 'long', year: 'numeric' });
     const starter = patch.active_plan === 'starter';
     const domain = (p && p.requested_domain) || '';
+    const noLink = !(p && p.existing_links);
     const accountLink = am.needs_password && am.join_session
       ? `${site}/join?paid=${encodeURIComponent(am.join_session)}` : '';
 
@@ -319,16 +320,22 @@ module.exports = async function handler(req, res) {
         + `customers today, how you book and take payment, and the access we need. All optional, save any `
         + `time, and we see what changed: ${site}/onboarding.html`
       : starter
-        ? `Want anything else on it? Reply to this email with extra photos, your logo, your prices, `
-          + `or anything about your business that isn't online yet, and we'll add it. Changes to your words `
-          + `and photos are unlimited, any time.`
+        ? (noLink
+            ? `One thing that makes your site better: reply with a link to your Instagram, Facebook or `
+              + `current website, and we'll build from your photos and words there. Extra photos, your logo `
+              + `or your prices are welcome too. Changes to your words and photos are unlimited, any time.`
+            : `Want anything else on it? Reply to this email with extra photos, your logo, your prices, `
+              + `or anything about your business that isn't online yet, and we'll add it. Changes to your words `
+              + `and photos are unlimited, any time.`)
           + (accountLink ? `\n\nAnd make your account, so you can see your site and ask for changes: ${accountLink}` : '')
         : `One thing that helps now: send us photos, your services and prices, and anything about `
           + `your business that isn't already online. From your account: ${site}/account.html`;
     const askHtml = patch.active_plan === 'max'
       ? `One thing that helps now: fill in the <strong>Max setup form</strong>. Your services and prices, how you get customers today, how you book and take payment, and the access we need. All optional, save any time, and we see what changed.`
       : starter
-        ? `<strong>Want anything else on it?</strong> Reply to this email with extra photos, your logo, your prices, or anything about your business that isn&rsquo;t online yet, and we&rsquo;ll add it. Changes to your words and photos are unlimited, any time.`
+        ? (noLink
+            ? `<strong>One thing that makes your site better:</strong> reply with a link to your Instagram, Facebook or current website, and we&rsquo;ll build from your photos and words there. Extra photos, your logo or your prices are welcome too. Changes to your words and photos are unlimited, any time.`
+            : `<strong>Want anything else on it?</strong> Reply to this email with extra photos, your logo, your prices, or anything about your business that isn&rsquo;t online yet, and we&rsquo;ll add it. Changes to your words and photos are unlimited, any time.`)
         : `One thing that helps now: send us photos, your services and prices, and anything about your business that isn&rsquo;t already online. Everything lives in your account from here: your plan, your requests, and your site.`;
 
     const cta = patch.active_plan === 'max'
