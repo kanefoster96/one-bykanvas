@@ -1602,6 +1602,66 @@ a.hero-pill:hover .pill-go{opacity:1}
 .join-acct-note b{color:var(--ink);font-weight:600;overflow-wrap:anywhere}
 .join #accountBox + .paynote{margin-top:22px}
 
+/* The fun bits. Dot talks you through it; the preview above the card is
+   their site, filling in as they type; the steps are named, not numbered;
+   paying ends in confetti. All of it stands still for reduced motion. */
+.join-top{margin-bottom:18px}
+.join-steps{display:flex;justify-content:space-between;list-style:none;margin:0 0 12px;padding:0}
+.join-steps li{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--ink-3);transition:color .3s var(--ease)}
+.join-steps i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-style:normal;font-size:12px;background:var(--line-soft);color:var(--ink-3);transition:background .3s var(--ease),color .3s var(--ease),transform .3s var(--ease)}
+.join-steps li.is-on{color:var(--ink)}
+.join-steps li.is-on i{background:var(--ink);color:#fff;transform:scale(1.08)}
+.join-steps li.is-done i{background:var(--good);color:#fff}
+.join .wiz-bar i{background:linear-gradient(90deg,#1a7f37,#34c17a)}
+
+.join-live{margin:0 0 16px;border-radius:18px;background:#fff;box-shadow:0 2px 24px rgba(0,0,0,.06);overflow:hidden}
+.jl-bar{display:flex;align-items:center;gap:6px;padding:9px 12px;background:#f5f5f7;border-bottom:1px solid var(--line-soft)}
+.jl-bar > i{width:8px;height:8px;border-radius:50%;background:#e3e3e8}
+.jl-url{flex:1;min-width:0;display:flex;align-items:center;gap:6px;margin-left:6px;padding:5px 11px;border-radius:980px;background:#fff;font-size:12.5px;color:var(--ink-3)}
+.jl-url svg{width:12px;height:12px;flex:0 0 auto}
+.jl-url b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.join-live.has-domain .jl-url{color:var(--ink)}
+.join-live.has-domain .jl-url svg{color:var(--good)}
+.jl-build{display:none;font-size:11.5px;font-weight:600;color:var(--good)}
+.jl-build i{font-style:normal;animation:jl-dots 1.2s infinite}
+.jl-build i:nth-child(2){animation-delay:.2s}.jl-build i:nth-child(3){animation-delay:.4s}
+@keyframes jl-dots{0%,60%,100%{opacity:.2}30%{opacity:1}}
+.join-live.is-building .jl-build{display:inline}
+.jl-site{display:flex;align-items:center;gap:12px;padding:14px 14px 16px;background:var(--jl-bg,#fff);transition:background .4s var(--ease)}
+.jl-badge{display:grid;place-items:center;flex:0 0 auto;width:40px;height:40px;border-radius:12px;background:var(--jl-accent,#1d1d1f);color:#fff;font-weight:700;font-size:17px;transition:background .4s var(--ease),transform .3s var(--ease)}
+.jl-badge.pop{animation:jl-pop .35s var(--ease)}
+@keyframes jl-pop{40%{transform:scale(1.15) rotate(-6deg)}}
+.jl-text{flex:1;min-width:0;display:flex;flex-direction:column}
+.jl-text b{font-size:16px;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jl-text small{font-size:12px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jl-btn{flex:0 0 auto;padding:7px 12px;border-radius:980px;background:var(--jl-accent,#1d1d1f);color:#fff;font-size:12px;font-weight:600;transition:background .4s var(--ease)}
+@media (max-width:380px){.jl-btn{display:none}}
+
+.join-dot{display:flex;align-items:flex-end;gap:12px;margin:0 0 18px}
+.join .join-face{width:52px;height:52px;flex:0 0 auto;box-shadow:0 8px 20px rgba(26,127,55,.22)}
+.join .join-face .dot-eyes{gap:11px}
+.join .join-face .dot-eyes i{width:8px;height:13px}
+.join-say{position:relative;margin:0 0 6px;padding:10px 14px;border-radius:16px 16px 16px 4px;background:#f2faf4;color:#14532d;font-size:14.5px;font-weight:500;line-height:1.4;animation:join-say .45s var(--ease) both}
+@keyframes join-say{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
+.wiz-step:not([hidden]) .join-face{animation:join-hop .6s var(--ease)}
+@keyframes join-hop{30%{transform:translateY(-8px)}60%{transform:translateY(0)}75%{transform:translateY(-3px)}}
+
+.join .pick-row{transition:border-color .2s var(--ease),box-shadow .2s var(--ease),transform .2s var(--ease)}
+.join .pick-row:hover{transform:translateY(-1px)}
+.join .pick-row.is-on{animation:join-pick .3s var(--ease)}
+@keyframes join-pick{50%{transform:scale(1.02)}}
+.join .wiz-next .join-arrow{display:inline-block;transition:transform .2s var(--ease)}
+.join .wiz-next:hover .join-arrow{transform:translateX(4px)}
+
+.join-confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.join-confetti i{position:absolute;top:-14px;width:9px;height:14px;border-radius:2px;opacity:.95;animation:join-fall linear forwards}
+@keyframes join-fall{to{transform:translate3d(var(--dx,0),110vh,0) rotate(var(--rot,540deg));opacity:.9}}
+
+@media (prefers-reduced-motion:reduce){
+  .join-say,.wiz-step:not([hidden]) .join-face,.join .pick-row.is-on,.jl-badge.pop,.jl-build i{animation:none}
+  .join-confetti{display:none}
+}
+
 /* Qualified because .sumrow b outranks a lone class - the reason this stayed
    black. Green is only ever "included or free" on this site, and £0 setup is
    exactly that. */

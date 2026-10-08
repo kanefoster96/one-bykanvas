@@ -59,6 +59,65 @@
     if (ref) localStorage.setItem('one-ref', ref.toUpperCase().slice(0, 20));
   } catch (e) {}
 
+  /* ---------------------------------------------------------- the preview
+     Their site, above the card, filling in as they go: the name and its
+     first letter, the address once picked, and their trade in its own
+     colour when the ad or page told us what they do. */
+  var LOOK = {
+    hair: ['Hairdresser', '#2f2e2d', '#fbf7f4'], lash: ['Lash artist', '#7a4a5d', '#fbf5f7'],
+    mua: ['Makeup artist', '#8a5a44', '#fbf6f2'], nails: ['Nail tech', '#9c3d64', '#fcf4f8'],
+    cake: ['Cake maker', '#b4566b', '#fdf6f3'], kids: ['Kids\u2019 club', '#e07a1f', '#fffaf1'],
+    elec: ['Electrician', '#1f4fd1', '#f5f8ff'], boiler: ['Heating engineer', '#d0461f', '#fff7f3'],
+    valet: ['Mobile car valeter', '#0f6e8c', '#f2fafc'], driving: ['Driving instructor', '#1a7f37', '#f5faf6'],
+    dance: ['Dance school', '#6b3fd1', '#f8f5ff'], salons: ['Salon', '#2f2e2d', '#fbf7f4'],
+    barbers: ['Barber', '#1d1d1f', '#f7f7f8'], cafes: ['Coffee shop', '#7a4b2a', '#fbf7f2'],
+    gyms: ['Gym', '#d12f2f', '#fff6f6'], cleaners: ['Cleaner', '#0f8a7a', '#f2fbf9'],
+    tutors: ['Tutor', '#3a55c9', '#f5f7ff'], photographers: ['Photographer', '#1d1d1f', '#f7f7f8'],
+    gardeners: ['Gardener', '#2f7d32', '#f4faf2'], trades: ['Trades', '#1f4fd1', '#f5f8ff']
+  };
+  var lastLetter = '';
+  function paint(building) {
+    var live = $('joinLive');
+    if (!live) return;
+    var name = ($('j_business').value || answers.business || '').trim();
+    var look = LOOK[trade];
+    $('jlName').textContent = name || 'Your business';
+    var letter = (name.charAt(0) || 'Y').toUpperCase();
+    var badge = $('jlBadge');
+    if (letter !== lastLetter) {
+      badge.textContent = letter;
+      badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop');
+      lastLetter = letter;
+    }
+    $('jlTrade').textContent = building ? 'Live within 24 hours' : look ? look[0] + ' in the North East' : 'Your website, live within 24 hours';
+    $('jlUrl').textContent = answers.domain || 'yourbusiness.co.uk';
+    live.classList.toggle('has-domain', Boolean(answers.domain));
+    live.classList.toggle('is-building', Boolean(building));
+    if (look) { live.style.setProperty('--jl-accent', look[1]); live.style.setProperty('--jl-bg', look[2]); }
+  }
+  $('j_business').addEventListener('input', function () { paint(); });
+
+  /* Confetti, once, when they have paid. */
+  function confetti() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var box = document.createElement('div');
+    box.className = 'join-confetti';
+    var colours = ['#1a7f37', '#34c17a', '#5fd18f', '#1d1d1f', '#f5b83d', '#e5484d', '#4f7cff'];
+    for (var i = 0; i < 70; i++) {
+      var c = document.createElement('i');
+      c.style.left = Math.random() * 100 + '%';
+      c.style.background = colours[i % colours.length];
+      c.style.animationDuration = (1.8 + Math.random() * 1.8) + 's';
+      c.style.animationDelay = (Math.random() * 0.5) + 's';
+      c.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px');
+      c.style.setProperty('--rot', (Math.random() * 900 - 450) + 'deg');
+      if (i % 3 === 0) { c.style.width = '8px'; c.style.height = '8px'; c.style.borderRadius = '50%'; }
+      box.appendChild(c);
+    }
+    document.body.appendChild(box);
+    setTimeout(function () { box.remove(); }, 4500);
+  }
+
   /* ---------------------------------------------------------- navigation */
   function show(step) {
     current = step;
@@ -75,8 +134,15 @@
       $('bar').style.width = Math.round((step / LAST) * 100) + '%';
     }
     window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
-    if (step === 2) askDomains();
-    if (step === 3) $('joinDomain').textContent = answers.domain || 'yourbusiness.co.uk';
+    if (step === 2) {
+      askDomains();
+      if (answers.business) $('say2').textContent = 'Ooh, ' + answers.business + '! Now pick your spot on the internet.';
+    }
+    document.querySelectorAll('.join-steps li').forEach(function (li, i) {
+      li.classList.toggle('is-on', i + 1 === step);
+      li.classList.toggle('is-done', i + 1 < step);
+    });
+    paint();
     var first = steps[step - 1].querySelector('input:not([tabindex="-1"]), button');
     if (first && step > 1) { try { first.focus({ preventScroll: true }); } catch (e) {} }
   }
@@ -156,6 +222,7 @@
     var on = wrap.querySelector('input:checked');
     answers.domain = on ? on.value : '';
     keep();
+    paint();
   }
 
   function noDomains(message) {
@@ -200,6 +267,7 @@
     if (!e.target.matches('input[name="domain"]')) return;
     answers.domain = e.target.value;
     keep();
+    paint();
     $('domList').querySelectorAll('.pick-row').forEach(function (r) {
       r.classList.toggle('is-on', r.querySelector('input').checked);
     });
@@ -333,6 +401,10 @@
         }
         accountEmail = d.email || '';
         $('doneEmail').textContent = accountEmail;
+        if (d.business) answers.business = d.business;
+        if (d.domain) answers.domain = d.domain;
+        paint(true);
+        if (d.paid) confetti();
         if (d.domain) {
           $('doneSub').textContent = '';
           $('doneSub').append('Your site goes live at ');

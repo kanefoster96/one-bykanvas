@@ -154,6 +154,17 @@ module.exports = async function handler(req, res) {
 
     const attachmentPaths = cleanAttachments(body.attachmentPaths, user.id, false);
 
+    /* From the chat's "Add website edit request" button: that button is
+       sold as a member's thing, so it only takes one from a live plan. The
+       chat says what it is to anyone else (chat.js, code no_plan). */
+    if (body.source === 'chat') {
+      const { data: plan } = await db.from('profiles')
+        .select('active_plan').eq('id', user.id).maybeSingle();
+      if (!(plan && plan.active_plan)) {
+        return res.status(403).json({ code: 'no_plan', error: 'Edit requests start once your plan is live.' });
+      }
+    }
+
     /* Edits are unlimited on every plan, Starter included: ask as often as
        you like, and they are worked through in turn (terms, section 3). */
     const siteId = await siteForUser(db, user.id);
