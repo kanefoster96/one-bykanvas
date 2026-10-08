@@ -1345,12 +1345,20 @@
           jobLine('They added', r.about)
         ];
     lines.filter(Boolean).forEach(function (l) { body.appendChild(l); });
+    /* Their payments, plan, refund and cancel live on the admin page. */
+    if (build) {
+      var bill = el('a', 'oa-job-bill', 'Payments, plan, refund or cancel \u203a');
+      bill.href = (window.ONE_API_BASE || '') + '/admin.html#c/' + encodeURIComponent(r.id);
+      bill.target = '_blank'; bill.rel = 'noopener';
+      body.appendChild(bill);
+    }
 
     var finish = el('form', 'oa-job-finish');
     var url = el('input'); url.type = 'url'; url.inputMode = 'url'; url.autocapitalize = 'none';
     url.placeholder = build ? 'https://their-site.com' : 'https://where-the-example-lives';
     url.setAttribute('aria-label', build ? 'Their site address' : 'Where the example lives');
     if (build && r.site_url) url.value = r.site_url;
+    else if (build && r.requested_domain) url.value = 'https://' + r.requested_domain;
     var go = el('button', 'btn btn-primary', build ? 'Mark it live' : 'Send the free design');
     go.type = 'submit';
     var note = el('p', 'note'); note.setAttribute('role', 'status');

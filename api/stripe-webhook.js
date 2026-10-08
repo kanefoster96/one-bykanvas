@@ -143,6 +143,21 @@ module.exports = async function handler(req, res) {
   }
 
   async function writeSubscription(sub) {
+    /* Stripe's events arrive in any order, and each carries the
+       subscription as it was when that event was made. Signing up sends
+       several at once; "created" (still incomplete) can land after "paid"
+       (active) and, written as it came, would knock a paying customer back
+       to incomplete. So the event only says which subscription changed:
+       what gets written is the subscription as Stripe has it now. */
+    try {
+      const fresh = await stripe.subscriptions.retrieve(sub.id);
+      if (fresh && fresh.id) {
+        fresh.metadata = Object.assign({}, sub.metadata, fresh.metadata);
+        sub = fresh;
+      }
+    } catch (err) {
+      console.error('webhook: could not re-read subscription, using the event copy:', err && err.message);
+    }
     const id = await profileIdFor(sub);
     if (!id) {
       console.error('webhook: no profile for customer', sub.customer);

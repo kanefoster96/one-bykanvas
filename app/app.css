@@ -349,3 +349,6 @@
 .oa-setup-bar .hint{margin:0;font-size:13.5px}
 .oa-setup-frame{width:100%;height:calc(100vh - 62px - 74px - 60px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border:0;border-radius:var(--radius);background:var(--bg-grey)}
 #tabSupport.is-setup>:not(#setupScreen){display:none}
+
+/* The build card's way to their payments and plan, on the admin page. */
+.oa-job-bill{display:inline-block;margin:6px 0 12px;font-size:14px;font-weight:600;color:var(--ink,#1d1d1f);text-decoration:underline;text-underline-offset:3px}

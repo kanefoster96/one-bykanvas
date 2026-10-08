@@ -58,6 +58,9 @@
     /* data-edits: the pull button that sits on the box, and the card that explains it. */
     + '.k1c-edit{display:flex;justify-content:center;margin:0 0 -1px;padding:6px 12px 0;border-top:1px solid #eee}.k1c-pull{display:inline-flex;align-items:center;gap:6px;border:1px solid #d2d2d7;border-bottom:0;border-radius:12px 12px 0 0;background:#f5f5f7;color:#1d1d1f;font:inherit;font-size:13px;font-weight:600;padding:6px 14px 7px;cursor:pointer;transition:background .2s,color .2s}.k1c-pull:hover{background:#ececf0}.k1c-pull i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#1d1d1f;color:#fff;font-size:13px;line-height:1}'
     + '.k1c.is-edit .k1c-pull{background:#1a7f37;border-color:#1a7f37;color:#fff}.k1c.is-edit .k1c-pull i{background:#fff;color:#1a7f37}.k1c.is-edit .k1c-form{background:#f2faf4;border-top-color:#bfe3c9}.k1c.is-edit .k1c-form textarea{border-color:#8fcfa1}.k1c.is-edit .k1c-send{background:#1a7f37}.k1c-edit + .k1c-form{border-top:1px solid #d2d2d7}'
+    + '.k1c-attach{flex:0 0 auto;align-self:flex-end;display:grid;place-items:center;width:42px;height:42px;border:1px solid #d2d2d7;border-radius:12px;background:#fff;color:#1d1d1f;cursor:pointer}.k1c-attach svg{width:20px;height:20px}.k1c-attach:hover{background:#f5f5f7}'
+    + '.k1c-shots{display:flex;gap:8px;padding:10px 12px 0;overflow-x:auto;background:#f2faf4}.k1c-shots[hidden]{display:none}.k1c-shot{position:relative;flex:0 0 auto;width:64px;height:64px;border-radius:10px;overflow:hidden;border:1px solid #bfe3c9;background:#fff}.k1c-shot img{width:100%;height:100%;object-fit:cover;display:block}.k1c-shot button{position:absolute;top:2px;right:2px;width:20px;height:20px;border:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:13px;line-height:20px;padding:0;cursor:pointer}'
+    + '.k1c-m img{display:block;max-width:100%;border-radius:10px;margin-top:6px}'
     + '.k1c-hint{margin:0;padding:8px 14px 0;font-size:12.5px;color:#1a7f37;background:#f2faf4}.k1c-hint[hidden]{display:none}'
     + '.k1c-card{align-self:stretch;border:1px solid #e5e5ea;border-radius:16px;padding:14px;background:#fafafa}.k1c-card b{display:block;font-size:14.5px;margin-bottom:4px}.k1c-card p{margin:0 0 10px;font-size:13.5px;color:#4a4a4f}.k1c-card a{display:inline-block;margin:0 8px 6px 0;padding:8px 13px;border-radius:10px;font-size:13.5px;font-weight:600;text-decoration:none;background:#1d1d1f;color:#fff}.k1c-card a.k1c-ghost{background:none;color:#1d1d1f;border:1px solid #d2d2d7}.k1c-card.k1c-ok{background:#f2faf4;border-color:#bfe3c9}'
     /* Dot, beside his tips. */
@@ -93,8 +96,9 @@
   panel.innerHTML = '<div class="k1c-head"><div class="k1c-headl"><div><b></b><small>Usually replies quickly</small></div></div><button class="k1c-x" type="button" aria-label="Close">&times;</button></div>'
     + '<div class="k1c-msgs"></div>'
     + '<div class="k1c-details" hidden><p>Leave an email or number in case you step away, and we’ll reply there too.</p><input type="text" placeholder="Your name" autocomplete="name"><input type="email" placeholder="Email" autocomplete="email" inputmode="email"><input type="tel" placeholder="Mobile" autocomplete="tel" inputmode="tel"><div class="k1c-row"><button type="button" class="k1c-save">Save</button><button type="button" class="k1c-skip">Not now</button></div></div>'
-    + (edits ? '<div class="k1c-edit"><button type="button" class="k1c-pull" aria-pressed="false"><i aria-hidden="true">+</i><span>Add website edit request</span></button></div><p class="k1c-hint" hidden>Tell us the change: words, photos, prices or hours. We make it and let you know.</p>' : '')
-    + '<form class="k1c-form"><textarea rows="1" placeholder="Write a message" aria-label="Your message" maxlength="2000"></textarea><button class="k1c-send" type="submit">Send</button></form>';
+    + (edits ? '<div class="k1c-edit"><button type="button" class="k1c-pull" aria-pressed="false"><i aria-hidden="true">+</i><span>Add website edit request</span></button></div><p class="k1c-hint" hidden>Tell us the change: words, photos, prices or hours. Add a screenshot of the part to change with the picture button. We make it and let you know.</p>' : '')
+    + (edits ? '<div class="k1c-shots" hidden></div>' : '')
+    + '<form class="k1c-form">' + (edits ? '<button type="button" class="k1c-attach" aria-label="Add a screenshot or photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-7 7"/></svg></button><input type="file" class="k1c-file" accept="image/*" multiple hidden>' : '') + '<textarea rows="1" placeholder="Write a message" aria-label="Your message" maxlength="2000"></textarea><button class="k1c-send" type="submit">Send</button></form>';
   panel.querySelector('.k1c-head div b').textContent = name;
   if (!btn.parentNode) document.body.appendChild(btn);
   document.body.appendChild(panel);
@@ -176,6 +180,7 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var text = input.value.trim();
+    if (editMode && shots.length) { sendEdit(text); return; }
     if (text.length < 2) return;
     if (editMode) { sendEdit(text); return; }
     input.value = ''; input.style.height = 'auto';
@@ -250,7 +255,7 @@
     pull.querySelector('i').textContent = on ? '\u00d7' : '+';
     pull.querySelector('span').textContent = on ? 'Website edit request' : 'Add website edit request';
     hint.hidden = !on;
-    input.placeholder = on ? 'What should we change?' : 'Write a message';
+    input.placeholder = on ? 'What to change?' : 'Write a message';
     form.querySelector('.k1c-send').textContent = on ? 'Send edit' : 'Send';
     input.focus();
   }
@@ -258,19 +263,120 @@
     if (editMode) { setEdit(false); return; }
     memberToken().then(function (t) { if (t) setEdit(true); else explain(); });
   });
+  /* ---- screenshots and photos (data-edits) ----
+     A member can add pictures to an edit request: a screenshot of the bit
+     to change, or the new photo. They are shrunk here first (a phone
+     screenshot is several MB; 1600px is plenty to see what to change), then
+     uploaded to the same private bucket the Requests page uses, under the
+     member's own folder, and attached to the request. */
+  var shots = [];
+  var shotsBox = panel.querySelector('.k1c-shots');
+  var fileIn = panel.querySelector('.k1c-file');
+  var attachBtn = panel.querySelector('.k1c-attach');
+  function shrink(file) {
+    return new Promise(function (resolve) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var max = 1600, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement('canvas');
+        c.width = Math.round(w * k); c.height = Math.round(h * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function (b) { URL.revokeObjectURL(url); resolve(b || file); }, 'image/jpeg', 0.85);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); resolve(null); };
+      img.src = url;
+    });
+  }
+  function paintShots() {
+    shotsBox.innerHTML = '';
+    shotsBox.hidden = !shots.length;
+    shots.forEach(function (sh, i) {
+      var d = document.createElement('div'); d.className = 'k1c-shot';
+      var im = document.createElement('img'); im.src = sh.url; im.alt = 'Screenshot ' + (i + 1);
+      var x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'Remove'); x.textContent = '×';
+      x.addEventListener('click', function () { URL.revokeObjectURL(sh.url); shots.splice(i, 1); paintShots(); });
+      d.appendChild(im); d.appendChild(x); shotsBox.appendChild(d);
+    });
+  }
+  function addFiles(list) {
+    var files = Array.prototype.filter.call(list || [], function (f) { return /^image\//.test(f.type); });
+    if (!files.length) return;
+    memberToken().then(function (t) {
+      if (!t) { explain(); return; }
+      if (!editMode) setEdit(true);
+      return Promise.all(files.slice(0, 5 - shots.length).map(shrink)).then(function (blobs) {
+        blobs.forEach(function (b) { if (b) shots.push({ blob: b, url: URL.createObjectURL(b) }); });
+        if (files.length + shots.length > 5) sys('Up to 5 pictures on one request.');
+        paintShots();
+        input.focus();
+      });
+    });
+  }
+  if (attachBtn) {
+    attachBtn.addEventListener('click', function () {
+      memberToken().then(function (t) { if (!t) explain(); else fileIn.click(); });
+    });
+    fileIn.addEventListener('change', function () { addFiles(fileIn.files); fileIn.value = ''; });
+    // A screenshot pasted straight into the box (desktop) works too.
+    input.addEventListener('paste', function (e) {
+      var items = (e.clipboardData && e.clipboardData.files) || [];
+      if (items.length) { e.preventDefault(); addFiles(items); }
+    });
+  }
+  /* Where the Supabase project is, for the upload. Kanvas One's pages load
+     supabase-config.js; if one didn't, fetch it. */
+  function supaCfg() {
+    if (window.ONE_SUPABASE && window.ONE_SUPABASE.url) return Promise.resolve(window.ONE_SUPABASE);
+    return new Promise(function (resolve) {
+      var sc = document.createElement('script'); sc.src = base + '/supabase-config.js';
+      sc.onload = function () { resolve(window.ONE_SUPABASE || null); }; sc.onerror = function () { resolve(null); };
+      document.head.appendChild(sc);
+    });
+  }
+  function tokenUser(t) {
+    try { return JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).sub; } catch (er) { return null; }
+  }
+  function uploadShots(t) {
+    if (!shots.length) return Promise.resolve([]);
+    var uid = tokenUser(t);
+    return supaCfg().then(function (cfg) {
+      if (!cfg || !cfg.url || !uid) throw new Error('Could not upload your pictures just now.');
+      var batch = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2);
+      return Promise.all(shots.map(function (sh, i) {
+        var path = uid + '/' + batch + '-' + i + '.jpg';
+        return fetch(cfg.url + '/storage/v1/object/request-attachments/' + path, {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + t, apikey: cfg.publishableKey, 'Content-Type': 'image/jpeg', 'x-upsert': 'false' },
+          body: sh.blob
+        }).then(function (r) { if (!r.ok) throw new Error('Could not upload a picture. Try a smaller one.'); return path; });
+      }));
+    });
+  }
+
   function sendEdit(text) {
     var sendBtn = form.querySelector('.k1c-send'); sendBtn.disabled = true;
     memberToken().then(function (t) {
       if (!t) { setEdit(false); input.value = text; explain(); return; }
       input.value = ''; input.style.height = 'auto';
-      return fetch(base + '/api/requests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t },
-        body: JSON.stringify({ kind: 'edit', body: text, source: 'chat' })
+      /* The server wants a sentence; a picture with a word or two says
+         the rest. */
+      var body = text;
+      if (shots.length && body.length < 10) body = (body ? body + ' ' : '') + '(see the picture' + (shots.length > 1 ? 's' : '') + ')';
+      var sent = shots.slice();
+      return uploadShots(t).then(function (paths) {
+        return fetch(base + '/api/requests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t },
+          body: JSON.stringify({ kind: 'edit', body: body, source: 'chat', attachmentPaths: paths })
+        });
       }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { return { status: r.status, d: d }; }); })
         .then(function (res) {
           if (res.status === 200) {
-            var mine = document.createElement('div'); mine.className = 'k1c-m k1c-v'; mine.textContent = text; msgs.appendChild(mine);
+            var mine = document.createElement('div'); mine.className = 'k1c-m k1c-v'; mine.textContent = body;
+            sent.forEach(function (sh) { var im = document.createElement('img'); im.src = sh.url; im.alt = ''; mine.appendChild(im); });
+            msgs.appendChild(mine);
+            shots = []; paintShots();
             card('Edit request sent', 'We\u2019ll make the change and let you know when it\u2019s done.', [['See your requests', base + '/requests.html', true]], true);
             setEdit(false);
             return;
@@ -284,7 +390,7 @@
           }
           sys((res.d && res.d.error) || 'Could not send that. Try again.');
         });
-    }).catch(function () { input.value = text; sys('Could not send that. Try again.'); })
+    }).catch(function (er) { input.value = text; sys((er && er.message) || 'Could not send that. Try again.'); })
       .then(function () { sendBtn.disabled = false; });
   }
 
