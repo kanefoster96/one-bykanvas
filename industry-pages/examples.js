@@ -209,7 +209,7 @@ function footer(e) {
     <a class="x-logo" href="${P}">${mark(e.icon)}<span>${e.name}</span></a>
     <p class="x-foot-addr">${e.address} &middot; ${e.phone}</p>
     <nav class="x-foot-links" aria-label="Footer"><a href="${P}">${e.services.h}</a><a href="${P}">${e.hero.cta}</a><a href="${P}">Contact</a><a href="${P}">Terms &amp; conditions</a><a href="${P}">Privacy policy</a><a href="${P}">Cancellation policy</a></nav>
-    <p class="x-credit">&copy; 2026 ${e.name} &middot; <a href="${P}">Website by Kanvas One</a></p>
+    <p class="x-credit">&copy; 2026 ${e.name}. All rights reserved.</p>
   </div>
 </footer>`;
 }
