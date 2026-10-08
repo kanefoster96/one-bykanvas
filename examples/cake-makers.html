@@ -12,10 +12,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="/examples/ex.css?v=6">
+<link rel="stylesheet" href="/examples/ex.css?v=7">
 <style>:root{--bg:#ffffff;--ink:#3a2a2f;--muted:#7d6d72;--accent:#e2557b;--accent2:#ffd36e;--accent3:#9ad9c2;--accent4:#f7a6bd;--soft:#fff5f7;--surface:#ffffff;--accent-text:#c13d62;--line:rgba(58,42,47,.1);--fh:'Fraunces', Georgia, serif;--fb:'Nunito Sans', system-ui, sans-serif;--hw:600;--hls:-.02em;--radius:22px;--btn-radius:999px;--on-accent:#fff;--hero-bg:linear-gradient(180deg, #ffffff 0%, #fff6f8 100%);--hero-ink:#3a2a2f;--case:none}</style>
 </head>
-<body class="T-cake">
+<body class="T-cake H-showcase">
 <header class="x-nav" id="xNav">
   <div class="x-wrap x-nav-in">
     <a class="x-logo" href="#preview" aria-label="Sugar &amp; Crumb"><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7"/><path d="M5 16c1.2 1 2.3 1 3.5 0s2.3-1 3.5 0 2.3 1 3.5 0 2.3-1 3.5 0"/><path d="M12 12V8"/><path d="M12 3.5c1 1.2 1 2.4 0 3-1-.6-1-1.8 0-3z"/></svg></span></a>
@@ -23,7 +23,7 @@
   </div>
 </header>
 <main>
-<section class="x-hero has-art">
+<section class="x-hero x-hero--showcase">
   <div class="x-wrap x-hero-in">
     <div class="x-hero-copy">
       <p class="x-status"><span aria-hidden="true"></span>Now taking orders for November</p>
@@ -32,8 +32,9 @@
       <a class="x-btn x-btn-hero" href="#preview">Order a cake</a>
       <ul class="x-risk"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Free design sketch</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Nothing to pay until you love the design</span></li></ul>
     </div>
-    <div class="x-art-wrap"><div class="x-art x-art-cake"><svg viewBox="0 0 400 400" aria-hidden="true">
-    <circle class="f-s" cx="200" cy="205" r="172"/>
+    <div class="x-hero-side">
+      <div class="x-art x-art-cake"><svg viewBox="44 60 312 312" aria-hidden="true">
+    
     <g opacity=".9"><rect class="f-b" x="62" y="96" width="16" height="6" rx="3" transform="rotate(-30 70 99)"/><rect class="f-c" x="318" y="120" width="16" height="6" rx="3" transform="rotate(25 326 123)"/><rect class="f-a" x="300" y="64" width="14" height="5" rx="2.5" transform="rotate(-50 307 66)"/><rect class="f-c" x="86" y="178" width="14" height="5" rx="2.5" transform="rotate(40 93 180)"/><rect class="f-b" x="330" y="214" width="14" height="5" rx="2.5" transform="rotate(-20 337 216)"/><circle class="f-d" cx="104" cy="64" r="5"/><circle class="f-b" cx="346" cy="170" r="4"/></g>
     <ellipse cx="200" cy="364" rx="58" ry="9" fill="#000" opacity=".06"/>
     <path class="f-w" stroke="rgba(0,0,0,.08)" stroke-width="2" d="M186 334 H214 L222 360 H178 Z"/>
@@ -48,37 +49,51 @@
     <circle class="f-a" cx="178" cy="122" r="12"/><circle class="f-a" cx="200" cy="114" r="13"/><circle class="f-a" cx="222" cy="122" r="12"/>
     <path class="f-c" d="M200 101 c4 -12 14 -16 22 -14 c-3 9 -12 15 -22 14z"/>
     <circle fill="#fff" opacity=".55" cx="196" cy="109" r="3.5"/><circle fill="#fff" opacity=".5" cx="174" cy="118" r="3"/>
-  </svg></div><p class="k1-guide k1-guide-hero"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Imagine one of your stunning cakes here.</span></p></div>
+  </svg></div>
+      <span class="x-tagpin x-tagpin-1">Vanilla &amp; raspberry</span><span class="x-tagpin x-tagpin-2">Serves 40</span><span class="x-tagpin x-tagpin-3">Hand-piped</span>
+      <p class="k1-guide k1-guide-hero"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Imagine one of your stunning cakes here.</span></p>
+    </div>
   </div>
   
 </section>
-<section class="x-sec" id="services" data-k1-seen="the services">
+<section class="x-sec x-steps-sec">
   <div class="x-wrap">
-    <div class="x-head"><h2>Cakes</h2><p>Gluten-free and vegan options on every cake.</p><p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your services and prices, each with a button to book.</span></p></div>
+    <div class="x-head"><h2>How ordering works</h2><p>Three steps, and nothing to pay until you love the design.</p></div>
+    <ol class="x-steps"><li><span class="x-step-n" aria-hidden="true">1</span><div><h3>Tell me the date</h3><p>And the theme, how many guests and any allergies.</p></div></li><li><span class="x-step-n" aria-hidden="true">2</span><div><h3>Get a sketch and a price</h3><p>Within a day, with flavours to choose from.</p></div></li><li><span class="x-step-n" aria-hidden="true">3</span><div><h3>Collect, or I deliver</h3><p>Boxed, on time and in one piece.</p></div></li></ol>
+    
   </div>
+</section>
+<section class="x-sec x-rail-sec" id="services" data-k1-seen="the services">
+  <div class="x-wrap"><div class="x-head"><h2>Cakes</h2><p>Gluten-free and vegan options on every cake.</p><p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your services and prices, each with a button to book.</span></p></div></div>
   <div class="x-rail-wrap">
     <div class="x-rail" tabindex="0" aria-label="Cakes"><a class="x-card" href="#preview">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">01</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7"/><path d="M5 16c1.2 1 2.3 1 3.5 0s2.3-1 3.5 0 2.3 1 3.5 0 2.3-1 3.5 0"/><path d="M12 12V8"/><path d="M12 3.5c1 1.2 1 2.4 0 3-1-.6-1-1.8 0-3z"/></svg></span></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-shot-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><svg class="x-card-cake" viewBox="0 20 200 140"><ellipse cx="100" cy="146" rx="84" ry="8" fill="#000" opacity=".07"/><rect x="40" y="70" width="120" height="56" rx="7" class="f-w"/><path class="f-a" d="M40 70 H160 V79 Q157.6 79 155.2 83.4 Q148.0 91 140.8 83.4 Q138.4 79 136.0 79 Q133.6 79 131.2 90 Q124.0 103 116.8 90 Q114.4 79 112.0 79 Q109.6 79 107.2 85.6 Q100.0 95 92.8 85.6 Q90.4 79 88.0 79 Q85.6 79 83.2 92.2 Q76.0 107 68.8 92.2 Q66.4 79 64.0 79 Q61.6 79 59.2 87.8 Q52.0 99 44.8 87.8 Q42.4 79 40.0 79 Z"/><circle class="f-c" cx="100" cy="62" r="7"/></svg></span>
       <span class="x-card-body"><h3>Celebration cakes</h3><p>Single tier, serves 12 to 15. Any theme, any flavour.</p>
-      <span class="x-card-foot"><b>From &pound;45</b><span>Serves 15</span><em>Book &rsaquo;</em></span></span>
+      <span class="x-card-foot"><b>From &pound;45</b><span>Serves 15</span><em>Order &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">02</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7"/><path d="M5 16c1.2 1 2.3 1 3.5 0s2.3-1 3.5 0 2.3 1 3.5 0 2.3-1 3.5 0"/><path d="M12 12V8"/><path d="M12 3.5c1 1.2 1 2.4 0 3-1-.6-1-1.8 0-3z"/></svg></span></span>
+      <span class="x-card-art" aria-hidden="true"><svg class="x-card-cake" viewBox="0 20 200 140"><ellipse cx="100" cy="146" rx="84" ry="8" fill="#000" opacity=".07"/><rect x="30" y="92" width="140" height="46" rx="7" class="f-w"/><path class="f-d" d="M30 92 H170 V101 Q167.7 101 165.3 109.8 Q158.3 121 151.3 109.8 Q149.0 101 146.7 101 Q144.3 101 142.0 105.4 Q135.0 113 128.0 105.4 Q125.7 101 123.3 101 Q121.0 101 118.7 112 Q111.7 125 104.7 112 Q102.3 101 100.0 101 Q97.7 101 95.3 107.6 Q88.3 117 81.3 107.6 Q79.0 101 76.7 101 Q74.3 101 72.0 114.2 Q65.0 129 58.0 114.2 Q55.7 101 53.3 101 Q51.0 101 48.7 109.8 Q41.7 121 34.7 109.8 Q32.3 101 30.0 101 Z"/><rect x="58" y="50" width="84" height="42" rx="7" class="f-d"/><path class="f-w" d="M58 50 H142 V59 Q139.9 59 137.8 70 Q131.5 83 125.2 70 Q123.1 59 121.0 59 Q118.9 59 116.8 65.6 Q110.5 75 104.2 65.6 Q102.1 59 100.0 59 Q97.9 59 95.8 72.2 Q89.5 87 83.2 72.2 Q81.1 59 79.0 59 Q76.9 59 74.8 67.8 Q68.5 79 62.2 67.8 Q60.1 59 58.0 59 Z"/><circle class="f-a" cx="100" cy="42" r="7"/></svg></span>
       <span class="x-card-body"><h3>Two-tier cakes</h3><p>For bigger birthdays, christenings and parties.</p>
-      <span class="x-card-foot"><b>From &pound;120</b><span>Serves 40</span><em>Book &rsaquo;</em></span></span>
+      <span class="x-card-foot"><b>From &pound;120</b><span>Serves 40</span><em>Order &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">03</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7"/><path d="M5 16c1.2 1 2.3 1 3.5 0s2.3-1 3.5 0 2.3 1 3.5 0 2.3-1 3.5 0"/><path d="M12 12V8"/><path d="M12 3.5c1 1.2 1 2.4 0 3-1-.6-1-1.8 0-3z"/></svg></span></span>
+      <span class="x-card-art" aria-hidden="true"><svg class="x-card-cake" viewBox="0 20 200 140"><ellipse cx="100" cy="146" rx="84" ry="8" fill="#000" opacity=".07"/><rect x="30" y="104" width="140" height="36" rx="7" class="f-w"/><path class="f-w" d="M30 104 H170 V113 Q167.7 113 165.3 121.8 Q158.3 133 151.3 121.8 Q149.0 113 146.7 113 Q144.3 113 142.0 117.4 Q135.0 125 128.0 117.4 Q125.7 113 123.3 113 Q121.0 113 118.7 124 Q111.7 137 104.7 124 Q102.3 113 100.0 113 Q97.7 113 95.3 119.6 Q88.3 129 81.3 119.6 Q79.0 113 76.7 113 Q74.3 113 72.0 126.2 Q65.0 141 58.0 126.2 Q55.7 113 53.3 113 Q51.0 113 48.7 121.8 Q41.7 133 34.7 121.8 Q32.3 113 30.0 113 Z"/><rect x="50" y="70" width="100" height="34" rx="7" class="f-w"/><path class="f-w" d="M50 70 H150 V79 Q147.5 79 145.0 90 Q137.5 103 130.0 90 Q127.5 79 125.0 79 Q122.5 79 120.0 85.6 Q112.5 95 105.0 85.6 Q102.5 79 100.0 79 Q97.5 79 95.0 92.2 Q87.5 107 80.0 92.2 Q77.5 79 75.0 79 Q72.5 79 70.0 87.8 Q62.5 99 55.0 87.8 Q52.5 79 50.0 79 Z"/><rect x="70" y="38" width="60" height="32" rx="7" class="f-w"/><path class="f-w" d="M70 38 H130 V47 Q128.0 47 126.0 53.6 Q120.0 63 114.0 53.6 Q112.0 47 110.0 47 Q108.0 47 106.0 60.2 Q100.0 75 94.0 60.2 Q92.0 47 90.0 47 Q88.0 47 86.0 55.8 Q80.0 67 74.0 55.8 Q72.0 47 70.0 47 Z"/><path class="f-a" d="M100 36c-6-9-16-9-16-2 0 6 9 6 16 2zm0 0c6-9 16-9 16-2 0 6-9 6-16 2z"/></svg></span>
       <span class="x-card-body"><h3>Wedding cakes</h3><p>Two or three tiers, with a free tasting box.</p>
-      <span class="x-card-foot"><b>From &pound;280</b><span>Tasting incl.</span><em>Book &rsaquo;</em></span></span>
+      <span class="x-card-foot"><b>From &pound;280</b><span>Tasting incl.</span><em>Order &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">04</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7"/><path d="M5 16c1.2 1 2.3 1 3.5 0s2.3-1 3.5 0 2.3 1 3.5 0 2.3-1 3.5 0"/><path d="M12 12V8"/><path d="M12 3.5c1 1.2 1 2.4 0 3-1-.6-1-1.8 0-3z"/></svg></span></span>
+      <span class="x-card-art" aria-hidden="true"><svg class="x-card-cake" viewBox="0 20 200 140"><ellipse cx="100" cy="146" rx="84" ry="8" fill="#000" opacity=".07"/><path class="f-b" d="M22 92 L28 134 H60 L66 92 Z"/><path class="f-w" d="M20 94 C 16 74, 34 70, 38 66 C 40 54, 56 54, 54 66 C 66 66, 72 80, 68 94 Z"/><circle class="f-a" cx="46" cy="56" r="6"/><path class="f-c" d="M78 92 L84 134 H116 L122 92 Z"/><path class="f-w" d="M76 94 C 72 74, 90 70, 94 66 C 96 54, 112 54, 110 66 C 122 66, 128 80, 124 94 Z"/><circle class="f-a" cx="102" cy="56" r="6"/><path class="f-d" d="M134 92 L140 134 H172 L178 92 Z"/><path class="f-w" d="M132 94 C 128 74, 146 70, 150 66 C 152 54, 168 54, 166 66 C 178 66, 184 80, 180 94 Z"/><circle class="f-a" cx="158" cy="56" r="6"/></svg></span>
       <span class="x-card-body"><h3>Cupcakes</h3><p>Decorated to match your cake or your party.</p>
-      <span class="x-card-foot"><b>&pound;24</b><span>A dozen</span><em>Book &rsaquo;</em></span></span>
+      <span class="x-card-foot"><b>&pound;24</b><span>A dozen</span><em>Order &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">05</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7"/><path d="M5 16c1.2 1 2.3 1 3.5 0s2.3-1 3.5 0 2.3 1 3.5 0 2.3-1 3.5 0"/><path d="M12 12V8"/><path d="M12 3.5c1 1.2 1 2.4 0 3-1-.6-1-1.8 0-3z"/></svg></span></span>
+      <span class="x-card-art" aria-hidden="true"><svg class="x-card-cake" viewBox="0 20 200 140"><ellipse cx="100" cy="146" rx="84" ry="8" fill="#000" opacity=".07"/><rect x="34" y="66" width="132" height="74" rx="8" class="f-w"/><path class="f-a" d="M34 84 H166" stroke="none"/><rect x="34" y="66" width="132" height="14" rx="6" class="f-a"/><circle cx="60" cy="100" r="12" fill="#d9a36b"/><circle cx="100" cy="100" r="12" fill="#7a4a33"/><circle cx="140" cy="100" r="12" fill="#d9a36b"/><circle cx="60" cy="124" r="12" fill="#7a4a33"/><circle cx="100" cy="124" r="12" fill="#d9a36b"/><circle cx="140" cy="124" r="12" fill="#7a4a33"/></svg></span>
       <span class="x-card-body"><h3>Brownie &amp; cookie boxes</h3><p>Gifts, thank-yous and treats.</p>
-      <span class="x-card-foot"><b>From &pound;15</b><span>Box of 9</span><em>Book &rsaquo;</em></span></span>
+      <span class="x-card-foot"><b>From &pound;15</b><span>Box of 9</span><em>Order &rsaquo;</em></span></span>
     </a></div>
     <div class="x-rail-btns x-wrap"><button class="x-rail-btn" type="button" data-rail="-1" aria-label="Previous">&lsaquo;</button><button class="x-rail-btn" type="button" data-rail="1" aria-label="Next">&rsaquo;</button></div>
+  </div>
+</section>
+<section class="x-sec x-flavours-sec">
+  <div class="x-wrap">
+    <div class="x-head"><h2>Pick your flavours</h2><p>Any cake, any flavour. Mix them between the tiers.</p></div>
+    <ul class="x-flavours"><li>Vanilla bean &amp; raspberry</li><li>Chocolate fudge</li><li>Lemon drizzle</li><li>Salted caramel</li><li>Red velvet</li><li>Biscoff</li><li>Carrot &amp; walnut</li><li>Funfetti</li></ul>
   </div>
 </section>
 <section class="x-sec x-pains-sec" data-k1-seen="the problems">
@@ -93,32 +108,22 @@
     <ul class="x-points"><li><span class="x-point-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><h3>Ten years of baking</h3><p>Over 1,000 cakes, from first birthdays to weddings.</p></div></li><li><span class="x-point-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><h3>Five-star hygiene rating</h3><p>Registered with Northumberland County Council.</p></div></li><li><span class="x-point-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><h3>Clear cancellation terms</h3><p>Full refund up to 7 days before collection.</p></div></li></ul>
   </div>
 </section>
-<section class="x-sec" id="faq">
+<section class="x-sec x-reviews-sec" id="reviews" data-k1-seen="the reviews">
+  <div class="x-wrap">
+    <div class="x-head"><h2>What customers say</h2><p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your real Google reviews show here.</span></p></div>
+    <div class="x-reviews"><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span><blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote><figcaption><span class="x-avatar" aria-hidden="true">A</span><span><b>Customer name</b><small>Google review</small></span></figcaption></figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span><blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote><figcaption><span class="x-avatar" aria-hidden="true">B</span><span><b>Customer name</b><small>Google review</small></span></figcaption></figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span><blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote><figcaption><span class="x-avatar" aria-hidden="true">C</span><span><b>Customer name</b><small>Google review</small></span></figcaption></figure></div>
+  </div>
+</section>
+<section class="x-sec x-faq-sec" id="faq">
   <div class="x-wrap x-faq-wrap">
     <div class="x-head"><h2>Questions</h2><p>Anything else? <a href="#preview">Send us a message</a>.</p></div>
     <div class="x-faq"><details><summary>How much notice do you need?</summary><p>Two weeks is ideal. Weddings, three months. Ask anyway, I can sometimes squeeze one in.</p></details><details><summary>Do you deliver?</summary><p>Yes, within 15 miles of Morpeth, and I set up wedding cakes at the venue.</p></details><details><summary>Can you do allergy-friendly cakes?</summary><p>Gluten-free and vegan, yes. Tell me about any allergy when you order.</p></details><details><summary>How do I pay?</summary><p>A &pound;20 deposit holds your date. The rest on collection.</p></details></div>
   </div>
 </section>
-<section class="x-sec x-reviews-sec" id="reviews" data-k1-seen="the reviews">
-  <div class="x-wrap">
-    <div class="x-head"><h2>What customers say</h2>
-      <p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your real Google reviews show here.</span></p></div>
-    <div class="x-reviews"><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
-      <blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote>
-      <figcaption><span class="x-avatar" aria-hidden="true">A</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
-    </figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
-      <blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote>
-      <figcaption><span class="x-avatar" aria-hidden="true">B</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
-    </figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
-      <blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote>
-      <figcaption><span class="x-avatar" aria-hidden="true">C</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
-    </figure></div>
-  </div>
-</section>
 <section class="x-band">
   <div class="x-wrap">
     <h2>Got a date in mind?</h2><p>Send it over and get ideas and a price within a day.</p>
-    <a class="x-btn x-btn-band" href="#preview">Order a cake</a>
+    <div class="x-band-btns"><a class="x-btn x-btn-band" href="#preview">Order a cake</a></div>
     <ul class="x-risk"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Free design sketch</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Nothing to pay until you love the design</span></li></ul>
   </div>
 </section>
@@ -156,7 +161,7 @@
   <a class="k1-x" href="/free?trade=cake" aria-label="Close the example"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
 </div>
 <script src="/consent.js?v=9"></script>
-<script src="/examples/ex.js?v=3"></script>
+<script src="/examples/ex.js?v=4"></script>
 <script src="/beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 </body>
 </html>

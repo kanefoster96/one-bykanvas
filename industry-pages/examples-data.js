@@ -1,28 +1,28 @@
 /* The example websites at /examples/<slug>: one made-up business for each
  * trade we advertise to. examples.js turns these into pages.
  *
- * Every example follows the same flow, the one that works on our own
- * customers' sites:
+ * Every example tells the same story, the one that works on our own
+ * customers' sites: the dream outcome and ONE button, proof, what the
+ * customer is fed up with (in their words), how this business fixes it,
+ * the services and prices, reviews, the button again, and a footer with
+ * terms and policies. What changes is how each trade tells it (layout):
  *
- *   header    the trade's symbol and name, and a menu
- *   hero      the dream outcome, then how or who for, ONE button (what the
- *             business wants the visitor to do), and the risk taken away
- *   services  a card for each thing they offer
- *   pains     what the customer is fed up with, in their words
- *   solution  how this business fixes it: experience, approach, policies
- *   faq       the trust questions
- *   reviews   obvious placeholders: on a real site, their Google reviews
- *   band      the button again
- *   footer    symbol, name, terms and policies
+ *   layout.hero   what that trade's customers want to see first: 'photo'
+ *                 (their best photo, the whole hero), 'booking' (the next
+ *                 free slots), 'swatch' (tap a colour), 'showcase' (a big
+ *                 cake), 'playful', 'breaker' (the fix), 'outcome' (how
+ *                 soon, how much), 'quote' (the price in two taps), 'road'
+ *   layout.order  the sections after it, by name (SECTIONS in examples.js)
+ *   layout.reviews  'cards', 'quote' (one big one) or 'passes'
+ *   layout.band   'call' adds the phone number to the last button
+ *   x             the content those heroes and sections need
  *
  * Every business is invented, and the pill at the bottom says so. Phone
  * numbers are from Ofcom's drama ranges (0191 498 0xxx, 07700 900xxx).
+ * Reviews are obvious placeholders: on a real site, their Google reviews.
  *
- * key    the trade's key in free.js: the preview pop-up sends people to
- *        /free?trade=<key>, with their trade already in the green pill.
- * art    a drawing for the hero where one suits the trade. The trades
- *        that sell how something looks get a photo instead (hero image in
- *        assets/examples/hero/<slug>.jpg); until it is there, a gradient.
+ * key    the trade's key in free.js and /join?trade=<key>.
+ * art    the trade's drawing (ART in examples.js).
  */
 'use strict';
 
@@ -31,7 +31,7 @@ module.exports = [
     slug: 'hairdressers', key: 'hair', label: 'Hairdressers', one: 'hairdresser', icon: 'scissors', art: 'hair',
     name: 'Linden Hair Studio', place: 'Tynemouth', phone: '0191 498 0217', address: 'Front Street, Tynemouth',
     fonts: 'Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600',
-    theme: { accent3: '#c6cfb4', dark: false, bg: '#f7f2ec', ink: '#2a2420', muted: '#76675d', accent: '#a85f43', accent2: '#d9b8a3', soft: '#efe4d9', surface: '#fffaf5', line: 'rgba(42,36,32,.12)', fh: "'Cormorant Garamond', Georgia, serif", fb: "'Jost', system-ui, sans-serif", hw: 600, hls: '-.01em', radius: '6px', btnRadius: '999px', onAccent: '#fff',
+    theme: { accent3: '#c6cfb4', dark: true, bg: '#f7f2ec', ink: '#2a2420', muted: '#76675d', accent: '#a85f43', accent2: '#d9b8a3', soft: '#efe4d9', surface: '#fffaf5', line: 'rgba(42,36,32,.12)', fh: "'Cormorant Garamond', Georgia, serif", fb: "'Jost', system-ui, sans-serif", hw: 600, hls: '-.01em', radius: '6px', btnRadius: '999px', onAccent: '#fff',
       heroBg: 'linear-gradient(170deg, #f7f2ec 0%, #eedfd1 100%)', heroInk: '#2a2420' },
     hero: {
       status: 'Taking new clients for October',
@@ -64,7 +64,15 @@ module.exports = [
       ['How long does balayage take?', 'Around three hours, including the toner and finish.'],
       ['Is there parking?', 'Free parking on the side streets, and two minutes from Tynemouth Metro.']
     ],
-    band: { h: 'Ready for colour you love?', p: 'Book online in under a minute.' }
+    band: { h: 'Ready for colour you love?', p: 'Book online in under a minute.' },
+    /* Chosen by eye: the work fills the hero, then more of it. */
+    layout: { hero: 'photo', reviews: 'quote', order: ['trust', 'gallery', 'pains', 'solution', 'menu', 'reviews', 'faq', 'band'] },
+    x: {
+      heroNote: 'Imagine this whole background is one of your favourite photos of your work.',
+      trust: [['12 years', 'colour specialist'], ['Free', 'colour consultations'], ['One client', 'at a time'], ['By the sea', 'Front Street, Tynemouth']],
+      gallery: { h: 'Fresh from the chair', p: 'A few of this month&rsquo;s favourites.', note: 'Your best work shows here.', items: ['Lived-in blonde', 'Copper balayage', 'Soft brunette', 'Colour correction', 'Glossy root tint'] },
+      menu: { h: 'Prices', groups: [['Cut &amp; style', [0, 5]], ['Colour', [1, 2, 4, 3]]] }
+    }
   },
 
   {
@@ -104,7 +112,16 @@ module.exports = [
       ['What should I do before my appointment?', 'Come with clean, mascara-free lashes. That&rsquo;s it.'],
       ['Can I wear them if I wear contacts?', 'Yes. Just take them out for the appointment itself.']
     ],
-    band: { h: 'Ready to skip the mascara?', p: 'Book your first set, patch test included.' }
+    band: { h: 'Ready to skip the mascara?', p: 'Book your first set, patch test included.' },
+    /* Booked on a whim: the next free slots are in the hero. */
+    layout: { hero: 'booking', order: ['trust', 'sets', 'pains', 'steps', 'reviews', 'faq', 'band'] },
+    x: {
+      heroNote: 'Imagine a close-up of your best set here.',
+      book: { h: 'Next free appointments', chips: ['Classic', 'Hybrid', 'Volume', 'Infill'], slots: [['Tue', '10:00'], ['Wed', '14:30'], ['Thu', '18:00'], ['Sat', '09:30']] },
+      trust: [['5 years', 'of lash sets'], ['Free', 'patch test, always'], ['Fume-free', 'medical-grade glue'], ['Gosforth', 'High Street studio']],
+      sets: { h: 'Find your set', p: 'From natural to full glam, each one mapped to your eye shape.', show: [[0, 11, 'Natural'], [1, 17, 'Textured'], [2, 26, 'Full and fluffy']], also: [3, 4, 5] },
+      steps: { h: 'Your first visit', p: 'A five-minute patch test, then lashes that last.', cta: true, items: [['Patch test', 'A quick, free visit at least 24 hours before, to check the glue suits you.'], ['Lash mapping', 'We talk through the look you want and map it to your eye shape.'], ['Lie back and relax', 'Two hours, eyes closed. Most people nap.'], ['Infills every 2 to 3 weeks', 'Keeps your set full for as long as you like.']] }
+    }
   },
 
   {
@@ -142,7 +159,16 @@ module.exports = [
       ['Will my makeup last all day?', 'Yes. Long-wear products, set properly, and a touch-up kit to keep.'],
       ['Can you do the bridal party too?', 'Yes, with a second artist for bigger parties.']
     ],
-    band: { h: 'Is your date still free?', p: 'Send it over and you&rsquo;ll know within a day.' }
+    band: { h: 'Is your date still free?', p: 'Send it over and you&rsquo;ll know within a day.' },
+    /* One date, booked a year ahead: is it free, and will I look like me. */
+    layout: { hero: 'photo', reviews: 'quote', order: ['trust', 'pains', 'steps', 'packages', 'gallery', 'reviews', 'faq', 'band'] },
+    x: {
+      heroNote: 'Imagine this whole background is your favourite bridal look.',
+      date: { label: 'Your wedding date', value: '2027-06-12' },
+      trust: [['300+', 'brides'], ['8 years', 'of weddings'], ['A trial', 'before the day'], ['Mobile', 'across the North East']],
+      steps: { h: 'Your wedding morning, planned', p: 'A timed plan, so nobody is waiting and you&rsquo;re ready with time to spare.', kind: 'timeline', items: [['Months before', 'Your trial', 'We try your look at home, take photos and tweak it until you love it.'], ['7.30am', 'The bridal party', 'Bridesmaids and mums first, each matched to your look.'], ['9.30am', 'You', 'Your makeup and lashes, and a calm half hour just for you.'], ['11am', 'Your touch-up kit', 'Your lipstick and powder to keep, for the speeches and the dance floor.']] },
+      gallery: { h: 'Recent brides', p: 'Soft glam to barely-there.', note: 'Your favourite looks show here.', items: ['Soft glam', 'Natural bridal', 'Evening reception', 'The bridal party'] }
+    }
   },
 
   {
@@ -182,7 +208,17 @@ module.exports = [
       ['How long do gel nails last?', 'Up to three weeks without chipping.'],
       ['Do you do toes too?', 'Yes, gel polish on toes is the same price as hands.']
     ],
-    band: { h: 'Treat your hands this week.', p: 'New clients get 10% off their first set.' }
+    band: { h: 'Treat your hands this week.', p: 'New clients get 10% off their first set.' },
+    /* Chosen by colour: tap a swatch, the nails change. */
+    layout: { hero: 'swatch', order: ['trust', 'gallery', 'menu', 'pains', 'solution', 'reviews', 'faq', 'band'] },
+    x: {
+      heroNote: 'Imagine your latest sets here.',
+      swatches: [['Raspberry', '#d64c74'], ['Lilac', '#b79cf5'], ['Milky pink', '#f7cdd9'], ['Cherry', '#8e1631'], ['Latte', '#c49a7e'], ['Sage', '#9cbf9f']],
+      trust: [['6 years', 'in Whitley Bay'], ['7 days', 'chip-free, or fixed free'], ['10% off', 'your first set'], ['Gentle', 'removals, no drilling']],
+      gallery: { h: 'Fresh sets', p: 'This week&rsquo;s favourites from the studio.', note: 'Your latest sets show here.', items: ['Chrome French', 'Milky BIAB', 'Hand-painted florals', 'Cherry gel', 'Almond acrylics', 'Lilac ombr&eacute;'] },
+      menu: { groups: [['Nails', [0, 1, 2, 3]], ['Extras', [4, 5]]] },
+      seal: ['7-day', 'chip-free guarantee']
+    }
   },
 
   {
@@ -222,7 +258,15 @@ module.exports = [
       ['Can you do allergy-friendly cakes?', 'Gluten-free and vegan, yes. Tell me about any allergy when you order.'],
       ['How do I pay?', 'A &pound;20 deposit holds your date. The rest on collection.']
     ],
-    band: { h: 'Got a date in mind?', p: 'Send it over and get ideas and a price within a day.' }
+    band: { h: 'Got a date in mind?', p: 'Send it over and get ideas and a price within a day.' },
+    /* Chosen by the cake itself: a big one in the hero, then how ordering works. */
+    layout: { hero: 'showcase', order: ['steps', 'rail', 'flavours', 'pains', 'solution', 'reviews', 'faq', 'band'] },
+    x: {
+      heroNote: 'Imagine one of your stunning cakes here.',
+      tags: ['Vanilla &amp; raspberry', 'Serves 40', 'Hand-piped'],
+      steps: { h: 'How ordering works', p: 'Three steps, and nothing to pay until you love the design.', items: [['Tell me the date', 'And the theme, how many guests and any allergies.'], ['Get a sketch and a price', 'Within a day, with flavours to choose from.'], ['Collect, or I deliver', 'Boxed, on time and in one piece.']] },
+      flavours: { h: 'Pick your flavours', p: 'Any cake, any flavour. Mix them between the tiers.', items: ['Vanilla bean &amp; raspberry', 'Chocolate fudge', 'Lemon drizzle', 'Salted caramel', 'Red velvet', 'Biscoff', 'Carrot &amp; walnut', 'Funfetti'] }
+    }
   },
 
   {
@@ -262,7 +306,15 @@ module.exports = [
       ['What if they miss a week?', 'No problem. Monthly members can catch up at another class.'],
       ['Is there parking?', 'Free parking at the centre, and a cafe next door.']
     ],
-    band: { h: 'Try a session on us.', p: 'No commitment. Just come along and see if they love it.' }
+    band: { h: 'Try a session on us.', p: 'No commitment. Just come along and see if they love it.' },
+    /* Parents decide on safety, then the day and time that fits. */
+    layout: { hero: 'playful', order: ['trust', 'timetable', 'pains', 'steps', 'reviews', 'faq', 'band'] },
+    x: {
+      heroNote: 'Imagine photos of your classes in action here.',
+      trust: [['DBS checked', 'every coach'], ['First aid', 'trained, every session'], ['Max 12', 'in every group'], ['Ages 2 to 11', 'all welcome']],
+      timetable: { h: 'The weekly timetable', p: 'Find a class that fits. The first session is free.', days: ['Mon', 'Tue', 'Wed', 'Sat'], extras: [4, 5], items: [['Mon', '9.30am', 'Mini Movers', '2 to 4'], ['Tue', '4.15pm', 'Sports Club', '5 to 8'], ['Wed', '4.30pm', 'Dance &amp; Drama', '5 to 11'], ['Sat', '9.30am', 'Mini Movers', '2 to 4'], ['Sat', '11am', 'Multi-sport', '6 to 11']] },
+      steps: { h: 'Your free first session', p: 'Nothing to sign, nothing to pay.', cta: true, items: [['Pick a class', 'Choose a day and an age group from the timetable.'], ['Come along', 'Comfy clothes, trainers and a water bottle. That&rsquo;s it.'], ['Join if they loved it', '&pound;20 a month, cancel any month.']] }
+    }
   },
 
   {
@@ -302,7 +354,16 @@ module.exports = [
       ['How much is a callout?', 'Fault finding starts at &pound;65, and you&rsquo;ll know the price before any work starts.'],
       ['Which areas do you cover?', 'Blyth, Cramlington, Bedlington, Ashington, Morpeth and Whitley Bay.']
     ],
-    band: { h: 'Power out? Something sparking?', p: 'Get a free quote, or call and we&rsquo;ll get someone to you today.' }
+    band: { h: 'Power out? Something sparking?', p: 'Get a free quote, or call and we&rsquo;ll get someone to you today.' },
+    /* Bought on trust: four promises up front, a plain price list, the areas. */
+    layout: { hero: 'breaker', band: 'call', order: ['value', 'table', 'pains', 'steps', 'areas', 'reviews', 'faq', 'band'] },
+    x: {
+      heroNote: 'Imagine a photo of you and your van here.',
+      fixed: 'Fixed first visit',
+      value: { h: 'Four promises on every job', items: [['clock', 'On time', 'A two-hour arrival window, and a text when we&rsquo;re on the way.'], ['tag', 'Fixed price', 'Agreed before we start, and it doesn&rsquo;t change.'], ['tidy', 'Left tidy', 'Dust sheets down, hoovered up after.'], ['shield', '12-month guarantee', 'On all labour, and every job certified.']] },
+      steps: { h: 'How a job goes', p: 'From the first call to the certificate.', items: [['Tell us the job', 'Call, or send a photo through the website.'], ['Get a fixed price', 'Usually within the hour.'], ['We turn up on time', 'With a text when we&rsquo;re on the way.'], ['Fixed and certified', 'Tested, certified and tidied up.']] },
+      areas: { h: 'Areas we cover', p: 'Same-day callouts across south-east Northumberland.', list: ['Blyth', 'Cramlington', 'Bedlington', 'Ashington', 'Morpeth', 'Whitley Bay', 'Seaton Delaval', 'Newbiggin'] }
+    }
   },
 
   {
@@ -342,7 +403,17 @@ module.exports = [
       ['Which boilers do you work on?', 'All the main makes: Worcester, Vaillant, Ideal, Baxi and more.'],
       ['Which areas do you cover?', 'Whitley Bay, Tynemouth, North Shields, Wallsend and Killingworth.']
     ],
-    band: { h: 'No heating or hot water?', p: 'Book now and we&rsquo;ll aim to be with you today.' }
+    band: { h: 'No heating or hot water?', p: 'Book now and we&rsquo;ll aim to be with you today.' },
+    /* Bought in a hurry: how soon, how much, and how sure, before anything else. */
+    layout: { hero: 'outcome', band: 'call', order: ['value', 'compare', 'table', 'areas', 'reviews', 'faq', 'band'] },
+    x: {
+      heroNote: 'Imagine a photo of you on the job here.',
+      today: { h: 'Today in North Tyneside', btn: 'Book the 2.30pm slot', rows: [['Next engineer', 'Today, 2.30pm'], ['Callout', '&pound;60, fixed'], ['Common parts', 'On the van']] },
+      stats: [['Same day', 'for no heating or hot water'], ['&pound;60', 'fixed callout, no fix no charge'], ['9 in 10', 'fixed on the first visit']],
+      value: { h: 'Warm again tonight, with one call', p: 'Everything that makes a boiler breakdown a hassle, taken away.', items: [['home', 'Heat back today', 'Heating and hot water back, usually the same day.', 'The result'], ['wrench', 'Fixed first time', 'Common parts on the van, and 20 years on every make.', 'The proof'], ['clock', 'No waiting in', 'A two-hour slot, and a text when we&rsquo;re close.', 'The wait'], ['shield', 'No risk', 'No fix, no charge. The callout price is fixed.', 'The risk']] },
+      compare: { h: 'Not like the last engineer', them: 'The usual', us: 'Coastline Heating', items: [['A three-day wait', 'Usually the same day'], ['A callout, then a fee to fix it', '&pound;60 fixed, no fix no charge'], ['&ldquo;You need a new boiler&rdquo;', 'Repair first, always'], ['Waiting in all day', 'A two-hour slot, and a text on the way']] },
+      areas: { h: 'Areas we cover', p: 'Same-day across North Tyneside.', list: ['Whitley Bay', 'Tynemouth', 'North Shields', 'Wallsend', 'Killingworth', 'Monkseaton', 'Cullercoats', 'Forest Hall'] }
+    }
   },
 
   {
@@ -381,7 +452,17 @@ module.exports = [
       ['How long does a full valet take?', 'About three hours for a standard car.'],
       ['Which areas do you cover?', 'Newcastle, Gosforth, Jesmond, Wallsend and North Tyneside.']
     ],
-    band: { h: 'Car need some love?', p: 'Book a slot and we&rsquo;ll come to you.' }
+    band: { h: 'Car need some love?', p: 'Book a slot and we&rsquo;ll come to you.' },
+    /* Bought on price and proof: the price in the hero, then before and after. */
+    layout: { hero: 'quote', order: ['beforeafter', 'tiers', 'steps', 'pains', 'reviews', 'areas', 'faq', 'band'] },
+    x: {
+      heroNote: 'Imagine your best finish here.',
+      quote: { sizes: [['Small', 0], ['Medium', 10], ['4x4', 20], ['Van', 25]], packs: [['Mini', 25], ['Full', 75], ['Polish', 170]] },
+      ba: { h: 'Before and after', p: 'Drag the handle to see the difference.', note: 'Your best before and after goes here.' },
+      tiers: { featured: 1, addons: [3, 4], items: [[0, ['Snow foam wash', 'Wheels and tyres', 'Hoover', 'Dash wipe']], [1, ['Everything in the mini', 'Seats shampooed', 'Leather cleaned and fed', 'Windows inside and out']], [2, ['Everything in the full', 'Swirls taken out', 'Deep gloss back', 'Wax to finish']]] },
+      steps: { h: 'How it works', p: 'You don&rsquo;t lift a finger.', items: [['Book a slot', 'Online, in a minute.'], ['We come to you', 'Home or work, with our own water and power.'], ['Pay after', 'Only once you&rsquo;ve seen it.']] },
+      areas: { h: 'Areas we cover', p: 'We come to you, anywhere here.', list: ['Newcastle', 'Gosforth', 'Jesmond', 'Heaton', 'Wallsend', 'North Shields', 'Tynemouth', 'Whitley Bay'] }
+    }
   },
 
   {
@@ -420,6 +501,15 @@ module.exports = [
       ['Do you help with the theory test?', 'Yes. Free tips, practice apps and hazard perception help.'],
       ['Where do you pick up from?', 'Home, school, college or work, anywhere in Gosforth, Jesmond, Heaton or Kenton.']
     ],
-    band: { h: 'Ready to get on the road?', p: 'Your first lesson is half price.' }
+    band: { h: 'Ready to get on the road?', p: 'Your first lesson is half price.' },
+    /* Bought on one thing, passing: the pass rate, then the road to test day. */
+    layout: { hero: 'road', reviews: 'passes', order: ['stats', 'steps', 'lessons', 'pains', 'solution', 'reviews', 'faq', 'band'] },
+    x: {
+      heroNote: 'Imagine you and your car here.',
+      badge: ['87%', 'passed first time last year'],
+      featured: 2,
+      stats: [['87%', 'first-time pass rate'], ['11 years', 'DVSA approved'], ['Manual', 'or automatic'], ['Door to door', 'picked up and dropped off']],
+      steps: { h: 'Your road to a full licence', p: 'A clear plan from your first lesson to test day.', kind: 'road', items: [['First lesson', 'Half price. See how you get on.'], ['Learn at your pace', 'Weekly lessons, every local test route practised.'], ['Mock test', 'A full mock, so the real one feels normal.'], ['Test day', 'A warm-up drive first, then you&rsquo;re in.'], ['Passed!', 'Your photo on the wall.']] }
+    }
   }
 ];

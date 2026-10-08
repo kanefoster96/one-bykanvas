@@ -12,10 +12,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/examples/ex.css?v=6">
+<link rel="stylesheet" href="/examples/ex.css?v=7">
 <style>:root{--bg:#f5f8fa;--ink:#0b0f14;--muted:#5e6b77;--accent:#14b8a6;--accent2:#0f766e;--accent3:#5eead4;--accent4:#14b8a6;--soft:#e6f4f2;--surface:#ffffff;--accent-text:#0f766e;--line:rgba(11,15,20,.1);--fh:'Sora', system-ui, sans-serif;--fb:'Sora', system-ui, sans-serif;--hw:700;--hls:-.04em;--radius:18px;--btn-radius:14px;--on-accent:#062a26;--hero-bg:radial-gradient(ellipse at 80% 10%, rgba(61,214,196,.22), transparent 55%), #0b0f14;--hero-ink:#eef3f7;--case:none}</style>
 </head>
-<body class="T-valet hero-dark">
+<body class="T-valet H-quote hero-dark">
 <header class="x-nav" id="xNav">
   <div class="x-wrap x-nav-in">
     <a class="x-logo" href="#preview" aria-label="Gleam Mobile Valeting"><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-3.5L6.2 8a2 2 0 0 1 1.8-1h8a2 2 0 0 1 1.8 1L20 12.5V16"/><path d="M3 16h18v2H3z"/><circle cx="7.5" cy="16" r="1.6"/><circle cx="16.5" cy="16" r="1.6"/></svg></span></a>
@@ -23,7 +23,7 @@
   </div>
 </header>
 <main>
-<section class="x-hero has-art">
+<section class="x-hero x-hero--quote">
   <div class="x-wrap x-hero-in">
     <div class="x-hero-copy">
       <p class="x-status"><span aria-hidden="true"></span>Slots free this week</p>
@@ -32,7 +32,8 @@
       <a class="x-btn x-btn-hero" href="#preview">Book a valet</a>
       <ul class="x-risk"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Pay after, when you&rsquo;re happy</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Free rebook if it rains</span></li></ul>
     </div>
-    <div class="x-art-wrap"><div class="x-art x-art-valet"><svg viewBox="0 0 400 320" aria-hidden="true">
+    <div class="x-hero-side">
+      <div class="x-art x-art-valet"><svg viewBox="0 0 400 320" aria-hidden="true">
     <ellipse cx="200" cy="262" rx="180" ry="18" fill="#000" opacity=".35"/>
     <path fill="#1b2633" stroke="var(--accent)" stroke-width="2.5" d="M40 230 C 40 200, 60 186, 96 180 L 136 130 C 146 118, 160 112, 178 112 H 262 C 282 112, 296 120, 310 136 L 340 176 C 362 180, 372 196, 372 214 V 236 C 372 244, 366 248, 358 248 H 52 C 44 248, 40 242, 40 230 Z"/>
     <path fill="#2a3a4b" d="M150 136 C 156 128, 164 124, 176 124 H 216 V 176 H 112 Z M228 124 H 262 C 276 124, 288 130, 298 142 L 324 176 H 228 Z"/>
@@ -41,37 +42,60 @@
     <circle cx="300" cy="248" r="32" fill="#0b0f14" stroke="#3a4a5c" stroke-width="6"/><circle cx="300" cy="248" r="12" fill="#56677a"/>
     <g fill="#3dd6c4"><path d="M330 40 l6 18 18 6 -18 6 -6 18 -6 -18 -18 -6 18 -6z"/><path d="M80 70 l4 12 12 4 -12 4 -4 12 -4 -12 -12 -4 12 -4z" opacity=".8"/><path d="M250 80 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z" opacity=".6"/></g>
     <g fill="#3dd6c4" opacity=".5"><path d="M180 40 c6 9 9 14 9 19 a9 9 0 0 1 -18 0 c0 -5 3 -10 9 -19z"/><path d="M130 30 c4 6 6 9 6 12 a6 6 0 0 1 -12 0 c0 -3 2 -6 6 -12z"/></g>
-  </svg></div><p class="k1-guide k1-guide-hero"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Imagine your best before and after here.</span></p></div>
+  </svg></div>
+      <p class="k1-guide k1-guide-hero"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Imagine your best finish here.</span></p>
+      <div class="x-quote" data-quote>
+        <p class="x-quote-h">Your price in two taps</p>
+        <p class="x-quote-l">Your car</p>
+        <div class="x-seg" data-q="size"><button type="button" data-v="0" aria-pressed="false">Small</button><button type="button" data-v="10" aria-pressed="true">Medium</button><button type="button" data-v="20" aria-pressed="false">4x4</button><button type="button" data-v="25" aria-pressed="false">Van</button></div>
+        <p class="x-quote-l">The clean</p>
+        <div class="x-seg" data-q="pack"><button type="button" data-v="25" aria-pressed="false">Mini</button><button type="button" data-v="75" aria-pressed="true">Full</button><button type="button" data-v="170" aria-pressed="false">Polish</button></div>
+        <div class="x-quote-out"><span>Total<b data-q-out>&pound;85</b></span><a class="x-btn" href="#preview">Book this</a></div>
+      </div>
+    </div>
   </div>
-  
 </section>
-<section class="x-sec" id="services" data-k1-seen="the services">
+<section class="x-sec x-ba-sec" data-k1-seen="the before and after">
+  <div class="x-wrap">
+    <div class="x-head"><h2>Before and after</h2><p>Drag the handle to see the difference.</p><p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your best before and after goes here.</span></p></div>
+    <div class="x-ba" style="--pos:50%">
+      <div class="x-ba-img x-ba-after" aria-hidden="true"><svg viewBox="0 0 400 320" aria-hidden="true">
+    <ellipse cx="200" cy="262" rx="180" ry="18" fill="#000" opacity=".35"/>
+    <path fill="#1b2633" stroke="var(--accent)" stroke-width="2.5" d="M40 230 C 40 200, 60 186, 96 180 L 136 130 C 146 118, 160 112, 178 112 H 262 C 282 112, 296 120, 310 136 L 340 176 C 362 180, 372 196, 372 214 V 236 C 372 244, 366 248, 358 248 H 52 C 44 248, 40 242, 40 230 Z"/>
+    <path fill="#2a3a4b" d="M150 136 C 156 128, 164 124, 176 124 H 216 V 176 H 112 Z M228 124 H 262 C 276 124, 288 130, 298 142 L 324 176 H 228 Z"/>
+    <path fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round" d="M70 196 H 330"/>
+    <circle cx="112" cy="248" r="32" fill="#0b0f14" stroke="#3a4a5c" stroke-width="6"/><circle cx="112" cy="248" r="12" fill="#56677a"/>
+    <circle cx="300" cy="248" r="32" fill="#0b0f14" stroke="#3a4a5c" stroke-width="6"/><circle cx="300" cy="248" r="12" fill="#56677a"/>
+    <g fill="#3dd6c4"><path d="M330 40 l6 18 18 6 -18 6 -6 18 -6 -18 -18 -6 18 -6z"/><path d="M80 70 l4 12 12 4 -12 4 -4 12 -4 -12 -12 -4 12 -4z" opacity=".8"/><path d="M250 80 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z" opacity=".6"/></g>
+    <g fill="#3dd6c4" opacity=".5"><path d="M180 40 c6 9 9 14 9 19 a9 9 0 0 1 -18 0 c0 -5 3 -10 9 -19z"/><path d="M130 30 c4 6 6 9 6 12 a6 6 0 0 1 -12 0 c0 -3 2 -6 6 -12z"/></g>
+  </svg><span>After</span></div>
+      <div class="x-ba-img x-ba-before" aria-hidden="true"><svg viewBox="0 0 400 320" aria-hidden="true">
+    <ellipse cx="200" cy="262" rx="180" ry="18" fill="#000" opacity=".35"/>
+    <path fill="#1b2633" stroke="var(--accent)" stroke-width="2.5" d="M40 230 C 40 200, 60 186, 96 180 L 136 130 C 146 118, 160 112, 178 112 H 262 C 282 112, 296 120, 310 136 L 340 176 C 362 180, 372 196, 372 214 V 236 C 372 244, 366 248, 358 248 H 52 C 44 248, 40 242, 40 230 Z"/>
+    <path fill="#2a3a4b" d="M150 136 C 156 128, 164 124, 176 124 H 216 V 176 H 112 Z M228 124 H 262 C 276 124, 288 130, 298 142 L 324 176 H 228 Z"/>
+    <path fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round" d="M70 196 H 330"/>
+    <circle cx="112" cy="248" r="32" fill="#0b0f14" stroke="#3a4a5c" stroke-width="6"/><circle cx="112" cy="248" r="12" fill="#56677a"/>
+    <circle cx="300" cy="248" r="32" fill="#0b0f14" stroke="#3a4a5c" stroke-width="6"/><circle cx="300" cy="248" r="12" fill="#56677a"/>
+    <g fill="#3dd6c4"><path d="M330 40 l6 18 18 6 -18 6 -6 18 -6 -18 -18 -6 18 -6z"/><path d="M80 70 l4 12 12 4 -12 4 -4 12 -4 -12 -12 -4 12 -4z" opacity=".8"/><path d="M250 80 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z" opacity=".6"/></g>
+    <g fill="#3dd6c4" opacity=".5"><path d="M180 40 c6 9 9 14 9 19 a9 9 0 0 1 -18 0 c0 -5 3 -10 9 -19z"/><path d="M130 30 c4 6 6 9 6 12 a6 6 0 0 1 -12 0 c0 -3 2 -6 6 -12z"/></g>
+  </svg><span>Before</span></div>
+      <span class="x-ba-handle" aria-hidden="true"><i>&lsaquo;&rsaquo;</i></span>
+      <input type="range" min="0" max="100" value="50" aria-label="Drag to compare before and after">
+    </div>
+  </div>
+</section>
+<section class="x-sec x-tiers-sec" id="services" data-k1-seen="the services">
   <div class="x-wrap">
     <div class="x-head"><h2>Packages</h2><p>Prices for a standard car. Vans and 4x4s from &pound;10 more.</p><p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your services and prices, each with a button to book.</span></p></div>
+    <div class="x-tiers"><a class="x-tier" href="#preview"><h3>Mini valet</h3><p class="x-tier-p"><b>&pound;35</b><span>1 hr</span></p><ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Snow foam wash</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Wheels and tyres</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Hoover</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Dash wipe</li></ul><span class="x-tier-go">Book mini valet</span></a><a class="x-tier is-main" href="#preview"><small>Most popular</small><h3>Full valet</h3><p class="x-tier-p"><b>&pound;85</b><span>3 hrs</span></p><ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Everything in the mini</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Seats shampooed</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Leather cleaned and fed</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Windows inside and out</li></ul><span class="x-tier-go">Book full valet</span></a><a class="x-tier" href="#preview"><h3>Machine polish</h3><p class="x-tier-p"><b>From &pound;180</b><span>5 hrs</span></p><ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Everything in the full</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Swirls taken out</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Deep gloss back</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Wax to finish</li></ul><span class="x-tier-go">Book machine polish</span></a></div>
+    <ul class="x-addons"><li><b>Ceramic coating</b><span>Two years&rsquo; protection. Water and dirt slide off.</span><em>From &pound;250</em></li><li><b>Pet hair removal</b><span>Every last hair, from seats, boot and carpets.</span><em>&pound;15</em></li></ul>
   </div>
-  <div class="x-rail-wrap">
-    <div class="x-rail" tabindex="0" aria-label="Packages"><a class="x-card" href="#preview">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">01</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-3.5L6.2 8a2 2 0 0 1 1.8-1h8a2 2 0 0 1 1.8 1L20 12.5V16"/><path d="M3 16h18v2H3z"/><circle cx="7.5" cy="16" r="1.6"/><circle cx="16.5" cy="16" r="1.6"/></svg></span></span>
-      <span class="x-card-body"><h3>Mini valet</h3><p>Snow foam wash, wheels, vacuum and a dash wipe.</p>
-      <span class="x-card-foot"><b>&pound;35</b><span>1 hr</span><em>Book &rsaquo;</em></span></span>
-    </a><a class="x-card" href="#preview">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">02</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-3.5L6.2 8a2 2 0 0 1 1.8-1h8a2 2 0 0 1 1.8 1L20 12.5V16"/><path d="M3 16h18v2H3z"/><circle cx="7.5" cy="16" r="1.6"/><circle cx="16.5" cy="16" r="1.6"/></svg></span></span>
-      <span class="x-card-body"><h3>Full valet</h3><p>Inside and out, seats shampooed, leather cleaned and fed.</p>
-      <span class="x-card-foot"><b>&pound;85</b><span>3 hrs</span><em>Book &rsaquo;</em></span></span>
-    </a><a class="x-card" href="#preview">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">03</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-3.5L6.2 8a2 2 0 0 1 1.8-1h8a2 2 0 0 1 1.8 1L20 12.5V16"/><path d="M3 16h18v2H3z"/><circle cx="7.5" cy="16" r="1.6"/><circle cx="16.5" cy="16" r="1.6"/></svg></span></span>
-      <span class="x-card-body"><h3>Machine polish</h3><p>Swirls and light scratches taken out. Deep gloss back.</p>
-      <span class="x-card-foot"><b>From &pound;180</b><span>5 hrs</span><em>Book &rsaquo;</em></span></span>
-    </a><a class="x-card" href="#preview">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">04</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-3.5L6.2 8a2 2 0 0 1 1.8-1h8a2 2 0 0 1 1.8 1L20 12.5V16"/><path d="M3 16h18v2H3z"/><circle cx="7.5" cy="16" r="1.6"/><circle cx="16.5" cy="16" r="1.6"/></svg></span></span>
-      <span class="x-card-body"><h3>Ceramic coating</h3><p>Two years&rsquo; protection. Water and dirt slide off.</p>
-      <span class="x-card-foot"><b>From &pound;250</b><span>1 day</span><em>Book &rsaquo;</em></span></span>
-    </a><a class="x-card" href="#preview">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">05</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-3.5L6.2 8a2 2 0 0 1 1.8-1h8a2 2 0 0 1 1.8 1L20 12.5V16"/><path d="M3 16h18v2H3z"/><circle cx="7.5" cy="16" r="1.6"/><circle cx="16.5" cy="16" r="1.6"/></svg></span></span>
-      <span class="x-card-body"><h3>Pet hair removal</h3><p>Every last hair, from seats, boot and carpets.</p>
-      <span class="x-card-foot"><b>&pound;15</b><span>Add-on</span><em>Book &rsaquo;</em></span></span>
-    </a></div>
-    <div class="x-rail-btns x-wrap"><button class="x-rail-btn" type="button" data-rail="-1" aria-label="Previous">&lsaquo;</button><button class="x-rail-btn" type="button" data-rail="1" aria-label="Next">&rsaquo;</button></div>
+</section>
+<section class="x-sec x-steps-sec">
+  <div class="x-wrap">
+    <div class="x-head"><h2>How it works</h2><p>You don&rsquo;t lift a finger.</p></div>
+    <ol class="x-steps"><li><span class="x-step-n" aria-hidden="true">1</span><div><h3>Book a slot</h3><p>Online, in a minute.</p></div></li><li><span class="x-step-n" aria-hidden="true">2</span><div><h3>We come to you</h3><p>Home or work, with our own water and power.</p></div></li><li><span class="x-step-n" aria-hidden="true">3</span><div><h3>Pay after</h3><p>Only once you&rsquo;ve seen it.</p></div></li></ol>
+    
   </div>
 </section>
 <section class="x-sec x-pains-sec" data-k1-seen="the problems">
@@ -80,38 +104,28 @@
     <ul class="x-pains"><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>No time to queue at a car wash that leaves swirls anyway.</span></li><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Kids, dogs and crumbs everywhere inside.</span></li><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Paying up front and hoping it&rsquo;s done properly.</span></li></ul>
   </div>
 </section>
-<section class="x-sec x-solution-sec">
-  <div class="x-wrap x-solution">
-    <div class="x-head"><h2>How we do it differently</h2><p>We come to your home or work with our own water and power, use proper products, and you only pay when you&rsquo;ve seen it.</p><a class="x-btn" href="#preview">Book a valet</a></div>
-    <ul class="x-points"><li><span class="x-point-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><h3>Six years of detailing</h3><p>Trained in paint correction and ceramic coatings.</p></div></li><li><span class="x-point-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><h3>Fully insured</h3><p>Your car is covered while it&rsquo;s with us.</p></div></li><li><span class="x-point-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><h3>Rain guarantee</h3><p>If it rains on an exterior clean, we come back free.</p></div></li></ul>
+<section class="x-sec x-reviews-sec" id="reviews" data-k1-seen="the reviews">
+  <div class="x-wrap">
+    <div class="x-head"><h2>What customers say</h2><p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your real Google reviews show here.</span></p></div>
+    <div class="x-reviews"><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span><blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote><figcaption><span class="x-avatar" aria-hidden="true">A</span><span><b>Customer name</b><small>Google review</small></span></figcaption></figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span><blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote><figcaption><span class="x-avatar" aria-hidden="true">B</span><span><b>Customer name</b><small>Google review</small></span></figcaption></figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span><blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote><figcaption><span class="x-avatar" aria-hidden="true">C</span><span><b>Customer name</b><small>Google review</small></span></figcaption></figure></div>
   </div>
 </section>
-<section class="x-sec" id="faq">
+<section class="x-sec x-areas-sec">
+  <div class="x-wrap x-areas">
+    <div class="x-head"><h2>Areas we cover</h2><p>We come to you, anywhere here.</p></div>
+    <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Newcastle</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Gosforth</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Jesmond</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Heaton</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Wallsend</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>North Shields</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Tynemouth</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Whitley Bay</li></ul>
+  </div>
+</section>
+<section class="x-sec x-faq-sec" id="faq">
   <div class="x-wrap x-faq-wrap">
     <div class="x-head"><h2>Questions</h2><p>Anything else? <a href="#preview">Send us a message</a>.</p></div>
     <div class="x-faq"><details><summary>Do I need to be home?</summary><p>No. Leave us the keys, or we can work at your office.</p></details><details><summary>Do you need my water or electricity?</summary><p>No, we bring our own.</p></details><details><summary>How long does a full valet take?</summary><p>About three hours for a standard car.</p></details><details><summary>Which areas do you cover?</summary><p>Newcastle, Gosforth, Jesmond, Wallsend and North Tyneside.</p></details></div>
   </div>
 </section>
-<section class="x-sec x-reviews-sec" id="reviews" data-k1-seen="the reviews">
-  <div class="x-wrap">
-    <div class="x-head"><h2>What customers say</h2>
-      <p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your real Google reviews show here.</span></p></div>
-    <div class="x-reviews"><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
-      <blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote>
-      <figcaption><span class="x-avatar" aria-hidden="true">A</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
-    </figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
-      <blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote>
-      <figcaption><span class="x-avatar" aria-hidden="true">B</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
-    </figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
-      <blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote>
-      <figcaption><span class="x-avatar" aria-hidden="true">C</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
-    </figure></div>
-  </div>
-</section>
 <section class="x-band">
   <div class="x-wrap">
     <h2>Car need some love?</h2><p>Book a slot and we&rsquo;ll come to you.</p>
-    <a class="x-btn x-btn-band" href="#preview">Book a valet</a>
+    <div class="x-band-btns"><a class="x-btn x-btn-band" href="#preview">Book a valet</a></div>
     <ul class="x-risk"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Pay after, when you&rsquo;re happy</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Free rebook if it rains</span></li></ul>
   </div>
 </section>
@@ -149,7 +163,7 @@
   <a class="k1-x" href="/free?trade=valet" aria-label="Close the example"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
 </div>
 <script src="/consent.js?v=9"></script>
-<script src="/examples/ex.js?v=3"></script>
+<script src="/examples/ex.js?v=4"></script>
 <script src="/beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 </body>
 </html>

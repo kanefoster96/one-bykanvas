@@ -6,6 +6,9 @@
  *   click in the journey (beacon.js), and so is the pop-up's button.
  * - The pill names the example, opens a list of the others, and closes
  *   back to /free.
+ * - The few parts of an example that do something on the spot: the
+ *   treatment chips, the polish swatches, the valeting price and the
+ *   before-and-after handle.
  */
 (function () {
   'use strict';
@@ -103,5 +106,44 @@
         rail.scrollBy({ left: step * Number(b.getAttribute('data-rail')), behavior: 'smooth' });
       });
     });
+  });
+
+  /* Buttons in a group where one is picked: the treatment chips, the
+     swatches, the car size and the clean. */
+  function pick(group, b) {
+    group.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+  }
+  document.querySelectorAll('.x-chips').forEach(function (g) {
+    g.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) pick(g, b); });
+  });
+
+  /* The swatches paint the nails. */
+  document.querySelectorAll('.x-swatches').forEach(function (g) {
+    var hero = g.closest('.x-hero');
+    g.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-polish]');
+      if (!b) return;
+      pick(g, b);
+      hero.style.setProperty('--polish', b.getAttribute('data-polish'));
+    });
+  });
+
+  /* The valeting price: the clean's price plus the car's size. */
+  document.querySelectorAll('[data-quote]').forEach(function (q) {
+    var out = q.querySelector('[data-q-out]');
+    function total() {
+      var sum = 0;
+      q.querySelectorAll('.x-seg button[aria-pressed="true"]').forEach(function (b) { sum += Number(b.getAttribute('data-v')) || 0; });
+      out.textContent = '\u00a3' + sum;
+    }
+    q.querySelectorAll('.x-seg').forEach(function (g) {
+      g.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { pick(g, b); total(); } });
+    });
+  });
+
+  /* Before and after: the range under the picture moves the line. */
+  document.querySelectorAll('.x-ba').forEach(function (ba) {
+    var r = ba.querySelector('input[type="range"]');
+    r.addEventListener('input', function () { ba.style.setProperty('--pos', r.value + '%'); });
   });
 })();

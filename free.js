@@ -19,15 +19,15 @@
   //  that example, for the phone's status bar]
   var DARK = '#2f2e2d';
   var TRADES = {
-    elec:    ['electricians', 'electricians', '#2e3128'],
-    boiler:  ['heating engineers', 'heating-engineers', '#5f2e1d'],
-    valet:   ['mobile car valeters', 'mobile-car-valeters', '#133133'],
-    driving: ['driving instructors', 'driving-instructors', '#e5f5eb'],
-    kids:    ['kids\u2019 clubs', 'kids-clubs', '#fff2d8'],
-    hair:    ['hairdressers', 'hairdressers', '#f8f1eb'],
-    lash:    ['lash artists', 'lash-artists', '#fdf5f3'],
-    mua:     ['makeup artists', 'makeup-artists', '#614f37'],
-    nails:   ['nail techs', 'nail-techs', '#fceff9'],
+    elec:    ['electricians', 'electricians', '#282d29'],
+    boiler:  ['heating engineers', 'heating-engineers', '#40251c'],
+    valet:   ['mobile car valeters', 'mobile-car-valeters', '#102327'],
+    driving: ['driving instructors', 'driving-instructors', '#eaf7ee'],
+    kids:    ['kids\u2019 clubs', 'kids-clubs', '#fff3d9'],
+    hair:    ['hairdressers', 'hairdressers', '#442c20'],
+    lash:    ['lash artists', 'lash-artists', '#fef6f4'],
+    mua:     ['makeup artists', 'makeup-artists', '#1a1512'],
+    nails:   ['nail techs', 'nail-techs', '#ffeff7'],
     cake:    ['cake makers', 'cake-makers', '#ffffff'],
     // From the homepage's trade picker: named in the pill, with the
     // examples in turn until they have one of their own.
