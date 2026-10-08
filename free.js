@@ -62,8 +62,7 @@
     var q;
     try { q = new URLSearchParams(location.search); } catch (e) { return null; }
     var named = String(q.get('trade') || '').toLowerCase();
-    if (TRADES[named]) return named;
-    var key = ADS[String(q.get('utm_content') || '')] || null;
+    var key = TRADES[named] ? named : ADS[String(q.get('utm_content') || '')] || null;
     if (!key) q.forEach(function (v) { if (!key && ADS[v]) key = ADS[v]; });
     try {
       if (key) sessionStorage.setItem('one.trade', key);
