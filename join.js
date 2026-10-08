@@ -328,8 +328,9 @@
   track.addEventListener('submit', function (e) {
     e.preventDefault();
     if (current !== 3 || paying) return;
+    /* Optional: a link gets a better first site, but it never stands
+       between them and paying. Without one we ask in the welcome email. */
     var link = $('j_link').value.trim();
-    if (link.length < 3) { say($('note3'), 'Add a link to where you are online now, so we know what to build from.', 'bad'); $('j_link').focus(); return; }
     answers.link = link;
     keep();
     paying = true;
@@ -496,7 +497,7 @@
     }
     if (current === 2) return { text: 'These three addresses are free right now and included in your plan. Prefer something else? Tap \u201cWant a different one?\u201d and we\u2019ll check it.',
       actions: [['Show me the addresses', null, '#domList']] };
-    if (current === 3) return { text: 'Paste the link to your Instagram, Facebook or current site. We build from your photos and words there. Yearly is \u00a399, two months free.',
+    if (current === 3) return { text: 'Got an Instagram, Facebook or website? Paste the link and we\u2019ll build from your photos and words there. No link? That\u2019s fine, send it later. Yearly is \u00a399, two months free.',
       actions: [['Show me the link box', null, '#j_link']] };
     return { text: 'You\u2019re in! Choose a password to see your site and ask for changes. Got more photos? Reply to your welcome email.',
       actions: [['Show me the password box', null, '#j_password']] };
