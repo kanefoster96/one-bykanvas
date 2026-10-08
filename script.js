@@ -132,6 +132,12 @@
       sessionStorage.setItem(FROM_KEY, (bits.join(' / ') + ' · ' + page).slice(0, 200));
     } catch (e) { /* private mode: the lead simply has no campaign */ }
   })();
+  /* Meta's click id from an ad, kept as an fbc value so the server's Lead
+     and Purchase can be tied to the ad that was clicked (join.js). */
+  try {
+    var clickId = new URLSearchParams(location.search).get('fbclid');
+    if (clickId && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
+  } catch (e) {}
   window.oneFrom = function () {
     try { return sessionStorage.getItem(FROM_KEY) || ''; } catch (e) { return ''; }
   };

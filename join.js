@@ -29,12 +29,19 @@
   function keep() { try { sessionStorage.setItem(KEEP, JSON.stringify(answers)); } catch (e) {} }
 
   /* Their trade, from the ad (?trade=) or the /free page earlier in the
-     visit, so the profile already says what they do. */
+     visit: only for the preview's colour, never saved as what they do. */
   var trade = String(q.get('trade') || '').toLowerCase();
   if (!/^[a-z]{2,20}$/.test(trade)) {
     try { trade = sessionStorage.getItem('one.trade') || ''; } catch (e) { trade = ''; }
   }
   if (trade) answers.trade = trade;
+
+  /* Meta's click id, when an ad lands straight here, kept as an fbc value
+     for the Lead and Purchase the server sends. */
+  try {
+    var clickId = q.get('fbclid');
+    if (clickId && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
+  } catch (e) {}
 
   var fromLink = String(q.get('business') || '').trim().slice(0, 120);
   if (fromLink) answers.business = fromLink;
@@ -175,6 +182,7 @@
       answers.business = biz;
       answers.email = email;
       keep();
+      tellMetaLead(email);
       show(2);
       return;
     }
@@ -184,6 +192,30 @@
       keep();
       show(3);
     }
+  }
+
+  /* A name and an email is a lead: Meta hears it from the browser (with
+     cookies accepted) and from our server (always), under one event id so
+     it counts once. Once per email. The click id from the ad (fbclid, kept
+     by script.js or ex.js on the page they landed on) lets Meta tie it to
+     the ad. */
+  function cookie(name) {
+    var m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+  function tellMetaLead(email) {
+    try { if (sessionStorage.getItem('one.join-lead') === email) return; sessionStorage.setItem('one.join-lead', email); } catch (e) {}
+    var id = 'lead-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+    if (window.oneTrack) window.oneTrack('Lead', { content_category: 'join' }, id);
+    var fbc = cookie('_fbc');
+    if (!fbc) { try { fbc = sessionStorage.getItem('one.fbc') || ''; } catch (e) {} }
+    try {
+      fetch('/api/join', {
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'lead', email: email, eventId: id, fbc: fbc, fbp: cookie('_fbp') })
+      }).catch(function () {});
+    } catch (e) {}
   }
 
   /* ---------------------------------------------------------- addresses */

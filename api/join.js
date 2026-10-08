@@ -6,8 +6,11 @@
  * once that is paid do they choose a password. Business and Max still go
  * through the get-started wizard, which makes the account first.
  *
- * Three actions, one endpoint:
+ * Four actions, one endpoint:
  *
+ *   lead     the business name and email have been given (step one): tells
+ *            Meta, server side, under the event id the browser used, so the
+ *            ads can learn who signs up. Nothing is stored.
  *   start    makes (or reuses) a password-less account for the email, writes
  *            what they told us onto the profile, and opens Stripe Checkout.
  *            The account is created by us, unconfirmed, with
@@ -30,6 +33,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { openCheckout, CheckoutError } = require('./_checkout_session.js');
 const { isValidDomain, lookup } = require('./domains.js');
+const { sendMetaEvent } = require('./_meta.js');
 
 const LIVE = ['active', 'trialing', 'past_due', 'unpaid'];
 const SESSION_ID = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
@@ -81,6 +85,7 @@ module.exports = async function handler(req, res) {
   const action = String(body.action || '');
 
   try {
+    if (action === 'lead') return await lead();
     if (action === 'start') return await start();
     if (action === 'status' || action === 'account') return await afterPayment(action);
     return res.status(400).json({ error: 'Unknown action.' });
@@ -88,6 +93,23 @@ module.exports = async function handler(req, res) {
     if (err instanceof CheckoutError) return res.status(err.status).json({ error: err.message });
     console.error('join %s failed:', action, err && err.message);
     return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
+  // ---- lead: step one done, for Meta ------------------------------------
+  async function lead() {
+    const email = clean(body.email, 254).toLowerCase();
+    const eventId = clean(body.eventId, 80);
+    if (!EMAIL.test(email) || !/^[A-Za-z0-9_-]{8,80}$/.test(eventId)) return res.status(400).json({ error: 'Bad request.' });
+    const fbc = /^fb\.1\.\d{10,14}\.[A-Za-z0-9_-]{10,500}$/.test(String(body.fbc || '')) ? String(body.fbc) : undefined;
+    const fbp = /^fb\.1\.\d{10,14}\.\d{5,25}$/.test(String(body.fbp || '')) ? String(body.fbp) : undefined;
+    const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    await sendMetaEvent({
+      name: 'Lead', eventId, email, fbc, fbp,
+      url: `${ourSiteUrl()}/join`,
+      ip: fwd || undefined, userAgent: req.headers['user-agent'] || undefined,
+      custom: { content_category: 'join' }
+    }).catch(() => {});
+    return res.status(204).end();
   }
 
   // ---- start: the details, then Stripe ---------------------------------

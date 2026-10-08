@@ -17,7 +17,7 @@ const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
 const EX_CSS_V = 8;
-const EX_JS_V = 5;
+const EX_JS_V = 6;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
 
