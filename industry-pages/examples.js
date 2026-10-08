@@ -2,8 +2,9 @@
  * /examples/<slug>. Built by `node industry-pages/build.js` along with the
  * other generated pages; the content is in examples-data.js.
  *
- * Every example follows the same flow (see examples-data.js) in its own
- * fonts and colours (examples/ex.css). Nothing on an example is a real
+ * Every example tells the same story (see examples-data.js), but each
+ * trade has its own hero and its own run of sections (layout in
+ * examples-data.js), in its own fonts and colours (examples/ex.css). Nothing on an example is a real
  * link: every link and button opens the preview pop-up, which says this
  * is how their site could look and sends them to /join?trade=<key>. The
  * press shows in their journey in the One app, and so does the pop-up's
@@ -15,8 +16,8 @@ const fs = require('fs');
 const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
-const EX_CSS_V = 6;
-const EX_JS_V = 3;
+const EX_CSS_V = 7;
+const EX_JS_V = 4;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
 
@@ -24,11 +25,9 @@ const free = (e) => '/free?trade=' + e.key;
 const join = (e) => '/join?trade=' + e.key;
 const P = '#preview';   // every link on an example opens the pop-up
 
-/* A photo for the hero, once one is in assets/examples/hero/. With a
-   <slug>-mobile version beside it, the hero is "split": on a phone the
-   words sit on the photo's own plain backdrop with the mobile photo under
-   them; on a wide screen the wide photo fills the hero behind the words.
-   Without one, the photo sits behind the words, darkened so they read. */
+/* A photo for the hero, once one is in assets/examples/hero/: it fills
+   the photo-led heroes (layout.hero 'photo') in place of the blurred
+   stand-in. */
 function findImage(name) {
   for (const ext of ['jpg', 'jpeg', 'webp', 'png']) {
     const f = `assets/examples/hero/${name}.${ext}`;
@@ -37,7 +36,6 @@ function findImage(name) {
   return '';
 }
 const heroImage = (e) => findImage(e.slug);
-const heroMobile = (e) => (heroImage(e) ? findImage(e.slug + '-mobile') : '');
 
 /* ------------------------------------------------------------- symbols */
 /* The logo: the trade's symbol in a ring, the way our own sites do it. */
@@ -200,67 +198,461 @@ const ART = {
   </svg>`
 };
 
+/* A fan of nail tips, the way a nail tech shows colours, painted in
+   whichever swatch is picked (the hero's --polish, set by ex.js). */
+ART.nailsBig = () => {
+  const tip = (a, i) => `<g transform="rotate(${a} 200 340)">
+      <path class="x-polish" d="M174 300 V150 C 174 92, 190 58, 200 40 C 210 58, 226 92, 226 150 V300 Z"/>
+      <path d="M174 300 V150 C 174 92, 190 58, 200 40 C 210 58, 226 92, 226 150 V300 Z" fill="url(#tipShade)"/>
+      <path d="M184 150 C 184 112, 191 82, 198 62" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="6" stroke-linecap="round"/>
+      ${i === 3 ? '<path d="M174 150 C 174 92, 190 58, 200 40 C 210 58, 226 92, 226 150 C 210 128, 190 128, 174 150 Z" fill="#fff" fill-opacity=".92"/>' : ''}
+      <rect x="171" y="292" width="58" height="22" rx="6" fill="#fff" stroke="rgba(45,31,43,.12)" stroke-width="2"/>
+    </g>`;
+  return `<svg viewBox="0 0 400 380" aria-hidden="true">
+    <defs><linearGradient id="tipShade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".12"/><stop offset=".45" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient></defs>
+    <circle class="f-s" cx="200" cy="210" r="168"/>
+    ${[-60, -40, -20, 0, 20, 40, 60].map((a, i) => tip(a, i)).join('')}
+    <circle cx="200" cy="340" r="22" fill="#fff" stroke="rgba(45,31,43,.14)" stroke-width="2"/><circle cx="200" cy="340" r="7" fill="var(--accent4)"/>
+    ${sparkle(352, 64, 14, 'f-b')}${sparkle(44, 96, 9, 'f-a')}${sparkle(364, 196, 7, 'f-d')}
+  </svg>`;
+};
+
+/* A fuse box with one breaker tripped, which flips back up (ex.css):
+   the electrician's whole promise in one picture. */
+ART.breaker = () => `<svg viewBox="0 0 420 400" aria-hidden="true">
+    <g fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="3" stroke-linecap="round"><path d="M110 330 V372 H20"/><path d="M210 330 V390"/><path d="M310 330 V372 H400"/><path d="M60 60 H150 L170 80"/><path d="M370 40 H290"/></g>
+    <circle cx="210" cy="210" r="168" fill="#fff" fill-opacity=".04"/>
+    <rect x="40" y="96" width="340" height="234" rx="22" fill="#f4f6f9"/>
+    <rect x="40" y="96" width="340" height="40" rx="22" fill="#e6eaf0"/><rect x="40" y="118" width="340" height="18" fill="#e6eaf0"/>
+    <circle cx="66" cy="116" r="6" fill="#cfd6df"/><circle cx="354" cy="116" r="6" fill="#cfd6df"/>
+    <rect x="62" y="152" width="296" height="146" rx="10" fill="#dfe4eb"/>
+    <rect x="74" y="166" width="54" height="118" rx="8" fill="var(--accent)"/>
+    <rect x="88" y="182" width="26" height="44" rx="5" fill="#0f1b2d"/>
+    <rect x="80" y="254" width="42" height="8" rx="4" fill="#0f1b2d" fill-opacity=".35"/>
+    ${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => { const x = 140 + i * 26.5; return `<rect x="${x}" y="166" width="21" height="118" rx="5" fill="#fff" stroke="#c9d1dc" stroke-width="1.5"/><rect class="${i === 5 ? 'x-trip' : ''}" x="${x + 5}" y="182" width="11" height="34" rx="3" fill="#0f1b2d"/><rect x="${x + 4}" y="262" width="13" height="6" rx="2" fill="#c9d1dc"/>`; }).join('')}
+    <circle class="x-led" cx="352" cy="312" r="7"/>
+    <rect x="62" y="306" width="120" height="10" rx="5" fill="#cfd6df"/>
+    <g transform="translate(320 40)"><circle r="40" fill="var(--accent)"/><path fill="#0f1b2d" d="M6 -24 L-14 4 H0 L-6 26 L16 -4 H2 Z"/></g>
+  </svg>`;
+
+/* Small drawings for the cake cards, one for each kind of cake. */
+const tier = (x, y, w, h, top, body) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" class="${body}"/>${drip(x, y, w, Math.max(3, Math.round(w / 24)), top)}`;
+const CAKE_MINI = [
+  () => `${tier(40, 70, 120, 56, 'f-a', 'f-w')}<circle class="f-c" cx="100" cy="62" r="7"/>`,
+  () => `${tier(30, 92, 140, 46, 'f-d', 'f-w')}${tier(58, 50, 84, 42, 'f-w', 'f-d')}<circle class="f-a" cx="100" cy="42" r="7"/>`,
+  () => `${tier(30, 104, 140, 36, 'f-w', 'f-w')}${tier(50, 70, 100, 34, 'f-w', 'f-w')}${tier(70, 38, 60, 32, 'f-w', 'f-w')}<path class="f-a" d="M100 36c-6-9-16-9-16-2 0 6 9 6 16 2zm0 0c6-9 16-9 16-2 0 6-9 6-16 2z"/>`,
+  () => [44, 100, 156].map((x, i) => `<path class="${['f-b', 'f-c', 'f-d'][i]}" d="M${x - 22} 92 L${x - 16} 134 H${x + 16} L${x + 22} 92 Z"/><path class="f-w" d="M${x - 24} 94 C ${x - 28} 74, ${x - 10} 70, ${x - 6} 66 C ${x - 4} 54, ${x + 12} 54, ${x + 10} 66 C ${x + 22} 66, ${x + 28} 80, ${x + 24} 94 Z"/><circle class="f-a" cx="${x + 2}" cy="56" r="6"/>`).join(''),
+  () => `<rect x="34" y="66" width="132" height="74" rx="8" class="f-w"/><path class="f-a" d="M34 84 H166" stroke="none"/><rect x="34" y="66" width="132" height="14" rx="6" class="f-a"/>${[[60, 104], [100, 104], [140, 104], [60, 128], [100, 128], [140, 128]].map(([x, y], i) => `<circle cx="${x}" cy="${y - 4}" r="12" fill="${i % 2 ? '#7a4a33' : '#d9a36b'}"/>`).join('')}`
+];
+
+/* Out-of-focus "photos": what the hero looks like until their own photo
+   is in. Blurred (ex.css) so they read as a photo, not a drawing. */
+const PH = {
+  hair: () => `<svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <defs><linearGradient id="phh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a1d17"/><stop offset=".55" stop-color="#5a3a2a"/><stop offset="1" stop-color="#8a5a3c"/></linearGradient></defs>
+    <rect width="1200" height="800" fill="url(#phh)"/>
+    <ellipse cx="1010" cy="120" rx="260" ry="200" fill="#f3e3cf" opacity=".55"/>
+    <ellipse cx="860" cy="430" rx="250" ry="330" fill="#b9805a"/>
+    <g fill="none" stroke-linecap="round">
+      <path d="M760 -40 C 700 160, 860 280, 800 460 S 700 760, 780 900" stroke="#e7c79f" stroke-width="90"/>
+      <path d="M880 -40 C 830 170, 980 300, 920 480 S 840 760, 900 900" stroke="#c99263" stroke-width="110"/>
+      <path d="M990 -20 C 960 200, 1080 320, 1030 520 S 980 760, 1040 900" stroke="#f0d6b0" stroke-width="80"/>
+      <path d="M690 60 C 650 240, 760 360, 720 540 S 660 760, 700 900" stroke="#a8673f" stroke-width="70"/>
+      <path d="M1100 40 C 1080 240, 1170 360, 1130 560" stroke="#d9aa7c" stroke-width="70"/>
+    </g>
+    <ellipse cx="300" cy="640" rx="380" ry="200" fill="#1c1310" opacity=".8"/>
+  </svg>`,
+  mua: () => `<svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <rect width="1200" height="800" fill="#16110e"/>
+    <ellipse cx="900" cy="470" rx="230" ry="300" fill="#c99a83" opacity=".75"/>
+    <ellipse cx="900" cy="300" rx="150" ry="180" fill="#e2bba3" opacity=".8"/>
+    <ellipse cx="880" cy="760" rx="380" ry="170" fill="#f1e6da" opacity=".7"/>
+    ${[[640, 120, 46, .55], [700, 260, 30, .5], [1120, 140, 58, .6], [1060, 330, 26, .55], [560, 420, 22, .45], [1150, 520, 40, .5], [480, 160, 34, .35], [380, 90, 22, .3], [1010, 70, 20, .5], [620, 600, 28, .35]].map(([x, y, r, o]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#f3d39a" opacity="${o}"/>`).join('')}
+  </svg>`,
+  lash: () => `<svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid slice">
+    <defs><radialGradient id="phl" cx=".5" cy=".45" r=".7"><stop offset="0" stop-color="#f6d9cc"/><stop offset=".7" stop-color="#e9bfae"/><stop offset="1" stop-color="#c98f80"/></radialGradient></defs>
+    <rect width="400" height="520" fill="url(#phl)"/>
+    <path d="M60 170 Q 200 120 340 175" fill="none" stroke="#8a5a4d" stroke-width="22" stroke-linecap="round" opacity=".55"/>
+    <path d="M50 270 Q 200 360 350 270" fill="none" stroke="#3a2422" stroke-width="9" stroke-linecap="round"/>
+    <g fill="none" stroke="#2a1a19" stroke-width="5" stroke-linecap="round">${lashes([50, 270], [200, 360], [350, 270], 22)}</g>
+    <ellipse cx="300" cy="90" rx="120" ry="70" fill="#fff" opacity=".35"/>
+  </svg>`
+};
+
 /* ------------------------------------------------------------- Dot */
 /* Dot, our mascot, leaves a few small notes down each example: what goes
    where on their own site, on the parts that sell (the hero, the services,
    "sound familiar?", the reviews). Not every section; just enough to read
    the page as a preview of theirs. */
-const HERO_NOTE = {
-  hair: 'Imagine your best colour work here.',
-  lash: 'Imagine a close-up of your best set here.',
-  mua: 'Imagine your favourite bridal look here.',
-  nails: 'Imagine your latest sets here.',
-  cake: 'Imagine one of your stunning cakes here.',
-  kids: 'Imagine photos of your classes in action here.',
-  elec: 'Imagine your van, your team or your best job here.',
-  boiler: 'Imagine you on the job here.',
-  valet: 'Imagine your best before and after here.',
-  driving: 'Imagine you and your car here.'
-};
 /* Trades that sell to people, whose "sound familiar?" reads as things
    customers say rather than jobs gone wrong. */
 const PEOPLE = ['hair', 'lash', 'mua', 'nails', 'cake', 'kids'];
 const dotFace = '<span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span>';
-const note = (text, cls) => `<p class="k1-guide${cls ? ' ' + cls : ''}">${dotFace}<span>${text}</span></p>`;
+const note = (text, cls) => (text ? `<p class="k1-guide${cls ? ' ' + cls : ''}">${dotFace}<span>${text}</span></p>` : '');
+const NOTE = {
+  services: 'Your services and prices, each with a button to book.',
+  pains: 'Build trust: describe their problem better than they could themselves.',
+  reviews: 'Your real Google reviews show here.'
+};
+const head = (h, p, n, cls) => `<div class="x-head${cls ? ' ' + cls : ''}"><h2>${h}</h2>${p ? `<p>${p}</p>` : ''}${note(n)}</div>`;
+const photoTag = `<span class="x-shot-tag">${CAMERA}Your photo</span>`;
 
-/* ------------------------------------------------------------ sections */
+/* Line icons for the promise tiles. */
+const ICON = {
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  tag: '<path d="M3.5 12.6V4.5h8.1l8.9 8.9-8 8z"/><circle cx="8" cy="9" r="1.5"/>',
+  tidy: '<path d="M14 3l-4 9"/><path d="M6 12h9l2 9H4z"/><path d="M9 16v5M12.5 16v5"/>',
+  shield: '<path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.2-7.5 9.5-4.3-1.3-7.5-4.9-7.5-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+  home: '<path d="M4 11l8-6.5 8 6.5"/><path d="M6 9.5V20h12V9.5"/><path d="M12 13c1.6 1.7 2 2.7 2 3.6a2 2 0 0 1-4 0c0-.9.4-1.9 2-3.6z"/>',
+  wrench: '<path d="M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5l3-3a4 4 0 0 1 3 3l-3 3"/>',
+  phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  pin: '<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>'
+};
+const icon = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k] || ICON.shield}</svg>`;
+const riskList = (e) => `<ul class="x-risk">${e.hero.risk.map((r) => `<li>${CHECK}<span>${r}</span></li>`).join('')}</ul>`;
+const ctaBtn = (e, cls) => `<a class="x-btn${cls ? ' ' + cls : ''}" href="${P}">${e.hero.cta}</a>`;
 
-function hero(e) {
-  const h = e.hero, img = heroImage(e), mob = heroMobile(e), art = !img && e.art && ART[e.art];
-  const t = e.theme;
-  const cls = 'x-hero' + (img ? (mob ? ' has-split' : ' has-photo') : '') + (art ? ' has-art' : '');
-  const style = img ? ` style="--hero-img:url('${img}')${mob ? `;--photo-bg:${t.photoBg || '#eeeeee'};--photo-ink:${t.photoInk || t.ink}` : ''}"` : '';
-  return `<section class="${cls}"${style}>
-  <div class="x-wrap x-hero-in">
-    <div class="x-hero-copy">
+/* ---------------------------------------------------------------- heroes */
+/* Each trade opens differently, on what its customers want to see first:
+   the work (a photo the width of the page), a free slot, a colour, the
+   cake, the fix, the price, the pass. */
+
+function copy(e, widget) {
+  const h = e.hero;
+  return `<div class="x-hero-copy">
       <p class="x-status"><span aria-hidden="true"></span>${h.status}</p>
       <h1>${h.h1}</h1>
       <p class="x-sub">${h.sub}</p>
-      <a class="x-btn x-btn-hero" href="${P}">${h.cta}</a>
-      <ul class="x-risk">${h.risk.map((r) => `<li>${CHECK}<span>${r}</span></li>`).join('')}</ul>
-    </div>
-    ${art ? `<div class="x-art-wrap"><div class="x-art x-art-${e.art}">${art()}</div>${note(HERO_NOTE[e.key] || 'Imagine your own photos here.', 'k1-guide-hero')}</div>` : ''}
+      ${widget || ctaBtn(e, 'x-btn-hero')}
+      ${riskList(e)}
+    </div>`;
+}
+
+/* Their best photo, the whole hero behind the words. */
+function heroPhoto(e) {
+  const img = heroImage(e), d = e.x.date;
+  const widget = d ? `<div class="x-date">
+        <label for="xDate">${d.label}</label>
+        <div class="x-date-row"><input id="xDate" type="date" value="${d.value}"><a class="x-btn" href="${P}">${e.hero.cta}</a></div>
+      </div>` : '';
+  return `<section class="x-hero x-hero--photo x-ph-${e.key}${img ? ' has-img' : ''}"${img ? ` style="--hero-img:url('${img}')"` : ''}>
+  <div class="x-ph" aria-hidden="true">${img ? '' : PH[e.key]()}</div>
+  <div class="x-wrap x-hero-in">
+    ${copy(e, widget)}
+    ${note(e.x.heroNote, 'k1-guide-hero k1-guide-photo')}
   </div>
-  ${mob ? `<img class="x-hero-photo" src="${mob}" alt="" width="1536" height="2048" decoding="async" fetchpriority="high">` : ''}
 </section>`;
 }
 
-/* Services as cards in a row that swipes on a phone and scrolls with
-   arrows on a computer: one card in view at a time reads better than a
-   long list, and the next one peeking in says there is more. */
-function services(e) {
-  const s = e.services;
-  return `<section class="x-sec" id="services" data-k1-seen="the services">
-  <div class="x-wrap">
-    <div class="x-head"><h2>${s.h}</h2><p>${s.sub}</p>${note('Your services and prices, each with a button to book.')}</div>
+/* A close-up in an arch, and the next free appointments over it. */
+function heroBooking(e) {
+  const b = e.x.book;
+  return `<section class="x-hero x-hero--booking">
+  <div class="x-wrap x-hero-in">
+    ${copy(e)}
+    <div class="x-hero-side">
+      <div class="x-arch" aria-hidden="true">${PH.lash()}${photoTag}</div>
+      ${note(e.x.heroNote, 'k1-guide-hero')}
+      <div class="x-book">
+        <p class="x-book-h">${b.h}</p>
+        <div class="x-chips" role="group" aria-label="Treatment">${b.chips.map((c, i) => `<button type="button" aria-pressed="${i ? 'false' : 'true'}">${c}</button>`).join('')}</div>
+        <div class="x-slots">${b.slots.map(([d, t]) => `<a href="${P}"><small>${d}</small><b>${t}</b></a>`).join('')}</div>
+        <a class="x-book-all" href="${P}">See all times &rsaquo;</a>
+      </div>
+    </div>
   </div>
+</section>`;
+}
+
+/* The hand, painted in the colour they tap. */
+function heroSwatch(e) {
+  const sw = e.x.swatches;
+  return `<section class="x-hero x-hero--swatch" style="--polish:${sw[0][1]}">
+  <div class="x-wrap x-hero-in">
+    ${copy(e)}
+    <div class="x-hero-side">
+      <div class="x-art x-art-nails">${ART.nailsBig()}</div>
+      <div class="x-swatches" role="group" aria-label="Try a colour">${sw.map(([n, c], i) => `<button type="button" class="x-sw" style="--c:${c}" data-polish="${c}" aria-pressed="${i ? 'false' : 'true'}"><i></i><span>${n}</span></button>`).join('')}</div>
+      ${note(e.x.heroNote, 'k1-guide-hero')}
+    </div>
+  </div>
+</section>`;
+}
+
+/* A big drawing beside the words: the cake, the club, the fix, the road. */
+function heroArt(e, kind, extra) {
+  return `<section class="x-hero x-hero--${kind}">
+  <div class="x-wrap x-hero-in">
+    ${copy(e)}
+    <div class="x-hero-side">
+      <div class="x-art x-art-${e.art}">${kind === 'showcase' ? ART.cake().replace('viewBox="0 0 400 400"', 'viewBox="44 60 312 312"').replace('<circle class="f-s" cx="200" cy="205" r="172"/>', '') : ART[kind === 'breaker' ? 'breaker' : e.art]()}</div>
+      ${extra || ''}
+      ${note(e.x.heroNote, 'k1-guide-hero')}
+    </div>
+  </div>
+  ${kind === 'playful' ? '<svg class="x-wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C 240 90, 480 0, 720 30 S 1200 80, 1440 30 V80 H0Z"/></svg>' : ''}
+</section>`;
+}
+const heroShowcase = (e) => heroArt(e, 'showcase', e.x.tags.map((t, i) => `<span class="x-tagpin x-tagpin-${i + 1}">${t}</span>`).join(''));
+const heroPlayful = (e) => heroArt(e, 'playful');
+const heroBreaker = (e) => heroArt(e, 'breaker', `<p class="x-fixed"><span></span>${e.x.fixed}</p>`);
+const heroRoad = (e) => heroArt(e, 'road', `<p class="x-badge"><b>${e.x.badge[0]}</b><span>${e.x.badge[1]}</span></p>`);
+
+/* No heating: how soon, what it costs, and the slot to book. */
+function heroOutcome(e) {
+  const t = e.x.today;
+  return `<section class="x-hero x-hero--outcome">
+  <div class="x-wrap x-hero-in">
+    ${copy(e)}
+    <div class="x-hero-side">
+      <div class="x-art x-art-boiler">${ART.boiler()}</div>
+      <div class="x-today">
+        <p class="x-today-h"><span aria-hidden="true"></span>${t.h}</p>
+        <dl>${t.rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+        <a class="x-btn" href="${P}">${t.btn}</a>
+        <p class="x-today-f">${icon('phone')}Or call <b>${e.phone}</b></p>
+      </div>
+      ${note(e.x.heroNote, 'k1-guide-hero')}
+    </div>
+  </div>
+  <div class="x-wrap"><ul class="x-outcomes">${e.x.stats.map(([b, s]) => `<li><b>${b}</b><span>${s}</span></li>`).join('')}</ul></div>
+</section>`;
+}
+
+/* Pick the car and the clean, see the price. */
+function heroQuote(e) {
+  const q = e.x.quote;
+  return `<section class="x-hero x-hero--quote">
+  <div class="x-wrap x-hero-in">
+    ${copy(e)}
+    <div class="x-hero-side">
+      <div class="x-art x-art-valet">${ART.valet()}</div>
+      ${note(e.x.heroNote, 'k1-guide-hero')}
+      <div class="x-quote" data-quote>
+        <p class="x-quote-h">Your price in two taps</p>
+        <p class="x-quote-l">Your car</p>
+        <div class="x-seg" data-q="size">${q.sizes.map(([n, add], i) => `<button type="button" data-v="${add}" aria-pressed="${i === 1 ? 'true' : 'false'}">${n}</button>`).join('')}</div>
+        <p class="x-quote-l">The clean</p>
+        <div class="x-seg" data-q="pack">${q.packs.map(([n, base], i) => `<button type="button" data-v="${base}" aria-pressed="${i === 1 ? 'true' : 'false'}">${n}</button>`).join('')}</div>
+        <div class="x-quote-out"><span>Total<b data-q-out>&pound;${q.packs[1][1] + q.sizes[1][1]}</b></span><a class="x-btn" href="${P}">Book this</a></div>
+      </div>
+    </div>
+  </div>
+</section>`;
+}
+
+const HEROES = { photo: heroPhoto, booking: heroBooking, swatch: heroSwatch, showcase: heroShowcase, playful: heroPlayful, breaker: heroBreaker, outcome: heroOutcome, quote: heroQuote, road: heroRoad };
+
+/* ------------------------------------------------------------ sections */
+/* A page is the hero, then the trade's own list of these (layout.order in
+   examples-data.js): the same journey every time (trust, the problem, the
+   fix, the services, reviews, the button again) told the way that trade's
+   customers decide. */
+
+function trust(e) {
+  return `<section class="x-trust">
+  <div class="x-wrap"><ul>${e.x.trust.map(([b, s]) => `<li><b>${b}</b><span>${s}</span></li>`).join('')}</ul></div>
+</section>`;
+}
+
+/* Big numbers, for the trades where the proof is a number. */
+function stats(e) {
+  return `<section class="x-stats">
+  <div class="x-wrap"><ul>${e.x.stats.map(([b, s]) => `<li><b>${b}</b><span>${s}</span></li>`).join('')}</ul></div>
+</section>`;
+}
+
+/* Their work, before anything else: for the trades people choose by eye. */
+function gallery(e) {
+  const g = e.x.gallery;
+  return `<section class="x-sec x-gallery-sec" data-k1-seen="the gallery">
+  <div class="x-wrap">
+    ${head(g.h, g.p, g.note)}
+    <div class="x-gallery">${g.items.map((t, i) => `<a class="x-shot" href="${P}">${i ? '' : photoTag}<span class="x-shot-l">${t}</span></a>`).join('')}</div>
+  </div>
+</section>`;
+}
+
+/* The services as cards in a row that swipes on a phone and scrolls with
+   arrows on a computer. */
+function rail(e) {
+  const s = e.services;
+  return `<section class="x-sec x-rail-sec" id="services" data-k1-seen="the services">
+  <div class="x-wrap">${head(s.h, s.sub, NOTE.services)}</div>
   <div class="x-rail-wrap">
     <div class="x-rail" tabindex="0" aria-label="${strip(s.h)}">${s.items.map(([n, d, pr, t], i) => `<a class="x-card" href="${P}">
-      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">${String(i + 1).padStart(2, '0')}</span><span class="x-card-tag">${CAMERA}Your photo</span>${mark(e.icon)}</span>
+      <span class="x-card-art" aria-hidden="true">${i ? '' : photoTag}${e.key === 'cake' && CAKE_MINI[i] ? `<svg class="x-card-cake" viewBox="0 20 200 140"><ellipse cx="100" cy="146" rx="84" ry="8" fill="#000" opacity=".07"/>${CAKE_MINI[i]()}</svg>` : mark(e.icon)}</span>
       <span class="x-card-body"><h3>${n}</h3><p>${d}</p>
-      <span class="x-card-foot"><b>${pr}</b><span>${t}</span><em>Book &rsaquo;</em></span></span>
+      <span class="x-card-foot"><b>${pr}</b><span>${t}</span><em>Order &rsaquo;</em></span></span>
     </a>`).join('')}</div>
     <div class="x-rail-btns x-wrap"><button class="x-rail-btn" type="button" data-rail="-1" aria-label="Previous">&lsaquo;</button><button class="x-rail-btn" type="button" data-rail="1" aria-label="Next">&rsaquo;</button></div>
+  </div>
+</section>`;
+}
+
+/* A salon price list: grouped, the price at the end of a dotted line. */
+function menu(e) {
+  const s = e.services;
+  return `<section class="x-sec x-menu-sec" id="services" data-k1-seen="the services">
+  <div class="x-wrap">
+    ${head(e.x.menu.h || s.h, s.sub, NOTE.services)}
+    <div class="x-menu">${e.x.menu.groups.map(([g, idx]) => `<div class="x-menu-g"><h3>${g}</h3><ul>${idx.map((i) => {
+      const [n, d, pr, t] = s.items[i];
+      return `<li><a href="${P}"><span class="x-menu-n"><b>${n}</b><small>${d}</small></span><i aria-hidden="true"></i><span class="x-menu-p"><b>${pr}</b><small>${t}</small></span></a></li>`;
+    }).join('')}</ul></div>`).join('')}</div>
+    <p class="x-center">${ctaBtn(e)}</p>
+  </div>
+</section>`;
+}
+
+/* Bridal packages: the bride's package first and biggest. */
+function packages(e) {
+  const s = e.services, [first, ...rest] = s.items;
+  return `<section class="x-sec x-packages-sec" id="services" data-k1-seen="the services">
+  <div class="x-wrap">
+    ${head(s.h, s.sub, NOTE.services)}
+    <div class="x-packages">
+      <a class="x-pack is-main" href="${P}"><small>Most booked</small><h3>${first[0]}</h3><p>${first[1]}</p><b>${first[2]}</b><span>${first[3]}</span><em>${e.hero.cta} &rsaquo;</em></a>
+      <div class="x-pack-list">${rest.map(([n, d, pr, t]) => `<a class="x-pack" href="${P}"><div><h3>${n}</h3><p>${d}</p></div><div class="x-pack-p"><b>${pr}</b><span>${t}</span></div></a>`).join('')}</div>
+    </div>
+  </div>
+</section>`;
+}
+
+/* Valeting packages side by side, the middle one picked out. */
+function tiers(e) {
+  const s = e.services, t = e.x.tiers;
+  return `<section class="x-sec x-tiers-sec" id="services" data-k1-seen="the services">
+  <div class="x-wrap">
+    ${head(s.h, s.sub, NOTE.services)}
+    <div class="x-tiers">${t.items.map(([i, feats], k) => { const [n, , pr, time] = s.items[i]; return `<a class="x-tier${k === t.featured ? ' is-main' : ''}" href="${P}">${k === t.featured ? '<small>Most popular</small>' : ''}<h3>${n}</h3><p class="x-tier-p"><b>${pr}</b><span>${time}</span></p><ul>${feats.map((f) => `<li>${CHECK}${f}</li>`).join('')}</ul><span class="x-tier-go">Book ${strip(n).toLowerCase()}</span></a>`; }).join('')}</div>
+    <ul class="x-addons">${t.addons.map((i) => { const [n, d, pr] = s.items[i]; return `<li><b>${n}</b><span>${d}</span><em>${pr}</em></li>`; }).join('')}</ul>
+  </div>
+</section>`;
+}
+
+/* A plain price list for the trades: the job, how soon, the price. */
+function table(e) {
+  const s = e.services;
+  return `<section class="x-sec x-table-sec" id="services" data-k1-seen="the services">
+  <div class="x-wrap">
+    ${head(s.h, s.sub, NOTE.services)}
+    <ul class="x-table">${s.items.map(([n, d, pr, t]) => `<li><a href="${P}"><span class="x-table-n"><b>${n}</b><small>${d}</small></span><span class="x-table-t">${icon('clock')}${t}</span><span class="x-table-p">${pr}</span><span class="x-table-go" aria-hidden="true">&rsaquo;</span></a></li>`).join('')}</ul>
+  </div>
+</section>`;
+}
+
+/* Lessons: a card each, the block of ten picked out. */
+function lessons(e) {
+  const s = e.services;
+  return `<section class="x-sec x-lessons-sec" id="services" data-k1-seen="the services">
+  <div class="x-wrap">
+    ${head(s.h, s.sub, NOTE.services)}
+    <div class="x-lessons">${s.items.map(([n, d, pr, t], i) => `<a class="x-lesson${i === e.x.featured ? ' is-main' : ''}" href="${P}">${i === e.x.featured ? '<small>Best value</small>' : ''}<h3>${n}</h3><p>${d}</p><span class="x-lesson-p"><b>${pr}</b><span>${t}</span></span></a>`).join('')}</div>
+  </div>
+</section>`;
+}
+
+/* Lash sets from natural to full, each drawn with as many lashes as it
+   gives; the other treatments underneath. */
+function sets(e) {
+  const s = e.services, x = e.x.sets;
+  const eye = (n) => `<svg viewBox="0 0 200 110" aria-hidden="true"><path d="M20 30 Q 100 92 180 30" fill="none" class="s-i" stroke-width="4" stroke-linecap="round"/><g fill="none" class="s-i" stroke-width="${n > 20 ? 1.8 : 2.4}" stroke-linecap="round">${lashes([20, 30], [100, 92], [180, 30], n)}</g></svg>`;
+  return `<section class="x-sec x-sets-sec" id="services" data-k1-seen="the services">
+  <div class="x-wrap">
+    ${head(x.h, x.p, NOTE.services)}
+    <div class="x-sets">${x.show.map(([i, n, label]) => { const [name, d, pr, t] = s.items[i]; return `<a class="x-set" href="${P}"><span class="x-set-eye">${eye(n)}</span><small>${label}</small><h3>${name}</h3><p>${d}</p><span class="x-set-p"><b>${pr}</b><span>${t}</span><em>Book &rsaquo;</em></span></a>`; }).join('')}</div>
+    <ul class="x-also">${x.also.map((i) => { const [n, , pr, t] = s.items[i]; return `<li><a href="${P}"><b>${n}</b><span>${pr} &middot; ${t}</span></a></li>`; }).join('')}</ul>
+  </div>
+</section>`;
+}
+
+/* How it works, as steps: a plain row, a timeline with times, or a road. */
+function steps(e) {
+  const s = e.x.steps, kind = s.kind ? ' is-' + s.kind : '';
+  return `<section class="x-sec x-steps-sec${kind}">
+  <div class="x-wrap">
+    ${head(s.h, s.p, s.note)}
+    <ol class="x-steps${kind}">${s.items.map((it, i) => {
+      const [when, h, p] = it.length === 3 ? it : ['', it[0], it[1]];
+      return `<li><span class="x-step-n" aria-hidden="true">${i + 1}</span><div>${when ? `<small>${when}</small>` : ''}<h3>${h}</h3><p>${p}</p></div></li>`;
+    }).join('')}</ol>
+    ${s.cta ? `<p class="x-center">${ctaBtn(e)}</p>` : ''}
+  </div>
+</section>`;
+}
+
+/* The kids' club week at a glance, then camps and parties. */
+function timetable(e) {
+  const t = e.x.timetable, s = e.services;
+  const names = [...new Set(t.items.map((c) => c[2]))];
+  return `<section class="x-sec x-time-sec" id="services" data-k1-seen="the services">
+  <div class="x-wrap">
+    ${head(t.h, t.p, NOTE.services)}
+    <div class="x-time">${t.days.map((d) => `<div class="x-day"><h3>${d}</h3><div>${t.items.filter((c) => c[0] === d).map(([, time, name, ages]) => `<a class="x-class x-class-${(names.indexOf(name) % 4) + 1}" href="${P}"><b>${name}</b><span>${time} &middot; ages ${ages}</span></a>`).join('')}</div></div>`).join('')}</div>
+    <p class="x-time-price">${s.sub}</p>
+    <div class="x-extras">${t.extras.map((i) => { const [n, d, pr, when] = s.items[i]; return `<a class="x-extra" href="${P}"><h3>${n}</h3><p>${d}</p><span><b>${pr}</b> &middot; ${when}</span></a>`; }).join('')}</div>
+  </div>
+</section>`;
+}
+
+/* The promises, tile by tile: what you get, how sure, how soon, how easy. */
+function value(e) {
+  const v = e.x.value;
+  return `<section class="x-sec x-value-sec">
+  <div class="x-wrap">
+    ${head(v.h, v.p, v.note)}
+    <ul class="x-value">${v.items.map(([ic, h, p, label]) => `<li><span class="x-value-ico">${icon(ic)}</span>${label ? `<small>${label}</small>` : ''}<h3>${h}</h3><p>${p}</p></li>`).join('')}</ul>
+  </div>
+</section>`;
+}
+
+function areas(e) {
+  const a = e.x.areas;
+  return `<section class="x-sec x-areas-sec">
+  <div class="x-wrap x-areas">
+    <div class="x-head"><h2>${a.h}</h2><p>${a.p}</p></div>
+    <ul>${a.list.map((t) => `<li>${icon('pin')}${t}</li>`).join('')}</ul>
+  </div>
+</section>`;
+}
+
+/* "Sound familiar?" as a side-by-side: the last engineer, and this one. */
+function compare(e) {
+  const c = e.x.compare;
+  return `<section class="x-sec x-pains-sec x-compare-sec" data-k1-seen="the problems">
+  <div class="x-wrap">
+    ${head(c.h, '', NOTE.pains)}
+    <div class="x-compare" role="table" aria-label="${strip(c.h)}">
+      <div class="x-compare-r x-compare-h" role="row"><span role="columnheader">${c.them}</span><span role="columnheader">${c.us}</span></div>
+      ${c.items.map(([a, b]) => `<div class="x-compare-r" role="row"><span role="cell">${CROSS}${a}</span><span role="cell">${CHECK}${b}</span></div>`).join('')}
+    </div>
+  </div>
+</section>`;
+}
+
+/* Before and after, with a handle to drag (ex.js). */
+function beforeafter(e) {
+  const b = e.x.ba;
+  return `<section class="x-sec x-ba-sec" data-k1-seen="the before and after">
+  <div class="x-wrap">
+    ${head(b.h, b.p, b.note)}
+    <div class="x-ba" style="--pos:50%">
+      <div class="x-ba-img x-ba-after" aria-hidden="true">${ART.valet()}<span>After</span></div>
+      <div class="x-ba-img x-ba-before" aria-hidden="true">${ART.valet()}<span>Before</span></div>
+      <span class="x-ba-handle" aria-hidden="true"><i>&lsaquo;&rsaquo;</i></span>
+      <input type="range" min="0" max="100" value="50" aria-label="Drag to compare before and after">
+    </div>
+  </div>
+</section>`;
+}
+
+function flavours(e) {
+  const f = e.x.flavours;
+  return `<section class="x-sec x-flavours-sec">
+  <div class="x-wrap">
+    ${head(f.h, f.p)}
+    <ul class="x-flavours">${f.items.map((t) => `<li>${t}</li>`).join('')}</ul>
   </div>
 </section>`;
 }
@@ -269,7 +661,7 @@ function pains(e) {
   const s = e.pains;
   return `<section class="x-sec x-pains-sec" data-k1-seen="the problems">
   <div class="x-wrap">
-    <div class="x-head"><h2>${s.h}</h2>${note('Build trust: describe their problem better than they could themselves.')}</div>
+    ${head(s.h, '', NOTE.pains)}
     <ul class="x-pains${PEOPLE.includes(e.key) ? ' is-bubbles' : ''}">${s.items.map((t) => `<li><span class="x-pain-ico">${CROSS}</span><span>${t}</span></li>`).join('')}</ul>
   </div>
 </section>`;
@@ -279,14 +671,14 @@ function solution(e) {
   const s = e.solution;
   return `<section class="x-sec x-solution-sec">
   <div class="x-wrap x-solution">
-    <div class="x-head"><h2>${s.h}</h2><p>${s.p}</p><a class="x-btn" href="${P}">${e.hero.cta}</a></div>
+    <div class="x-head"><h2>${s.h}</h2><p>${s.p}</p>${e.x.seal ? `<p class="x-seal" aria-hidden="true"><b>${e.x.seal[0]}</b><span>${e.x.seal[1]}</span></p>` : ''}${ctaBtn(e)}</div>
     <ul class="x-points">${s.items.map(([h, p]) => `<li><span class="x-point-ico">${CHECK}</span><div><h3>${h}</h3><p>${p}</p></div></li>`).join('')}</ul>
   </div>
 </section>`;
 }
 
 function faq(e) {
-  return `<section class="x-sec" id="faq">
+  return `<section class="x-sec x-faq-sec" id="faq">
   <div class="x-wrap x-faq-wrap">
     <div class="x-head"><h2>Questions</h2><p>Anything else? <a href="${P}">Send us a message</a>.</p></div>
     <div class="x-faq">${e.faq.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>
@@ -295,27 +687,39 @@ function faq(e) {
 }
 
 /* Reviews are placeholders on purpose: on a real site, these are the
-   business's own Google reviews. */
+   business's own Google reviews. Three cards, one big quote, or (for the
+   driving school) pass photos with a review under each. */
 function reviews(e) {
-  const card = (i) => `<figure class="x-review">${stars}
-      <blockquote>A five-star review from one of your ${e.key === 'kids' ? 'parents' : 'customers'} goes here, pulled in from Google.</blockquote>
-      <figcaption><span class="x-avatar" aria-hidden="true">${'ABC'[i]}</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
-    </figure>`;
+  const who = e.key === 'kids' ? 'parents' : e.key === 'driving' ? 'pupils' : 'customers';
+  const kind = e.layout.reviews || 'cards';
+  const quote = `A five-star review from one of your ${who} goes here, pulled in from Google.`;
+  const cap = (i) => `<figcaption><span class="x-avatar" aria-hidden="true">${'ABC'[i]}</span><span><b>Customer name</b><small>Google review</small></span></figcaption>`;
+  let body;
+  if (kind === 'quote') {
+    body = `<figure class="x-bigquote">${stars}<blockquote>&ldquo;${quote}&rdquo;</blockquote>${cap(0)}<span class="x-dots" aria-hidden="true"><i class="is-on"></i><i></i><i></i></span></figure>`;
+  } else if (kind === 'passes') {
+    body = `<div class="x-passes">${[0, 1, 2].map((i) => `<figure class="x-pass"><span class="x-pass-img" aria-hidden="true">${i ? '' : photoTag}<em>Passed!</em></span>${stars}<blockquote>${quote}</blockquote>${cap(i)}</figure>`).join('')}</div>`;
+  } else {
+    body = `<div class="x-reviews">${[0, 1, 2].map((i) => `<figure class="x-review">${stars}<blockquote>${quote}</blockquote>${cap(i)}</figure>`).join('')}</div>`;
+  }
+  const h = kind === 'passes' ? 'Recent passes' : `What ${who} say`;
+  const n = kind === 'passes' ? 'Your pupils&rsquo; pass photos and reviews show here.' : NOTE.reviews;
   return `<section class="x-sec x-reviews-sec" id="reviews" data-k1-seen="the reviews">
   <div class="x-wrap">
-    <div class="x-head"><h2>What ${e.key === 'kids' ? 'parents' : 'customers'} say</h2>
-      ${note('Your real Google reviews show here.')}</div>
-    <div class="x-reviews">${[0, 1, 2].map(card).join('')}</div>
+    ${head(h, '', n)}
+    ${body}
   </div>
 </section>`;
 }
 
+/* The button again; for the emergency trades, the phone number too. */
 function band(e) {
+  const call = e.layout.band === 'call';
   return `<section class="x-band">
   <div class="x-wrap">
     <h2>${e.band.h}</h2><p>${e.band.p}</p>
-    <a class="x-btn x-btn-band" href="${P}">${e.hero.cta}</a>
-    <ul class="x-risk">${e.hero.risk.map((r) => `<li>${CHECK}<span>${r}</span></li>`).join('')}</ul>
+    <div class="x-band-btns">${ctaBtn(e, 'x-btn-band')}${call ? `<a class="x-btn x-btn-call" href="${P}">${icon('phone')}${e.phone}</a>` : ''}</div>
+    ${riskList(e)}
   </div>
 </section>`;
 }
@@ -330,6 +734,8 @@ function footer(e) {
   </div>
 </footer>`;
 }
+
+const SECTIONS = { trust, stats, gallery, rail, menu, packages, tiers, table, lessons, sets, steps, timetable, value, areas, compare, beforeafter, flavours, pains, solution, faq, reviews, band };
 
 /* ------------------------------------------------- Kanvas One's layer */
 
@@ -378,7 +784,7 @@ function themeCss(t) {
 
 function page(e) {
   const one = strip(e.one).replace(/&rsquo;/g, '’');
-  const dark = heroImage(e) ? !heroMobile(e) : Boolean(e.theme.dark);
+  const dark = Boolean(e.theme.dark);
   return `<!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -396,7 +802,7 @@ function page(e) {
 <link rel="stylesheet" href="/examples/ex.css?v=${EX_CSS_V}">
 <style>${themeCss(e.theme)}</style>
 </head>
-<body class="T-${e.key}${dark ? ' hero-dark' : ''}">
+<body class="T-${e.key} H-${e.layout.hero}${dark ? ' hero-dark' : ''}">
 <header class="x-nav" id="xNav">
   <div class="x-wrap x-nav-in">
     <a class="x-logo" href="${P}" aria-label="${strip(e.name)}">${mark(e.icon)}</a>
@@ -404,13 +810,8 @@ function page(e) {
   </div>
 </header>
 <main>
-${hero(e)}
-${services(e)}
-${pains(e)}
-${solution(e)}
-${faq(e)}
-${reviews(e)}
-${band(e)}
+${HEROES[e.layout.hero](e)}
+${e.layout.order.map((k) => SECTIONS[k](e)).join('\n')}
 </main>
 ${footer(e)}
 ${modal(e)}
