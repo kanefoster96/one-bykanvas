@@ -31,6 +31,7 @@ Based in the North East of England. Web design for Newcastle upon Tyne (Gosforth
 - [Plans and prices](https://kanvas.one/plans)
 - [How it works](https://kanvas.one/how-it-works)
 - [What's included](https://kanvas.one/whats-included)
+- [Example websites](https://kanvas.one/examples): example sites for hairdressers, electricians, cake makers, nail techs and more
 - [Websites for trades](https://kanvas.one/websites-for-trades)
 - [Websites for hairdressers](https://kanvas.one/websites-for-hairdressers)
 - [Websites for electricians](https://kanvas.one/websites-for-electricians)

@@ -131,11 +131,15 @@
   if (window.IntersectionObserver) {
     var seen = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
-        if (!en.isIntersecting) return;
+        /* Seen: most of it on screen, or, for a section taller than the
+           screen, enough of it to fill half the screen. isIntersecting
+           alone is true for a sliver at the edge. */
+        var view = (en.rootBounds && en.rootBounds.height) || window.innerHeight;
+        if (en.intersectionRatio < 0.6 && en.intersectionRect.height < view * 0.5) return;
         seen.unobserve(en.target);
         click(String(en.target.getAttribute('data-k1-seen')).slice(0, 60), 'seen');
       });
-    }, { threshold: 0.6 });
+    }, { threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1] });
     var watch = function () { document.querySelectorAll('[data-k1-seen]').forEach(function (n) { seen.observe(n); }); };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch); else watch();
   }

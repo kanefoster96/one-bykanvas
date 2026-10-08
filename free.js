@@ -20,17 +20,18 @@
      tapped the electricians ad, and put the nearest example first. A
      ?trade= on the link does the same for ads made later. Kept for the
      visit, so it survives a refresh. */
+  // [the words in the pill, the nearest real example, the example site]
   var TRADES = {
-    elec:    ['electricians', 'mpe'],
-    boiler:  ['heating engineers', 'mpe'],
-    valet:   ['mobile car valeters', 'mpe'],
-    driving: ['driving instructors', 'mpe'],
-    kids:    ['kids\u2019 clubs', 'dance'],
-    hair:    ['hairdressers', 'fstr'],
-    lash:    ['lash artists', 'fstr'],
-    mua:     ['makeup artists', 'fstr'],
-    nails:   ['nail techs', 'fstr'],
-    cake:    ['cake makers', 'fstr']
+    elec:    ['electricians', 'mpe', 'electricians'],
+    boiler:  ['heating engineers', 'mpe', 'heating-engineers'],
+    valet:   ['mobile car valeters', 'mpe', 'mobile-car-valeters'],
+    driving: ['driving instructors', 'mpe', 'driving-instructors'],
+    kids:    ['kids\u2019 clubs', 'dance', 'kids-clubs'],
+    hair:    ['hairdressers', 'fstr', 'hairdressers'],
+    lash:    ['lash artists', 'fstr', 'lash-artists'],
+    mua:     ['makeup artists', 'fstr', 'makeup-artists'],
+    nails:   ['nail techs', 'fstr', 'nail-techs'],
+    cake:    ['cake makers', 'fstr', 'cake-makers']
   };
   var ADS = {
     // Northumberland
@@ -64,6 +65,8 @@
     var also = document.getElementById('builtAlso');
     if (pill) pill.textContent = t[0];
     if (also) also.hidden = false;
+    var ex = document.getElementById('tradeExample');
+    if (ex) { ex.href = '/examples/' + t[2]; ex.innerHTML = 'See an example website for ' + t[0] + ' &rsaquo;'; }
     // The nearest example first; the order sets which one shows first.
     var cycle = document.getElementById('madeCycle');
     var first = cycle && cycle.querySelector('img[data-kind="' + t[1] + '"]');
