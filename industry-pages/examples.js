@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
-const EX_CSS_V = 4;
+const EX_CSS_V = 5;
 const EX_JS_V = 2;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
@@ -282,7 +282,7 @@ function page(e) {
 <body class="T-${e.key}${dark ? ' hero-dark' : ''}">
 <header class="x-nav">
   <div class="x-wrap x-nav-in">
-    <a class="x-logo" href="${P}">${mark(e.icon)}<span>${e.name}</span></a>
+    <a class="x-logo" href="${P}" aria-label="${strip(e.name)}">${mark(e.icon)}</a>
     <button class="x-burger" type="button" data-preview aria-label="Menu"><span></span><span></span></button>
   </div>
 </header>

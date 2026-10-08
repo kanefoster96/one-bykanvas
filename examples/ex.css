@@ -40,6 +40,9 @@ body.k1-locked{overflow:hidden}
 .x-logo > span:last-child{font-family:var(--fh);font-weight:var(--hw);font-size:19px;letter-spacing:var(--hls);line-height:1.1;text-transform:var(--case);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .x-mark{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:50%;border:1.6px solid currentColor}
 .x-mark svg{width:20px;height:20px}
+/* The header carries the badge alone, a touch bigger; the name is in the footer. */
+.x-nav .x-mark{width:42px;height:42px;flex-basis:42px}
+.x-nav .x-mark svg{width:22px;height:22px}
 .x-burger{display:grid;align-content:center;gap:7px;width:44px;height:44px;padding:0 9px;margin-right:-9px;background:none;border:0;color:inherit;cursor:pointer}
 .x-burger span{display:block;height:2px;border-radius:2px;background:currentColor}
 
