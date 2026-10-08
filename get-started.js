@@ -48,6 +48,15 @@
     if (/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z]{2,63})+$/.test(d) && d.length <= 253) wantDomain = d;
   } catch (e) {}
 
+  /* ?business= from the box on the homepage or /free: the name they have
+     just typed, so the first screen starts where they left off. */
+  (function prefillBusiness() {
+    var b = '';
+    try { b = String(new URLSearchParams(location.search).get('business') || '').trim().slice(0, 120); } catch (e) {}
+    var el = document.getElementById('business_name');
+    if (b && el && !el.value) el.value = b;
+  })();
+
   /* ?lead= from the ready email or the card on their example: what they
      told us when they asked for it, filled in so the first screen is a
      check rather than a form. The password is still theirs to choose. */
@@ -111,7 +120,7 @@
   var answers = {};
 
   var PLANS = {
-    starter:  { label: 'Starter',  price: '£25', half: '£12.50', yearly: '£250' },
+    starter:  { label: 'Starter',  price: '£9.99', yearly: '£99.90' },
     business: { label: 'Business', price: '£50', half: '£25',    yearly: '£500' },
     pro:      { label: 'Pro',      price: '£120' },
     max:      { label: 'Max',      price: '£250', half: '£125',   yearly: '£2,500' }
@@ -734,7 +743,7 @@
     if ($('sumOfferRow')) {
       $('sumOffer').textContent = annual
         ? '2 months free + the Launch Boost'
-        : (other ? offer + ' applied at checkout' : '50% off your first month');
+        : (other ? offer + ' applied at checkout' : (plan.half ? '50% off your first month' : 'No setup fee, cancel any month'));
     }
 
     /* The address they chose, shown in a browser bar so the thing they are
@@ -756,7 +765,7 @@
       var free = document.createElement('b');
       free.textContent = 'Free with your plan.';
       note.appendChild(free);
-      note.appendChild(document.createTextNode(' Registered for you today, and your page is live on it the same day.'));
+      note.appendChild(document.createTextNode(' Registered for you today, and your site is live on it within 24 hours.'));
     }
     $('sumDomainRow').hidden = !domain;
     $('sumDomain').textContent = domain || '\u2014';
@@ -975,7 +984,7 @@
   });
 
   /* The step up, offered once at the moment they are choosing. Starter
-   * sees what £25 more unlocks. Business sees Max framed as the launch
+   * sees what Business unlocks. Business sees Max framed as the launch
    * months - SEO and texts while the site is new, then step down to
    * Business once the ranking is where they want it, keeping the ranking.
    * Max sees nothing: there is nowhere up to go. The pay step repeats it
@@ -990,7 +999,7 @@
     var UP = {
       starter: {
         to: 'business',
-        tag: 'For £25 more',
+        tag: 'The step up',
         head: 'Business turns a website into a way to get booked.',
         list: [
           'Bookings, payments and forms on your site',

@@ -267,7 +267,7 @@ module.exports = async function handler(req, res) {
               + `<strong>${esc(business)}</strong>. It&rsquo;ll land in this inbox within 24 hours.`,
             'Designed by hand, for you. Nothing for you to do in the meantime.',
             'Want it to look even more like you? Reply with your logo and a few favourite photos. Optional, and it makes the design better.',
-            'When it lands: like it, and &pound;12.50 puts it live on your own address the same day, then &pound;25 a month, cancel any month. '
+            'When it lands: like it, and it goes live on your own address for &pound;9.99 a month, cancel any month. '
               + 'Anything off, just reply &mdash; changes are free. Not for you? No hard feelings.'
           ],
           details: facts,
@@ -279,7 +279,7 @@ module.exports = async function handler(req, res) {
             + `It'll land in this inbox within 24 hours. Designed by hand, for you. `
             + `Nothing for you to do in the meantime.\n\n`
             + `Want it to look even more like you? Reply with your logo and a few favourite photos. Optional, and it makes the design better.\n\n`
-            + `When it lands: like it, and GBP 12.50 puts it live on your own address the same day, then GBP 25 a month, cancel any month. `
+            + `When it lands: like it, and it goes live on your own address for GBP 9.99 a month, cancel any month. `
             + `Anything off, just reply - changes are free. Not for you? No hard feelings.\n`
       });
       console.log('lead: confirmation email', theirs);

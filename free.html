@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>See Your New Website Free Within 24 Hours, No Card | Kanvas One</title>
-<meta name="description" content="Free design today, your website live tomorrow. Your business name and email is all it takes. Love it? £12.50 for your first month, then £25 a month.">
+<title>Your Website Built for You, Live in 24 Hours, £9.99 a Month | Kanvas One</title>
+<meta name="description" content="Your website built for you and live within 24 hours, £9.99 a month with your web address, hosting and unlimited changes included. Not sure? See your free design first.">
 <meta name="theme-color" content="#ffffff">
-<meta property="og:title" content="See Your New Website Free Within 24 Hours, No Card | Kanvas One">
-<meta property="og:description" content="Free design today, your website live tomorrow. Your business name and email is all it takes. Love it? £12.50 for your first month, then £25 a month.">
+<meta property="og:title" content="Your Website Built for You, Live in 24 Hours, £9.99 a Month | Kanvas One">
+<meta property="og:description" content="Your website built for you and live within 24 hours, £9.99 a month. Not sure? See your free design first.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Kanvas One">
 <meta property="og:image" content="https://kanvas.one/assets/og-image.png">
@@ -20,7 +20,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
-<link rel="stylesheet" href="styles.css?v=137">
+<link rel="stylesheet" href="styles.css?v=138">
 </head>
 <body>
 
@@ -47,21 +47,24 @@
          anyone else, or anyone whose trade the ad guessed wrong, still sees
          themselves in "North East businesses". -->
     <p class="built-for reveal" id="builtFor">Websites built for <span class="built-pill" id="builtTrade">North East businesses</span><span class="built-also" id="builtAlso" hidden>and other North East businesses</span></p>
-    <h1 class="reveal offer-h1"><span class="g-free">Free design today.</span><br><span class="g-free">Your website live tomorrow.</span></h1>
+    <h1 class="reveal offer-h1"><span class="g-free">Your website,</span><br><span class="g-free">live in 24 hours.</span></h1>
+    <p class="offer-price reveal"><b><span class="cur">&pound;</span>9.99</b><span class="offer-per">a month</span></p>
+    <p class="offer-terms reveal">Built for you &middot; Unlimited changes &middot; No setup fee</p>
 
-    <!-- The same two steps as the homepage: the name and an arrow, then the
-         email and the gift that sends it. A link to the business is asked
-         for after, and can be skipped. free.js. -->
+    <!-- One box, two ways in (free.js). Joining, the default: the business
+         name and the arrow go straight into signing up, with the name
+         filled in. Or, for anyone unsure, the free design: the same name,
+         then the email and the gift that sends it, then an optional link. -->
     <form class="hero-form offer-pill reveal" id="offer" novalidate>
       <div class="hp" aria-hidden="true">
         <label for="offer_extra">Leave this empty</label>
         <input id="offer_extra" name="offer_extra" type="text" tabindex="-1" autocomplete="off">
       </div>
       <div class="mini-step" id="offerStep1">
-        <label for="business">Your business name, to get started</label>
+        <label for="business" id="businessLabel">Your business name, to get started</label>
         <div class="mini-row">
           <input id="business" type="text" autocomplete="organization" autocapitalize="words" placeholder="e.g. Fade Room Barbers" enterkeyhint="next">
-          <button class="mini-go" id="offerNext" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+          <button class="mini-go" id="offerNext" type="button" aria-label="Get started"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
         </div>
       </div>
       <div class="mini-step" id="offerStep2" hidden>
@@ -80,7 +83,8 @@
         <p class="hint mini-skip"><button class="linkish" id="offerSkip" type="button">Nothing online yet? Skip this</button></p>
       </div>
       <p class="note" id="offerNote" role="status" aria-live="polite"></p>
-      <p class="micro offer-micro">Free, no card. In your inbox within 24 hours.</p>
+      <p class="micro offer-micro" id="offerMicro">Two minutes to sign up. Your site, live within 24 hours.</p>
+      <p class="offer-alt" id="offerAlt"><button class="linkish" id="offerMode" type="button">Not sure? See your free design first</button></p>
     </form>
 
     <!-- Under the box: what their site might look like. Example sites, not
@@ -109,36 +113,34 @@
 <section class="section pt0">
   <div class="wrap">
 
-    <!-- The price, straight under the form, so the question every ad click
-         is quietly asking ("what does it cost after?") is answered before
-         they scroll away. The number that matters is what they pay today;
-         the monthly price follows it, and the big numbers either side are
-         anchors: a traditional build above, Max below. -->
+    <!-- What the £9.99 buys, under the preview, so the question every ad
+         click is quietly asking ("what do I get for that?") is answered
+         before they scroll away. A traditional build is the anchor. -->
     <div class="today reveal" id="price" data-k1-seen="the price">
-      <p class="today-tag">Only if you love it</p>
-      <p class="today-due"><span class="cur">&pound;</span>12.50 <span class="today-word">first month</span></p>
-      <p class="today-sub">Then &pound;25 a month, and that includes:</p>
+      <p class="today-tag">Everything included</p>
+      <p class="today-due"><span class="cur">&pound;</span>9.99 <span class="today-word">a month</span></p>
+      <p class="today-sub">Built for you, live within 24 hours, and that includes:</p>
       <ul class="ticks today-ticks">
         <li class="tick-hero">Your own web address, included</li>
         <li class="tick-hero">Contact form and click to call</li>
         <li>Your details, hours, photos and socials</li>
         <li>Found on Google in your town</li>
         <li>Hosting and security included</li>
-        <li><strong>Edits whenever you need them</strong>, made by us</li>
+        <li><strong>Unlimited changes to your words and photos</strong>, made by us</li>
         <li>Support from a real person</li>
       </ul>
       <p class="today-fine">No setup fee. Cancel any month.</p>
+      <a class="btn today-go" href="#offer" data-to-offer>Get started &rsaquo;</a>
       <div class="today-promise">
         <p class="today-promise-name">The See-It-First Promise</p>
         <ul>
-          <li>Your design is free. Don&rsquo;t love it? You owe nothing.</li>
+          <li>Not sure? Your design is free first. Don&rsquo;t love it? You owe nothing.</li>
           <li>No contract. Cancel any month, with no exit fee.</li>
           <li>Your web address is yours. Leave, and we transfer it to you free.</li>
         </ul>
       </div>
       <p class="today-vs">A traditional website: <s>&pound;3,000+</s> before you see a thing, and &pound;100 to &pound;200 for every change after.</p>
     </div>
-
 
     <!-- Proof under the form: what customers say, then the sites, by name,
          as links rather than screenshots (a cropped screenshot sells nothing;
@@ -154,11 +156,10 @@
     <div class="offer-after">
       <h2>What happens <span class="g-free">next.</span></h2>
       <ol class="offer-steps">
-        <li>We look at your business online.</li>
-        <li>We design your page and email it within 24 hours.</li>
-        <li>Like it? Pay &pound;12.50 and it&rsquo;s live on your own web address the same day.
-            Then &pound;25 a month, cancel any month.</li>
-        <li>Don&rsquo;t like it? You owe nothing. No hard feelings.</li>
+        <li>Tell us your business name and pick your web address. Two minutes.</li>
+        <li>We build your site from our designs, around your business, and it&rsquo;s live within 24 hours.</li>
+        <li>&pound;9.99 a month. Send changes from your phone and we make them.</li>
+        <li>Not sure yet? <a href="#offer" data-to-free>See your free design first</a>. Don&rsquo;t love it? You owe nothing.</li>
       </ol>
 
     </div>
@@ -166,6 +167,20 @@
 </section>
 
 </main>
+
+<!-- Not sure? The free design, offered once to someone leaving without
+     starting: on a computer when the pointer heads for the tabs, on a phone
+     after they have seen the price and not pressed anything (free.js). -->
+<div class="notsure" id="notSure" hidden>
+  <div class="notsure-card" role="dialog" aria-modal="true" aria-labelledby="notSureH" data-k1-seen="the not-sure prompt">
+    <button class="notsure-x" type="button" data-notsure-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <span class="dot-face notsure-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span>
+    <h2 id="notSureH">Not sure yet?</h2>
+    <p>See your free design first. Your business name and email, and it&rsquo;s in your inbox within 24 hours. No card.</p>
+    <button class="btn notsure-go" type="button" id="notSureGo">Get my free design</button>
+    <button class="notsure-keep" type="button" data-notsure-close>No thanks</button>
+  </div>
+</div>
 
 <footer class="foot">
   <div class="wrap">
@@ -178,7 +193,7 @@
     <nav class="foot-legal-links" aria-label="Legal">
       <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
     </nav>
-    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Your page goes live on your own address the same day you join; the features you ask for are built within 14 days of joining, or your next month is free (see terms). Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. Cancel anytime &mdash; no further payments are taken.</p>
+    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Your site goes live on your own address within 24 hours of joining; the features you ask for are built within 14 days of joining, or your next month is free (see terms). Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. Cancel anytime &mdash; no further payments are taken.</p>
     <p class="foot-copy">&copy; <span id="year">2026</span> Kanvas. All rights reserved.</p>
   </div>
 </footer>
@@ -187,7 +202,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=34"></script>
-<script src="free.js?v=14"></script>
+<script src="free.js?v=15"></script>
 <script src="reviews.js?v=5"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>

@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Get started — Kanvas One</title>
-<meta name="description" content="Tell us about your business and we'll build your site. Live on your own address the same day you join, your features built within 14 days, no setup cost.">
+<meta name="description" content="Tell us about your business and we'll build your site. Live on your own address within 24 hours you join, your features built within 14 days, no setup cost.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
-<link rel="stylesheet" href="styles.css?v=137">
+<link rel="stylesheet" href="styles.css?v=138">
 </head>
 <body class="auth-body">
 
@@ -61,7 +61,7 @@
       <!-- ============ 2. the business ============ -->
       <section class="wiz-step" data-step="2" aria-label="Choose a plan" hidden>
         <h1>Your plan.</h1>
-        <p class="wiz-sub">Starter is the site. Business, for &pound;25 more, gets you booked. Max adds growth. Move between them any month.</p>
+        <p class="wiz-sub">Starter is the site, &pound;9.99 a month. Business gets you booked. Max adds growth. Move between them any month.</p>
 
         <!-- Starter first, and chosen: it is the offer on every page. Business
              is the step up, then Max. -->
@@ -71,7 +71,7 @@
         </div>
 
         <!-- What each way of paying gets, said once above the plans. -->
-        <p class="bill-note" id="billNote"><b>Monthly:</b> your first month is half price. <b>Annual:</b> two months free, plus the Launch Boost &mdash; your first month spent getting you found. <button class="linkish inline" type="button" id="boostMore">What&rsquo;s in it?</button></p>
+        <p class="bill-note" id="billNote"><b>Monthly:</b> Starter is &pound;9.99 from day one; Business and Max are half price for the first month. <b>Annual:</b> two months free, plus the Launch Boost &mdash; your first month spent getting you found. <button class="linkish inline" type="button" id="boostMore">What&rsquo;s in it?</button></p>
         <ul class="ticks boost-list" id="boostList" hidden>
           <li>Your Google Business Profile set up, verified and filled in</li>
           <li>A page for every service you offer and every town you cover</li>
@@ -84,7 +84,7 @@
           <label class="pick-row is-on" data-plan="starter" id="pickStarter">
             <input type="radio" name="plan" value="starter" checked>
             <span class="pick-main">
-              <span class="pick-head"><b>Starter</b><em data-m="£25|/mo" data-y="£250|/yr">£25<span>/mo</span></em></span>
+              <span class="pick-head"><b>Starter</b><em data-m="£9.99|/mo" data-y="£99.90|/yr">£9.99<span>/mo</span></em></span>
               <span class="pick-note"><b class="pick-flag">The site</b>Designed, hosted, and live today. No setup fee.</span>
             </span>
           </label>
@@ -102,7 +102,7 @@
             <input type="radio" name="plan" value="business">
             <span class="pick-main">
               <span class="pick-head"><b>Business</b><em data-m="£50|/mo" data-y="£500|/yr">£50<span>/mo</span></em></span>
-              <span class="pick-note"><b class="pick-flag">+&pound;25: get booked</b>Bookings, payments, live chat, and changes within 48 hours.</span>
+              <span class="pick-note"><b class="pick-flag">Get booked</b>Bookings, payments, live chat, and changes within 48 hours.</span>
             </span>
           </label>
           <div class="pick-feats" data-plan="business">
@@ -136,7 +136,7 @@
 
 
         <!-- The step up from whichever plan is picked, said once, optional.
-             Starter is shown what £25 more unlocks; Business is shown Max
+             Starter is shown what Business unlocks; Business is shown Max
              as a launch-months choice they can step down from. Filled by
              get-started.js from what is selected. -->
         <div class="pick-up" id="planUp" hidden>
@@ -285,9 +285,9 @@
           <div class="sumrow"><span>Account</span><b id="sumEmail">—</b></div>
           <div class="sumrow" id="sumDomainRow" hidden><span>Web address</span><b id="sumDomain">—</b></div>
           <div class="sumrow"><span>Plan</span><b id="sumPlan">Starter</b></div>
-          <div class="sumrow"><span>Monthly</span><b id="sumPrice">£25</b></div>
+          <div class="sumrow"><span>Monthly</span><b id="sumPrice">£9.99</b></div>
           <div class="sumrow"><span>Setup</span><b class="sum-free">Free</b></div>
-          <div class="sumrow total"><span>Due today</span><b id="sumDue">£12.50</b></div>
+          <div class="sumrow total"><span>Due today</span><b id="sumDue">£9.99</b></div>
           <div class="sumrow" id="sumOfferRow"><span>Included</span><b class="sum-free" id="sumOffer">50% off your first month</b></div>
         </div>
 
@@ -313,13 +313,13 @@
         <p class="pay-proof">Designed and built by our team to get your business more customers online. Message us any time, no ticket queue.</p>
         <!-- The downsell, for the person hesitating at the card: keep the page,
              lose the features, for less. Hidden once they are on Starter. -->
-        <button class="linkish" id="payDown" type="button" hidden>Not sure you need bookings and chat? Switch to Starter, &pound;25, and keep this page live.</button>
+        <button class="linkish" id="payDown" type="button" hidden>Not sure you need bookings and chat? Switch to Starter, &pound;9.99 a month, and keep this page live.</button>
 
         <!-- The three things someone hesitates over, answered on the way past. -->
         <ul class="assure">
           <li>No setup fee</li>
           <li>Cancel anytime</li>
-          <li>Live the same day</li>
+          <li>Live within 24 hours</li>
         </ul>
 
         <!-- Card details are collected by Stripe Checkout on Stripe's own
@@ -371,7 +371,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=31"></script>
+<script src="get-started.js?v=33"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

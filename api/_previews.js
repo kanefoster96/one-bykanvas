@@ -6,7 +6,7 @@
  * The email is the offer. In order: the page itself, the web address that
  * could be theirs, what the page could become once they say yes, and the
  * way in: Starter, the page live with a contact form and click to call,
- * £25, no setup fee. Business sits beside it for £25 more.
+ * £9.99 a month, no setup fee. Business sits beside it at £50 a month.
  */
 const { ourSiteUrl } = require('./_env.js');
 const { PREVIEW_OFFER } = require('./_plans.js');
@@ -72,26 +72,26 @@ function joinHref(site, plan, domain, leadId) {
   return `${site}/get-started.html?${q.join('&')}`;
 }
 
-/* The thing to press: Starter, the page live for £25. Business beside it
-   for £25 more, for the person who already knows they want bookings. Max
+/* The thing to press: Starter, the page live for £9.99 a month. Business
+   beside it at £50, for the person who already knows they want bookings. Max
    is offered after they have said yes, in the wizard. */
 function planCards(site, domain, leadId) {
   const live = domain ? 'Live on ' + esc(domain) + ' today.' : 'Live on your own address today.';
   return {
     title: 'Make it your site',
-    intro: 'This page, live on your own web address: £12.50 today, then £25 a month. No setup fee. Cancel any month, no exit fee, and your web address stays yours.',
+    intro: 'This page, live on your own web address: £9.99 a month. No setup fee. Cancel any month, no exit fee, and your web address stays yours.',
     cards: [{
-      name: 'Starter', price: '£25', tag: 'The site', featured: true,
+      name: 'Starter', price: '£9.99', tag: 'The site', featured: true,
       text: live + ' Customers find you, call you and message you.',
       items: [
         'Contact form and click to call',
         'Found on Google in your town',
         'Your web address, hosting and security included',
-        'Edits whenever you need them, made by us'
+        'Changes to your words and photos, made by us'
       ],
-      ctaText: 'Put it live — £12.50 today', ctaHref: joinHref(site, 'starter', domain, leadId)
+      ctaText: 'Put it live — £9.99 a month', ctaHref: joinHref(site, 'starter', domain, leadId)
     }, {
-      name: 'Business', price: '£50', tag: '+£25: get booked',
+      name: 'Business', price: '£50', tag: 'Get booked',
       text: 'Everything in Starter, plus the features that take the work off your phone.',
       items: [
         'Bookings, payments and live chat',
@@ -101,7 +101,7 @@ function planCards(site, domain, leadId) {
       ],
       ctaText: 'Choose Business — £25 today', ctaHref: joinHref(site, 'business', domain, leadId)
     }],
-    note: '50% off your first month, on any plan. Or pay for the year: 2 months free and the Launch Boost, '
+    note: 'Business: 50% off your first month. Or pay for the year on any plan: 2 months free and the Launch Boost, '
         + 'your first month spent getting you found on Google.<br>'
         + 'Designed and built by our team to get your business more customers online. Message us any time.'
   };
@@ -194,8 +194,8 @@ async function sendLeadPreview(db, id, url, opts) {
       offer: {
         code: PREVIEW_OFFER.code,
         href: `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}`,
-        text: '<strong>50% off your first month, on any plan.</strong><br>'
-            + 'Applied when you join. Or pay for the year: 2 months free and the Launch Boost.',
+        text: '<strong>50% off your first month of Business.</strong><br>'
+            + 'Applied when you join. Starter is £9.99 a month from day one. Or pay for the year: 2 months free and the Launch Boost.',
         note: 'Nothing to copy &mdash; it is already on the bill when you pay.'
       },
       closing: 'Anything you&rsquo;d change on the page, just reply and say so. Changes are free, before and after you join. &mdash; The Kanvas One team',
@@ -219,15 +219,15 @@ async function sendLeadPreview(db, id, url, opts) {
         + COULD.map((t) => '- ' + t).join('\n') + '\n\n'
         + `What happens when you say yes:\n`
         + NEXT.items.map((t) => '- ' + t).join('\n') + '\n\n'
-        + `Put it live. Starter, GBP 12.50 today then GBP 25 a month: this page live on your own address today, `
-        + `with a contact form and click to call, found on Google, unlimited edits made by us. `
+        + `Put it live. Starter, GBP 9.99 a month: this page live on your own address within 24 hours, `
+        + `with a contact form and click to call, found on Google, and changes to your words and photos made by us. `
         + `No setup fee. Cancel any month.\n`
         + `${joinHref(site, 'starter', claimable, lead.id)}\n\n`
-        + `Want bookings, payments and live chat? Business is GBP 25 more, with changes done within 48 hours `
+        + `Want bookings, payments and live chat? Business is GBP 50 a month, with changes done within 48 hours `
         + `and your three features built within 14 days or your next month is free.\n`
         + `${joinHref(site, 'business', claimable, lead.id)}\n\n`
         + `Designed and built by our team to get your business more customers online. Message us any time.\n\n`
-        + `50% off your first month, on any plan, applied when you join. Or pay for the year: `
+        + `50% off your first month of Business, applied when you join. Or pay for the year on any plan: `
         + `2 months free and the Launch Boost, your first month spent getting you found on Google.\n`
         + `${site}/plans.html?offer=${encodeURIComponent(PREVIEW_OFFER.code)}\n\n`
         + `Anything you'd change on the page, just reply and say so. Changes are free, `
