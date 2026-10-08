@@ -7,78 +7,119 @@
 <meta name="description" content="What a lash artist website from Kanvas One could look like. Get yours designed free within 24 hours.">
 <!-- A made-up business, so it is never offered to someone searching for it. -->
 <meta name="robots" content="noindex, follow">
-<meta name="theme-color" content="#fbf4f2">
+<meta name="theme-color" content="#111111">
 <link rel="icon" href="/assets/favicon.svg?v=4" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="/examples/ex.css?v=1">
-<style>:root{--bg:#fbf4f2;--ink:#3a2a2e;--muted:#866f73;--accent:#b9606c;--accent2:#e8b4b8;--accent3:#e8b4b8;--accent4:#b9606c;--soft:#f5e2e0;--surface:#ffffff;--line:rgba(58,42,46,.1);--fh:'DM Serif Display', Georgia, serif;--fb:'DM Sans', system-ui, sans-serif;--hw:400;--hls:-.01em;--radius:22px;--btn-radius:999px;--on-accent:#fff;--hero:#fbf4f2;--hero-ink:#3a2a2e;--case:none}</style>
+<link rel="stylesheet" href="/examples/ex.css?v=3">
+<style>:root{--bg:#fbf4f2;--ink:#3a2a2e;--muted:#866f73;--accent:#b9606c;--accent2:#e8b4b8;--accent3:#e8b4b8;--accent4:#b9606c;--soft:#f5e2e0;--surface:#ffffff;--accent-text:#b9606c;--line:rgba(58,42,46,.1);--fh:'DM Serif Display', Georgia, serif;--fb:'DM Sans', system-ui, sans-serif;--hw:400;--hls:-.01em;--radius:20px;--btn-radius:999px;--on-accent:#fff;--hero-bg:radial-gradient(ellipse at 80% 10%, #c97b84 0%, transparent 55%), radial-gradient(ellipse at 0% 100%, #6e3c46 0%, transparent 60%), #3a2a2e;--hero-ink:#fff6f5;--case:none}</style>
 </head>
-<body class="L-soft T-lash">
-
+<body class="T-lash hero-dark">
 <header class="x-nav">
   <div class="x-wrap x-nav-in">
-    <a class="x-logo" href="/free?trade=lash">Flutter Lash Studio</a>
-    <nav class="x-links" aria-label="Flutter Lash Studio"><a href="/free?trade=lash">Treatments</a><a href="/free?trade=lash">Before you book</a><a href="/free?trade=lash">Work</a><a href="/free?trade=lash">Reviews</a></nav>
-    <a class="x-btn x-btn-nav" href="/free?trade=lash"><span class="x-long">Book now</span><span class="x-short">Book</span></a>
+    <a class="x-logo" href="#preview"><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11c2.5 3.3 5.6 5 9 5s6.5-1.7 9-5"/><path d="M5 13.4L3.6 15.6M8.4 15.3l-.9 2.5M12 16v2.7M15.6 15.3l.9 2.5M19 13.4l1.4 2.2"/></svg></span><span>Flutter Lash Studio</span></a>
+    <button class="x-burger" type="button" data-preview aria-label="Menu"><span></span><span></span></button>
   </div>
 </header>
 <main>
-<section class="x-hero"><div class="x-wrap x-hero-in">
+<section class="x-hero">
+  <div class="x-wrap x-hero-in">
     <div class="x-hero-copy">
-      <p class="x-eyebrow">Lash extensions &middot; Gosforth</p><h1>Wake up with your lashes already done.</h1><p class="x-sub">Classic, hybrid and Russian volume sets, matched to your eye shape. Patch test included and aftercare explained, with infills every two to three weeks.</p>
-      <div class="x-hero-btns"><a class="x-btn" href="/free?trade=lash">Book now</a><a class="x-btn x-btn-ghost" href="/free?trade=lash">See treatments</a></div>
-      <p class="x-rating"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span><span>5.0 from 112 Google reviews</span></p>
+      <p class="x-status"><span aria-hidden="true"></span>Infill slots free this week</p>
+      <h1>Wake up with your lashes already done.</h1>
+      <p class="x-sub">Classic, hybrid and volume sets in Gosforth, matched to your eye shape, so you can skip the mascara and still look like you made an effort.</p>
+      <a class="x-btn x-btn-hero" href="#preview">Book your set</a>
+      <ul class="x-risk"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Free patch test</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Cancel up to 24 hours before</span></li></ul>
     </div>
-    <div class="x-art x-art-lash"><svg viewBox="0 0 400 400" aria-hidden="true">
-    <circle class="f-b" cx="320" cy="90" r="16" opacity=".6"/><circle class="f-a" cx="80" cy="320" r="8" opacity=".5"/>
-    <path class="s-b" fill="none" stroke-width="3" stroke-linecap="round" opacity=".6" d="M110 150 Q200 112 290 150"/>
-    <g fill="none" class="s-i" stroke-width="3.2" stroke-linecap="round"><path d="M80.4 206.9 Q69.4 224.2 73.1 235.8"/><path d="M91.3 213.5 Q80.8 231.5 86.0 243.5"/><path d="M102.1 219.5 Q92.3 238.3 99.0 250.8"/><path d="M113.0 224.9 Q103.9 244.5 112.1 257.6"/><path d="M123.9 229.6 Q115.5 250.2 125.4 263.9"/><path d="M134.8 233.7 Q127.3 255.3 138.7 269.7"/><path d="M145.6 237.1 Q139.1 259.8 152.3 274.9"/><path d="M156.5 240.0 Q151.0 263.7 166.0 279.5"/><path d="M167.4 242.2 Q163.1 266.9 179.9 283.4"/><path d="M178.3 243.7 Q175.3 269.6 194.1 286.8"/><path d="M189.1 244.7 Q187.6 271.6 208.4 289.5"/><path d="M200.0 245.0 Q200.0 272.9 223.0 291.5"/><path d="M210.9 244.7 Q212.5 273.6 237.7 292.9"/><path d="M221.7 243.7 Q225.2 273.6 252.7 293.5"/><path d="M232.6 242.2 Q238.0 272.9 267.8 293.3"/><path d="M243.5 240.0 Q250.8 271.5 283.0 292.5"/><path d="M254.4 237.1 Q263.7 269.4 298.4 290.8"/><path d="M265.2 233.7 Q276.7 266.6 313.8 288.5"/><path d="M276.1 229.6 Q289.7 263.1 329.3 285.4"/><path d="M287.0 224.9 Q302.7 258.9 344.9 281.5"/><path d="M297.9 219.5 Q315.8 254.0 360.6 276.9"/><path d="M308.7 213.5 Q328.9 248.4 376.2 271.6"/><path d="M319.6 206.9 Q342.0 242.1 391.9 265.6"/></g>
-    <path fill="none" class="s-i" stroke-width="7" stroke-linecap="round" d="M70 200 Q200 290 330 200"/>
-  </svg></div>
-  </div></section>
-<section class="x-sec x-prices-sec" id="prices" data-k1-seen="the prices">
-    <div class="x-wrap">
-      <div class="x-head"><p class="x-eyebrow">Treatments</p><h2>Find your set.</h2><p>Not sure which set suits you? Book a classic and we&rsquo;ll talk it through first.</p></div>
-      <div class="x-cards"><a class="x-card" href="/free?trade=lash"><div class="x-card-top"><h3>Classic full set</h3><b>&pound;45</b></div><p>One extension on each natural lash. Mascara, but better.</p><span class="x-card-meta">2 hrs<em>Book &rsaquo;</em></span></a><a class="x-card" href="/free?trade=lash"><div class="x-card-top"><h3>Hybrid full set</h3><b>&pound;55</b></div><p>Classic and volume mixed for a soft, textured look.</p><span class="x-card-meta">2 hrs 15<em>Book &rsaquo;</em></span></a><a class="x-card" href="/free?trade=lash"><div class="x-card-top"><h3>Russian volume</h3><b>&pound;65</b></div><p>Handmade fans for full, fluffy, dramatic lashes.</p><span class="x-card-meta">2 hrs 30<em>Book &rsaquo;</em></span></a><a class="x-card" href="/free?trade=lash"><div class="x-card-top"><h3>Infills</h3><b>From &pound;30</b></div><p>Every two to three weeks to keep your set full.</p><span class="x-card-meta">1 hr<em>Book &rsaquo;</em></span></a><a class="x-card" href="/free?trade=lash"><div class="x-card-top"><h3>Lash lift &amp; tint</h3><b>&pound;40</b></div><p>Your own lashes, lifted and darkened for six weeks.</p><span class="x-card-meta">1 hr<em>Book &rsaquo;</em></span></a><a class="x-card" href="/free?trade=lash"><div class="x-card-top"><h3>Brow lamination</h3><b>&pound;35</b></div><p>Brushed-up, fuller brows that stay put.</p><span class="x-card-meta">45 mins<em>Book &rsaquo;</em></span></a></div>
-    </div>
-  </section>
-<section class="x-sec x-info-sec"><div class="x-wrap"><div class="x-head"><h2>Before you book</h2></div><div class="x-info"><div class="x-info-item x-info-0"><span class="x-info-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h3>Patch test</h3><p>A quick patch test at least 48 hours before your first set. Free, and takes five minutes.</p></div><div class="x-info-item x-info-1"><span class="x-info-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h3>Come lash-free</h3><p>No mascara or eye makeup on the day, so your set lasts as long as it should.</p></div><div class="x-info-item x-info-2"><span class="x-info-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h3>A small deposit</h3><p>A &pound;10 deposit holds your slot and comes off the price on the day.</p></div></div></div></section>
-<section class="x-sec x-gallery-sec" id="work" data-k1-seen="the gallery">
-    <div class="x-wrap">
-      <div class="x-head"><h2>Recent sets</h2>
-        <p class="k1-note"><span class="k1-note-dot" aria-hidden="true"></span>On your site, this is your own work, taken from your Instagram.</p></div>
-      <div class="x-gallery"><a class="x-tile x-tile-0" href="/free?trade=lash" style="--x1:28%;--y1:30%;--x2:72%;--y2:78%"><span>Natural classic</span></a><a class="x-tile x-tile-1" href="/free?trade=lash" style="--x1:70%;--y1:24%;--x2:30%;--y2:80%"><span>Wispy hybrid</span></a><a class="x-tile x-tile-2" href="/free?trade=lash" style="--x1:40%;--y1:70%;--x2:75%;--y2:25%"><span>Soft volume</span></a><a class="x-tile x-tile-3" href="/free?trade=lash" style="--x1:22%;--y1:64%;--x2:66%;--y2:20%"><span>Lash lift</span></a><a class="x-tile x-tile-4" href="/free?trade=lash" style="--x1:60%;--y1:40%;--x2:25%;--y2:75%"><span>Cat-eye map</span></a><a class="x-tile x-tile-5" href="/free?trade=lash" style="--x1:35%;--y1:25%;--x2:70%;--y2:70%"><span>Brow lamination</span></a></div>
-    </div>
-  </section>
+    
+  </div>
+</section>
+<section class="x-sec" id="services" data-k1-seen="the services">
+  <div class="x-wrap">
+    <div class="x-head"><h2>Treatments</h2><p>Not sure which set suits you? Book a classic and we&rsquo;ll talk it through first.</p></div>
+    <div class="x-cards"><a class="x-card" href="#preview">
+      <h3>Classic full set</h3><p>One extension on each natural lash. Mascara, but better.</p>
+      <span class="x-card-foot"><b>&pound;45</b><span>2 hrs</span><em>Book &rsaquo;</em></span>
+    </a><a class="x-card" href="#preview">
+      <h3>Hybrid full set</h3><p>Classic and volume mixed for a soft, textured look.</p>
+      <span class="x-card-foot"><b>&pound;55</b><span>2 hrs 15</span><em>Book &rsaquo;</em></span>
+    </a><a class="x-card" href="#preview">
+      <h3>Russian volume</h3><p>Handmade fans for full, fluffy, dramatic lashes.</p>
+      <span class="x-card-foot"><b>&pound;65</b><span>2 hrs 30</span><em>Book &rsaquo;</em></span>
+    </a><a class="x-card" href="#preview">
+      <h3>Infills</h3><p>Every two to three weeks to keep your set full.</p>
+      <span class="x-card-foot"><b>From &pound;30</b><span>1 hr</span><em>Book &rsaquo;</em></span>
+    </a><a class="x-card" href="#preview">
+      <h3>Lash lift &amp; tint</h3><p>Your own lashes, lifted and darkened for six weeks.</p>
+      <span class="x-card-foot"><b>&pound;40</b><span>1 hr</span><em>Book &rsaquo;</em></span>
+    </a><a class="x-card" href="#preview">
+      <h3>Brow lamination</h3><p>Brushed-up, fuller brows that stay put.</p>
+      <span class="x-card-foot"><b>&pound;35</b><span>45 mins</span><em>Book &rsaquo;</em></span>
+    </a></div>
+  </div>
+</section>
+<section class="x-sec x-pains-sec" data-k1-seen="the problems">
+  <div class="x-wrap">
+    <div class="x-head"><h2>Sound familiar?</h2></div>
+    <ul class="x-pains"><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Lashes that looked full on day one, half gone by day five.</span></li><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Itchy, heavy sets that pulled on your natural lashes.</span></li><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Twenty minutes every morning with mascara and curlers.</span></li></ul>
+  </div>
+</section>
+<section class="x-sec x-solution-sec">
+  <div class="x-wrap x-solution">
+    <div class="x-head"><h2>How we do it differently</h2><p>Every set is mapped to your eye shape and your natural lashes, with the right weight so they last and don&rsquo;t damage what&rsquo;s underneath.</p><a class="x-btn" href="#preview">Book your set</a></div>
+    <ul class="x-points"><li><span class="x-point-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><h3>Fully qualified, fully insured</h3><p>Five years of sets, trained in classic, hybrid and volume.</p></div></li><li><span class="x-point-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><h3>Medical-grade glue</h3><p>Gentle, fume-free, and patch tested on you first.</p></div></li><li><span class="x-point-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><h3>Cancel up to 24 hours before</h3><p>Move or cancel free with a day&rsquo;s notice.</p></div></li></ul>
+  </div>
+</section>
+<section class="x-sec" id="faq">
+  <div class="x-wrap x-faq-wrap">
+    <div class="x-head"><h2>Questions</h2><p>Anything else? <a href="#preview">Send us a message</a>.</p></div>
+    <div class="x-faq"><details><summary>How long do extensions last?</summary><p>With infills every two to three weeks, as long as you like. A set on its own lasts three to four weeks.</p></details><details><summary>Will they damage my natural lashes?</summary><p>Not when they&rsquo;re applied properly. We only use weights your lashes can carry.</p></details><details><summary>What should I do before my appointment?</summary><p>Come with clean, mascara-free lashes. That&rsquo;s it.</p></details><details><summary>Can I wear them if I wear contacts?</summary><p>Yes. Just take them out for the appointment itself.</p></details></div>
+  </div>
+</section>
 <section class="x-sec x-reviews-sec" id="reviews" data-k1-seen="the reviews">
-    <div class="x-wrap">
-      <div class="x-head"><p class="x-eyebrow">Reviews</p><h2>What clients say</h2></div>
-      <div class="x-reviews"><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span><blockquote>&ldquo;My lashes have never lasted this long. Three weeks and still full.&rdquo;</blockquote><figcaption><b>Hannah</b> &middot; Jesmond</figcaption></figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span><blockquote>&ldquo;So relaxing I fell asleep. Ellie matched the style perfectly to my eyes.&rdquo;</blockquote><figcaption><b>Priya</b> &middot; Gosforth</figcaption></figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span><blockquote>&ldquo;Spotless room, gentle and careful. I won&rsquo;t go anywhere else now.&rdquo;</blockquote><figcaption><b>Laura</b> &middot; Kenton</figcaption></figure></div>
-      <p class="x-reviews-more"><a href="/free?trade=lash"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span> 5.0 from 112 Google reviews &rsaquo;</a></p>
-    </div>
-  </section>
-<section class="x-band"><div class="x-wrap"><h2>First set? Let&rsquo;s get you booked.</h2><p>Patch test free, deposit off the price on the day.</p><a class="x-btn x-btn-band" href="/free?trade=lash">Book your first set</a></div></section>
-<section class="x-sec x-visit-sec" id="visit">
-    <div class="x-wrap x-visit">
-      <div class="x-visit-main">
-        <p class="x-eyebrow">Gosforth</p><h2>Find us</h2>
-        <p class="x-visit-addr">High Street, Gosforth</p><p class="x-visit-note">Upstairs studio, entrance next to the florist.</p>
-        <div class="x-visit-btns"><a class="x-btn" href="/free?trade=lash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span>07700 900318</span></a><a class="x-btn x-btn-ghost" href="/free?trade=lash">Message us</a></div>
-      </div>
-      <dl class="x-hours"><div><dt>Monday &ndash; Friday</dt><dd>9.30am &ndash; 7pm</dd></div><div><dt>Saturday</dt><dd>9am &ndash; 4pm</dd></div><div><dt>Sunday</dt><dd>Closed</dd></div></dl>
-    </div>
-  </section>
+  <div class="x-wrap">
+    <div class="x-head"><h2>What customers say</h2>
+      <p class="k1-note"><span class="k1-note-dot" aria-hidden="true"></span>On your site, your real Google reviews show here.</p></div>
+    <div class="x-reviews"><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
+      <blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote>
+      <figcaption><span class="x-avatar" aria-hidden="true">A</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
+    </figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
+      <blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote>
+      <figcaption><span class="x-avatar" aria-hidden="true">B</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
+    </figure><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
+      <blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote>
+      <figcaption><span class="x-avatar" aria-hidden="true">C</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
+    </figure></div>
+  </div>
+</section>
+<section class="x-band">
+  <div class="x-wrap">
+    <h2>Ready to skip the mascara?</h2><p>Book your first set, patch test included.</p>
+    <a class="x-btn x-btn-band" href="#preview">Book your set</a>
+    <ul class="x-risk"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Free patch test</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Cancel up to 24 hours before</span></li></ul>
+  </div>
+</section>
 </main>
 <footer class="x-foot">
   <div class="x-wrap">
-    <p class="x-foot-logo">Flutter Lash Studio</p>
-    <p>High Street, Gosforth &middot; 07700 900318</p>
-    <nav class="x-foot-links" aria-label="Footer"><a href="/free?trade=lash">Treatments</a><a href="/free?trade=lash">Before you book</a><a href="/free?trade=lash">Work</a><a href="/free?trade=lash">Reviews</a><a href="/free?trade=lash">Privacy</a></nav>
-    <p class="x-credit"><a href="/free?trade=lash">Website by Kanvas One</a></p>
+    <a class="x-logo" href="#preview"><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11c2.5 3.3 5.6 5 9 5s6.5-1.7 9-5"/><path d="M5 13.4L3.6 15.6M8.4 15.3l-.9 2.5M12 16v2.7M15.6 15.3l.9 2.5M19 13.4l1.4 2.2"/></svg></span><span>Flutter Lash Studio</span></a>
+    <p class="x-foot-addr">High Street, Gosforth &middot; 07700 900318</p>
+    <nav class="x-foot-links" aria-label="Footer"><a href="#preview">Treatments</a><a href="#preview">Book your set</a><a href="#preview">Contact</a><a href="#preview">Terms &amp; conditions</a><a href="#preview">Privacy policy</a><a href="#preview">Cancellation policy</a></nav>
+    <p class="x-credit">&copy; 2026 Flutter Lash Studio &middot; <a href="#preview">Website by Kanvas One</a></p>
   </div>
 </footer>
+<div class="k1-modal" id="k1Modal" hidden>
+  <div class="k1-modal-card" role="dialog" aria-modal="true" aria-labelledby="k1ModalH">
+    <button class="k1-modal-x" type="button" data-k1-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <span class="k1-face" aria-hidden="true"><span><i></i><i></i></span></span>
+    <h2 id="k1ModalH">This site is a preview of how yours might look.</h2>
+    <p>Or send us a site you already like, and we&rsquo;ll use it for inspiration.</p>
+    <p class="k1-modal-offer"><b>Get your free site design today.</b> Love it? Go online tomorrow.</p>
+    <a class="k1-modal-go" href="/free?trade=lash">Get my free design</a>
+    <button class="k1-modal-keep" type="button" data-k1-close>Keep looking</button>
+  </div>
+</div>
 <div class="k1-pill" id="k1Pill">
   <div class="k1-menu" id="k1Menu" hidden>
     <p class="k1-menu-h">See another example</p>
@@ -93,7 +134,7 @@
   <a class="k1-x" href="/free?trade=lash" aria-label="Close the example"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
 </div>
 <script src="/consent.js?v=9"></script>
-<script src="/examples/ex.js?v=1"></script>
+<script src="/examples/ex.js?v=2"></script>
 <script src="/beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 </body>
 </html>

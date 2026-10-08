@@ -1,8 +1,11 @@
-/* The example websites: Kanvas One's pill at the bottom of each one.
+/* The example websites: Kanvas One's layer on top of each one.
  *
- * The pill names the example, opens a list of the others, and closes back
- * to /free for this trade. Every link on the example itself already goes
- * there (examples.js), so there is nothing else to wire up.
+ * - Every link and button on the example (href="#preview", or
+ *   data-preview) opens the preview pop-up: this is how your site could
+ *   look, and a button to /free for this trade. The press is still a
+ *   click in the journey (beacon.js), and so is the pop-up's button.
+ * - The pill names the example, opens a list of the others, and closes
+ *   back to /free.
  */
 (function () {
   'use strict';
@@ -21,6 +24,41 @@
     }
   } catch (e) { /* private mode: the lead simply has no campaign */ }
 
+  /* ---------- the preview pop-up ---------- */
+  var modal = document.getElementById('k1Modal');
+  var opener = null;
+  function show() {
+    if (!modal) return;
+    opener = document.activeElement;
+    modal.hidden = false;
+    document.body.classList.add('k1-locked');
+    var go = modal.querySelector('.k1-modal-go');
+    if (go) go.focus({ preventScroll: true });
+  }
+  function hide() {
+    if (!modal || modal.hidden) return;
+    modal.hidden = true;
+    document.body.classList.remove('k1-locked');
+    if (opener && opener.focus) opener.focus({ preventScroll: true });
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('a[href="#preview"], [data-preview]');
+    if (t) { e.preventDefault(); show(); return; }
+    if (modal && !modal.hidden && (e.target === modal || (e.target.closest && e.target.closest('[data-k1-close]')))) hide();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (!modal || modal.hidden) return;
+    if (e.key === 'Escape') { hide(); return; }
+    // Keep Tab inside the pop-up while it is open.
+    if (e.key === 'Tab') {
+      var f = modal.querySelectorAll('a[href],button');
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  /* ---------- the pill ---------- */
   var pill = document.getElementById('k1Pill');
   var btn = document.getElementById('k1Switch');
   var menu = document.getElementById('k1Menu');
