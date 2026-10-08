@@ -424,7 +424,9 @@
           try { seen = localStorage.getItem('one.join-tracked'); } catch (e) {}
           if (seen !== sessionId) {
             try { localStorage.setItem('one.join-tracked', sessionId); } catch (e) {}
-            window.oneTrack('Subscribe', { currency: 'GBP', value: d.annual ? 99 : 9.99 }, sessionId);
+            // The same event and id the server sends (stripe-webhook.js), so
+            // Meta counts the sale once whether or not cookies were accepted.
+            window.oneTrack('Purchase', { currency: 'GBP', value: d.annual ? 99 : 9.99, content_name: 'starter' }, d.sub || sessionId);
           }
         }
         try { sessionStorage.removeItem(KEEP); } catch (e) {}
