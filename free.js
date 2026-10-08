@@ -20,18 +20,20 @@
      tapped the electricians ad, and put the nearest example first. A
      ?trade= on the link does the same for ads made later. Kept for the
      visit, so it survives a refresh. */
-  // [the words in the pill, the nearest real example, the example site]
+  // [the words in the pill, the nearest real site, the example site, the
+  //  colour at the top of that example, for the phone's status bar]
+  var DARK = '#2f2e2d';
   var TRADES = {
-    elec:    ['electricians', 'mpe', 'electricians'],
-    boiler:  ['heating engineers', 'mpe', 'heating-engineers'],
-    valet:   ['mobile car valeters', 'mpe', 'mobile-car-valeters'],
-    driving: ['driving instructors', 'mpe', 'driving-instructors'],
-    kids:    ['kids\u2019 clubs', 'dance', 'kids-clubs'],
-    hair:    ['hairdressers', 'fstr', 'hairdressers'],
-    lash:    ['lash artists', 'fstr', 'lash-artists'],
-    mua:     ['makeup artists', 'fstr', 'makeup-artists'],
-    nails:   ['nail techs', 'fstr', 'nail-techs'],
-    cake:    ['cake makers', 'fstr', 'cake-makers']
+    elec:    ['electricians', 'mpe', 'electricians', DARK],
+    boiler:  ['heating engineers', 'mpe', 'heating-engineers', DARK],
+    valet:   ['mobile car valeters', 'mpe', 'mobile-car-valeters', DARK],
+    driving: ['driving instructors', 'mpe', 'driving-instructors', '#f5faf6'],
+    kids:    ['kids\u2019 clubs', 'dance', 'kids-clubs', '#fffcf3'],
+    hair:    ['hairdressers', 'fstr', 'hairdressers', DARK],
+    lash:    ['lash artists', 'fstr', 'lash-artists', DARK],
+    mua:     ['makeup artists', 'fstr', 'makeup-artists', DARK],
+    nails:   ['nail techs', 'fstr', 'nail-techs', DARK],
+    cake:    ['cake makers', 'fstr', 'cake-makers', DARK]
   };
   var ADS = {
     // Northumberland
@@ -65,15 +67,25 @@
     var also = document.getElementById('builtAlso');
     if (pill) pill.textContent = t[0];
     if (also) also.hidden = false;
-    var ex = document.getElementById('tradeExample');
-    if (ex) { ex.href = '/examples/' + t[2]; ex.innerHTML = 'See an example website for ' + t[0] + ' &rsaquo;'; }
-    // The nearest example first; the order sets which one shows first.
-    var cycle = document.getElementById('madeCycle');
-    var first = cycle && cycle.querySelector('img[data-kind="' + t[1] + '"]');
-    if (first && first !== cycle.firstElementChild) {
-      first.removeAttribute('loading');
-      cycle.insertBefore(first, cycle.firstElementChild);
+    /* The phone shows the example site for their trade, not the cycle of
+       our real ones, with a button to open it and a line saying theirs is
+       made for them. */
+    var screen = document.getElementById('madeCycle');
+    if (screen) {
+      screen.innerHTML = '<img class="sb-example-shot" src="/assets/examples/phone/' + t[2] + '.jpg" alt="" width="780" height="1692" decoding="async" style="background:' + t[3] + '">';
+      var sb = screen.closest('.sb');
+      if (sb) sb.classList.add('is-trade');
+      var phone = document.getElementById('sbPhone');
+      if (phone) phone.setAttribute('aria-label', 'An example website for ' + t[0]);
+      var tag = document.getElementById('sbTag');
+      if (tag) tag.textContent = 'An example for ' + t[0];
+      var title = document.getElementById('sbTitle');
+      if (title) title.innerHTML = 'What yours could <span class="g-free">look like.</span>';
+      var note = document.getElementById('tradeNote');
+      if (note) note.hidden = false;
     }
+    var ex = document.getElementById('tradeExample');
+    if (ex) { ex.href = '/examples/' + t[2]; ex.className = 'sb-preview'; ex.innerHTML = 'Preview the full site &rsaquo;'; }
   })();
 
   var form = document.getElementById('offer');

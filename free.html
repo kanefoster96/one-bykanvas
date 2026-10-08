@@ -20,7 +20,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
-<link rel="stylesheet" href="styles.css?v=135">
+<link rel="stylesheet" href="styles.css?v=136">
 </head>
 <body>
 
@@ -72,9 +72,9 @@
         </div>
       </div>
       <div class="mini-step" id="offerStep3" hidden>
-        <label for="handle">Sent! For a better free design, add a link to one of your business pages or social accounts</label>
+        <label for="handle">Sent! For a better free design, add a link to your business, or to a site whose style you like</label>
         <div class="mini-row">
-          <input id="handle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@instagram, Facebook, Checkatrade, a website" enterkeyhint="done">
+          <input id="handle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@instagram, Facebook, or a site you like" enterkeyhint="done">
           <button class="mini-go" id="offerHandleGo" type="button" aria-label="Add it"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
         </div>
         <p class="hint mini-skip"><button class="linkish" id="offerSkip" type="button">Nothing online yet? Skip this</button></p>
@@ -88,10 +88,10 @@
          the one nearest their trade first (free.js). Dot sits beside it,
          looking round and blinking. -->
     <div class="sb reveal" data-k1-seen="the examples">
-      <p class="sb-tag">Real sites, live now</p>
-      <h2 class="sb-title">Built for North&nbsp;East <span class="g-free">businesses.</span></h2>
+      <p class="sb-tag" id="sbTag">Real sites, live now</p>
+      <h2 class="sb-title" id="sbTitle">Built for North&nbsp;East <span class="g-free">businesses.</span></h2>
       <div class="sb-stage">
-        <div class="sb-phone" aria-label="Websites we have built for North East businesses" role="img">
+        <div class="sb-phone" id="sbPhone" aria-label="Websites we have built for North East businesses" role="img">
           <div class="sb-screen" id="madeCycle">
             <img data-kind="mpe" src="assets/phone-mpe.jpg" alt="" style="background:#ffffff" width="1267" height="2260" decoding="async">
             <img data-kind="dance" src="assets/phone-academy.jpg" alt="" style="background:#000000" width="1264" height="2260" loading="lazy" decoding="async">
@@ -101,10 +101,11 @@
         </div>
         <div class="dot-look" aria-hidden="true"><span class="dot-face"><span class="dot-eyes"><i></i><i></i></span></span></div>
       </div>
-      <blockquote class="sb-quote">&ldquo;Now people searching for dog training near me find the site, read how I work, and book themselves in. &hellip; I&rsquo;ve got a waiting list.&rdquo;<cite>A dog trainer, Newcastle</cite></blockquote>
-      <!-- An example site for their trade when the ad said which (free.js),
-           otherwise the gallery of them all. -->
+      <!-- From an ad, the phone shows the example site for their trade and
+           this opens it (free.js); otherwise the gallery of them all. -->
       <p class="sb-example"><a id="tradeExample" href="/examples">See example websites &rsaquo;</a></p>
+      <p class="sb-note" id="tradeNote" hidden>Yours is designed around your business. Like the look of another site? Send us the link after you ask for your free design.</p>
+      <blockquote class="sb-quote">&ldquo;Now people searching for dog training near me find the site, read how I work, and book themselves in. &hellip; I&rsquo;ve got a waiting list.&rdquo;<cite>A dog trainer, Newcastle</cite></blockquote>
     </div>
   </div>
 </section>
@@ -195,7 +196,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=34"></script>
-<script src="free.js?v=11"></script>
+<script src="free.js?v=12"></script>
 <script src="reviews.js?v=4"></script>
 <script src="chat.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>

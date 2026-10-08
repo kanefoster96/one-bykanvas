@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 135;
+const CSS_V = 136;
 const SCRIPT_V = 34;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -848,4 +848,4 @@ for (const m of MAX) {
 
 /* ------------------------------------------------------------- examples */
 /* /examples and one made-up business per trade: examples.js. */
-require('./examples.js').build(OUT, { cssV: 135, scriptV: 34 });
+require('./examples.js').build(OUT, { cssV: 136, scriptV: 34 });
