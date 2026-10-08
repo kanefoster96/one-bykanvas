@@ -421,9 +421,20 @@ ${b.rich ? `<!-- One Try-it-free that follows a phone down the page once the her
 const LOCAL = require('./local.js');
 /* Trades with an example site at /examples/<slug>: their page links to it. */
 const EXAMPLE_SLUGS = require('./examples-data.js').map((e) => e.slug);
+/* Every "Try it free" on a trade page opens the free design for that trade
+   (/free, with the trade in its green pill and its example in the phone):
+   the keys are free.js's. Local pages go to /free as it is. */
+const FREE_KEYS = {
+  trades: 'trades', salons: 'salons', barbers: 'barbers', 'coffee-shops': 'cafes', gyms: 'gyms',
+  cleaners: 'cleaners', tutors: 'tutors', photographers: 'photographers', gardeners: 'gardeners',
+  hairdressers: 'hair', 'lash-artists': 'lash', 'makeup-artists': 'mua', 'cake-makers': 'cake',
+  'kids-clubs': 'kids', electricians: 'elec', 'heating-engineers': 'boiler', 'nail-techs': 'nails',
+  'mobile-car-valeters': 'valet', 'driving-instructors': 'driving'
+};
 for (const b of INDUSTRIES.concat(LOCAL)) {
   const file = path.join(OUT, `${b.file || 'websites-for-' + b.slug}.html`);
-  fs.writeFileSync(file, page(b));
+  const freeUrl = FREE_KEYS[b.slug] ? '/free?trade=' + FREE_KEYS[b.slug] : '/free';
+  fs.writeFileSync(file, page(b).replace(/href="#miniFree"/g, `href="${freeUrl}"`));
   console.log('wrote', path.basename(file));
 }
 
