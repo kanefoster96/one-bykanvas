@@ -83,4 +83,25 @@
   new MutationObserver(lift).observe(document.body, { childList: true });
   window.addEventListener('resize', lift);
   lift();
+
+  /* The header is see-through over the hero and turns to frosted glass
+     once the page scrolls under it. */
+  var nav = document.getElementById('xNav');
+  if (nav) {
+    var onScroll = function () { nav.classList.toggle('is-scrolled', window.scrollY > 24); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  /* The services row's arrows, on a computer: one card along each press. */
+  document.querySelectorAll('.x-rail-wrap').forEach(function (wrap) {
+    var rail = wrap.querySelector('.x-rail');
+    wrap.querySelectorAll('[data-rail]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var card = rail.querySelector('.x-card');
+        var step = card ? card.getBoundingClientRect().width + 14 : 300;
+        rail.scrollBy({ left: step * Number(b.getAttribute('data-rail')), behavior: 'smooth' });
+      });
+    });
+  });
 })();
