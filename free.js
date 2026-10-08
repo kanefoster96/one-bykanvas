@@ -33,7 +33,19 @@
     lash:    ['lash artists', 'lash-artists', DARK],
     mua:     ['makeup artists', 'makeup-artists', DARK],
     nails:   ['nail techs', 'nail-techs', DARK],
-    cake:    ['cake makers', 'cake-makers', DARK]
+    cake:    ['cake makers', 'cake-makers', DARK],
+    // From the homepage's trade picker: named in the pill, with the
+    // examples in turn until they have one of their own.
+    trades:        ['trades'],
+    salons:        ['salons'],
+    barbers:       ['barbers'],
+    cafes:         ['coffee shops'],
+    gyms:          ['gyms'],
+    cleaners:      ['cleaners'],
+    tutors:        ['tutors'],
+    photographers: ['photographers'],
+    gardeners:     ['gardeners'],
+    dance:         ['dance schools']
   };
   var ADS = {
     // Northumberland
@@ -69,6 +81,7 @@
     if (also) also.hidden = false;
     /* The phone shows the example site for their trade, and the button
        opens it. */
+    if (!t[1]) return;
     var screen = document.getElementById('madeCycle');
     if (screen) {
       screen.innerHTML = '<img class="sb-example-shot" src="/assets/examples/phone/' + t[1] + '.jpg" alt="" width="780" height="1692" decoding="async" style="background:' + t[2] + '">';
