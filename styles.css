@@ -1641,13 +1641,6 @@ a.hero-pill:hover .pill-go{opacity:1}
 .join .join-face{width:52px;height:52px;flex:0 0 auto;box-shadow:0 8px 20px rgba(26,127,55,.22)}
 .join .join-face .dot-eyes{gap:11px}
 .join .join-face .dot-eyes i{width:8px;height:13px}
-/* Ask Dot, in the header: the chat opens from here, so no bubble sits
-   over the pay button. */
-.join-ask{margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border:1px solid var(--line);border-radius:980px;background:#fff;color:var(--ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
-.join-ask:hover{border-color:var(--ink-3)}
-.join-ask .dot-face{width:26px;height:26px;box-shadow:none}
-.join-ask .dot-eyes{gap:5px}
-.join-ask .dot-eyes i{width:4px;height:7px}
 /* Dot looks at the box you are in (join.js sets the transform). */
 .join .join-face .dot-eyes.is-aiming{animation:none;transition:transform .25s var(--ease)}
 .join-say{position:relative;margin:0 0 6px;padding:10px 14px;border-radius:16px 16px 16px 4px;background:#f2faf4;color:#14532d;font-size:14.5px;font-weight:500;line-height:1.4;animation:join-say .45s var(--ease) both}

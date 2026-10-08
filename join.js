@@ -470,8 +470,8 @@
   });
 
   /* ---------------------------------------------------------- Dot
-     He watches the box you are in (his eyes turn to it), and the chat
-     opens with a tip for the step you are on (chat.js reads oneGuide). */
+     He watches the box you are in (his eyes turn to it). oneGuide is his
+     tip for the step, for the chat (chat.js) wherever it is loaded. */
   function look(el) {
     var step = steps[current - 1];
     var eyes = step && step.querySelector('.join-face .dot-eyes');
