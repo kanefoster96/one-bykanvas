@@ -16,8 +16,8 @@ const fs = require('fs');
 const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
-const EX_CSS_V = 7;
-const EX_JS_V = 4;
+const EX_CSS_V = 8;
+const EX_JS_V = 5;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
 
@@ -317,8 +317,20 @@ const ctaBtn = (e, cls) => `<a class="x-btn${cls ? ' ' + cls : ''}" href="${P}">
    the work (a photo the width of the page), a free slot, a colour, the
    cake, the fix, the price, the pass. */
 
+/* A box in place of the hero button: the wedding date, or a postcode.
+   On their site it would take the visitor on with it filled in; here it
+   opens the preview, which says so. */
+function askBox(e) {
+  const a = e.x.ask;
+  return `<form class="x-ask" data-preview-form data-say="${a.say}" novalidate>
+        <label for="xAsk">${a.label}</label>
+        <div class="x-ask-row">${a.type === 'date' ? `<input id="xAsk" name="date" type="date" value="${a.value}">` : `<input id="xAsk" name="postcode" type="text" inputmode="text" autocomplete="postal-code" autocapitalize="characters" maxlength="8" placeholder="${a.placeholder}">`}<button class="x-btn" type="submit">${a.btn || e.hero.cta}</button></div>
+      </form>`;
+}
+
 function copy(e, widget) {
   const h = e.hero;
+  if (!widget && e.x.ask) widget = askBox(e);
   return `<div class="x-hero-copy">
       <p class="x-status"><span aria-hidden="true"></span>${h.status}</p>
       <h1>${h.h1}</h1>
@@ -330,11 +342,7 @@ function copy(e, widget) {
 
 /* Their best photo, the whole hero behind the words. */
 function heroPhoto(e) {
-  const img = heroImage(e), d = e.x.date;
-  const widget = d ? `<div class="x-date">
-        <label for="xDate">${d.label}</label>
-        <div class="x-date-row"><input id="xDate" type="date" value="${d.value}"><a class="x-btn" href="${P}">${e.hero.cta}</a></div>
-      </div>` : '';
+  const img = heroImage(e), widget = '';
   return `<section class="x-hero x-hero--photo x-ph-${e.key}${img ? ' has-img' : ''}"${img ? ` style="--hero-img:url('${img}')"` : ''}>
   <div class="x-ph" aria-hidden="true">${img ? '' : PH[e.key]()}</div>
   <div class="x-wrap x-hero-in">
@@ -762,9 +770,10 @@ function modal(e) {
   <div class="k1-modal-card" role="dialog" aria-modal="true" aria-labelledby="k1ModalH">
     <button class="k1-modal-x" type="button" data-k1-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <span class="k1-face" aria-hidden="true"><span><i></i><i></i></span></span>
-    <h2 id="k1ModalH">This site is a preview of how yours might look.</h2>
-    <p>We build yours from the page you already have. Like another site&rsquo;s style? Send it too.</p>
-    <p class="k1-modal-offer"><b>Live in 24 hours.</b> &pound;9.99 a month, cancel any month.</p>
+    <h2 id="k1ModalH">This is a preview of how yours could look.</h2>
+    <p class="k1-modal-say" id="k1Say" hidden></p>
+    <p>Join today and we build your full website from the page you already have.</p>
+    <p class="k1-modal-offer"><b>Live by tomorrow.</b> &pound;9.99 a month, cancel any month.</p>
     <a class="k1-modal-go" href="${join(e)}">Get started</a>
     <button class="k1-modal-keep" type="button" data-k1-close>Keep looking</button>
   </div>

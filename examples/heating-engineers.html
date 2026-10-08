@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="/examples/ex.css?v=7">
+<link rel="stylesheet" href="/examples/ex.css?v=8">
 <style>:root{--bg:#fffaf6;--ink:#1d1a18;--muted:#6b625c;--accent:#e0501f;--accent2:#1d1a18;--accent3:#ffc15e;--accent4:#e0501f;--soft:#f8ede4;--surface:#ffffff;--accent-text:#b83c0f;--line:rgba(29,26,24,.1);--fh:'Archivo', system-ui, sans-serif;--fb:'Archivo', system-ui, sans-serif;--hw:800;--hls:-.03em;--radius:14px;--btn-radius:999px;--on-accent:#fff;--hero-bg:radial-gradient(ellipse at 85% 0%, rgba(234,90,42,.35), transparent 55%), radial-gradient(ellipse at 0% 100%, #3a2a22 0%, transparent 60%), #1d1a18;--hero-ink:#fff8f3;--case:none}</style>
 </head>
 <body class="T-boiler H-outcome hero-dark">
@@ -26,10 +26,13 @@
 <section class="x-hero x-hero--outcome">
   <div class="x-wrap x-hero-in">
     <div class="x-hero-copy">
-      <p class="x-status"><span aria-hidden="true"></span>Same-day boiler repairs in North Tyneside</p>
+      <p class="x-status"><span aria-hidden="true"></span>Same-day boiler repairs</p>
       <h1>Heating and hot water back, usually the same day.</h1>
       <p class="x-sub">Boiler repairs, servicing and new boilers across North Tyneside, from Gas Safe registered engineers who carry the common parts on the van.</p>
-      <a class="x-btn x-btn-hero" href="#preview">Book an engineer</a>
+      <form class="x-ask" data-preview-form data-say="On your site, this shows their nearest free slot and books it with their postcode filled in." novalidate>
+        <label for="xAsk">Find an engineer near you</label>
+        <div class="x-ask-row"><input id="xAsk" name="postcode" type="text" inputmode="text" autocomplete="postal-code" autocapitalize="characters" maxlength="8" placeholder="Enter your postcode"><button class="x-btn" type="submit">Find an engineer</button></div>
+      </form>
       <ul class="x-risk"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>&pound;60 fixed callout</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>No fix, no charge</span></li></ul>
     </div>
     <div class="x-hero-side">
@@ -110,9 +113,10 @@
   <div class="k1-modal-card" role="dialog" aria-modal="true" aria-labelledby="k1ModalH">
     <button class="k1-modal-x" type="button" data-k1-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <span class="k1-face" aria-hidden="true"><span><i></i><i></i></span></span>
-    <h2 id="k1ModalH">This site is a preview of how yours might look.</h2>
-    <p>We build yours from the page you already have. Like another site&rsquo;s style? Send it too.</p>
-    <p class="k1-modal-offer"><b>Live in 24 hours.</b> &pound;9.99 a month, cancel any month.</p>
+    <h2 id="k1ModalH">This is a preview of how yours could look.</h2>
+    <p class="k1-modal-say" id="k1Say" hidden></p>
+    <p>Join today and we build your full website from the page you already have.</p>
+    <p class="k1-modal-offer"><b>Live by tomorrow.</b> &pound;9.99 a month, cancel any month.</p>
     <a class="k1-modal-go" href="/join?trade=boiler">Get started</a>
     <button class="k1-modal-keep" type="button" data-k1-close>Keep looking</button>
   </div>
@@ -131,7 +135,7 @@
   <a class="k1-x" href="/free?trade=boiler" aria-label="Close the example"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
 </div>
 <script src="/consent.js?v=9"></script>
-<script src="/examples/ex.js?v=4"></script>
+<script src="/examples/ex.js?v=5"></script>
 <script src="/beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 </body>
 </html>

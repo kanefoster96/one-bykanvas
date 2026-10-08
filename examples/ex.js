@@ -30,9 +30,11 @@
   /* ---------- the preview pop-up ---------- */
   var modal = document.getElementById('k1Modal');
   var opener = null;
-  function show() {
+  function show(say) {
     if (!modal) return;
     opener = document.activeElement;
+    var line = document.getElementById('k1Say');
+    if (line) { line.innerHTML = say || ''; line.hidden = !say; }
     modal.hidden = false;
     document.body.classList.add('k1-locked');
     var go = modal.querySelector('.k1-modal-go');
@@ -48,6 +50,14 @@
     var t = e.target.closest && e.target.closest('a[href="#preview"], [data-preview]');
     if (t) { e.preventDefault(); show(); return; }
     if (modal && !modal.hidden && (e.target === modal || (e.target.closest && e.target.closest('[data-k1-close]')))) hide();
+  });
+  /* The postcode and wedding-date boxes: on their site these would carry
+     on with what was typed; here they open the preview and say so. */
+  document.addEventListener('submit', function (e) {
+    var f = e.target.closest && e.target.closest('[data-preview-form]');
+    if (!f) return;
+    e.preventDefault();
+    show(f.getAttribute('data-say'));
   });
   document.addEventListener('keydown', function (e) {
     if (!modal || modal.hidden) return;

@@ -19,15 +19,15 @@
   //  that example, for the phone's status bar]
   var DARK = '#2f2e2d';
   var TRADES = {
-    elec:    ['electricians', 'electricians', '#282d29'],
-    boiler:  ['heating engineers', 'heating-engineers', '#40251c'],
+    elec:    ['electricians', 'electricians', '#282d27'],
+    boiler:  ['heating engineers', 'heating-engineers', '#41261d'],
     valet:   ['mobile car valeters', 'mobile-car-valeters', '#102327'],
     driving: ['driving instructors', 'driving-instructors', '#eaf7ee'],
     kids:    ['kids\u2019 clubs', 'kids-clubs', '#fff3d9'],
     hair:    ['hairdressers', 'hairdressers', '#442c20'],
     lash:    ['lash artists', 'lash-artists', '#fef6f4'],
     mua:     ['makeup artists', 'makeup-artists', '#1a1512'],
-    nails:   ['nail techs', 'nail-techs', '#ffeff7'],
+    nails:   ['nail techs', 'nail-techs', '#fdf0f7'],
     cake:    ['cake makers', 'cake-makers', '#ffffff'],
     // From the homepage's trade picker: named in the pill, with the
     // examples in turn until they have one of their own.
