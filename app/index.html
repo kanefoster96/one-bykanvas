@@ -75,6 +75,13 @@
   <!-- ---- Website (Starter: no dashboard, so the site itself is the first tab) ---- -->
   <section class="oa-tab" id="tabWebsite" hidden>
     <div class="oa-tab-head"><h2>Your website</h2></div>
+    <!-- A tapped "new enquiry" notification lands here: Starter has no
+         dashboard to open it in, and the full message is in their email. -->
+    <div class="oa-card" id="siteEnquiry" role="status" hidden>
+      <p class="oa-card-title" id="siteEnquiryTitle">New enquiry from your site</p>
+      <p class="hint" id="siteEnquiryBody"></p>
+      <p class="hint">The full message is in your email. Reply to that email to answer them.</p>
+    </div>
     <div class="oa-card oa-status">
       <div class="oa-status-row">
         <span class="oa-status-dot" id="siteDot"></span>
@@ -579,6 +586,6 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=25"></script>
+<script src="app.js?v=26"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
-<link rel="stylesheet" href="styles.css?v=139">
+<link rel="stylesheet" href="styles.css?v=141">
 </head>
 <body class="auth-body">
 
@@ -22,9 +22,25 @@
 </header>
 
 <main class="wiz join">
-  <div class="wiz-top" id="wizTop">
-    <p class="wiz-count"><span id="stepNow">1</span> of 3</p>
+  <div class="wiz-top join-top" id="wizTop">
+    <ol class="join-steps" aria-label="Progress">
+      <li class="is-on"><i>1</i><span>You</span></li>
+      <li><i>2</i><span>Address</span></li>
+      <li><i>3</i><span>Go live</span></li>
+    </ol>
+    <p class="wiz-count sr-only">Step <span id="stepNow">1</span> of 3</p>
     <div class="wiz-bar"><i id="bar"></i></div>
+  </div>
+
+  <!-- Their site, filling in as they type: the name in the header, the
+       address in the bar, the trade under it (join.js). -->
+  <div class="join-live" id="joinLive" aria-hidden="true">
+    <div class="jl-bar"><i></i><i></i><i></i><span class="jl-url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><b id="jlUrl">yourbusiness.co.uk</b></span><span class="jl-build">Building<i>.</i><i>.</i><i>.</i></span></div>
+    <div class="jl-site">
+      <span class="jl-badge" id="jlBadge">Y</span>
+      <span class="jl-text"><b id="jlName">Your business</b><small id="jlTrade">Your website, live within 24 hours</small></span>
+      <span class="jl-btn">Get in touch</span>
+    </div>
   </div>
 
   <div class="wiz-view">
@@ -32,6 +48,7 @@
 
       <!-- ============ 1. who ============ -->
       <section class="wiz-step" data-step="1" aria-label="Your business">
+        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">Hi, I&rsquo;m Dot! Let&rsquo;s build your website.</p></div>
         <h1>Your website, live in 24&nbsp;hours.</h1>
         <p class="wiz-sub">Built for you, <strong>&pound;9.99 a month</strong>. Three quick questions, then you&rsquo;re done.</p>
         <div class="hp" aria-hidden="true">
@@ -42,12 +59,13 @@
         <div class="field"><label for="j_email">Email</label><input id="j_email" type="email" autocomplete="email" maxlength="254">
           <p class="hint">Where we send your site when it&rsquo;s live.</p></div>
         <p class="note" id="note1" role="status" aria-live="polite"></p>
-        <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <button class="btn btn-primary full wiz-next" data-next type="button">Next <span class="join-arrow" aria-hidden="true">&rarr;</span></button>
         <p class="wiz-foot">Already with us? <a href="/login.html">Log in</a></p>
       </section>
 
       <!-- ============ 2. the address ============ -->
       <section class="wiz-step" data-step="2" aria-label="Your web address" hidden>
+        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say" id="say2">Ooh, nice name. Now pick your spot on the internet.</p></div>
         <h1>Pick your web address.</h1>
         <p class="wiz-sub">Three that are free right now. Included in your plan.</p>
         <div class="pick" id="domList" aria-live="polite" aria-busy="true">
@@ -68,12 +86,13 @@
           </div>
         </details>
         <p class="note" id="note2" role="status" aria-live="polite"></p>
-        <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
+        <button class="btn btn-primary full wiz-next" data-next type="button">Next <span class="join-arrow" aria-hidden="true">&rarr;</span></button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
 
       <!-- ============ 3. the page, then pay ============ -->
       <section class="wiz-step" data-step="3" aria-label="Your page and payment" hidden>
+        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">Nearly there! Show us where you are now.</p></div>
         <h1>Where are you online now?</h1>
         <p class="wiz-sub">We build your site from it: your photos, your words, your prices.</p>
         <div class="field"><label for="j_link">Link to your Instagram, Facebook or current site</label>
@@ -98,13 +117,6 @@
           </label>
         </div>
 
-        <div class="urlbar" id="joinBar">
-          <span class="urlbar-lights" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="urlbar-pill">
-            <svg class="urlbar-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-            <span id="joinDomain">yourbusiness.co.uk</span>
-          </span>
-        </div>
         <ul class="ticks join-ticks">
           <li>Built for you and live within 24 hours</li>
           <li>Your web address included</li>
@@ -125,9 +137,7 @@
 
       <!-- ============ after Stripe: make the account ============ -->
       <section class="wiz-step" data-step="4" aria-label="Make your account" hidden>
-        <div class="done-tick" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
-        </div>
+        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">Woohoo! We&rsquo;re building it now.</p></div>
         <h1 id="doneHead">You&rsquo;re in.</h1>
         <p class="wiz-sub" id="doneSub">Your site goes live within 24 hours. We&rsquo;ll email you the moment it is.</p>
 
@@ -164,7 +174,8 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="join.js?v=1"></script>
+<script src="join.js?v=3"></script>
+<script src="chat.js?v=8" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits defer></script>
 <script src="beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
 </body>

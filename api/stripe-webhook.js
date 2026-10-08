@@ -620,12 +620,16 @@ module.exports = async function handler(req, res) {
     const customerId = typeof invoice.customer === 'string' ? invoice.customer : (invoice.customer && invoice.customer.id);
     if (!customerId) return;
     const { data: p } = await admin
-      .from('profiles').select('id').eq('stripe_customer_id', customerId).maybeSingle();
+      .from('profiles').select('id, business_name, contact_name').eq('stripe_customer_id', customerId).maybeSingle();
     if (!p) return;
 
     const { data: who } = await admin.auth.admin.getUserById(p.id);
     const email = who && who.user && who.user.email;
-    if (!email) return;
+    if (!email) {
+      await notifyAdmin(admin, 'A payment failed: ' + (p.business_name || p.contact_name || 'a customer'),
+        'No login email on file, so they have not been told. Stripe will retry over the next week.');
+      return;
+    }
 
     const site = ourSiteUrl();
 
@@ -679,8 +683,9 @@ module.exports = async function handler(req, res) {
     await notify(admin, p.id, 'We couldn\u2019t take payment',
       'Your card was declined - updating it from your account fixes it straight away.',
       '/account.html');
-    await notifyAdmin(admin, 'A payment failed',
-      'Stripe will retry over the next week; their plan pauses if it keeps failing.');
+    await notifyAdmin(admin, 'A payment failed: ' + (p.business_name || p.contact_name || email),
+      (p.business_name ? p.business_name + ' (' + email + ')' : email) + ' - ' + amountDue
+      + ' did not go through. Stripe will retry over the next week; their plan pauses if it keeps failing.');
   }
 
   /* Everything worth knowing to start the build, in one message. Without this

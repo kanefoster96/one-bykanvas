@@ -116,6 +116,25 @@ async function load() {
   tellApp();
   showBellCount();
   openFromHash();
+  loadSubs();
+}
+
+/* Monthly-or-annual, the real amount and "set to end" live in Stripe, not
+   on the profile. Fetched once after the page has drawn; the Customers
+   filters and the recurring figure use it when it arrives and fall back
+   to the profile until then. */
+var subs = {};
+var subsLoaded = false;
+async function loadSubs() {
+  try {
+    var res = await api({ action: 'subscriptionsOverview' });
+    subs = res.subscriptions || {};
+    subsLoaded = true;
+    if (activeSection === 'customers' || activeSection === 'payments') {
+      if (activeSection === 'customers' && selectedCustomerId) return; // don't redraw an open form
+      render();
+    }
+  } catch (e) { /* the page works without it */ }
 }
 
 /* Framed in the One app, the app keeps its own loading screen up until
@@ -226,7 +245,44 @@ function planPriorityLabel(userId) {
   return (p && PLAN_QUEUE[p.active_plan]) || 'in turn';
 }
 
-function isCustomer(p) { return !!p.active_plan; }
+/* Past due or unpaid: Stripe is still trying the card. The webhook clears
+   active_plan for those, but they are still customers - they stay listed,
+   flagged, rather than vanishing into Contacts with nothing to act on. */
+function isPastDue(p) { return p.subscription_status === 'past_due' || p.subscription_status === 'unpaid'; }
+function isCustomer(p) { return !!p.active_plan || isPastDue(p); }
+function planOf(p) { return p.active_plan || (isPastDue(p) ? p.selected_plan : null) || null; }
+function subOf(p) { return (p && p.stripe_subscription_id && subs[p.stripe_subscription_id]) || null; }
+function isCancelling(p) { var s = subOf(p); return !!(s && s.cancelAtPeriodEnd); }
+function paidNoPassword(p) { return !!p.needs_password && isCustomer(p); }
+
+var STATUS_WORD = { active: 'Active', trialing: 'Trialing', past_due: 'Payment failed', unpaid: 'Payment failed',
+  canceled: 'Cancelled', incomplete: 'Incomplete', incomplete_expired: 'Expired', paused: 'Paused' };
+
+/* The plan chip plus whatever needs a second look: a failed payment, a
+   membership set to end, or a /join payer who never made their account. */
+function statusChips(p) {
+  var frag = document.createDocumentFragment();
+  if (isPastDue(p)) frag.appendChild(el('span', 'plan-chip k1-chip-bad', 'Payment failed'));
+  else if (isCancelling(p)) frag.appendChild(el('span', 'plan-chip k1-chip-warn', 'Cancelling'));
+  if (paidNoPassword(p)) frag.appendChild(el('span', 'plan-chip k1-chip-warn', 'No password yet'));
+  return frag;
+}
+
+function chipBox(p) {
+  var box = el('div', 'k1-chips');
+  box.appendChild(el('span', 'plan-chip', PLAN_NAME[planOf(p)] || 'No plan'));
+  box.appendChild(statusChips(p));
+  return box;
+}
+
+/* "3h ago", "2d ago" - for the build queue, where the hours are the point. */
+function hoursAgo(iso) {
+  var d = new Date(iso);
+  if (isNaN(d)) return { text: '', over: false };
+  var h = Math.max(0, Math.floor((Date.now() - d.getTime()) / 36e5));
+  var text = h < 1 ? 'Joined under an hour ago' : h < 48 ? 'Joined ' + h + 'h ago' : 'Joined ' + Math.floor(h / 24) + 'd ago';
+  return { text: text, over: h >= 24 };
+}
 
 function lifetimeSpent(userId) {
   return state.requests.reduce(function (sum, r) {
@@ -260,7 +316,9 @@ function seoLoggedThisPeriod(p) {
    notification dot, since it means work is owed regardless of the request
    queue being empty. */
 function unbuiltCustomers() {
-  return state.profiles.filter(function (p) { return p.active_plan && p.site_status === 'building'; });
+  /* Oldest first: the 24-hour promise is kept by whoever has waited longest. */
+  return state.profiles.filter(function (p) { return p.active_plan && p.site_status === 'building'; })
+    .slice().sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
 }
 
 function pendingSeoCustomers() {
@@ -384,8 +442,9 @@ function siteEditorRow(p) {
   url.type = 'text';
   // Prefilled with what they asked for once it is bought, so marking a site
   // live is one click rather than retyping the address.
-  url.value = p.site_url || '';
-  url.placeholder = p.requested_domain || 'their-site.co.uk';
+  url.value = p.site_url
+    || (p.requested_domain ? (/^https?:\/\//i.test(p.requested_domain) ? p.requested_domain : 'https://' + p.requested_domain) : '');
+  url.placeholder = 'https://their-site.co.uk';
   url.setAttribute('aria-label', 'Site address for ' + (p.business_name || 'this customer'));
 
   var status = el('select', 'admin-select');
@@ -596,6 +655,14 @@ function newBuildCard(p) {
   head.appendChild(names);
   head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan] || 'No plan'));
   card.appendChild(head);
+
+  var age = hoursAgo(p.created_at);
+  if (age.text) {
+    card.appendChild(el('p', 'cust-points' + (age.over ? ' is-over' : ''),
+      age.text + (age.over && p.active_plan === 'starter' ? ' · past the 24 hours' : '')));
+  }
+  var reachB = contactLine(p);
+  if (reachB) card.appendChild(reachB);
 
   card.appendChild(onboardingLines(p));
   var want = domainWantLine(p);
@@ -1069,7 +1136,7 @@ function contactLine(p) {
 /* The chip is the truth about money: a live plan by name, a picked-but-unpaid
    plan marked as such, or no plan at all. */
 function planChip(p) {
-  if (p.active_plan) return el('span', 'plan-chip', PLAN_NAME[p.active_plan] || 'No plan');
+  if (isCustomer(p)) return chipBox(p);
   return el('span', 'plan-chip is-none',
     p.selected_plan ? PLAN_NAME[p.selected_plan] + ' (unpaid)' : 'No plan');
 }
@@ -1104,14 +1171,14 @@ function customerListRow(p) {
   names.appendChild(el('p', 'cust-sub',
     [p.contact_name, p.business_type].filter(Boolean).join(' · ') || 'No details yet'));
   head.appendChild(names);
-  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan] || 'No plan'));
+  head.appendChild(chipBox(p));
   card.appendChild(head);
 
   var reach = contactLine(p);
   if (reach) card.appendChild(reach);
 
   card.appendChild(el('p', 'cust-points',
-    openCountFor(p.id) + ' open · ' + PLAN_QUEUE[p.active_plan] + ' · £' + (lifetimeSpent(p.id) / 100).toFixed(0) + ' spent lifetime'));
+    openCountFor(p.id) + ' open · ' + (PLAN_QUEUE[planOf(p)] || 'in turn') + (lifetimeSpent(p.id) ? ' · ' + money(lifetimeSpent(p.id)) + ' in request charges' : '')));
 
   if (p.active_plan === 'max') {
     var due = !seoLoggedThisPeriod(p);
@@ -1125,10 +1192,76 @@ function customerListRow(p) {
   return card;
 }
 
+/* Search, then two rows of chips: which plan, and what state the money is
+   in. Kept between visits so coming back from a customer lands on the same
+   filtered list. */
+var customerSearch = '';
+var customerPlan = 'all';
+var customerStatus = 'all';
+var CUSTOMER_PLAN_CHIPS = [['all', 'All'], ['starter', 'Starter'], ['business', 'Business'], ['max', 'Max']];
+var CUSTOMER_STATUS_CHIPS = [['all', 'Any status'], ['active', 'Active'], ['past_due', 'Past due'],
+  ['cancelling', 'Cancelling'], ['no_password', 'Paid, no password']];
+
+function customerMatches(p) {
+  if (!matchesSearch(p, customerSearch)) return false;
+  if (customerPlan !== 'all' && planOf(p) !== customerPlan) return false;
+  if (customerStatus === 'active') return (p.subscription_status === 'active' || p.subscription_status === 'trialing') && !isCancelling(p);
+  if (customerStatus === 'past_due') return isPastDue(p);
+  if (customerStatus === 'cancelling') return isCancelling(p);
+  if (customerStatus === 'no_password') return paidNoPassword(p);
+  return true;
+}
+
+function chipRow(chips, current, onPick) {
+  var row = el('div', 'chip-row');
+  chips.forEach(function (c) {
+    var b = el('button', 'filter-chip' + (current === c[0] ? ' is-on' : ''), c[1]);
+    b.type = 'button';
+    b.setAttribute('aria-pressed', String(current === c[0]));
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call(row.children, function (x) {
+        x.classList.toggle('is-on', x === b);
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      onPick(c[0]);
+    });
+    row.appendChild(b);
+  });
+  return row;
+}
+
 function renderCustomersList(wrap) {
   var customers = state.profiles.filter(isCustomer);
   if (!customers.length) { wrap.appendChild(el('p', 'site-none', 'No paying customers yet.')); return; }
-  customers.forEach(function (p) { wrap.appendChild(customerListRow(p)); });
+
+  var tools = el('div', 'k1-cust-tools');
+  var search = el('input', 'admin-input contact-search');
+  search.type = 'search';
+  search.placeholder = 'Search business, name, email, phone, domain…';
+  search.value = customerSearch;
+  search.setAttribute('aria-label', 'Search customers');
+  tools.appendChild(search);
+  tools.appendChild(chipRow(CUSTOMER_PLAN_CHIPS, customerPlan, function (v) { customerPlan = v; paint(); }));
+  tools.appendChild(chipRow(CUSTOMER_STATUS_CHIPS, customerStatus, function (v) { customerStatus = v; paint(); }));
+  var count = el('p', 'hint k1-cust-count');
+  tools.appendChild(count);
+  wrap.appendChild(tools);
+
+  var list = el('div');
+  wrap.appendChild(list);
+
+  function paint() {
+    list.textContent = '';
+    var shown = customers.filter(customerMatches);
+    count.textContent = shown.length + ' of ' + customers.length + ' customer' + (customers.length === 1 ? '' : 's')
+      + (customerStatus === 'cancelling' && !subsLoaded ? ' · still asking Stripe who is cancelling' : '');
+    if (!shown.length) { list.appendChild(el('p', 'site-none', 'Nobody matches that.')); return; }
+    shown.forEach(function (p) { list.appendChild(customerListRow(p)); });
+  }
+  // Repaint just the list on each keystroke - a full render() would rebuild
+  // the input itself and drop focus mid-word.
+  search.addEventListener('input', function () { customerSearch = search.value.trim(); paint(); });
+  paint();
 }
 
 /* Each feature is its own row now, not a plain array - so one can be marked
@@ -1310,7 +1443,7 @@ function paymentsPanel(p) {
     .sort(function (a, b) { return new Date(b.billed_at) - new Date(a.billed_at); });
   var total = lifetimeSpent(p.id);
 
-  body.appendChild(el('p', 'cust-points', '£' + (total / 100).toFixed(0) + ' charged lifetime'));
+  body.appendChild(el('p', 'cust-points', money(total) + ' charged lifetime'));
   if (!charged.length) {
     body.appendChild(el('p', 'site-none', 'Nothing charged yet.'));
   } else {
@@ -1319,8 +1452,8 @@ function paymentsPanel(p) {
       var li = el('li', 'queue-item');
       var main = el('div', 'queue-main');
       main.appendChild(el('p', 'queue-what', r.detail));
-      main.appendChild(el('p', 'queue-meta', kindName(r.kind) + ' · £' +
-        (r.billed_amount / 100).toFixed(0) + ' · ' + when(r.billed_at)));
+      main.appendChild(el('p', 'queue-meta', kindName(r.kind) + ' · ' +
+        money(r.billed_amount) + ' · ' + when(r.billed_at)));
       li.appendChild(main);
       list.appendChild(li);
     });
@@ -1428,7 +1561,7 @@ function recentRequestsList(userId) {
     main.appendChild(el('p', 'queue-what', r.detail));
     main.appendChild(el('p', 'queue-meta', kindName(r.kind) + ' · ' +
       when(r.created_at) +
-      (r.billed_at ? ' · charged £' + (r.billed_amount / 100).toFixed(0) : '')));
+      (r.billed_at ? ' · charged ' + money(r.billed_amount) : '')));
     li.appendChild(main);
 
     // Where it got to, set right as a pill rather than buried mid-sentence.
@@ -1454,13 +1587,15 @@ function customerDetail(p) {
   names.appendChild(el('p', 'cust-sub',
     [p.contact_name, p.business_type].filter(Boolean).join(' \u00b7 ') || 'No details yet'));
   head.appendChild(names);
-  head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan] || 'No plan'));
+  head.appendChild(chipBox(p));
   wrap.appendChild(head);
 
   var reach = contactLine(p);
   if (reach) wrap.appendChild(reach);
   wrap.appendChild(el('p', 'cust-sub', 'Signed up ' + when(p.created_at)
-    + (p.last_sign_in_at ? ' · last signed in ' + when(p.last_sign_in_at) : '')));
+    + (p.last_sign_in_at ? ' · last signed in ' + when(p.last_sign_in_at) : (p.needs_password ? '' : ' · never signed in'))));
+  wrap.appendChild(accountFacts(p));
+  if (p.needs_password) wrap.appendChild(resendLinkRow(p));
 
   wrap.appendChild(siteEditorRow(p));
   wrap.appendChild(appConfigRow(p));
@@ -1501,10 +1636,62 @@ function customerDetail(p) {
     wrap.appendChild(recent);
   }
 
-  wrap.appendChild(el('h3', 'req-list-title', 'Membership'));
+  wrap.appendChild(el('h3', 'req-list-title', 'Invoices & billing'));
   wrap.appendChild(billingPanel(p));
 
   return wrap;
+}
+
+/* The facts about an account that are not on the site: what the money is
+   doing, how they found us and how they joined. */
+var JOINED_WORD = { join: 'Paid first on /join', wizard: 'The get-started form' };
+function accountFacts(p) {
+  var box = el('div', 'k1-facts');
+  function fact(label, value, cls) {
+    if (!value) return;
+    var line = el('p', 'cust-sub' + (cls ? ' ' + cls : ''));
+    line.appendChild(el('strong', null, label + ': '));
+    line.appendChild(document.createTextNode(value));
+    box.appendChild(line);
+  }
+  var s = subOf(p);
+  fact('Billing', (STATUS_WORD[p.subscription_status] || p.subscription_status || 'No subscription')
+    + (s && s.interval ? ' · ' + (s.interval === 'year' ? 'annual' : 'monthly') : '')
+    + (s && typeof s.amount === 'number' ? ', ' + money(s.amount) + (s.interval === 'year' ? ' a year' : ' a month') : '')
+    + (s && s.cancelAtPeriodEnd ? ' · ends ' + when(s.cancelAt || s.currentPeriodEnd) : '')
+    + (!s && p.current_period_end ? ' · renews ' + when(p.current_period_end) : ''),
+    isPastDue(p) ? 'k1-bad' : '');
+  if (!isCustomer(p) && p.selected_plan) fact('Picked', (PLAN_NAME[p.selected_plan] || p.selected_plan) + ', not paid');
+  fact('Came from', p.campaign_from);
+  fact('Joined via', p.joined_via ? (JOINED_WORD[p.joined_via] || p.joined_via) : null);
+  if (p.needs_password) fact('Account', 'Paid but has not chosen a password yet, so they cannot log in', 'k1-bad');
+  return box;
+}
+
+/* For a /join payer who never made their account: sends the link from
+   their welcome email again. */
+function resendLinkRow(p) {
+  var row = el('div', 'k1-row');
+  var b = el('button', 'btn btn-ghost admin-save', 'Resend account link');
+  b.type = 'button';
+  var out = el('p', 'note');
+  if (!p.has_join_link) { b.disabled = true; out.textContent = 'No payment link on file for them, so there is nothing to resend.'; }
+  b.addEventListener('click', async function () {
+    if (!window.confirm('Email ' + (p.email || 'them') + ' the link to choose a password?')) return;
+    b.disabled = true;
+    try {
+      var r = await api({ action: 'resendAccountLink', userId: p.id });
+      out.textContent = 'Sent to ' + r.to + '.';
+      out.className = 'note ok';
+    } catch (err) {
+      out.textContent = err.message;
+      out.className = 'note bad';
+      b.disabled = false;
+    }
+  });
+  row.appendChild(b);
+  row.appendChild(out);
+  return row;
 }
 
 function renderCustomersSection() {
@@ -1836,11 +2023,17 @@ function clearPlanRow(p) {
   return box;
 }
 
+/* Invoices & billing: the subscription as Stripe has it, the last twelve
+   invoices with a Refund on each paid one, a plan change, and the two ways
+   to end it (at the period end, or now). Everything is asked of Stripe when
+   the customer is opened - the profile row is a mirror and can be stale.
+   Every button that takes money or ends something asks first. */
 function billingPanel(p) {
-  var wrap = el('div', 'danger-panel');
+  var wrap = el('div', 'danger-panel k1-billing');
   var note = el('p', 'note');
+  note.setAttribute('role', 'status');
 
-  if (!p.stripe_subscription_id) {
+  if (!p.stripe_subscription_id && !p.stripe_customer_id) {
     wrap.appendChild(claimsPlan(p)
       ? clearPlanRow(p)
       : el('p', 'hint', 'No subscription on this account.'));
@@ -1852,109 +2045,269 @@ function billingPanel(p) {
   wrap.appendChild(note);
   body.appendChild(el('p', 'hint', 'Checking with Stripe…'));
 
-  function fail(msg) {
-    body.textContent = '';
-    body.appendChild(el('p', 'hint', msg));
-  }
+  function tell(msg, kind) { note.textContent = msg || ''; note.className = 'note' + (kind ? ' ' + kind : ''); }
 
   async function paint() {
     var out;
     try {
-      out = await api({ action: 'subscriptionState', userId: p.id });
-    } catch (err) { return fail(err.message); }
-
-    var sub = out && out.subscription;
-    body.textContent = '';
-    if (!sub) {
-      // Nothing to cancel; if the profile still claims a plan, offer the
-      // way out instead of a dead end.
-      if (claimsPlan(p)) { body.appendChild(clearPlanRow(p)); return; }
-      return fail('Stripe has no live subscription for this account.');
-    }
-
-    var ends = sub.endsAt ? when(sub.endsAt) : 'their next payment date';
-
-    if (sub.cancelAtPeriodEnd) {
-      body.appendChild(el('p', 'hint', 'Set to end on ' + ends
-        + '. They keep everything until then.'));
-      body.appendChild(actionBtn('Keep them on', false, 'Restoring…'));
+      out = await api({ action: 'billing', userId: p.id });
+    } catch (err) {
+      body.textContent = '';
+      body.appendChild(el('p', 'hint', err.message));
       return;
     }
+    body.textContent = '';
+    if (out.configured === false) { body.appendChild(el('p', 'hint', 'Stripe is not configured on this deployment.')); return; }
 
-    body.appendChild(el('p', 'hint', 'Ends at their next payment date, not today \u2014 they '
-      + 'keep the month they have paid for, which is what the terms say. '
-      + 'You can undo it any time before ' + ends + '.'));
+    var sub = out.subscription && !out.subscription.missing ? out.subscription : null;
+    if (sub) {
+      subs[sub.id] = sub;
+      var running = sub.status === 'active' || sub.status === 'trialing' || sub.status === 'past_due' || sub.status === 'unpaid';
+      var line = el('p', 'k1-sub-line' + (sub.status === 'past_due' || sub.status === 'unpaid' ? ' k1-bad' : ''));
+      line.appendChild(el('strong', null, (STATUS_WORD[sub.status] || sub.status) + ' '));
+      line.appendChild(document.createTextNode(
+        (PLAN_NAME[planOf(p) || sub.plan] || 'Plan')
+        + (sub.interval ? ', ' + (sub.interval === 'year' ? 'annual' : 'monthly') : '')
+        + (typeof sub.amount === 'number' ? ' at ' + money(sub.amount) + (sub.interval === 'year' ? ' a year' : ' a month') : '')
+        + (sub.cancelAtPeriodEnd ? ' · ends ' + when(sub.cancelAt || sub.currentPeriodEnd)
+          : running && sub.currentPeriodEnd ? ' · renews ' + when(sub.currentPeriodEnd) : '')));
+      body.appendChild(line);
 
-    var armed = false;
-    var btn = el('button', 'btn btn-ghost admin-save danger', 'End membership');
-    btn.type = 'button';
-    var stand = el('button', 'linkish', 'Keep it');
-    stand.type = 'button';
-    stand.hidden = true;
-
-    stand.addEventListener('click', function () {
-      armed = false;
-      btn.textContent = 'End membership';
-      btn.classList.remove('is-armed');
-      stand.hidden = true;
-      note.textContent = '';
-      note.className = 'note';
-    });
-
-    btn.addEventListener('click', async function () {
-      if (!armed) {
-        armed = true;
-        btn.textContent = 'Yes, end it at the next payment';
-        btn.classList.add('is-armed');
-        stand.hidden = false;
-        return;
+      if (sub.status === 'canceled' || sub.status === 'incomplete_expired') {
+        body.appendChild(endedHint());
+      } else if (running) {
+        if (sub.status === 'active' || sub.status === 'trialing') body.appendChild(planChanger(sub));
+        body.appendChild(endRow(sub));
       }
-      btn.disabled = true;
-      btn.textContent = 'Ending…';
-      try {
-        var res = await api({ action: 'setCancelAtPeriodEnd', userId: p.id, cancel: true });
-        note.textContent = res && res.endsAt
-          ? 'Ending on ' + when(res.endsAt) + '.'
-          : 'Ending at their next payment date.';
-        note.className = 'note ok';
-        await paint();
-      } catch (err) {
-        note.textContent = err.message;
-        note.className = 'note bad';
-        btn.disabled = false;
-        btn.textContent = 'End membership';
-        btn.classList.remove('is-armed');
-        stand.hidden = true;
-        armed = false;
-      }
-    });
+    } else if (p.stripe_subscription_id) {
+      if (claimsPlan(p)) body.appendChild(clearPlanRow(p));
+      else body.appendChild(el('p', 'hint', 'Stripe has no live subscription for this account.'));
+    } else {
+      body.appendChild(claimsPlan(p) ? clearPlanRow(p) : endedHint());
+    }
 
-    var row = el('div', 'danger-row');
-    row.appendChild(btn);
-    row.appendChild(stand);
-    body.appendChild(row);
+    body.appendChild(el('h4', 'pay-day', 'Invoices'));
+    body.appendChild(invoiceList(out.invoices || []));
   }
 
-  /* Undoing takes one click - it is the safe direction. */
-  function actionBtn(label, cancel, busyLabel) {
-    var b = el('button', 'btn btn-ghost admin-save', label);
+  function endedHint() {
+    var box = el('p', 'hint');
+    box.appendChild(document.createTextNode('No running membership. It cannot be restarted from here: send them to '));
+    var a1 = el('a', null, '/join'); a1.href = '/join'; a1.target = '_blank';
+    var a2 = el('a', null, '/get-started'); a2.href = '/get-started.html'; a2.target = '_blank';
+    box.appendChild(a1);
+    box.appendChild(document.createTextNode(' (Starter) or '));
+    box.appendChild(a2);
+    box.appendChild(document.createTextNode(' (Business, Max) to sign up again.'));
+    return box;
+  }
+
+  /* ---- invoices, with Refund on anything that still has money on it ---- */
+  function invoiceList(invoices) {
+    if (!invoices.length) return el('p', 'site-none', 'No invoices yet.');
+    var list = el('ul', 'pay-list');
+    invoices.forEach(function (inv) {
+      var li = el('li', 'pay-row');
+      var main = el('div', 'pay-main');
+      main.appendChild(el('p', 'pay-who', when(inv.created) + (inv.number ? ' · ' + inv.number : '')));
+      if (inv.description) main.appendChild(el('p', 'pay-what', inv.description));
+      var meta = [];
+      if (inv.refunded) meta.push(money(inv.refunded) + ' refunded');
+      if (inv.status === 'open' && inv.attempt_count) meta.push(inv.attempt_count + ' failed attempt' + (inv.attempt_count === 1 ? '' : 's'));
+      if (meta.length) main.appendChild(el('p', 'pay-meta', meta.join(' · ')));
+      li.appendChild(main);
+
+      var side = el('div', 'pay-side');
+      side.appendChild(el('p', 'pay-amount', money(inv.status === 'paid' ? inv.amount_paid : inv.amount_due)));
+      var word = inv.status === 'paid' ? (inv.refunded && !inv.refundable ? 'Refunded' : 'Paid')
+        : inv.status === 'open' ? (inv.attempt_count ? 'Failed' : 'Due')
+        : inv.status === 'uncollectible' ? 'Failed' : inv.status === 'void' ? 'Void' : inv.status;
+      side.appendChild(el('span', 'pay-pill' + (word === 'Failed' ? ' k1-pill-bad' : ''), word));
+      if (inv.hosted_invoice_url) {
+        var a = el('a', 'linkish k1-inv-link', 'View');
+        a.href = inv.hosted_invoice_url; a.target = '_blank'; a.rel = 'noopener';
+        side.appendChild(a);
+      }
+      if (inv.status === 'paid' && inv.refundable > 0) side.appendChild(refundButton(inv));
+      li.appendChild(side);
+      list.appendChild(li);
+    });
+    return list;
+  }
+
+  function refundButton(inv) {
+    var b = el('button', 'linkish danger k1-refund', 'Refund');
     b.type = 'button';
     b.addEventListener('click', async function () {
+      var max = inv.refundable;
+      var typed = window.prompt('Refund how much to ' + ownerLabel(p) + '? Up to ' + money(max)
+        + ' is left on this payment.', (max / 100).toFixed(2));
+      if (typed == null) return;
+      var pence = Math.round(parseFloat(String(typed).replace(/[£,\s]/g, '')) * 100);
+      if (!(pence > 0) || pence > max) { tell('That needs to be between £0.01 and ' + money(max) + '.', 'bad'); return; }
+      if (!window.confirm('Refund ' + money(pence) + ' to ' + ownerLabel(p) + '? It goes back to their card in 5 to 10 days. '
+        + 'Their plan is not changed.')) return;
       b.disabled = true;
-      b.textContent = busyLabel;
+      tell('Refunding…');
       try {
-        await api({ action: 'setCancelAtPeriodEnd', userId: p.id, cancel: cancel });
-        note.textContent = 'Back on. Their plan will renew as normal.';
-        note.className = 'note ok';
+        var r = await api({ action: 'refund', userId: p.id, paymentId: inv.id, amount: pence });
+        tell('Refunded ' + money(r.refund.amount) + '.', 'ok');
         await paint();
-      } catch (err) {
-        note.textContent = err.message;
-        note.className = 'note bad';
-        b.disabled = false;
-        b.textContent = label;
-      }
+      } catch (err) { tell(err.message, 'bad'); b.disabled = false; }
     });
     return b;
+  }
+
+  /* ---- change plan: pick, see the price, then confirm ---- */
+  function planChanger(sub) {
+    var box = el('div', 'k1-plan-change');
+    box.appendChild(el('p', 'k1-label', 'Change plan'));
+    var row = el('div', 'k1-row');
+    var plan = el('select', 'admin-select');
+    plan.setAttribute('aria-label', 'New plan');
+    [['starter', 'Starter'], ['business', 'Business'], ['max', 'Max']].forEach(function (pair) {
+      var o = el('option', null, pair[1]); o.value = pair[0];
+      if (pair[0] === planOf(p)) o.selected = true;
+      plan.appendChild(o);
+    });
+    var interval = el('select', 'admin-select');
+    interval.setAttribute('aria-label', 'Billing');
+    [['month', 'Monthly'], ['year', 'Annual']].forEach(function (pair) {
+      var o = el('option', null, pair[1]); o.value = pair[0];
+      if (pair[0] === (sub.interval || 'month')) o.selected = true;
+      interval.appendChild(o);
+    });
+    var check = el('button', 'btn btn-ghost admin-save', 'Check price');
+    check.type = 'button';
+    row.appendChild(plan); row.appendChild(interval); row.appendChild(check);
+    box.appendChild(row);
+    var preview = el('div', 'k1-plan-preview');
+    box.appendChild(preview);
+
+    function reset() { preview.textContent = ''; }
+    plan.addEventListener('change', reset);
+    interval.addEventListener('change', reset);
+
+    check.addEventListener('click', async function () {
+      reset();
+      check.disabled = true;
+      tell('Asking Stripe…');
+      var pv;
+      try {
+        pv = await api({ action: 'changePlan', userId: p.id, plan: plan.value, interval: interval.value, apply: false });
+        tell('');
+      } catch (err) { tell(err.message, 'bad'); check.disabled = false; return; }
+      check.disabled = false;
+      var price = money(pv.amount) + (pv.interval === 'year' ? ' a year' : ' a month');
+      var what = (PLAN_NAME[pv.to] || pv.to) + ' ' + (pv.interval === 'year' ? 'annual' : 'monthly') + ', ' + price;
+      var text = pv.upgrading
+        ? what + '. Takes effect now: Stripe charges the difference today'
+          + (typeof pv.dueNow === 'number' ? ' (' + money(pv.dueNow) + ')' : '') + ' to the card on file.'
+        : what + ' from their next renewal' + (pv.renewsAt ? ' on ' + when(new Date(pv.renewsAt * 1000).toISOString()) : '')
+          + '. Nothing charged now; they keep ' + (PLAN_NAME[pv.from] || 'their plan') + ' until then.';
+      preview.appendChild(el('p', 'hint', text));
+      var go = el('button', 'btn btn-primary admin-save', 'Confirm change');
+      go.type = 'button';
+      go.addEventListener('click', async function () {
+        if (!window.confirm('Move ' + ownerLabel(p) + ' to ' + what + '?'
+          + (pv.upgrading ? ' Their card is charged now.' : ''))) return;
+        go.disabled = true;
+        tell('Changing…');
+        try {
+          await api({ action: 'changePlan', userId: p.id, plan: plan.value, interval: interval.value, apply: true });
+          tell('Done. ' + (pv.upgrading ? 'They are on ' + what + ' now.' : 'It changes at their renewal.')
+            + ' The page catches up once Stripe tells us.', 'ok');
+          if (pv.upgrading) p.active_plan = pv.to;
+          await paint();
+        } catch (err) { tell(err.message, 'bad'); go.disabled = false; }
+      });
+      preview.appendChild(go);
+    });
+    return box;
+  }
+
+  /* ---- ending it: at the period end (undoable), or now (typed) ---- */
+  function endRow(sub) {
+    var box = el('div', 'k1-end');
+    var ends = sub.currentPeriodEnd ? when(sub.cancelAt || sub.currentPeriodEnd) : 'their next payment date';
+
+    if (sub.cancelAtPeriodEnd) {
+      box.appendChild(el('p', 'hint', 'Set to end on ' + ends + '. They keep everything until then.'));
+      var keep = el('button', 'btn btn-ghost admin-save', 'Keep them on');
+      keep.type = 'button';
+      keep.addEventListener('click', async function () {
+        keep.disabled = true;
+        try {
+          await api({ action: 'reactivate', userId: p.id });
+          tell('Back on. Their plan will renew as normal.', 'ok');
+          await paint();
+        } catch (err) { tell(err.message, 'bad'); keep.disabled = false; }
+      });
+      box.appendChild(keep);
+    } else {
+      box.appendChild(el('p', 'hint', 'End membership ends it at their next payment date, not today — they '
+        + 'keep the month they have paid for, which is what the terms say. You can undo it any time before ' + ends + '.'));
+      var armed = false;
+      var btn = el('button', 'btn btn-ghost admin-save danger', 'End membership');
+      btn.type = 'button';
+      var stand = el('button', 'linkish', 'Keep it');
+      stand.type = 'button';
+      stand.hidden = true;
+      stand.addEventListener('click', function () {
+        armed = false; btn.textContent = 'End membership'; btn.classList.remove('is-armed'); stand.hidden = true; tell('');
+      });
+      btn.addEventListener('click', async function () {
+        if (!armed) {
+          armed = true; btn.textContent = 'Yes, end it at the next payment'; btn.classList.add('is-armed'); stand.hidden = false;
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = 'Ending…';
+        try {
+          var res = await api({ action: 'setCancelAtPeriodEnd', userId: p.id, cancel: true });
+          tell(res && res.endsAt ? 'Ending on ' + when(res.endsAt) + '.' : 'Ending at their next payment date.', 'ok');
+          await paint();
+        } catch (err) {
+          tell(err.message, 'bad');
+          btn.disabled = false; btn.textContent = 'End membership'; btn.classList.remove('is-armed'); stand.hidden = true; armed = false;
+        }
+      });
+      var row = el('div', 'danger-row');
+      row.appendChild(btn);
+      row.appendChild(stand);
+      box.appendChild(row);
+    }
+
+    /* Now, today: typed confirmation, the same as deleting a contact. */
+    var label = p.business_name || 'CANCEL';
+    var openNow = el('button', 'linkish danger k1-cancel-now', 'Cancel now instead…');
+    openNow.type = 'button';
+    var confirmBox = el('div', 'danger-confirm');
+    confirmBox.hidden = true;
+    confirmBox.appendChild(el('p', 'hint', 'Ends the membership today. Stripe bills nothing more and nothing is refunded '
+      + '(use Refund on an invoice for that). Type ' + label + ' to confirm.'));
+    var field = el('input', 'danger-input');
+    field.type = 'text';
+    field.autocomplete = 'off';
+    field.setAttribute('aria-label', 'Type ' + label + ' to confirm');
+    var go = el('button', 'btn btn-ghost admin-save danger', 'Cancel now');
+    go.type = 'button';
+    go.disabled = true;
+    field.addEventListener('input', function () { go.disabled = field.value.trim().toLowerCase() !== label.trim().toLowerCase(); });
+    go.addEventListener('click', async function () {
+      go.disabled = true;
+      try {
+        await api({ action: 'cancelNow', userId: p.id, confirm: field.value });
+        tell('Cancelled. Stripe will stop billing them now.', 'ok');
+        await paint();
+      } catch (err) { tell(err.message, 'bad'); go.disabled = false; }
+    });
+    openNow.addEventListener('click', function () { confirmBox.hidden = !confirmBox.hidden; if (!confirmBox.hidden) field.focus(); });
+    confirmBox.appendChild(field);
+    confirmBox.appendChild(go);
+    box.appendChild(openNow);
+    box.appendChild(confirmBox);
+    return box;
   }
 
   paint();
@@ -1977,9 +2330,19 @@ function deletePanel(p) {
 
   var live = ['active', 'trialing', 'past_due', 'unpaid'].indexOf(p.subscription_status) !== -1;
   if (live) {
-    wrap.appendChild(el('p', 'hint', 'This account has a live subscription. End the membership '
-      + 'on their customer page first \u2014 deleting them here would leave Stripe billing a '
-      + 'person who no longer exists.'));
+    wrap.appendChild(el('p', 'hint', 'This account has a live subscription'
+      + (isPastDue(p) ? ' (its last payment failed, but Stripe is still retrying)' : '')
+      + '. End the membership under Invoices & billing on their customer page first \u2014 deleting '
+      + 'them here would leave Stripe billing a person who no longer exists.'));
+    var go2 = el('button', 'btn btn-ghost admin-save', 'Open their customer page');
+    go2.type = 'button';
+    go2.addEventListener('click', function () {
+      selectedContactId = null;
+      selectedCustomerId = p.id;
+      activeSection = 'customers';
+      render();
+    });
+    wrap.appendChild(go2);
 
     /* Unless the "live subscription" is a claim Stripe doesn't share - a
        test signup, say. One click asks Stripe and clears the claim if it
@@ -2209,8 +2572,9 @@ function renderPlansSection() {
   var wrap = document.getElementById('plansBody');
   wrap.textContent = '';
 
-  ['business', 'pro', 'max'].forEach(function (key) {
-    var customers = state.profiles.filter(function (p) { return p.active_plan === key; });
+  ['starter', 'business', 'pro', 'max'].forEach(function (key) {
+    var customers = state.profiles.filter(function (p) { return isCustomer(p) && planOf(p) === key; });
+    if (key === 'pro' && !customers.length) return; // legacy, only shown while someone is still on it
     wrap.appendChild(el('h3', 'req-list-title', PLAN_NAME[key] + ' (' + customers.length + ')'));
     if (!customers.length) {
       wrap.appendChild(el('p', 'site-none', 'Nobody on this plan yet.'));
@@ -2221,6 +2585,8 @@ function renderPlansSection() {
       row.tabIndex = 0;
       row.setAttribute('role', 'button');
       row.appendChild(el('h3', null, ownerLabel(p)));
+      var flags = statusChips(p);
+      if (flags.childNodes.length) { var fb = el('div', 'k1-chips'); fb.appendChild(flags); row.appendChild(fb); }
       row.appendChild(el('p', 'cust-sub', openCountFor(p.id) + ' open request' + (openCountFor(p.id) === 1 ? '' : 's')));
       function openCustomer() { selectedCustomerId = p.id; activeSection = 'customers'; render(); }
       row.addEventListener('click', openCustomer);
@@ -2359,9 +2725,17 @@ function renderPaymentsSection() {
   var wrap = document.getElementById('paymentsBody');
   wrap.textContent = '';
 
+  /* What active plans bring in a month. Stripe's own amount and interval
+     when the overview has arrived (an annual plan counts a twelfth of its
+     yearly price); the list price per month until then. */
   var mrr = state.profiles.reduce(function (sum, p) {
     var billing = p.subscription_status === 'active' || p.subscription_status === 'trialing';
-    return p.active_plan && billing ? sum + (PLAN_PRICE[p.active_plan] || 0) : sum;
+    if (!p.active_plan || !billing) return sum;
+    var s = subOf(p);
+    if (s && typeof s.amount === 'number' && (s.status === 'active' || s.status === 'trialing')) {
+      return sum + (s.interval === 'year' ? s.amount / 12 : s.amount);
+    }
+    return sum + (PLAN_PRICE[p.active_plan] || 0);
   }, 0);
 
   var now = new Date();
@@ -2378,11 +2752,12 @@ function renderPaymentsSection() {
     .forEach(function (pair) {
       var box = el('div', 'pay-stat');
       box.appendChild(el('span', 'pay-stat-label', pair[0]));
-      box.appendChild(el('span', 'pay-stat-value', '£' + (pair[1] / 100).toFixed(0)));
+      box.appendChild(el('span', 'pay-stat-value', money(Math.round(pair[1]))));
       stats.appendChild(box);
     });
   wrap.appendChild(stats);
-  wrap.appendChild(el('p', 'hint', 'Recurring is what active plans bill each month. The other two count '
+  wrap.appendChild(el('p', 'hint', 'Recurring is what active plans bring in a month (annual plans count a twelfth of the year'
+    + (subsLoaded ? '' : '; list prices until Stripe answers') + '). The other two count '
     + 'edits and features charged beyond a plan’s points — plan payments themselves live in Stripe.'));
 
   wrap.appendChild(el('h3', 'req-list-title', 'All payments'));

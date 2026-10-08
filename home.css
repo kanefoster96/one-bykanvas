@@ -557,3 +557,10 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 /* The example sites in the phones: screenshots made to the phone's shape
    (assets/examples/phone/), so they fill the screen under the notch. */
 .hh-screen img.hh-ex{object-fit:cover;object-position:top;padding-top:11%;box-sizing:border-box}
+
+/* A way in at the end of every section, so nobody has to scroll back up
+   to the hero to start. Same button, different words. */
+.sec-cta{margin-top:34px;display:flex;flex-direction:column;align-items:center}
+.sec-cta .btn{min-width:min(280px,100%);gap:6px}
+.sec-cta-note{margin:10px 0 0;font-size:13px;line-height:1.5;color:var(--ink-3)}
+.micro + .sec-cta,.hw-more + .sec-cta,.rail-more + .sec-cta{margin-top:20px}

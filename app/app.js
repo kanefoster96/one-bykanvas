@@ -510,9 +510,26 @@
     if (link && link.kind === 'support' && link.id) { location.hash = 'r/' + link.id; showTab('Support'); return; }
     if (n.href && /^\/requests\.html#(r\/.+)$/.test(n.href)) { location.hash = RegExp.$1; showTab('Support'); return; }
     if (n.href && /^\/admin\.html#r\/(.+)$/.test(n.href)) { pendingRequest = RegExp.$1; showTab('Support'); return; }
+    /* Starter has no dashboard: the Dashboard tab is hidden for them, so
+       anything that would open there lands on Website instead - an
+       enquiry with a card saying what came in, a link (their site going
+       live) in the browser. */
+    if (isStarter()) {
+      showTab('Website');
+      if ((link && (link.kind === 'enquiry' || link.kind === 'person')) || n.kind === 'person') showEnquiryCard(n);
+      else if (n.href && /^https:\/\//.test(n.href)) openExternal(n.href);
+      return;
+    }
     if (link && link.path && site && site.dashboard_url) { pendingPath = link.path; showTab('Dashboard'); return; }
     if (n.href && /^https:\/\//.test(n.href)) { showTab('Dashboard'); openExternal(n.href); return; }
     showTab('Dashboard');
+  }
+
+  function showEnquiryCard(n) {
+    $('siteEnquiryTitle').textContent = (n && n.title) || 'New enquiry from your site';
+    $('siteEnquiryBody').textContent = (n && n.body) || '';
+    $('siteEnquiryBody').hidden = !(n && n.body);
+    $('siteEnquiry').hidden = false;
   }
 
   function openExternal(url) {

@@ -18,6 +18,8 @@ const { sendEmail, sendBatch } = require('./_email.js');
 const { html: emailHtml, standardFooter, esc } = require('./_email_template.js');
 const { unsubscribeHeaders, unsubscribeUrl, optedOut } = require('./_unsubscribe.js');
 const { shortfallFor } = require('./_billing.js');
+const { changePlan } = require('./_change_plan.js');
+const { prepareRefund, runRefund } = require('./_refund.js');
 const { lookup: domainLookup } = require('./domains.js');
 const { notify } = require('./_notify.js');
 const { notifySiteLive } = require('./_site_live.js');
@@ -32,6 +34,26 @@ const DEFAULT_ADMINS = ['kane@kanvas.one'];
    changing it in Stripe, not here: this is only the word we print. */
 
 function adminList() { return adminEmails(); }
+
+/* The parts of a Stripe subscription the admin page shows. The period end
+   moved from the subscription onto its items in newer API versions; either
+   is read. */
+function subSummary(sub) {
+  const item = sub.items && sub.items.data && sub.items.data[0];
+  const price = item && item.price;
+  const end = sub.current_period_end || (item && item.current_period_end) || null;
+  return {
+    id: sub.id,
+    status: sub.status,
+    interval: (price && price.recurring && price.recurring.interval) || null,
+    amount: price && typeof price.unit_amount === 'number' ? price.unit_amount * ((item && item.quantity) || 1) : null,
+    currentPeriodEnd: end ? new Date(end * 1000).toISOString() : null,
+    cancelAtPeriodEnd: Boolean(sub.cancel_at_period_end),
+    cancelAt: sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null,
+    plan: (sub.metadata && sub.metadata.plan) || null
+  };
+}
+
 
 /* Charges the card on file off-session, for a shortfall already worked out
  * by the caller. Shared by accepting a request (the normal path - before any
@@ -203,37 +225,54 @@ module.exports = async function handler(req, res) {
 
     // ---- read: every customer, newest first ----------------------------
     if (action === 'list') {
-      const { data: profiles, error } = await db
-        .from('profiles')
-        /* stripe_subscription_id has to be here: the membership panel decides
-           whether there is anything to cancel from it, and without it every
-           customer - paying or not - read as "no subscription" while the
-           delete panel, reading subscription_status, still refused to delete
-           them. A paying customer was unmanageable from both sides. */
-        .select('id, business_name, contact_name, phone, business_type, active_plan, selected_plan, ' +
+      /* stripe_subscription_id has to be here: the membership panel decides
+         whether there is anything to cancel from it, and without it every
+         customer - paying or not - read as "no subscription" while the
+         delete panel, reading subscription_status, still refused to delete
+         them. A paying customer was unmanageable from both sides. */
+      const PROFILE_COLS = 'id, business_name, contact_name, phone, business_type, active_plan, selected_plan, ' +
                 'subscription_status, current_period_end, points_reset_at, site_url, site_status, requested_domain, domain_owned, ' +
                 'address, service_area, opening_hours, services, site_goals, site_uses, existing_links, ' +
-                'admin_notes, created_at, stripe_customer_id, stripe_subscription_id, campaign_from')
-        .order('created_at', { ascending: false })
-        .limit(200);
-      if (error) throw new Error(error.message);
+                'admin_notes, created_at, stripe_customer_id, stripe_subscription_id, campaign_from';
+      /* Two reads, merged: everyone with any billing at all (never capped
+         in practice, so a paying customer cannot fall off the end of the
+         list behind a pile of abandoned sign-ups), plus the newest 200 of
+         everyone else for Contacts. */
+      const [billedRes, recentRes] = await Promise.all([
+        db.from('profiles').select(PROFILE_COLS)
+          .or('stripe_subscription_id.not.is.null,active_plan.not.is.null')
+          .order('created_at', { ascending: false }).limit(5000),
+        db.from('profiles').select(PROFILE_COLS)
+          .order('created_at', { ascending: false }).limit(200)
+      ]);
+      if (billedRes.error) throw new Error(billedRes.error.message);
+      if (recentRes.error) throw new Error(recentRes.error.message);
+      const byId = {};
+      (billedRes.data || []).concat(recentRes.data || []).forEach((p) => { byId[p.id] = p; });
+      const profiles = Object.keys(byId).map((k) => byId[k])
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
       // Emails live in auth.users, not on profiles - without this join the
       // admin page has no way to show or contact anyone. Best effort: a
       // profile whose auth row can't be found just shows without an email
-      // rather than failing the whole list.
-      const emailById = {};
-      for (let page = 1; page <= 5; page++) {
+      // rather than failing the whole list. app_metadata says how they
+      // joined, and whether a /join payer has still to choose a password.
+      const authById = {};
+      for (let page = 1; page <= 25; page++) {
         const { data: usersPage, error: usersErr } = await db.auth.admin.listUsers({ page, perPage: 200 });
         if (usersErr) { console.error('admin: listUsers failed:', usersErr.message); break; }
         const users = (usersPage && usersPage.users) || [];
-        users.forEach((u) => { emailById[u.id] = { email: u.email, lastSignIn: u.last_sign_in_at }; });
+        users.forEach((u) => { authById[u.id] = u; });
         if (users.length < 200) break;
       }
-      (profiles || []).forEach((p) => {
-        const u = emailById[p.id];
+      profiles.forEach((p) => {
+        const u = authById[p.id];
+        const am = (u && u.app_metadata) || {};
         p.email = (u && u.email) || null;
-        p.last_sign_in_at = (u && u.lastSignIn) || null;
+        p.last_sign_in_at = (u && u.last_sign_in_at) || null;
+        p.joined_via = am.joined_via || null;
+        p.needs_password = Boolean(am.needs_password);
+        p.has_join_link = Boolean(am.needs_password && am.join_session);
       });
 
       const { data: reqs, error: reqError } = await db
@@ -539,6 +578,240 @@ module.exports = async function handler(req, res) {
           endsAt: endsAt ? new Date(endsAt * 1000).toISOString() : null
         }
       });
+    }
+
+    /* ---- every live subscription, from Stripe, in one go ----------------
+     *
+     * What the profile row does not keep: monthly or annual, the real amount,
+     * and whether it is set to end. The Customers filters (Cancelling) and the
+     * monthly-recurring figure read this. Asked for after the page has drawn,
+     * so a slow Stripe never holds the page up. Stripe's default listing is
+     * every subscription that has not ended.
+     */
+    if (action === 'subscriptionsOverview') {
+      const { STRIPE_SECRET_KEY } = process.env;
+      if (!STRIPE_SECRET_KEY) return res.status(200).json({ ok: true, subscriptions: {} });
+      const stripe = new Stripe(STRIPE_SECRET_KEY);
+      const out = {};
+      let startingAfter;
+      for (let page = 0; page < 20; page++) {
+        const args = { limit: 100 };
+        if (startingAfter) args.starting_after = startingAfter;
+        const list = await stripe.subscriptions.list(args);
+        const rows = (list && list.data) || [];
+        rows.forEach((sub) => { out[sub.id] = subSummary(sub); });
+        if (!list.has_more || !rows.length) break;
+        startingAfter = rows[rows.length - 1].id;
+      }
+      return res.status(200).json({ ok: true, subscriptions: out });
+    }
+
+    /* ---- one customer's billing: the subscription and recent invoices -- */
+    if (action === 'billing') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      const { data: who, error: whoErr } = await db.from('profiles')
+        .select('stripe_customer_id, stripe_subscription_id, active_plan, subscription_status')
+        .eq('id', userId).maybeSingle();
+      if (whoErr) throw new Error(whoErr.message);
+      if (!who) return res.status(404).json({ error: 'No such customer.' });
+
+      const { STRIPE_SECRET_KEY } = process.env;
+      if (!STRIPE_SECRET_KEY) return res.status(200).json({ ok: true, configured: false, subscription: null, invoices: [] });
+      const stripe = new Stripe(STRIPE_SECRET_KEY);
+
+      let subscription = null;
+      if (who.stripe_subscription_id) {
+        try {
+          subscription = subSummary(await stripe.subscriptions.retrieve(who.stripe_subscription_id));
+        } catch (e) {
+          console.error('admin: billing, subscription lookup failed:', e && e.message);
+          subscription = { missing: true };
+        }
+      }
+
+      let invoices = [];
+      if (who.stripe_customer_id) {
+        const args = { customer: who.stripe_customer_id, limit: 12, expand: ['data.charge'] };
+        let list;
+        try { list = await stripe.invoices.list(args); }
+        catch (e) { delete args.expand; list = await stripe.invoices.list(args); }
+        invoices = (list.data || []).map((inv) => {
+          const charge = inv.charge && typeof inv.charge === 'object' ? inv.charge : null;
+          const line = inv.lines && inv.lines.data && inv.lines.data[0];
+          const refunded = charge ? (charge.amount_refunded || 0) : 0;
+          return {
+            id: inv.id, number: inv.number || null, status: inv.status,
+            amount_paid: inv.amount_paid || 0, amount_due: inv.amount_due || 0, total: inv.total || 0,
+            created: inv.created ? new Date(inv.created * 1000).toISOString() : null,
+            hosted_invoice_url: inv.hosted_invoice_url || null,
+            description: line ? line.description : null,
+            attempt_count: inv.attempt_count || 0,
+            refunded,
+            refundable: charge ? Math.max(0, charge.amount - refunded) : (inv.status === 'paid' ? inv.amount_paid || 0 : 0)
+          };
+        });
+      }
+
+      return res.status(200).json({
+        ok: true, configured: true,
+        profileStatus: who.subscription_status || null, plan: who.active_plan || null,
+        subscription, invoices
+      });
+    }
+
+    /* ---- refund one paid invoice, in full or part ----------------------
+     * The same checks as the MCP refund tool (api/_refund.js): the payment
+     * must be this customer's, and never more than is left on it. The page
+     * has already asked "are you sure, and how much"; this re-reads Stripe
+     * rather than trusting the figure it showed. */
+    if (action === 'refund') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      const { STRIPE_SECRET_KEY } = process.env;
+      if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe is not configured.' });
+      const { data: who, error: whoErr } = await db.from('profiles')
+        .select('stripe_customer_id, business_name').eq('id', userId).maybeSingle();
+      if (whoErr) throw new Error(whoErr.message);
+      if (!who) return res.status(404).json({ error: 'No such customer.' });
+
+      const stripe = new Stripe(STRIPE_SECRET_KEY);
+      try {
+        const prep = await prepareRefund(stripe, {
+          paymentId: body.paymentId, customerId: who.stripe_customer_id,
+          amount: body.amount == null || body.amount === '' ? null : body.amount, reason: body.reason
+        });
+        const r = await runRefund(stripe, {
+          chargeId: prep.charge.id, customerId: who.stripe_customer_id, amount: prep.amount, reason: prep.reason
+        });
+        console.log('admin: refunded %s on %s (%s)', r.amount, prep.charge.id, who.business_name || userId);
+        return res.status(200).json({ ok: true, refund: r });
+      } catch (e) {
+        if (e && e.shown) return res.status(e.httpStatus || 400).json({ error: e.message });
+        if (e && e.type && /^Stripe/.test(e.type)) return res.status(400).json({ error: e.message });
+        throw e;
+      }
+    }
+
+    /* ---- move a customer to another plan, or between monthly and annual --
+     * Same rules as the customer's own page (api/_change_plan.js): an
+     * upgrade, or any change of interval, bills now; a downgrade waits for
+     * the renewal. apply: false previews the price for the confirm box. */
+    if (action === 'changePlan') {
+      const userId = String(body.userId || '');
+      const plan = String(body.plan || '').toLowerCase();
+      const interval = body.interval === 'year' ? 'year' : body.interval === 'month' ? 'month' : undefined;
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      if (!['starter', 'business', 'max'].includes(plan)) return res.status(400).json({ error: 'Plans are Starter, Business or Max.' });
+      const { STRIPE_SECRET_KEY } = process.env;
+      if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe is not configured.' });
+      const { data: who, error: whoErr } = await db.from('profiles')
+        .select('stripe_subscription_id, active_plan, subscription_status').eq('id', userId).maybeSingle();
+      if (whoErr) throw new Error(whoErr.message);
+      if (!who) return res.status(404).json({ error: 'No such customer.' });
+      try {
+        const out = await changePlan(new Stripe(STRIPE_SECRET_KEY), db, userId, who, plan, body.apply === true, { interval });
+        return res.status(200).json(out);
+      } catch (e) {
+        if (e && e.httpStatus) return res.status(e.httpStatus).json({ error: e.message });
+        if (e && e.type === 'StripeCardError') return res.status(400).json({ error: 'Their card was declined, so the plan has not changed.' });
+        if (e && e.type && /^Stripe/.test(e.type)) return res.status(400).json({ error: e.message });
+        throw e;
+      }
+    }
+
+    /* ---- end a membership now, not at the period end -------------------
+     * For the rare case it has to stop today (fraud, a duplicate, a
+     * customer who asks). Nothing is refunded here - that is the Refund
+     * button, deliberately separate. The page asks for the business name
+     * to be typed first; the server asks for it too. */
+    if (action === 'cancelNow') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      const { STRIPE_SECRET_KEY } = process.env;
+      if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe is not configured.' });
+      const { data: who, error: whoErr } = await db.from('profiles')
+        .select('stripe_subscription_id, business_name').eq('id', userId).maybeSingle();
+      if (whoErr) throw new Error(whoErr.message);
+      if (!who || !who.stripe_subscription_id) return res.status(400).json({ error: 'No subscription to cancel.' });
+      const want = String(who.business_name || 'CANCEL').trim().toLowerCase();
+      if (String(body.confirm || '').trim().toLowerCase() !== want) {
+        return res.status(400).json({ error: 'Type ' + (who.business_name || 'CANCEL') + ' to confirm.' });
+      }
+      try {
+        const sub = await new Stripe(STRIPE_SECRET_KEY).subscriptions.cancel(who.stripe_subscription_id);
+        console.log('admin: cancelled now %s (%s)', who.stripe_subscription_id, who.business_name || userId);
+        return res.status(200).json({ ok: true, status: sub.status });
+      } catch (e) {
+        console.error('admin: cancel now failed:', e && e.message);
+        return res.status(400).json({ error: e && e.message ? e.message : 'Stripe refused that.' });
+      }
+    }
+
+    /* ---- bring a membership back --------------------------------------
+     * Only possible while it is still running and merely set to end. One
+     * that has already ended cannot be restarted from here: they sign up
+     * again (Starter on /join, Business and Max on /get-started). */
+    if (action === 'reactivate') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      const { STRIPE_SECRET_KEY } = process.env;
+      if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe is not configured.' });
+      const { data: who, error: whoErr } = await db.from('profiles')
+        .select('stripe_subscription_id').eq('id', userId).maybeSingle();
+      if (whoErr) throw new Error(whoErr.message);
+      const ended = { error: 'That membership has ended, so it cannot be restarted here. Send them to ' + ourSiteUrl() + '/join (Starter) or ' + ourSiteUrl() + '/get-started (Business or Max) to sign up again.', ended: true };
+      if (!who || !who.stripe_subscription_id) return res.status(400).json(ended);
+      const stripe = new Stripe(STRIPE_SECRET_KEY);
+      let sub;
+      try { sub = await stripe.subscriptions.retrieve(who.stripe_subscription_id); }
+      catch (e) { return res.status(400).json(ended); }
+      if (sub.status === 'canceled' || sub.status === 'incomplete_expired') return res.status(400).json(ended);
+      if (!sub.cancel_at_period_end) return res.status(400).json({ error: 'It is not set to end, so there is nothing to undo.' });
+      sub = await stripe.subscriptions.update(sub.id, { cancel_at_period_end: false });
+      return res.status(200).json({ ok: true, subscription: subSummary(sub) });
+    }
+
+    /* ---- resend the "make your account" link --------------------------
+     * Someone who paid on /join but never chose a password has no way in
+     * except the link in their welcome email. This sends that link again:
+     * the Checkout Session id is the proof of payment the password step
+     * already checks, so nothing new is minted. */
+    if (action === 'resendAccountLink') {
+      const userId = String(body.userId || '');
+      if (!userId) return res.status(400).json({ error: 'Which customer?' });
+      const { data: found, error: fErr } = await db.auth.admin.getUserById(userId);
+      if (fErr || !found || !found.user) return res.status(404).json({ error: 'No such account.' });
+      const user = found.user;
+      const am = user.app_metadata || {};
+      if (!am.needs_password) return res.status(400).json({ error: 'They have already made their account.' });
+      if (!am.join_session) return res.status(400).json({ error: 'No payment link on file for them - they may not have reached checkout.' });
+      if (!user.email) return res.status(400).json({ error: 'No email on file.' });
+      const { data: prof } = await db.from('profiles')
+        .select('business_name, subscription_status').eq('id', userId).maybeSingle();
+      if (!prof || !['active', 'trialing', 'past_due', 'unpaid'].includes(prof.subscription_status)) {
+        return res.status(400).json({ error: 'They have not paid yet, so the link would not work. Send them to /join instead.' });
+      }
+      const site = ourSiteUrl();
+      const link = site + '/join?paid=' + encodeURIComponent(am.join_session);
+      const biz = prof.business_name ? ', ' + prof.business_name : '';
+      const result = await sendEmail({
+        to: user.email,
+        subject: 'Make your Kanvas One account',
+        text: 'Hi' + biz + ',\n\nYou are all paid up - the one thing left is to choose a password, '
+            + 'so you can see your site and ask for changes:\n' + link + '\n\nAny questions, just reply to this email.',
+        html: emailHtml({
+          preheader: 'Choose a password to see your site and ask for changes.',
+          heading: 'One step left: your account',
+          lines: ['Hi' + esc(biz) + ',', 'You are all paid up. The one thing left is to choose a password, so you can see your site and ask for changes.'],
+          ctaText: 'Make your account', ctaHref: link,
+          ctaNote: 'Any questions, just reply to this email.',
+          footerLinks: standardFooter(site)
+        })
+      });
+      if (result !== 'sent') return res.status(502).json({ error: 'The email did not send (' + result + ').' });
+      console.log('admin: resent account link to %s', userId);
+      return res.status(200).json({ ok: true, to: user.email });
     }
 
     /* ---- the free-example queue ----------------------------------------
