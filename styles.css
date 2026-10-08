@@ -1641,6 +1641,8 @@ a.hero-pill:hover .pill-go{opacity:1}
 .join .join-face{width:52px;height:52px;flex:0 0 auto;box-shadow:0 8px 20px rgba(26,127,55,.22)}
 .join .join-face .dot-eyes{gap:11px}
 .join .join-face .dot-eyes i{width:8px;height:13px}
+/* Dot looks at the box you are in (join.js sets the transform). */
+.join .join-face .dot-eyes.is-aiming{animation:none;transition:transform .25s var(--ease)}
 .join-say{position:relative;margin:0 0 6px;padding:10px 14px;border-radius:16px 16px 16px 4px;background:#f2faf4;color:#14532d;font-size:14.5px;font-weight:500;line-height:1.4;animation:join-say .45s var(--ease) both}
 @keyframes join-say{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
 .wiz-step:not([hidden]) .join-face{animation:join-hop .6s var(--ease)}

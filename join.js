@@ -143,6 +143,7 @@
       li.classList.toggle('is-done', i + 1 < step);
     });
     paint();
+    if (window.oneGuide) guideChanged();
     var first = steps[step - 1].querySelector('input:not([tabindex="-1"]), button');
     if (first && step > 1) { try { first.focus({ preventScroll: true }); } catch (e) {} }
   }
@@ -466,6 +467,42 @@
   $('j_password').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') { e.preventDefault(); $('acctBtn').click(); }
   });
+
+  /* ---------------------------------------------------------- Dot
+     He watches the box you are in (his eyes turn to it), and the chat
+     opens with a tip for the step you are on (chat.js reads oneGuide). */
+  function look(el) {
+    var step = steps[current - 1];
+    var eyes = step && step.querySelector('.join-face .dot-eyes');
+    if (!eyes) return;
+    if (!el) { eyes.classList.remove('is-aiming'); eyes.style.transform = ''; return; }
+    var f = eyes.getBoundingClientRect(), t = el.getBoundingClientRect();
+    var dx = (t.left + t.width / 2) - (f.left + f.width / 2);
+    var dy = (t.top + t.height / 2) - (f.top + f.height / 2);
+    var d = Math.sqrt(dx * dx + dy * dy) || 1;
+    eyes.classList.add('is-aiming');
+    eyes.style.transform = 'translate(' + (dx / d * 6).toFixed(1) + 'px,' + (dy / d * 5).toFixed(1) + 'px)';
+  }
+  track.addEventListener('focusin', function (e) { if (e.target.matches('input, button')) look(e.target); });
+  track.addEventListener('focusout', function () { setTimeout(function () { if (!track.contains(document.activeElement)) look(null); }, 0); });
+
+  window.oneGuide = function () {
+    if (current === 1) {
+      var needName = !$('j_business').value.trim();
+      return { text: needName
+          ? 'Start with your business name, the one your customers know you by. Then your email, so we can send your site when it\u2019s live.'
+          : 'Great name. Now your email: it\u2019s where your site lands, and how you log in later.',
+        actions: [[needName ? 'Show me the name box' : 'Show me the email box', null, needName ? '#j_business' : '#j_email']] };
+    }
+    if (current === 2) return { text: 'These three addresses are free right now and included in your plan. Prefer something else? Tap \u201cWant a different one?\u201d and we\u2019ll check it.',
+      actions: [['Show me the addresses', null, '#domList']] };
+    if (current === 3) return { text: 'Paste the link to your Instagram, Facebook or current site. We build from your photos and words there. Yearly is \u00a399, two months free.',
+      actions: [['Show me the link box', null, '#j_link']] };
+    return { text: 'You\u2019re in! Choose a password to see your site and ask for changes. Got more photos? Reply to your welcome email.',
+      actions: [['Show me the password box', null, '#j_password']] };
+  };
+  function guideChanged() { try { window.dispatchEvent(new Event('one:guide')); } catch (e) {} }
+  $('j_business').addEventListener('change', guideChanged);
 
   /* ---------------------------------------------------------- start */
   fill();

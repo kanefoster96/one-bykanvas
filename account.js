@@ -1083,3 +1083,26 @@ document.getElementById('logout').addEventListener('click', async function () {
       });
   });
 })();
+
+/* ---------------- Dot's tip in the chat ----------------
+   What their site still needs from them: the business details left empty,
+   each a button that opens the details and points at the box (chat.js). */
+window.oneGuide = function () {
+  var NAMES = { business_name: 'business name', business_type: 'type of business', public_email: 'contact email',
+    phone: 'phone number', address: 'address or area', opening_hours: 'opening hours', services: 'services and prices',
+    site_goals: 'what the site should do', existing_links: 'links to where you are online' };
+  var missing = Object.keys(NAMES).filter(function (k) {
+    var el = document.getElementById(k);
+    if (!el) return false;
+    if (k === 'address') { var area = document.getElementById('service_area'); return !el.value.trim() && !(area && area.value.trim()); }
+    return !el.value.trim();
+  });
+  if (!missing.length) {
+    return { text: 'Your details are all filled in. Want something changed on your site? Tap “Add website edit request” below and we’ll do it.' };
+  }
+  var list = missing.slice(0, 3).map(function (k) { return NAMES[k]; });
+  return {
+    text: 'Your site is built from your details. Still missing: ' + list.join(', ') + (missing.length > 3 ? ' and ' + (missing.length - 3) + ' more' : '') + '. Fill them in and we’ll add them for you.',
+    actions: missing.slice(0, 3).map(function (k) { return ['Add ' + NAMES[k], null, '#' + k, '#bizEditBtn']; })
+  };
+};

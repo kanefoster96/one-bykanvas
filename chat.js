@@ -12,7 +12,11 @@
  * data-edits (Kanvas One's own site only) adds the "Add website edit
  * request" pull button above the box: a signed-in member's message goes in
  * as an edit request (/api/requests) instead of a chat; anyone else is told
- * what it is and how to get it.
+ * what it is and how to get it. It also brings Dot, who opens the chat
+ * with a tip for the page you are on: a page can hand him its own with
+ * window.oneGuide() (join.js, account.js), returning { text, actions },
+ * where an action either links (href) or points at a field (target, and
+ * an optional click to open what it sits behind first).
  */
 (function () {
   'use strict';
@@ -56,6 +60,14 @@
     + '.k1c.is-edit .k1c-pull{background:#1a7f37;border-color:#1a7f37;color:#fff}.k1c.is-edit .k1c-pull i{background:#fff;color:#1a7f37}.k1c.is-edit .k1c-form{background:#f2faf4;border-top-color:#bfe3c9}.k1c.is-edit .k1c-form textarea{border-color:#8fcfa1}.k1c.is-edit .k1c-send{background:#1a7f37}.k1c-edit + .k1c-form{border-top:1px solid #d2d2d7}'
     + '.k1c-hint{margin:0;padding:8px 14px 0;font-size:12.5px;color:#1a7f37;background:#f2faf4}.k1c-hint[hidden]{display:none}'
     + '.k1c-card{align-self:stretch;border:1px solid #e5e5ea;border-radius:16px;padding:14px;background:#fafafa}.k1c-card b{display:block;font-size:14.5px;margin-bottom:4px}.k1c-card p{margin:0 0 10px;font-size:13.5px;color:#4a4a4f}.k1c-card a{display:inline-block;margin:0 8px 6px 0;padding:8px 13px;border-radius:10px;font-size:13.5px;font-weight:600;text-decoration:none;background:#1d1d1f;color:#fff}.k1c-card a.k1c-ghost{background:none;color:#1d1d1f;border:1px solid #d2d2d7}.k1c-card.k1c-ok{background:#f2faf4;border-color:#bfe3c9}'
+    /* Dot: in the header, and beside his tips. */
+    + '.k1c-dot{position:relative;display:inline-block;flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);vertical-align:middle}.k1c-dot .k1c-eyes{position:absolute;left:0;right:0;top:34%;display:flex;justify-content:center;gap:6px;animation:k1c-look 7s ease-in-out infinite}.k1c-dot .k1c-eyes i{display:block;width:5px;height:9px;border-radius:50%;background:#fff;animation:k1c-blink 4.2s ease-in-out infinite}'
+    + '@keyframes k1c-look{0%,14%{transform:none}20%,36%{transform:translate(-3px,-1px)}42%,58%{transform:translate(3px,-1px)}64%,80%{transform:translate(0,2px)}86%,100%{transform:none}}@keyframes k1c-blink{0%,91%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}'
+    + '.k1c-headl{display:flex;align-items:center;gap:10px}.k1c-head .k1c-dot{width:32px;height:32px;box-shadow:0 0 0 2px rgba(255,255,255,.25)}'
+    + '.k1c-guide{display:flex;gap:9px;align-items:flex-start;align-self:stretch}.k1c-guide .k1c-dot{width:28px;height:28px;margin-top:2px}.k1c-guide .k1c-dot .k1c-eyes{gap:5px}.k1c-guide .k1c-dot .k1c-eyes i{width:4px;height:8px}.k1c-gbody{flex:1;min-width:0;background:#f2faf4;color:#14532d;border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:14px}.k1c-gbody p{margin:0}.k1c-gbody small{display:block;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:#1a7f37;margin-bottom:2px}.k1c-gacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.k1c-gacts a,.k1c-gacts button{border:1px solid #bfe3c9;background:#fff;color:#14532d;border-radius:980px;padding:6px 11px;font:inherit;font-size:12.5px;font-weight:600;text-decoration:none;cursor:pointer}.k1c-gacts a:hover,.k1c-gacts button:hover{background:#e6f5ea}'
+    + '.k1c-btn-dot{background:none;box-shadow:0 8px 24px rgba(26,127,55,.35)}.k1c-dotbtn{width:56px;height:56px}.k1c-dotbtn .k1c-eyes{gap:9px}.k1c-dotbtn .k1c-eyes i{width:8px;height:13px}'
+    + '.k1-spot{outline:3px solid #34c17a !important;outline-offset:3px;border-radius:10px;animation:k1-spot 1.2s ease-in-out 2}@keyframes k1-spot{50%{outline-color:rgba(52,193,122,.25)}}'
+    + '@media (prefers-reduced-motion:reduce){.k1c-dot .k1c-eyes,.k1c-dot .k1c-eyes i,.k1-spot{animation:none}}'
     + '@media (max-width:480px){.k1c{right:10px;left:10px;width:auto;bottom:80px}}'
     /* data-full: the whole screen on a phone, a full-height panel on the right elsewhere. */
     + '.k1c-full{top:12px;right:12px;bottom:12px;width:min(420px,calc(100vw - 24px));max-height:none}'
@@ -74,16 +86,21 @@
   } else {
     btn = document.createElement('button');
     btn.className = 'k1c-btn'; btn.type = 'button'; btn.setAttribute('aria-label', 'Chat with ' + name);
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg><span class="k1c-n" hidden></span>';
+    btn.innerHTML = (edits
+      ? '<span class="k1c-dot k1c-dotbtn" aria-hidden="true"><span class="k1c-eyes"><i></i><i></i></span></span>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg>')
+      + '<span class="k1c-n" hidden></span>';
+    if (edits) { btn.classList.add('k1c-btn-dot'); btn.setAttribute('aria-label', 'Ask Dot or the team'); }
   }
   var panel = document.createElement('div');
   panel.className = 'k1c' + (full ? ' k1c-full' : ''); panel.hidden = true; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Chat with ' + name);
-  panel.innerHTML = '<div class="k1c-head"><div><b></b><small>Usually replies quickly</small></div><button class="k1c-x" type="button" aria-label="Close">&times;</button></div>'
+  var DOT = '<span class="k1c-dot" aria-hidden="true"><span class="k1c-eyes"><i></i><i></i></span></span>';
+  panel.innerHTML = '<div class="k1c-head"><div class="k1c-headl">' + (edits ? DOT : '') + '<div><b></b><small>' + (edits ? 'Dot and the team, usually replies quickly' : 'Usually replies quickly') + '</small></div></div><button class="k1c-x" type="button" aria-label="Close">&times;</button></div>'
     + '<div class="k1c-msgs"></div>'
     + '<div class="k1c-details" hidden><p>Leave an email or number in case you step away, and we’ll reply there too.</p><input type="text" placeholder="Your name" autocomplete="name"><input type="email" placeholder="Email" autocomplete="email" inputmode="email"><input type="tel" placeholder="Mobile" autocomplete="tel" inputmode="tel"><div class="k1c-row"><button type="button" class="k1c-save">Save</button><button type="button" class="k1c-skip">Not now</button></div></div>'
     + (edits ? '<div class="k1c-edit"><button type="button" class="k1c-pull" aria-pressed="false"><i aria-hidden="true">+</i><span>Add website edit request</span></button></div><p class="k1c-hint" hidden>Tell us the change: words, photos, prices or hours. We make it and let you know.</p>' : '')
     + '<form class="k1c-form"><textarea rows="1" placeholder="Write a message" aria-label="Your message" maxlength="2000"></textarea><button class="k1c-send" type="submit">Send</button></form>';
-  panel.querySelector('.k1c-head b').textContent = name;
+  panel.querySelector('.k1c-head div b').textContent = name;
   if (!btn.parentNode) document.body.appendChild(btn);
   document.body.appendChild(panel);
 
@@ -151,7 +168,7 @@
     btn.setAttribute('aria-expanded', String(open));
     // Full screen on a phone: the page behind must not scroll instead.
     if (full && window.innerWidth <= 700) document.documentElement.style.overflow = open ? 'hidden' : '';
-    if (open) { unread = 0; badge.hidden = true; input.focus(); msgs.scrollTop = msgs.scrollHeight; if (conv) poll().then(schedule); }
+    if (open) { renderGuide(); unread = 0; badge.hidden = true; input.focus(); msgs.scrollTop = msgs.scrollHeight; if (conv) poll().then(schedule); }
     else schedule();
   }
   btn.addEventListener('click', function () { setOpen(!open); });
@@ -275,6 +292,59 @@
     }).catch(function () { input.value = text; sys('Could not send that. Try again.'); })
       .then(function () { sendBtn.disabled = false; });
   }
+
+  /* ---- Dot's tip for this page (data-edits) ----
+     Shown at the top of the chat each time it opens, rewritten in place, so
+     it follows the visitor through a form step by step. */
+  var TIPS = {
+    '/': { text: 'Hi, I\u2019m Dot! Ask us anything. Or start now: it takes two minutes and your site is live within 24 hours.', actions: [['Get started', '/join'], ['See the plans', '/plans.html']] },
+    '/plans': { text: 'Starter is the website, \u00a39.99 a month. Business adds bookings, payments and chat. Max runs your ads and Google too. Not sure? Ask me here.', actions: [['Start on Starter', '/join']] },
+    '/free': { text: 'Type your business name in the box and press the arrow. Then it\u2019s your email, your web address and a link to where you are online now.', actions: [['Take me to the box', null, '#business']] },
+    '/how-it-works': { text: 'Three steps: tell us your name, we build it from your Instagram or Facebook, and it\u2019s live within 24 hours.', actions: [['Get started', '/join']] },
+    '/requests': { text: 'Every change you ask for lives here. Tap one to see where it\u2019s up to, or reply to it. New one? Tap \u201cAdd website edit request\u201d below.' }
+  };
+  var guideEl = null;
+  function guideFor() {
+    try { if (typeof window.oneGuide === 'function') { var g = window.oneGuide(); if (g) return g; } } catch (er) { /* the page's own tip failed: use ours */ }
+    var path = location.pathname.replace(/\.html$/, '').replace(/\/index$/, '/') || '/';
+    if (/^\/(websites-for|web-design)-/.test(path)) return TIPS['/'];
+    return TIPS[path] || null;
+  }
+  function spot(sel, click) {
+    if (click) { var opener = document.querySelector(click); if (opener) opener.click(); }
+    setTimeout(function () {
+      var el = document.querySelector(sel);
+      if (!el) return;
+      /* On a phone the panel covers the page: get out of the way. */
+      if (window.innerWidth <= 700) setOpen(false);
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.remove('k1-spot'); void el.offsetWidth; el.classList.add('k1-spot');
+      setTimeout(function () { el.classList.remove('k1-spot'); }, 2600);
+      try { el.focus({ preventScroll: true }); } catch (er) {}
+    }, click ? 250 : 0);
+  }
+  function renderGuide() {
+    if (!edits) return;
+    var g = guideFor();
+    if (!g) { if (guideEl) { guideEl.remove(); guideEl = null; } return; }
+    if (!guideEl || !guideEl.isConnected) {
+      guideEl = document.createElement('div');
+      guideEl.className = 'k1c-guide';
+      msgs.insertBefore(guideEl, msgs.firstChild);
+    }
+    guideEl.innerHTML = DOT + '<div class="k1c-gbody"><small>Dot</small><p></p><div class="k1c-gacts"></div></div>';
+    guideEl.querySelector('p').textContent = g.text;
+    var acts = guideEl.querySelector('.k1c-gacts');
+    (g.actions || []).forEach(function (a) {
+      var el;
+      if (a[1]) { el = document.createElement('a'); el.href = /^https?:/.test(a[1]) ? a[1] : base + a[1]; }
+      else { el = document.createElement('button'); el.type = 'button'; el.addEventListener('click', function () { spot(a[2], a[3]); }); }
+      el.textContent = a[0];
+      acts.appendChild(el);
+    });
+    if (!acts.children.length) acts.remove();
+  }
+  window.addEventListener('one:guide', function () { if (open) renderGuide(); });
 
   /* First paint: the greeting, then whatever thread is already here. */
   sys(greeting);
