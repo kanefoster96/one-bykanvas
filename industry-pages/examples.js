@@ -17,7 +17,7 @@ const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
 const EX_CSS_V = 8;
-const EX_JS_V = 6;
+const EX_JS_V = 7;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
 
@@ -827,7 +827,7 @@ ${modal(e)}
 ${pill(e)}
 <script src="/consent.js?v=9"></script>
 <script src="/examples/ex.js?v=${EX_JS_V}"></script>
-<script src="/beacon.js?v=4" data-site="${SITE_ID}" defer></script>
+<script src="/beacon.js?v=5" data-site="${SITE_ID}" defer></script>
 </body>
 </html>
 `;
@@ -901,7 +901,7 @@ ${o.body}
 <script src="/session.js?v=3"></script>
 <script src="/script.js?v=${o.scriptV}"></script>
 <script src="/chat.js?v=9" data-site="${SITE_ID}" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
-<script src="/beacon.js?v=4" data-site="${SITE_ID}" defer></script>
+<script src="/beacon.js?v=5" data-site="${SITE_ID}" defer></script>
 <script src="/admin-pill.js?v=8"></script>
 </body>
 </html>

@@ -90,6 +90,22 @@
 .oa-funnel-row:nth-child(3) .oa-funnel-bar{background:#0f8a63}
 .oa-funnel-n{flex:0 0 44px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
 .oa-funnel-note{margin-top:10px;line-height:1.45}
+/* each ad, step by step */
+.oa-ads{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.oa-ad{border-radius:14px;background:var(--line-soft)}
+.oa-ad > summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.oa-ad > summary::-webkit-details-marker{display:none}
+.oa-ad-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.oa-ad-name{font-weight:600;font-size:15px}
+.oa-ad-n{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.oa-ad-tag{font-size:12px;color:var(--ink-2)}
+.oa-ad-line{font-size:13px;color:var(--ink-2);line-height:1.4}
+.oa-ad-line b{color:#0f8a63;font-weight:600}
+.oa-ad .oa-funnel{padding:2px 14px 14px}
+.oa-ad .oa-funnel-label{flex:0 0 46%;font-size:13px;line-height:1.25}
+.oa-ad .oa-funnel-row .oa-funnel-bar{background:var(--ink);opacity:1}
+.oa-ad .oa-funnel-row.is-left .oa-funnel-bar{background:#c0392b;opacity:.75}
+.oa-ad .oa-funnel-row.is-paid .oa-funnel-bar{background:#0f8a63}
 .oa-journeys .oa-list-key{white-space:normal;line-height:1.4}
 .oa-journey-arrow{font-style:normal;color:var(--ink-3);margin:0 5px}
 

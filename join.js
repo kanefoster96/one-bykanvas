@@ -23,6 +23,14 @@
 
   function say(el, msg, kind) { el.textContent = msg || ''; el.className = 'note' + (kind ? ' ' + kind : ''); }
 
+  /* How far this visit got, for the Analytics tab (beacon.js): an example
+     page marks 1 and 2, this page 3 to 8. Once per visit each. */
+  function step(n, label) { (window.k1q = window.k1q || []).push([n, label]); }
+  function whenBeacon(fn) {
+    if (window.k1 && window.k1.payment) { fn(); return; }
+    window.addEventListener('load', function () { if (window.k1 && window.k1.payment) fn(); });
+  }
+
   /* ---------------------------------------------------------- memory */
   var answers = {};
   try { answers = JSON.parse(sessionStorage.getItem(KEEP) || '{}') || {}; } catch (e) { answers = {}; }
@@ -183,6 +191,7 @@
       answers.email = email;
       keep();
       tellMetaLead(email);
+      step(4, 'Entered their name and email');
       show(2);
       return;
     }
@@ -190,6 +199,7 @@
       if (!answers.domain) { say($('note2'), 'Pick a web address, or type the one you want.', 'bad'); return; }
       say($('note2'), '');
       keep();
+      step(5, 'Picked a web address');
       show(3);
     }
   }
@@ -373,6 +383,7 @@
     btn.disabled = true;
     btn.textContent = 'Opening secure payment…';
     say($('note3'), '');
+    step(6, 'Pressed pay');
     if (window.oneTrack) {
       window.oneTrack('InitiateCheckout', { content_category: 'starter', currency: 'GBP', value: answers.billing === 'annual' ? 99 : 9.99 });
     }
@@ -440,7 +451,15 @@
         if (d.business) answers.business = d.business;
         if (d.domain) answers.domain = d.domain;
         paint(true);
-        if (d.paid) confetti();
+        if (d.paid) {
+          confetti();
+          step(7, 'Paid');
+          // The payment, tied to this visit in Analytics; the ref keeps a
+          // reloaded page to one.
+          whenBeacon(function () {
+            window.k1.payment({ amount: d.annual ? 9900 : 999, ref: d.sub || sessionId, email: accountEmail, description: 'Starter, ' + (d.annual ? 'yearly' : 'monthly') });
+          });
+        }
         if (d.domain) {
           $('doneSub').textContent = '';
           $('doneSub').append('Your site goes live at ');
@@ -490,6 +509,7 @@
           if (res.d.code === 'done') { $('accountBox').hidden = true; $('doneLogin').hidden = false; }
           return;
         }
+        step(8, 'Made their account');
         if (!(window.ONE && window.ONE.ready)) { location.href = '/login.html'; return; }
         return window.ONE.db.auth.signInWithPassword({ email: res.d.email || accountEmail, password: pw })
           .then(function (out) {
@@ -551,6 +571,7 @@
     say($('note3'), 'Payment cancelled. Nothing was taken. Pay when you’re ready.');
   } else {
     show(1);
+    step(3, 'Opened the join form');
     if (!answers.business) { try { $('j_business').focus({ preventScroll: true }); } catch (e) {} }
   }
 })();
