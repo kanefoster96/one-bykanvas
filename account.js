@@ -114,7 +114,13 @@ async function start() {
 
   var profile = await ONE.db.from('profiles').select('*').eq('id', user.id).maybeSingle();
   if (profile.error) {
-    loading.innerHTML = '<p>Could not load your account: ' + ONE.friendlyError(profile.error) + '</p>';
+    // A login that has run out or was ended elsewhere: back to log in.
+    if (profile.status === 401 || /jwt/i.test(profile.error.message || '')) {
+      try { await ONE.db.auth.signOut({ scope: 'local' }); } catch (e) { /* cleared locally regardless */ }
+      location.replace('/login.html');
+      return;
+    }
+    loading.innerHTML = '<p>Could not load your account: ' + ONE.friendlyError(profile.error) + '</p><p><a class="btn btn-ghost" href="/account.html">Try again</a></p>';
     return;
   }
   if (profile.data) fill(profile.data);
@@ -1045,7 +1051,8 @@ document.getElementById('payBtn').addEventListener('click', async function () {
 
 /* ---------------- log out ---------------- */
 document.getElementById('logout').addEventListener('click', async function () {
-  if (ONE.ready) await ONE.db.auth.signOut();
+  // This browser only: logging out here must not log them out of the app.
+  if (ONE.ready) { try { await ONE.db.auth.signOut({ scope: 'local' }); } catch (e) { /* cleared locally regardless */ } }
   location.href = '/login.html';
 });
 })();
