@@ -36,6 +36,7 @@ const { addNote, listInbox, getThread, cleanBody, siteForUser } = require('./_re
 const { notifySiteLive } = require('./_site_live.js');
 const { sendLeadPreview } = require('./_previews.js');
 const { changePlan } = require('./_change_plan.js');
+const { prepareRefund, runRefund } = require('./_refund.js');
 
 const PROTOCOL = '2025-06-18';
 const SERVER_INFO = { name: 'kanvas-one', version: '2.0.0' };
@@ -253,27 +254,6 @@ async function partnerBalances(ctx) {
     const thisMonth = mine.filter((r) => monthKey(r.created_at) === nowKey).reduce((s, r) => s + r.amount_pence, 0);
     return { partner_id: partner.id, name: partner.name, contact: partner.contact, code: partner.code, earned: money(earned), paid: money(paid), owed: money(earned - paid), owed_pence: earned - paid, this_month: money(thisMonth), customers: new Set(mine.map((r) => r.user_id)).size };
   });
-}
-
-async function chargeFor(ctx, paymentId) {
-  const id = String(paymentId || '').trim();
-  const stripe = ctx.stripe();
-  if (/^ch_/.test(id)) return stripe.charges.retrieve(id);
-  if (/^pi_/.test(id)) {
-    const pi = await stripe.paymentIntents.retrieve(id);
-    const ch = typeof pi.latest_charge === 'string' ? pi.latest_charge : (pi.latest_charge && pi.latest_charge.id);
-    if (!ch) throw fail('That payment has no charge to refund yet.');
-    return stripe.charges.retrieve(ch);
-  }
-  if (/^in_/.test(id)) {
-    const inv = await stripe.invoices.retrieve(id);
-    const ch = typeof inv.charge === 'string' ? inv.charge : (inv.charge && inv.charge.id);
-    if (ch) return stripe.charges.retrieve(ch);
-    const piId = typeof inv.payment_intent === 'string' ? inv.payment_intent : (inv.payment_intent && inv.payment_intent.id);
-    if (piId) return chargeFor(ctx, piId);
-    throw fail('That invoice has not been paid, so there is nothing to refund.');
-  }
-  throw fail('payment_id should be an invoice (in_), payment intent (pi_) or charge (ch_) id.');
 }
 
 const SITE_ARG = { site_id: { type: 'string', description: 'from list_sites' } };
@@ -563,8 +543,8 @@ const writeTools = {
       catch (e) { if (e.httpStatus) throw fail(e.message); throw e; }
       const name = caller.is_admin ? person(site.profile, site.email) : 'your site';
       const line = pv.upgrading
-        ? 'Upgrade ' + name + ' from ' + PLAN_NAME[pv.from] + ' to ' + PLAN_NAME[pv.to] + ' now. Stripe charges the difference today' + (typeof pv.dueNow === 'number' ? ', ' + money(pv.dueNow) : '') + ', then ' + money(PLANS[a.plan].amount) + ' a month from the next renewal. The card on file must go through or nothing changes.'
-        : 'Move ' + name + ' from ' + PLAN_NAME[pv.from] + ' down to ' + PLAN_NAME[pv.to] + ' from the next renewal' + (pv.renewsAt ? ' on ' + when(new Date(pv.renewsAt * 1000).toISOString()) : '') + '. Nothing charged now; the current plan runs until then.';
+        ? 'Upgrade ' + name + ' from ' + PLAN_NAME[pv.from] + ' to ' + PLAN_NAME[pv.to] + ' now. Stripe charges the difference today' + (typeof pv.dueNow === 'number' ? ', ' + money(pv.dueNow) : '') + ', then ' + money(pv.amount) + (pv.interval === 'year' ? ' a year' : ' a month') + ' from the next renewal. The card on file must go through or nothing changes.'
+        : 'Move ' + name + ' from ' + PLAN_NAME[pv.from] + ' down to ' + PLAN_NAME[pv.to] + ' from the next renewal' + (pv.renewsAt ? ' on ' + when(new Date(pv.renewsAt * 1000).toISOString()) : '') + ', at ' + money(pv.amount) + (pv.interval === 'year' ? ' a year' : ' a month') + '. Nothing charged now; the current plan runs until then.';
       return { preview: line, args: { plan: a.plan } };
     },
     async execute(ctx, caller, a, site) {
@@ -606,25 +586,14 @@ const writeTools = {
     description: 'Admin: refund one of this site’s payments, full or partial. payment_id from orders_list (in_, pi_ or ch_). amount_pence defaults to what is still refundable.',
     input: withSite({ payment_id: { type: 'string' }, amount_pence: { type: 'integer', minimum: 1 }, reason: { type: 'string', enum: ['duplicate', 'fraudulent', 'requested_by_customer'] } }, ['payment_id']),
     async preview(ctx, caller, a, site) {
-      const charge = await chargeFor(ctx, a.payment_id);
-      const cus = typeof charge.customer === 'string' ? charge.customer : (charge.customer && charge.customer.id);
-      if (!cus || cus !== site.profile.stripe_customer_id) throw denied('Permission denied: that payment is not on this site.');
-      const left = charge.amount - (charge.amount_refunded || 0);
-      if (left <= 0) throw fail('That payment of ' + money(charge.amount) + ' is already fully refunded.');
-      const amount = a.amount_pence == null ? left : Math.round(Number(a.amount_pence));
-      if (!Number.isFinite(amount) || amount <= 0) throw fail('The amount needs to be a whole number of pence.');
-      if (amount > left) throw fail('Only ' + money(left) + ' of ' + money(charge.amount) + ' is left to refund.');
-      const reason = a.reason || 'requested_by_customer';
-      return { preview: 'Refund ' + money(amount) + ' of ' + money(charge.amount) + ' (' + (charge.description || 'payment') + ' on ' + when(new Date(charge.created * 1000).toISOString()) + ') to ' + person(site.profile, null) + ', reason: ' + reason.replace(/_/g, ' ') + '. Stripe returns it to their card within 5 to 10 days. The subscription is not changed.', args: { charge_id: charge.id, amount, reason } };
+      const { charge, amount, left, reason } = await prepareRefund(ctx.stripe(), {
+        paymentId: a.payment_id, customerId: site.profile.stripe_customer_id, amount: a.amount_pence, reason: a.reason
+      });
+      return { preview: 'Refund ' + money(amount) + ' of ' + money(charge.amount) + (left < charge.amount ? ' (' + money(left) + ' still refundable)' : '') + ' (' + (charge.description || 'payment') + ' on ' + when(new Date(charge.created * 1000).toISOString()) + ') to ' + person(site.profile, null) + ', reason: ' + reason.replace(/_/g, ' ') + '. Stripe returns it to their card within 5 to 10 days. The subscription is not changed.', args: { charge_id: charge.id, amount, reason } };
     },
     async execute(ctx, caller, a, site) {
-      const charge = await ctx.stripe().charges.retrieve(a.charge_id);
-      const cus = typeof charge.customer === 'string' ? charge.customer : (charge.customer && charge.customer.id);
-      if (cus !== site.profile.stripe_customer_id) throw denied('Permission denied: that payment is not on this site.');
-      const left = charge.amount - (charge.amount_refunded || 0);
-      if (a.amount > left) throw fail('Only ' + money(left) + ' is left to refund now, so nothing was refunded. Ask for a fresh preview.');
-      const r = await ctx.stripe().refunds.create({ charge: a.charge_id, amount: a.amount, reason: a.reason });
-      return { refund_id: r.id, amount: money(r.amount), status: r.status };
+      const r = await runRefund(ctx.stripe(), { chargeId: a.charge_id, customerId: site.profile.stripe_customer_id, amount: a.amount, reason: a.reason });
+      return { refund_id: r.refund_id, amount: money(r.amount), status: r.status };
     }
   },
 

@@ -9,13 +9,49 @@ const { PLANS } = require('./_plans.js');
 
 function fail(status, message) { const e = new Error(message); e.httpStatus = status; return e; }
 
-function priceDataFor(plan, interval) {
+/* Subscription items cannot carry product_data the way a Checkout line item
+   can: Stripe requires price_data.product, the id of a Product that already
+   exists. So each plan has one Product, found by metadata.kanvas_plan and
+   made the first time it is needed, then remembered for the life of the
+   function instance. Checkout still uses inline product_data, which is
+   allowed there. */
+const productCache = {};
+
+async function productFor(stripe, plan) {
+  if (productCache[plan]) return productCache[plan];
+  let startingAfter;
+  for (let page = 0; page < 10; page++) {
+    const args = { active: true, limit: 100 };
+    if (startingAfter) args.starting_after = startingAfter;
+    const list = await stripe.products.list(args);
+    const rows = (list && list.data) || [];
+    const hit = rows.find((p) => p.metadata && p.metadata.kanvas_plan === plan);
+    if (hit) { productCache[plan] = hit.id; return hit.id; }
+    if (!list.has_more || !rows.length) break;
+    startingAfter = rows[rows.length - 1].id;
+  }
+  const made = await stripe.products.create({
+    name: PLANS[plan].label,
+    metadata: { kanvas_plan: plan }
+  });
+  productCache[plan] = made.id;
+  return made.id;
+}
+
+/* What the plan costs on a given interval. A plan with no yearly price
+   (legacy Pro) can only be monthly. */
+function priceFor(plan, interval) {
   const annual = interval === 'year' && Number.isFinite(PLANS[plan].yearly);
+  return { amount: annual ? PLANS[plan].yearly : PLANS[plan].amount, interval: annual ? 'year' : 'month' };
+}
+
+async function priceDataFor(stripe, plan, interval) {
+  const p = priceFor(plan, interval);
   return {
     currency: 'gbp',
-    unit_amount: annual ? PLANS[plan].yearly : PLANS[plan].amount,
-    recurring: { interval: annual ? 'year' : 'month' },
-    product_data: { name: PLANS[plan].label + (annual ? ' — Annual (2 months free)' : '') }
+    product: await productFor(stripe, plan),
+    unit_amount: p.amount,
+    recurring: { interval: p.interval }
   };
 }
 
@@ -27,12 +63,12 @@ function intervalOf(item) {
    the SDK has renamed this call across versions and it is a nicety rather
    than something to fail the change over, so an error just means the page
    describes the change without an exact figure. */
-async function previewAmount(stripe, sub, item, plan) {
+async function previewAmount(stripe, sub, item, priceData) {
   const args = {
     customer: typeof sub.customer === 'string' ? sub.customer : sub.customer.id,
     subscription: sub.id,
     subscription_details: {
-      items: [{ id: item.id, price_data: priceDataFor(plan, intervalOf(item)), quantity: 1 }],
+      items: [{ id: item.id, price_data: priceData, quantity: 1 }],
       proration_behavior: 'always_invoice'
     }
   };
@@ -50,16 +86,17 @@ async function previewAmount(stripe, sub, item, plan) {
 }
 
 /* profile needs stripe_subscription_id, active_plan and subscription_status.
-   apply=false previews; apply=true changes it. */
-async function changePlan(stripe, admin, userId, profile, plan, apply) {
+   apply=false previews; apply=true changes it. opts.interval ('month' or
+   'year') moves the billing interval too - the admin page passes it; the
+   customer's own page and MCP leave it out, which keeps the interval the
+   subscription already has, so an annual subscriber stays annual. */
+async function changePlan(stripe, admin, userId, profile, plan, apply, opts) {
   const live = profile && (profile.subscription_status === 'active' || profile.subscription_status === 'trialing');
   if (!live || !profile.stripe_subscription_id) {
     const e = fail(400, 'There is no active plan to change yet.'); e.needsCheckout = true; throw e;
   }
+  if (!PLANS[plan] || plan === 'pro') throw fail(400, 'Unknown plan.');
   const current = profile.active_plan;
-  if (current === plan) {
-    throw fail(400, 'That is already your plan.');
-  }
 
   const sub = await stripe.subscriptions.retrieve(profile.stripe_subscription_id);
   const item = sub.items && sub.items.data && sub.items.data[0];
@@ -68,14 +105,30 @@ async function changePlan(stripe, admin, userId, profile, plan, apply) {
     throw fail(500, 'Could not read your subscription. Please get in touch.');
   }
 
+  const fromInterval = intervalOf(item);
+  const wanted = opts && (opts.interval === 'year' || opts.interval === 'month') ? opts.interval : fromInterval;
+  if (wanted === 'year' && !Number.isFinite(PLANS[plan].yearly)) throw fail(400, 'That plan has no yearly price.');
+  const target = priceFor(plan, wanted);
+  const intervalChanging = target.interval !== fromInterval;
+
+  if (current === plan && !intervalChanging) {
+    throw fail(400, 'That is already your plan.');
+  }
+
   /* Compare on price, not on the order of the list: the list is for display
-     and the money is what the two behaviours actually differ on. */
+     and the money is what the two behaviours actually differ on. A change
+     of interval always takes effect now - Stripe restarts the billing
+     period when the interval changes, so it cannot wait for the renewal -
+     and so it goes down the upgrade path, which bills (or credits) the
+     difference straight away. */
   const currentAmount = PLANS[current] ? PLANS[current].amount : (item.price && item.price.unit_amount) || 0;
-  const upgrading = PLANS[plan].amount > currentAmount;
+  const upgrading = intervalChanging || PLANS[plan].amount > currentAmount;
   /* Newer API versions carry the period on the item rather than the
      subscription, and an account can be pinned to either. */
   const renewsAt = sub.current_period_end
     || (item.current_period_end || null);
+
+  const priceData = await priceDataFor(stripe, plan, target.interval);
 
   if (!apply) {
     return {
@@ -84,12 +137,15 @@ async function changePlan(stripe, admin, userId, profile, plan, apply) {
       upgrading,
       from: current,
       to: plan,
+      fromInterval,
+      interval: target.interval,
+      amount: target.amount,
       renewsAt,
-      dueNow: upgrading ? await previewAmount(stripe, sub, item, plan) : 0
+      dueNow: upgrading ? await previewAmount(stripe, sub, item, priceData) : 0
     };
   }
 
-  const items = [{ id: item.id, price_data: priceDataFor(plan, intervalOf(item)), quantity: 1 }];
+  const items = [{ id: item.id, price_data: priceData, quantity: 1 }];
   const metadata = Object.assign({}, sub.metadata, { plan, supabase_user_id: userId });
 
   if (upgrading) {
@@ -134,10 +190,10 @@ async function changePlan(stripe, admin, userId, profile, plan, apply) {
     });
   }
 
-  console.log('change-plan: %s %s -> %s (%s)', userId, current, plan,
-    upgrading ? 'upgraded now' : 'from next renewal');
+  console.log('change-plan: %s %s/%s -> %s/%s (%s)', userId, current, fromInterval, plan, target.interval,
+    upgrading ? 'now' : 'from next renewal');
 
-  return { ok: true, upgrading, from: current, to: plan, renewsAt };
+  return { ok: true, upgrading, from: current, to: plan, fromInterval, interval: target.interval, amount: target.amount, renewsAt };
 }
 
-module.exports = { changePlan, priceDataFor, intervalOf };
+module.exports = { changePlan, priceDataFor, priceFor, productFor, intervalOf, _productCache: productCache };
