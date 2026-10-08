@@ -64,7 +64,7 @@ function planNote(plan, name, site) {
         ],
         ctaText: 'See what Business does',
         ctaHref: `${site}/plans.html#business`,
-        ctaNote: 'It is &pound;50 a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.',
+        ctaNote: 'It is &pound;49 a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.',
         footer: 'You&rsquo;re getting this because your Kanvas One plan went live about a month ago. It is the only email like it.',
         footerLinks: standardFooter(site)
       }),
@@ -97,7 +97,7 @@ function planNote(plan, name, site) {
       ],
       ctaText: 'See what Max does',
       ctaHref: `${site}/plans.html#max`,
-      ctaNote: 'It is &pound;250 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.',
+      ctaNote: 'It is &pound;249 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.',
       footer: 'You&rsquo;re getting this because your Kanvas One plan went live about a month ago. It is the only email like it.',
       footerLinks: standardFooter(site)
     }),
@@ -183,13 +183,13 @@ function lastOne(lead, site) {
           + 'your words and photos made by us. No setup fee.',
         'Pay for the year and it&rsquo;s 2 months free plus the Launch Boost: your first month '
           + 'spent getting you found on Google.',
-        'Want bookings, payments and live chat? Business is &pound;50 a month, first month half price. Either way, this is '
+        'Want bookings, payments and live chat? Business is &pound;49 a month, first month half price. Either way, this is '
           + 'the last email about it, and nothing else will follow.'
       ],
       offer: offerBox(site),
       ctaText: 'Put it live — £9.99 a month',
       ctaHref: joinHref(site, lead, 'starter'),
-      ctaNote: `Or <a href="${esc(joinHref(site, lead, 'business'))}" style="color:inherit;">Business, &pound;50 a month, with bookings and payments</a>.`,
+      ctaNote: `Or <a href="${esc(joinHref(site, lead, 'business'))}" style="color:inherit;">Business, &pound;49 a month, with bookings and payments</a>.`,
       footer: 'You&rsquo;re getting this because you asked for a free example at '
             + 'kanvas.one. This is the last email about it.',
       footerLinks: standardFooter(site)

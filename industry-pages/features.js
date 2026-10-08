@@ -2,7 +2,7 @@
  * they have a problem, not a trade. "booking system for small business",
  * "take payments online", "facebook ads for local businesses". Each page
  * answers that search with the pain, the way it works on a Kanvas One site,
- * the plan it lives on, and the free example first.
+ * the plan it lives on, and how to start.
  *
  * Built by build.js into /<slug>.html. Fields:
  *
@@ -14,7 +14,6 @@
  *   desc        meta description
  *   pain        what it is like without it, in the owner's words
  *   lines       requests typed into the demo box
- *   placeholder the business name example on the form
  *   how         three steps, [heading, text]
  *   gets        what they get, ticked
  *   plan        'business' | 'max': the plan it lives on
@@ -28,10 +27,9 @@ module.exports = [
     search: 'Booking system for small businesses, built into your website',
     h1: 'A booking system on your own website.',
     lede: 'Customers pick a slot, pay a deposit and get a reminder. You find out on your phone. No app to send them to, no back-and-forth.',
-    desc: 'A booking system built into your own website, set up for you: customers pick a slot, pay a deposit and get a text reminder. Built and run for you from £50 a month, no setup fee. See a real page for your business free within 24 hours.',
+    desc: 'A booking system built into your own website, set up for you: customers pick a slot, pay a deposit and get a text reminder. Built and run for you from £49 a month, no setup fee. Your site live within 24 hours of joining.',
     pain: 'Every booking is three messages. What days have you got, what time, can you do Saturday. Then a no-show, because nothing was paid and nothing reminded them. The booking apps want a cut, a monthly fee, and your customers on their site instead of yours.',
     lines: ['Let customers book a slot on my site', 'Take a £10 deposit when they book', 'Text them a reminder the day before', 'Show my availability so they stop asking'],
-    placeholder: 'e.g. Fade Room Barbers',
     how: [
       ['Tell us how you work', 'Your services, how long each takes, when you are open, what deposit you want. Five minutes.'],
       ['We build it into your site', 'The calendar, the deposit, the confirmation and the reminder. On your own address, matching your site, within 14 days of joining.'],
@@ -46,7 +44,7 @@ module.exports = [
       'Cancel and rebook links, so they do not have to ring'
     ],
     plan: 'business',
-    planLine: 'Bookings are part of Business: &pound;50 a month, no setup fee, and the site, hosting and web address are in it.',
+    planLine: 'Bookings are part of Business: &pound;49 a month, no setup fee, and the site, hosting and web address are in it.',
     faq: [
       ['Does it work for more than one person?', 'Yes. Each barber, stylist or trainer gets their own hours and their own calendar, and the customer picks who.'],
       ['Can I take a deposit?', 'Yes, any amount you like, or the full price. It goes to your bank through Stripe, and a customer who paid a deposit turns up.'],
@@ -61,10 +59,9 @@ module.exports = [
     search: 'Take payments online for your small business, on your own website',
     h1: 'Take payments on your own website.',
     lede: 'Deposits, invoices, products, gift vouchers. Paid by card on your site, straight to your bank, while you are on a job.',
-    desc: 'Take card payments on your own website: deposits, invoices, products and gift vouchers, paid straight to your bank. Set up for you from £50 a month, no setup fee. See a real page for your business free within 24 hours.',
+    desc: 'Take card payments on your own website: deposits, invoices, products and gift vouchers, paid straight to your bank. Set up for you from £49 a month, no setup fee. Your site live within 24 hours of joining.',
     pain: 'Chasing bank transfers. Cash that has to be counted. A card machine that costs monthly whether you use it or not. Customers who want to pay now, at eleven at night, and cannot.',
     lines: ['Take deposits on my site', 'Let people pay an invoice by card', 'Sell gift vouchers online', 'Add a small shop to my site'],
-    placeholder: 'e.g. Nova Nails',
     how: [
       ['Tell us what people pay you for', 'Deposits, a price list, products, vouchers, invoices. Whatever it is, and how you want the money to land.'],
       ['We connect it to your bank', 'Stripe, set up for you, paid into your account. No monthly fee for the card machine you do not use.'],
@@ -79,7 +76,7 @@ module.exports = [
       'Every payment against the customer’s name'
     ],
     plan: 'business',
-    planLine: 'Payments are part of Business: &pound;50 a month, no setup fee. Card fees are Stripe&rsquo;s, about 1.5% plus 20p per payment, and nothing on top from us.',
+    planLine: 'Payments are part of Business: &pound;49 a month, no setup fee. Card fees are Stripe&rsquo;s, about 1.5% plus 20p per payment, and nothing on top from us.',
     faq: [
       ['What does it cost per payment?', 'Stripe&rsquo;s fee, about 1.5% plus 20p for a UK card. Nothing on top. There is no monthly fee for taking payments.'],
       ['When does the money arrive?', 'In your bank account a few days after the payment, on a rolling basis. Stripe sets the exact schedule.'],
@@ -94,10 +91,9 @@ module.exports = [
     search: 'Facebook and Instagram ads for local businesses, run for you',
     h1: 'Facebook and Instagram ads, run for you.',
     lede: 'You set the budget. We write the offer, build the ad and the form, run it, and tell you each month what it cost and what came in.',
-    desc: 'Facebook and Instagram ads for local businesses, set up, run and tracked for you. You set the budget and change it any time; We write the offer, build the ad and the form, and report every month. Part of Max, £250 a month, no setup fee.',
+    desc: 'Facebook and Instagram ads for local businesses, set up, run and tracked for you. You set the budget and change it any time; We write the offer, build the ad and the form, and report every month. Part of Max, £249 a month, no setup fee.',
     pain: 'You boosted a post once and got likes from people three hundred miles away. An agency wanted &pound;600 a month before the budget. So the ads never got done, and the phone stays as quiet as it was.',
     lines: ['Run a Facebook ad for my boiler service offer', 'Get me more customers in my town', 'Put a form on my site the ad can send people to', 'Tell me what the ads brought in this month'],
-    placeholder: 'e.g. Dave the Plumber',
     how: [
       ['A photo, or a line of text', 'The job you want more of, and a picture of it. That is all we need from you, plus access to your Facebook page.'],
       ['We build the offer, the ad and the form', 'Written for your town and your trade, pointing at a page on your own site that turns a click into a call. Live within 7 days.'],
@@ -112,10 +108,10 @@ module.exports = [
       'Every enquiry from the ads followed up by email if it goes quiet'
     ],
     plan: 'max',
-    planLine: 'Ads are part of Max: &pound;250 a month with the website, the ranking work and the follow-up emails in it. No setup fee, and your price is locked for as long as you stay.',
+    planLine: 'Ads are part of Max: &pound;249 a month with the website, the ranking work and the follow-up emails in it. No setup fee, and your price is locked for as long as you stay.',
     faq: [
       ['How much should the budget be?', 'Your call, and you can change it any time. Below about &pound;10 a day there is not enough to learn from, so that is where we suggest starting.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
+      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;249 is for the work.'],
       ['Will it definitely bring customers?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, and a note every month showing what it brought in, so you can decide with numbers.'],
       ['What do you need from me?', 'A photo or a line about the job you want more of, and admin access to your Facebook page. We do the rest.']
     ]
@@ -126,10 +122,9 @@ module.exports = [
     search: 'A website with live chat, answered from your phone',
     h1: 'Live chat on your website, answered from your phone.',
     lede: 'The question they would have rung about, answered in a message, kept with their name. No app for them, no desk for you.',
-    desc: 'Live chat built into your own website and answered from your phone: enquiries, questions and quotes in one place, kept against the customer’s name. Set up for you from £50 a month, no setup fee. See a real page for your business free within 24 hours.',
+    desc: 'Live chat built into your own website and answered from your phone: enquiries, questions and quotes in one place, kept against the customer’s name. Set up for you from £49 a month, no setup fee. Your site live within 24 hours of joining.',
     pain: 'Half your enquiries are the same four questions. They arrive on Facebook, Instagram, WhatsApp, text and email, and one of them always gets missed. The one you miss was the job.',
     lines: ['Add live chat to my site', 'Answer questions from my phone', 'Keep every enquiry in one place', 'Let people send me a photo of the job'],
-    placeholder: 'e.g. Bright Sparks Electrical',
     how: [
       ['We add the chat to your site', 'A small button on every page. Customers type, and can send a photo of the job.'],
       ['It comes to your phone', 'A notification, and the whole conversation. Reply when you are off the ladder. If they left an email, they hear back there too.'],
@@ -144,7 +139,7 @@ module.exports = [
       'Every conversation kept with the customer’s bookings and payments'
     ],
     plan: 'business',
-    planLine: 'Live chat is part of Business: &pound;50 a month, no setup fee, with the site, hosting and web address in it.',
+    planLine: 'Live chat is part of Business: &pound;49 a month, no setup fee, with the site, hosting and web address in it.',
     faq: [
       ['Do I have to answer straight away?', 'No. It is a message, not a phone call. They see that you will reply, and if they leave an email they get your reply there too.'],
       ['Is it a bot?', 'No. It is you, from your phone. The site answers the common questions in the page itself, so the chat is for the ones that need you.'],
@@ -159,10 +154,9 @@ module.exports = [
     search: 'Get Google reviews automatically, after every job',
     h1: 'Google reviews asked for after every job, automatically.',
     lede: 'A message the day after, with the link. You never have to ask, and the reviews are what move you up the map.',
-    desc: 'Get Google reviews automatically: a message to every customer the day after the job, with the link, sent by your website. Set up for you from £50 a month, no setup fee. See a real page for your business free within 24 hours.',
+    desc: 'Get Google reviews automatically: a message to every customer the day after the job, with the link, sent by your website. Set up for you from £49 a month, no setup fee. Your site live within 24 hours of joining.',
     pain: 'You know reviews are what people check. You mean to ask. The job is done, the van is loaded, and asking feels awkward, so the customer who was delighted never says so where anyone can see it.',
     lines: ['Ask every customer for a Google review', 'Send the review link the day after the job', 'Show my reviews on my site', 'Get me higher on Google Maps in my town'],
-    placeholder: 'e.g. Green & Tidy Gardens',
     how: [
       ['Your Google listing, linked', 'We connect your Google Business Profile to your site, or set one up if you have none.'],
       ['The ask, sent for you', 'The day after each booking or payment, the customer gets a short message from your business with the review link. Written once, sent every time.'],
@@ -177,7 +171,7 @@ module.exports = [
       'Nothing for you to remember'
     ],
     plan: 'business',
-    planLine: 'Automatic review requests are part of Business: &pound;50 a month, no setup fee, with the site, hosting and web address in it.',
+    planLine: 'Automatic review requests are part of Business: &pound;49 a month, no setup fee, with the site, hosting and web address in it.',
     faq: [
       ['Is it allowed?', 'Yes. Asking every customer for an honest review is what Google recommends. What is not allowed is paying for reviews or filtering out the unhappy ones, and this does neither.'],
       ['What does the message say?', 'A short thank-you from your business and the link. You see it before it goes live and can change the wording any time.'],

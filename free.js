@@ -1,15 +1,10 @@
 /* /free - the page every ad lands on.
  *
- * The same two steps as the homepage, in one row:
- *   1. the business name, Title Cased as it is typed, and an arrow;
- *   2. the email, and the gift button that sends it (/api/lead).
- * Then, with the request already in, one optional step: a link to the
- * business, added to the lead just sent, so the page is designed from
- * something real. Added or skipped, they go on to /thanks.html.
- *
- * The Lead event fires the moment the request is in, not on the thank-you
- * page, so someone who closes the tab at the optional step still counts.
- * thanks.js sees `tracked` and does not fire it twice.
+ * Says who it is for (the trade from the ad), shows an example site for that
+ * trade, and takes the business name into the join page, where they pick a
+ * web address, give us the page they are online at and pay. No free design
+ * and no exit prompt any more: £9.99 is the offer, and cancelling any month
+ * is the safety net.
  */
 (function () {
   'use strict';
@@ -95,69 +90,29 @@
   var form = document.getElementById('offer');
   if (!form) return;
   var name = document.getElementById('business');
-  var next = document.getElementById('offerNext');
-  var email = document.getElementById('email');
-  var send = document.getElementById('offerSend');
-  var handle = document.getElementById('handle');
-  var handleGo = document.getElementById('offerHandleGo');
-  var skip = document.getElementById('offerSkip');
-  var steps = [document.getElementById('offerStep1'), document.getElementById('offerStep2'), document.getElementById('offerStep3')];
   var note = document.getElementById('offerNote');
-  var hp = document.getElementById('offer_extra');
-  var shownAt = Date.now();
-  var leadId = null;
-  var at = 0;
 
-  /* Two ways in, one box. 'join' (the default) takes the name straight into
-     signing up for Starter; 'free' is the free design, for anyone unsure:
-     the name, then the email, then an optional link. ?mode=free (from the
-     trade pages' "Not sure?" links) starts on the free design. */
-  var label1 = document.getElementById('businessLabel');
-  var micro = document.getElementById('offerMicro');
-  var modeBtn = document.getElementById('offerMode');
-  var mode = 'join';
-  var touched = false;   // they have started; the not-sure prompt stays away
-  function setMode(m, focus) {
-    mode = m;
-    form.classList.toggle('is-free', m === 'free');
-    if (label1) label1.textContent = m === 'free' ? 'Your business name, for your free design' : 'Your business name, to get started';
-    next.setAttribute('aria-label', m === 'free' ? 'Next' : 'Get started');
-    if (micro) micro.textContent = m === 'free' ? 'Free, no card. In your inbox within 24 hours.' : 'Two minutes to sign up. Your site, live within 24 hours.';
-    if (modeBtn) modeBtn.textContent = m === 'free' ? 'Rather get started now? \u00a39.99 a month' : 'Not sure? See your free design first';
-    if (at === 1) go(0, focus ? name : null);
-    else if (focus) name.focus({ preventScroll: true });
+  /* One box: the business name, then into the join page with it filled in
+     and their trade carried along. join.js takes it from there (email, web
+     address, the link they are online at, payment). */
+  function join() {
+    var q = 'business=' + encodeURIComponent(name.value.trim());
+    try { var t = sessionStorage.getItem('one.trade'); if (t) q += '&trade=' + encodeURIComponent(t); } catch (e) { /* private mode */ }
+    location.assign('/join?' + q);
   }
-  try { if (new URLSearchParams(location.search).get('mode') === 'free') setMode('free'); } catch (e) { /* old browser: join */ }
-  if (modeBtn) modeBtn.addEventListener('click', function () { touched = true; setMode(mode === 'free' ? 'join' : 'free', true); });
 
-  /* Links further down the page back to the box: "Get started" as it is,
-     "See your free design first" switching it to the free design. */
-  function toBox(free) {
-    touched = true;
-    if (free && mode !== 'free') setMode('free');
-    else if (!free && mode !== 'join' && at === 0) setMode('join');
-    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(function () { (at === 1 ? email : name).focus({ preventScroll: true }); }, 450);
-  }
+  /* "Get started" further down the page brings them back to the box. */
   document.addEventListener('click', function (e) {
-    var a = e.target.closest && e.target.closest('[data-to-offer], [data-to-free]');
+    var a = e.target.closest && e.target.closest('[data-to-offer]');
     if (!a) return;
     e.preventDefault();
-    toBox(a.hasAttribute('data-to-free'));
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function () { name.focus({ preventScroll: true }); }, 450);
   });
 
-  /* Joining: into the sign-up with the name they typed, on Starter. The
-     wizard takes it from there (account, trade, web address, payment). */
-  function join() {
-    var q = 'plan=starter&business=' + encodeURIComponent(name.value.trim());
-    location.assign('/get-started.html?' + q);
-  }
-
   function say(msg, kind) { note.textContent = msg || ''; note.className = 'note' + (kind ? ' ' + kind : ''); }
-  function filled(el) { return el.value.trim().length >= 2; }
 
   function titleCase(s) { return s.replace(/(^|[\s\-'&(]+)([a-z])/g, function (m, pre, ch) { return pre + ch.toUpperCase(); }); }
-  name.addEventListener('focus', function () { touched = true; });
   name.addEventListener('input', function () {
     var pos = name.selectionStart, was = name.value, now = titleCase(was);
     if (now !== was) { name.value = now; try { name.setSelectionRange(pos, pos); } catch (e) { /* not settable here */ } }
@@ -165,140 +120,9 @@
     say('');
   });
 
-  /* The step on screen fades out; the next fades in where it was. */
-  function go(n, focusEl) {
-    var from = steps[at], to = steps[n];
-    at = n;
-    from.classList.add('out');
-    setTimeout(function () {
-      from.hidden = true; from.classList.remove('out', 'in');
-      to.hidden = false; to.classList.add('in');
-      if (focusEl) setTimeout(function () { focusEl.focus({ preventScroll: true }); }, 80);
-    }, 230);
-  }
-
-  function step2() {
-    if (!filled(name)) { name.classList.add('err'); name.focus(); say('Tell us your business name.', 'bad'); return; }
-    say('');
-    touched = true;
-    if (mode === 'join') return join();
-    /* The second step speaks to them by name, so it reads as the same
-       conversation and shows the name went in. */
-    var label = steps[1].querySelector('label');
-    if (label) label.textContent = 'Where should we send the design for ' + name.value.trim() + '?';
-    go(1, email);
-  }
-  next.addEventListener('click', step2);
-  name.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); step2(); } });
-  email.addEventListener('input', function () { email.classList.remove('err'); });
-
-  form.addEventListener('submit', async function (e) {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
-    if (at === 0) return step2();
-    if (at === 2) return addLink();
-    if (leadId) return;
-    var biz = name.value.trim();
-    var mail = email.value.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { email.classList.add('err'); email.focus(); return say('Enter a valid email address.', 'bad'); }
-    send.disabled = true;
-    say('Sending…');
-    try {
-      var res = await fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          source: 'free-preview', name: biz, business: biz, email: mail, handle: '',
-          campaign: (window.oneFrom && window.oneFrom()) || '',
-          website: hp ? hp.value : '',
-          elapsed: Date.now() - shownAt
-        })
-      });
-      var data = await res.json().catch(function () { return {}; });
-      if (!res.ok) throw new Error(data.error || 'Could not send that. Try again.');
-      leadId = data.id || '';
-      if (window.oneTrack) window.oneTrack('Lead', { content_category: 'free-preview' }, leadId || null);
-      /* Handed to the thank-you page rather than put in its URL: an email
-         address in a link ends up in browser history. */
-      try { sessionStorage.setItem('one.free-requested', JSON.stringify({ email: mail, id: leadId, tracked: true })); } catch (err) { /* private mode */ }
-      say('');
-      if (micro) micro.hidden = true;
-      var alt = document.getElementById('offerAlt');
-      if (alt) alt.hidden = true;
-      go(2, handle);
-    } catch (err) {
-      say(err.message || 'Could not send that. Try again.', 'bad');
-      send.disabled = false;
-    }
+    if (name.value.trim().length < 2) { name.classList.add('err'); name.focus(); say('Tell us your business name.', 'bad'); return; }
+    join();
   });
-
-  function done() { location.assign('/thanks.html'); }
-  async function addLink() {
-    var link = handle.value.trim();
-    if (!link) { handle.classList.add('err'); handle.focus(); return say('Paste a link, or skip.', 'bad'); }
-    handleGo.disabled = true;
-    if (leadId) {
-      try {
-        await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ update: leadId, handle: link }) });
-      } catch (err) { /* the page is already on its way; the link was a bonus */ }
-    }
-    done();
-  }
-  handleGo.addEventListener('click', addLink);
-  handle.addEventListener('input', function () { handle.classList.remove('err'); });
-  handle.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addLink(); } });
-  skip.addEventListener('click', done);
-
-  /* ---- not sure? ----
-     The free design, offered once to someone about to leave without
-     starting: on a computer when the pointer leaves through the top of the
-     window, on a phone (where there is no such moment) once they have seen
-     the price and not touched the box for a while. Never if they have
-     started, never twice in a visit. */
-  var ns = document.getElementById('notSure');
-  if (ns) {
-    var NS_KEY = 'one.notsure';
-    var seenBefore = false;
-    try { seenBefore = !!sessionStorage.getItem(NS_KEY); } catch (e) { /* private mode */ }
-    var nsOpener = null;
-    var showNs = function () {
-      if (seenBefore || touched || mode === 'free' || leadId || !ns.hidden) return;
-      seenBefore = true;
-      try { sessionStorage.setItem(NS_KEY, '1'); } catch (e) { /* private mode */ }
-      nsOpener = document.activeElement;
-      ns.hidden = false;
-      var go2 = document.getElementById('notSureGo');
-      if (go2) go2.focus({ preventScroll: true });
-    };
-    var hideNs = function () {
-      ns.hidden = true;
-      if (nsOpener && nsOpener.focus) nsOpener.focus({ preventScroll: true });
-    };
-    ns.addEventListener('click', function (e) {
-      if (e.target === ns || (e.target.closest && e.target.closest('[data-notsure-close]'))) hideNs();
-    });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !ns.hidden) hideNs(); });
-    var nsGo = document.getElementById('notSureGo');
-    if (nsGo) nsGo.addEventListener('click', function () { ns.hidden = true; toBox(true); });
-
-    var fine = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
-    if (fine) {
-      document.addEventListener('mouseout', function (e) {
-        if (e.relatedTarget || e.clientY > 0) return;
-        if (Date.now() - shownAt < 4000) return;
-        showNs();
-      });
-    } else {
-      var price = document.getElementById('price');
-      if (price && window.IntersectionObserver) {
-        var timer = null;
-        new IntersectionObserver(function (entries, obs) {
-          entries.forEach(function (en) {
-            if (en.intersectionRatio < 0.5 || timer) return;
-            obs.disconnect();
-            timer = setTimeout(showNs, 9000);
-          });
-        }, { threshold: [0.5] }).observe(price);
-      }
-    }
-  }
 })();

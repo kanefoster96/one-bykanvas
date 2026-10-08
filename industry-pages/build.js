@@ -1,7 +1,7 @@
 /* Industry landing pages — one static page per kind of business, for search.
  *
  * Each page answers the query "website for [my trade]" with copy about that
- * trade, the features that trade actually asks for, and the free-build offer.
+ * trade, the features that trade actually asks for, and the Starter offer.
  * The skeleton (head, nav, footer, scripts) mirrors the hand-written pages;
  * run `node industry-pages/build.js` from the repo root to regenerate all ten
  * after editing the data below or the template. The generated files are
@@ -17,8 +17,8 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 138;
-const SCRIPT_V = 34;
+const CSS_V = 139;
+const SCRIPT_V = 35;
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -110,7 +110,9 @@ function plain(html) {
 }
 
 
-/* Shared between the trade pages and the feature pages. */
+/* Shared between the trade pages and the feature pages. Every href="#join"
+   in a template becomes /join as the page is written, with the trade on it
+   where the page has one. */
 const NAV = `<header class="nav" id="nav">
   <div class="nav-inner">
     <a class="logo" href="/" aria-label="Kanvas One — home">one<span class="wm-dot">.</span></a>
@@ -121,9 +123,9 @@ const NAV = `<header class="nav" id="nav">
   </div>
 </header>
 
-<!-- The free page, as a banner under the nav: one pill, nearly full width,
+<!-- The offer, as a banner under the nav: one pill, nearly full width,
      on every marketing page. -->
-<a class="free-banner" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.2" rx="1"/><path d="M4.8 12.2v7.9c0 .5.4.9.9.9h12.6c.5 0 .9-.4.9-.9v-7.9"/><path d="M12 8v13"/><path d="M12 8c0-2.5-1-4.2-2.8-4.2a2.1 2.1 0 0 0 0 4.2z"/><path d="M12 8c0-2.5 1-4.2 2.8-4.2a2.1 2.1 0 0 1 0 4.2z"/></svg><span>Your website, live in 24 hours: &pound;9.99 a month</span><span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
+<a class="free-banner" href="#join"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><span>Your website, live in 24 hours: &pound;9.99 a month</span><span class="pill-go" aria-hidden="true">&rsaquo;</span></a>
 
 <div class="menu" id="menu" hidden></div>
 <div class="scrim" id="scrim" hidden></div>
@@ -132,46 +134,16 @@ const NAV = `<header class="nav" id="nav">
 
 `;
 
-function miniForm(placeholder) {
-  return `<!-- The free example, on the page the ad lands on: three things, one at a
-     time. Same endpoint and thank-you page as /free.html; script.js runs
-     it wherever #miniFree is. -->
-<section class="section pt0">
+/* The offer, straight after the hero: pay, and the site is built for
+   you from the page you already have. Trade and local pages send it to
+   /join; the feature and Max pages pass their own plan. */
+function joinCta(href, label, micro) {
+  return `<section class="section pt0">
   <div class="wrap center">
-    <form class="free-mini reveal" id="miniFree" novalidate>
-      <p class="hero-pill"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free</p>
-      <h3>See your site within 24 hours. <span class="g-free">Free.</span></h3>
-      <p class="lede">Three things, and a real page lands in your inbox within 24 hours.<span class="gap"></span>No card.</p>
-
-      <div class="hp" aria-hidden="true">
-        <label for="mini_extra">Leave this empty</label>
-        <input id="mini_extra" name="mini_extra" type="text" tabindex="-1" autocomplete="off">
-      </div>
-
-      <div class="mini-step wait" id="miniStep1">
-        <label for="miniBusiness">Your business name</label>
-        <input id="miniBusiness" type="text" autocomplete="organization" placeholder="${placeholder || 'e.g. Fade Room Barbers'}" enterkeyhint="next">
-      </div>
-
-      <div class="mini-step" id="miniStep2" hidden>
-        <label for="miniHandle">Your business anywhere online</label>
-        <input id="miniHandle" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@yourbusiness or a link" enterkeyhint="next">
-        <p class="hint">Instagram, Facebook, your current site, Trust a Trader &mdash; anywhere.</p>
-      </div>
-
-      <div class="mini-step" id="miniStep3" hidden>
-        <label for="miniEmail">Where should we send it? You&rsquo;ll have it within 24 hours.</label>
-        <div class="mini-row">
-          <input id="miniEmail" type="email" autocomplete="email" placeholder="you@example.com" enterkeyhint="send">
-          <button class="mini-go" id="miniSend" type="submit" aria-label="Send my free example">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <p class="note" id="miniNote" role="status" aria-live="polite"></p>
-      <p class="mini-alt">Already decided? <a href="/get-started.html">Get started &rsaquo;</a></p>
-    </form>
+    <div class="cta-row reveal">
+      <a class="btn btn-primary" href="${href || '#join'}">${label || 'Get started, &pound;9.99 a month &rsaquo;'}</a>
+    </div>
+    <p class="micro reveal">${micro || 'Built for you from the page you already have, live within 24 hours. Or &pound;99 a year.'}</p>
   </div>
 </section>
 `;
@@ -205,13 +177,14 @@ const FOOT = `<footer class="foot">
 </html>
 `;
 
-/* What every plan page offers, for the structured data: Starter from
-   £9.99 a month, and the free design for anyone who wants to see it first. Search engines and AI answers read the
+/* What every plan page offers, for the structured data: Starter at
+   £9.99 a month, or £99 a year. Search engines and AI answers read the
    price from here as well as from the page. */
 const OFFERS = [
-  { '@type': 'Offer', name: 'Free website design', price: '0', priceCurrency: 'GBP', description: 'A real page for your business, designed and emailed within 24 hours, before you pay. No card.', url: 'https://kanvas.one/free' },
-  { '@type': 'Offer', name: 'Starter website plan', price: '9.99', priceCurrency: 'GBP', description: 'A website built for you and live within 24 hours, £9.99 a month. Web address, hosting, security, support and changes to your words and photos included. No setup fee, no VAT, cancel any month.', url: 'https://kanvas.one/plans',
-    priceSpecification: { '@type': 'UnitPriceSpecification', price: '9.99', priceCurrency: 'GBP', unitText: 'month', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' } } }
+  { '@type': 'Offer', name: 'Starter website plan', price: '9.99', priceCurrency: 'GBP', description: 'A website built for you from the page you already have and live within 24 hours, £9.99 a month. Web address, hosting, security, support and unlimited changes to your words and photos included. No setup fee, no VAT, cancel any month.', url: 'https://kanvas.one/join',
+    priceSpecification: { '@type': 'UnitPriceSpecification', price: '9.99', priceCurrency: 'GBP', unitText: 'month', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' } } },
+  { '@type': 'Offer', name: 'Starter website plan, paid yearly', price: '99', priceCurrency: 'GBP', description: 'The Starter plan paid for the year: £99, two months free.', url: 'https://kanvas.one/join',
+    priceSpecification: { '@type': 'UnitPriceSpecification', price: '99', priceCurrency: 'GBP', unitText: 'year', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'ANN' } } }
 ];
 
 function page(b) {
@@ -286,7 +259,7 @@ ${b.trust ? `    <ul class="assure trust reveal">${b.trust.map((t) => `<li>${t}<
 ` : ''}  </div>
 </section>
 
-${miniForm(b.placeholder)}
+${joinCta()}
 <section class="section pt0">
   <div class="wrap center">
     <h2 class="reveal">What your site can do.</h2>
@@ -299,7 +272,7 @@ ${b.also ? `  <div class="wrap center also reveal">
     <p class="also-title">${b.alsoTitle || 'Also included, if you want them'}</p>
     <div class="also-pills">${b.also.map((t) => `<span class="use-chip">${t}</span>`).join('')}</div>
     <div class="cta-row">
-      <a class="btn btn-free" href="#miniFree">Get started, &pound;9.99 a month &rsaquo;</a>
+      <a class="btn btn-primary" href="#join">Get started, &pound;9.99 a month &rsaquo;</a>
     </div>
   </div>
 ` : ''}</section>
@@ -341,12 +314,12 @@ ${b.maxPitch ? `<section class="section">
       <h3>Starter</h3>
       <p class="price"><span class="cur">&pound;</span>9.99<span class="per">/month</span></p>
       <p class="plan-note">Found on Google, called and messaged. Designed and hosted for you. No setup fee.</p>
-      <a class="btn btn-primary full" href="/get-started.html?plan=starter">Choose Starter &rsaquo;</a>
+      <a class="btn btn-primary full" href="#join">Choose Starter &rsaquo;</a>
     </article>
     <article class="plan">
       <div class="badge">Get booked</div>
       <h3>Business</h3>
-      <p class="price"><span class="cur">&pound;</span>50<span class="per">/month</span></p>
+      <p class="price"><span class="cur">&pound;</span>49<span class="per">/month</span></p>
       <p class="plan-note">Everything in Starter, plus:</p>
       <ul class="ticks">
         <li class="tick-hero">Bookings, payments and live chat</li>
@@ -358,7 +331,7 @@ ${b.maxPitch ? `<section class="section">
     <article class="plan">
       <div class="badge">Add growth</div>
       <h3>Max</h3>
-      <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
+      <p class="price"><span class="cur">&pound;</span>249<span class="per">/month</span></p>
       <p class="plan-note">An end-to-end system for your kind of business, run for you:</p>
       <ul class="ticks">
         <li class="tick-hero">Your Facebook and Instagram ads, run by us. You set the budget</li>
@@ -369,7 +342,7 @@ ${b.maxPitch ? `<section class="section">
       <a class="btn btn-ghost full" href="${maxHref(b.slug)}">${maxLabel(b.slug)} &rsaquo;</a>
     </article>
   </div>
-  <p class="wrap center micro reveal">50% off your first month. Or pay for the year: 2 months free and the Launch Boost.</p>
+  <p class="wrap center micro reveal">No setup fee on any plan. Business is half price for your first month. Or pay for the year: 2 months free and the Launch Boost.</p>
 </section>
 ` : ''}${b.faq ? `<section class="section grey">
   <div class="wrap center">
@@ -385,23 +358,22 @@ ${faqFor(b).map(([q, a]) => `    <details>
 ` : ''}<section class="section grey cta-end">
   <div class="wrap center">
     <h2 class="reveal">Your website, live within <span class="g-free">24 hours.</span></h2>
-    <p class="lede reveal">${b.promise ? 'Our side of the deal, in writing.' : b.freeLede}</p>
+    <p class="lede reveal">${b.promise ? 'Our side of the deal, in writing.' : 'Built for you from the page you already have. We change it until you love it.'}</p>
 ${b.rich ? `${b.promise ? `    <div class="promise reveal">
       <p class="promise-name">${b.promise.name}</p>
       <ul class="promise-lines">${b.promise.lines.map((l) => `<li>${l}</li>`).join('')}</ul>
     </div>
-` : ''}    <p class="micro reveal price-line">&pound;9.99 a month, web address included. No setup fees. Cancel anytime.</p>
+` : ''}    <p class="micro reveal price-line">&pound;9.99 a month, or &pound;99 a year. Web address included. No setup fees. Cancel any month.</p>
 ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join('\n')}
     <div class="cta-row reveal">
-      <a class="btn btn-free" href="#miniFree">Get started, &pound;9.99 a month &rsaquo;</a>
+      <a class="btn btn-primary" href="#join">Get started, &pound;9.99 a month &rsaquo;</a>
     </div>
-    <p class="micro reveal"><a href="#miniFree&mode=free">Not sure? See your free design first</a></p>
     <p class="ask reveal">${b.endLine}</p>
 ` : `    <div class="cta-row reveal">
-      <a class="btn btn-free" href="#miniFree">Get started &rsaquo;</a>
+      <a class="btn btn-primary" href="#join">Get started &rsaquo;</a>
       <a class="btn btn-ghost" href="/plans.html">See all plans</a>
     </div>
-    <p class="micro reveal">From &pound;9.99 a month. No setup fees. Cancel anytime. <a href="#miniFree&mode=free">Not sure? See your free design first</a></p>
+    <p class="micro reveal">&pound;9.99 a month, or &pound;99 a year. No setup fees. Cancel any month.</p>
     <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email us</a> and we answer &mdash; usually the same working day.</p>
 `}    <nav class="ind-links reveal" aria-label="Websites for other business types">
       <span>${b.linksLabel || 'We also build for:'}</span>${linkStrip(b.slug)}
@@ -414,7 +386,7 @@ ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join
 ${b.rich ? `<!-- One Get started that follows a phone down the page once the hero has
      gone, and steps aside when the closing offer is on screen. -->
 <div class="sticky-cta" id="stickyCta" hidden>
-  <a class="btn btn-free" href="#miniFree">Get started, &pound;9.99 a month &rsaquo;</a>
+  <a class="btn btn-primary" href="#join">Get started, &pound;9.99 a month &rsaquo;</a>
 </div>
 ` : ''}${FOOT}`;
 }
@@ -422,10 +394,10 @@ ${b.rich ? `<!-- One Get started that follows a phone down the page once the her
 const LOCAL = require('./local.js');
 /* Trades with an example site at /examples/<slug>: their page links to it. */
 const EXAMPLE_SLUGS = require('./examples-data.js').map((e) => e.slug);
-/* Every "Get started" on a trade page opens /free for that trade
-   (/free, with the trade in its green pill and its example in the phone):
-   the keys are free.js's. Local pages go to /free as it is. */
-const FREE_KEYS = {
+/* Every "Get started" on a trade page opens /join for that trade, so the
+   signup knows the business type: the keys are join.js's (and free.js's).
+   Local pages go to /join as it is. */
+const JOIN_KEYS = {
   trades: 'trades', salons: 'salons', barbers: 'barbers', 'coffee-shops': 'cafes', gyms: 'gyms',
   cleaners: 'cleaners', tutors: 'tutors', photographers: 'photographers', gardeners: 'gardeners',
   hairdressers: 'hair', 'lash-artists': 'lash', 'makeup-artists': 'mua', 'cake-makers': 'cake',
@@ -434,16 +406,14 @@ const FREE_KEYS = {
 };
 for (const b of INDUSTRIES.concat(LOCAL)) {
   const file = path.join(OUT, `${b.file || 'websites-for-' + b.slug}.html`);
-  const freeUrl = FREE_KEYS[b.slug] ? '/free?trade=' + FREE_KEYS[b.slug] : '/free';
-  fs.writeFileSync(file, page(b)
-    .replace(/href="#miniFree&mode=free"/g, `href="${freeUrl}${freeUrl.includes('?') ? '&' : '?'}mode=free"`)
-    .replace(/href="#miniFree"/g, `href="${freeUrl}"`));
+  const joinUrl = JOIN_KEYS[b.slug] ? '/join?trade=' + JOIN_KEYS[b.slug] : '/join';
+  fs.writeFileSync(file, page(b).replace(/href="#join"/g, `href="${joinUrl}"`));
   console.log('wrote', path.basename(file));
 }
 
 /* ---------------------------------------------------------- feature pages */
 /* One per thing an owner searches for: the pain, how it works on their
-   site, what they get, the plan it lives on, the free example first. */
+   site, what they get, the plan it lives on, and how to start. */
 function featureLinks(exceptSlug) {
   return FEATURES.filter((f) => f.slug !== exceptSlug)
     .map((f) => `<a href="/${f.slug}.html">${f.short}</a>`).join('');
@@ -453,7 +423,7 @@ function planCard(f) {
   if (f.plan === 'max') return `    <article class="plan featured">
       <div class="badge">Add growth</div>
       <h3>Max</h3>
-      <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
+      <p class="price"><span class="cur">&pound;</span>249<span class="per">/month</span></p>
       <p class="plan-note">Your site, designed and built, plus us going and getting you customers every month.</p>
       <p class="plan-free">No setup fees</p>
       <a class="btn btn-primary full" href="/get-started.html?plan=max${maxParam(f.slug)}">Add growth</a>
@@ -471,7 +441,7 @@ function planCard(f) {
   return `    <article class="plan featured">
       <div class="badge">Get booked</div>
       <h3>Business</h3>
-      <p class="price"><span class="cur">&pound;</span>50<span class="per">/month</span></p>
+      <p class="price"><span class="cur">&pound;</span>49<span class="per">/month</span></p>
       <p class="plan-note">Your site, designed and built for you, plus the features that take the work off your phone.</p>
       <p class="plan-free">No setup fees</p>
       <a class="btn btn-primary full" href="/get-started.html?plan=business">Choose Business</a>
@@ -482,13 +452,21 @@ function planCard(f) {
         <li class="tick-hero">Priority changes, made by us within 48 hours</li>
         <li class="tick-hero">Your three features built within 14 days, or your next month is free</li>
       </ul>
-      <p class="plan-up">Just want the site, with a contact form and click to call? <a href="/plans.html#starter">Starter is &pound;9.99 a month</a>.</p>
+      <p class="plan-up">Just want the site, with a contact form and click to call? <a href="/join">Starter is &pound;9.99 a month</a>.</p>
     </article>`;
+}
+
+/* Where a feature page's Get started goes: the plan the feature lives on. */
+function featureStart(f) {
+  return f.plan === 'max'
+    ? { href: '/get-started.html?plan=max', label: 'Get started, &pound;249 a month &rsaquo;' }
+    : { href: '/get-started.html?plan=business', label: 'Get started, &pound;49 a month &rsaquo;' };
 }
 
 function featurePage(f) {
   const url = `https://kanvas.one/${f.slug}`;
   const title = `${f.search} — Kanvas One`;
+  const start = featureStart(f);
   return `<!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -539,7 +517,7 @@ ${NAV}<section class="page-hero">
   <div class="wrap center">
     <h1 class="reveal">${f.h1}</h1>
     <p class="lede reveal">${lines(f.lede)}</p>
-    <p class="micro reveal hero-note">Built into your own website, set up for you. ${f.plan === 'max' ? '&pound;250 a month, no setup fee.' : 'From &pound;50 a month, no setup fee.'}</p>
+    <p class="micro reveal hero-note">Built into your own website, set up for you. ${f.plan === 'max' ? '&pound;249 a month, no setup fee.' : 'From &pound;49 a month, no setup fee.'}</p>
 
     <div class="typebox reveal" aria-hidden="true">
       <span class="typebox-text" id="typeDemo" data-lines="${JSON.stringify(f.lines).replace(/"/g, '&quot;')}"></span>
@@ -548,13 +526,14 @@ ${NAV}<section class="page-hero">
   </div>
 </section>
 
-<!-- The pain, in the owner's words, then the free example: the page has
+<!-- The pain, in the owner's words, then the way to start: the page has
      said what it understands before it asks for anything. -->
 <section class="section pt0">
   <div class="wrap center">
     <p class="lede reveal pain">${f.pain}</p>
   </div>
-${miniForm(f.placeholder)}</section>
+</section>
+${joinCta(start.href, start.label, 'Built for you from the page you already have, live within 24 hours. Just want the site? <a href="/join">Starter is &pound;9.99 a month, or &pound;99 a year</a>.')}
 
 <section class="section pt0">
   <div class="wrap center">
@@ -597,12 +576,12 @@ ${f.faq.map(([q, a]) => `    <details>
 <section class="section grey cta-end">
   <div class="wrap center">
     <h2 class="reveal">Your website, live within <span class="g-free">24 hours.</span></h2>
-    <p class="lede reveal">A real page for your business, before you decide anything.</p>
+    <p class="lede reveal">Built for you from the page you already have. We change it until you love it.</p>
     <div class="cta-row reveal">
-      <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
+      <a class="btn btn-primary" href="${start.href}">${start.label}</a>
       <a class="btn btn-ghost" href="/plans.html">All the plans</a>
     </div>
-    <p class="micro reveal">From &pound;9.99 a month. No setup fees. Cancel anytime.</p>
+    <p class="micro reveal">From &pound;9.99 a month. No setup fees. No contract, cancel any month.</p>
     <nav class="ind-links reveal" aria-label="Other features">
       <span>Also:</span>${featureLinks(f.slug)}
     </nav>
@@ -615,14 +594,14 @@ ${f.faq.map(([q, a]) => `    <details>
 </main>
 
 <div class="sticky-cta" id="stickyCta" hidden>
-  <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
+  <a class="btn btn-primary" href="${start.href}">${start.label}</a>
 </div>
 ${FOOT}`;
 }
 
 for (const f of FEATURES) {
   const file = path.join(OUT, `${f.slug}.html`);
-  fs.writeFileSync(file, featurePage(f));
+  fs.writeFileSync(file, featurePage(f).replace(/href="#join"/g, 'href="/join"'));
   console.log('wrote', path.basename(file));
 }
 
@@ -647,10 +626,9 @@ function maxLabel(slug) {
 
 function maxPage(m) {
   const url = `https://kanvas.one/max/${m.slug}`;
-  const free = `/free.html?t=${m.tag}`;
+  const start = `/get-started.html?plan=max&max=${m.slug}`;
   /* Pages live in /max/, so every asset path is absolute. */
   const nav = NAV.replace(/href="\/"/g, 'href="/"');
-  const form = miniForm('e.g. ' + (m.slug === 'trades' ? 'Dave the Plumber' : m.slug === 'clubs' ? 'Northside Dance' : 'Nova Nails'));
   const foot = FOOT.replace(/src="([a-z-]+\.js)/g, 'src="/$1');
   return `<!DOCTYPE html>
 <html lang="en-GB">
@@ -679,7 +657,7 @@ ${JSON.stringify({
   areaServed: 'GB',
   url: url,
   description: m.desc,
-  offers: { '@type': 'Offer', price: '250', priceCurrency: 'GBP', description: 'Per month. Ad spend paid separately by the customer.' }
+  offers: { '@type': 'Offer', price: '249', priceCurrency: 'GBP', description: 'Per month. Ad spend paid separately by the customer.' }
 })}
 </script>
 <script type="application/ld+json">
@@ -710,10 +688,10 @@ ${nav}<!-- 1. The promise, the price, the ask. -->
     </div>
     <p class="hero-pill reveal">${m.name}</p>
     <h1 class="reveal">${m.promise}</h1>
-    <p class="lede reveal">&pound;250 a month. No setup fee. Live within 24 hours of joining.</p>
+    <p class="lede reveal">&pound;249 a month. No setup fee. Live within 24 hours of joining.</p>
     <div class="cta-row reveal">
-      <a class="btn btn-primary" href="#miniFree">See your free preview</a>
-      <a class="btn btn-ghost" href="/get-started.html?plan=max&max=${m.slug}">Start ${m.name} &rsaquo;</a>
+      <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
+      <a class="btn btn-ghost" href="/plans.html">All the plans</a>
     </div>
     <p class="fineprint reveal">${MAX.AD_SPEND}</p>
   </div>
@@ -793,7 +771,7 @@ ${m.why.map(([lead, rest]) => `    <p><b>${lead}</b>${rest}</p>`).join('\n')}
     <h2 class="reveal">What it costs.</h2>
   </div>
   <div class="wrap cost reveal">
-    <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
+    <p class="price"><span class="cur">&pound;</span>249<span class="per">/month</span></p>
     <p>No setup fee. Same price whatever your business type.</p>
     <p>${MAX.AD_SPEND}</p>
     <p>One price, with the website, the ads, the ranking work, the bookings and the follow-ups in it.</p>
@@ -805,7 +783,7 @@ ${m.why.map(([lead, rest]) => `    <p><b>${lead}</b>${rest}</p>`).join('\n')}
 <section id="offer" class="section">
   <div class="wrap center">
     <h2 class="reveal">No risk to try it.</h2>
-    <ul class="assure trust reveal"><li>Free preview in 24 hours</li><li>Live within 24 hours of joining</li><li>No setup fee</li><li>Cancel anytime</li></ul>
+    <ul class="assure trust reveal"><li>Live within 24 hours of joining</li><li>No setup fee</li><li>No contract, cancel any month</li><li>Your web address is yours</li></ul>
   </div>
 ${MAX_GUARANTEE ? `  <div class="wrap">
     <div class="promise reveal">
@@ -814,7 +792,11 @@ ${MAX_GUARANTEE ? `  <div class="wrap">
     </div>
   </div>
 ` : ''}  <div class="wrap center">
-${form}  </div>
+    <div class="cta-row reveal">
+      <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
+    </div>
+    <p class="micro reveal">We change it until you love it. Leave, and we transfer your web address to you free.</p>
+  </div>
 </section>
 
 <!-- 9. Questions. -->
@@ -833,10 +815,10 @@ ${m.faq.map(([q, a]) => `    <details>
 <!-- 10. The ask. -->
 <section class="section cta-end">
   <div class="wrap center">
-    <h2 class="reveal">Start with the <span class="g-free">free</span> example.</h2>
-    <p class="lede reveal">A real page for your business, within 24 hours.<span class="gap"></span>No card, no catch. Then decide.</p>
+    <h2 class="reveal">Live within <span class="g-free">24 hours.</span></h2>
+    <p class="lede reveal">Your site built for you from the page you already have, then the rest run for you.<span class="gap"></span>No contract. Cancel any month.</p>
     <div class="cta-row reveal">
-      <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>See your free example page &rsaquo;</a>
+      <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
       <a class="btn btn-ghost" href="/plans.html">All the plans</a>
     </div>
     <nav class="ind-links reveal" aria-label="Other Max models">
@@ -848,7 +830,7 @@ ${m.faq.map(([q, a]) => `    <details>
 </main>
 
 <div class="sticky-cta" id="stickyCta" hidden>
-  <a class="btn btn-free" href="#miniFree"><svg class="gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS.gift}</svg>Try it free &rsaquo;</a>
+  <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
 </div>
 ${foot}`;
 }
@@ -856,10 +838,10 @@ ${foot}`;
 fs.mkdirSync(path.join(OUT, 'max'), { recursive: true });
 for (const m of MAX) {
   const file = path.join(OUT, 'max', `${m.slug}.html`);
-  fs.writeFileSync(file, maxPage(m));
+  fs.writeFileSync(file, maxPage(m).replace(/href="#join"/g, 'href="/join"'));
   console.log('wrote max/' + path.basename(file));
 }
 
 /* ------------------------------------------------------------- examples */
 /* /examples and one made-up business per trade: examples.js. */
-require('./examples.js').build(OUT, { cssV: 138, scriptV: 34 });
+require('./examples.js').build(OUT, { cssV: 139, scriptV: 35 });

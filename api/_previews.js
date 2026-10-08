@@ -6,7 +6,7 @@
  * The email is the offer. In order: the page itself, the web address that
  * could be theirs, what the page could become once they say yes, and the
  * way in: Starter, the page live with a contact form and click to call,
- * £9.99 a month, no setup fee. Business sits beside it at £50 a month.
+ * £9.99 a month, no setup fee. Business sits beside it at £49 a month.
  */
 const { ourSiteUrl } = require('./_env.js');
 const { PREVIEW_OFFER } = require('./_plans.js');
@@ -73,7 +73,7 @@ function joinHref(site, plan, domain, leadId) {
 }
 
 /* The thing to press: Starter, the page live for £9.99 a month. Business
-   beside it at £50, for the person who already knows they want bookings. Max
+   beside it at £49, for the person who already knows they want bookings. Max
    is offered after they have said yes, in the wizard. */
 function planCards(site, domain, leadId) {
   const live = domain ? 'Live on ' + esc(domain) + ' today.' : 'Live on your own address today.';
@@ -91,7 +91,7 @@ function planCards(site, domain, leadId) {
       ],
       ctaText: 'Put it live — £9.99 a month', ctaHref: joinHref(site, 'starter', domain, leadId)
     }, {
-      name: 'Business', price: '£50', tag: 'Get booked',
+      name: 'Business', price: '£49', tag: 'Get booked',
       text: 'Everything in Starter, plus the features that take the work off your phone.',
       items: [
         'Bookings, payments and live chat',
@@ -99,7 +99,7 @@ function planCards(site, domain, leadId) {
         'Priority changes, made by us within 48 hours',
         'Your three features built within 14 days, or your next month is free'
       ],
-      ctaText: 'Choose Business — £25 today', ctaHref: joinHref(site, 'business', domain, leadId)
+      ctaText: 'Choose Business — £24.50 today', ctaHref: joinHref(site, 'business', domain, leadId)
     }],
     note: 'Business: 50% off your first month. Or pay for the year on any plan: 2 months free and the Launch Boost, '
         + 'your first month spent getting you found on Google.<br>'

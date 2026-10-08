@@ -1591,6 +1591,17 @@ a.hero-pill:hover .pill-go{opacity:1}
 .urlbar-note{margin:0 0 22px;text-align:center;font-size:13px;color:var(--ink-3);min-height:18px}
 .urlbar-note b{color:var(--good);font-weight:600}
 
+/* Join (Starter, paid first): the yearly badge sits beside its name, the
+   ticks sit tight under the address, and the account card names the email
+   they will log in with. */
+.join .pick-head b .bill-save{margin-left:7px;vertical-align:2px}
+.join .urlbar{margin-top:6px}
+.join .join-ticks{margin:16px 0 20px}
+.join .join-ticks li{font-size:14.5px;margin-bottom:9px}
+.join-acct-note{margin:-6px 0 16px;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.join-acct-note b{color:var(--ink);font-weight:600;overflow-wrap:anywhere}
+.join #accountBox + .paynote{margin-top:22px}
+
 /* Qualified because .sumrow b outranks a lone class - the reason this stayed
    black. Green is only ever "included or free" on this site, and £0 setup is
    exactly that. */
@@ -3065,7 +3076,7 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .sb-example a{color:var(--good);text-decoration:none}
 .sb-example a:hover{text-decoration:underline;text-underline-offset:3px}
 
-/* ---------- /free: £9.99, join first, free design for anyone unsure ---------- */
+/* ---------- /free: £9.99, join first ---------- */
 .offer-hero h1.offer-h1{margin-bottom:14px}
 .offer-price{display:flex;align-items:baseline;justify-content:center;gap:8px;margin:0}
 .offer-price b{font-size:clamp(46px,12vw,64px);font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--ink)}

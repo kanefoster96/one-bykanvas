@@ -5,7 +5,7 @@
  * Every example follows the same flow (see examples-data.js) in its own
  * fonts and colours (examples/ex.css). Nothing on an example is a real
  * link: every link and button opens the preview pop-up, which says this
- * is how their site could look and sends them to /free?trade=<key>. The
+ * is how their site could look and sends them to /join?trade=<key>. The
  * press shows in their journey in the One app, and so does the pop-up's
  * button. The pill at the bottom switches trade, and closes back to /free.
  */
@@ -21,6 +21,7 @@ const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
 
 const free = (e) => '/free?trade=' + e.key;
+const join = (e) => '/join?trade=' + e.key;
 const P = '#preview';   // every link on an example opens the pop-up
 
 /* A photo for the hero, once one is in assets/examples/hero/. With a
@@ -228,7 +229,7 @@ function pill(e) {
     <span class="k1-logo" aria-hidden="true">one<i>.</i></span><span class="k1-switch-t"><small>Example site</small><b>${e.label}</b></span>
     <svg class="k1-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
   </button>
-  <a class="k1-go" href="${free(e)}">Get yours free</a>
+  <a class="k1-go" href="${join(e)}">Get yours, &pound;9.99</a>
   <a class="k1-x" href="${free(e)}" aria-label="Close the example"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
 </div>`;
 }
@@ -240,9 +241,9 @@ function modal(e) {
     <button class="k1-modal-x" type="button" data-k1-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <span class="k1-face" aria-hidden="true"><span><i></i><i></i></span></span>
     <h2 id="k1ModalH">This site is a preview of how yours might look.</h2>
-    <p>Or send us a site you already like, and we&rsquo;ll use it for inspiration.</p>
-    <p class="k1-modal-offer"><b>Get your free site design today.</b> Love it? Go online tomorrow.</p>
-    <a class="k1-modal-go" href="${free(e)}">Get my free design</a>
+    <p>We build yours from the page you already have. Like another site&rsquo;s style? Send it too.</p>
+    <p class="k1-modal-offer"><b>Live in 24 hours.</b> &pound;9.99 a month, cancel any month.</p>
+    <a class="k1-modal-go" href="${join(e)}">Get started</a>
     <button class="k1-modal-keep" type="button" data-k1-close>Keep looking</button>
   </div>
 </div>`;
@@ -268,7 +269,7 @@ function page(e) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Example ${one} website | Kanvas One</title>
-<meta name="description" content="What a ${one} website from Kanvas One could look like. Get yours designed free within 24 hours.">
+<meta name="description" content="What a ${one} website from Kanvas One could look like. Yours built for you and live within 24 hours, £9.99 a month.">
 <!-- A made-up business, so it is never offered to someone searching for it. -->
 <meta name="robots" content="noindex, follow">
 <meta name="theme-color" content="${dark ? '#111111' : e.theme.bg}">
@@ -390,13 +391,13 @@ function indexPage(v) {
   return shell({
     cssV: v.cssV, scriptV: v.scriptV,
     title: 'Example Websites for Local Businesses | Kanvas One',
-    desc: 'See what your website could look like. Example sites for hairdressers, electricians, cake makers, nail techs and more, then get yours designed free within 24 hours.',
+    desc: 'See what your website could look like. Example sites for hairdressers, electricians, cake makers, nail techs and more, then get yours built for you, live within 24 hours.',
     canonical: 'https://kanvas.one/examples',
     body: `<section class="page-hero exg-hero">
   <div class="wrap center">
     <p class="sb-tag reveal">Examples</p>
     <h1 class="reveal">See what yours could <span class="g-free">look like.</span></h1>
-    <p class="sub reveal">Example websites for local businesses. Pick yours, have a look around, then get your own designed free within 24 hours.</p>
+    <p class="sub reveal">Example websites for local businesses. Pick yours, have a look around, then get your own: built for you, live within 24 hours.</p>
   </div>
 </section>
 <section class="section pt0">
@@ -406,8 +407,8 @@ function indexPage(v) {
     </div>
     <div class="exg-end reveal">
       <h2>Don&rsquo;t see your business?</h2>
-      <p>We design for every kind of local business. Send us your name and we&rsquo;ll design yours, free.</p>
-      <a class="btn exg-btn" href="/free">Get my free design</a>
+      <p>We build for every kind of local business. &pound;9.99 a month, live within 24 hours.</p>
+      <a class="btn exg-btn" href="/join">Get started</a>
     </div>
   </div>
 </section>`

@@ -120,10 +120,10 @@
   var answers = {};
 
   var PLANS = {
-    starter:  { label: 'Starter',  price: '£9.99', yearly: '£99.90' },
-    business: { label: 'Business', price: '£50', half: '£25',    yearly: '£500' },
+    starter:  { label: 'Starter',  price: '£9.99', yearly: '£99' },
+    business: { label: 'Business', price: '£49', half: '£24.50',    yearly: '£490' },
     pro:      { label: 'Pro',      price: '£120' },
-    max:      { label: 'Max',      price: '£250', half: '£125',   yearly: '£2,500' }
+    max:      { label: 'Max',      price: '£249', half: '£124.50',   yearly: '£2,490' }
   };
 
   /* Monthly or annual, shared with the plans page through the same stash;
@@ -1008,7 +1008,7 @@
           'Priority changes, made by us within 48 hours'
         ],
         note: 'Starter gets you found. Business gets you booked.',
-        btn: 'Switch to Business — £50 a month',
+        btn: 'Switch to Business — £49 a month',
         line: 'Changed your mind about bookings and chat? '
       },
       business: {
@@ -1022,7 +1022,7 @@
           'Business email, and first in the queue'
         ],
         note: 'We need a photo or a line of text; we do the rest. <strong>Your price is locked for as long as you stay.</strong> Step down any month; you keep the ranking.',
-        btn: 'Add growth — Max, £250 a month',
+        btn: 'Add growth — Max, £249 a month',
         line: 'Want us to go and get you customers? '
       }
     };

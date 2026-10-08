@@ -16,7 +16,7 @@ var app     = document.getElementById('app');
 var note    = document.getElementById('adminNote');
 
 var PLAN_NAME   = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' };
-var PLAN_PRICE  = { starter: 999, business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
+var PLAN_PRICE  = { starter: 999, business: 4900, pro: 12000, max: 24900 }; // pence/month — must match api/_plans.js PLANS
 var STATUS_NAME = { new: 'Open', accepted: 'Open', waiting: 'Waiting on customer', in_progress: 'In progress', done: 'Done', declined: 'Done' };
 /* info is a business-details change the customer made themselves - free, and
    raised by api/business-updated.js rather than asked for. */
@@ -2266,7 +2266,7 @@ function renderPartnersSection() {
   wrap.appendChild(el('p', 'hint', 'Each partner has a code (create the matching promotion code in '
     + 'Stripe first - 25% off, repeating for 6 months). When a customer joins with it - through the link '
     + 'or typed at checkout - 25% of the plan price lands here for each of their first 12 payments '
-    + '(£12.50 a month on Business), whatever discount the customer has. '
+    + '(£12.25 a month on Business), whatever discount the customer has. '
     + 'Pay what is owed, tap Mark paid, done.'));
 
   // ---- add form --------------------------------------------------------
