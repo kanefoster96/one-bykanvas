@@ -16,6 +16,7 @@
   'use strict';
 
   var loading = document.getElementById('loading');
+  var splash = loading ? loading.innerHTML : '';
   var login = document.getElementById('login');
   var app = document.getElementById('app');
 
@@ -63,23 +64,46 @@
   function say(node, message, kind) { node.textContent = message || ''; node.className = 'note' + (kind ? ' ' + kind : ''); }
   function $(id) { return document.getElementById(id); }
 
+  /* The login has gone (it ran out, or was ended somewhere else): an error
+     that says so, and the login screen in place of whatever was showing. */
+  function loggedOut(message) {
+    var err = new Error(message || 'Your session has expired. Log in again.');
+    err.loggedOut = true;
+    return err;
+  }
+
   async function token() {
     var sess = await ONE.db.auth.getSession();
     var t = sess.data && sess.data.session && sess.data.session.access_token;
-    if (!t) throw new Error('Your session has expired. Log in again.');
+    if (!t) { await showLogin(); throw loggedOut(); }
     return t;
   }
 
   function api(payload) { return apiTo('/api/app', payload); }
 
-  async function apiTo(path, payload) {
-    var res = await fetch(BASE + path, {
+  function post(path, payload, t) {
+    return fetch(BASE + path, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (await token()) },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t },
       body: JSON.stringify(payload)
     });
+  }
+
+  async function apiTo(path, payload) {
+    var res = await post(path, payload, await token());
+    if (res.status === 401) {
+      // The stored login can outlive the server's: try a fresh one once
+      // before asking them to log in again.
+      var fresh = null;
+      try { var r = await ONE.db.auth.refreshSession(); fresh = r.data && r.data.session && r.data.session.access_token; } catch (e) { fresh = null; }
+      if (fresh) res = await post(path, payload, fresh);
+      if (res.status === 401) {
+        try { await ONE.db.auth.signOut({ scope: 'local' }); } catch (e) { /* the login is already gone */ }
+        await showLogin();
+        throw loggedOut();
+      }
+    }
     var data = await res.json().catch(function () { return {}; });
-    if (res.status === 401) { await showLogin(); throw new Error(data.error || 'Please log in again.'); }
     if (!res.ok) throw new Error(data.error || 'Something went wrong. Try again.');
     return data;
   }
@@ -1876,8 +1900,10 @@
     try {
       me = await api({ action: 'me' });
     } catch (err) {
-      loading.innerHTML = '<p>Could not load your account: ' + ONE.friendlyError(err) + '</p>';
+      if (err.loggedOut) { $('loginNote').textContent = 'Please log in again.'; return; }
+      loading.innerHTML = '<p>Could not load your account: ' + ONE.friendlyError(err) + '</p><p><button class="btn btn-primary" type="button" id="bootRetry">Try again</button></p>';
       loading.hidden = false;
+      $('bootRetry').addEventListener('click', function () { loading.innerHTML = splash; boot(); });
       nativeReady();
       return;
     }
