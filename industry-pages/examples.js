@@ -374,7 +374,7 @@ ${o.body}
 <script src="/supabase-config.js?v=1"></script>
 <script src="/session.js?v=3"></script>
 <script src="/script.js?v=${o.scriptV}"></script>
-<script src="/chat.js?v=8" data-site="${SITE_ID}" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
+<script src="/chat.js?v=9" data-site="${SITE_ID}" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="/beacon.js?v=4" data-site="${SITE_ID}" defer></script>
 <script src="/admin-pill.js?v=8"></script>
 </body>
