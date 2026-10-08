@@ -10,6 +10,14 @@ async function notifySiteLive(db, userId, businessName, siteUrl) {
   const { data: who } = await db.auth.admin.getUserById(userId);
   const customerEmail = who && who.user && who.user.email;
   if (!customerEmail) return;
+  /* Someone who paid on the join page but never chose a password can't log
+     in yet: their first step is making the account, from the same link the
+     welcome email gave them. */
+  const am = (who.user.app_metadata) || {};
+  const loginHref = am.needs_password && am.join_session
+    ? `${ourSiteUrl()}/join?paid=${encodeURIComponent(am.join_session)}`
+    : `${ourSiteUrl()}/login.html`;
+  const loginWord = am.needs_password ? 'Make your account' : 'Log in';
 
   const href = /^https?:\/\//i.test(siteUrl) ? siteUrl : 'https://' + siteUrl;
   const shown = href.replace(/^https?:\/\//i, '').replace(/\/$/, '');
@@ -20,6 +28,12 @@ async function notifySiteLive(db, userId, businessName, siteUrl) {
     subject: 'Your site is live',
     text: `${businessName || 'Your site'} is live at ${shown}.\n\n`
         + `Have a look, and let us know if there's anything you'd like changed.\n\n`
+        + `How to change anything, any time:\n`
+        + `1. ${loginWord} at ${loginHref}\n`
+        + `2. Open the live chat (the chat button at the top of the page).\n`
+        + `3. Tap "Add website edit request", add a screenshot of the part you want changed, `
+        + `and tell us what to change: new words, a new photo, new prices or hours. `
+        + `We make it and let you know. Changes to your words and photos are unlimited.\n\n`
         + `One favour: know another business that could use a site like yours? `
         + `Your referral code is on your account page - give it to them, and when `
         + `their site goes live your next month is free.\n\n`
@@ -35,6 +49,10 @@ async function notifySiteLive(db, userId, businessName, siteUrl) {
       lines: [
         `It&rsquo;s built, it&rsquo;s online, and it&rsquo;s yours.`,
         `Have a look through, and let us know if there&rsquo;s anything you&rsquo;d like changed &mdash; send as many edits as you like, whenever you need them.`,
+        `<strong>How to change anything, any time:</strong><br>`
+          + `1. <a href="${loginHref}">${loginWord}</a> on kanvas.one.<br>`
+          + `2. Open the live chat (the chat button at the top of the page).<br>`
+          + `3. Tap <strong>Add website edit request</strong>, add a screenshot of the part you want changed, and tell us what to change: new words, a new photo, new prices or hours. We make it and let you know.`,
         /* The referral ask lands at the happiest moment there is. Honoured
            by hand: a month's credit on both accounts in Stripe. */
         `One favour: know another business that could use a site like yours? `
@@ -51,7 +69,7 @@ async function notifySiteLive(db, userId, businessName, siteUrl) {
       ],
       ctaText: 'View your site',
       ctaHref: href,
-      ctaNote: 'Ask for a change any time from your account.',
+      ctaNote: 'Ask for a change any time from the live chat on kanvas.one.',
       footer: 'You&rsquo;re getting this because your site with Kanvas One has gone live.',
       footerLinks: standardFooter(site)
     })

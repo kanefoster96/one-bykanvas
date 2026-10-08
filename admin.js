@@ -1088,6 +1088,14 @@ function renderThread(wrap) {
 function openFromHash() {
   var m = /^#r\/([\w-]{1,64})$/.exec(location.hash || '');
   if (m && m[1] !== openRequestId) openThread(m[1]);
+  /* #c/<id>: a customer's page, from the One app's build card. */
+  var c = /^#c\/([\w-]{1,64})$/.exec(location.hash || '');
+  if (c) {
+    selectedCustomerId = c[1];
+    activeSection = 'customers';
+    history.replaceState(null, '', location.pathname);
+    render();
+  }
 }
 window.addEventListener('hashchange', openFromHash);
 
