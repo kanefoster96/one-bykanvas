@@ -89,7 +89,9 @@
       badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop');
       lastLetter = letter;
     }
-    $('jlTrade').textContent = building ? 'Live within 24 hours' : look ? look[0] + ' in the North East' : 'Your website, live within 24 hours';
+    // The trade's colour only: the ad they came from is not a promise of
+    // what they do, so the preview never names one.
+    $('jlTrade').textContent = building ? 'Live within 24 hours' : 'Your website, live within 24 hours';
     $('jlUrl').textContent = answers.domain || 'yourbusiness.co.uk';
     live.classList.toggle('has-domain', Boolean(answers.domain));
     live.classList.toggle('is-building', Boolean(building));
@@ -348,7 +350,7 @@
       body: JSON.stringify({
         action: 'start',
         business: answers.business, email: answers.email, domain: answers.domain,
-        link: link, billing: answers.billing || 'monthly', trade: trade,
+        link: link, billing: answers.billing || 'monthly',
         offer: offerCode(), referralCode: referralCode(),
         website: $('j_website').value
       })
