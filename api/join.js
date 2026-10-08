@@ -223,7 +223,10 @@ module.exports = async function handler(req, res) {
         business: (p && p.business_name) || '',
         domain: (p && p.requested_domain) || '',
         annual: session.metadata.billing === 'annual',
-        needsAccount: Boolean(am.needs_password)
+        needsAccount: Boolean(am.needs_password),
+        /* The id the webhook sends Meta its Purchase under, so the
+           browser's copy of the same sale counts once. */
+        sub: paid && typeof session.subscription === 'string' ? session.subscription : ''
       });
     }
 
