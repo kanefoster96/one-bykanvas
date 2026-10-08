@@ -12,11 +12,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/examples/ex.css?v=5">
-<style>:root{--bg:#ffffff;--ink:#0f1b2d;--muted:#5b6678;--accent:#ffc400;--accent2:#0f1b2d;--accent3:#0f1b2d;--accent4:#ffc400;--soft:#f2f4f7;--surface:#ffffff;--accent-text:#0f1b2d;--line:rgba(15,27,45,.1);--fh:'Barlow Condensed', 'Arial Narrow', sans-serif;--fb:'Barlow', system-ui, sans-serif;--hw:700;--hls:0;--radius:10px;--btn-radius:10px;--on-accent:#0f1b2d;--hero-bg:radial-gradient(circle at 85% 10%, rgba(255,196,0,.16), transparent 50%), #0f1b2d;--hero-ink:#ffffff;--case:uppercase}</style>
+<link rel="stylesheet" href="/examples/ex.css?v=6">
+<style>:root{--bg:#ffffff;--ink:#0f1b2d;--muted:#5b6678;--accent:#ffc400;--accent2:#0f1b2d;--accent3:#ffe27a;--accent4:#ffc400;--soft:#f2f4f7;--surface:#ffffff;--accent-text:#0f1b2d;--line:rgba(15,27,45,.1);--fh:'Barlow Condensed', 'Arial Narrow', sans-serif;--fb:'Barlow', system-ui, sans-serif;--hw:700;--hls:0;--radius:10px;--btn-radius:10px;--on-accent:#0f1b2d;--hero-bg:radial-gradient(circle at 85% 10%, rgba(255,196,0,.16), transparent 50%), #0f1b2d;--hero-ink:#ffffff;--case:uppercase}</style>
 </head>
 <body class="T-elec hero-dark">
-<header class="x-nav">
+<header class="x-nav" id="xNav">
   <div class="x-wrap x-nav-in">
     <a class="x-logo" href="#preview" aria-label="Brightline Electrical"><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5L4.5 14H11l-1 7.5L18.5 10H12z"/></svg></span></a>
     <button class="x-burger" type="button" data-preview aria-label="Menu"><span></span><span></span></button>
@@ -32,44 +32,53 @@
       <a class="x-btn x-btn-hero" href="#preview">Get a free quote</a>
       <ul class="x-risk"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Free quotes</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Fixed price before we start</span></li></ul>
     </div>
-    <div class="x-art x-art-elec"><svg viewBox="0 0 400 400" aria-hidden="true">
+    <div class="x-art-wrap"><div class="x-art x-art-elec"><svg viewBox="0 0 400 400" aria-hidden="true">
     <g fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="3" stroke-linecap="round">
       <path d="M20 90 H120 L150 120 V170"/><path d="M380 70 H300 L270 100"/><path d="M20 310 H110 L140 280"/><path d="M380 300 H290 L260 270 V240"/><path d="M200 20 V70"/><path d="M200 330 V380"/>
     </g>
     <g fill="#fff" fill-opacity=".3"><circle cx="20" cy="90" r="6"/><circle cx="380" cy="70" r="6"/><circle cx="20" cy="310" r="6"/><circle cx="380" cy="300" r="6"/><circle cx="200" cy="20" r="6"/><circle cx="200" cy="380" r="6"/></g>
     <circle cx="200" cy="200" r="118" fill="#fff" fill-opacity=".06"/><circle cx="200" cy="200" r="118" fill="none" stroke="var(--accent)" stroke-opacity=".5" stroke-width="2"/>
     <path class="f-a" d="M222 92 L140 214 H196 L176 308 L262 178 H204 Z"/>
-  </svg></div>
+  </svg></div><p class="k1-guide k1-guide-hero"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Imagine your van, your team or your best job here.</span></p></div>
   </div>
   
 </section>
 <section class="x-sec" id="services" data-k1-seen="the services">
   <div class="x-wrap">
-    <div class="x-head"><h2>Services</h2><p>Prices include VAT. Bigger jobs get a free written quote.</p></div>
-    <div class="x-cards"><a class="x-card" href="#preview">
-      <h3>Fault finding</h3><p>Tripping, flickering or no power. Found and fixed.</p>
-      <span class="x-card-foot"><b>From &pound;65</b><span>Same day</span><em>Book &rsaquo;</em></span>
+    <div class="x-head"><h2>Services</h2><p>Prices include VAT. Bigger jobs get a free written quote.</p><p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your services and prices, each with a button to book.</span></p></div>
+  </div>
+  <div class="x-rail-wrap">
+    <div class="x-rail" tabindex="0" aria-label="Services"><a class="x-card" href="#preview">
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">01</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5L4.5 14H11l-1 7.5L18.5 10H12z"/></svg></span></span>
+      <span class="x-card-body"><h3>Fault finding</h3><p>Tripping, flickering or no power. Found and fixed.</p>
+      <span class="x-card-foot"><b>From &pound;65</b><span>Same day</span><em>Book &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <h3>Consumer units</h3><p>Old fuse box swapped for a safe, modern board.</p>
-      <span class="x-card-foot"><b>From &pound;450</b><span>1 day</span><em>Book &rsaquo;</em></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">02</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5L4.5 14H11l-1 7.5L18.5 10H12z"/></svg></span></span>
+      <span class="x-card-body"><h3>Consumer units</h3><p>Old fuse box swapped for a safe, modern board.</p>
+      <span class="x-card-foot"><b>From &pound;450</b><span>1 day</span><em>Book &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <h3>EV chargers</h3><p>Home chargers fitted, registered and certified.</p>
-      <span class="x-card-foot"><b>From &pound;850</b><span>Half a day</span><em>Book &rsaquo;</em></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">03</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5L4.5 14H11l-1 7.5L18.5 10H12z"/></svg></span></span>
+      <span class="x-card-body"><h3>EV chargers</h3><p>Home chargers fitted, registered and certified.</p>
+      <span class="x-card-foot"><b>From &pound;850</b><span>Half a day</span><em>Book &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <h3>Rewires</h3><p>Full and partial rewires, tidy and fast.</p>
-      <span class="x-card-foot"><b>Free quote</b><span>3 &ndash; 5 days</span><em>Book &rsaquo;</em></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">04</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5L4.5 14H11l-1 7.5L18.5 10H12z"/></svg></span></span>
+      <span class="x-card-body"><h3>Rewires</h3><p>Full and partial rewires, tidy and fast.</p>
+      <span class="x-card-foot"><b>Free quote</b><span>3 &ndash; 5 days</span><em>Book &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <h3>EICR certificates</h3><p>Landlord and homebuyer safety checks.</p>
-      <span class="x-card-foot"><b>From &pound;120</b><span>2 &ndash; 4 hrs</span><em>Book &rsaquo;</em></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">05</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5L4.5 14H11l-1 7.5L18.5 10H12z"/></svg></span></span>
+      <span class="x-card-body"><h3>EICR certificates</h3><p>Landlord and homebuyer safety checks.</p>
+      <span class="x-card-foot"><b>From &pound;120</b><span>2 &ndash; 4 hrs</span><em>Book &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <h3>Lights &amp; sockets</h3><p>Extra sockets, outdoor lights, downlights.</p>
-      <span class="x-card-foot"><b>From &pound;60</b><span>Same week</span><em>Book &rsaquo;</em></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">06</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5L4.5 14H11l-1 7.5L18.5 10H12z"/></svg></span></span>
+      <span class="x-card-body"><h3>Lights &amp; sockets</h3><p>Extra sockets, outdoor lights, downlights.</p>
+      <span class="x-card-foot"><b>From &pound;60</b><span>Same week</span><em>Book &rsaquo;</em></span></span>
     </a></div>
+    <div class="x-rail-btns x-wrap"><button class="x-rail-btn" type="button" data-rail="-1" aria-label="Previous">&lsaquo;</button><button class="x-rail-btn" type="button" data-rail="1" aria-label="Next">&rsaquo;</button></div>
   </div>
 </section>
 <section class="x-sec x-pains-sec" data-k1-seen="the problems">
   <div class="x-wrap">
-    <div class="x-head"><h2>Sound familiar?</h2></div>
+    <div class="x-head"><h2>Sound familiar?</h2><p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Build trust: describe their problem better than they could themselves.</span></p></div>
     <ul class="x-pains"><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Waiting in all day for someone who never turns up.</span></li><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>A price that doubles once the work has started.</span></li><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Dust and cable offcuts left all over the house.</span></li></ul>
   </div>
 </section>
@@ -88,7 +97,7 @@
 <section class="x-sec x-reviews-sec" id="reviews" data-k1-seen="the reviews">
   <div class="x-wrap">
     <div class="x-head"><h2>What customers say</h2>
-      <p class="k1-note"><span class="k1-note-dot" aria-hidden="true"></span>On your site, your real Google reviews show here.</p></div>
+      <p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your real Google reviews show here.</span></p></div>
     <div class="x-reviews"><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
       <blockquote>A five-star review from one of your customers goes here, pulled in from Google.</blockquote>
       <figcaption><span class="x-avatar" aria-hidden="true">A</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
@@ -142,7 +151,7 @@
   <a class="k1-x" href="/free?trade=elec" aria-label="Close the example"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
 </div>
 <script src="/consent.js?v=9"></script>
-<script src="/examples/ex.js?v=2"></script>
+<script src="/examples/ex.js?v=3"></script>
 <script src="/beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 </body>
 </html>

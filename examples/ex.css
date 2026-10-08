@@ -27,20 +27,26 @@ body.k1-locked{overflow:hidden}
 /* Colours for the drawings. */
 .f-a{fill:var(--accent)}.f-b{fill:var(--accent2)}.f-c{fill:var(--accent3)}.f-d{fill:var(--accent4)}
 .f-e{fill:var(--accent2)}.f-s{fill:var(--soft)}.f-w{fill:var(--surface)}.f-i{fill:var(--ink)}
+.s-a{stroke:var(--accent)}.s-b{stroke:var(--accent2)}.s-i{stroke:var(--ink)}
+.hero-dark .x-hero .f-s{fill:rgba(255,255,255,.06)}
 
 /* ---------- buttons ---------- */
 .x-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 26px;border-radius:var(--btn-radius);background:var(--accent);color:var(--on-accent);font-weight:600;font-size:16px;letter-spacing:.005em;border:0;transition:transform .2s,box-shadow .2s,filter .2s;white-space:nowrap}
 .x-btn:hover{transform:translateY(-1px);box-shadow:0 12px 28px -12px var(--accent);filter:brightness(1.04)}
 
-/* ---------- header: the symbol and name, and a menu ---------- */
-.x-nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
-.hero-dark .x-nav{background:rgba(14,13,13,.86);color:#fff;border-bottom-color:rgba(255,255,255,.08)}
+/* ---------- header: the symbol and a menu ----------
+   See-through over the hero, the way our own sites do it, and frosted
+   glass once the page scrolls under it (ex.js adds is-scrolled). */
+.x-nav{position:fixed;top:0;left:0;right:0;z-index:20;background:transparent;border-bottom:1px solid transparent;transition:background .3s,border-color .3s,color .3s,backdrop-filter .3s}
+.hero-dark .x-nav{color:#fff}
+.x-nav.is-scrolled{background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);border-bottom-color:var(--line);color:var(--ink)}
 .x-nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:66px}
 .x-logo{display:inline-flex;align-items:center;gap:11px;min-width:0}
 .x-logo > span:last-child{font-family:var(--fh);font-weight:var(--hw);font-size:19px;letter-spacing:var(--hls);line-height:1.1;text-transform:var(--case);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .x-mark{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:50%;border:1.6px solid currentColor}
 .x-mark svg{width:20px;height:20px}
 /* The header carries the badge alone, a touch bigger; the name is in the footer. */
+.x-nav .x-mark,.x-foot .x-mark{background:var(--accent);color:var(--on-accent);border:0;box-shadow:0 8px 20px -10px var(--accent),inset 0 1px 0 rgba(255,255,255,.35)}
 .x-nav .x-mark{width:42px;height:42px;flex-basis:42px}
 .x-nav .x-mark svg{width:22px;height:22px}
 .x-burger{display:grid;align-content:center;gap:7px;width:44px;height:44px;padding:0 9px;margin-right:-9px;background:none;border:0;color:inherit;cursor:pointer}
@@ -49,7 +55,7 @@ body.k1-locked{overflow:hidden}
 /* ---------- hero ---------- */
 .x-hero{position:relative;background:var(--hero-bg);color:var(--hero-ink);overflow:hidden}
 .x-hero.has-photo{background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.58) 55%,rgba(0,0,0,.72) 100%),var(--hero-img) center/cover no-repeat;color:#fff}
-.x-hero-in{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:min(780px,calc(88svh - 66px));padding-top:56px;padding-bottom:64px}
+.x-hero-in{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:min(780px,88svh);padding-top:118px;padding-bottom:56px}
 .x-hero-copy{display:flex;flex-direction:column;align-items:center;max-width:780px}
 .x-status{display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:999px;border:1px solid color-mix(in srgb,currentColor 22%,transparent);background:color-mix(in srgb,currentColor 6%,transparent);font-size:13.5px;font-weight:500;margin-bottom:26px}
 .x-status span{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:x-pulse 2.2s infinite}
@@ -61,15 +67,20 @@ body.k1-locked{overflow:hidden}
 .x-risk li{display:inline-flex;align-items:center;gap:7px}
 .x-risk svg{width:17px;height:17px;flex:0 0 17px;color:var(--accent)}
 body:not(.hero-dark) .x-risk svg{color:var(--accent-text)}
-.x-art{width:min(300px,76vw);margin:40px auto 0}
+.x-art-wrap{display:flex;align-items:center;gap:12px;margin:0 auto 22px;max-width:360px;text-align:left;order:-1}
+.x-art{width:min(118px,32vw);flex:0 0 auto}
+@media (max-width:899px){.x-hero.has-art .x-hero-in{min-height:0;padding-top:92px;padding-bottom:52px}}
 .x-art svg{width:100%;height:auto}
+.x-art-wrap .k1-guide-hero{margin:0}
 @media (min-width:900px){
-  .x-hero-in{padding-top:80px;padding-bottom:96px}
+  .x-hero-in{padding-top:140px;padding-bottom:96px}
   .x-hero h1{max-width:18ch}
   .x-hero.has-art .x-hero-in{flex-direction:row;justify-content:space-between;gap:56px;text-align:left}
   .x-hero.has-art .x-hero-copy{align-items:flex-start;flex:1 1 0}
   .x-hero.has-art .x-risk{justify-content:flex-start}
-  .x-hero.has-art .x-art{width:min(420px,40%);margin:0;flex:0 0 auto}
+  .x-hero.has-art .x-art-wrap{position:relative;display:block;width:min(440px,42%);max-width:none;margin:0;flex:0 0 auto}
+  .x-hero.has-art .x-art{width:100%}
+  .x-hero.has-art .k1-guide-hero{position:absolute;left:-18px;bottom:22px;max-width:260px}
   .x-hero.has-art h1{max-width:13ch}
 }
 /* A light photo with a plain backdrop (has-split): on a phone the words
@@ -89,7 +100,7 @@ body:not(.hero-dark) .x-risk svg{color:var(--accent-text)}
   .x-hero.has-split h1{max-width:13ch}
   .x-hero-photo{display:none}
 }
-.T-kids .x-art{border-radius:36px;overflow:hidden;background:#fff;box-shadow:0 30px 60px -36px rgba(35,48,74,.4)}
+.T-kids .x-art{border-radius:28px;overflow:hidden;background:#fff;box-shadow:0 30px 60px -36px rgba(35,48,74,.4)}
 .T-elec .x-hero h1{font-size:clamp(48px,12vw,92px);line-height:.95}
 
 /* ---------- sections ---------- */
@@ -100,17 +111,33 @@ body:not(.hero-dark) .x-risk svg{color:var(--accent-text)}
 .x-head > p{margin-top:14px;color:var(--muted);font-size:17px}
 .x-head > p a{color:var(--accent-text);font-weight:600;border-bottom:1.5px solid currentColor}
 
-/* services */
-.x-cards{display:grid;gap:14px}
-@media (min-width:700px){.x-cards{grid-template-columns:repeat(2,1fr)}}
-@media (min-width:1020px){.x-cards{grid-template-columns:repeat(3,1fr)}}
-.x-card{display:flex;flex-direction:column;gap:8px;padding:24px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);transition:transform .2s,box-shadow .2s,border-color .2s}
-.x-card:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 50%,var(--line));box-shadow:0 20px 40px -26px rgba(0,0,0,.3)}
-.x-card h3{font-size:23px;text-transform:var(--case)}
-.x-card p{color:var(--muted);font-size:15.5px;flex:1}
+/* services: a row of cards, swiped on a phone, arrows on a computer */
+.x-rail-wrap{position:relative}
+.x-rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:6px 20px 22px;scroll-padding:0 20px}
+.x-rail::-webkit-scrollbar{display:none}
+@media (min-width:760px){.x-rail{padding-left:max(32px,calc((100vw - 1120px)/2 + 32px));padding-right:max(32px,calc((100vw - 1120px)/2 + 32px));scroll-padding:0 max(32px,calc((100vw - 1120px)/2 + 32px))}}
+.x-card{flex:0 0 min(300px,82vw);scroll-snap-align:start;display:flex;flex-direction:column;border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s}
+.x-card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 50%,var(--line));box-shadow:0 22px 44px -28px rgba(0,0,0,.35)}
+.x-card-art{position:relative;display:grid;place-items:center;height:150px;background:linear-gradient(135deg,var(--soft) 0%,color-mix(in srgb,var(--accent) 24%,var(--soft)) 100%);color:var(--accent-text)}
+.x-card:nth-child(3n+2) .x-card-art{background:linear-gradient(135deg,var(--soft) 0%,color-mix(in srgb,var(--accent3) 34%,var(--soft)) 100%)}
+.x-card:nth-child(3n) .x-card-art{background:linear-gradient(135deg,var(--soft) 0%,color-mix(in srgb,var(--accent) 10%,var(--soft)) 100%)}
+.x-card-tag{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.75);color:#55555c;font:600 11px/1 Inter,system-ui,sans-serif;letter-spacing:.02em}
+.x-card-tag svg{width:12px;height:12px}
+.x-card-art .x-mark{width:64px;height:64px;flex-basis:64px;border:0;background:var(--surface);color:var(--accent-text);box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}
+.x-card-art .x-mark svg{width:30px;height:30px}
+.x-card-n{position:absolute;top:12px;left:14px;font-family:var(--fh);font-weight:var(--hw);font-size:15px;opacity:.55}
+.x-card-body{display:flex;flex-direction:column;gap:8px;padding:20px 22px 22px;flex:1}
+.x-card h3{font-size:22px;text-transform:var(--case)}
+.x-card p{color:var(--muted);font-size:15px;flex:1}
 .x-card-foot{display:flex;align-items:baseline;gap:10px;margin-top:8px;padding-top:14px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
 .x-card-foot b{font-size:17px;color:var(--ink)}
 .x-card-foot em{margin-left:auto;font-style:normal;font-weight:600;color:var(--accent-text)}
+.x-rail-btns{display:none}
+@media (min-width:760px){
+  .x-rail-btns{display:flex;justify-content:flex-end;gap:10px;margin-top:4px}
+  .x-rail-btn{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:24px;line-height:1;cursor:pointer;transition:background .2s,border-color .2s}
+  .x-rail-btn:hover{border-color:var(--accent);background:var(--soft)}
+}
 
 /* sound familiar? */
 .x-pains-sec{background:var(--soft)}
@@ -119,6 +146,12 @@ body:not(.hero-dark) .x-risk svg{color:var(--accent-text)}
 .x-pains li{display:flex;gap:14px;align-items:flex-start;padding:22px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);font-size:17.5px;line-height:1.45;font-weight:500}
 .x-pain-ico{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border-radius:50%;background:#fbe4e4;color:#c43c3c}
 .x-pain-ico svg{width:16px;height:16px}
+
+/* "Sound familiar?" as things customers say, for the trades that sell to
+   people rather than to a job: speech bubbles, quote marks, no crosses. */
+.x-pains.is-bubbles li{position:relative;display:block;padding:22px 22px 22px 54px;border-radius:var(--radius) var(--radius) var(--radius) 6px;font-style:italic;font-weight:500}
+.x-pains.is-bubbles li::before{content:"\201C";position:absolute;left:18px;top:8px;font-family:var(--fh);font-size:48px;line-height:1;color:var(--accent);font-style:normal}
+.x-pains.is-bubbles .x-pain-ico{display:none}
 
 /* how we do it */
 .x-solution{display:grid;gap:8px}
@@ -160,6 +193,13 @@ body:not(.hero-dark) .x-risk svg{color:var(--accent-text)}
 .x-review figcaption b{display:block;font-size:15px}
 .x-review figcaption small{display:block;font-size:13px;color:var(--muted)}
 .x-avatar{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--soft);color:var(--muted);font-weight:700;font-size:15px;border:1px dashed color-mix(in srgb,var(--muted) 45%,transparent)}
+/* Dot's notes: Kanvas One's layer, the same on every example. */
+.k1-guide{display:inline-flex;align-items:center;gap:8px;margin:14px auto 0;padding:4px 12px 4px 4px;border-radius:999px;background:rgba(231,245,236,.92);color:#16612c;font:500 12.5px/1.35 Inter,system-ui,-apple-system,sans-serif;letter-spacing:0;text-transform:none;text-align:left;border:1px solid rgba(26,127,55,.14)}
+.x-head > .k1-guide{margin-top:16px;font-size:12.5px;color:#16612c}
+.k1-guide-hero{border-radius:16px 16px 16px 4px;padding:8px 12px 8px 8px;box-shadow:0 10px 24px -16px rgba(26,127,55,.6)}
+.k1-dot{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%)}
+.k1-dot span{display:flex;gap:5px}
+.k1-dot i{display:block;width:4px;height:7px;border-radius:3px;background:#fff;animation:k1-blink 4s infinite}
 .k1-note{display:inline-flex;align-items:center;gap:8px;margin-top:16px !important;padding:7px 13px 7px 10px;border-radius:999px;background:#e7f5ec;color:#16612c !important;font:500 13px/1.3 Inter,system-ui,-apple-system,sans-serif !important;letter-spacing:0;text-transform:none}
 .k1-note-dot{width:9px;height:9px;border-radius:50%;background:#1a7f37;flex:0 0 9px}
 
@@ -168,6 +208,19 @@ body:not(.hero-dark) .x-risk svg{color:var(--accent-text)}
 .x-band h2{font-size:clamp(34px,6.6vw,54px);max-width:16ch;margin:0 auto}
 .x-band > .x-wrap > p{margin:14px auto 0;max-width:30em;opacity:.8;font-size:17px}
 .x-btn-band{margin-top:28px;width:100%;max-width:400px;min-height:58px;font-size:17px}
+
+/* A motif for each trade, on the tinted sections, so no two examples feel
+   like the same page in different colours. */
+.T-cake .x-pains-sec,.T-cake .x-reviews-sec{background-color:var(--soft);background-image:radial-gradient(circle,var(--accent2) 2.2px,transparent 2.6px),radial-gradient(circle,var(--accent3) 2.2px,transparent 2.6px);background-size:46px 46px,46px 46px;background-position:0 0,23px 23px}
+.T-kids .x-pains-sec,.T-kids .x-reviews-sec{background-image:radial-gradient(circle,color-mix(in srgb,var(--accent3) 45%,transparent) 3px,transparent 3.5px),radial-gradient(circle,color-mix(in srgb,var(--accent4) 35%,transparent) 3px,transparent 3.5px);background-size:60px 60px;background-position:0 0,30px 30px}
+.T-elec .x-pains-sec,.T-elec .x-reviews-sec{background-image:linear-gradient(rgba(15,27,45,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(15,27,45,.05) 1px,transparent 1px);background-size:28px 28px}
+.T-boiler .x-pains-sec,.T-boiler .x-reviews-sec{background-image:radial-gradient(ellipse at 100% 0%,rgba(224,80,31,.12),transparent 55%),radial-gradient(ellipse at 0% 100%,rgba(255,193,94,.18),transparent 55%)}
+.T-valet .x-pains-sec,.T-valet .x-reviews-sec{background-image:linear-gradient(115deg,transparent 40%,rgba(20,184,166,.08) 50%,transparent 60%)}
+.T-driving .x-pains-sec{background-image:repeating-linear-gradient(90deg,var(--accent3) 0 34px,transparent 34px 60px);background-size:100% 6px;background-repeat:no-repeat;background-position:0 0}
+.T-nails .x-pains-sec,.T-nails .x-reviews-sec{background-image:linear-gradient(160deg,#fff0f6 0%,#f3eaff 100%)}
+.T-lash .x-pains-sec,.T-lash .x-reviews-sec{background-image:radial-gradient(ellipse at 50% 0%,rgba(185,96,108,.10),transparent 60%)}
+.T-mua .x-pains-sec,.T-mua .x-reviews-sec{background-image:linear-gradient(90deg,transparent calc(50% - 40px),var(--accent2) calc(50% - 40px),var(--accent2) calc(50% + 40px),transparent calc(50% + 40px));background-size:100% 2px;background-repeat:no-repeat;background-position:0 0}
+.T-hair .x-pains-sec,.T-hair .x-reviews-sec{background-image:radial-gradient(ellipse at 85% 10%,rgba(168,95,67,.10),transparent 55%)}
 
 /* footer */
 .x-foot{padding:48px 0 32px;font-size:14.5px;color:var(--muted);border-top:1px solid var(--line)}

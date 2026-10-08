@@ -28,11 +28,11 @@
 
 module.exports = [
   {
-    slug: 'hairdressers', key: 'hair', label: 'Hairdressers', one: 'hairdresser', icon: 'scissors',
+    slug: 'hairdressers', key: 'hair', label: 'Hairdressers', one: 'hairdresser', icon: 'scissors', art: 'hair',
     name: 'Linden Hair Studio', place: 'Tynemouth', phone: '0191 498 0217', address: 'Front Street, Tynemouth',
     fonts: 'Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600',
-    theme: { bg: '#f7f2ec', ink: '#2a2420', muted: '#76675d', accent: '#a85f43', accent2: '#d9b8a3', soft: '#efe4d9', surface: '#fffaf5', line: 'rgba(42,36,32,.12)', fh: "'Cormorant Garamond', Georgia, serif", fb: "'Jost', system-ui, sans-serif", hw: 600, hls: '-.01em', radius: '6px', btnRadius: '999px', onAccent: '#fff',
-      heroBg: 'radial-gradient(ellipse at 75% 15%, #8a5440 0%, transparent 55%), radial-gradient(ellipse at 10% 90%, #5a3a2c 0%, transparent 60%), #2a2420', heroInk: '#fbf6f1' },
+    theme: { accent3: '#c6cfb4', dark: false, bg: '#f7f2ec', ink: '#2a2420', muted: '#76675d', accent: '#a85f43', accent2: '#d9b8a3', soft: '#efe4d9', surface: '#fffaf5', line: 'rgba(42,36,32,.12)', fh: "'Cormorant Garamond', Georgia, serif", fb: "'Jost', system-ui, sans-serif", hw: 600, hls: '-.01em', radius: '6px', btnRadius: '999px', onAccent: '#fff',
+      heroBg: 'linear-gradient(170deg, #f7f2ec 0%, #eedfd1 100%)', heroInk: '#2a2420' },
     hero: {
       status: 'Taking new clients for October',
       h1: 'Hair colour that still looks good six weeks later.',
@@ -68,11 +68,11 @@ module.exports = [
   },
 
   {
-    slug: 'lash-artists', key: 'lash', label: 'Lash artists', one: 'lash artist', icon: 'lash',
+    slug: 'lash-artists', key: 'lash', label: 'Lash artists', one: 'lash artist', icon: 'lash', art: 'lash',
     name: 'Flutter Lash Studio', place: 'Gosforth', phone: '07700 900318', address: 'High Street, Gosforth',
     fonts: 'DM+Serif+Display&family=DM+Sans:wght@400;500;700',
-    theme: { bg: '#fbf4f2', ink: '#3a2a2e', muted: '#866f73', accent: '#b9606c', accent2: '#e8b4b8', soft: '#f5e2e0', surface: '#ffffff', line: 'rgba(58,42,46,.1)', fh: "'DM Serif Display', Georgia, serif", fb: "'DM Sans', system-ui, sans-serif", hw: 400, hls: '-.01em', radius: '20px', btnRadius: '999px', onAccent: '#fff',
-      heroBg: 'radial-gradient(ellipse at 80% 10%, #c97b84 0%, transparent 55%), radial-gradient(ellipse at 0% 100%, #6e3c46 0%, transparent 60%), #3a2a2e', heroInk: '#fff6f5' },
+    theme: { accent3: '#f3c9a8', dark: false, bg: '#fbf4f2', ink: '#3a2a2e', muted: '#866f73', accent: '#b9606c', accent2: '#e8b4b8', soft: '#f5e2e0', surface: '#ffffff', line: 'rgba(58,42,46,.1)', fh: "'DM Serif Display', Georgia, serif", fb: "'DM Sans', system-ui, sans-serif", hw: 400, hls: '-.01em', radius: '20px', btnRadius: '999px', onAccent: '#fff',
+      heroBg: 'linear-gradient(170deg, #fdf7f5 0%, #f5e0dd 100%)', heroInk: '#3a2a2e' },
     hero: {
       status: 'Infill slots free this week',
       h1: 'Wake up with your lashes already done.',
@@ -108,10 +108,10 @@ module.exports = [
   },
 
   {
-    slug: 'makeup-artists', key: 'mua', label: 'Makeup artists', one: 'makeup artist', icon: 'brush',
+    slug: 'makeup-artists', key: 'mua', label: 'Makeup artists', one: 'makeup artist', icon: 'brush', art: 'mua',
     name: 'Gilt Makeup Artistry', place: 'Newcastle', phone: '07700 900452', address: 'Mobile across the North East',
     fonts: 'Bodoni+Moda:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;700',
-    theme: { bg: '#faf7f2', ink: '#1d1a1a', muted: '#7a706a', accent: '#a8834a', accentText: '#7d5f2e', accent2: '#cfa96b', soft: '#f1ebe1', surface: '#ffffff', line: 'rgba(29,26,26,.1)', fh: "'Bodoni Moda', Georgia, serif", fb: "'Manrope', system-ui, sans-serif", hw: 500, hls: '-.01em', radius: '4px', btnRadius: '999px', onAccent: '#fff',
+    theme: { accent3: '#e7c3ae', dark: true, bg: '#faf7f2', ink: '#1d1a1a', muted: '#7a706a', accent: '#a8834a', accentText: '#7d5f2e', accent2: '#cfa96b', soft: '#f1ebe1', surface: '#ffffff', line: 'rgba(29,26,26,.1)', fh: "'Bodoni Moda', Georgia, serif", fb: "'Manrope', system-ui, sans-serif", hw: 500, hls: '-.01em', radius: '4px', btnRadius: '999px', onAccent: '#fff',
       heroBg: 'radial-gradient(ellipse at 85% 0%, rgba(207,169,107,.45) 0%, transparent 50%), radial-gradient(ellipse at 0% 100%, #2a231d 0%, transparent 60%), #121011', heroInk: '#f6efe6' },
     hero: {
       status: '2027 wedding dates now booking',
@@ -146,11 +146,11 @@ module.exports = [
   },
 
   {
-    slug: 'nail-techs', key: 'nails', label: 'Nail techs', one: 'nail tech', icon: 'polish',
+    slug: 'nail-techs', key: 'nails', label: 'Nail techs', one: 'nail tech', icon: 'polish', art: 'nails',
     name: 'The Polish Room', place: 'Whitley Bay', phone: '07700 900527', address: 'Park View, Whitley Bay',
     fonts: 'Outfit:wght@400;500;600;700',
-    theme: { bg: '#fff7f5', ink: '#2d1f2b', muted: '#7d6876', accent: '#d64c74', accent2: '#f7b5c8', soft: '#fde6ee', surface: '#ffffff', line: 'rgba(45,31,43,.1)', fh: "'Outfit', system-ui, sans-serif", fb: "'Outfit', system-ui, sans-serif", hw: 700, hls: '-.035em', radius: '24px', btnRadius: '999px', onAccent: '#fff', photoBg: '#e7e1e4', photoInk: '#2d1f2b',
-      heroBg: 'radial-gradient(ellipse at 85% 10%, #f07ea0 0%, transparent 55%), radial-gradient(ellipse at 0% 100%, #6b2445 0%, transparent 60%), #2d1f2b', heroInk: '#fff7fa' },
+    theme: { dark: false, bg: '#fffafc', ink: '#2d1f2b', muted: '#7d6876', accent: '#d64c74', accent2: '#c9a7ff', accent3: '#ffb3cf', accent4: '#7a5af8', accentText: '#b82a63', soft: '#fde6ee', surface: '#ffffff', line: 'rgba(45,31,43,.1)', fh: "'Outfit', system-ui, sans-serif", fb: "'Outfit', system-ui, sans-serif", hw: 700, hls: '-.035em', radius: '24px', btnRadius: '999px', onAccent: '#fff', photoBg: '#e7e1e4', photoInk: '#2d1f2b',
+      heroBg: 'linear-gradient(160deg, #fff0f6 0%, #f1e7ff 100%)', heroInk: '#2d1f2b' },
     hero: {
       status: 'New clients welcome',
       h1: 'Nails that last three weeks, not three days.',
@@ -186,11 +186,12 @@ module.exports = [
   },
 
   {
-    slug: 'cake-makers', key: 'cake', label: 'Cake makers', one: 'cake maker', icon: 'cake',
+    slug: 'cake-makers', key: 'cake', label: 'Cake makers', one: 'cake maker', icon: 'cake', art: 'cake',
     name: 'Sugar &amp; Crumb', place: 'Morpeth', phone: '07700 900684', address: 'Collection from Morpeth',
     fonts: 'Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700',
-    theme: { bg: '#fff8ef', ink: '#3b2418', muted: '#85685a', accent: '#c45a78', accent2: '#f2c86b', soft: '#f8e7d6', surface: '#ffffff', line: 'rgba(59,36,24,.12)', fh: "'Fraunces', Georgia, serif", fb: "'Nunito Sans', system-ui, sans-serif", hw: 600, hls: '-.02em', radius: '18px', btnRadius: '999px', onAccent: '#fff',
-      heroBg: 'radial-gradient(ellipse at 85% 10%, #d4728a 0%, transparent 55%), radial-gradient(ellipse at 0% 100%, #6b3a26 0%, transparent 60%), #3b2418', heroInk: '#fff8ef' },
+    theme: { dark: false, bg: '#ffffff', ink: '#3a2a2f', muted: '#7d6d72', accent: '#e2557b', accentText: '#c13d62', accent2: '#ffd36e', accent3: '#9ad9c2', accent4: '#f7a6bd', soft: '#fff5f7', surface: '#ffffff', line: 'rgba(58,42,47,.1)', fh: "'Fraunces', Georgia, serif", fb: "'Nunito Sans', system-ui, sans-serif", hw: 600, hls: '-.02em', radius: '22px', btnRadius: '999px', onAccent: '#fff',
+      heroBg: 'linear-gradient(180deg, #ffffff 0%, #fff6f8 100%)', heroInk: '#3a2a2f' },
+
     hero: {
       status: 'Now taking orders for November',
       h1: 'Celebration cakes people talk about after the party.',
@@ -228,7 +229,7 @@ module.exports = [
     slug: 'kids-clubs', key: 'kids', label: 'Kids&rsquo; clubs', one: 'kids&rsquo; club', icon: 'star', art: 'kids',
     name: 'Little Movers', place: 'Cramlington', phone: '0191 498 0731', address: 'Community Centre, Cramlington',
     fonts: 'Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700',
-    theme: { bg: '#fffcf3', ink: '#23304a', muted: '#5f6b82', accent: '#ff6b4a', accentText: '#c9391a', accent2: '#ffc93c', accent3: '#3fb8af', accent4: '#7c6cf2', soft: '#fff1d6', surface: '#ffffff', line: 'rgba(35,48,74,.1)', fh: "'Fredoka', system-ui, sans-serif", fb: "'Nunito', system-ui, sans-serif", hw: 600, hls: '-.01em', radius: '24px', btnRadius: '999px', onAccent: '#fff',
+    theme: { dark: false, bg: '#fffcf3', ink: '#23304a', muted: '#5f6b82', accent: '#ff6b4a', accentText: '#c9391a', accent2: '#ffc93c', accent3: '#3fb8af', accent4: '#7c6cf2', soft: '#fff1d6', surface: '#ffffff', line: 'rgba(35,48,74,.1)', fh: "'Fredoka', system-ui, sans-serif", fb: "'Nunito', system-ui, sans-serif", hw: 600, hls: '-.01em', radius: '24px', btnRadius: '999px', onAccent: '#fff',
       heroBg: 'linear-gradient(160deg, #fff4dc 0%, #ffe3c2 100%)', heroInk: '#23304a' },
     hero: {
       status: 'Now enrolling for October',
@@ -268,7 +269,7 @@ module.exports = [
     slug: 'electricians', key: 'elec', label: 'Electricians', one: 'electrician', icon: 'bolt', art: 'elec',
     name: 'Brightline Electrical', place: 'Blyth', phone: '0191 498 0123', address: 'Based in Blyth, covering Northumberland',
     fonts: 'Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700',
-    theme: { bg: '#ffffff', ink: '#0f1b2d', muted: '#5b6678', accent: '#ffc400', accentText: '#0f1b2d', accent2: '#0f1b2d', soft: '#f2f4f7', surface: '#ffffff', line: 'rgba(15,27,45,.1)', fh: "'Barlow Condensed', 'Arial Narrow', sans-serif", fb: "'Barlow', system-ui, sans-serif", hw: 700, hls: '0', radius: '10px', btnRadius: '10px', onAccent: '#0f1b2d', upper: true,
+    theme: { accent3: '#ffe27a', dark: true, bg: '#ffffff', ink: '#0f1b2d', muted: '#5b6678', accent: '#ffc400', accentText: '#0f1b2d', accent2: '#0f1b2d', soft: '#f2f4f7', surface: '#ffffff', line: 'rgba(15,27,45,.1)', fh: "'Barlow Condensed', 'Arial Narrow', sans-serif", fb: "'Barlow', system-ui, sans-serif", hw: 700, hls: '0', radius: '10px', btnRadius: '10px', onAccent: '#0f1b2d', upper: true,
       heroBg: 'radial-gradient(circle at 85% 10%, rgba(255,196,0,.16), transparent 50%), #0f1b2d', heroInk: '#ffffff' },
     hero: {
       status: 'Same-day callouts across Northumberland',
@@ -308,7 +309,7 @@ module.exports = [
     slug: 'heating-engineers', key: 'boiler', label: 'Heating engineers', one: 'heating engineer', icon: 'flame', art: 'boiler',
     name: 'Coastline Heating', place: 'Whitley Bay', phone: '0191 498 0456', address: 'Based in Whitley Bay, covering North Tyneside',
     fonts: 'Archivo:wght@400;500;600;700;800',
-    theme: { bg: '#fffaf6', ink: '#1d1a18', muted: '#6b625c', accent: '#e0501f', accentText: '#b83c0f', accent2: '#1d1a18', soft: '#f8ede4', surface: '#ffffff', line: 'rgba(29,26,24,.1)', fh: "'Archivo', system-ui, sans-serif", fb: "'Archivo', system-ui, sans-serif", hw: 800, hls: '-.03em', radius: '14px', btnRadius: '999px', onAccent: '#fff',
+    theme: { accent3: '#ffc15e', dark: true, bg: '#fffaf6', ink: '#1d1a18', muted: '#6b625c', accent: '#e0501f', accentText: '#b83c0f', accent2: '#1d1a18', soft: '#f8ede4', surface: '#ffffff', line: 'rgba(29,26,24,.1)', fh: "'Archivo', system-ui, sans-serif", fb: "'Archivo', system-ui, sans-serif", hw: 800, hls: '-.03em', radius: '14px', btnRadius: '999px', onAccent: '#fff',
       heroBg: 'radial-gradient(ellipse at 85% 0%, rgba(234,90,42,.35), transparent 55%), radial-gradient(ellipse at 0% 100%, #3a2a22 0%, transparent 60%), #1d1a18', heroInk: '#fff8f3' },
     hero: {
       status: 'Same-day boiler repairs in North Tyneside',
@@ -348,7 +349,7 @@ module.exports = [
     slug: 'mobile-car-valeters', key: 'valet', label: 'Car valeters', one: 'mobile car valeter', icon: 'car', art: 'valet',
     name: 'Gleam Mobile Valeting', place: 'Newcastle', phone: '07700 900861', address: 'Mobile across Newcastle and North Tyneside',
     fonts: 'Sora:wght@400;500;600;700',
-    theme: { bg: '#f5f8fa', ink: '#0b0f14', muted: '#5e6b77', accent: '#14b8a6', accentText: '#0f766e', accent2: '#0f766e', soft: '#e6f4f2', surface: '#ffffff', line: 'rgba(11,15,20,.1)', fh: "'Sora', system-ui, sans-serif", fb: "'Sora', system-ui, sans-serif", hw: 700, hls: '-.04em', radius: '18px', btnRadius: '14px', onAccent: '#062a26',
+    theme: { accent3: '#5eead4', dark: true, bg: '#f5f8fa', ink: '#0b0f14', muted: '#5e6b77', accent: '#14b8a6', accentText: '#0f766e', accent2: '#0f766e', soft: '#e6f4f2', surface: '#ffffff', line: 'rgba(11,15,20,.1)', fh: "'Sora', system-ui, sans-serif", fb: "'Sora', system-ui, sans-serif", hw: 700, hls: '-.04em', radius: '18px', btnRadius: '14px', onAccent: '#062a26',
       heroBg: 'radial-gradient(ellipse at 80% 10%, rgba(61,214,196,.22), transparent 55%), #0b0f14', heroInk: '#eef3f7' },
     hero: {
       status: 'Slots free this week',
@@ -387,7 +388,7 @@ module.exports = [
     slug: 'driving-instructors', key: 'driving', label: 'Driving instructors', one: 'driving instructor', icon: 'wheel', art: 'driving',
     name: 'Pass Lane Driving School', place: 'Gosforth', phone: '07700 900944', address: 'Gosforth, Jesmond, Heaton and Kenton',
     fonts: 'Plus+Jakarta+Sans:wght@400;500;600;700;800',
-    theme: { bg: '#f5faf6', ink: '#102a1c', muted: '#587163', accent: '#16874a', accentText: '#147a43', accent2: '#e53935', accent3: '#ffd23f', accent4: '#1f9d55', soft: '#e3f3e8', surface: '#ffffff', line: 'rgba(16,42,28,.1)', fh: "'Plus Jakarta Sans', system-ui, sans-serif", fb: "'Plus Jakarta Sans', system-ui, sans-serif", hw: 800, hls: '-.04em', radius: '20px', btnRadius: '14px', onAccent: '#fff',
+    theme: { dark: false, bg: '#f5faf6', ink: '#102a1c', muted: '#587163', accent: '#16874a', accentText: '#147a43', accent2: '#e53935', accent3: '#ffd23f', accent4: '#1f9d55', soft: '#e3f3e8', surface: '#ffffff', line: 'rgba(16,42,28,.1)', fh: "'Plus Jakarta Sans', system-ui, sans-serif", fb: "'Plus Jakarta Sans', system-ui, sans-serif", hw: 800, hls: '-.04em', radius: '20px', btnRadius: '14px', onAccent: '#fff',
       heroBg: 'linear-gradient(160deg, #eaf7ee 0%, #d3eedc 100%)', heroInk: '#102a1c' },
     hero: {
       status: 'Booking lessons for November',

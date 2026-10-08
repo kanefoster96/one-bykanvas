@@ -12,11 +12,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="/examples/ex.css?v=5">
+<link rel="stylesheet" href="/examples/ex.css?v=6">
 <style>:root{--bg:#fffcf3;--ink:#23304a;--muted:#5f6b82;--accent:#ff6b4a;--accent2:#ffc93c;--accent3:#3fb8af;--accent4:#7c6cf2;--soft:#fff1d6;--surface:#ffffff;--accent-text:#c9391a;--line:rgba(35,48,74,.1);--fh:'Fredoka', system-ui, sans-serif;--fb:'Nunito', system-ui, sans-serif;--hw:600;--hls:-.01em;--radius:24px;--btn-radius:999px;--on-accent:#fff;--hero-bg:linear-gradient(160deg, #fff4dc 0%, #ffe3c2 100%);--hero-ink:#23304a;--case:none}</style>
 </head>
 <body class="T-kids">
-<header class="x-nav">
+<header class="x-nav" id="xNav">
   <div class="x-wrap x-nav-in">
     <a class="x-logo" href="#preview" aria-label="Little Movers"><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4l2.5 5.4 5.9.6-4.4 4 1.2 5.8L12 16.2l-5.2 3 1.2-5.8-4.4-4 5.9-.6z"/></svg></span></a>
     <button class="x-burger" type="button" data-preview aria-label="Menu"><span></span><span></span></button>
@@ -32,7 +32,7 @@
       <a class="x-btn x-btn-hero" href="#preview">Book a free session</a>
       <ul class="x-risk"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>First session free</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>No contract, cancel any month</span></li></ul>
     </div>
-    <div class="x-art x-art-kids"><svg viewBox="0 0 400 420" aria-hidden="true">
+    <div class="x-art-wrap"><div class="x-art x-art-kids"><svg viewBox="0 0 400 420" aria-hidden="true">
     <circle class="f-b" cx="290" cy="110" r="66"/>
     <path class="f-c" d="M0 330 C 80 260, 170 280, 230 320 S 360 300, 400 270 V420 H0Z"/>
     <path class="f-d" opacity=".85" d="M0 370 C 90 330, 190 340, 260 370 S 360 360, 400 345 V420 H0Z"/>
@@ -42,38 +42,47 @@
     <path class="f-c" d="M190 60 l6 12 13 2 -9 9 2 13 -12 -6 -12 6 2 -13 -9 -9 13 -2z"/>
     <rect class="f-d" x="350" y="200" width="16" height="16" rx="3" transform="rotate(20 358 208)"/><rect class="f-a" x="170" y="160" width="12" height="12" rx="3" transform="rotate(-25 176 166)"/>
     <rect class="f-b" x="30" y="180" width="12" height="12" rx="3" transform="rotate(35 36 186)"/>
-  </svg></div>
+  </svg></div><p class="k1-guide k1-guide-hero"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Imagine photos of your classes in action here.</span></p></div>
   </div>
   
 </section>
 <section class="x-sec" id="services" data-k1-seen="the services">
   <div class="x-wrap">
-    <div class="x-head"><h2>Classes</h2><p>&pound;6 a session, or &pound;20 a month for one class a week. Siblings half price.</p></div>
-    <div class="x-cards"><a class="x-card" href="#preview">
-      <h3>Mini Movers</h3><p>Music and movement for ages 2 to 4. Grown-ups join in.</p>
-      <span class="x-card-foot"><b>Mon &amp; Sat</b><span>9.30am</span><em>Book &rsaquo;</em></span>
+    <div class="x-head"><h2>Classes</h2><p>&pound;6 a session, or &pound;20 a month for one class a week. Siblings half price.</p><p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your services and prices, each with a button to book.</span></p></div>
+  </div>
+  <div class="x-rail-wrap">
+    <div class="x-rail" tabindex="0" aria-label="Classes"><a class="x-card" href="#preview">
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">01</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4l2.5 5.4 5.9.6-4.4 4 1.2 5.8L12 16.2l-5.2 3 1.2-5.8-4.4-4 5.9-.6z"/></svg></span></span>
+      <span class="x-card-body"><h3>Mini Movers</h3><p>Music and movement for ages 2 to 4. Grown-ups join in.</p>
+      <span class="x-card-foot"><b>Mon &amp; Sat</b><span>9.30am</span><em>Book &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <h3>Sports Club</h3><p>Ball skills, races and team games for ages 5 to 8.</p>
-      <span class="x-card-foot"><b>Tuesday</b><span>4.15pm</span><em>Book &rsaquo;</em></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">02</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4l2.5 5.4 5.9.6-4.4 4 1.2 5.8L12 16.2l-5.2 3 1.2-5.8-4.4-4 5.9-.6z"/></svg></span></span>
+      <span class="x-card-body"><h3>Sports Club</h3><p>Ball skills, races and team games for ages 5 to 8.</p>
+      <span class="x-card-foot"><b>Tuesday</b><span>4.15pm</span><em>Book &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <h3>Dance &amp; Drama</h3><p>Confidence, rhythm and a show at the end of term. Ages 5 to 11.</p>
-      <span class="x-card-foot"><b>Wednesday</b><span>4.30pm</span><em>Book &rsaquo;</em></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">03</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4l2.5 5.4 5.9.6-4.4 4 1.2 5.8L12 16.2l-5.2 3 1.2-5.8-4.4-4 5.9-.6z"/></svg></span></span>
+      <span class="x-card-body"><h3>Dance &amp; Drama</h3><p>Confidence, rhythm and a show at the end of term. Ages 5 to 11.</p>
+      <span class="x-card-foot"><b>Wednesday</b><span>4.30pm</span><em>Book &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <h3>Multi-sport</h3><p>A different sport every week for ages 6 to 11.</p>
-      <span class="x-card-foot"><b>Saturday</b><span>11am</span><em>Book &rsaquo;</em></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">04</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4l2.5 5.4 5.9.6-4.4 4 1.2 5.8L12 16.2l-5.2 3 1.2-5.8-4.4-4 5.9-.6z"/></svg></span></span>
+      <span class="x-card-body"><h3>Multi-sport</h3><p>A different sport every week for ages 6 to 11.</p>
+      <span class="x-card-foot"><b>Saturday</b><span>11am</span><em>Book &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <h3>Holiday camps</h3><p>Fun-packed days every school holiday.</p>
-      <span class="x-card-foot"><b>&pound;30 a day</b><span>9am &ndash; 3pm</span><em>Book &rsaquo;</em></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">05</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4l2.5 5.4 5.9.6-4.4 4 1.2 5.8L12 16.2l-5.2 3 1.2-5.8-4.4-4 5.9-.6z"/></svg></span></span>
+      <span class="x-card-body"><h3>Holiday camps</h3><p>Fun-packed days every school holiday.</p>
+      <span class="x-card-foot"><b>&pound;30 a day</b><span>9am &ndash; 3pm</span><em>Book &rsaquo;</em></span></span>
     </a><a class="x-card" href="#preview">
-      <h3>Birthday parties</h3><p>Two hours of games with a coach. We tidy up.</p>
-      <span class="x-card-foot"><b>From &pound;150</b><span>Weekends</span><em>Book &rsaquo;</em></span>
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">06</span><span class="x-card-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Your photo</span><span class="x-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4l2.5 5.4 5.9.6-4.4 4 1.2 5.8L12 16.2l-5.2 3 1.2-5.8-4.4-4 5.9-.6z"/></svg></span></span>
+      <span class="x-card-body"><h3>Birthday parties</h3><p>Two hours of games with a coach. We tidy up.</p>
+      <span class="x-card-foot"><b>From &pound;150</b><span>Weekends</span><em>Book &rsaquo;</em></span></span>
     </a></div>
+    <div class="x-rail-btns x-wrap"><button class="x-rail-btn" type="button" data-rail="-1" aria-label="Previous">&lsaquo;</button><button class="x-rail-btn" type="button" data-rail="1" aria-label="Next">&rsaquo;</button></div>
   </div>
 </section>
 <section class="x-sec x-pains-sec" data-k1-seen="the problems">
   <div class="x-wrap">
-    <div class="x-head"><h2>Sound familiar?</h2></div>
-    <ul class="x-pains"><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Bouncing off the walls by 4pm with nowhere to go.</span></li><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Big classes where your child just stands at the back.</span></li><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Paying a term up front for something they might not like.</span></li></ul>
+    <div class="x-head"><h2>Sound familiar?</h2><p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Build trust: describe their problem better than they could themselves.</span></p></div>
+    <ul class="x-pains is-bubbles"><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Bouncing off the walls by 4pm with nowhere to go.</span></li><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Big classes where your child just stands at the back.</span></li><li><span class="x-pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span>Paying a term up front for something they might not like.</span></li></ul>
   </div>
 </section>
 <section class="x-sec x-solution-sec">
@@ -91,7 +100,7 @@
 <section class="x-sec x-reviews-sec" id="reviews" data-k1-seen="the reviews">
   <div class="x-wrap">
     <div class="x-head"><h2>What parents say</h2>
-      <p class="k1-note"><span class="k1-note-dot" aria-hidden="true"></span>On your site, your real Google reviews show here.</p></div>
+      <p class="k1-guide"><span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span><span>Your real Google reviews show here.</span></p></div>
     <div class="x-reviews"><figure class="x-review"><span class="x-stars" aria-label="5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg></span>
       <blockquote>A five-star review from one of your parents goes here, pulled in from Google.</blockquote>
       <figcaption><span class="x-avatar" aria-hidden="true">A</span><span><b>Customer name</b><small>Google review</small></span></figcaption>
@@ -145,7 +154,7 @@
   <a class="k1-x" href="/free?trade=kids" aria-label="Close the example"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
 </div>
 <script src="/consent.js?v=9"></script>
-<script src="/examples/ex.js?v=2"></script>
+<script src="/examples/ex.js?v=3"></script>
 <script src="/beacon.js?v=4" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 </body>
 </html>

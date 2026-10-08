@@ -15,8 +15,8 @@ const fs = require('fs');
 const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
-const EX_CSS_V = 5;
-const EX_JS_V = 2;
+const EX_CSS_V = 6;
+const EX_JS_V = 3;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
 
@@ -59,12 +59,98 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 const CROSS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>';
 const STAR = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg>';
 const stars = '<span class="x-stars" aria-label="5 stars">' + STAR.repeat(5) + '</span>';
+const CAMERA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
 const strip = (s) => s.replace(/<[^>]+>/g, '');
+
+/* Icing that drips over the edge of a tier: a band across the top with
+   drops of uneven lengths hanging from it. */
+function drip(x, y, w, n, cls) {
+  const step = w / n;
+  let d = `M${x} ${y} H${x + w} V${y + 9}`;
+  for (let i = n; i > 0; i--) {
+    const x1 = x + i * step, mid = x1 - step / 2, len = 8 + ((i * 7) % 5) * 4;
+    d += ` Q${(x1 - step * 0.1).toFixed(1)} ${y + 9} ${(mid + step * 0.3).toFixed(1)} ${y + 9 + len * 0.55}`
+       + ` Q${mid.toFixed(1)} ${y + 13 + len} ${(mid - step * 0.3).toFixed(1)} ${y + 9 + len * 0.55}`
+       + ` Q${(x1 - step * 0.9).toFixed(1)} ${y + 9} ${(x1 - step).toFixed(1)} ${y + 9}`;
+  }
+  return `<path class="${cls}" d="${d} Z"/>`;
+}
+/* Lashes along a closed eyelid (a quadratic from a to c through b),
+   longest in the middle and sweeping outwards. */
+function lashes(a, b, c, n) {
+  let out = '';
+  for (let i = 1; i < n; i++) {
+    const t = i / n, u = 1 - t;
+    const x = u * u * a[0] + 2 * u * t * b[0] + t * t * c[0];
+    const y = u * u * a[1] + 2 * u * t * b[1] + t * t * c[1];
+    const len = 26 + Math.sin(Math.PI * t) * 34;
+    const lean = (t - 0.5) * 1.3;
+    const ex = x + lean * len, ey = y + len;
+    out += `<path d="M${x.toFixed(1)} ${y.toFixed(1)} Q${(x + lean * len * 0.2).toFixed(1)} ${(y + len * 0.7).toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}"/>`;
+  }
+  return out;
+}
+const sparkle = (x, y, r, cls) => `<path class="${cls}" d="M${x} ${y - r} Q${x + r * 0.18} ${y - r * 0.18} ${x + r} ${y} Q${x + r * 0.18} ${y + r * 0.18} ${x} ${y + r} Q${x - r * 0.18} ${y + r * 0.18} ${x - r} ${y} Q${x - r * 0.18} ${y - r * 0.18} ${x} ${y - r}Z"/>`;
 
 /* ---------------------------------------------------------------- art */
 /* Drawings for the trades where one says more than a photo would. The
    rest get a photo in the hero (heroImage). */
 const ART = {
+  cake: () => `<svg viewBox="0 0 400 400" aria-hidden="true">
+    <circle class="f-s" cx="200" cy="205" r="172"/>
+    <g opacity=".9"><rect class="f-b" x="62" y="96" width="16" height="6" rx="3" transform="rotate(-30 70 99)"/><rect class="f-c" x="318" y="120" width="16" height="6" rx="3" transform="rotate(25 326 123)"/><rect class="f-a" x="300" y="64" width="14" height="5" rx="2.5" transform="rotate(-50 307 66)"/><rect class="f-c" x="86" y="178" width="14" height="5" rx="2.5" transform="rotate(40 93 180)"/><rect class="f-b" x="330" y="214" width="14" height="5" rx="2.5" transform="rotate(-20 337 216)"/><circle class="f-d" cx="104" cy="64" r="5"/><circle class="f-b" cx="346" cy="170" r="4"/></g>
+    <ellipse cx="200" cy="364" rx="58" ry="9" fill="#000" opacity=".06"/>
+    <path class="f-w" stroke="rgba(0,0,0,.08)" stroke-width="2" d="M186 334 H214 L222 360 H178 Z"/>
+    <ellipse class="f-w" stroke="rgba(0,0,0,.08)" stroke-width="2" cx="200" cy="334" rx="138" ry="13"/>
+    <rect class="f-w" stroke="rgba(0,0,0,.09)" stroke-width="2" x="86" y="250" width="228" height="82" rx="14"/>
+    ${drip(86, 250, 228, 9, 'f-d')}
+    <g class="f-c"><circle cx="112" cy="312" r="5"/><circle cx="142" cy="312" r="5"/><circle cx="172" cy="312" r="5"/><circle cx="202" cy="312" r="5"/><circle cx="232" cy="312" r="5"/><circle cx="262" cy="312" r="5"/><circle cx="292" cy="312" r="5"/></g>
+    <rect class="f-d" x="118" y="186" width="164" height="66" rx="12"/>
+    ${drip(118, 186, 164, 7, 'f-w')}
+    <rect class="f-w" stroke="rgba(0,0,0,.09)" stroke-width="2" x="148" y="128" width="104" height="60" rx="10"/>
+    ${drip(148, 128, 104, 5, 'f-b')}
+    <circle class="f-a" cx="178" cy="122" r="12"/><circle class="f-a" cx="200" cy="114" r="13"/><circle class="f-a" cx="222" cy="122" r="12"/>
+    <path class="f-c" d="M200 101 c4 -12 14 -16 22 -14 c-3 9 -12 15 -22 14z"/>
+    <circle fill="#fff" opacity=".55" cx="196" cy="109" r="3.5"/><circle fill="#fff" opacity=".5" cx="174" cy="118" r="3"/>
+  </svg>`,
+
+  hair: () => `<svg viewBox="0 0 400 400" aria-hidden="true">
+    <circle class="f-s" cx="200" cy="200" r="172"/>
+    <g fill="none" stroke-linecap="round">
+      <path class="s-b" stroke-width="46" d="M96 330 C 120 250, 210 268, 208 196 S 270 104, 312 84"/>
+      <path class="s-a" stroke-width="22" d="M112 338 C 140 262, 228 280, 226 204 S 284 120, 322 102"/>
+      <path stroke="#fff" stroke-opacity=".55" stroke-width="5" d="M104 318 C 130 250, 206 262, 204 200 S 262 112, 300 92"/>
+    </g>
+    <g transform="rotate(-28 300 288)" fill="none" class="s-i" stroke-width="7" stroke-linecap="round">
+      <circle cx="262" cy="270" r="17"/><circle cx="262" cy="318" r="17"/><path d="M276 278 L352 312 M276 310 L352 276"/>
+    </g>
+    <g transform="rotate(18 110 130)"><rect class="f-a" x="56" y="108" width="112" height="22" rx="8"/><g class="f-a">${Array.from({ length: 11 }, (_, i) => `<rect x="${62 + i * 9.6}" y="126" width="4.6" height="26" rx="2.3"/>`).join('')}</g></g>
+    ${sparkle(330, 196, 12, 'f-a')}${sparkle(78, 234, 8, 'f-b')}
+  </svg>`,
+
+  lash: () => `<svg viewBox="0 0 400 400" aria-hidden="true">
+    <circle class="f-s" cx="200" cy="200" r="172"/>
+    <path fill="none" class="s-b" stroke-width="16" stroke-linecap="round" d="M108 128 Q 206 86 300 136"/>
+    <path fill="none" class="s-i" stroke-width="7" stroke-linecap="round" d="M84 200 Q 200 286 316 200"/>
+    <g fill="none" class="s-i" stroke-width="5" stroke-linecap="round">${lashes([84, 200], [200, 286], [316, 200], 15)}</g>
+    ${sparkle(318, 112, 13, 'f-a')}${sparkle(86, 286, 9, 'f-a')}${sparkle(300, 300, 7, 'f-b')}
+  </svg>`,
+
+  mua: () => `<svg viewBox="0 0 400 400" aria-hidden="true">
+    <circle cx="200" cy="200" r="172" fill="#fff" fill-opacity=".05"/><circle cx="200" cy="200" r="172" fill="none" stroke="var(--accent)" stroke-opacity=".45" stroke-width="2"/>
+    <rect x="70" y="176" width="260" height="150" rx="24" fill="#fff" fill-opacity=".07" stroke="var(--accent)" stroke-width="2.5"/>
+    ${[['#e7c3ae', 112, 222], ['#c98a74', 168, 222], ['#9c5a46', 224, 222], ['#cfa96b', 280, 222], ['#f1d9c7', 112, 280], ['#b46a64', 168, 280], ['#6e3b33', 224, 280], ['#e3b07a', 280, 280]].map(([c, x, y]) => `<circle cx="${x}" cy="${y}" r="21" fill="${c}"/><circle cx="${x - 7}" cy="${y - 7}" r="5" fill="#fff" opacity=".35"/>`).join('')}
+    <g transform="rotate(-38 230 120)"><rect x="150" y="104" width="150" height="16" rx="8" fill="#2a2320" stroke="var(--accent)" stroke-width="2"/><rect class="f-a" x="290" y="100" width="28" height="24" rx="4"/><path class="f-b" d="M318 100 C 350 96, 372 106, 380 112 C 372 118, 350 128, 318 124 Z"/></g>
+    ${sparkle(330, 96, 12, 'f-b')}${sparkle(80, 120, 8, 'f-a')}
+  </svg>`,
+
+  nails: () => `<svg viewBox="0 0 400 400" aria-hidden="true">
+    <circle class="f-s" cx="200" cy="200" r="172"/>
+    ${[[96, 'f-a', 0], [176, 'f-b', 1], [256, 'f-c', 2]].map(([x, c, i]) => `<g transform="rotate(${(i - 1) * 7} ${x + 24} 300)"><rect class="s-i" x="${x + 10}" y="${150 - i * 6}" width="28" height="${70 + i * 6}" rx="6" fill="#2d1f2b"/><rect class="${c}" x="${x - 6}" y="${214}" width="60" height="96" rx="18"/><rect x="${x + 4}" y="226" width="10" height="64" rx="5" fill="#fff" opacity=".45"/></g>`).join('')}
+    <g>${[['f-d', 74, 92, -24], ['f-a', 124, 70, -10], ['f-b', 274, 70, 10], ['f-c', 324, 92, 24]].map(([c, x, y, r]) => `<path class="${c}" transform="rotate(${r} ${x} ${y + 26})" d="M${x - 15} ${y + 52} V${y + 20} C ${x - 15} ${y - 4}, ${x + 15} ${y - 4}, ${x + 15} ${y + 20} V${y + 52} Z"/>`).join('')}</g>
+    ${sparkle(200, 92, 14, 'f-a')}${sparkle(344, 210, 9, 'f-d')}${sparkle(58, 214, 8, 'f-b')}
+  </svg>`,
+
   kids: () => `<svg viewBox="0 0 400 420" aria-hidden="true">
     <circle class="f-b" cx="290" cy="110" r="66"/>
     <path class="f-c" d="M0 330 C 80 260, 170 280, 230 320 S 360 300, 400 270 V420 H0Z"/>
@@ -114,6 +200,29 @@ const ART = {
   </svg>`
 };
 
+/* ------------------------------------------------------------- Dot */
+/* Dot, our mascot, leaves a few small notes down each example: what goes
+   where on their own site, on the parts that sell (the hero, the services,
+   "sound familiar?", the reviews). Not every section; just enough to read
+   the page as a preview of theirs. */
+const HERO_NOTE = {
+  hair: 'Imagine your best colour work here.',
+  lash: 'Imagine a close-up of your best set here.',
+  mua: 'Imagine your favourite bridal look here.',
+  nails: 'Imagine your latest sets here.',
+  cake: 'Imagine one of your stunning cakes here.',
+  kids: 'Imagine photos of your classes in action here.',
+  elec: 'Imagine your van, your team or your best job here.',
+  boiler: 'Imagine you on the job here.',
+  valet: 'Imagine your best before and after here.',
+  driving: 'Imagine you and your car here.'
+};
+/* Trades that sell to people, whose "sound familiar?" reads as things
+   customers say rather than jobs gone wrong. */
+const PEOPLE = ['hair', 'lash', 'mua', 'nails', 'cake', 'kids'];
+const dotFace = '<span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span>';
+const note = (text, cls) => `<p class="k1-guide${cls ? ' ' + cls : ''}">${dotFace}<span>${text}</span></p>`;
+
 /* ------------------------------------------------------------ sections */
 
 function hero(e) {
@@ -130,21 +239,28 @@ function hero(e) {
       <a class="x-btn x-btn-hero" href="${P}">${h.cta}</a>
       <ul class="x-risk">${h.risk.map((r) => `<li>${CHECK}<span>${r}</span></li>`).join('')}</ul>
     </div>
-    ${art ? `<div class="x-art x-art-${e.art}">${art()}</div>` : ''}
+    ${art ? `<div class="x-art-wrap"><div class="x-art x-art-${e.art}">${art()}</div>${note(HERO_NOTE[e.key] || 'Imagine your own photos here.', 'k1-guide-hero')}</div>` : ''}
   </div>
   ${mob ? `<img class="x-hero-photo" src="${mob}" alt="" width="1536" height="2048" decoding="async" fetchpriority="high">` : ''}
 </section>`;
 }
 
+/* Services as cards in a row that swipes on a phone and scrolls with
+   arrows on a computer: one card in view at a time reads better than a
+   long list, and the next one peeking in says there is more. */
 function services(e) {
   const s = e.services;
   return `<section class="x-sec" id="services" data-k1-seen="the services">
   <div class="x-wrap">
-    <div class="x-head"><h2>${s.h}</h2><p>${s.sub}</p></div>
-    <div class="x-cards">${s.items.map(([n, d, pr, t]) => `<a class="x-card" href="${P}">
-      <h3>${n}</h3><p>${d}</p>
-      <span class="x-card-foot"><b>${pr}</b><span>${t}</span><em>Book &rsaquo;</em></span>
+    <div class="x-head"><h2>${s.h}</h2><p>${s.sub}</p>${note('Your services and prices, each with a button to book.')}</div>
+  </div>
+  <div class="x-rail-wrap">
+    <div class="x-rail" tabindex="0" aria-label="${strip(s.h)}">${s.items.map(([n, d, pr, t], i) => `<a class="x-card" href="${P}">
+      <span class="x-card-art" aria-hidden="true"><span class="x-card-n">${String(i + 1).padStart(2, '0')}</span><span class="x-card-tag">${CAMERA}Your photo</span>${mark(e.icon)}</span>
+      <span class="x-card-body"><h3>${n}</h3><p>${d}</p>
+      <span class="x-card-foot"><b>${pr}</b><span>${t}</span><em>Book &rsaquo;</em></span></span>
     </a>`).join('')}</div>
+    <div class="x-rail-btns x-wrap"><button class="x-rail-btn" type="button" data-rail="-1" aria-label="Previous">&lsaquo;</button><button class="x-rail-btn" type="button" data-rail="1" aria-label="Next">&rsaquo;</button></div>
   </div>
 </section>`;
 }
@@ -153,8 +269,8 @@ function pains(e) {
   const s = e.pains;
   return `<section class="x-sec x-pains-sec" data-k1-seen="the problems">
   <div class="x-wrap">
-    <div class="x-head"><h2>${s.h}</h2></div>
-    <ul class="x-pains">${s.items.map((t) => `<li><span class="x-pain-ico">${CROSS}</span><span>${t}</span></li>`).join('')}</ul>
+    <div class="x-head"><h2>${s.h}</h2>${note('Build trust: describe their problem better than they could themselves.')}</div>
+    <ul class="x-pains${PEOPLE.includes(e.key) ? ' is-bubbles' : ''}">${s.items.map((t) => `<li><span class="x-pain-ico">${CROSS}</span><span>${t}</span></li>`).join('')}</ul>
   </div>
 </section>`;
 }
@@ -188,7 +304,7 @@ function reviews(e) {
   return `<section class="x-sec x-reviews-sec" id="reviews" data-k1-seen="the reviews">
   <div class="x-wrap">
     <div class="x-head"><h2>What ${e.key === 'kids' ? 'parents' : 'customers'} say</h2>
-      <p class="k1-note"><span class="k1-note-dot" aria-hidden="true"></span>On your site, your real Google reviews show here.</p></div>
+      ${note('Your real Google reviews show here.')}</div>
     <div class="x-reviews">${[0, 1, 2].map(card).join('')}</div>
   </div>
 </section>`;
@@ -262,7 +378,7 @@ function themeCss(t) {
 
 function page(e) {
   const one = strip(e.one).replace(/&rsquo;/g, '’');
-  const dark = heroImage(e) ? !heroMobile(e) : !/^linear-gradient\(160deg, #(e|f)/.test(e.theme.heroBg);
+  const dark = heroImage(e) ? !heroMobile(e) : Boolean(e.theme.dark);
   return `<!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -281,7 +397,7 @@ function page(e) {
 <style>${themeCss(e.theme)}</style>
 </head>
 <body class="T-${e.key}${dark ? ' hero-dark' : ''}">
-<header class="x-nav">
+<header class="x-nav" id="xNav">
   <div class="x-wrap x-nav-in">
     <a class="x-logo" href="${P}" aria-label="${strip(e.name)}">${mark(e.icon)}</a>
     <button class="x-burger" type="button" data-preview aria-label="Menu"><span></span><span></span></button>
