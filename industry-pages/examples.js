@@ -383,7 +383,7 @@ ${o.body}
 
 function indexPage(v) {
   const cards = EXAMPLES.map((e) => `<a class="exg-card reveal" href="/examples/${e.slug}">
-        <span class="exg-shot"><img src="/assets/examples/${e.slug}.jpg" alt="" width="390" height="720" loading="lazy" decoding="async"></span>
+        <span class="exg-shot"><img src="/assets/examples/${e.slug}.jpg" alt="" width="390" height="720" loading="lazy" decoding="async"><span class="exg-peek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>Preview</span></span>
         <span class="exg-meta"><b>${e.label}</b><span>${e.name}</span></span>
         <span class="exg-go">View example &rsaquo;</span>
       </a>`).join('\n      ');
