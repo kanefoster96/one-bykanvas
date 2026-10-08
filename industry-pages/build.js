@@ -18,7 +18,7 @@ const OUT = path.join(__dirname, '..');
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
 const CSS_V = 139;
-const SCRIPT_V = 35;
+const SCRIPT_V = 36;
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -844,4 +844,4 @@ for (const m of MAX) {
 
 /* ------------------------------------------------------------- examples */
 /* /examples and one made-up business per trade: examples.js. */
-require('./examples.js').build(OUT, { cssV: 139, scriptV: 35 });
+require('./examples.js').build(OUT, { cssV: 139, scriptV: 36 });

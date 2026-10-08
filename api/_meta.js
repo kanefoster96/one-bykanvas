@@ -1,7 +1,8 @@
 /* Meta's Conversions API: the two events that matter, sent from the server
  * so that a visitor who declined cookies still counts.
  *
- *   Lead      - a free example asked for   (api/lead.js)
+ *   Lead      - a free example asked for   (api/lead.js), or a business
+ *               name and email given on /join (api/join.js, action lead)
  *   Purchase  - a plan gone live           (api/stripe-webhook.js)
  *
  * Off unless META_CAPI_TOKEN is set; then it needs the pixel id, which is
@@ -19,7 +20,9 @@ function sha256(s) {
   return crypto.createHash('sha256').update(String(s || '').trim().toLowerCase()).digest('hex');
 }
 
-/* { name, eventId, email, url, value, currency, custom } */
+/* { name, eventId, email, url, ip, userAgent, fbc, fbp, value, currency, custom }
+   fbc is Meta's click id from the ad (fb.1.<ms>.<fbclid>), fbp its browser
+   id: with them Meta can tie the event to the ad that was clicked. */
 async function sendMetaEvent(ev) {
   const token = String(process.env.META_CAPI_TOKEN || '').trim();
   if (!token) return 'skipped';
@@ -34,7 +37,9 @@ async function sendMetaEvent(ev) {
     user_data: {
       em: ev.email ? [sha256(ev.email)] : undefined,
       client_ip_address: ev.ip || undefined,
-      client_user_agent: ev.userAgent || undefined
+      client_user_agent: ev.userAgent || undefined,
+      fbc: ev.fbc || undefined,
+      fbp: ev.fbp || undefined
     },
     custom_data: Object.assign({},
       ev.value != null ? { value: Number(ev.value), currency: ev.currency || 'GBP' } : {},

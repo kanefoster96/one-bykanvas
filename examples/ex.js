@@ -25,7 +25,16 @@
       if (!bits.length && q.get('fbclid')) bits.push('facebook');
       if (bits.length) sessionStorage.setItem('one.from', (bits.join(' / ') + ' · ' + location.pathname.replace(/\.html$/, '')).slice(0, 200));
     }
+    // Meta's click id, kept as an fbc value for the server's events.
+    var clickId = new URLSearchParams(location.search).get('fbclid');
+    if (clickId && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
   } catch (e) { /* private mode: the lead simply has no campaign */ }
+
+  /* Which example they looked at, for Meta (only with cookies accepted). */
+  if (window.oneTrack) {
+    var exName = (document.querySelector('.k1-switch-t b') || {}).textContent || '';
+    window.oneTrack('ViewContent', { content_category: 'example', content_name: exName });
+  }
 
   /* ---------- the preview pop-up ---------- */
   var modal = document.getElementById('k1Modal');
