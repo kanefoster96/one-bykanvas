@@ -16,6 +16,14 @@
  *
  * amount in pence. ref is the order or payment id, so a refreshed page
  * does not count twice. Optional: email, name, description, currency.
+ *
+ * A site with steps people go through (look, open, sign up, pay) marks
+ * each one, numbered in order, and the Analytics tab shows how far each
+ * ad's visitors got. Once per visit each; a page that marks a step
+ * before this script has loaded queues it in window.k1q:
+ *
+ *   k1.step(2, 'Opened the preview')
+ *   (window.k1q = window.k1q || []).push([2, 'Opened the preview'])
  */
 (function () {
   'use strict';
@@ -157,8 +165,19 @@
     });
   }
 
+  /* A step on the way to buying, numbered in order: once per visit. */
+  function step(n, label) {
+    n = Math.floor(Number(n));
+    if (!(n >= 1 && n <= 20) || !label || !counting) return;
+    var key = 'k1st' + n, done = false;
+    try { done = !!sessionStorage.getItem(key); if (!done) sessionStorage.setItem(key, '1'); } catch (e) { /* storage blocked: send it anyway */ }
+    if (done) return;
+    send({ site: site, type: 'click', session: sessionId(), path: location.pathname || '/', label: String(label).slice(0, 80), target: 'step:' + n });
+  }
+
   var api = window.k1 || {};
   api.payment = payment;
+  api.step = step;
   api.session = sessionId;
   window.k1 = api;
 
@@ -171,4 +190,7 @@
   });
   window.addEventListener('popstate', function () { setTimeout(hit, 0); });
   hit();
+  // Steps marked before this script loaded, after the view they belong to.
+  (window.k1q || []).forEach(function (x) { step(x[0], x[1]); });
+  window.k1q = { push: function (x) { step(x[0], x[1]); } };
 })();

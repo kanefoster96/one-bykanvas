@@ -36,6 +36,24 @@
     window.oneTrack('ViewContent', { content_category: 'example', content_name: exName });
   }
 
+  /* How far a visit from an ad gets, for the Analytics tab (beacon.js):
+     1 looked through the example, 2 opened the preview. /join marks the
+     rest. */
+  function step(n, label) { (window.k1q = window.k1q || []).push([n, label]); }
+  if (window.IntersectionObserver) {
+    /* A section most of the way on screen (or filling half of it), as
+       beacon.js counts "seen": not an edge peeking in on arrival. */
+    var looked = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (en) {
+        var view = (en.rootBounds && en.rootBounds.height) || window.innerHeight;
+        return en.intersectionRatio >= 0.6 || en.intersectionRect.height >= view * 0.5;
+      })) return;
+      looked.disconnect();
+      step(1, 'Looked through the example');
+    }, { threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] });
+    document.querySelectorAll('[data-k1-seen]').forEach(function (n) { looked.observe(n); });
+  }
+
   /* ---------- the preview pop-up ---------- */
   var modal = document.getElementById('k1Modal');
   var opener = null;
@@ -46,6 +64,7 @@
     if (line) { line.innerHTML = say || ''; line.hidden = !say; }
     modal.hidden = false;
     document.body.classList.add('k1-locked');
+    step(2, 'Opened the preview');
     var go = modal.querySelector('.k1-modal-go');
     if (go) go.focus({ preventScroll: true });
   }

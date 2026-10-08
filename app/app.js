@@ -713,6 +713,7 @@
     if (st.kind === 'view') return (first ? 'Landed on ' : 'Opened ') + pageName(st.path);
     var label = '\u201c' + st.label + '\u201d';
     var t = st.target || '';
+    if (/^step:\d+$/.test(t)) return '\u2714 ' + st.label;
     if (t === 'form-start') return 'Tapped into ' + label;
     if (t === 'seen') return 'Scrolled to ' + st.label;
     if (t === 'form') return 'Sent the form ' + label;
@@ -746,6 +747,9 @@
     chips.appendChild(el('span', 'oa-chip' + (v.from_ad ? ' is-ad' : ''), sourceText(v)));
     if (v.sent_form) chips.appendChild(el('span', 'oa-chip is-good', 'Sent a form'));
     else if (v.started_form) chips.appendChild(el('span', 'oa-chip', 'Started the form'));
+    // The furthest step the site marked: how far this visit got.
+    var far = (v.done || [])[(v.done || []).length - 1];
+    if (far) chips.appendChild(el('span', 'oa-chip' + (far.n >= 4 ? ' is-good' : ''), 'Got to: ' + far.label));
     if (v.messaged) chips.appendChild(el('span', 'oa-chip is-good', 'Messaged'));
     if (v.paid) chips.appendChild(el('span', 'oa-chip is-good', 'Paid'));
     main.appendChild(chips);
@@ -792,8 +796,57 @@
     list('anRefs', vs.sources.map(function (x) { return { key: x.ad === 'likely' ? x.source + ' (likely ad)' : x.source, n: x.visitors }; }), 'key', 'n', 'Nothing yet.');
     var ads = vs.from_ads.yes + vs.from_ads.likely;
     $('anRefsNote').textContent = vs.total ? (ads ? ads + ' of ' + vs.total + ' visitors came from an ad.' + (vs.from_ads.likely ? ' Facebook and Instagram add the same tag to shared posts as to ads, so those count as likely.' : '') : 'None from an ad in this period.') : '';
+    renderAds(vs.ads);
     list('anClicks', vs.clicks, 'label', 'visitors', 'No clicks yet. Buttons and links pressed show here.');
     $('anClicksNote').textContent = vs.clicks.length ? 'By how many visitors pressed each one.' + (vs.sent_form ? ' ' + vs.sent_form + ' sent a form.' : '') : '';
+  }
+  /* Each ad: its visitors, how many left straight away, and how many did
+     each step, as bars the width of their share. */
+  function renderAds(ads) {
+    var card = $('anAdsCard');
+    var rows = (ads && ads.rows) || [];
+    card.hidden = !rows.some(function (r) { return r.ad; }) && !(ads && ads.steps.length);
+    if (card.hidden) return;
+    var box = $('anAds');
+    box.innerHTML = '';
+    rows.forEach(function (r) {
+      var li = el('li');
+      var det = el('details', 'oa-ad');
+      var sum = el('summary');
+      var top = el('div', 'oa-ad-top');
+      top.appendChild(el('span', 'oa-ad-name', r.ad && r.landing ? pageName(r.landing) : r.name));
+      top.appendChild(el('span', 'oa-ad-n', r.visitors === 1 ? '1 visitor' : fmt(r.visitors) + ' visitors'));
+      sum.appendChild(top);
+      if (r.ad) sum.appendChild(el('span', 'oa-ad-tag', 'Ad: ' + r.name));
+      /* The line under the name: who left, then who paid, or on a site
+         without a paid step, the furthest step anyone got to. */
+      var paidAt = -1, furthest = null;
+      ads.steps.forEach(function (st, i) { if (/^paid$/i.test(st.label)) paidAt = i; if (r.steps[i]) furthest = st.label + ' (' + r.steps[i] + ')'; });
+      var paid = Math.max(r.paid || 0, paidAt >= 0 ? r.steps[paidAt] : 0);
+      var line = el('p', 'oa-ad-line');
+      line.textContent = pct(r.left, r.visitors) + ' left straight away \u00b7 ';
+      if (paidAt >= 0 || paid) line.appendChild(paid ? el('b', '', paid + ' paid') : document.createTextNode('nobody paid yet'));
+      else line.append(furthest ? 'furthest: ' + furthest : 'nobody went further yet');
+      sum.appendChild(line);
+      det.appendChild(sum);
+      var f = el('div', 'oa-funnel');
+      var bars = [['Visited', r.visitors, ''], ['Left without doing anything', r.left, 'is-left']];
+      ads.steps.forEach(function (st, i) { bars.push([st.label, r.steps[i], /paid/i.test(st.label) ? 'is-paid' : '']); });
+      bars.forEach(function (b) {
+        var row = el('div', 'oa-funnel-row ' + b[2]);
+        row.appendChild(el('span', 'oa-funnel-label', b[0]));
+        var track = el('span', 'oa-funnel-track');
+        var bar = el('span', 'oa-funnel-bar');
+        bar.style.width = (b[1] ? Math.max(2, (b[1] / (r.visitors || 1)) * 100) : 0) + '%';
+        track.appendChild(bar);
+        row.appendChild(track);
+        row.appendChild(el('span', 'oa-funnel-n', fmt(b[1])));
+        f.appendChild(row);
+      });
+      det.appendChild(f);
+      li.appendChild(det);
+      box.appendChild(li);
+    });
   }
   $('anVisitsMore').addEventListener('click', function () { anShown += 30; if (anLast) renderVisits(anLast); });
 

@@ -155,6 +155,38 @@ function botSessions(rows) {
 const LIVE_WINDOW = 5 * 60 * 1000;
 const MAX_VISITS = 150, MAX_STEPS = 40;
 
+/* A click that is not a press: a section scrolled to, a box tapped into,
+   or a step the site marked (k1.step in beacon.js, target "step:<n>"). */
+function stepNo(target) { const m = /^step:(\d{1,2})$/.exec(String(target || '')); return m ? Number(m[1]) : 0; }
+function isPress(target) { return target !== 'seen' && target !== 'form-start' && !stepNo(target); }
+
+/* Each ad, and everyone not from an ad, step by step: how many visits it
+   brought, how many left without doing anything, and how many did each
+   step the site marks. Steps are counted as done, not assumed: someone
+   who skipped the preview and went straight to the form is not counted
+   as having opened it. Pure. */
+function byAd(visitList) {
+  const labels = {};
+  const groups = {};
+  visitList.forEach((v) => {
+    const name = v.from_ad ? (v.campaign || v.source + ' ad') : 'Not from an ad';
+    const g = groups[name] || (groups[name] = { name, ad: !!v.from_ad, visitors: 0, left: 0, paid: 0, landings: {}, reached: {} });
+    g.visitors++;
+    if (v.paid) g.paid++;
+    g.landings[v.landing] = (g.landings[v.landing] || 0) + 1;
+    if (v.pages === 1 && !v.clicks && !v.done.length) g.left++;
+    v.done.forEach((d) => { if (!labels[d.n]) labels[d.n] = d.label; g.reached[d.n] = (g.reached[d.n] || 0) + 1; });
+  });
+  const nums = Object.keys(labels).map(Number).sort((a, b) => a - b);
+  const steps = nums.map((n) => ({ n, label: labels[n] }));
+  const rows = Object.keys(groups).map((k) => {
+    const g = groups[k];
+    const landing = Object.keys(g.landings).sort((a, b) => g.landings[b] - g.landings[a])[0] || null;
+    return { name: g.name, ad: g.ad, landing, visitors: g.visitors, left: g.left, paid: g.paid, steps: nums.map((n) => g.reached[n] || 0) };
+  }).sort((a, b) => (a.ad === b.ad ? b.visitors - a.visitors : a.ad ? -1 : 1));
+  return { steps, rows };
+}
+
 /* Every visit in the period as a story, newest first: where it came
    from, the page it landed on, then each page and each click in order,
    and whether it ended in a message or a payment. Pure. */
@@ -178,6 +210,9 @@ function visits(views, clicks, convs, pays, days, now) {
     // A refresh of the same page is not a step.
     const story = steps.filter((x, i) => !(x.kind === 'view' && i && steps[i - 1].kind === 'view' && steps[i - 1].path === x.path));
     const lastAt = story.length ? story[story.length - 1].at : lastView.created_at;
+    const done = [];
+    by[s].clicks.forEach((r) => { const n = stepNo(r.target); if (n && !done.some((d) => d.n === n)) done.push({ n, label: r.label }); });
+    done.sort((a, b) => a.n - b.n);
     const ad = vs.find((r) => r.from_ad) || first;
     return {
       session: s,
@@ -193,11 +228,12 @@ function visits(views, clicks, convs, pays, days, now) {
       country: first.country || null,
       city: first.city || null,
       pages: vs.length,
-      clicks: by[s].clicks.filter((x) => x.target !== 'seen' && x.target !== 'form-start').length,
+      clicks: by[s].clicks.filter((x) => isPress(x.target)).length,
       started_form: by[s].clicks.some((x) => x.target === 'form-start'),
       sent_form: by[s].clicks.some((x) => x.target === 'form'),
       messaged: messaged.has(s),
       paid: paid.has(s),
+      done,
       steps: story.slice(0, MAX_STEPS),
       more_steps: Math.max(0, story.length - MAX_STEPS)
     };
@@ -208,7 +244,7 @@ function visits(views, clicks, convs, pays, days, now) {
   out.forEach((x) => { src[x.source] = src[x.source] || { source: x.source, visitors: 0, ad: x.from_ad }; src[x.source].visitors++; });
   // What was pressed, and by how many different visitors.
   const pressed = {};
-  c.forEach((r) => { if (!by[r.session] || r.target === 'seen' || r.target === 'form-start') return; (pressed[r.label] = pressed[r.label] || new Set()).add(r.session); });
+  c.forEach((r) => { if (!by[r.session] || !isPress(r.target)) return; (pressed[r.label] = pressed[r.label] || new Set()).add(r.session); });
 
   return {
     list: out.slice(0, MAX_VISITS),
@@ -217,7 +253,8 @@ function visits(views, clicks, convs, pays, days, now) {
     from_ads: { yes: out.filter((x) => x.from_ad === 'yes').length, likely: out.filter((x) => x.from_ad === 'likely').length },
     sources: Object.keys(src).map((k) => src[k]).sort((a, b) => b.visitors - a.visitors).slice(0, 10),
     clicks: Object.keys(pressed).map((k) => ({ label: k, visitors: pressed[k].size })).sort((a, b) => b.visitors - a.visitors).slice(0, 10),
-    sent_form: out.filter((x) => x.sent_form).length
+    sent_form: out.filter((x) => x.sent_form).length,
+    ads: byAd(out)
   };
 }
 
@@ -992,5 +1029,6 @@ module.exports.summarise = summarise;
 module.exports.money = money;
 module.exports.funnel = funnel;
 module.exports.visits = visits;
+module.exports.byAd = byAd;
 module.exports.windowFor = windowFor;
 module.exports.cleanPath = cleanPath;
