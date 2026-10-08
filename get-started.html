@@ -11,7 +11,23 @@
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
-<link rel="stylesheet" href="styles.css?v=138">
+<link rel="stylesheet" href="styles.css?v=139">
+<script>
+/* Starter is paid first now, on /join. Anyone sent here for it (or with no
+   plan named, which means Starter) goes there with what they brought;
+   Business and Max, and the ready-email links (?lead=, ?domain=), stay. */
+(function () {
+  try {
+    var q = new URLSearchParams(location.search);
+    var plan = q.get('plan');
+    if ((plan && plan !== 'starter') || q.get('lead') || q.get('domain')) return;
+    var keep = new URLSearchParams();
+    ['business', 'trade', 'ref', 'offer'].forEach(function (k) { if (q.get(k)) keep.set(k, q.get(k)); });
+    var rest = keep.toString();
+    location.replace('/join' + (rest ? '?' + rest : ''));
+  } catch (e) { /* old browser: the wizard still works */ }
+})();
+</script>
 </head>
 <body class="auth-body">
 
@@ -84,7 +100,7 @@
           <label class="pick-row is-on" data-plan="starter" id="pickStarter">
             <input type="radio" name="plan" value="starter" checked>
             <span class="pick-main">
-              <span class="pick-head"><b>Starter</b><em data-m="£9.99|/mo" data-y="£99.90|/yr">£9.99<span>/mo</span></em></span>
+              <span class="pick-head"><b>Starter</b><em data-m="£9.99|/mo" data-y="£99|/yr">£9.99<span>/mo</span></em></span>
               <span class="pick-note"><b class="pick-flag">The site</b>Designed, hosted, and live today. No setup fee.</span>
             </span>
           </label>
@@ -101,7 +117,7 @@
           <label class="pick-row" data-plan="business">
             <input type="radio" name="plan" value="business">
             <span class="pick-main">
-              <span class="pick-head"><b>Business</b><em data-m="£50|/mo" data-y="£500|/yr">£50<span>/mo</span></em></span>
+              <span class="pick-head"><b>Business</b><em data-m="£49|/mo" data-y="£490|/yr">£49<span>/mo</span></em></span>
               <span class="pick-note"><b class="pick-flag">Get booked</b>Bookings, payments, live chat, and changes within 48 hours.</span>
             </span>
           </label>
@@ -118,7 +134,7 @@
           <label class="pick-row" data-plan="max">
             <input type="radio" name="plan" value="max">
             <span class="pick-main">
-              <span class="pick-head"><b>Max</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
+              <span class="pick-head"><b>Max</b><em data-m="£249|/mo" data-y="£2,490|/yr">£249<span>/mo</span></em></span>
               <span class="pick-note"><b class="pick-flag">Add growth</b>An end-to-end system for your kind of business, run for you.</span>
             </span>
           </label>

@@ -9,7 +9,8 @@
    points value on each row, so inserts keep writing one, but no money or
    allowance is derived from it anywhere any more. */
 /* yearly = ten months' money for twelve months of service: "2 months
-   free" framing rather than a percentage discount. pro has no yearly
+   free" framing rather than a percentage discount. Starter rounds down to
+   a straight £99, a smaller-looking number than £99.90. pro has no yearly
    price because it is legacy and cannot be bought. */
 /* starter is the way in: £9.99 a month for a site built for them from one
    of our designs, live within 24 hours, with their own address, words and
@@ -19,10 +20,10 @@
    and email leads with it. Business is the step up (bookings, payments,
    chat, changes within 48 hours), Max is add growth. */
 const PLANS = {
-  starter:  { label: 'Kanvas One — Starter',  amount: 999,   yearly: 9990,   points: 1 },
-  business: { label: 'Kanvas One — Business', amount: 5000,  yearly: 50000,  points: 1 },
+  starter:  { label: 'Kanvas One — Starter',  amount: 999,   yearly: 9900,   points: 1 },
+  business: { label: 'Kanvas One — Business', amount: 4900,  yearly: 49000,  points: 1 },
   pro:      { label: 'Kanvas One — Pro',      amount: 12000,                 points: 3 },
-  max:      { label: 'Kanvas One — Max',      amount: 25000,  yearly: 250000, points: 5 }
+  max:      { label: 'Kanvas One — Max',      amount: 24900,  yearly: 249000, points: 5 }
 };
 
 /* What a request costs, and what it would cost paid for on its own. */

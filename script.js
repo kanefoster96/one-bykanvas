@@ -140,7 +140,7 @@
   // One source of truth for the nav. Pages only need an empty #menu element;
   // the header itself stays in the markup so it renders without JavaScript.
   var MENU = [
-    { label: 'Try it free',     href: '/free.html' },
+    { label: 'Get started',     href: '/join' },
     { label: 'How it works',    href: '/how-it-works.html' },
     { label: "What\u2019s included", href: '/whats-included.html' },
     { label: 'Features',        href: '/features.html' },
@@ -171,9 +171,9 @@
         '<h2>Max for your business</h2>' +
         '<p>We\u2019ll build an end-to-end website model for your business. It gets you new customers through ads and SEO, ' +
         'asks for more money at the right moments with upsells and add-ons, and prompts reviews and referrals automatically, ' +
-        'with payments, bookings and follow-up emails handling everything in between. All included for \u00a3250 a month.</p>' +
+        'with payments, bookings and follow-up emails handling everything in between. All included for \u00a3249 a month.</p>' +
         '<p class="one-modal-small">Tell us what you do and we\u2019ll show you how it would work for you.</p>' +
-        '<a class="btn btn-primary full" href="/free.html?t=max-other">Get your free preview</a>';
+        '<a class="btn btn-primary full" href="/get-started.html?plan=max&max=other">Start Max</a>';
       document.body.appendChild(d);
       d.querySelector('.one-modal-x').addEventListener('click', function () { d.close(); });
       d.addEventListener('click', function (e) { if (e.target === d) d.close(); });

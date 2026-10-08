@@ -15,6 +15,14 @@ const { sendMetaEvent } = require('./_meta.js');
 
 const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' }; // must match admin.js/account.js
 
+/* £9.99, £49, £2,490: pence only when there are any. */
+function money(pence) {
+  const p = Number(pence) || 0;
+  return '£' + (p % 100
+    ? (p / 100).toFixed(2)
+    : (p / 100).toLocaleString('en-GB'));
+}
+
 // Keep Vercel from parsing the body so the signature can be verified.
 module.exports.config = { api: { bodyParser: false } };
 
@@ -226,7 +234,7 @@ module.exports = async function handler(req, res) {
         .then(({ error }) => { if (error) console.error('webhook: winback reset failed:', error.message); });
       await rewardReferrer(id, patch);
       await announceNewCustomer(id, patch);
-      await welcomeCustomer(id, patch);
+      await welcomeCustomer(id, patch, sub);
       await notify(admin, id, 'Welcome to Kanvas One 👋',
         'Your plan is active and your build is in the queue. Everything lives here from now on.',
         '/account.html');
@@ -247,18 +255,26 @@ module.exports = async function handler(req, res) {
   }
 
   /* The first thing a customer sees once their card is actually charged -
-     what plan, where to go, and that the build is starting. */
-  async function welcomeCustomer(id, patch) {
+     what plan, where to go, and that the build is starting. Starter is
+     different enough to have its own words: live within 24 hours from the
+     link they gave us, and a reply with photos is all they need to send.
+     Someone who paid on the join page but closed the tab before choosing a
+     password gets the link back to that step here. */
+  async function welcomeCustomer(id, patch, sub) {
     const { data: p } = await admin
-      .from('profiles').select('business_name').eq('id', id).maybeSingle();
+      .from('profiles').select('business_name, requested_domain').eq('id', id).maybeSingle();
     const { data: who } = await admin.auth.admin.getUserById(id);
     const email = who && who.user && who.user.email;
     if (!email) return;
+    const am = (who.user.app_metadata) || {};
 
     const planName = PLAN_NAME[patch.active_plan] || 'your';
     const plan = PLANS[patch.active_plan];
+    const yearly = Boolean(sub && sub.items && sub.items.data && sub.items.data[0]
+      && sub.items.data[0].price && sub.items.data[0].price.recurring
+      && sub.items.data[0].price.recurring.interval === 'year');
     const QUEUE_LINE = {
-      starter: 'Unlimited edits, from your dashboard',
+      starter: 'Unlimited, to your words and photos',
       business: 'Unlimited, done in turn',
       pro: 'Unlimited, with priority',
       max: 'Unlimited, top priority'
@@ -267,57 +283,83 @@ module.exports = async function handler(req, res) {
     const who2 = p && p.business_name ? ', ' + p.business_name : '';
     const started = new Date().toLocaleDateString('en-GB',
       { day: 'numeric', month: 'long', year: 'numeric' });
+    const starter = patch.active_plan === 'starter';
+    const domain = (p && p.requested_domain) || '';
+    const accountLink = am.needs_password && am.join_session
+      ? `${site}/join?paid=${encodeURIComponent(am.join_session)}` : '';
 
     /* The three things someone actually wants confirmed after paying: which
        plan they are on, what it gets them, and from when. */
     const facts = [{ label: 'Plan', value: `Kanvas One — ${planName}` }];
     if (plan) {
       facts.push({
-        label: 'Monthly',
-        value: `£${(plan.amount / 100).toFixed(0)}`
+        label: yearly ? 'Yearly' : 'Monthly',
+        value: money(yearly ? plan.yearly : plan.amount)
       });
       facts.push({
         label: 'Changes included',
         value: QUEUE_LINE[patch.active_plan] || 'Unlimited'
       });
     }
+    if (starter && domain) facts.push({ label: 'Web address', value: domain });
     facts.push({ label: 'Started', value: started });
+
+    const nowText = starter
+      ? `Here's what happens now. We register ${domain || 'your web address'} and build your site from the page you sent us. `
+        + `It goes live within 24 hours, and you get an email the moment it is.`
+      : `Here's what happens now. Today we register your web address and put your page live on it, `
+        + `and you get an email the moment it is. `
+        + `Then we build the features you asked for, within 14 days - or your next month is free. `
+        + `If we need anything from you - photos, prices, an offer - we'll ask.`;
+    const nowHtml = starter
+      ? `Here&rsquo;s what happens now. We register <strong>${esc(domain || 'your web address')}</strong> and build your site from the page you sent us. It goes live <strong>within 24 hours</strong>, and you get an email the moment it is.`
+      : `Here&rsquo;s what happens now. <strong>Today</strong> we register your web address and put your page live on it, and you get an email the moment it is. <strong>Then</strong> we build the features you asked for, within 14 days &mdash; or your next month is free. If we need anything from you &mdash; photos, prices, an offer &mdash; we&rsquo;ll ask.`;
+    const askText = patch.active_plan === 'max'
+      ? `One thing that helps now: fill in the Max setup form. Your services and prices, how you get `
+        + `customers today, how you book and take payment, and the access we need. All optional, save any `
+        + `time, and we see what changed: ${site}/onboarding.html`
+      : starter
+        ? `Want anything else on it? Reply to this email with extra photos, your logo, your prices, `
+          + `or anything about your business that isn't online yet, and we'll add it. Changes to your words `
+          + `and photos are unlimited, any time.`
+          + (accountLink ? `\n\nAnd make your account, so you can see your site and ask for changes: ${accountLink}` : '')
+        : `One thing that helps now: send us photos, your services and prices, and anything about `
+          + `your business that isn't already online. From your account: ${site}/account.html`;
+    const askHtml = patch.active_plan === 'max'
+      ? `One thing that helps now: fill in the <strong>Max setup form</strong>. Your services and prices, how you get customers today, how you book and take payment, and the access we need. All optional, save any time, and we see what changed.`
+      : starter
+        ? `<strong>Want anything else on it?</strong> Reply to this email with extra photos, your logo, your prices, or anything about your business that isn&rsquo;t online yet, and we&rsquo;ll add it. Changes to your words and photos are unlimited, any time.`
+        : `One thing that helps now: send us photos, your services and prices, and anything about your business that isn&rsquo;t already online. Everything lives in your account from here: your plan, your requests, and your site.`;
+
+    const cta = patch.active_plan === 'max'
+      ? { text: 'Open the Max setup form', href: `${site}/onboarding.html`, note: 'Two minutes now saves a week later.' }
+      : accountLink
+        ? { text: 'Make your account', href: accountLink, note: 'Choose a password to see your site and ask for changes.' }
+        : starter
+          ? { text: 'Open your account', href: `${site}/account.html`, note: 'Or just reply to this email.' }
+          : { text: 'Send photos and details', href: `${site}/account.html`, note: 'Two minutes now saves a week later.' };
 
     const result = await sendEmail({
       to: email,
-      subject: "You're all set — welcome to Kanvas One",
+      subject: starter ? "You're in. Your site is live within 24 hours" : "You're all set — welcome to Kanvas One",
       text: `Welcome to Kanvas One${who2} 👋\n\n`
           + `Your ${planName} plan is now active - thanks for signing up.\n\n`
-          + (plan
-              ? `Plan:             one - ${planName}\n`
-                + `Monthly:          £${(plan.amount / 100).toFixed(0)}\n`
-                + `Changes included: ${QUEUE_LINE[patch.active_plan] || 'Unlimited'}\n`
-                + `Started:          ${started}\n\n`
-              : '')
-          + `Here's what happens now. Today we register your web address and put your page live on it, `
-          + `and you get an email the moment it is. `
-          + `Then we build the features you asked for, within 14 days - or your next month is free. `
-          + `If we need anything from you - photos, prices, an offer - we'll ask.\n\n`
-          + (patch.active_plan === 'max'
-              ? `One thing that helps now: fill in the Max setup form. Your services and prices, how you get `
-                + `customers today, how you book and take payment, and the access we need. All optional, save any `
-                + `time, and we see what changed: ${site}/onboarding.html`
-              : `One thing that helps now: send us photos, your services and prices, and anything about `
-                + `your business that isn't already online. From your account: ${site}/account.html`),
+          + facts.map(f => `${(f.label + ':').padEnd(18)}${f.value}`).join('\n') + '\n\n'
+          + nowText + '\n\n' + askText,
       html: emailHtml({
-        preheader: `Your ${planName} plan is active. Here's what happens next.`,
+        preheader: starter
+          ? `Your site goes live within 24 hours. Reply with any photos you'd like on it.`
+          : `Your ${planName} plan is active. Here's what happens next.`,
         heading: `Welcome to Kanvas One${who2} 👋`,
         lines: [
           `Your <strong>${esc(planName)}</strong> plan is now active &mdash; thanks for signing up.`,
-          `Here&rsquo;s what happens now. <strong>Today</strong> we register your web address and put your page live on it, and you get an email the moment it is. <strong>Then</strong> we build the features you asked for, within 14 days &mdash; or your next month is free. If we need anything from you &mdash; photos, prices, an offer &mdash; we&rsquo;ll ask.`,
-          patch.active_plan === 'max'
-            ? `One thing that helps now: fill in the <strong>Max setup form</strong>. Your services and prices, how you get customers today, how you book and take payment, and the access we need. All optional, save any time, and we see what changed.`
-            : `One thing that helps now: send us photos, your services and prices, and anything about your business that isn&rsquo;t already online. Everything lives in your account from here: your plan, your requests, and your site.`
+          nowHtml,
+          askHtml
         ],
         details: facts,
-        ctaText: patch.active_plan === 'max' ? 'Open the Max setup form' : 'Send photos and details',
-        ctaHref: patch.active_plan === 'max' ? `${site}/onboarding.html` : `${site}/account.html`,
-        ctaNote: 'Two minutes now saves a week later.',
+        ctaText: cta.text,
+        ctaHref: cta.href,
+        ctaNote: cta.note,
         footer: 'You&rsquo;re getting this because you started a plan with Kanvas One.',
         footerLinks: standardFooter(site)
       })
@@ -525,7 +567,7 @@ module.exports = async function handler(req, res) {
   /* The partner ledger. Every paid invoice from a partner-attributed
      customer records the partner's share: 25% of the PLAN price - the
      invoice subtotal, before the customer's own discount - so it is
-     £12.50 a payment on Business whatever they paid; or a flat rate_pence
+     £12.25 a payment on Business whatever they paid; or a flat rate_pence
      for a partner promised one. Capped at the customer's first 12
      payments: the deal is a year, not forever. unique(invoice_id) makes a
      retried webhook a no-op. */
@@ -646,7 +688,7 @@ module.exports = async function handler(req, res) {
   async function announceNewCustomer(id, patch) {
     const { data: p } = await admin
       .from('profiles')
-      .select('business_name, contact_name, phone, business_type, requested_domain, domain_owned, site_goals')
+      .select('business_name, contact_name, phone, business_type, requested_domain, domain_owned, site_goals, existing_links')
       .eq('id', id)
       .maybeSingle();
 
@@ -677,6 +719,7 @@ module.exports = async function handler(req, res) {
       `Phone:     ${(p && p.phone) || '-'}`,
       `Trade:     ${(p && p.business_type) || '-'}`,
       `Address:   ${domainLine}`,
+      `Online:    ${(p && p.existing_links) || '-'}`,
       '',
       'What they want the site to do:',
       (p && p.site_goals) || '-',

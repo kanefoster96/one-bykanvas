@@ -20,8 +20,8 @@
   var CODE = '';
 
   function shareText() {
-    return 'Kanvas One builds your website for you, from £9.99 a month - and you '
-      + 'see a free example of your site before paying anything. Use my code '
+    return 'Kanvas One builds your website for you, live within 24 hours, from £9.99 '
+      + 'a month. Use my code '
       + CODE + ' when you join: ' + LINK;
   }
 

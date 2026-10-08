@@ -10,7 +10,7 @@
  * They open the page from the ready email and get ten seconds with it,
  * alone. Then a card slides up from the bottom: this is your designed
  * shell, this address is yours to claim, one button for Starter (the page
- * live, £9.99 a month) and a line for Business (£50 a month). What else it could do
+ * live, £9.99 a month) and a line for Business (£49 a month). What else it could do
  * waits behind a line. Closing folds it to a small pill that brings the
  * card back. The pill's own × hides it for the visit.
  *
@@ -203,7 +203,7 @@
 
     var up = make('p', { margin: '0 0 10px', padding: '0 4px', fontSize: '13px', lineHeight: '1.45', color: INK2 });
     var upLink = make('a', { color: INK, fontWeight: '600', textDecoration: 'underline', textUnderlineOffset: '3px' },
-      'Business, \u00a350 a month');
+      'Business, \u00a349 a month');
     upLink.href = joinHref('business'); upLink.target = '_blank'; upLink.rel = 'noopener';
     up.appendChild(upLink);
     up.appendChild(document.createTextNode(': ' + BUSINESS_LINE));

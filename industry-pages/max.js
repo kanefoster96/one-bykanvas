@@ -17,7 +17,6 @@
  *   value                rows of [what you get, what it does for you]
  *   why                  four [bold lead, sentence] pairs
  *   faq                  [question, answer] pairs; also structured data
- *   tag                  the ?t= value for the free page
  */
 const AD_SPEND = 'You pay your own ad spend on top, straight to Meta. &pound;150 to &pound;300 for the first month is enough to learn what works.';
 
@@ -26,9 +25,8 @@ module.exports = [
     slug: 'trades',
     icon: '<path d="m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9"/><path d="m18 15 4-4"/><path d="m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5"/>',
     name: 'Trades Max',
-    tag: 'trades',
     promise: 'Your phone rings with jobs. The rest is done for you.',
-    desc: 'Trades Max: a website, ads, local SEO, quotes, bookings, payments, reviews and referrals, built and run for plumbers, electricians, roofers and builders. £250 a month, no setup fee, you pay your own ad spend. See a real page for your business free within 24 hours.',
+    desc: 'Trades Max: a website, ads, local SEO, quotes, bookings, payments, reviews and referrals, built and run for plumbers, electricians, roofers and builders. £249 a month, no setup fee, you pay your own ad spend. Live within 24 hours of joining.',
     who: 'Plumbers, electricians, gas engineers, roofers, builders, plasterers, landscapers. One or two vans, good at the work, want more of it, and no time to do the marketing yourself.',
     stages: [
       { name: 'Get found', intro: 'Every job starts with someone searching, or scrolling.', items: [
@@ -87,19 +85,18 @@ module.exports = [
     ],
     faq: [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works. Below about &pound;10 a day there is not enough to learn from.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
+      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;249 is for the work.'],
       ['Will it definitely bring jobs?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, the follow-ups, and a note every month showing what it brought in, so you decide with numbers.'],
       ['What if I already have a website?', 'We build the new one, move your address across, and nothing goes offline in between. Your reviews and ranking come with you.'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;50. Move up to Trades Max any month.']
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;49. Move up to Trades Max any month.']
     ]
   },
   {
     slug: 'clubs',
     icon: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
     name: 'Clubs Max',
-    tag: 'clubs',
     promise: 'New members every week. Trials, sign-ups and renewals, run for you.',
-    desc: 'Clubs Max: a website, ads, local SEO, trial bookings, memberships, payments, reviews and referrals, built and run for dance schools, gyms, martial arts and sports clubs. £250 a month, no setup fee, you pay your own ad spend. See a real page for your club free within 24 hours.',
+    desc: 'Clubs Max: a website, ads, local SEO, trial bookings, memberships, payments, reviews and referrals, built and run for dance schools, gyms, martial arts and sports clubs. £249 a month, no setup fee, you pay your own ad spend. Live within 24 hours of joining.',
     who: 'Dance schools, gyms, martial arts, cheer, swim schools, sports clubs. You run the classes and the shows; you want every class full and every term renewed; you have no evenings left for the admin.',
     stages: [
       { name: 'Get found', intro: 'Every new member starts with a parent, or a person, searching.', items: [
@@ -158,18 +155,17 @@ module.exports = [
     ],
     faq: [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
+      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;249 is for the work.'],
       ['Does it handle consent forms and medical details?', 'Yes. They are filled in when a parent books the trial, kept against the member, and there for the coach on the register. Nothing on paper.'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;50. Move up to Clubs Max any month.']
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;49. Move up to Clubs Max any month.']
     ]
   },
   {
     slug: 'salon',
     icon: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88"/><path d="M14.47 14.48 20 20"/><path d="M8.12 8.12 12 12"/>',
     name: 'Salon Max',
-    tag: 'salon',
     promise: 'A full book, fewer no-shows, and clients who come back on their own.',
-    desc: 'Salon Max: a website, ads, local SEO, online booking with deposits, payments, reviews, rebooking and referrals, built and run for salons, barbers, nail techs and beauty rooms. £250 a month, no setup fee, you pay your own ad spend. See a real page for your salon free within 24 hours.',
+    desc: 'Salon Max: a website, ads, local SEO, online booking with deposits, payments, reviews, rebooking and referrals, built and run for salons, barbers, nail techs and beauty rooms. £249 a month, no setup fee, you pay your own ad spend. Live within 24 hours of joining.',
     who: 'Hair salons, barbers, nail techs, lash and brow rooms, beauty clinics. You do the work and the client comes back for you; you want a full book and fewer gaps; you have no time to chase the ones who drift.',
     stages: [
       { name: 'Get found', intro: 'Every new client starts with a search, or a photo they saw.', items: [
@@ -228,9 +224,9 @@ module.exports = [
     ],
     faq: [
       ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
+      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;249 is for the work.'],
       ['Can each stylist have their own diary?', 'Yes. Clients book a person or the first free chair, each stylist sees their own day, and a stylist who leaves takes nothing with them.'],
-      ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;50. Move up to Salon Max any month.']
+      ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;49. Move up to Salon Max any month.']
     ]
   }
 ];

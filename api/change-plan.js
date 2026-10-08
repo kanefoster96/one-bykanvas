@@ -28,7 +28,7 @@ const ORDER = ['starter', 'business', 'pro', 'max'];
 
 /* The new price keeps the customer's existing billing interval: an annual
    subscriber moving Business -> Max stays annual, and Stripe prorates
-   within the year (the unused chunk of £500 credits against £2,500 for the
+   within the year (the unused chunk of £490 credits against £2,490 for the
    remaining months). Without this, a plan change would silently convert an
    annual customer to monthly billing. */
 module.exports = async function handler(req, res) {

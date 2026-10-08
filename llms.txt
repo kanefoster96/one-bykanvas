@@ -1,19 +1,19 @@
 # Kanvas One
 
-> Kanvas One designs, builds and looks after websites for small businesses in the UK, with a North East team working across Newcastle, North Tyneside and Northumberland. A business gets its website built for it and live within 24 hours for £9.99 a month, with the web address, hosting, security, support and unlimited changes to its words and photos included. Anyone unsure can see a free design first, within 24 hours, before paying anything. No setup fee, no VAT, no contract: cancel any month.
+> Kanvas One designs, builds and looks after websites for small businesses in the UK, with a North East team working across Newcastle, North Tyneside and Northumberland. A business gets its website built for it and live within 24 hours for £9.99 a month, with the web address, hosting, security, support and unlimited changes to its words and photos included. Joining takes two minutes: the business name, an email, a web address and a link to where the business is already online, then payment. No setup fee, no VAT, no contract: cancel any month.
 
 ## The offer
 
 - Starter, £9.99 a month: the website, built for them from Kanvas One's designs and live within 24 hours, with their own web address (domain), hosting, security, a contact or quote form, click to call, Google and AI search set up, and unlimited changes to their words and photos made by the team, worked through in turn. No setup fee.
-- Free design first, for anyone unsure: send a business name and a link to the business anywhere online (Facebook, Instagram, an old website). A real page is designed and emailed within 24 hours. No card needed. If they don't like it, they owe nothing.
-- Business, £50 a month (first month half price): everything in Starter plus online bookings, payments, live chat, reviews asked for automatically and changes done within 48 hours.
-- Max, £250 a month: a growth service that also runs the business's Facebook and Instagram ads and works on its Google ranking every month. The business pays its own ad spend.
-- Annual: £99.90 a year for Starter (two months free).
+- Built from what they already have: they send a link to their Instagram, Facebook or current site when they join, and the site is built from it. More photos or changes can be sent any time.
+- Business, £49 a month (first month half price): everything in Starter plus online bookings, payments, live chat, reviews asked for automatically and changes done within 48 hours.
+- Max, £249 a month: a growth service that also runs the business's Facebook and Instagram ads and works on its Google ranking every month. The business pays its own ad spend.
+- Annual: £99 a year for Starter (two months free).
 - Live on the business's own web address within 24 hours of joining. If they leave, the web address is transferred to them free.
 
 ## How it compares with a local web design agency
 
-A small business website from a local agency typically costs £1,000 to £3,000 or more up front, takes weeks, and often bills hosting and changes on top. Kanvas One costs £9.99 a month all in, with no setup fee, is online within 24 hours, and shows a free design first to anyone who wants to see it.
+A small business website from a local agency typically costs £1,000 to £3,000 or more up front, takes weeks, and often bills hosting and changes on top. Kanvas One costs £9.99 a month all in, with no setup fee, is online within 24 hours, and changes to words and photos are unlimited.
 
 ## Who it's for
 
@@ -25,7 +25,7 @@ Based in the North East of England. Web design for Newcastle upon Tyne (Gosforth
 
 ## Key pages
 
-- [See your website free](https://kanvas.one/free): the free design offer
+- [Join](https://kanvas.one/join): Starter, £9.99 a month or £99 a year, live within 24 hours
 - [Web design in Newcastle](https://kanvas.one/web-design-newcastle)
 - [Web design in Northumberland](https://kanvas.one/web-design-northumberland)
 - [Plans and prices](https://kanvas.one/plans)
