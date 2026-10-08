@@ -133,7 +133,7 @@ module.exports = [
       ['How quickly can my website be live?', 'You see your design within 24 hours. Once you join, it&rsquo;s live on your own web address the same day, so most businesses are online the day after they first message us.'],
       ['Is the web address included?', 'Yes. We register your web address (yourbusiness.co.uk or similar) and renew it for as long as you&rsquo;re with us. If you already own one, we use that instead.'],
       ['Will my site show up on Google in Newcastle?', 'Every site is written around what customers in your area search for, set up for Google and AI search, and linked to your Google listing. No honest company can promise you the top spot. Max, &pound;250 a month, works on your ranking every month.'],
-      ['Are you local?', 'Yes. We&rsquo;re a North East team working with businesses across Newcastle, North Tyneside and Northumberland, including a dance school in North Tyneside and a dog trainer in Newcastle. Everything is done online, and you can message us any time.']
+      ['Are you local?', 'Yes. We&rsquo;re a North East team working with businesses across Newcastle, North Tyneside and Northumberland, including a dance school in North Tyneside. Everything is done online, and you can message us any time.']
     ].concat(LOCAL_FAQ_END),
     endLine: 'Got a question? Email <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20Newcastle%20business">hello@kanvas.one</a> and we reply.',
     linksLabel: 'Websites for:'

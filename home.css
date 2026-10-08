@@ -553,3 +553,7 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
   .hh-frame,.oc-card,.oc-card:hover,.ui,.hw-step:nth-child(even) .ui{transform:none}
   .pill:hover{transform:none;transition:none}
 }
+
+/* The example sites in the phones: screenshots made to the phone's shape
+   (assets/examples/phone/), so they fill the screen under the notch. */
+.hh-screen img.hh-ex{object-fit:cover;object-position:top;padding-top:11%;box-sizing:border-box}
