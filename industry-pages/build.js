@@ -171,7 +171,7 @@ const FOOT = `<footer class="foot">
 <script src="script.js?v=${SCRIPT_V}"></script>
 <script src="reviews.js?v=5"></script>
 <script src="chat.js?v=10" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
-<script src="beacon.js?v=5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
+<script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>

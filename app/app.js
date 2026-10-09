@@ -714,6 +714,8 @@
     var label = '\u201c' + st.label + '\u201d';
     var t = st.target || '';
     if (/^step:\d+$/.test(t)) return '\u2714 ' + st.label;
+    var lv = /^leave:(\d+):(\d+)$/.exec(t);
+    if (lv) return 'Left ' + pageName(st.path) + ' after ' + secsText(Number(lv[1])) + ', having scrolled ' + lv[2] + '% of it';
     if (t === 'form-start') return 'Tapped into ' + label;
     if (t === 'seen') return 'Scrolled to ' + st.label;
     if (t === 'form') return 'Sent the form ' + label;
@@ -725,6 +727,7 @@
     if (t) return 'Pressed ' + label + ' \u2192 left for ' + t;
     return 'Pressed ' + label;
   }
+  function secsText(n) { return n < 60 ? n + 's' : Math.floor(n / 60) + 'm ' + (n % 60) + 's'; }
   function visitRow(v) {
     var li = el('li');
     var det = el('details', 'oa-visit');
@@ -740,7 +743,7 @@
     var bits = ['Landed on ' + pageName(v.landing)];
     bits.push(v.pages === 1 ? '1 page' : v.pages + ' pages');
     if (v.clicks) bits.push(v.clicks === 1 ? '1 click' : v.clicks + ' clicks');
-    bits.push(minutesText(v.first_at, v.last_at));
+    bits.push(v.stayed != null ? 'stayed ' + secsText(v.stayed) : minutesText(v.first_at, v.last_at));
     var where = [v.city, v.city ? null : (v.country ? countryName(v.country) : null), v.device === 'phone' ? 'phone' : 'desktop'].filter(Boolean);
     main.appendChild(el('p', 'oa-visit-line', bits.join(' · ') + ' · ' + where.join(', ')));
     var chips = el('div', 'oa-chips');
@@ -824,7 +827,7 @@
       ads.steps.forEach(function (st, i) { if (/^paid$/i.test(st.label)) paidAt = i; if (r.steps[i]) furthest = st.label + ' (' + r.steps[i] + ')'; });
       var paid = Math.max(r.paid || 0, paidAt >= 0 ? r.steps[paidAt] : 0);
       var line = el('p', 'oa-ad-line');
-      line.textContent = pct(r.left, r.visitors) + ' left straight away \u00b7 ';
+      line.textContent = pct(r.left, r.visitors) + ' left straight away \u00b7 ' + (r.stayed != null ? 'stayed ' + secsText(r.stayed) + ', scrolled ' + r.scrolled + '% (typical) \u00b7 ' : '');
       if (paidAt >= 0 || paid) line.appendChild(paid ? el('b', '', paid + ' paid') : document.createTextNode('nobody paid yet'));
       else line.append(furthest ? 'furthest: ' + furthest : 'nobody went further yet');
       sum.appendChild(line);
