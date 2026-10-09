@@ -1,8 +1,8 @@
 /* Starter, paid first: the account comes after the money.
  *
- * The join page asks for four things - the business name, an email, one of
- * three free web addresses and (optionally) a link to where the business already is
- * online - then sends them to Stripe for £9.99 a month or £99 a year. Only
+ * The join page asks for the business name, an email, one of three free
+ * web addresses and (optionally) a link to where the business already is
+ * online and up to three screenshots of it - then sends them to Stripe for £9.99 a month or £99 a year. Only
  * once that is paid do they choose a password. Business and Max still go
  * through the get-started wizard, which makes the account first.
  *
@@ -38,6 +38,24 @@ const { sendMetaEvent } = require('./_meta.js');
 const LIVE = ['active', 'trialing', 'past_due', 'unpaid'];
 const SESSION_ID = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const SHOT = /^data:image\/jpeg;base64,([A-Za-z0-9+/]+={0,2})$/;
+const MAX_SHOTS = 3, MAX_SHOT_BYTES = 1.5 * 1024 * 1024;
+
+/* The screenshots from the join page: JPEGs the browser has already
+   shrunk, as data URLs. Bytes, or null if any is not one. */
+function shotsFrom(list) {
+  if (list == null) return [];
+  if (!Array.isArray(list) || list.length > MAX_SHOTS) return null;
+  const out = [];
+  for (const item of list) {
+    const m = SHOT.exec(String(item || ''));
+    if (!m) return null;
+    const buf = Buffer.from(m[1], 'base64');
+    if (!buf.length || buf.length > MAX_SHOT_BYTES || buf[0] !== 0xff || buf[1] !== 0xd8) return null;
+    out.push(buf);
+  }
+  return out;
+}
 
 
 function clean(v, max) {
@@ -127,6 +145,8 @@ module.exports = async function handler(req, res) {
     if (business.length < 2) return res.status(400).json({ error: 'Add your business name.', field: 'business' });
     if (!EMAIL.test(email)) return res.status(400).json({ error: 'That email does not look right.', field: 'email' });
     if (!isValidDomain(domain)) return res.status(400).json({ error: 'Pick a web address.', field: 'domain' });
+    const shots = shotsFrom(body.shots);
+    if (!shots) return res.status(400).json({ error: 'One of those screenshots could not be sent. Remove it and add it again.', field: 'shots' });
 
     /* Free a minute ago is not free now. Taken is a clear no; a registry
        that does not answer is not a reason to lose the sale - we register
@@ -162,6 +182,19 @@ module.exports = async function handler(req, res) {
       user = made.user;
     }
 
+    /* The screenshots, into their photos folder, as public links on the
+       profile beside the link: the build card and the new-customer email
+       both show "Already online". A failed upload never stops the payment;
+       the welcome email asks for anything we are missing. */
+    const shotUrls = [];
+    for (let i = 0; i < shots.length; i++) {
+      const path = `${user.id}/join-${Date.now()}-${i + 1}.jpg`;
+      const { error: upErr } = await admin.storage.from('photos').upload(path, shots[i], { contentType: 'image/jpeg', upsert: false });
+      if (upErr) { console.error('join: screenshot upload failed:', upErr.message); continue; }
+      shotUrls.push(admin.storage.from('photos').getPublicUrl(path).data.publicUrl);
+    }
+    const online = [link, shotUrls.length ? 'Screenshots: ' + shotUrls.join(' ') : ''].filter(Boolean).join('\n');
+
     /* What they told us, straight onto the profile: nothing waits for a
        browser to come back and save it. */
     const row = {
@@ -169,7 +202,7 @@ module.exports = async function handler(req, res) {
       business_name: business,
       requested_domain: domain,
       domain_owned: false,
-      existing_links: link || null,
+      existing_links: online || null,
       selected_plan: 'starter',
       onboarded_at: new Date().toISOString()
     };

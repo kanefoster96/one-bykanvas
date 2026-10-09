@@ -11,7 +11,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
-<link rel="stylesheet" href="styles.css?v=143">
+<link rel="stylesheet" href="styles.css?v=144">
 </head>
 <body class="auth-body">
 
@@ -27,9 +27,10 @@
     <ol class="join-steps" aria-label="Progress">
       <li class="is-on"><i>1</i><span>You</span></li>
       <li><i>2</i><span>Address</span></li>
-      <li><i>3</i><span>Go live</span></li>
+      <li><i>3</i><span>Your page</span></li>
+      <li><i>4</i><span>Go live</span></li>
     </ol>
-    <p class="wiz-count sr-only">Step <span id="stepNow">1</span> of 3</p>
+    <p class="wiz-count sr-only">Step <span id="stepNow">1</span> of 4</p>
     <div class="wiz-bar"><i id="bar"></i></div>
   </div>
 
@@ -67,7 +68,7 @@
       <!-- ============ 2. the address ============ -->
       <section class="wiz-step" data-step="2" aria-label="Your web address" hidden>
         <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say" id="say2">Thanks! Now pick a web address. Our team sets it up for you.</p></div>
-        <h1>Pick your web address.</h1>
+        <h1 tabindex="-1">Pick your web address.</h1>
         <p class="wiz-sub">Three that are free right now. Included in your plan.</p>
         <div class="pick" id="domList" aria-live="polite" aria-busy="true">
           <div class="pick-row is-waiting"><span class="dom-bar"></span><span class="dom-searching">Searching&hellip;</span></div>
@@ -91,41 +92,63 @@
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
 
-      <!-- ============ 3. the page, then pay ============ -->
-      <section class="wiz-step" data-step="3" aria-label="Your page and payment" hidden>
-        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">Last bit! Your link shows our designers your photos, words and prices.</p></div>
-        <h1>Where are you online now?</h1>
-        <p class="wiz-sub">We build your site from it: your photos, your words, your prices.</p>
-        <div class="field"><label for="j_link">Link to your Instagram, Facebook or current site <span class="opt">(recommended)</span></label>
-          <input id="j_link" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="400" placeholder="instagram.com/yourbusiness">
-          <p class="hint">Not to hand? Skip it and send it after you join. The more we see, the better your site.</p></div>
+      <!-- ============ 3. where they are online: optional ============ -->
+      <section class="wiz-step" data-step="3" aria-label="Your page" hidden>
+        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">Optional, but it helps! Show our designers your photos, words and prices.</p></div>
+        <h1 tabindex="-1">Where are you online now?</h1>
+        <p class="wiz-sub">Our team builds your site from what you already have. Share a link, a few screenshots, or both.</p>
 
-        <p class="wiz-label">How would you like to pay?</p>
+        <div class="field"><label for="j_link">Link to your Instagram, Facebook, booking page or current site</label>
+          <input id="j_link" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="400" placeholder="instagram.com/yourbusiness">
+        </div>
+
+        <div class="field">
+          <span class="field-label" id="shotsLabel">Screenshots of your socials or booking page</span>
+          <label class="shot-add" for="j_shots">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10.5" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg>
+            <span><b>Add screenshots</b><small>Up to 3, from your camera roll</small></span>
+          </label>
+          <input id="j_shots" class="sr-only" type="file" accept="image/*" multiple aria-labelledby="shotsLabel">
+          <div class="shot-grid" id="shotGrid"></div>
+        </div>
+
+        <p class="note" id="note3" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary full wiz-next" data-next type="button" id="next3">Next <span class="join-arrow" aria-hidden="true">&rarr;</span></button>
+        <button class="linkish wiz-skip" data-next type="button" id="skip3">Skip for now, I&rsquo;ll send it later</button>
+        <button class="linkish wiz-back" data-back type="button">Back</button>
+      </section>
+
+      <!-- ============ 4. pay ============ -->
+      <section class="wiz-step" data-step="4" aria-label="Payment" hidden>
+        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">Last step! Once you pay, I pass everything to our team and they start on your site.</p></div>
+        <h1 tabindex="-1">How would you like to pay?</h1>
+        <p class="wiz-sub">Same website either way. Yearly saves you money.</p>
+
         <div class="pick" id="billPick">
           <label class="pick-row is-on">
             <input type="radio" name="billing" value="monthly" checked>
             <span class="pick-main">
               <span class="pick-head"><b>Monthly</b><em>&pound;9.99<span>/month</span></em></span>
-              <span class="pick-note">Cancel any month.</span>
+              <span class="pick-note">&pound;119.88 a year. Cancel any month.</span>
             </span>
           </label>
           <label class="pick-row">
             <input type="radio" name="billing" value="annual">
             <span class="pick-main">
-              <span class="pick-head"><b>Yearly <span class="bill-save">2 months free</span></b><em>&pound;99<span>/year</span></em></span>
-              <span class="pick-note">One payment for the whole year.</span>
+              <span class="pick-head"><b>Yearly <span class="bill-save">Save &pound;20.88 a year</span></b><em>&pound;99<span>/year</span></em></span>
+              <span class="pick-note">Works out at &pound;8.25 a month. One payment, two months free.</span>
             </span>
           </label>
         </div>
 
         <ul class="ticks join-ticks">
-          <li>Built for you and live within 24 hours</li>
+          <li>Designed and built by our team, live within 24 hours</li>
           <li>Your web address included</li>
           <li>Unlimited changes to your words and photos</li>
           <li>No setup fee</li>
         </ul>
 
-        <p class="note" id="note3" role="status" aria-live="polite"></p>
+        <p class="note" id="note4pay" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full" id="payBtn" type="submit">Pay &pound;9.99 and go live</button>
         <ul class="assure">
           <li>Payments secured by Stripe</li>
@@ -137,9 +160,9 @@
       </section>
 
       <!-- ============ after Stripe: make the account ============ -->
-      <section class="wiz-step" data-step="4" aria-label="Make your account" hidden>
+      <section class="wiz-step" data-step="5" aria-label="Make your account" hidden>
         <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">All done! I&rsquo;ve passed everything to our team. They&rsquo;re on it.</p></div>
-        <h1 id="doneHead">You&rsquo;re in.</h1>
+        <h1 id="doneHead" tabindex="-1">You&rsquo;re in.</h1>
         <p class="wiz-sub" id="doneSub">Our team is building your site. It goes live within 24 hours. We&rsquo;ll email you the moment it is.</p>
 
         <div id="accountBox">
@@ -175,7 +198,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="join.js?v=10"></script>
+<script src="join.js?v=11"></script>
 <script src="chat.js?v=10" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
