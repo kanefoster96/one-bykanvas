@@ -763,6 +763,18 @@ function pill(e) {
 </div>`;
 }
 
+/* The landing-page A/B test. A visit from one of the reel ads
+   (utm_content=reel-<trade>) is put in A or B at random, once, and kept
+   there on later visits. A stays on this example; B goes straight to the
+   join form for the trade. The arm is added to utm_content (reel-nails-a,
+   reel-nails-b), so the Analytics tab's per-ad card shows the two side by
+   side with nothing else changed. Runs before anything loads, so B never
+   sees the example or counts a view of it. No storage: still split, just
+   not kept. */
+function abSplit(e) {
+  return `<script>(function(){try{var q=new URLSearchParams(location.search),c=q.get('utm_content')||'';if(!/^reel-[a-z]+$/.test(c))return;var v;try{v=localStorage.getItem('k1ab')}catch(x){}if(v!=='a'&&v!=='b'){v=Math.random()<0.5?'a':'b';try{localStorage.setItem('k1ab',v)}catch(x){}}q.set('utm_content',c+'-'+v);if(v==='b'){q.set('trade','${e.key}');location.replace('/join?'+q.toString());}else{history.replaceState(null,'',location.pathname+'?'+q.toString()+location.hash);}}catch(x){}})();</script>`;
+}
+
 /* The strip above the example: what this page is, before anything else.
    Someone from an ad lands on what looks like a stranger's business; this
    says it is an example, and that ours builds theirs for £9.99. It scrolls
@@ -809,6 +821,7 @@ function page(e) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+${abSplit(e)}
 <title>Example ${one} website | Kanvas One</title>
 <meta name="description" content="What a ${one} website from Kanvas One could look like. Yours built for you and live within 24 hours, £9.99 a month.">
 <!-- A made-up business, so it is never offered to someone searching for it. -->
