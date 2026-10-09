@@ -839,7 +839,7 @@ ${modal(e)}
 ${pill(e)}
 <script src="/consent.js?v=10"></script>
 <script src="/examples/ex.js?v=${EX_JS_V}"></script>
-<script src="/beacon.js?v=5" data-site="${SITE_ID}" defer></script>
+<script src="/beacon.js?v=6" data-site="${SITE_ID}" defer></script>
 </body>
 </html>
 `;
@@ -913,7 +913,7 @@ ${o.body}
 <script src="/session.js?v=3"></script>
 <script src="/script.js?v=${o.scriptV}"></script>
 <script src="/chat.js?v=10" data-site="${SITE_ID}" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
-<script src="/beacon.js?v=5" data-site="${SITE_ID}" defer></script>
+<script src="/beacon.js?v=6" data-site="${SITE_ID}" defer></script>
 <script src="/admin-pill.js?v=8"></script>
 </body>
 </html>

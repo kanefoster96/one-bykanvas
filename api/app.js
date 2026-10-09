@@ -160,7 +160,10 @@ const MAX_VISITS = 150, MAX_STEPS = 40;
 /* A click that is not a press: a section scrolled to, a box tapped into,
    or a step the site marked (k1.step in beacon.js, target "step:<n>"). */
 function stepNo(target) { const m = /^step:(\d{1,2})$/.exec(String(target || '')); return m ? Number(m[1]) : 0; }
-function isPress(target) { return target !== 'seen' && target !== 'form-start' && !stepNo(target); }
+/* "leave:<seconds>:<percent>": how long a page was open and how far down
+   it they got, sent as they leave it. */
+function leaveOf(target) { const m = /^leave:(\d{1,4}):(\d{1,3})$/.exec(String(target || '')); return m ? { secs: Number(m[1]), scrolled: Number(m[2]) } : null; }
+function isPress(target) { return target !== 'seen' && target !== 'form-start' && !stepNo(target) && !leaveOf(target); }
 
 /* Each ad, and everyone not from an ad, step by step: how many visits it
    brought, how many left without doing anything, and how many did each
@@ -172,8 +175,9 @@ function byAd(visitList) {
   const groups = {};
   visitList.forEach((v) => {
     const name = v.from_ad ? (v.campaign || v.source + ' ad') : 'Not from an ad';
-    const g = groups[name] || (groups[name] = { name, ad: !!v.from_ad, visitors: 0, left: 0, paid: 0, landings: {}, reached: {} });
+    const g = groups[name] || (groups[name] = { name, ad: !!v.from_ad, visitors: 0, left: 0, paid: 0, landings: {}, reached: {}, secs: [], scrolled: [] });
     g.visitors++;
+    if (v.stayed != null) { g.secs.push(v.stayed); g.scrolled.push(v.scrolled); }
     if (v.paid) g.paid++;
     g.landings[v.landing] = (g.landings[v.landing] || 0) + 1;
     if (v.pages === 1 && !v.clicks && !v.done.length) g.left++;
@@ -184,7 +188,8 @@ function byAd(visitList) {
   const rows = Object.keys(groups).map((k) => {
     const g = groups[k];
     const landing = Object.keys(g.landings).sort((a, b) => g.landings[b] - g.landings[a])[0] || null;
-    return { name: g.name, ad: g.ad, landing, visitors: g.visitors, left: g.left, paid: g.paid, steps: nums.map((n) => g.reached[n] || 0) };
+    const mid = (l) => { if (!l.length) return null; const a = l.slice().sort((x, y) => x - y); return a[Math.floor(a.length / 2)]; };
+    return { name: g.name, ad: g.ad, landing, visitors: g.visitors, left: g.left, paid: g.paid, stayed: mid(g.secs), scrolled: mid(g.scrolled), steps: nums.map((n) => g.reached[n] || 0) };
   }).sort((a, b) => (a.ad === b.ad ? b.visitors - a.visitors : a.ad ? -1 : 1));
   return { steps, rows };
 }
@@ -212,6 +217,12 @@ function visits(views, clicks, convs, pays, days, now) {
     // A refresh of the same page is not a step.
     const story = steps.filter((x, i) => !(x.kind === 'view' && i && steps[i - 1].kind === 'view' && steps[i - 1].path === x.path));
     const lastAt = story.length ? story[story.length - 1].at : lastView.created_at;
+    // Time on the site: the pages' own leave records added up; how far
+    // down the page they left from they got.
+    const leaves = by[s].clicks.map((r) => leaveOf(r.target)).filter(Boolean);
+    const stayed = leaves.length ? leaves.reduce((n, x) => n + x.secs, 0) : null;
+    const lastLeave = by[s].clicks.filter((r) => leaveOf(r.target)).sort((a, b) => new Date(a.created_at) - new Date(b.created_at)).pop();
+    const scrolled = lastLeave ? leaveOf(lastLeave.target).scrolled : null;
     const done = [];
     by[s].clicks.forEach((r) => { const n = stepNo(r.target); if (n && !done.some((d) => d.n === n)) done.push({ n, label: r.label }); });
     done.sort((a, b) => a.n - b.n);
@@ -235,6 +246,8 @@ function visits(views, clicks, convs, pays, days, now) {
       sent_form: by[s].clicks.some((x) => x.target === 'form'),
       messaged: messaged.has(s),
       paid: paid.has(s),
+      stayed,
+      scrolled,
       done,
       steps: story.slice(0, MAX_STEPS),
       more_steps: Math.max(0, story.length - MAX_STEPS)

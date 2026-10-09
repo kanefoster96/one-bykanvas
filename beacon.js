@@ -61,12 +61,36 @@
     try { fetch(url, { method: 'POST', body: body, keepalive: true, mode: 'no-cors' }); } catch (e) { /* nothing to do */ }
   }
 
+  /* How long the page was open and how far down it they got, sent once
+     when they leave it (or put the tab away): a visit that pressed nothing
+     still says whether it read for a minute or left in a second. */
+  var openedAt = Date.now(), deepest = 0, leftSent = false;
+  function depth() {
+    var doc = document.documentElement;
+    var full = Math.max(doc.scrollHeight, document.body ? document.body.scrollHeight : 0) || 1;
+    var seenTo = (window.scrollY || doc.scrollTop || 0) + (window.innerHeight || 0);
+    deepest = Math.max(deepest, Math.min(100, Math.round((seenTo / full) * 100)));
+  }
+  window.addEventListener('scroll', depth, { passive: true });
+  function leave() {
+    if (!counting || leftSent || !last) return;
+    leftSent = true;
+    depth();
+    var secs = Math.min(3600, Math.round((Date.now() - openedAt) / 1000));
+    send({ site: site, type: 'click', session: sessionId(), path: last, label: 'Left the page', target: 'leave:' + secs + ':' + deepest });
+  }
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') leave(); });
+  window.addEventListener('pagehide', leave);
+
   var last = '';
   function hit() {
     if (!counting) return;
     var path = location.pathname || '/';
     if (path === last) return;
+    if (last) leave();
     last = path;
+    openedAt = Date.now(); deepest = 0; leftSent = false;
+    setTimeout(depth, 0);
     send({ site: site, session: sessionId(), path: path, url: location.href, referrer: document.referrer || '', width: window.innerWidth || 0 });
   }
 
