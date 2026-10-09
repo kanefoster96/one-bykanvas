@@ -820,7 +820,9 @@
       top.appendChild(el('span', 'oa-ad-name', r.ad && r.landing ? pageName(r.landing) : r.name));
       top.appendChild(el('span', 'oa-ad-n', r.visitors === 1 ? '1 visitor' : fmt(r.visitors) + ' visitors'));
       sum.appendChild(top);
-      if (r.ad) sum.appendChild(el('span', 'oa-ad-tag', 'Ad: ' + r.name));
+      // The landing-page test (examples.js abSplit) tags its two arms -a and -b.
+      var arm = /-(a|b)$/.exec(r.name);
+      if (r.ad) sum.appendChild(el('span', 'oa-ad-tag', 'Ad: ' + r.name + (arm ? ' \u00b7 Test ' + arm[1].toUpperCase() + (arm[1] === 'a' ? ': example page' : ': straight to join form') : '')));
       /* The line under the name: who left, then who paid, or on a site
          without a paid step, the furthest step anyone got to. */
       var paidAt = -1, furthest = null;
