@@ -153,7 +153,7 @@
     window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
     if (step === 2) {
       askDomains();
-      if (answers.business) $('say2').textContent = 'Ooh, ' + answers.business + '! Now pick your spot on the internet.';
+      if (answers.business) $('say2').textContent = 'Thanks, ' + answers.business + '! Now pick a web address. Our team sets it up for you.';
     }
     document.querySelectorAll('.join-steps li').forEach(function (li, i) {
       li.classList.toggle('is-on', i + 1 === step);
@@ -462,7 +462,7 @@
         }
         if (d.domain) {
           $('doneSub').textContent = '';
-          $('doneSub').append('Your site goes live at ');
+          $('doneSub').append('Our team is building your site. It goes live at ');
           var b = document.createElement('b');
           b.textContent = d.domain;
           $('doneSub').append(b, ' within 24 hours. We’ll email you the moment it is.');
@@ -547,15 +547,15 @@
     if (current === 1) {
       var needName = !$('j_business').value.trim();
       return { text: needName
-          ? 'Start with your business name, the one your customers know you by. Then your email, so we can send your site when it\u2019s live.'
-          : 'Great name. Now your email: it\u2019s where your site lands, and how you log in later.',
+          ? 'I\u2019ll pass all this to our team. Start with your business name, the one your customers know you by. Then your email, so they can send you your site when it\u2019s live.'
+          : 'Great name. Now your email: it\u2019s where our team sends your site, and how you log in later.',
         actions: [[needName ? 'Show me the name box' : 'Show me the email box', null, needName ? '#j_business' : '#j_email']] };
     }
-    if (current === 2) return { text: 'These three addresses are free right now and included in your plan. Prefer something else? Tap \u201cWant a different one?\u201d and we\u2019ll check it.',
+    if (current === 2) return { text: 'These three addresses are free right now and included in your plan. Our team sets yours up for you. Prefer something else? Tap \u201cWant a different one?\u201d and I\u2019ll check it\u2019s free.',
       actions: [['Show me the addresses', null, '#domList']] };
-    if (current === 3) return { text: 'Got an Instagram, Facebook or website? Paste the link and we\u2019ll build from your photos and words there. No link? That\u2019s fine, send it later. Yearly is \u00a399, two months free.',
+    if (current === 3) return { text: 'Got an Instagram, Facebook or website? Paste the link so our designers can build from your photos, words and prices. No link? That\u2019s fine, send it to them later. Yearly is \u00a399, two months free.',
       actions: [['Show me the link box', null, '#j_link']] };
-    return { text: 'You\u2019re in! Choose a password to see your site and ask for changes. Got more photos? Reply to your welcome email.',
+    return { text: 'You\u2019re in, and our team has your details. Choose a password to see your site and ask them for changes. Got more photos? Reply to your welcome email.',
       actions: [['Show me the password box', null, '#j_password']] };
   };
   function guideChanged() { try { window.dispatchEvent(new Event('one:guide')); } catch (e) {} }
