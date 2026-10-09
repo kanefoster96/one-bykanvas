@@ -1601,6 +1601,27 @@ a.hero-pill:hover .pill-go{opacity:1}
 .join-acct-note{margin:-6px 0 16px;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
 .join-acct-note b{color:var(--ink);font-weight:600;overflow-wrap:anywhere}
 .join #accountBox + .paynote{margin-top:22px}
+/* A step's heading takes focus when it opens (join.js), not a box, so the
+   phone's keyboard stays down until they tap one. No ring on a heading. */
+.join .wiz-step h1:focus{outline:none}
+/* Step 3: screenshots of their socials or booking page. */
+.join .field-label{display:block;font-size:13.5px;font-weight:500;color:var(--ink-2);margin-bottom:8px}
+.shot-add{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:var(--surface-2,#f4f4f5);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);cursor:pointer;transition:background .2s var(--ease)}
+.shot-add:hover{background:#ececee}
+.shot-add[hidden]{display:none}
+.shot-add svg{width:26px;height:26px;flex:0 0 auto;color:var(--good)}
+.shot-add span{display:flex;flex-direction:column;gap:2px}
+.shot-add b{font-size:15px}
+.shot-add small{font-size:13px;color:var(--ink-3)}
+#j_shots:focus-visible + .shot-grid,.shot-add:focus-within{outline:2px solid var(--good);outline-offset:2px}
+.shot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.shot-grid:empty{display:none}
+.shot{position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background:#eee;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.shot-x{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:18px;line-height:28px;padding:0;cursor:pointer}
+.join .wiz-skip{display:block;margin:14px auto 0;font-weight:500}
+.join .wiz-skip + .wiz-back{margin-top:8px}
+@media (max-width:420px){.join-steps li{font-size:11.5px;gap:5px}}
 
 /* The fun bits. Dot talks you through it; the preview above the card is
    their site, filling in as they type; the steps are named, not numbered;

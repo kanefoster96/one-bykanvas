@@ -1,8 +1,8 @@
 /* one — join: Starter, paid first.
  *
- * Three steps: the business name and email, one of three free web addresses,
- * and a link to where they are online now with monthly or yearly. Then
- * Stripe. Stripe sends them back here with ?paid=<session id>, and the last
+ * Four steps: the business name and email, one of three free web addresses,
+ * where they are online now (a link and/or screenshots, both optional), and
+ * monthly or yearly. Then Stripe. Stripe sends them back here with ?paid=<session id>, and the last
  * card asks for a password: the account is made after the money, not
  * before (api/join.js has the why).
  *
@@ -13,7 +13,7 @@
   'use strict';
 
   var KEEP = 'one.join';
-  var LAST = 3;
+  var LAST = 4;
 
   var $ = function (id) { return document.getElementById(id); };
   var track = $('track');
@@ -161,17 +161,19 @@
     });
     paint();
     if (window.oneGuide) guideChanged();
-    var first = steps[step - 1].querySelector('input:not([tabindex="-1"]), button');
-    if (first && step > 1) { try { first.focus({ preventScroll: true }); } catch (e) {} }
+    /* The step's heading takes focus, not its first box: a box would pop
+       the phone's keyboard up over the step before they have read it. */
+    var head = steps[step - 1].querySelector('h1');
+    if (head && step > 1) { try { head.focus({ preventScroll: true }); } catch (e) {} }
   }
 
   track.addEventListener('click', function (e) {
     if (e.target.closest('[data-back]')) { show(Math.max(1, current - 1)); return; }
     if (e.target.closest('[data-next]')) advance();
   });
-  // Enter moves on rather than submitting from the first two steps.
+  // Enter moves on rather than submitting from the first three steps.
   track.addEventListener('keydown', function (e) {
-    if (e.key !== 'Enter' || current > 2 || e.target.tagName === 'BUTTON') return;
+    if (e.key !== 'Enter' || current > 3 || e.target.tagName === 'BUTTON') return;
     e.preventDefault();
     if (e.target.id === 'domOwn') { checkTyped(); return; }
     advance();
@@ -201,6 +203,13 @@
       keep();
       step(5, 'Picked a web address');
       show(3);
+      return;
+    }
+    if (current === 3) {
+      answers.link = $('j_link').value.trim();
+      keep();
+      if (answers.link || shots.length) step(6, 'Shared a link or screenshots');
+      show(4);
     }
   }
 
@@ -353,6 +362,66 @@
   }
   $('domCheck').addEventListener('click', checkTyped);
 
+  /* ---------------------------------------------------------- screenshots
+     Up to three, shrunk in the browser to a JPEG no wider than 1400px, so
+     three fit in one request. They go to the server with the details when
+     they press pay, and are kept for this visit so a cancelled payment
+     comes back with them still there. */
+  var SHOTS = 'one.join.shots';
+  var shots = [];
+  try { shots = JSON.parse(sessionStorage.getItem(SHOTS) || '[]') || []; } catch (e) { shots = []; }
+  function keepShots() { try { sessionStorage.setItem(SHOTS, JSON.stringify(shots)); } catch (e) { /* too big for storage: kept for this page only */ } }
+  function paintShots() {
+    var grid = $('shotGrid');
+    grid.innerHTML = '';
+    shots.forEach(function (x, i) {
+      var cell = document.createElement('div');
+      cell.className = 'shot';
+      var img = document.createElement('img');
+      img.src = x.data; img.alt = 'Screenshot ' + (i + 1);
+      var del = document.createElement('button');
+      del.type = 'button'; del.className = 'shot-x'; del.setAttribute('aria-label', 'Remove screenshot ' + (i + 1)); del.textContent = '\u00d7';
+      del.addEventListener('click', function () { shots.splice(i, 1); keepShots(); paintShots(); });
+      cell.appendChild(img); cell.appendChild(del);
+      grid.appendChild(cell);
+    });
+    document.querySelector('.shot-add').hidden = shots.length >= 3;
+  }
+  function shrink(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var scale = Math.min(1, 1400 / Math.max(img.width, img.height));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        // Three must fit in one request (Vercel takes 4.5 MB): a busy one
+        // goes again at a lower quality.
+        var out = c.toDataURL('image/jpeg', 0.8);
+        if (out.length > 1100000) out = c.toDataURL('image/jpeg', 0.6);
+        resolve(out);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('not an image')); };
+      img.src = url;
+    });
+  }
+  $('j_shots').addEventListener('change', function () {
+    var files = Array.prototype.slice.call(this.files || []).slice(0, 3 - shots.length);
+    this.value = '';
+    if (!files.length) return;
+    say($('note3'), 'Adding\u2026');
+    Promise.all(files.map(function (f) { return shrink(f).then(function (d) { return { data: d }; }, function () { return null; }); }))
+      .then(function (list) {
+        var bad = list.filter(function (x) { return !x; }).length;
+        list.forEach(function (x) { if (x) shots.push(x); });
+        keepShots(); paintShots();
+        say($('note3'), bad ? bad + (bad === 1 ? ' file was' : ' files were') + ' not a picture we could read.' : '', bad ? 'bad' : '');
+      });
+  });
+  paintShots();
+
   /* ---------------------------------------------------------- billing */
   function setBilling(which) {
     answers.billing = which === 'annual' ? 'annual' : 'monthly';
@@ -371,19 +440,18 @@
   var paying = false;
   track.addEventListener('submit', function (e) {
     e.preventDefault();
-    if (current !== 3 || paying) return;
-    /* Optional: a link gets a better first site, but it never stands
-       between them and paying. Without one we ask in the welcome email. */
-    var link = $('j_link').value.trim();
-    answers.link = link;
-    keep();
+    if (current !== 4 || paying) return;
+    /* Optional: a link or screenshots get a better first site, but they
+       never stand between them and paying. Without either we ask in the
+       welcome email. */
+    var link = answers.link || '';
     paying = true;
     var btn = $('payBtn');
     var was = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Opening secure payment…';
-    say($('note3'), '');
-    step(6, 'Pressed pay');
+    say($('note4pay'), '');
+    step(7, 'Pressed pay');
     if (window.oneTrack) {
       window.oneTrack('InitiateCheckout', { content_category: 'starter', currency: 'GBP', value: answers.billing === 'annual' ? 99 : 9.99 });
     }
@@ -393,7 +461,7 @@
       body: JSON.stringify({
         action: 'start',
         business: answers.business, email: answers.email, domain: answers.domain,
-        link: link, billing: answers.billing || 'monthly',
+        link: link, shots: shots.map(function (x) { return x.data; }), billing: answers.billing || 'monthly',
         offer: offerCode(), referralCode: referralCode(),
         website: $('j_website').value
       })
@@ -413,14 +481,15 @@
           say($('note2'), d.error, 'bad');
           return;
         }
-        say($('note3'), d.error || 'Something went wrong. Please try again.', 'bad');
-        if (d.code === 'exists' || d.code === 'paid') $('note3').insertAdjacentHTML('beforeend', ' <a href="/login.html">Log in</a>');
+        if (d.field === 'shots') { show(3); say($('note3'), d.error, 'bad'); return; }
+        say($('note4pay'), d.error || 'Something went wrong. Please try again.', 'bad');
+        if (d.code === 'exists' || d.code === 'paid') $('note4pay').insertAdjacentHTML('beforeend', ' <a href="/login.html">Log in</a>');
       })
       .catch(function () {
         paying = false;
         btn.disabled = false;
         btn.textContent = was;
-        say($('note3'), 'We could not reach payments just now. Check your connection and try again.', 'bad');
+        say($('note4pay'), 'We could not reach payments just now. Check your connection and try again.', 'bad');
       });
   });
 
@@ -429,7 +498,7 @@
   var accountEmail = '';
 
   function afterPayment() {
-    show(4);
+    show(5);
     $('doneEmail').textContent = 'your email';
     fetch('/api/join', {
       method: 'POST',
@@ -453,7 +522,7 @@
         paint(true);
         if (d.paid) {
           confetti();
-          step(7, 'Paid');
+          step(8, 'Paid');
           // The payment, tied to this visit in Analytics; the ref keeps a
           // reloaded page to one.
           whenBeacon(function () {
@@ -482,7 +551,7 @@
             window.oneTrack('Purchase', { currency: 'GBP', value: d.annual ? 99 : 9.99, content_name: 'starter' }, d.sub || sessionId);
           }
         }
-        try { sessionStorage.removeItem(KEEP); } catch (e) {}
+        try { sessionStorage.removeItem(KEEP); sessionStorage.removeItem(SHOTS); } catch (e) {}
       })
       .catch(function () {
         $('doneSub').textContent = 'Your payment went through. If this page will not load, check your email for your welcome message.';
@@ -509,7 +578,7 @@
           if (res.d.code === 'done') { $('accountBox').hidden = true; $('doneLogin').hidden = false; }
           return;
         }
-        step(8, 'Made their account');
+        step(9, 'Made their account');
         if (!(window.ONE && window.ONE.ready)) { location.href = '/login.html'; return; }
         return window.ONE.db.auth.signInWithPassword({ email: res.d.email || accountEmail, password: pw })
           .then(function (out) {
@@ -553,8 +622,10 @@
     }
     if (current === 2) return { text: 'These three addresses are free right now and included in your plan. Our team sets yours up for you. Prefer something else? Tap \u201cWant a different one?\u201d and I\u2019ll check it\u2019s free.',
       actions: [['Show me the addresses', null, '#domList']] };
-    if (current === 3) return { text: 'Got an Instagram, Facebook or website? Paste the link so our designers can build from your photos, words and prices. No link? That\u2019s fine, send it to them later. Yearly is \u00a399, two months free.',
+    if (current === 3) return { text: 'Optional, but our designers love it: paste a link to your Instagram, Facebook or booking page, or add a few screenshots of them. Nothing to hand? Skip it and send it to the team later.',
       actions: [['Show me the link box', null, '#j_link']] };
+    if (current === 4) return { text: 'Same website either way. Yearly is \u00a399, so you save \u00a320.88 a year against monthly. Once you pay, I pass everything to our team.',
+      actions: [['Show me the plans', null, '#billPick']] };
     return { text: 'You\u2019re in, and our team has your details. Choose a password to see your site and ask them for changes. Got more photos? Reply to your welcome email.',
       actions: [['Show me the password box', null, '#j_password']] };
   };
@@ -567,8 +638,8 @@
   if (/^cs_(test|live)_[A-Za-z0-9]{10,200}$/.test(sessionId)) {
     afterPayment();
   } else if (q.get('cancelled') && answers.business && answers.email && answers.domain) {
-    show(3);
-    say($('note3'), 'Payment cancelled. Nothing was taken. Pay when you’re ready.');
+    show(4);
+    say($('note4pay'), 'Payment cancelled. Nothing was taken. Pay when you’re ready.');
   } else {
     show(1);
     step(3, 'Opened the join form');

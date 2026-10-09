@@ -628,7 +628,13 @@ function onboardingLines(p) {
   ].filter(function (pair) { return pair[1]; }).forEach(function (pair) {
     var line = el('p', 'cust-sub');
     line.appendChild(el('strong', null, pair[0] + ': '));
-    line.appendChild(document.createTextNode(pair[1]));
+    /* Links open: "Already online" holds their page and, from /join, the
+       screenshots they sent. */
+    String(pair[1]).split(/(https?:\/\/[^\s,]+)/).forEach(function (bit, i) {
+      if (!bit) return;
+      if (i % 2) { var a = el('a', null, /\/join-\d+-\d+\.jpg$/.test(bit) ? 'screenshot' : bit); a.href = bit; a.target = '_blank'; a.rel = 'noopener'; line.appendChild(a); line.appendChild(document.createTextNode(' ')); }
+      else line.appendChild(document.createTextNode(bit));
+    });
     frag.appendChild(line);
   });
   return frag;
