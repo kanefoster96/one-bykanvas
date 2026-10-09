@@ -5,7 +5,7 @@
  *   look, and a button to /free for this trade. The press is still a
  *   click in the journey (beacon.js), and so is the pop-up's button.
  * - The pill names the example, opens a list of the others, and closes
- *   back to /free.
+ *   onto /join for this trade: whoever has read this far is ready to start.
  * - The few parts of an example that do something on the spot: the
  *   treatment chips, the polish swatches, the valeting price and the
  *   before-and-after handle.

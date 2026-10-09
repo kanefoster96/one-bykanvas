@@ -8,7 +8,7 @@
  * link: every link and button opens the preview pop-up, which says this
  * is how their site could look and sends them to /join?trade=<key>. The
  * press shows in their journey in the One app, and so does the pop-up's
- * button. The pill at the bottom switches trade, and closes back to /free.
+ * button. The pill at the bottom switches trade, and closes onto /join.
  */
 'use strict';
 
@@ -21,7 +21,6 @@ const EX_JS_V = 8;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
 
-const free = (e) => '/free?trade=' + e.key;
 const join = (e) => '/join?trade=' + e.key;
 const P = '#preview';   // every link on an example opens the pop-up
 
@@ -760,7 +759,7 @@ function pill(e) {
     <svg class="k1-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
   </button>
   <a class="k1-go" href="${join(e)}">Get yours, &pound;9.99</a>
-  <a class="k1-x" href="${free(e)}" aria-label="Close the example"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+  <a class="k1-x" href="${join(e)}" aria-label="Close the example and start yours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
 </div>`;
 }
 
