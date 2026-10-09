@@ -145,7 +145,9 @@ function sourceLabel(v) {
 /* Towns that are really server farms: a "visitor" from one is a crawler,
    an uptime check or a link preview running on a cloud machine, not a
    person. Their visits are left out of the numbers and counted apart. */
-const DATA_CENTRES = /^(boardman|ashburn|council bluffs|the dalles|moncks corner|prineville|lenoir|forest city|quincy|san jose|santa clara|north charleston)$/i;
+/* Meta's own data centres are here too: when an ad goes live or changes,
+   its review checks the landing page from them, dozens of times. */
+const DATA_CENTRES = /^(boardman|ashburn|council bluffs|the dalles|moncks corner|prineville|lenoir|forest city|quincy|san jose|santa clara|north charleston|lule[aå]|clonee|odense|altoona|fort worth|gallatin|los lunas|papillion|henrico|new albany|eagle mountain|huntsville|dekalb|stanton springs|kuna|mesa|jeffersonville|sarpy)$/i;
 function botSessions(rows) {
   const out = new Set();
   rows.forEach((r) => { if (r.city && DATA_CENTRES.test(String(r.city).trim())) out.add(r.session); });
