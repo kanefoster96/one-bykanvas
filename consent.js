@@ -171,8 +171,11 @@
   function show() {
     if (pill) return;
 
+    /* A page that is mostly a picture (the example sites) asks for the
+       slim one: one line, two buttons, so it hides little of the page. */
+    var slim = document.body.hasAttribute('data-consent-slim');
     pill = document.createElement('div');
-    pill.className = 'consent';
+    pill.className = 'consent' + (slim ? ' consent-slim' : '');
     pill.setAttribute('role', 'region');
     pill.setAttribute('aria-label', 'Cookies');
 
@@ -182,22 +185,26 @@
        the same two choices are offered; Reject and Accept answer here. */
     var text = document.createElement('p');
     text.className = 'consent-text';
-    text.appendChild(document.createTextNode(
-      'Cookies run the site. If you agree, they also help us improve our ads. '));
+    text.appendChild(document.createTextNode(slim
+      ? 'Cookies help us improve our ads. '
+      : 'Cookies run the site. If you agree, they also help us improve our ads. '));
     var link = document.createElement('a');
     link.href = '/cookies.html';
-    link.textContent = 'Cookie policy';
+    link.textContent = slim ? 'Policy' : 'Cookie policy';
     text.appendChild(link);
     text.appendChild(document.createTextNode('.'));
 
     var actions = document.createElement('div');
     actions.className = 'consent-actions';
 
-    var custom = document.createElement('a');
-    custom.className = 'consent-btn';
-    custom.href = '/cookies.html';
-    custom.textContent = 'Customise';
-    actions.appendChild(custom);
+    // The slim strip leaves Customise to the policy link: same page.
+    if (!slim) {
+      var custom = document.createElement('a');
+      custom.className = 'consent-btn';
+      custom.href = '/cookies.html';
+      custom.textContent = 'Customise';
+      actions.appendChild(custom);
+    }
 
     [['Reject', 'essential'], ['Accept', 'all']].forEach(function (b) {
       var btn = document.createElement('button');

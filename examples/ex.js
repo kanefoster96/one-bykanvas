@@ -129,7 +129,15 @@
      once the page scrolls under it. */
   var nav = document.getElementById('xNav');
   if (nav) {
-    var onScroll = function () { nav.classList.toggle('is-scrolled', window.scrollY > 24); };
+    /* The example strip sits above it at the top of the page; the header
+       rides just below the strip and moves up as the strip scrolls away. */
+    var topStrip = document.getElementById('k1Top');
+    var onScroll = function () {
+      var h = topStrip ? topStrip.offsetHeight : 0;
+      nav.style.top = Math.max(0, h - window.scrollY) + 'px';
+      nav.classList.toggle('is-scrolled', window.scrollY > h + 24);
+    };
+    window.addEventListener('resize', onScroll);
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
   }

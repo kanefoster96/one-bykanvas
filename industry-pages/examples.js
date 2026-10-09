@@ -16,8 +16,8 @@ const fs = require('fs');
 const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
-const EX_CSS_V = 8;
-const EX_JS_V = 7;
+const EX_CSS_V = 9;
+const EX_JS_V = 8;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
 
@@ -764,6 +764,17 @@ function pill(e) {
 </div>`;
 }
 
+/* The strip above the example: what this page is, before anything else.
+   Someone from an ad lands on what looks like a stranger's business; this
+   says it is an example, and that ours builds theirs for £9.99. It scrolls
+   away with the page; the pill at the foot stays. */
+function topStrip(e) {
+  return `<div class="k1-top" id="k1Top">
+  <p class="k1-top-t"><small>Example website for ${strip(e.one).replace(/&rsquo;/g, '’')}s</small><b>Our team builds yours, &pound;9.99/mo</b></p>
+  <a class="k1-top-go" href="${join(e)}">Get yours</a>
+</div>`;
+}
+
 /* The pop-up every link on the example opens. */
 function modal(e) {
   return `<div class="k1-modal" id="k1Modal" hidden>
@@ -811,7 +822,8 @@ function page(e) {
 <link rel="stylesheet" href="/examples/ex.css?v=${EX_CSS_V}">
 <style>${themeCss(e.theme)}</style>
 </head>
-<body class="T-${e.key} H-${e.layout.hero}${dark ? ' hero-dark' : ''}">
+<body class="T-${e.key} H-${e.layout.hero}${dark ? ' hero-dark' : ''}" data-consent-slim>
+${topStrip(e)}
 <header class="x-nav" id="xNav">
   <div class="x-wrap x-nav-in">
     <a class="x-logo" href="${P}" aria-label="${strip(e.name)}">${mark(e.icon)}</a>
@@ -825,7 +837,7 @@ ${e.layout.order.map((k) => SECTIONS[k](e)).join('\n')}
 ${footer(e)}
 ${modal(e)}
 ${pill(e)}
-<script src="/consent.js?v=9"></script>
+<script src="/consent.js?v=10"></script>
 <script src="/examples/ex.js?v=${EX_JS_V}"></script>
 <script src="/beacon.js?v=5" data-site="${SITE_ID}" defer></script>
 </body>

@@ -734,5 +734,19 @@ figcaption small{display:block;font-size:13px;color:var(--muted)}
 .consent-actions{display:flex;gap:8px}
 .consent-btn{flex:1 1 0;min-width:0;text-align:center;font:500 14px/1.2 Inter,system-ui,sans-serif;padding:9px 8px;border-radius:10px;cursor:pointer;white-space:nowrap;background:#f5f5f7;border:1px solid #f5f5f7;color:#1d1d1f}
 .consent-btn-yes{background:#1d1d1f;border-color:#1d1d1f;color:#fff}
+.consent-slim{display:flex;align-items:center;gap:8px;width:calc(100vw - 20px);max-width:460px;padding:6px 6px 6px 14px;border-radius:999px;border:0;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.consent-slim .consent-text{flex:1 1 auto;min-width:0;margin:0;font-size:12.5px;line-height:1.3}
+.consent-slim .consent-actions{flex:0 0 auto;gap:6px}
+.consent-slim .consent-btn{flex:0 0 auto;padding:8px 12px;border-radius:999px;font-size:13px}
+
+/* The strip above the example (examples.js topStrip): Kanvas One's, not
+   the example business's, so it wears our type and colours. */
+.k1-top{position:relative;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px 9px 16px;padding-top:calc(9px + env(safe-area-inset-top));background:#161618;color:#fff;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.k1-top-t{margin:0;display:flex;flex-direction:column;gap:1px;min-width:0}
+.k1-top-t small{font-size:11.5px;font-weight:500;color:rgba(255,255,255,.62);letter-spacing:.01em}
+.k1-top-t b{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.25}
+.k1-top-go{flex:0 0 auto;display:inline-flex;align-items:center;min-height:38px;padding:0 16px;border-radius:999px;background:linear-gradient(180deg,#34c17a,#1a7f37);color:#fff;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px -8px rgba(26,127,55,.8)}
+.k1-top-go:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media (min-width:760px){.k1-top{justify-content:center;gap:20px}.k1-top-t{flex-direction:row;align-items:baseline;gap:10px}.k1-top-t small{font-size:13px}.k1-top-t b{font-size:14.5px}}
 
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}.x-trip{transform:none;fill:#0f1b2d}.x-led{fill:#30d158}}
