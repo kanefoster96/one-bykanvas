@@ -16,7 +16,7 @@ const fs = require('fs');
 const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
-const EX_CSS_V = 10;
+const EX_CSS_V = 11;
 const EX_JS_V = 8;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
@@ -302,7 +302,11 @@ const ICON = {
   home: '<path d="M4 11l8-6.5 8 6.5"/><path d="M6 9.5V20h12V9.5"/><path d="M12 13c1.6 1.7 2 2.7 2 3.6a2 2 0 0 1-4 0c0-.9.4-1.9 2-3.6z"/>',
   wrench: '<path d="M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5l3-3a4 4 0 0 1 3 3l-3 3"/>',
   phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
-  pin: '<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>'
+  pin: '<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+  question: '<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.7"/><path d="M12 17h.01"/>',
+  heart: '<path d="M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.6 4.2 4.2 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>',
+  eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
+  spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/>'
 };
 const icon = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k] || ICON.shield}</svg>`;
 const riskList = (e) => `<ul class="x-risk">${e.hero.risk.map((r) => `<li>${CHECK}<span>${r}</span></li>`).join('')}</ul>`;
@@ -666,7 +670,8 @@ function pains(e) {
   return `<section class="x-sec x-pains-sec" data-k1-seen="the problems">
   <div class="x-wrap">
     ${head(s.h, '', NOTE.pains)}
-    <ul class="x-pains">${s.items.map((t) => `<li>${t}</li>`).join('')}</ul>
+    <ul class="x-pains">${s.items.map(([ic, t, p]) => `<li><span class="x-pain-ico">${icon(ic)}</span><b>${t}</b><span>${p}</span></li>`).join('')}</ul>
+    ${s.end ? `<div class="x-pains-end"><p>${s.end}</p>${ctaBtn(e)}</div>` : ''}
   </div>
 </section>`;
 }

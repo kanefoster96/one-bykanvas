@@ -48,10 +48,10 @@ module.exports = [
       ['Gloss &amp; toner', 'Shine and tone back in between colours.', '&pound;30', '30 mins'],
       ['Occasion hair', 'Weddings, proms and parties. Trials available.', 'From &pound;45', '1 hr']
     ] },
-    pains: { h: 'We know how it feels', items: [
-      'Sitting in the chair not knowing if your colour will turn out how you pictured is nerve-wracking.',
-      'Feeling rushed when all you want is someone who really listens to what you&rsquo;re after.',
-      'Not knowing the price until you&rsquo;re at the till leaves you on edge the whole appointment.'
+    pains: { h: 'We understand', end: 'Tell us what you&rsquo;re hoping for, and we&rsquo;ll tell you honestly how to get there.', items: [
+      ['question', 'Will it look how I pictured?', 'Sitting in the chair not knowing how your colour will turn out is nerve-wracking.'],
+      ['clock', 'Feeling rushed.', 'You want someone who really listens to what you&rsquo;re after, not one eye on the next client.'],
+      ['tag', 'A surprise at the till.', 'Not knowing the price until the end leaves you on edge the whole appointment.']
     ] },
     solution: { h: 'How we do it differently', p: 'One client at a time, a proper consultation before every colour, and honest advice about what your hair will really do.', items: [
       ['12 years&rsquo; experience', 'Colour specialist, trained in balayage and corrections.'],
@@ -96,10 +96,10 @@ module.exports = [
       ['Lash lift &amp; tint', 'Your own lashes, lifted and darkened for six weeks.', '&pound;40', '1 hr'],
       ['Brow lamination', 'Brushed-up, fuller brows that stay put.', '&pound;35', '45 mins']
     ] },
-    pains: { h: 'We know how it feels', items: [
-      'Watching your lashes thin out after a few days makes you wonder if they were worth it.',
-      'Worrying a heavy set will damage your natural lashes takes the fun out of it.',
-      'Rushing mascara every morning when you&rsquo;d love to just wake up ready.'
+    pains: { h: 'We understand', end: 'Tell us the look you love, and we&rsquo;ll map a set that suits your eyes.', items: [
+      ['eye', 'They don&rsquo;t last.', 'Watching your lashes thin out after a few days makes you wonder if they were worth it.'],
+      ['shield', 'Worried about damage.', 'You love the look, but worry a heavy set will ruin your natural lashes.'],
+      ['clock', 'Mornings take forever.', 'Mascara, curlers, touch-ups. You&rsquo;d love to just wake up ready.']
     ] },
     solution: { h: 'How we do it differently', p: 'Every set is mapped to your eye shape and your natural lashes, with the right weight so they last and don&rsquo;t damage what&rsquo;s underneath.', items: [
       ['Fully qualified, fully insured', 'Five years of sets, trained in classic, hybrid and volume.'],
@@ -143,10 +143,10 @@ module.exports = [
       ['Occasion glam', 'Proms, parties and events, at home or at the venue.', '&pound;55', '1 hr'],
       ['Makeup lesson', 'One to one. Learn your own everyday and evening looks.', '&pound;70', '1 hr 30']
     ] },
-    pains: { h: 'We know how it feels', items: [
-      'Worrying you won&rsquo;t look like yourself in photos you&rsquo;ll keep forever is a lot of pressure.',
-      'Wondering if your makeup will last from the first look to the last dance.',
-      'Feeling the clock ticking all morning, with everyone waiting on you.'
+    pains: { h: 'We understand', end: 'Tell us about your day, and we&rsquo;ll plan a morning that feels calm.', items: [
+      ['question', 'Will I still look like me?', 'Photos you&rsquo;ll keep forever are a lot of pressure to get right.'],
+      ['clock', 'Will it last all day?', 'You&rsquo;re wondering if it&rsquo;ll hold from the first look to the last dance.'],
+      ['heart', 'A stressful morning.', 'The clock&rsquo;s ticking and everyone&rsquo;s waiting on you, when it should feel calm.']
     ] },
     solution: { h: 'How I do it differently', p: 'A proper trial, a timed plan for the morning, and long-wear products chosen for your skin, so you can relax and enjoy it.', items: [
       ['Eight years of weddings', 'Over 300 brides, from barn weddings to city hotels.'],
@@ -192,10 +192,10 @@ module.exports = [
       ['Nail art', 'Chrome, French, florals and hand-painted designs.', 'From &pound;5', 'Per set'],
       ['Removal', 'Gentle soak-off, no drilling into your nail.', '&pound;10', '20 mins']
     ] },
-    pains: { h: 'We know how it feels', items: [
-      'Spending money on a set and worrying it&rsquo;ll chip before the week is out.',
-      'Feeling nervous your natural nails will be thin and sore after the next removal.',
-      'Showing a picture and quietly hoping they get it right this time.'
+    pains: { h: 'We understand', end: 'Send us the look you love, and we&rsquo;ll agree the design before we start.', items: [
+      ['tag', 'Money down the drain.', 'You spend on a set, then worry it&rsquo;ll chip before the week is out.'],
+      ['shield', 'Sore, thin nails.', 'You&rsquo;re nervous your natural nails won&rsquo;t survive another rough removal.'],
+      ['question', 'Will they get it right?', 'You show a picture and quietly hope it comes out the same.']
     ] },
     solution: { h: 'How we do it differently', p: 'Careful prep, the right product for your nails, and a design agreed before we start, so they last and your natural nails stay healthy.', items: [
       ['Qualified and insured', 'BIAB and acrylic trained, six years in Whitley Bay.'],
@@ -242,10 +242,10 @@ module.exports = [
       ['Cupcakes', 'Decorated to match your cake or your party.', '&pound;24', 'A dozen'],
       ['Brownie &amp; cookie boxes', 'Gifts, thank-yous and treats.', 'From &pound;15', 'Box of 9']
     ] },
-    pains: { h: 'We know how it feels', items: [
-      'Ordering a cake for a big day and hoping it tastes as good as it looks.',
-      'Chasing for a price for days leaves you planning the party in the dark.',
-      'Worrying all morning that it won&rsquo;t arrive on time, or in one piece.'
+    pains: { h: 'We understand', end: 'Tell us about the occasion, and we&rsquo;ll send a sketch and a fixed price.', items: [
+      ['question', 'Will it taste as good as it looks?', 'It&rsquo;s a big day and the cake is the centrepiece. It needs to be right.'],
+      ['tag', 'Chasing for a price.', 'Waiting days for a quote leaves you planning the party in the dark.'],
+      ['clock', 'Will it arrive in one piece?', 'You&rsquo;ll be watching the clock all morning until it&rsquo;s safely on the table.']
     ] },
     solution: { h: 'How I do it differently', p: 'Real butter, proper fillings and flavours tested on friends first. You see a sketch and a fixed price before you pay a penny.', items: [
       ['Ten years of baking', 'Over 1,000 cakes, from first birthdays to weddings.'],
@@ -290,10 +290,10 @@ module.exports = [
       ['Holiday camps', 'Fun-packed days every school holiday.', '&pound;30 a day', '9am &ndash; 3pm'],
       ['Birthday parties', 'Two hours of games with a coach. We tidy up.', 'From &pound;150', 'Weekends']
     ] },
-    pains: { h: 'We know how it feels', items: [
-      'Watching them bounce off the walls after school, wishing they had somewhere to burn it off.',
-      'Worrying they&rsquo;ll hang back at the edge of a big class and never join in.',
-      'Paying a whole term up front and hoping they&rsquo;ll actually like it.'
+    pains: { h: 'We understand', end: 'Book a free first session, and see how they get on before you pay.', items: [
+      ['spark', 'Endless energy.', 'They&rsquo;re bouncing off the walls after school and you&rsquo;re running out of ideas.'],
+      ['question', 'Will they fit in?', 'You worry they&rsquo;ll hang back at the edge of a big class and never join in.'],
+      ['tag', 'Paying for a whole term.', 'Paying up front, then hoping they actually like it.']
     ] },
     solution: { h: 'How we do it differently', p: 'Small groups, coaches who know every child&rsquo;s name, and a free first session so they can try it before you pay a thing.', items: [
       ['DBS-checked and first-aid trained', 'Every coach, every session.'],
@@ -338,10 +338,10 @@ module.exports = [
       ['EICR certificates', 'Landlord and homebuyer safety checks.', 'From &pound;120', '2 &ndash; 4 hrs'],
       ['Lights &amp; sockets', 'Extra sockets, outdoor lights, downlights.', 'From &pound;60', 'Same week']
     ] },
-    pains: { h: 'We know how it feels', items: [
-      'Not knowing how much the fix will cost, or how long it&rsquo;ll take, makes you feel uneasy.',
-      'Waiting in all day, unsure if anyone&rsquo;s actually coming, wastes a day you can&rsquo;t get back.',
-      'Letting someone new into your home and hoping they&rsquo;ll treat it like their own.'
+    pains: { h: 'We understand', end: 'Tell us what&rsquo;s wrong, and we&rsquo;ll give you a fixed price before we start.', items: [
+      ['tag', 'What will it cost?', 'Not knowing how much the fix will cost, or how long it&rsquo;ll take, makes you feel uneasy.'],
+      ['clock', 'Waiting in all day.', 'Unsure if anyone&rsquo;s actually coming, you lose a day you can&rsquo;t get back.'],
+      ['home', 'Someone new in your home.', 'You&rsquo;re hoping whoever turns up treats your house like their own.']
     ] },
     solution: { h: 'How we do it differently', p: 'We turn up when we say, agree a fixed price before we start, and leave the place cleaner than we found it.', items: [
       ['15 years&rsquo; experience', 'Qualified, Part P registered and fully insured.'],
@@ -388,10 +388,10 @@ module.exports = [
       ['Power flush', 'Cold radiators warm again.', 'From &pound;350', 'Half a day'],
       ['Smart thermostats', 'Hive and Nest fitted and set up.', 'From &pound;180', '2 hrs']
     ] },
-    pains: { h: 'We know how it feels', items: [
-      'A cold house with no idea when someone can come out is stressful, especially with little ones.',
-      'Wondering if you really need a new boiler, or just a part, leaves you unsure who to trust.',
-      'Not knowing what the final bill will be makes it hard to even pick up the phone.'
+    pains: { h: 'We understand', end: 'Tell us what&rsquo;s happening, and we&rsquo;ll tell you the callout price up front.', items: [
+      ['home', 'A cold house.', 'No heating, no hot water, and no idea when someone can come out. It&rsquo;s stressful, especially with little ones.'],
+      ['question', 'Who do you trust?', 'You&rsquo;re unsure if you really need a new boiler, or just a part.'],
+      ['tag', 'Dreading the bill.', 'Not knowing what it&rsquo;ll cost makes it hard to even pick up the phone.']
     ] },
     solution: { h: 'How we do it differently', p: 'The common parts are on the van, the callout is fixed, and we&rsquo;ll always repair before we suggest replacing.', items: [
       ['Gas Safe registered', '20 years on boilers, all makes and models.'],
@@ -438,10 +438,10 @@ module.exports = [
       ['Ceramic coating', 'Two years&rsquo; protection. Water and dirt slide off.', 'From &pound;250', '1 day'],
       ['Pet hair removal', 'Every last hair, from seats, boot and carpets.', '&pound;15', 'Add-on']
     ] },
-    pains: { h: 'We know how it feels', items: [
-      'Finding the time to clean the car properly feels impossible with everything else going on.',
-      'Getting in every morning to crumbs and dog hair quietly gets you down.',
-      'Handing over your car and hoping it comes back the way you pictured.'
+    pains: { h: 'We understand', end: 'Tell us about your car. We come to you, and you only pay when you&rsquo;ve seen it.', items: [
+      ['clock', 'No time.', 'Cleaning the car properly feels impossible with everything else going on.'],
+      ['tidy', 'It gets you down.', 'Getting in every morning to crumbs and muddy footprints quietly wears on you.'],
+      ['question', 'Will it be done properly?', 'Handing over your car and hoping it comes back the way you pictured.']
     ] },
     solution: { h: 'How we do it differently', p: 'We come to your home or work with our own water and power, use proper products, and you only pay when you&rsquo;ve seen it.', items: [
       ['Six years of detailing', 'Trained in paint correction and ceramic coatings.'],
@@ -487,10 +487,10 @@ module.exports = [
       ['Intensive course', 'Pass in weeks, not months.', 'From &pound;900', '2 &ndash; 4 weeks'],
       ['Pass Plus', 'Motorways, night driving and confidence after your test.', '&pound;180', '6 hrs']
     ] },
-    pains: { h: 'We know how it feels', items: [
-      'Feeling your nerves take over before you&rsquo;ve even pulled away.',
-      'Worrying you&rsquo;ll be judged every time you stall or get something wrong.',
-      'Not knowing when you&rsquo;ll be ready makes learning feel like it&rsquo;ll never end.'
+    pains: { h: 'We understand', end: 'Tell us where you&rsquo;re up to, and we&rsquo;ll plan your way to test day.', items: [
+      ['heart', 'Nerves take over.', 'Your hands are shaking before you&rsquo;ve even pulled away.'],
+      ['question', 'Feeling judged.', 'Every stall or wrong turn feels like someone&rsquo;s keeping score.'],
+      ['clock', 'Will I ever be ready?', 'Not knowing when you&rsquo;ll pass makes learning feel like it&rsquo;ll never end.']
     ] },
     solution: { h: 'How we do it differently', p: 'Calm, patient lessons at your pace, a clear plan to test day, and every Gosforth and Newcastle test route practised before you go.', items: [
       ['DVSA approved, 11 years', 'An 87% first-time pass rate last year.'],
