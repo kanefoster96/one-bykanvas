@@ -1606,20 +1606,65 @@ a.hero-pill:hover .pill-go{opacity:1}
 .join .wiz-step h1:focus{outline:none}
 /* Step 3: screenshots of their socials or booking page. */
 .join .field-label{display:block;font-size:13.5px;font-weight:500;color:var(--ink-2);margin-bottom:8px}
-.shot-add{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:var(--surface-2,#f4f4f5);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);cursor:pointer;transition:background .2s var(--ease)}
-.shot-add:hover{background:#ececee}
-.shot-add[hidden]{display:none}
-.shot-add svg{width:26px;height:26px;flex:0 0 auto;color:var(--good)}
-.shot-add span{display:flex;flex-direction:column;gap:2px}
-.shot-add b{font-size:15px}
-.shot-add small{font-size:13px;color:var(--ink-3)}
-#j_shots:focus-visible + .shot-grid,.shot-add:focus-within{outline:2px solid var(--good);outline-offset:2px}
-.shot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.up-drop{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:var(--surface-2,#f4f4f5);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);cursor:pointer;transition:background .2s var(--ease)}
+.up-drop:hover{background:#ececee}
+.up-drop[hidden]{display:none}
+.up-drop svg{width:26px;height:26px;flex:0 0 auto;color:var(--good)}
+.up-drop span{display:flex;flex-direction:column;gap:2px}
+.up-drop b{font-size:15px}
+.up-drop small{font-size:13px;color:var(--ink-3)}
+#j_shots:focus-visible + .shot-grid,.up-drop:focus-within{outline:2px solid var(--good);outline-offset:2px}
+.shot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .shot-grid:empty{display:none}
-.shot{position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background:#eee;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.shot{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:#eee;box-shadow:0 2px 10px rgba(0,0,0,.08)}
 .shot img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
 .shot-x{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:18px;line-height:28px;padding:0;cursor:pointer}
 .join .wiz-skip{display:block;margin:14px auto 0;font-weight:500}
+
+/* Dot sits alone, centred above each step's question (no speech bubble). */
+.join-dot.is-solo{justify-content:center;margin:2px 0 14px}
+.join .wiz-step > h1,.join .wiz-step > .wiz-sub{text-align:center}
+.join .wiz-step > .wiz-sub{margin-left:auto;margin-right:auto;max-width:34ch}
+.join .join-name input{font-size:19px;padding:15px 16px;text-align:center}
+
+/* Step 1: the free web address under the name. */
+.dom-block{margin-top:6px;animation:join-say .4s var(--ease) both}
+.free-tag{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:980px;background:#e8f7ee;color:var(--good);font-size:11.5px;font-weight:700;letter-spacing:.02em;vertical-align:1px}
+.dom-type{margin-top:12px}
+
+/* Step 2: feature cards to pick, all free, and the Business card. */
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 18px}
+.feat{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:14px 12px 12px;border:0;border-radius:16px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06),inset 0 0 0 1px rgba(0,0,0,.07);text-align:left;font:inherit;color:var(--ink);cursor:pointer;transition:box-shadow .2s var(--ease),transform .15s var(--ease),background .2s var(--ease)}
+.feat:hover{transform:translateY(-1px)}
+.feat:focus-visible{outline:2px solid var(--good);outline-offset:2px}
+.feat b{font-size:14.5px;font-weight:600;line-height:1.25;padding-right:22px}
+.feat small{font-size:12px;line-height:1.35;color:var(--ink-3)}
+.feat em{margin-top:4px;font-style:normal;font-size:11px;font-weight:700;color:var(--good);letter-spacing:.02em}
+.feat-tick{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.18);color:transparent;transition:background .2s var(--ease),box-shadow .2s var(--ease)}
+.feat-tick svg{width:12px;height:12px}
+.feat.is-on{background:#f2faf4;box-shadow:0 1px 3px rgba(26,127,55,.12),inset 0 0 0 1.5px var(--good);animation:join-pick .3s var(--ease)}
+.feat.is-on .feat-tick{background:var(--good);box-shadow:none;color:#fff}
+.biz-card{margin:0 0 18px;padding:16px;border-radius:18px;background:#161618;color:#fff;transition:box-shadow .2s var(--ease)}
+.biz-card.is-on{box-shadow:0 0 0 2px var(--good)}
+.biz-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.biz-name{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.biz-price{font-size:13px;color:rgba(255,255,255,.7);text-align:right}
+.biz-price b{font-size:20px;color:#fff}
+.biz-price small{display:block;font-size:11.5px;color:#5fd18f;font-weight:600}
+.biz-sub{margin:8px 0 10px;font-size:13.5px;color:rgba(255,255,255,.72);line-height:1.4}
+.biz-list{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:7px}
+.biz-list li{position:relative;padding-left:22px;font-size:14px;line-height:1.35}
+.biz-list li::before{content:"";position:absolute;left:3px;top:4px;width:10px;height:6px;border-left:2px solid #5fd18f;border-bottom:2px solid #5fd18f;transform:rotate(-45deg)}
+.join .biz-btn{background:#fff;color:#161618;border-color:#fff;gap:6px}
+.join .biz-btn svg{width:16px;height:16px}
+.biz-card.is-on .biz-btn{background:var(--good);border-color:var(--good);color:#fff}
+.join .biz-undo{display:block;margin:10px auto 0;color:rgba(255,255,255,.75);font-size:13.5px}
+.join #domList .pick-head b{font-size:15px;letter-spacing:-.01em;overflow-wrap:anywhere}
+
+/* Step 4: what they are getting, then the price. */
+.join-sum{margin:2px 0 12px;text-align:center;font-size:13.5px;color:var(--ink-2);overflow-wrap:anywhere}
+#payBox{animation:join-say .4s var(--ease) both}
+@media (max-width:360px){.feat-grid{grid-template-columns:1fr}}
 .join .wiz-skip + .wiz-back{margin-top:8px}
 @media (max-width:420px){.join-steps li{font-size:11.5px;gap:5px}}
 
@@ -1635,28 +1680,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .join-steps li.is-done i{background:var(--good);color:#fff}
 .join .wiz-bar i{background:linear-gradient(90deg,#1a7f37,#34c17a)}
 
-.join-live{margin:0 0 16px;border-radius:18px;background:#fff;box-shadow:0 2px 24px rgba(0,0,0,.06);overflow:hidden}
-.jl-bar{display:flex;align-items:center;gap:6px;padding:9px 12px;background:#f5f5f7;border-bottom:1px solid var(--line-soft)}
-.jl-bar > i{width:8px;height:8px;border-radius:50%;background:#e3e3e8}
-.jl-url{flex:1;min-width:0;display:flex;align-items:center;gap:6px;margin-left:6px;padding:5px 11px;border-radius:980px;background:#fff;font-size:12.5px;color:var(--ink-3)}
-.jl-url svg{width:12px;height:12px;flex:0 0 auto}
-.jl-url b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.join-live.has-domain .jl-url{color:var(--ink)}
-.join-live.has-domain .jl-url svg{color:var(--good)}
-.jl-build{display:none;font-size:11.5px;font-weight:600;color:var(--good)}
-.jl-build i{font-style:normal;animation:jl-dots 1.2s infinite}
-.jl-build i:nth-child(2){animation-delay:.2s}.jl-build i:nth-child(3){animation-delay:.4s}
-@keyframes jl-dots{0%,60%,100%{opacity:.2}30%{opacity:1}}
-.join-live.is-building .jl-build{display:inline}
-.jl-site{display:flex;align-items:center;gap:12px;padding:14px 14px 16px;background:var(--jl-bg,#fff);transition:background .4s var(--ease)}
-.jl-badge{display:grid;place-items:center;flex:0 0 auto;width:40px;height:40px;border-radius:12px;background:var(--jl-accent,#1d1d1f);color:#fff;font-weight:700;font-size:17px;transition:background .4s var(--ease),transform .3s var(--ease)}
-.jl-badge.pop{animation:jl-pop .35s var(--ease)}
-@keyframes jl-pop{40%{transform:scale(1.15) rotate(-6deg)}}
-.jl-text{flex:1;min-width:0;display:flex;flex-direction:column}
-.jl-text b{font-size:16px;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.jl-text small{font-size:12px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.jl-btn{flex:0 0 auto;padding:7px 12px;border-radius:980px;background:var(--jl-accent,#1d1d1f);color:#fff;font-size:12px;font-weight:600;transition:background .4s var(--ease)}
-@media (max-width:380px){.jl-btn{display:none}}
+
 
 .join-dot{display:flex;align-items:flex-end;gap:12px;margin:0 0 18px}
 .join .join-face{width:52px;height:52px;flex:0 0 auto;box-shadow:0 8px 20px rgba(26,127,55,.22)}
@@ -1682,7 +1706,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 @keyframes join-fall{to{transform:translate3d(var(--dx,0),110vh,0) rotate(var(--rot,540deg));opacity:.9}}
 
 @media (prefers-reduced-motion:reduce){
-  .join-say,.wiz-step:not([hidden]) .join-face,.join .pick-row.is-on,.jl-badge.pop,.jl-build i{animation:none}
+  .wiz-step:not([hidden]) .join-face,.join .pick-row.is-on,.join .feat.is-on{animation:none}
   .join-confetti{display:none}
 }
 

@@ -629,10 +629,10 @@ function onboardingLines(p) {
     var line = el('p', 'cust-sub');
     line.appendChild(el('strong', null, pair[0] + ': '));
     /* Links open: "Already online" holds their page and, from /join, the
-       screenshots they sent. */
+       photos they sent. */
     String(pair[1]).split(/(https?:\/\/[^\s,]+)/).forEach(function (bit, i) {
       if (!bit) return;
-      if (i % 2) { var a = el('a', null, /\/join-\d+-\d+\.jpg$/.test(bit) ? 'screenshot' : bit); a.href = bit; a.target = '_blank'; a.rel = 'noopener'; line.appendChild(a); line.appendChild(document.createTextNode(' ')); }
+      if (i % 2) { var a = el('a', null, /\/(join-\d+-\d+\.jpg|join\/[a-z0-9]{24}\/[^/]+)$/.test(bit) ? 'photo' : bit); a.href = bit; a.target = '_blank'; a.rel = 'noopener'; line.appendChild(a); line.appendChild(document.createTextNode(' ')); }
       else line.appendChild(document.createTextNode(bit));
     });
     frag.appendChild(line);
