@@ -376,17 +376,11 @@
     if (!list.children.length) BUSINESS.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; list.appendChild(li); });
     var on = plan() === 'business';
     $('bizCard').classList.toggle('is-on', on);
-    $('bizBtn').setAttribute('aria-pressed', on ? 'true' : 'false');
-    $('bizBtn').innerHTML = on ? TICK + ' Business chosen' : 'Upgrade to Business';
-    $('bizUndo').hidden = !on;
+    $('bizBtn').setAttribute('aria-checked', on ? 'true' : 'false');
+    $('bizState').textContent = on ? 'On · first month £24.50' : 'Everything you picked stays';
   }
   $('bizBtn').addEventListener('click', function () {
-    answers.plan = 'business';
-    keep();
-    paintBusiness();
-  });
-  $('bizUndo').addEventListener('click', function () {
-    answers.plan = 'starter';
+    answers.plan = plan() === 'business' ? 'starter' : 'business';
     keep();
     paintBusiness();
   });
@@ -503,38 +497,42 @@
   /* ---------------------------------------------------------- 4. email, then pay */
   var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   function paintPay() {
-    var p = PRICES[plan()];
     var biz = plan() === 'business';
-    var save = Math.round((p.month * 12 - p.year) * 100) / 100;
-    var bill = answers.billing === 'annual' ? 'annual' : 'monthly';
-    $('billPick').innerHTML =
-      '<label class="pick-row"><input type="radio" name="billing" value="monthly"><span class="pick-main">'
-      + '<span class="pick-head"><b>Monthly</b><em>' + money(p.month) + '<span>/month</span></em></span>'
-      + '<span class="pick-note">' + (biz ? 'First month ' + money(p.first) + ', then ' + money(p.month) + '. Cancel any month.' : money(Math.round(p.month * 1200) / 100) + ' a year. Cancel any month.') + '</span>'
-      + '</span></label>'
-      + '<label class="pick-row"><input type="radio" name="billing" value="annual"><span class="pick-main">'
-      + '<span class="pick-head"><b>Yearly <span class="bill-save">Save ' + money(save) + ' a year</span></b><em>' + money(p.year) + '<span>/year</span></em></span>'
-      + '<span class="pick-note">Works out at ' + money(Math.round(p.year / 12 * 100) / 100) + ' a month. One payment, two months free.</span>'
-      + '</span></label>';
-    setBilling(bill);
+    var save = Math.round((PRICES[plan()].month * 12 - PRICES[plan()].year) * 100) / 100;
+    $('billPick').querySelector('.pill-save').textContent = 'Save ' + money(save);
+    setBilling(answers.billing);
     var n = answers.features.length;
     var sum = [answers.business, answers.domain, biz ? 'Business' : (n ? n + (n === 1 ? ' feature' : ' features') : 'Starter')].filter(Boolean);
     $('joinSum').textContent = sum.join(' · ');
     emailChanged();
   }
+  /* Monthly or yearly: a pill switch, and one price under it for the
+     choice, so there is only ever one number to read. */
   function setBilling(which) {
     answers.billing = which === 'annual' ? 'annual' : 'monthly';
-    $('billPick').querySelectorAll('.pick-row').forEach(function (r) {
-      var input = r.querySelector('input');
-      input.checked = input.value === answers.billing;
-      r.classList.toggle('is-on', input.checked);
+    var yearly = answers.billing === 'annual';
+    $('billPick').querySelectorAll('[data-bill]').forEach(function (b) {
+      b.setAttribute('aria-checked', b.dataset.bill === answers.billing ? 'true' : 'false');
     });
-    var p = PRICES[plan()];
-    var today = answers.billing === 'annual' ? p.year : p.first;
-    $('payBtn').textContent = 'Pay ' + money(today) + ' and go live';
+    var p = PRICES[plan()], biz = plan() === 'business';
+    $('priceNow').textContent = money(yearly ? p.year : p.month);
+    $('priceUnit').textContent = yearly ? '/year' : '/month';
+    $('priceNote').textContent = yearly
+      ? 'Works out at ' + money(Math.round(p.year / 12 * 100) / 100) + ' a month. One payment, two months free.'
+      : biz ? 'First month ' + money(p.first) + ', then ' + money(p.month) + '. Cancel any month.'
+        : money(Math.round(p.month * 1200) / 100) + ' a year. Cancel any month.';
+    $('payBtn').textContent = 'Pay ' + money(yearly ? p.year : p.first) + ' and go live';
   }
-  $('billPick').addEventListener('change', function (e) {
-    if (e.target.name === 'billing') { setBilling(e.target.value); keep(); }
+  $('billPick').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-bill]');
+    if (b) { setBilling(b.dataset.bill); keep(); }
+  });
+  $('billPick').addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    setBilling(answers.billing === 'annual' ? 'monthly' : 'annual');
+    keep();
+    $('billPick').querySelector('[aria-checked="true"]').focus();
   });
   /* The price and the button appear once the email looks right: the email
      first, then the money, one thing at a time. */

@@ -11,7 +11,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
-<link rel="stylesheet" href="styles.css?v=145">
+<link rel="stylesheet" href="styles.css?v=146">
 </head>
 <body class="auth-body">
 
@@ -81,8 +81,10 @@
           </div>
           <p class="biz-sub">Everything above, plus the features that take the work off your phone:</p>
           <ul class="biz-list" id="bizList"></ul>
-          <button class="btn btn-ghost full biz-btn" id="bizBtn" type="button" aria-pressed="false">Upgrade to Business</button>
-          <button class="linkish biz-undo" id="bizUndo" type="button" hidden>Keep Starter instead</button>
+          <button class="biz-switch" id="bizBtn" type="button" role="switch" aria-checked="false">
+            <span class="biz-switch-t"><b>Upgrade to Business</b><small id="bizState">Everything you picked stays</small></span>
+            <span class="sw" aria-hidden="true"><i></i></span>
+          </button>
         </div>
 
         <p class="note" id="note2" role="status" aria-live="polite"></p>
@@ -127,7 +129,11 @@
 
         <div id="payBox" hidden>
           <p class="join-sum" id="joinSum"></p>
-          <div class="pick" id="billPick"></div>
+          <div class="pill-toggle" id="billPick" role="radiogroup" aria-label="How you pay">
+            <button type="button" role="radio" data-bill="monthly" aria-checked="true">Monthly</button>
+            <button type="button" role="radio" data-bill="annual" aria-checked="false">Yearly <span class="pill-save">2 months free</span></button>
+          </div>
+          <div class="price-card" id="priceCard"><p class="price-big"><b id="priceNow">&pound;9.99</b><span id="priceUnit">/month</span></p><p class="price-note" id="priceNote"></p></div>
           <p class="note" id="note4pay" role="status" aria-live="polite"></p>
           <button class="btn btn-primary full" id="payBtn" type="submit">Pay &pound;9.99 and go live</button>
           <ul class="assure">
@@ -179,7 +185,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="join.js?v=12"></script>
+<script src="join.js?v=13"></script>
 <script src="chat.js?v=10" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

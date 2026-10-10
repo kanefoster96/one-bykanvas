@@ -1622,47 +1622,80 @@ a.hero-pill:hover .pill-go{opacity:1}
 .join .wiz-skip{display:block;margin:14px auto 0;font-weight:500}
 
 /* Dot sits alone, centred above each step's question (no speech bubble). */
-.join-dot.is-solo{justify-content:center;margin:2px 0 14px}
+.join-dot.is-solo{justify-content:center;margin:0 0 12px}
 .join .wiz-step > h1,.join .wiz-step > .wiz-sub{text-align:center}
-.join .wiz-step > .wiz-sub{margin-left:auto;margin-right:auto;max-width:34ch}
+.join .wiz-step > h1{max-width:18ch;margin:0 auto 22px}
+.join .wiz-step > h1:has(+ .wiz-sub){margin-bottom:0}
+.join .wiz-step > .wiz-sub{margin:8px auto 22px;max-width:34ch;font-size:15px}
+.join .join-name{margin-bottom:0}
 .join .join-name input{font-size:19px;padding:15px 16px;text-align:center}
+.join .wiz-step .note:empty{display:none}
+.join .wiz-step .note{margin:12px 0 0}
+.join .wiz-step .wiz-next{margin-top:20px}
+.join #payBtn{margin-top:4px}
+.join .wiz-step .wiz-foot{margin-top:16px}
+.join .wiz-step .field:last-of-type{margin-bottom:0}
 
 /* Step 1: the free web address under the name. */
-.dom-block{margin-top:6px;animation:join-say .4s var(--ease) both}
+.dom-block{margin-top:22px;padding-top:20px;border-top:1px solid var(--line-soft);animation:join-say .4s var(--ease) both}
+.dom-block .wiz-label{margin:0 0 10px}
+.dom-block .pick{margin-bottom:0}
+.dom-block .pick-row + .pick-row{margin-top:8px}
+.dom-block .dom-state{margin:0}
 .free-tag{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:980px;background:#e8f7ee;color:var(--good);font-size:11.5px;font-weight:700;letter-spacing:.02em;vertical-align:1px}
-.dom-type{margin-top:12px}
+.join .dom-type{margin:16px 0 0}
+.join .dom-type .hint{margin:0}
 
 /* Step 2: feature cards to pick, all free, and the Business card. */
-.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 18px}
-.feat{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:14px 12px 12px;border:0;border-radius:16px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06),inset 0 0 0 1px rgba(0,0,0,.07);text-align:left;font:inherit;color:var(--ink);cursor:pointer;transition:box-shadow .2s var(--ease),transform .15s var(--ease),background .2s var(--ease)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 22px}
+.feat{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:14px 12px 14px 14px;border:0;border-radius:16px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06),inset 0 0 0 1px rgba(0,0,0,.07);text-align:left;font:inherit;color:var(--ink);cursor:pointer;transition:box-shadow .2s var(--ease),transform .15s var(--ease),background .2s var(--ease)}
 .feat:hover{transform:translateY(-1px)}
 .feat:focus-visible{outline:2px solid var(--good);outline-offset:2px}
-.feat b{font-size:14.5px;font-weight:600;line-height:1.25;padding-right:22px}
+.feat b{font-size:14.5px;font-weight:600;line-height:1.25;padding-right:26px}
 .feat small{font-size:12px;line-height:1.35;color:var(--ink-3)}
 .feat em{margin-top:4px;font-style:normal;font-size:11px;font-weight:700;color:var(--good);letter-spacing:.02em}
 .feat-tick{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.18);color:transparent;transition:background .2s var(--ease),box-shadow .2s var(--ease)}
 .feat-tick svg{width:12px;height:12px}
 .feat.is-on{background:#f2faf4;box-shadow:0 1px 3px rgba(26,127,55,.12),inset 0 0 0 1.5px var(--good);animation:join-pick .3s var(--ease)}
 .feat.is-on .feat-tick{background:var(--good);box-shadow:none;color:#fff}
-.biz-card{margin:0 0 18px;padding:16px;border-radius:18px;background:#161618;color:#fff;transition:box-shadow .2s var(--ease)}
+.biz-card{margin:0;padding:18px 16px 16px;border-radius:18px;background:#161618;color:#fff;transition:box-shadow .2s var(--ease)}
 .biz-card.is-on{box-shadow:0 0 0 2px var(--good)}
 .biz-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .biz-name{font-size:17px;font-weight:700;letter-spacing:-.01em}
 .biz-price{font-size:13px;color:rgba(255,255,255,.7);text-align:right}
 .biz-price b{font-size:20px;color:#fff}
 .biz-price small{display:block;font-size:11.5px;color:#5fd18f;font-weight:600}
-.biz-sub{margin:8px 0 10px;font-size:13.5px;color:rgba(255,255,255,.72);line-height:1.4}
-.biz-list{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:7px}
+.biz-sub{margin:10px 0 12px;font-size:13.5px;color:rgba(255,255,255,.72);line-height:1.4}
+.biz-list{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:7px}
 .biz-list li{position:relative;padding-left:22px;font-size:14px;line-height:1.35}
 .biz-list li::before{content:"";position:absolute;left:3px;top:4px;width:10px;height:6px;border-left:2px solid #5fd18f;border-bottom:2px solid #5fd18f;transform:rotate(-45deg)}
-.join .biz-btn{background:#fff;color:#161618;border-color:#fff;gap:6px}
-.join .biz-btn svg{width:16px;height:16px}
-.biz-card.is-on .biz-btn{background:var(--good);border-color:var(--good);color:#fff}
-.join .biz-undo{display:block;margin:10px auto 0;color:rgba(255,255,255,.75);font-size:13.5px}
+/* The Business switch: one tap on, one tap off. */
+.biz-switch{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;margin:0;padding:12px 12px 12px 14px;border:0;border-radius:14px;background:rgba(255,255,255,.08);color:#fff;font:inherit;text-align:left;cursor:pointer;transition:background .2s var(--ease)}
+.biz-switch:hover{background:rgba(255,255,255,.12)}
+.biz-switch:focus-visible{outline:2px solid #5fd18f;outline-offset:2px}
+.biz-switch-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.biz-switch-t b{font-size:15px;font-weight:600}
+.biz-switch-t small{font-size:12.5px;color:rgba(255,255,255,.65)}
+.sw{position:relative;flex:0 0 auto;width:50px;height:30px;border-radius:999px;background:rgba(255,255,255,.25);transition:background .25s var(--ease)}
+.sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .25s var(--ease)}
+[aria-checked="true"] > .sw{background:#34c17a}
+[aria-checked="true"] > .sw i{transform:translateX(20px)}
+.biz-card.is-on .biz-switch-t small{color:#5fd18f}
+
+/* Monthly or yearly: a pill switch, and the one price under it. */
+.pill-toggle{display:flex;gap:4px;padding:4px;margin:0 0 12px;border-radius:999px;background:#f0f0f3}
+.pill-toggle button{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:var(--ink-2);font:inherit;font-size:14.5px;font-weight:600;cursor:pointer;transition:background .2s var(--ease),color .2s var(--ease),box-shadow .2s var(--ease)}
+.pill-toggle button[aria-checked="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.pill-toggle button:focus-visible{outline:2px solid var(--good);outline-offset:1px}
+.pill-save{padding:2px 7px;border-radius:999px;background:#e8f7ee;color:var(--good);font-size:11px;font-weight:700;white-space:nowrap}
+.price-card{margin:0 0 16px;padding:14px 16px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);text-align:center}
+.price-big{margin:0;font-size:15px;color:var(--ink-3)}
+.price-big b{font-size:32px;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
+.price-note{margin:4px 0 0;font-size:13.5px;line-height:1.4;color:var(--ink-2)}
 .join #domList .pick-head b{font-size:15px;letter-spacing:-.01em;overflow-wrap:anywhere}
 
 /* Step 4: what they are getting, then the price. */
-.join-sum{margin:2px 0 12px;text-align:center;font-size:13.5px;color:var(--ink-2);overflow-wrap:anywhere}
+.join-sum{margin:16px 0 14px;text-align:center;font-size:13.5px;color:var(--ink-2);overflow-wrap:anywhere}
 #payBox{animation:join-say .4s var(--ease) both}
 @media (max-width:360px){.feat-grid{grid-template-columns:1fr}}
 .join .wiz-skip + .wiz-back{margin-top:8px}
