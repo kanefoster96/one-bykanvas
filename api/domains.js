@@ -13,7 +13,10 @@ const TLDS = ['co.uk', 'com', 'uk'];
 /* Registries that RDAP's own bootstrap does not cover, or covers badly. */
 const RDAP_HOSTS = {
   'co.uk': 'https://rdap.nominet.uk/uk/domain/',
-  'uk':    'https://rdap.nominet.uk/uk/domain/'
+  'uk':    'https://rdap.nominet.uk/uk/domain/',
+  // Straight to the .com registry: the rdap.org redirector once called a
+  // registered .com free.
+  'com':   'https://rdap.verisign.com/com/v1/domain/'
 };
 const RDAP_DEFAULT = 'https://rdap.org/domain/';
 
@@ -85,8 +88,28 @@ function candidates(name, type) {
   return out.filter((d, i) => out.indexOf(d) === i);
 }
 
-/* taken | free | unknown. Never guesses. */
+/* A domain that is in use has name servers. If DNS lists any, it is taken,
+   whatever the registry lookup said; if DNS cannot say, the lookup decides. */
+const dns = require('dns').promises;
+async function hasNameServers(domain) {
+  const resolver = new dns.Resolver({ timeout: 2500, tries: 1 });
+  try {
+    const ns = await resolver.resolveNs(domain);
+    return ns.length > 0;
+  } catch (err) {
+    return false;
+  }
+}
+
+/* taken | free | unknown. Never guesses. "free" needs both the registry
+   to say not found and DNS to show no name servers. */
 async function lookup(domain) {
+  const [rdap, ns] = await Promise.all([rdapLookup(domain), hasNameServers(domain)]);
+  if (ns) return 'taken';
+  return rdap;
+}
+
+async function rdapLookup(domain) {
   const tld = TLDS.find(t => domain.endsWith('.' + t));
   const base = (tld && RDAP_HOSTS[tld]) || RDAP_DEFAULT;
   const ctrl = new AbortController();
