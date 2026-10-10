@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Join: Your Website for £9.99 a Month | Kanvas One</title>
-<meta name="description" content="Your website, built for you from the page you already have and live within 24 hours. £9.99 a month or £99 a year, web address included, cancel any month.">
+<meta name="description" content="Your website, designed and built by our team and live within 24 hours. Pick a free web address and the features you want. £9.99 a month, cancel any month.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
-<link rel="stylesheet" href="styles.css?v=144">
+<link rel="stylesheet" href="styles.css?v=145">
 </head>
 <body class="auth-body">
 
@@ -26,7 +26,7 @@
   <div class="wiz-top join-top" id="wizTop">
     <ol class="join-steps" aria-label="Progress">
       <li class="is-on"><i>1</i><span>You</span></li>
-      <li><i>2</i><span>Address</span></li>
+      <li><i>2</i><span>Features</span></li>
       <li><i>3</i><span>Your page</span></li>
       <li><i>4</i><span>Go live</span></li>
     </ol>
@@ -34,134 +34,115 @@
     <div class="wiz-bar"><i id="bar"></i></div>
   </div>
 
-  <!-- Their site, filling in as they type: the name in the header, the
-       address in the bar, the trade under it (join.js). -->
-  <div class="join-live" id="joinLive" aria-hidden="true">
-    <div class="jl-bar"><i></i><i></i><i></i><span class="jl-url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><b id="jlUrl">yourbusiness.co.uk</b></span><span class="jl-build">Building<i>.</i><i>.</i><i>.</i></span></div>
-    <div class="jl-site">
-      <span class="jl-badge" id="jlBadge">Y</span>
-      <span class="jl-text"><b id="jlName">Your business</b><small id="jlTrade">Your website, live within 24 hours</small></span>
-      <span class="jl-btn">Get in touch</span>
-    </div>
-  </div>
-
   <div class="wiz-view">
     <form class="wiz-track" id="track" novalidate>
 
-      <!-- ============ 1. who ============ -->
+      <!-- ============ 1. the name, and a free web address ============ -->
       <section class="wiz-step" data-step="1" aria-label="Your business">
-        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">Hi, I&rsquo;m Dot! I&rsquo;ll help you get our team what they need to build your site.</p></div>
-        <h1>Your website, live in 24&nbsp;hours.</h1>
-        <p class="wiz-sub">Designed and built by our team, <strong>&pound;9.99 a month</strong>. Three quick questions, then you&rsquo;re done.</p>
+        <div class="join-dot is-solo" aria-hidden="true"><span class="dot-face join-face"><span class="dot-eyes"><i></i><i></i></span></span></div>
+        <h1 tabindex="-1">What&rsquo;s your business name?</h1>
         <div class="hp" aria-hidden="true">
           <label for="j_website">Leave this empty</label>
           <input id="j_website" name="website" type="text" tabindex="-1" autocomplete="off">
         </div>
-        <div class="field"><label for="j_business">Business name</label><input id="j_business" type="text" autocomplete="organization" maxlength="120"></div>
-        <div class="field"><label for="j_email">Email</label><input id="j_email" type="email" autocomplete="email" maxlength="254">
-          <p class="hint">Where we send your site when it&rsquo;s live.</p></div>
+        <div class="field join-name"><label class="sr-only" for="j_business">Business name</label>
+          <input id="j_business" type="text" autocomplete="organization" maxlength="120" placeholder="Your business name"></div>
+
+        <div class="dom-block" id="domBlock" hidden>
+          <p class="wiz-label">Pick your web address <span class="free-tag">Free</span></p>
+          <div class="pick" id="domList" aria-live="polite"></div>
+          <p class="dom-state" id="domState" hidden></p>
+          <div class="field dom-type">
+            <label for="domOwn">Or type the one you want</label>
+            <div class="dom-own">
+              <input id="domOwn" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="yourbusiness.co.uk">
+              <button class="btn btn-ghost" id="domCheck" type="button">Check</button>
+            </div>
+            <p class="hint" id="domOwnNote">Included free with your website.</p>
+          </div>
+        </div>
+
         <p class="note" id="note1" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next <span class="join-arrow" aria-hidden="true">&rarr;</span></button>
         <p class="wiz-foot">Already with us? <a href="/login.html">Log in</a></p>
       </section>
 
-      <!-- ============ 2. the address ============ -->
-      <section class="wiz-step" data-step="2" aria-label="Your web address" hidden>
-        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say" id="say2">Thanks! Now pick a web address. Our team sets it up for you.</p></div>
-        <h1 tabindex="-1">Pick your web address.</h1>
-        <p class="wiz-sub">Three that are free right now. Included in your plan.</p>
-        <div class="pick" id="domList" aria-live="polite" aria-busy="true">
-          <div class="pick-row is-waiting"><span class="dom-bar"></span><span class="dom-searching">Searching&hellip;</span></div>
-          <div class="pick-row is-waiting"><span class="dom-bar"></span></div>
-          <div class="pick-row is-waiting"><span class="dom-bar"></span></div>
-        </div>
-        <p class="dom-state" id="domState" hidden></p>
-        <details class="dom-have" id="domMore">
-          <summary>Want a different one?</summary>
-          <div class="field">
-            <label for="domOwn">Type the address you want</label>
-            <div class="dom-own">
-              <input id="domOwn" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="yourbusiness.co.uk">
-              <button class="btn btn-ghost" id="domCheck" type="button">Check</button>
-            </div>
-            <p class="hint" id="domOwnNote">&nbsp;</p>
+      <!-- ============ 2. what the site can do ============ -->
+      <section class="wiz-step" data-step="2" aria-label="Features" hidden>
+        <div class="join-dot is-solo" aria-hidden="true"><span class="dot-face join-face"><span class="dot-eyes"><i></i><i></i></span></span></div>
+        <h1 tabindex="-1">Select what your site can do</h1>
+        <p class="wiz-sub">All free and included in your monthly price. Pick as many as you like.</p>
+        <div class="feat-grid" id="featGrid" role="group" aria-label="Features"></div>
+
+        <div class="biz-card" id="bizCard">
+          <div class="biz-head">
+            <span class="biz-name">Business</span>
+            <span class="biz-price"><b>&pound;49</b>/month <small>first month &pound;24.50</small></span>
           </div>
-        </details>
+          <p class="biz-sub">Everything above, plus the features that take the work off your phone:</p>
+          <ul class="biz-list" id="bizList"></ul>
+          <button class="btn btn-ghost full biz-btn" id="bizBtn" type="button" aria-pressed="false">Upgrade to Business</button>
+          <button class="linkish biz-undo" id="bizUndo" type="button" hidden>Keep Starter instead</button>
+        </div>
+
         <p class="note" id="note2" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next <span class="join-arrow" aria-hidden="true">&rarr;</span></button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
 
-      <!-- ============ 3. where they are online: optional ============ -->
+      <!-- ============ 3. what they already have: optional ============ -->
       <section class="wiz-step" data-step="3" aria-label="Your page" hidden>
-        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">Optional, but it helps! Show our designers your photos, words and prices.</p></div>
-        <h1 tabindex="-1">Where are you online now?</h1>
-        <p class="wiz-sub">Our team builds your site from what you already have. Share a link, a few screenshots, or both.</p>
+        <div class="join-dot is-solo" aria-hidden="true"><span class="dot-face join-face"><span class="dot-eyes"><i></i><i></i></span></span></div>
+        <h1 tabindex="-1">Send us what you already have</h1>
+        <p class="wiz-sub">Optional, but it helps. Our team builds your site from your logo, photos and pages: screenshots are fine.</p>
 
-        <div class="field"><label for="j_link">Link to your Instagram, Facebook, booking page or current site</label>
-          <input id="j_link" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="400" placeholder="instagram.com/yourbusiness">
-        </div>
+        <div class="field"><label for="j_social">Instagram, Facebook or TikTok</label>
+          <input id="j_social" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="300" placeholder="instagram.com/yourbusiness"></div>
+        <div class="field"><label for="j_link">Booking page or current website</label>
+          <input id="j_link" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="300" placeholder="yourbusiness.setmore.com"></div>
 
         <div class="field">
-          <span class="field-label" id="shotsLabel">Screenshots of your socials or booking page</span>
-          <label class="shot-add" for="j_shots">
+          <span class="field-label" id="upLabel">Your logo, photos and screenshots</span>
+          <label class="up-drop" for="j_files">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10.5" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg>
-            <span><b>Add screenshots</b><small>Up to 3, from your camera roll</small></span>
+            <span><b>Add photos</b><small id="upCount">Up to 20, from your camera roll</small></span>
           </label>
-          <input id="j_shots" class="sr-only" type="file" accept="image/*" multiple aria-labelledby="shotsLabel">
-          <div class="shot-grid" id="shotGrid"></div>
+          <input id="j_files" class="sr-only" type="file" accept="image/*" multiple aria-labelledby="upLabel">
+          <div class="shot-grid" id="upGrid"></div>
         </div>
 
         <p class="note" id="note3" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button" id="next3">Next <span class="join-arrow" aria-hidden="true">&rarr;</span></button>
-        <button class="linkish wiz-skip" data-next type="button" id="skip3">Skip for now, I&rsquo;ll send it later</button>
+        <button class="linkish wiz-skip" data-next type="button">Skip for now, I&rsquo;ll send it later</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
 
-      <!-- ============ 4. pay ============ -->
-      <section class="wiz-step" data-step="4" aria-label="Payment" hidden>
-        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">Last step! Once you pay, I pass everything to our team and they start on your site.</p></div>
-        <h1 tabindex="-1">How would you like to pay?</h1>
-        <p class="wiz-sub">Same website either way. Yearly saves you money.</p>
+      <!-- ============ 4. the login, then pay ============ -->
+      <section class="wiz-step" data-step="4" aria-label="Go live" hidden>
+        <div class="join-dot is-solo" aria-hidden="true"><span class="dot-face join-face"><span class="dot-eyes"><i></i><i></i></span></span></div>
+        <h1 tabindex="-1">Where should we send your login?</h1>
+        <p class="wiz-sub">Your email is your login, for free unlimited edits to your site once it&rsquo;s live.</p>
+        <div class="field"><label class="sr-only" for="j_email">Email</label>
+          <input id="j_email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com"></div>
 
-        <div class="pick" id="billPick">
-          <label class="pick-row is-on">
-            <input type="radio" name="billing" value="monthly" checked>
-            <span class="pick-main">
-              <span class="pick-head"><b>Monthly</b><em>&pound;9.99<span>/month</span></em></span>
-              <span class="pick-note">&pound;119.88 a year. Cancel any month.</span>
-            </span>
-          </label>
-          <label class="pick-row">
-            <input type="radio" name="billing" value="annual">
-            <span class="pick-main">
-              <span class="pick-head"><b>Yearly <span class="bill-save">Save &pound;20.88 a year</span></b><em>&pound;99<span>/year</span></em></span>
-              <span class="pick-note">Works out at &pound;8.25 a month. One payment, two months free.</span>
-            </span>
-          </label>
+        <div id="payBox" hidden>
+          <p class="join-sum" id="joinSum"></p>
+          <div class="pick" id="billPick"></div>
+          <p class="note" id="note4pay" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary full" id="payBtn" type="submit">Pay &pound;9.99 and go live</button>
+          <ul class="assure">
+            <li>Payments secured by Stripe</li>
+            <li>Cancel any time</li>
+          </ul>
+          <p class="wiz-foot legal-consent">By paying you agree to our
+            <a href="/terms.html">terms of service</a> and <a href="/privacy.html">privacy notice</a>.</p>
         </div>
-
-        <ul class="ticks join-ticks">
-          <li>Designed and built by our team, live within 24 hours</li>
-          <li>Your web address included</li>
-          <li>Unlimited changes to your words and photos</li>
-          <li>No setup fee</li>
-        </ul>
-
-        <p class="note" id="note4pay" role="status" aria-live="polite"></p>
-        <button class="btn btn-primary full" id="payBtn" type="submit">Pay &pound;9.99 and go live</button>
-        <ul class="assure">
-          <li>Payments secured by Stripe</li>
-          <li>Cancel any time</li>
-        </ul>
-        <p class="wiz-foot legal-consent">By paying you agree to our
-          <a href="/terms.html">terms of service</a> and <a href="/privacy.html">privacy notice</a>.</p>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
 
       <!-- ============ after Stripe: make the account ============ -->
       <section class="wiz-step" data-step="5" aria-label="Make your account" hidden>
-        <div class="join-dot"><span class="dot-face join-face" aria-hidden="true"><span class="dot-eyes"><i></i><i></i></span></span><p class="join-say">All done! I&rsquo;ve passed everything to our team. They&rsquo;re on it.</p></div>
+        <div class="join-dot is-solo" aria-hidden="true"><span class="dot-face join-face"><span class="dot-eyes"><i></i><i></i></span></span></div>
         <h1 id="doneHead" tabindex="-1">You&rsquo;re in.</h1>
         <p class="wiz-sub" id="doneSub">Our team is building your site. It goes live within 24 hours. We&rsquo;ll email you the moment it is.</p>
 
@@ -171,7 +152,7 @@
           <div class="field"><label for="j_password">Choose a password</label>
             <input id="j_password" type="password" autocomplete="new-password" minlength="8" maxlength="72">
             <p class="hint">At least 8 characters.</p></div>
-          <p class="note" id="note4" role="status" aria-live="polite"></p>
+          <p class="note" id="note5" role="status" aria-live="polite"></p>
           <button class="btn btn-primary full" id="acctBtn" type="button">Make my account</button>
         </div>
 
@@ -198,7 +179,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="join.js?v=11"></script>
+<script src="join.js?v=12"></script>
 <script src="chat.js?v=10" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

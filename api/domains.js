@@ -18,6 +18,27 @@ const RDAP_HOSTS = {
 const RDAP_DEFAULT = 'https://rdap.org/domain/';
 
 const LOOKUP_BUDGET = 8;      // outbound lookups per request, hard cap
+
+/* A web address someone types is included only if it costs us under about
+   £15 a year to register and renew at Porkbun, where we buy them. Porkbun
+   publishes its prices (USD, no key needed); kept for half a day. If the
+   list cannot be had, nothing is refused on price: we check by hand. */
+const PRICE_CAP_USD = 19;
+let porkbun = { at: 0, pricing: null };
+async function tldPrice(tld) {
+  if (!porkbun.pricing || Date.now() - porkbun.at > 12 * 3600 * 1000) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+    try {
+      const r = await fetch('https://api.porkbun.com/api/json/v3/pricing/get', { method: 'POST', body: '{}', headers: { 'Content-Type': 'application/json' }, signal: ctrl.signal });
+      const d = await r.json();
+      if (d && d.status === 'SUCCESS' && d.pricing) porkbun = { at: Date.now(), pricing: d.pricing };
+    } catch (e) { /* unreachable: no price check this time */ } finally { clearTimeout(timer); }
+  }
+  const p = porkbun.pricing && porkbun.pricing[tld];
+  if (!p) return null;
+  return Math.max(Number(p.registration) || 0, Number(p.renewal) || 0);
+}
 const TIMEOUT_MS = 4000;
 
 /* "Copper & Crumb" -> "copperandcrumb". Registrable labels are a-z, 0-9 and
@@ -111,6 +132,14 @@ module.exports = async function handler(req, res) {
       const domain = String(body.domain || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
       if (!isValidDomain(domain)) {
         return res.status(400).json({ error: 'That does not look like a web address.' });
+      }
+      // .co.uk, .com and .uk are always in; anything else under the cap.
+      const tld = domain.split('.').slice(TLDS.some((t) => domain.endsWith('.' + t) && t.includes('.')) ? -2 : -1).join('.');
+      if (!TLDS.includes(tld)) {
+        const usd = await tldPrice(tld);
+        if (usd !== null && usd > PRICE_CAP_USD) {
+          return res.status(200).json({ domain, state: 'pricey', message: '.' + tld + ' addresses are not included. Try .co.uk, .com or .uk.' });
+        }
       }
       return res.status(200).json({ domain, state: await lookup(domain) });
     }

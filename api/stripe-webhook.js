@@ -715,7 +715,7 @@ module.exports = async function handler(req, res) {
   async function announceNewCustomer(id, patch) {
     const { data: p } = await admin
       .from('profiles')
-      .select('business_name, contact_name, phone, business_type, requested_domain, domain_owned, site_goals, existing_links')
+      .select('business_name, contact_name, phone, business_type, requested_domain, domain_owned, site_goals, site_uses, existing_links')
       .eq('id', id)
       .maybeSingle();
 
@@ -747,6 +747,7 @@ module.exports = async function handler(req, res) {
       `Trade:     ${(p && p.business_type) || '-'}`,
       `Address:   ${domainLine}`,
       `Online:    ${(p && p.existing_links) || '-'}`,
+      `Wants:     ${(p && p.site_uses && p.site_uses.length) ? p.site_uses.join(', ') : '-'}`,
       '',
       'What they want the site to do:',
       (p && p.site_goals) || '-',
