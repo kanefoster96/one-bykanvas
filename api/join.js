@@ -166,6 +166,7 @@ module.exports = async function handler(req, res) {
       ? body.features.map(String).filter((k, i, a) => FEATURES[k] && a.indexOf(k) === i).map((k) => FEATURES[k])
       : [];
     const files = Array.isArray(body.files) ? body.files.map(String) : [];
+    const owned = body.owned === true;   // they already have it: we connect it, not buy it
 
     if (business.length < 2) return res.status(400).json({ error: 'Add your business name.', field: 'business' });
     if (!EMAIL.test(email)) return res.status(400).json({ error: 'That email does not look right.', field: 'email' });
@@ -177,7 +178,7 @@ module.exports = async function handler(req, res) {
     /* Free a minute ago is not free now. Taken is a clear no; a registry
        that does not answer is not a reason to lose the sale - we register
        it by hand and sort it with them if it has gone. */
-    if (await lookup(domain) === 'taken') {
+    if (!owned && await lookup(domain) === 'taken') {
       return res.status(409).json({ error: domain + ' has just been taken. Pick another.', field: 'domain', code: 'domain_taken' });
     }
 
@@ -220,7 +221,7 @@ module.exports = async function handler(req, res) {
       id: user.id,
       business_name: business,
       requested_domain: domain,
-      domain_owned: false,
+      domain_owned: owned,
       existing_links: online || null,
       site_uses: features.length ? features : null,
       selected_plan: plan,

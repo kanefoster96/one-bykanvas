@@ -221,7 +221,7 @@
     b.textContent = domain;
     var em = document.createElement('em');
     em.className = 'dom-free';
-    em.textContent = 'Free';
+    em.textContent = answers.owned === domain ? 'Yours' : 'Free';
     head.appendChild(b);
     head.appendChild(em);
     main.appendChild(head);
@@ -325,22 +325,42 @@
     })
       .then(function (r) { return r.json(); })
       .then(function (res) {
-        if (res.state === 'taken') { note.textContent = d + ' is taken. Try another.'; return; }
+        if (res.state === 'taken') {
+          /* Taken might mean taken by them: plenty of people already own
+             their name. Let them say so and we connect it instead. */
+          note.textContent = d + ' is already registered. If it’s yours, we’ll connect it to your new site. ';
+          var mine = document.createElement('button');
+          mine.type = 'button';
+          mine.className = 'linkish dom-mine';
+          mine.textContent = 'It’s mine, use it';
+          mine.addEventListener('click', function () {
+            answers.owned = d;
+            useTyped(d);
+            note.textContent = 'Great, we’ll connect ' + d + ' to your new site. No extra cost.';
+          });
+          note.appendChild(mine);
+          return;
+        }
         if (res.state === 'pricey') { note.textContent = res.message || 'That ending is not included. Try .co.uk, .com or .uk.'; return; }
         note.textContent = res.state === 'free'
           ? d + ' is free. It’s yours, included with your website.'
           : 'We could not confirm ' + d + ' just now. We will check it by hand before we register it.';
-        var list = Array.prototype.map.call($('domList').querySelectorAll('input[name="domain"]'), function (i) { return i.value; });
-        answers.domain = d;
-        answers.ownDomain = true;
-        paintDomains([d].concat(list.filter(function (x) { return x !== d; })).slice(0, 3));
-        $('domState').hidden = true;
-        say($('note1'), '');
+        answers.owned = '';
+        useTyped(d);
       })
       .catch(function () { note.textContent = 'We could not check just now. Try again in a moment.'; })
       .then(function () { $('domCheck').disabled = false; });
   }
   $('domCheck').addEventListener('click', checkTyped);
+
+  function useTyped(d) {
+    var list = Array.prototype.map.call($('domList').querySelectorAll('input[name="domain"]'), function (i) { return i.value; });
+    answers.domain = d;
+    answers.ownDomain = true;
+    paintDomains([d].concat(list.filter(function (x) { return x !== d; })).slice(0, 3));
+    $('domState').hidden = true;
+    say($('note1'), '');
+  }
 
   /* ---------------------------------------------------------- 2. features */
   var TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -574,6 +594,7 @@
       body: JSON.stringify({
         action: 'start',
         business: answers.business, email: email, domain: answers.domain,
+        owned: Boolean(answers.owned) && answers.owned === answers.domain,
         plan: plan(), features: answers.features,
         social: answers.social || '', link: answers.link || '',
         files: answers.files.map(function (f) { return f.path; }),
