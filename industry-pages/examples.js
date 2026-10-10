@@ -16,7 +16,7 @@ const fs = require('fs');
 const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
-const EX_CSS_V = 9;
+const EX_CSS_V = 10;
 const EX_JS_V = 8;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
@@ -283,14 +283,11 @@ const PH = {
    where on their own site, on the parts that sell (the hero, the services,
    "sound familiar?", the reviews). Not every section; just enough to read
    the page as a preview of theirs. */
-/* Trades that sell to people, whose "sound familiar?" reads as things
-   customers say rather than jobs gone wrong. */
-const PEOPLE = ['hair', 'lash', 'mua', 'nails', 'cake', 'kids'];
 const dotFace = '<span class="k1-dot" aria-hidden="true"><span><i></i><i></i></span></span>';
 const note = (text, cls) => (text ? `<p class="k1-guide${cls ? ' ' + cls : ''}">${dotFace}<span>${text}</span></p>` : '');
 const NOTE = {
   services: 'Your services and prices, each with a button to book.',
-  pains: 'Build trust: describe their problem better than they could themselves.',
+  pains: 'Build trust: show you understand how your customers feel, before you show what you do.',
   reviews: 'Your real Google reviews show here.'
 };
 const head = (h, p, n, cls) => `<div class="x-head${cls ? ' ' + cls : ''}"><h2>${h}</h2>${p ? `<p>${p}</p>` : ''}${note(n)}</div>`;
@@ -669,7 +666,7 @@ function pains(e) {
   return `<section class="x-sec x-pains-sec" data-k1-seen="the problems">
   <div class="x-wrap">
     ${head(s.h, '', NOTE.pains)}
-    <ul class="x-pains${PEOPLE.includes(e.key) ? ' is-bubbles' : ''}">${s.items.map((t) => `<li><span class="x-pain-ico">${CROSS}</span><span>${t}</span></li>`).join('')}</ul>
+    <ul class="x-pains">${s.items.map((t) => `<li>${t}</li>`).join('')}</ul>
   </div>
 </section>`;
 }
