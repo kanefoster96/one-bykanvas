@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Free Check: Could Max Help Your Business? | Kanvas One</title>
+<meta name="description" content="Step two of the free check. Tell us about your business to see if Max can help, and how we would run it for you.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
+<link rel="stylesheet" href="styles.css?v=139">
+<link rel="stylesheet" href="home.css?v=32">
+</head>
+<body class="home page-check">
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one<span class="wm-dot">.</span></a>
+    <button class="nav-chat" id="navChat" type="button" aria-label="Chat with us" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+<div class="menu" id="menu" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+
+<!-- Step two of the free check. The numbers arrive in the address from the
+     homepage sliders (?members=&capacity=&fee=) and are shown, not typed
+     again. Their details go to api/plan.js; the result opens on /your-plan. -->
+<main id="main" class="mh-page">
+  <div class="wrap mh-page-wrap">
+    <p class="mh-kicker">Free check &middot; step 2 of 2</p>
+    <h1 class="mh-page-h">Let&rsquo;s see if Max can help <span class="dim">your business.</span></h1>
+
+    <div class="mh-numbers" id="numbers">
+      <div class="mh-numbers-row">
+        <div><b id="nMembers">40</b><span>members now</span></div>
+        <div><b id="nCapacity">60</b><span>you could take</span></div>
+        <div><b id="nFee">&pound;50</b><span>a month each</span></div>
+      </div>
+      <p class="mh-numbers-line" id="nLine">That leaves <b>20 spaces</b> empty, costing you <b>&pound;12,000</b> every single year.</p>
+      <a class="mh-numbers-edit" id="nEdit" href="/#plan">&lsaquo; Change my numbers</a>
+    </div>
+
+    <form class="mh-calc mh-plan-form" id="checkForm" novalidate>
+      <p class="mh-plan-step">Enter your details to see if Max can help your business.</p>
+      <div class="mh-field"><label for="gBusiness">Business name</label><input id="gBusiness" type="text" autocomplete="organization" maxlength="120" required></div>
+      <div class="mh-field"><label for="gType">What do you run?</label>
+        <select id="gType"><option value="kids">Kids&rsquo; club</option><option value="dance">Dance or cheer school</option><option value="gymnastics">Gymnastics</option><option value="martial">Martial arts</option><option value="swim">Swim school</option><option value="sport">Football or sport</option><option value="gym">Gym or personal training</option><option value="yoga">Yoga or Pilates</option><option value="music">Music or tutoring</option><option value="other">Something else</option></select></div>
+      <div class="mh-field"><label for="gName">Your name</label><input id="gName" type="text" autocomplete="name" maxlength="120" required></div>
+      <div class="mh-field"><label for="gEmail">Email</label><input id="gEmail" type="email" autocomplete="email" maxlength="254" required></div>
+      <div class="mh-field"><label for="gPhone">Phone <span style="font-weight:400">(optional)</span></label><input id="gPhone" type="tel" autocomplete="tel" maxlength="30"></div>
+      <div class="mh-field"><label for="gTown">Town <span style="font-weight:400">(optional)</span></label><input id="gTown" type="text" autocomplete="address-level2" maxlength="80"></div>
+      <div class="mh-hp" aria-hidden="true"><label for="gWebsite">Leave this empty</label><input id="gWebsite" type="text" tabindex="-1" autocomplete="off"></div>
+      <p class="note wide" id="gNote" role="status" aria-live="polite"></p>
+      <button class="btn btn-primary wide" type="submit" id="gSend">Check my business</button>
+      <p class="mh-plan-small wide">Free, no card, no obligation. We&rsquo;ll email you a copy of your result.</p>
+    </form>
+  </div>
+</main>
+
+<footer class="mh-page-foot">
+  <div class="wrap">
+    <p>&copy; <span id="year">2026</span> Kanvas One &middot; <a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a></p>
+  </div>
+</footer>
+
+<script src="consent.js?v=9"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="session.js?v=3"></script>
+<script src="script.js?v=37"></script>
+<script src="chat.js?v=10" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
+<script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
+<script src="growth-model.js?v=2"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var G = window.GrowthModel, money = G.money;
+  var q = new URLSearchParams(location.search);
+  // No numbers? Back to the sliders: this page is step two, not a front door.
+  if (!q.get('members') || !q.get('capacity') || !q.get('fee')) { location.replace('/#plan'); return; }
+  var n = { members: q.get('members'), capacity: q.get('capacity'), fee: q.get('fee') };
+  var p = G.plan(n);
+
+  $('nMembers').textContent = p.members;
+  $('nCapacity').textContent = p.capacity;
+  $('nFee').textContent = money(p.fee);
+  $('nLine').innerHTML = p.spaces > 0
+    ? 'That leaves <b>' + p.spaces + ' space' + (p.spaces === 1 ? '' : 's') + '</b> empty, costing you <b>' + money(p.gapYear) + '</b> every single year.'
+    : 'Every space is full: <b>' + money(p.total) + '</b> coming in every month.';
+  $('nEdit').href = '/?' + G.query(p) + '#plan';
+
+  var shownAt = Date.now();
+  var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  $('checkForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var note = $('gNote'), btn = $('gSend');
+    var v = function (id) { return $(id).value.trim(); };
+    var bad = function (msg, id) { note.className = 'note wide bad'; note.textContent = msg; $(id).focus(); };
+    note.className = 'note wide'; note.textContent = '';
+    if (v('gBusiness').length < 2) return bad('Add your business name.', 'gBusiness');
+    if (v('gName').length < 2) return bad('Add your name.', 'gName');
+    if (!EMAIL.test(v('gEmail'))) return bad('That email doesn’t look right.', 'gEmail');
+    btn.disabled = true; btn.textContent = 'Checking…';
+    fetch('/api/plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        members: p.members, capacity: p.capacity, fee: p.fee,
+        business: v('gBusiness'), type: $('gType').value, name: v('gName'), email: v('gEmail'),
+        phone: v('gPhone'), town: v('gTown'), website: v('gWebsite'),
+        elapsed: Date.now() - shownAt,
+        campaign: (window.oneFrom && window.oneFrom()) || ''
+      })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok) throw new Error((res.d && res.d.error) || 'failed');
+        // The result is a page of its own: numbers, business and what they run
+        // in the address (never their name or email), the lead id for the
+        // Meta event to match the server's.
+        location.href = '/your-plan?' + G.query(p)
+          + '&business=' + encodeURIComponent(v('gBusiness'))
+          + '&type=' + encodeURIComponent($('gType').value)
+          + '&id=' + encodeURIComponent(res.d.id || '');
+      })
+      .catch(function (err) {
+        note.className = 'note wide bad';
+        note.textContent = (err && err.message && err.message !== 'failed') ? err.message : 'That didn’t send. Try again, or email hello@kanvas.one.';
+        btn.disabled = false; btn.textContent = 'Check my business';
+      });
+  });
+})();
+</script>
+</body>
+</html>

@@ -38,9 +38,13 @@
   function plan(input) {
     var i = input || {};
     var members = whole(i.members, 0, 5000);
-    var spaces = whole(i.spaces, 0, 5000);
     var fee = whole(i.fee, 1, 5000);
-    var capacity = members + spaces;
+    /* They tell us how many they can take in total; the empty places are
+       the difference. (An older caller may still send spaces directly.) */
+    var capacity = i.capacity != null && i.capacity !== ''
+      ? Math.max(members, whole(i.capacity, 0, 10000))
+      : members + whole(i.spaces, 0, 5000);
+    var spaces = capacity - members;
     var empty = capacity ? spaces / capacity : 0;
     var perMonth = Math.max(1, Math.floor(AVG.adBudget / AVG.memberCost));
     var months = spaces ? Math.ceil(spaces / perMonth) : 0;
@@ -65,6 +69,11 @@
     };
   }
 
+  /* The numbers as a query string, for the next page and back again. */
+  function query(n) {
+    return 'members=' + whole(n.members, 0, 5000) + '&capacity=' + whole(n.capacity, 0, 10000) + '&fee=' + whole(n.fee, 1, 5000);
+  }
+
   /* What they run, as get-started.html's Max models know it. */
   function maxModel(type) {
     return ['gym', 'yoga', 'music', 'other'].indexOf(type) === -1 ? 'clubs' : 'other';
@@ -74,5 +83,5 @@
     return '£' + Math.round(n).toLocaleString('en-GB');
   }
 
-  return { plan: plan, maxModel: maxModel, money: money, AVG: AVG, PRICE: PRICE };
+  return { plan: plan, query: query, maxModel: maxModel, money: money, AVG: AVG, PRICE: PRICE };
 });
