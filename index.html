@@ -25,7 +25,7 @@
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
 <link rel="stylesheet" href="styles.css?v=139">
-<link rel="stylesheet" href="home.css?v=32">
+<link rel="stylesheet" href="home.css?v=33">
 </head>
 <body class="home">
 
@@ -410,15 +410,15 @@
     <p class="lede reveal mh-plan-lede">Max isn&rsquo;t for everyone. Enter your numbers, then your details, to see if it&rsquo;s right for you. If it is, we&rsquo;ll show you exactly how we&rsquo;d run it. Free, no card.</p>
     <div class="mh-calc reveal" id="gpCard">
       <div class="mh-slide">
-        <div class="mh-slide-top"><label for="gMembers">Members you have now</label><output id="gMembersOut" for="gMembers">40</output></div>
+        <div class="mh-slide-top"><label for="gMembers">Members you have now</label><span class="mh-num"><input id="gMembersN" type="number" inputmode="numeric" min="0" max="5000" step="1" value="40" aria-label="Members you have now, typed"></span></div>
         <input id="gMembers" class="mh-range" type="range" min="0" max="500" step="1" value="40">
       </div>
       <div class="mh-slide">
-        <div class="mh-slide-top"><label for="gCapacity">Members you could take in total</label><output id="gCapacityOut" for="gCapacity">60</output></div>
+        <div class="mh-slide-top"><label for="gCapacity">Members you could take in total</label><span class="mh-num"><input id="gCapacityN" type="number" inputmode="numeric" min="0" max="10000" step="1" value="60" aria-label="Members you could take in total, typed"></span></div>
         <input id="gCapacity" class="mh-range" type="range" min="0" max="600" step="1" value="60">
       </div>
       <div class="mh-slide">
-        <div class="mh-slide-top"><label for="gFee">What a member pays a month</label><output id="gFeeOut" for="gFee">&pound;50</output></div>
+        <div class="mh-slide-top"><label for="gFee">What a member pays a month</label><span class="mh-num"><span class="mh-num-pre" aria-hidden="true">&pound;</span><input id="gFeeN" type="number" inputmode="numeric" min="1" max="5000" step="1" value="50" aria-label="What a member pays a month in pounds, typed"></span></div>
         <input id="gFee" class="mh-range" type="range" min="10" max="500" step="5" value="50">
       </div>
       <div class="mh-calc-out" aria-live="polite">
@@ -558,32 +558,46 @@
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   // ---- The free check, step one ------------------------------------
-  // Sliders only. The button carries the numbers to /check in the address,
-  // and a return from /check (?members=..) puts them back on the sliders.
+  // The button carries the numbers to /check in the address.
   var G = window.GrowthModel;
   var money = G.money;
   function fill(el) {
     el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%');
   }
+  // Each number can be dragged on its slider or tapped and typed: the typed
+  // box is the value, the slider follows it (and pins at its end for big
+  // numbers). A return from /check (?members=..) fills them back in.
+  var PAIRS = [['gMembers', 'gMembersN'], ['gCapacity', 'gCapacityN'], ['gFee', 'gFeeN']];
   try {
     var back = new URLSearchParams(location.search);
-    ['members', 'capacity', 'fee'].forEach(function (k) {
-      var v = back.get(k), el = $({ members: 'gMembers', capacity: 'gCapacity', fee: 'gFee' }[k]);
-      if (v !== null && v !== '' && isFinite(+v)) el.value = v;
+    [['members', 'gMembersN'], ['capacity', 'gCapacityN'], ['fee', 'gFeeN']].forEach(function (k) {
+      var v = back.get(k[0]);
+      if (v !== null && v !== '' && isFinite(+v)) $(k[1]).value = Math.round(+v);
     });
   } catch (e) {}
-  function numbers() {
-    return { members: +$('gMembers').value, capacity: +$('gCapacity').value, fee: +$('gFee').value };
+  function num(id) {
+    var el = $(id), v = Math.round(+el.value);
+    if (!isFinite(v) || el.value === '') v = 0;
+    return Math.max(+el.min, Math.min(+el.max, v));
   }
-  function calc(moved) {
-    // Total can't be under what they have now: whichever moved wins.
-    var m = $('gMembers'), c = $('gCapacity');
-    if (+c.value < +m.value) { if (moved === c) m.value = c.value; else c.value = m.value; }
+  function numbers() {
+    return { members: num('gMembersN'), capacity: num('gCapacityN'), fee: Math.max(1, num('gFeeN')) };
+  }
+  function sync() {
+    PAIRS.forEach(function (pr) {
+      var box = $(pr[1]);
+      $(pr[0]).value = num(pr[1]); fill($(pr[0]));
+      box.style.width = (Math.max(2, String(box.value).length) + 0.4) + 'ch';
+    });
+  }
+  // Total can't be under what they have now: whichever was changed wins.
+  function settle(changed) {
+    var m = num('gMembersN'), c = num('gCapacityN');
+    if (c < m) { if (changed === 'gCapacityN') $('gMembersN').value = c; else $('gCapacityN').value = m; }
+  }
+  function calc() {
     var n = numbers(), p = G.plan(n);
-    $('gMembersOut').textContent = n.members;
-    $('gCapacityOut').textContent = n.capacity;
-    $('gFeeOut').textContent = money(n.fee);
-    fill(m); fill(c); fill($('gFee'));
+    sync();
     var lose = p.spaces > 0;
     $('gLeft').innerHTML = lose
       ? 'That leaves <b>' + p.spaces + ' space' + (p.spaces === 1 ? '' : 's') + '</b> empty.'
@@ -594,11 +608,17 @@
     $('gFix').textContent = lose
       ? '\u00a3249 a month could fix that. Just ' + p.cover + ' new member' + (p.cover === 1 ? ' covers' : 's cover') + ' it.'
       : 'Max can still run it all for you, for the fees of ' + p.cover + ' member' + (p.cover === 1 ? '' : 's') + '.';
-    $('gGo').href = '/check?' + G.query(n);
+    $('gGo').href = '/check?' + G.query({ members: n.members, capacity: Math.max(n.members, n.capacity), fee: n.fee });
   }
-  ['gMembers', 'gCapacity', 'gFee'].forEach(function (id) {
-    $(id).addEventListener('input', function () { calc($(id)); });
+  PAIRS.forEach(function (pr) {
+    var slider = $(pr[0]), box = $(pr[1]);
+    slider.addEventListener('input', function () { box.value = slider.value; settle(pr[1]); calc(); });
+    box.addEventListener('input', calc);
+    box.addEventListener('focus', function () { try { box.select(); } catch (e) {} });
+    box.addEventListener('change', function () { box.value = num(pr[1]); settle(pr[1]); calc(); });
+    box.addEventListener('keydown', function (e) { if (e.key === 'Enter') box.blur(); });
   });
+  settle();
   calc();
 
   // The demo request, as an enquiry on Kanvas One.
