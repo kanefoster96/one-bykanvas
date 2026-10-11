@@ -23,6 +23,7 @@ const { PREVIEW_OFFER } = require('./_plans.js');
 const { sendEmail } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { notifyAdmin } = require('./_notify.js');
+const { startHref } = require('./plan.js');
 
 const DAY = 24 * 60 * 60 * 1000;
 /* Send windows: due after the floor, skipped for good after the ceiling.
@@ -40,6 +41,12 @@ const WB_UNTIL = 60 * DAY;
    plan above theirs. Said once, and not at all if the month is long gone. */
 const PN_AFTER = 30 * DAY;
 const PN_UNTIL = 45 * DAY;
+/* The free growth plan (api/plan.js): two follow-ups after the plan itself,
+   anchored to when they asked. */
+const G1_AFTER = 2 * DAY;
+const G1_UNTIL = 6 * DAY;
+const G2_AFTER = 6 * DAY;
+const G2_UNTIL = 20 * DAY;
 
 /* Informative, not a pitch: what the next plan does and why a business
    might want it, in case any of it is useful. One email, ever. */
@@ -206,6 +213,133 @@ function lastOne(lead, site) {
   };
 }
 
+/* ---- free growth plan follow-ups ------------------------------------- */
+/* What they run, read back off the lead's summary line, only to pick the
+   right Max model for the start link. */
+function planType(about) {
+  return /Gym or personal|Yoga|Music|Something else/.test(String(about || '')) ? 'other' : 'kids';
+}
+
+/* Day 2. Max: what actually happened in our academy. Business: any questions. */
+function growthOne(lead, site) {
+  const biz = String(lead.business).replace(/[\r\n]+/g, ' ');
+  const type = planType(lead.about);
+  if (lead.plan_interest === 'max') {
+    const start = startHref(site, 'max', lead.business, type);
+    return {
+      to: lead.email,
+      subject: `What happened in our own club, ${biz}`,
+      html: emailHtml({
+        preheader: '£103 of ads, 21 trial bookings, 4 new members, in three weeks.',
+        heading: 'What happened in our own club',
+        lines: [
+          `When we put together the plan for <strong>${esc(lead.business)}</strong>, the numbers came from somewhere real: our own dance and cheer academy, running on this system since 2017.`,
+          'The first three weeks of ads, 21 September to 10 October:'
+        ],
+        details: [
+          { label: 'Spent on ads', value: '£103' },
+          { label: 'Trial bookings', value: '21' },
+          { label: 'New members', value: '4' },
+          { label: 'New fees', value: '£200 a month' }
+        ],
+        perks: [
+          '<strong>Nobody chased anyone.</strong> Trials booked themselves, reminders went out, and the follow-up with the link to join did the rest.',
+          '<strong>Those 4 members pay every month</strong>, so the £103 keeps paying back long after the ads stopped.',
+          '<strong>Your first 3 months of ads are on us</strong>, so the first trials cost you nothing.'
+        ],
+        ctaText: 'Start Max — £249 a month',
+        ctaHref: start,
+        ctaNote: 'Rather talk it through first? Reply and we&rsquo;ll find 10 minutes.',
+        footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. One more email follows, then we leave you be.',
+        footerLinks: standardFooter(site)
+      }),
+      text: `When we put together the plan for ${lead.business}, the numbers came from our own dance and cheer academy.\n\n`
+        + 'First three weeks of ads: £103 spent, 21 trial bookings, 4 new members, £200 a month in new fees.\n\n'
+        + 'Your first 3 months of ads are on us.\n\n'
+        + `Start Max: ${start}\n\nRather talk first? Just reply.\n`
+    };
+  }
+  const start = startHref(site, 'business', lead.business, type);
+  return {
+    to: lead.email,
+    subject: `Any questions about your plan, ${biz}?`,
+    html: emailHtml({
+      preheader: 'Business, £49 a month: your website, bookings and payments, run for you.',
+      heading: 'Any questions?',
+      lines: [
+        `A couple of days ago we suggested <strong>Business</strong> for <strong>${esc(lead.business)}</strong>, rather than Max.`,
+        'If anything wasn&rsquo;t clear, or you want to know how it would work for your classes, just reply. A real person answers, usually the same working day.',
+        '<strong>Business is &pound;49 a month</strong>, no setup fee: your website looked after for you, bookings and payments online, live chat, and changes made within 48 hours.'
+      ],
+      ctaText: 'Start with Business — £49 a month',
+      ctaHref: start,
+      footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. One more email follows, then we leave you be.',
+      footerLinks: standardFooter(site)
+    }),
+    text: `A couple of days ago we suggested Business for ${lead.business}, rather than Max.\n\n`
+      + 'If anything wasn’t clear, just reply. A real person answers.\n\n'
+      + `Business is £49 a month, no setup fee: ${start}\n`
+  };
+}
+
+/* Day 6, the last one. Max: the two questions everyone asks. Business: when
+   you're ready to grow, here's what Max adds. */
+function growthTwo(lead, site) {
+  const biz = String(lead.business).replace(/[\r\n]+/g, ' ');
+  const type = planType(lead.about);
+  if (lead.plan_interest === 'max') {
+    const start = startHref(site, 'max', lead.business, type);
+    return {
+      to: lead.email,
+      subject: `The two questions everyone asks, ${biz}`,
+      html: emailHtml({
+        preheader: 'What it really costs, and what happens if it doesn’t work.',
+        heading: 'The two questions everyone asks',
+        lines: [
+          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;249 a month for everything: website, member app, trial bookings, memberships, payments and the ads run for you. The first 3 months of ads are included. From month 4 you choose: fund your own ad budget, or we keep paying and each new member from the ads pays their first month to us.',
+          '<strong>&ldquo;What if it doesn&rsquo;t work?&rdquo;</strong> There&rsquo;s a 3-month minimum, unless we don&rsquo;t get you at least 10 trial bookings in that time. Then you can leave whenever you like.',
+          'And when your classes are full, we pause the ads. You just pay the &pound;249.',
+          'This is the last email about your plan. If now isn&rsquo;t the time, no hard feelings.'
+        ],
+        ctaText: 'Start Max — £249 a month',
+        ctaHref: start,
+        ctaNote: 'Or reply with anything you&rsquo;d like to ask.',
+        footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
+        footerLinks: standardFooter(site)
+      }),
+      text: '"What does it really cost?" £249 a month for everything, first 3 months of ads included. From month 4: fund your own ads, or we keep paying and each new member from the ads pays their first month to us.\n\n'
+        + '"What if it doesn’t work?" 3-month minimum, unless we don’t get you 10 trial bookings; then leave whenever you like.\n\n'
+        + 'When you’re full, we pause the ads.\n\n'
+        + `Start Max: ${start}\n\nThis is the last email about your plan.\n`
+    };
+  }
+  const start = startHref(site, 'business', lead.business, type);
+  const max = startHref(site, 'max', lead.business, type);
+  return {
+    to: lead.email,
+    subject: `When you're ready to grow, ${biz}`,
+    html: emailHtml({
+      preheader: 'Business now, Max when you open a new class. Last email from us.',
+      heading: 'When you\u2019re ready to grow',
+      lines: [
+        `Business is still what we&rsquo;d suggest for <strong>${esc(lead.business)}</strong> today. When you open a new class or want more members, Max adds:`
+      ],
+      perks: [
+        '<strong>Facebook and Instagram ads, run for you</strong>, shown to families nearby for the classes with spaces. First 3 months included.',
+        '<strong>Trial bookings, reminders and follow-ups</strong> that turn trials into members without you chasing.',
+        '<strong>A member app</strong> for bookings, passes, messages and payments.'
+      ],
+      ctaText: 'Start with Business — £49 a month',
+      ctaHref: start,
+      ctaNote: `Switch to Max from your account any month. <a href="${esc(max)}" style="color:inherit;">Or start on Max now.</a>`,
+      footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
+      footerLinks: standardFooter(site)
+    }),
+    text: `Business is still what we'd suggest for ${lead.business} today. When you open a new class, Max adds ads run for you, trial bookings and follow-ups, and a member app.\n\n`
+      + `Start with Business: ${start}\nOr Max: ${max}\n\nThis is the last email about your plan.\n`
+  };
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'POST') {
     res.setHeader('Allow', 'GET, POST');
@@ -284,6 +418,39 @@ module.exports = async function handler(req, res) {
         if (stamp === 'followup1_sent_at') sentF1++;
         else sentF2++;
       }
+    }
+
+    /* ---- free growth plans: day 2 and day 6, from when they asked ----- */
+    let sentG1 = 0, sentG2 = 0;
+    const { data: plans, error: gErr } = await db.from('leads')
+      .select('id, business, email, about, plan_interest, created_at, followup1_sent_at, followup2_sent_at')
+      .eq('source', 'growth-plan')
+      .is('followup2_sent_at', null)
+      .gte('created_at', new Date(now - G2_UNTIL).toISOString())
+      .order('created_at', { ascending: true })
+      .limit(200);
+    if (gErr) console.error('followups: growth-plan query failed:', gErr.message);
+
+    for (const lead of plans || []) {
+      if (!lead.email) continue;
+      if (registered.has(String(lead.email).toLowerCase())) continue;
+      const age = now - new Date(lead.created_at).getTime();
+      let message = null, stamp = null;
+      if (!lead.followup1_sent_at && age >= G1_AFTER && age <= G1_UNTIL) {
+        message = growthOne(lead, site); stamp = 'followup1_sent_at';
+      } else if (lead.followup1_sent_at && age >= G2_AFTER && age <= G2_UNTIL) {
+        message = growthTwo(lead, site); stamp = 'followup2_sent_at';
+      }
+      if (!message) continue;
+
+      const patch = {};
+      patch[stamp] = new Date().toISOString();
+      const { error: stampErr } = await db.from('leads').update(patch).eq('id', lead.id);
+      if (stampErr) { console.error('followups: growth stamp failed for %s:', lead.id, stampErr.message); continue; }
+
+      const outcome = await sendEmail(message);
+      console.log('followups: growth %s to %s -> %s', stamp, lead.email, outcome);
+      if (outcome === 'sent') { if (stamp === 'followup1_sent_at') sentG1++; else sentG2++; }
     }
 
     /* ---- win-back: cancelled customers, one nudge ever ---------------- */
@@ -375,9 +542,9 @@ module.exports = async function handler(req, res) {
       if (outcome === 'sent') sentPn++;
     }
 
-    if (sentF1 + sentF2 + sentWb + sentPn > 0) {
+    if (sentF1 + sentF2 + sentG1 + sentG2 + sentWb + sentPn > 0) {
       await notifyAdmin(db, 'Follow-ups sent',
-        `${sentF1} "what did you think", ${sentF2} final follow-ups, ${sentWb} win-backs and ${sentPn} month-in notes went out.`);
+        `${sentF1} "what did you think", ${sentF2} final follow-ups, ${sentG1 + sentG2} growth-plan follow-ups, ${sentWb} win-backs and ${sentPn} month-in notes went out.`);
     }
 
     /* ---- retention: what the privacy notice promises, kept true ------- */
@@ -389,7 +556,7 @@ module.exports = async function handler(req, res) {
     const chats = await db.from('conversations').delete().lt('last_message_at', new Date(now - 24 * 30 * DAY).toISOString());
     if (chats.error) console.error('followups: conversations sweep failed:', chats.error.message);
 
-    return res.status(200).json({ ok: true, followup1: sentF1, followup2: sentF2, winback: sentWb });
+    return res.status(200).json({ ok: true, followup1: sentF1, followup2: sentF2, growth1: sentG1, growth2: sentG2, winback: sentWb });
   } catch (err) {
     console.error('followups:', err && err.message);
     return res.status(500).json({ error: 'Something went wrong.' });
