@@ -155,7 +155,7 @@
     { label: 'See all plans',   href: '/plans.html' },
     { label: 'Max', children: [
       { label: 'Trades Max', href: '/max/trades' },
-      { label: 'Clubs Max',  href: '/max/clubs' },
+      { label: 'Kids\u2019 clubs', href: '/clubs' },
       { label: 'Salon Max',  href: '/max/salon' },
       { label: 'Other',      other: true }
     ] },
