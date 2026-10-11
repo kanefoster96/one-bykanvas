@@ -25,7 +25,7 @@
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
 <link rel="stylesheet" href="styles.css?v=139">
-<link rel="stylesheet" href="home.css?v=31">
+<link rel="stylesheet" href="home.css?v=32">
 </head>
 <body class="home">
 
@@ -398,54 +398,37 @@
   </div>
 </section>
 
-<!-- ============ FREE GROWTH PLAN ============
-     Three sliders straight under the hero, then a short form, then the plan:
-     Max for a business that can carry it, an honest "you don't need Max yet"
-     and Business for one that can't. The sums are growth-model.js, shared
-     with api/plan.js so the screen and the email agree. -->
+<!-- ============ FREE CHECK ============
+     Step one of the free check: their members, how many they can take in
+     total, and the fee. The button carries the numbers to /check (step two,
+     their details) and the result opens on /your-plan, so every step is a
+     page of its own in the analytics. The sums are growth-model.js. -->
 <section id="plan" class="section mh-spaces" data-tone="white">
   <div class="wrap center">
     <p class="mh-kicker reveal">Free check</p>
     <h2 class="reveal">Could Max help your business? <span class="dim dim-line">Let&rsquo;s find out.</span></h2>
-    <p class="lede reveal mh-plan-lede">Max isn&rsquo;t for everyone. Enter your numbers and your details to see if it&rsquo;s right for you. If it is, we&rsquo;ll show you exactly how we&rsquo;d run it. Free, no card.</p>
+    <p class="lede reveal mh-plan-lede">Max isn&rsquo;t for everyone. Enter your numbers, then your details, to see if it&rsquo;s right for you. If it is, we&rsquo;ll show you exactly how we&rsquo;d run it. Free, no card.</p>
     <div class="mh-calc reveal" id="gpCard">
-      <div id="gpOne">
-        <div class="mh-slide">
-          <div class="mh-slide-top"><label for="gMembers">Members you have now</label><output id="gMembersOut" for="gMembers">40</output></div>
-          <input id="gMembers" class="mh-range" type="range" min="0" max="500" step="1" value="40">
-        </div>
-        <div class="mh-slide">
-          <div class="mh-slide-top"><label for="gSpaces">Spaces you could still fill</label><output id="gSpacesOut" for="gSpaces">20</output></div>
-          <input id="gSpaces" class="mh-range" type="range" min="0" max="300" step="1" value="20">
-        </div>
-        <div class="mh-slide">
-          <div class="mh-slide-top"><label for="gFee">What a member pays a month</label><output id="gFeeOut" for="gFee">&pound;50</output></div>
-          <input id="gFee" class="mh-range" type="range" min="10" max="500" step="5" value="50">
-        </div>
-        <div class="mh-calc-out" aria-live="polite">
-          <p class="mh-calc-pre" id="gPre">Your empty spaces are costing you</p>
-          <p class="mh-calc-big" id="gLoss">&pound;12,000</p>
-          <p class="mh-calc-sub" id="gLossSub">every single year.</p>
-          <p class="mh-calc-cover" id="gFix">&pound;249 a month could fix that. Just 5 new members cover it.</p>
-          <p class="mh-calc-full" id="gFull">&pound;3,000 a month with every space filled</p>
-        </div>
-        <button class="btn btn-primary mh-plan-go" type="button" id="gGo">See if Max can help my business <span aria-hidden="true">&rsaquo;</span></button>
+      <div class="mh-slide">
+        <div class="mh-slide-top"><label for="gMembers">Members you have now</label><output id="gMembersOut" for="gMembers">40</output></div>
+        <input id="gMembers" class="mh-range" type="range" min="0" max="500" step="1" value="40">
       </div>
-
-      <form id="gpTwo" class="mh-plan-form" novalidate hidden>
-        <p class="mh-plan-step">Enter your details to see if Max can help your business.</p>
-        <div class="mh-field"><label for="gBusiness">Business name</label><input id="gBusiness" type="text" autocomplete="organization" maxlength="120" required></div>
-        <div class="mh-field"><label for="gType">What do you run?</label>
-          <select id="gType"><option value="kids">Kids&rsquo; club</option><option value="dance">Dance or cheer school</option><option value="gymnastics">Gymnastics</option><option value="martial">Martial arts</option><option value="swim">Swim school</option><option value="sport">Football or sport</option><option value="gym">Gym or personal training</option><option value="yoga">Yoga or Pilates</option><option value="music">Music or tutoring</option><option value="other">Something else</option></select></div>
-        <div class="mh-field"><label for="gName">Your name</label><input id="gName" type="text" autocomplete="name" maxlength="120" required></div>
-        <div class="mh-field"><label for="gEmail">Email</label><input id="gEmail" type="email" autocomplete="email" maxlength="254" required></div>
-        <div class="mh-field"><label for="gPhone">Phone <span style="font-weight:400">(optional)</span></label><input id="gPhone" type="tel" autocomplete="tel" maxlength="30"></div>
-        <div class="mh-field"><label for="gTown">Town <span style="font-weight:400">(optional)</span></label><input id="gTown" type="text" autocomplete="address-level2" maxlength="80"></div>
-        <div class="mh-hp" aria-hidden="true"><label for="gWebsite">Leave this empty</label><input id="gWebsite" type="text" tabindex="-1" autocomplete="off"></div>
-        <p class="note wide" id="gNote" role="status" aria-live="polite"></p>
-        <button class="btn btn-primary wide" type="submit" id="gSend">Check my business</button>
-        <button class="mh-plan-back wide" type="button" id="gBack">&lsaquo; Change my numbers</button>
-      </form>
+      <div class="mh-slide">
+        <div class="mh-slide-top"><label for="gCapacity">Members you could take in total</label><output id="gCapacityOut" for="gCapacity">60</output></div>
+        <input id="gCapacity" class="mh-range" type="range" min="0" max="600" step="1" value="60">
+      </div>
+      <div class="mh-slide">
+        <div class="mh-slide-top"><label for="gFee">What a member pays a month</label><output id="gFeeOut" for="gFee">&pound;50</output></div>
+        <input id="gFee" class="mh-range" type="range" min="10" max="500" step="5" value="50">
+      </div>
+      <div class="mh-calc-out" aria-live="polite">
+        <p class="mh-calc-left" id="gLeft">That leaves <b>20 spaces</b> empty.</p>
+        <p class="mh-calc-pre" id="gPre">Your empty spaces are costing you</p>
+        <p class="mh-calc-big" id="gLoss">&pound;12,000</p>
+        <p class="mh-calc-sub" id="gLossSub">every single year.</p>
+        <p class="mh-calc-cover" id="gFix">&pound;249 a month could fix that. Just 5 new members cover it.</p>
+      </div>
+      <a class="btn btn-primary mh-plan-go" id="gGo" href="/check?members=40&amp;capacity=60&amp;fee=50">See if Max can help <span aria-hidden="true">&rsaquo;</span></a>
     </div>
   </div>
 </section>
@@ -513,46 +496,6 @@
 
 </main>
 
-<!-- The plan, drawn from the same numbers the email uses. -->
-<dialog class="mh-dialog" id="gpPlan" aria-labelledby="gpPlanHead">
-  <button class="mh-dialog-x" type="button" data-close aria-label="Close">&times;</button>
-  <p class="mh-kicker">Good news</p>
-  <h2 id="gpPlanHead"></h2>
-  <div class="mh-plan-stats" id="gpStats"></div>
-  <ol class="mh-plan-steps" id="gpSteps"></ol>
-  <div class="mh-plan-rec">
-    <p class="mh-plan-rec-t"><b>We&rsquo;d recommend Max</b> &middot; &pound;249 a month</p>
-    <p>First 3 months of ads included. 10 trial bookings in your first 3 months, or leave any time.</p>
-  </div>
-  <div class="mh-dialog-cta">
-    <a class="btn btn-primary" id="gpStartMax" href="/get-started.html?plan=max">Start Max</a>
-    <a class="btn btn-ghost" href="#demo" data-close>Book a 10-minute chat</a>
-  </div>
-  <p class="mh-dialog-small">We&rsquo;ve emailed you a copy. The figures are what happened in our own academy, not a promise.</p>
-</dialog>
-
-<!-- Under the line: the honest answer, and the cheaper plan. -->
-<dialog class="mh-dialog" id="gpAdvice" aria-labelledby="gpAdviceHead">
-  <button class="mh-dialog-x" type="button" data-close aria-label="Close">&times;</button>
-  <p class="mh-kicker">Your free growth plan</p>
-  <h2 id="gpAdviceHead">We don&rsquo;t think you need Max yet.</h2>
-  <p class="mh-dialog-lede" id="gpWhy"></p>
-  <div class="mh-plan-rec">
-    <p class="mh-plan-rec-t"><b>Business</b> &middot; &pound;49 a month <span class="mh-save">&pound;200 a month less</span></p>
-    <ul class="ticks">
-      <li>Your website, built and looked after for you</li>
-      <li>Bookings and payments taken online</li>
-      <li>Live chat, and reviews asked for automatically</li>
-      <li>Changes made for you within 48 hours</li>
-    </ul>
-  </div>
-  <div class="mh-dialog-cta">
-    <a class="btn btn-primary" id="gpStartBiz" href="/get-started.html?plan=business">Start with Business</a>
-    <button class="btn btn-ghost" type="button" id="gpStillMax">I&rsquo;d still like Max</button>
-  </div>
-  <p class="mh-dialog-small">We&rsquo;ve emailed you this too. When you open a new class, Max can switch the ads on.</p>
-</dialog>
-
 <div class="sticky-cta" id="stickyCta" hidden>
   <a class="btn btn-primary" href="#plan">See if Max can help</a>
 </div>
@@ -610,144 +553,56 @@
 <script src="chat.js?v=10" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
-<script src="growth-model.js?v=1"></script>
+<script src="growth-model.js?v=2"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  // ---- The free growth plan ----------------------------------------
+  // ---- The free check, step one ------------------------------------
+  // Sliders only. The button carries the numbers to /check in the address,
+  // and a return from /check (?members=..) puts them back on the sliders.
   var G = window.GrowthModel;
   var money = G.money;
   function fill(el) {
     el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%');
   }
+  try {
+    var back = new URLSearchParams(location.search);
+    ['members', 'capacity', 'fee'].forEach(function (k) {
+      var v = back.get(k), el = $({ members: 'gMembers', capacity: 'gCapacity', fee: 'gFee' }[k]);
+      if (v !== null && v !== '' && isFinite(+v)) el.value = v;
+    });
+  } catch (e) {}
   function numbers() {
-    return { members: +$('gMembers').value, spaces: +$('gSpaces').value, fee: +$('gFee').value };
+    return { members: +$('gMembers').value, capacity: +$('gCapacity').value, fee: +$('gFee').value };
   }
-  function calc() {
+  function calc(moved) {
+    // Total can't be under what they have now: whichever moved wins.
+    var m = $('gMembers'), c = $('gCapacity');
+    if (+c.value < +m.value) { if (moved === c) m.value = c.value; else c.value = m.value; }
     var n = numbers(), p = G.plan(n);
     $('gMembersOut').textContent = n.members;
-    $('gSpacesOut').textContent = n.spaces;
+    $('gCapacityOut').textContent = n.capacity;
     $('gFeeOut').textContent = money(n.fee);
-    fill($('gMembers')); fill($('gSpaces')); fill($('gFee'));
+    fill(m); fill(c); fill($('gFee'));
     var lose = p.spaces > 0;
-    $('gPre').textContent = lose ? 'Your empty spaces are costing you' : 'No empty spaces. Nice.';
+    $('gLeft').innerHTML = lose
+      ? 'That leaves <b>' + p.spaces + ' space' + (p.spaces === 1 ? '' : 's') + '</b> empty.'
+      : 'That&rsquo;s every space <b>full</b>.';
+    $('gPre').textContent = lose ? 'Your empty spaces are costing you' : 'Nice. That\u2019s coming in';
     $('gLoss').textContent = lose ? money(p.gapYear) : money(p.total);
-    $('gLossSub').textContent = lose ? 'every single year.' : 'coming in every month.';
+    $('gLossSub').textContent = lose ? 'every single year.' : 'every month.';
     $('gFix').textContent = lose
-      ? '£249 a month could fix that. Just ' + p.cover + ' new member' + (p.cover === 1 ? ' covers' : 's cover') + ' it.'
+      ? '\u00a3249 a month could fix that. Just ' + p.cover + ' new member' + (p.cover === 1 ? ' covers' : 's cover') + ' it.'
       : 'Max can still run it all for you, for the fees of ' + p.cover + ' member' + (p.cover === 1 ? '' : 's') + '.';
-    $('gFull').textContent = money(p.total) + ' a month with every space filled';
-    $('gFull').hidden = !lose;
+    $('gGo').href = '/check?' + G.query(n);
   }
-  ['gMembers', 'gSpaces', 'gFee'].forEach(function (id) { $(id).addEventListener('input', calc); });
+  ['gMembers', 'gCapacity', 'gFee'].forEach(function (id) {
+    $(id).addEventListener('input', function () { calc($(id)); });
+  });
   calc();
 
-  var shownAt = 0;
-  $('gGo').addEventListener('click', function () {
-    $('gpOne').hidden = true; $('gpTwo').hidden = false; if (!shownAt) shownAt = Date.now();
-    $('gBusiness').focus();
-  });
-  $('gBack').addEventListener('click', function () {
-    $('gpTwo').hidden = true; $('gpOne').hidden = false; $('gGo').focus();
-  });
-
-  function open(d) { if (typeof d.showModal === 'function') d.showModal(); else d.setAttribute('open', ''); }
-  function shut(d) { if (typeof d.close === 'function') d.close(); else d.removeAttribute('open'); }
-  document.querySelectorAll('.mh-dialog').forEach(function (d) {
-    d.addEventListener('click', function (e) {
-      if (e.target === d || e.target.closest('[data-close]')) shut(d);
-    });
-  });
-
-  function startHref(which, business, type) {
-    var q = ['plan=' + which];
-    if (which === 'max') q.push('max=' + G.maxModel(type));
-    q.push('business=' + encodeURIComponent(business));
-    return '/get-started.html?' + q.join('&');
-  }
-  function stat(big, small) {
-    return '<div><b>' + big + '</b><span>' + small + '</span></div>';
-  }
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-
-  function showMax(p, who) {
-    $('gpPlanHead').textContent = 'Max can help ' + who.business + '. Here’s how we’d run it.';
-    var stats = stat(money(p.total), 'a month, full');
-    var steps;
-    if (p.mode === 'fill') {
-      stats += stat(p.spaces, 'spaces to fill') + stat('~' + p.months + ' mo', 'to fill them');
-      steps = [
-        ['Weeks 1 and 2.', 'We build your website, member app and timetable, and move your members across.'],
-        ['Week 3.', 'Ads go live for the classes with spaces. In our own academy, £' + G.AVG.adBudget + ' a month brought around ' + p.trials + ' trials and ' + p.perMonth + ' new members a month.'],
-        ['At that pace', 'your ' + p.spaces + ' spaces fill in about ' + p.months + ' month' + (p.months === 1 ? '' : 's') + '.'],
-        [p.cover + ' new member' + (p.cover === 1 ? '' : 's'), 'at ' + money(p.fee) + ' cover the £249. The first 3 months of ads are on us.'],
-        ['Every trial', 'gets reminders and a follow-up with the link to join, and members pay monthly by card, automatically.']
-      ];
-    } else {
-      stats += stat(p.members, 'members') + stat('Standby', 'ads, until you grow');
-      steps = [
-        ['Weeks 1 and 2.', 'We build your website, member app and timetable, and move your members across.'],
-        ['Payments run themselves.', 'Monthly memberships by card, failed payments chased for you.'],
-        ['Trials and follow-ups', 'sent for you, every time, so nobody slips through.'],
-        ['A real person to message', 'for any change, and a monthly report on how it’s going.'],
-        ['Ads on standby.', 'You’re nearly full, so we wouldn’t run them yet. Open a new class and we switch them on.']
-      ];
-    }
-    $('gpStats').innerHTML = stats;
-    $('gpSteps').innerHTML = steps.map(function (s) { return '<li><b>' + esc(s[0]) + '</b> ' + esc(s[1]) + '</li>'; }).join('');
-    $('gpStartMax').href = startHref('max', who.business, who.type);
-    open($('gpPlan'));
-  }
-
-  function showAdvice(p, who) {
-    $('gpWhy').textContent = p.mode === 'run'
-      ? 'You’re already nearly full, so paying for ads you don’t need isn’t worth it.'
-      : 'At the size you are now, we’d rather you didn’t pay for more than you need.';
-    $('gpStartBiz').href = startHref('business', who.business, who.type);
-    $('gpStillMax').onclick = function () { shut($('gpAdvice')); showMax(p, who); };
-    open($('gpAdvice'));
-  }
-
-  var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  $('gpTwo').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var note = $('gNote'), btn = $('gSend');
-    var v = function (id) { return $(id).value.trim(); };
-    var bad = function (msg, id) { note.className = 'note wide bad'; note.textContent = msg; $(id).focus(); };
-    note.className = 'note wide'; note.textContent = '';
-    if (v('gBusiness').length < 2) return bad('Add your business name.', 'gBusiness');
-    if (v('gName').length < 2) return bad('Add your name.', 'gName');
-    if (!EMAIL.test(v('gEmail'))) return bad('That email doesn’t look right.', 'gEmail');
-    var n = numbers();
-    var who = { business: v('gBusiness'), type: $('gType').value };
-    btn.disabled = true; btn.textContent = 'Checking…';
-    fetch('/api/plan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        members: n.members, spaces: n.spaces, fee: n.fee,
-        business: who.business, type: who.type, name: v('gName'), email: v('gEmail'),
-        phone: v('gPhone'), town: v('gTown'), website: v('gWebsite'),
-        elapsed: shownAt ? Date.now() - shownAt : -1,
-        campaign: (window.oneFrom && window.oneFrom()) || ''
-      })
-    })
-      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
-      .then(function (res) {
-        if (!res.ok) throw new Error((res.d && res.d.error) || 'failed');
-        var p = G.plan(n);
-        btn.disabled = false; btn.textContent = 'Check my business';
-        try { if (window.fbq) window.fbq('track', 'Lead', { content_category: 'growth-plan' }, { eventID: res.d.id }); } catch (err) {}
-        if (p.recommend === 'max') showMax(p, who); else showAdvice(p, who);
-      })
-      .catch(function (err) {
-        note.className = 'note wide bad';
-        note.textContent = (err && err.message && err.message !== 'failed') ? err.message : 'That didn’t send. Try again, or email hello@kanvas.one.';
-        btn.disabled = false; btn.textContent = 'Check my business';
-      });
-  });
-
   // The demo request, as an enquiry on Kanvas One.
+  var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   var SITE = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
   $('demoForm').addEventListener('submit', function (e) {
     e.preventDefault();

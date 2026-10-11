@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your Free Check Result | Kanvas One</title>
+<meta name="description" content="Your free check result: whether Max can help your business, and how we would run it for you.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
+<link rel="stylesheet" href="styles.css?v=139">
+<link rel="stylesheet" href="home.css?v=32">
+</head>
+<body class="home page-plan">
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one<span class="wm-dot">.</span></a>
+    <button class="nav-chat" id="navChat" type="button" aria-label="Chat with us" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+<div class="menu" id="menu" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+
+<!-- The free check's result, drawn from the address (?members=&capacity=
+     &fee=&business=&type=&id=) with growth-model.js, the same sums the email
+     used. Max when it fits; otherwise the honest "you don't need Max yet"
+     and Business. &view=max shows the Max plan anyway, as its own address. -->
+<main id="main" class="mh-page">
+  <div class="wrap mh-page-wrap">
+
+    <section id="resMax" hidden>
+      <p class="mh-kicker">Good news</p>
+      <h1 class="mh-page-h" id="maxHead">Max can help your business.</h1>
+      <p class="mh-page-sub">Here&rsquo;s how we&rsquo;d run it for you.</p>
+      <div class="mh-plan-stats" id="maxStats"></div>
+      <ol class="mh-plan-steps mh-calc" id="maxSteps"></ol>
+      <div class="mh-plan-rec">
+        <p class="mh-plan-rec-t"><b>We&rsquo;d recommend Max</b> &middot; &pound;249 a month</p>
+        <p>First 3 months of ads included. 10 trial bookings in your first 3 months, or leave any time.</p>
+      </div>
+      <div class="mh-dialog-cta">
+        <a class="btn btn-primary" id="startMax" href="/get-started.html?plan=max">Start Max</a>
+        <a class="btn btn-ghost" href="/#demo">Book a 10-minute chat</a>
+      </div>
+      <p class="mh-dialog-small">We&rsquo;ve emailed you a copy. The figures are what happened in our own academy, not a promise.</p>
+    </section>
+
+    <section id="resBiz" hidden>
+      <p class="mh-kicker">Your result</p>
+      <h1 class="mh-page-h">We don&rsquo;t think you need Max yet.</h1>
+      <p class="mh-page-sub" id="bizWhy"></p>
+      <div class="mh-plan-rec">
+        <p class="mh-plan-rec-t"><b>Business</b> &middot; &pound;49 a month <span class="mh-save">&pound;200 a month less</span></p>
+        <ul class="ticks">
+          <li>Your website, built and looked after for you</li>
+          <li>Bookings and payments taken online</li>
+          <li>Live chat, and reviews asked for automatically</li>
+          <li>Changes made for you within 48 hours</li>
+        </ul>
+      </div>
+      <div class="mh-dialog-cta">
+        <a class="btn btn-primary" id="startBiz" href="/get-started.html?plan=business">Start with Business</a>
+        <a class="btn btn-ghost" id="stillMax" href="#">I&rsquo;d still like Max</a>
+      </div>
+      <p class="mh-dialog-small">We&rsquo;ve emailed you this too. When you open a new class, Max can switch the ads on.</p>
+    </section>
+
+  </div>
+</main>
+
+<footer class="mh-page-foot">
+  <div class="wrap">
+    <p>&copy; <span id="year">2026</span> Kanvas One &middot; <a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a></p>
+  </div>
+</footer>
+
+<script src="consent.js?v=9"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="session.js?v=3"></script>
+<script src="script.js?v=37"></script>
+<script src="chat.js?v=10" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
+<script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
+<script src="growth-model.js?v=2"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var G = window.GrowthModel, money = G.money;
+  var q = new URLSearchParams(location.search);
+  if (!q.get('members') || !q.get('capacity') || !q.get('fee')) { location.replace('/#plan'); return; }
+  var p = G.plan({ members: q.get('members'), capacity: q.get('capacity'), fee: q.get('fee') });
+  var business = String(q.get('business') || '').trim().slice(0, 120) || 'your business';
+  var type = String(q.get('type') || 'other');
+
+  function startHref(which) {
+    var s = ['plan=' + which];
+    if (which === 'max') s.push('max=' + G.maxModel(type));
+    if (q.get('business')) s.push('business=' + encodeURIComponent(business));
+    return '/get-started.html?' + s.join('&');
+  }
+  function stat(big, small) {
+    var d = document.createElement('div');
+    var b = document.createElement('b'); b.textContent = big;
+    var s = document.createElement('span'); s.textContent = small;
+    d.appendChild(b); d.appendChild(s);
+    return d;
+  }
+
+  function showMax() {
+    document.title = 'Max can help ' + business + ' | Kanvas One';
+    $('maxHead').textContent = 'Max can help ' + business + '.';
+    var stats = $('maxStats'), steps;
+    stats.appendChild(stat(money(p.total), 'a month, full'));
+    if (p.mode === 'fill') {
+      stats.appendChild(stat(p.spaces, 'spaces to fill'));
+      stats.appendChild(stat('~' + p.months + ' mo', 'to fill them'));
+      steps = [
+        ['Weeks 1 and 2.', 'We build your website, member app and timetable, and move your members across.'],
+        ['Week 3.', 'Ads go live for the classes with spaces. In our own academy, £' + G.AVG.adBudget + ' a month brought around ' + p.trials + ' trials and ' + p.perMonth + ' new members a month.'],
+        ['At that pace', 'your ' + p.spaces + ' spaces fill in about ' + p.months + ' month' + (p.months === 1 ? '' : 's') + '.'],
+        [p.cover + ' new member' + (p.cover === 1 ? '' : 's'), 'at ' + money(p.fee) + ' cover the £249. The first 3 months of ads are on us.'],
+        ['Every trial', 'gets reminders and a follow-up with the link to join, and members pay monthly by card, automatically.']
+      ];
+    } else {
+      stats.appendChild(stat(p.members, 'members'));
+      stats.appendChild(stat('Standby', 'ads, until you grow'));
+      steps = [
+        ['Weeks 1 and 2.', 'We build your website, member app and timetable, and move your members across.'],
+        ['Payments run themselves.', 'Monthly memberships by card, failed payments chased for you.'],
+        ['Trials and follow-ups', 'sent for you, every time, so nobody slips through.'],
+        ['A real person to message', 'for any change, and a monthly report on how it’s going.'],
+        ['Ads on standby.', 'You’re nearly full, so we wouldn’t run them yet. Open a new class and we switch them on.']
+      ];
+    }
+    var ol = $('maxSteps');
+    steps.forEach(function (s) {
+      var li = document.createElement('li');
+      var b = document.createElement('b'); b.textContent = s[0];
+      li.appendChild(b); li.appendChild(document.createTextNode(' ' + s[1]));
+      ol.appendChild(li);
+    });
+    $('startMax').href = startHref('max');
+    $('resMax').hidden = false;
+  }
+
+  function showBiz() {
+    document.title = 'Your free check result | Kanvas One';
+    $('bizWhy').textContent = p.mode === 'run'
+      ? 'You’re already nearly full, so paying for ads you don’t need isn’t worth it. We’d start you on Business instead: £200 a month less.'
+      : 'At the size you are now, we’d rather you didn’t pay for more than you need. We’d start you on Business instead: £200 a month less.';
+    $('startBiz').href = startHref('business');
+    $('stillMax').href = location.pathname + location.search.replace(/&view=max/, '') + '&view=max';
+    $('resBiz').hidden = false;
+  }
+
+  if (p.recommend === 'max' || q.get('view') === 'max') showMax(); else showBiz();
+
+  // The Lead, once per result, with the server's event id so Meta keeps one.
+  var id = q.get('id');
+  try {
+    if (id && !sessionStorage.getItem('one.lead.' + id)) {
+      sessionStorage.setItem('one.lead.' + id, '1');
+      var fire = function () { if (window.fbq) window.fbq('track', 'Lead', { content_category: 'growth-plan' }, { eventID: id }); };
+      if (window.fbq) fire(); else window.addEventListener('load', fire);
+    }
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>

@@ -69,7 +69,8 @@ function maxEmail(site, lead, p, type) {
   const start = startHref(site, 'max', lead.business, type);
   const details = [
     { label: 'Members now', value: String(p.members) },
-    { label: 'Spaces to fill', value: String(p.spaces) },
+    { label: 'Room for', value: String(p.capacity) },
+    { label: 'Spaces empty', value: String(p.spaces) },
     { label: 'Fee a month', value: money(p.fee) },
     { label: 'When full', value: money(p.total) + ' a month' }
   ];
@@ -96,7 +97,7 @@ function maxEmail(site, lead, p, type) {
       footerLinks: standardFooter(site)
     }),
     text: `Your growth plan, ${lead.business}\n\n`
-      + `Members now: ${p.members}\nSpaces to fill: ${p.spaces}\nFee a month: ${money(p.fee)}\nWhen full: ${money(p.total)} a month\n\n`
+      + `Members now: ${p.members}\nRoom for: ${p.capacity}\nSpaces empty: ${p.spaces}\nFee a month: ${money(p.fee)}\nWhen full: ${money(p.total)} a month\n\n`
       + steps.map((s) => '- ' + s.replace(/<[^>]+>/g, '').replace(/&pound;/g, '£').replace(/&rsquo;/g, '’')).join('\n')
       + `\n\nStart Max, £249 a month: ${start}\n\n`
       + 'First 3 months of ads included. 3-month minimum, unless we don’t get you 10 trial bookings; then leave any time.\n'
@@ -167,7 +168,7 @@ module.exports = async function handler(req, res) {
     if (!name || !business) return res.status(400).json({ error: 'Tell us your name and business.' });
     if (!looksLikeEmail(email)) return res.status(400).json({ error: 'That email does not look right.' });
 
-    const p = growth.plan({ members: body.members, spaces: body.spaces, fee: body.fee });
+    const p = growth.plan({ members: body.members, capacity: body.capacity, spaces: body.spaces, fee: body.fee });
 
     /* Bots: the same answer a real plan gets, and nothing stored or sent. */
     if (clean(body.website, 200)) return res.status(200).json({ ok: true, id: crypto.randomUUID(), plan: p });
@@ -179,7 +180,7 @@ module.exports = async function handler(req, res) {
     const rec = p.recommend === 'max' ? 'Max' : 'Business';
     const about = [
       `Free growth plan: ${TYPES[type]}${town ? ' in ' + town : ''}.`,
-      `${p.members} members now, ${p.spaces} spaces to fill, ${money(p.fee)} a month each.`,
+      `${p.members} members now, room for ${p.capacity} (${p.spaces} spaces empty), ${money(p.fee)} a month each.`,
       `${money(p.total)} a month when full (${money(p.now)} now). We recommended ${rec}`
         + (p.mode === 'run' ? ', nearly full.' : `, about ${p.months} months to fill.`),
       phone ? `Phone: ${phone}` : ''
