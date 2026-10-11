@@ -11,7 +11,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
 <link rel="stylesheet" href="styles.css?v=139">
-<link rel="stylesheet" href="home.css?v=38">
+<link rel="stylesheet" href="home.css?v=39">
 </head>
 <body class="home page-check">
 
@@ -58,7 +58,7 @@
       <div class="mh-field"><label for="gTown">Town <span style="font-weight:400">(optional)</span></label><input id="gTown" type="text" autocomplete="address-level2" maxlength="80"></div>
       <div class="mh-hp" aria-hidden="true"><label for="gWebsite">Leave this empty</label><input id="gWebsite" type="text" tabindex="-1" autocomplete="off"></div>
       <p class="note wide" id="gNote" role="status" aria-live="polite"></p>
-      <button class="btn btn-primary wide" type="submit" id="gSend">Check my business</button>
+      <button class="btn btn-primary wide" type="submit" id="gSend">Get my free plan</button>
       <p class="mh-plan-small wide">Free, no card, no obligation. We&rsquo;ll email you a copy of your result.</p>
     </form>
   </div>
@@ -132,7 +132,7 @@
       .catch(function (err) {
         note.className = 'note wide bad';
         note.textContent = (err && err.message && err.message !== 'failed') ? err.message : 'That didn’t send. Try again, or email hello@kanvas.one.';
-        btn.disabled = false; btn.textContent = 'Check my business';
+        btn.disabled = false; btn.textContent = 'Get my free plan';
       });
   });
 })();
