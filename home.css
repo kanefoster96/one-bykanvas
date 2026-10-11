@@ -582,7 +582,7 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 .mh-now{display:inline-flex;align-items:center;gap:9px;margin:26px 0 0;font-size:15px;color:var(--ink-2)}
 .mh-now i{width:9px;height:9px;border-radius:50%;background:var(--good);box-shadow:0 0 0 4px var(--good-soft)}
 .mh h1{margin:16px auto 0;max-width:14ch;font-size:clamp(44px,8.4vw,88px);line-height:1.02;letter-spacing:-.045em;font-weight:700;text-wrap:balance}
-@media (min-width:900px){.mh h1{max-width:none;font-size:clamp(56px,5.3vw,72px)}}
+@media (min-width:900px){.mh h1{max-width:none;font-size:clamp(56px,5.6vw,76px)}}
 .mh h1 .mh-off{display:block;background:linear-gradient(90deg,var(--ink) 0%,#8e8e93 75%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .mh .sub{max-width:600px;margin:22px auto 0;font-size:clamp(18px,2.2vw,21px);line-height:1.5;color:var(--ink-2)}
 .mh-cta{max-width:430px;margin:30px auto 0}
@@ -661,3 +661,31 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 .mh-done .tile{margin:0 auto 14px}
 .mh-done p{color:var(--ink-2)}
 .mh-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+/* Hero: the reviews line, and what takes the risk away. */
+.mh-stars{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin:2px 0 0;font-size:14.5px;color:var(--ink-2)}
+.mh-star-row{display:inline-flex;gap:2px}
+.mh-star-row svg{width:17px;height:17px;fill:#f5b301}
+.mh-risk{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 22px;max-width:640px;margin:26px auto 0;padding:0}
+.mh-risk li{display:inline-flex;align-items:center;gap:7px;font-size:15.5px;font-weight:600;color:var(--ink)}
+.mh-risk svg{width:18px;height:18px;flex:0 0 18px;color:var(--good)}
+.mh .mh-cta{margin-top:26px}
+@media (max-width:600px){.mh-risk{flex-direction:column;align-items:flex-start;gap:10px;width:fit-content}.mh .hh-phone-wrap{margin-bottom:0}.mh .hh-scene{min-height:0}}
+
+/* The calculator, as two sliders. */
+.mh-spaces{padding-top:clamp(64px,8vw,96px)}
+.mh-slide{text-align:left}
+.mh-slide + .mh-slide{margin-top:26px}
+.mh-slide-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
+.mh-slide-top label{font-size:15px;font-weight:600;color:var(--ink-2)}
+.mh-slide-top output{font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums}
+.mh-range{--p:20%;-webkit-appearance:none;appearance:none;width:100%;height:32px;margin:0;background:transparent;cursor:pointer}
+.mh-range:focus{outline:none}
+.mh-range::-webkit-slider-runnable-track{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--good) var(--p),#e3e3e8 var(--p))}
+.mh-range::-moz-range-track{height:8px;border-radius:999px;background:#e3e3e8}
+.mh-range::-moz-range-progress{height:8px;border-radius:999px;background:var(--good)}
+.mh-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:30px;height:30px;margin-top:-11px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 8px rgba(0,0,0,.22),0 0 0 1px rgba(0,0,0,.06)}
+.mh-range::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 8px rgba(0,0,0,.22),0 0 0 1px rgba(0,0,0,.06)}
+.mh-range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(26,127,55,.3),0 2px 8px rgba(0,0,0,.22)}
+.mh-range:focus-visible::-moz-range-thumb{box-shadow:0 0 0 4px rgba(26,127,55,.3),0 2px 8px rgba(0,0,0,.22)}
+.mh-spaces .sec-cta{margin-top:30px}
