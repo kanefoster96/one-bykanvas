@@ -25,7 +25,7 @@
 <link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
 <link rel="stylesheet" href="styles.css?v=139">
-<link rel="stylesheet" href="home.css?v=30">
+<link rel="stylesheet" href="home.css?v=31">
 </head>
 <body class="home">
 
@@ -70,10 +70,10 @@
     <ul class="mh-risk reveal">
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>First 3 months of ads on us</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>10 trial bookings, or leave any time</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Free plan, no card, no obligation</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Free check, no card, no obligation</li>
     </ul>
     <div class="mh-cta reveal">
-      <a class="btn btn-primary" href="#plan">Get my free growth plan</a>
+      <a class="btn btn-primary" href="#plan">See if Max can help your business</a>
       <p class="mh-in">Already with us? <a href="/login.html">Log in</a></p>
     </div>
   </div>
@@ -92,69 +92,80 @@
   </div>
 </section>
 
-<!-- ============ FREE GROWTH PLAN ============
-     Three sliders straight under the hero, then a short form, then the plan:
-     Max for a business that can carry it, an honest "you don't need Max yet"
-     and Business for one that can't. The sums are growth-model.js, shared
-     with api/plan.js so the screen and the email agree. -->
-<section id="plan" class="section mh-spaces" data-tone="light">
+<!-- ============ WE UNDERSTAND ============ -->
+<section id="understand" class="section pr" data-tone="light">
   <div class="wrap center">
-    <p class="mh-kicker reveal">Free growth plan</p>
-    <h2 class="reveal">What could your business <span class="dim">make?</span></h2>
-    <p class="lede reveal mh-plan-lede">Three numbers and we&rsquo;ll show you how we&rsquo;d run it for you. Free, no card, no obligation.</p>
-    <div class="mh-calc reveal" id="gpCard">
-      <div id="gpOne">
-        <div class="mh-slide">
-          <div class="mh-slide-top"><label for="gMembers">Members you have now</label><output id="gMembersOut" for="gMembers">40</output></div>
-          <input id="gMembers" class="mh-range" type="range" min="0" max="500" step="1" value="40">
-        </div>
-        <div class="mh-slide">
-          <div class="mh-slide-top"><label for="gSpaces">Spaces you could still fill</label><output id="gSpacesOut" for="gSpaces">20</output></div>
-          <input id="gSpaces" class="mh-range" type="range" min="0" max="300" step="1" value="20">
-        </div>
-        <div class="mh-slide">
-          <div class="mh-slide-top"><label for="gFee">What a member pays a month</label><output id="gFeeOut" for="gFee">&pound;50</output></div>
-          <input id="gFee" class="mh-range" type="range" min="10" max="500" step="5" value="50">
-        </div>
-        <div class="mh-calc-out" aria-live="polite">
-          <p class="mh-calc-big" id="gTotal">&pound;3,000</p>
-          <p class="mh-calc-sub">a month, every space filled</p>
-          <p class="mh-calc-cover" id="gGap">&pound;12,000 a year in spaces you&rsquo;re not filling</p>
-        </div>
-        <button class="btn btn-primary mh-plan-go" type="button" id="gGo">Get my free plan <span aria-hidden="true">&rsaquo;</span></button>
-      </div>
-
-      <form id="gpTwo" class="mh-plan-form" novalidate hidden>
-        <p class="mh-plan-step">Nearly there. Where should we send your plan?</p>
-        <div class="mh-field"><label for="gBusiness">Business name</label><input id="gBusiness" type="text" autocomplete="organization" maxlength="120" required></div>
-        <div class="mh-field"><label for="gType">What do you run?</label>
-          <select id="gType"><option value="kids">Kids&rsquo; club</option><option value="dance">Dance or cheer school</option><option value="gymnastics">Gymnastics</option><option value="martial">Martial arts</option><option value="swim">Swim school</option><option value="sport">Football or sport</option><option value="gym">Gym or personal training</option><option value="yoga">Yoga or Pilates</option><option value="music">Music or tutoring</option><option value="other">Something else</option></select></div>
-        <div class="mh-field"><label for="gName">Your name</label><input id="gName" type="text" autocomplete="name" maxlength="120" required></div>
-        <div class="mh-field"><label for="gEmail">Email</label><input id="gEmail" type="email" autocomplete="email" maxlength="254" required></div>
-        <div class="mh-field"><label for="gPhone">Phone <span style="font-weight:400">(optional)</span></label><input id="gPhone" type="tel" autocomplete="tel" maxlength="30"></div>
-        <div class="mh-field"><label for="gTown">Town <span style="font-weight:400">(optional)</span></label><input id="gTown" type="text" autocomplete="address-level2" maxlength="80"></div>
-        <div class="mh-hp" aria-hidden="true"><label for="gWebsite">Leave this empty</label><input id="gWebsite" type="text" tabindex="-1" autocomplete="off"></div>
-        <p class="note wide" id="gNote" role="status" aria-live="polite"></p>
-        <button class="btn btn-primary wide" type="submit" id="gSend">Show my plan</button>
-        <button class="mh-plan-back wide" type="button" id="gBack">&lsaquo; Change my numbers</button>
-      </form>
-    </div>
+    <p class="pr-tag reveal">We understand</p>
+    <h2 class="reveal">We run one too. <span class="dim dim-line">We know the hard bits.</span></h2>
+  </div>
+  <div class="wrap pr-strip reveal">
+    <div class="pr-item"><span class="tile tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><b>Trials that never turn up</b><span>You hold a space, the coach plans for them, and nobody comes.</span></div>
+    <div class="pr-item"><span class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12.6V4.5h8.1l8.9 8.9-8 8z"/><circle cx="8" cy="9" r="1.5"/></svg></span><b>Chasing who&rsquo;s paid</b><span>Cash, transfers and &ldquo;I&rsquo;ll pay next week&rdquo;, every month.</span></div>
+    <div class="pr-item"><span class="tile tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></span><b>Messages at 10pm</b><span>&ldquo;What time is it?&rdquo; &ldquo;Is there space?&rdquo; Every night.</span></div>
+    <div class="pr-item"><span class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.4" stroke-dasharray="2.4 2.4"/></svg></span><b>Half-empty classes</b><span>Every empty space is hall hire you&rsquo;re already paying for.</span></div>
+  </div>
+  <div class="wrap center sec-cta reveal">
+    <a class="btn btn-primary" href="#plan">See if we can fix this for you <span aria-hidden="true">&rsaquo;</span></a>
+    <p class="sec-cta-note">A free check. Two minutes, no card.</p>
   </div>
 </section>
 
-<!-- ============ THE PROOF ============ -->
-<section id="results" class="section" data-tone="white">
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how" class="section hw" data-tone="white">
   <div class="wrap">
-    <div class="mh-results reveal">
-      <p class="mh-results-tag">OUR OWN ACADEMY &middot; FIRST 3 WEEKS OF ADS</p>
-      <div class="mh-results-row">
-        <div><p class="mh-results-n">&pound;103</p><p class="mh-results-t">spent on ads</p></div>
-        <div><p class="mh-results-n">21</p><p class="mh-results-t">trial bookings</p></div>
-        <div><p class="mh-results-n">4</p><p class="mh-results-t">new members</p></div>
-        <div><p class="mh-results-n">&pound;200</p><p class="mh-results-t">a month in new fees</p></div>
+    <h2 class="reveal">How it works. <span class="dim dim-line">As easy as 1,&nbsp;2,&nbsp;3.</span></h2>
+    <div class="hw-steps">
+
+      <div class="hw-step">
+        <div class="hw-text reveal">
+          <h3>1. See if Max can help</h3>
+          <p>Tell us your members, your empty spaces and your fees. If it&rsquo;s a fit, you&rsquo;ll see exactly how we&rsquo;d run it for your business, free. Rather talk it through? Book a 10-minute call.</p>
+        </div>
+        <div class="ui reveal" aria-hidden="true">
+          <p class="ui-title">This week</p>
+          <div class="ui-chips">
+            <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>Free check done</b><small>your plan, sent to your inbox</small></span></div>
+            <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></span><span class="chip-text"><b>Max is a fit</b><small>20 spaces to fill, about 4 months</small></span></div>
+          </div>
+        </div>
       </div>
-      <p class="mh-results-foot">A North East dance and cheer academy running on One, 21 September to 10 October 2026. Seven more trials were still booked in.</p>
+
+      <div class="hw-step">
+        <div class="hw-text reveal">
+          <h3>2. We set it all up <span class="g-free">for you</span></h3>
+          <p>Your website, member app, classes, prices and timetable. We move your members across and help parents move their payments over.</p>
+        </div>
+        <div class="ui reveal" aria-hidden="true">
+          <p class="ui-title">Setting up</p>
+          <div class="ui-chips">
+            <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Website and timetable</b><small>your classes, coaches and prices</small></span></div>
+            <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Member app</b><small>passes, bookings, messages</small></span></div>
+            <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 11h5M18.5 8.5v5"/></svg></span><span class="chip-text"><b>Members moved across</b><small>done for you</small></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hw-step">
+        <div class="hw-text reveal">
+          <h3>3. Ads on, trials in</h3>
+          <p>Your first 3 months of ads are on us. Trials book themselves, reminders go out, and new members pay monthly.</p>
+        </div>
+        <div class="ui reveal" aria-hidden="true">
+          <p class="ui-title">Week one</p>
+          <div class="ui-live"><i></i>Live on yourclub.co.uk</div>
+          <div class="ui-chips">
+            <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>3 free trials booked</b><small>from your ads, this week</small></span></div>
+            <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Membership started</b><small>&pound;50 a month</small></span></div>
+          </div>
+          <p class="ui-note">An example week. Results vary by club.</p>
+        </div>
+      </div>
+
     </div>
+  </div>
+  <div class="wrap center sec-cta reveal">
+    <a class="btn btn-primary" href="#plan">Start with step 1 <span aria-hidden="true">&rsaquo;</span></a>
+    <p class="sec-cta-note">Free, no card, no commitment.</p>
   </div>
 </section>
 
@@ -231,85 +242,35 @@
     <button class="rail-btn" data-rail-dir="1" aria-label="Next">&rsaquo;</button>
   </div>
   <div class="wrap center sec-cta reveal">
-    <a class="btn btn-primary" href="#demo">Book a 10-minute demo <span aria-hidden="true">&rsaquo;</span></a>
-    <p class="sec-cta-note">See it running in our own academy.</p>
+    <a class="btn btn-primary" href="#plan">See if Max can help you <span aria-hidden="true">&rsaquo;</span></a>
+    <p class="sec-cta-note">A free check. Two minutes, no card.</p>
   </div>
 </section>
 
-<!-- ============ WE UNDERSTAND ============ -->
-<section id="understand" class="section pr" data-tone="white">
-  <div class="wrap center">
-    <p class="pr-tag reveal">We understand</p>
-    <h2 class="reveal">We run one too. <span class="dim dim-line">We know the hard bits.</span></h2>
-  </div>
-  <div class="wrap pr-strip reveal">
-    <div class="pr-item"><span class="tile tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><b>Trials that never turn up</b><span>You hold a space, the coach plans for them, and nobody comes.</span></div>
-    <div class="pr-item"><span class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12.6V4.5h8.1l8.9 8.9-8 8z"/><circle cx="8" cy="9" r="1.5"/></svg></span><b>Chasing who&rsquo;s paid</b><span>Cash, transfers and &ldquo;I&rsquo;ll pay next week&rdquo;, every month.</span></div>
-    <div class="pr-item"><span class="tile tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></span><b>Messages at 10pm</b><span>&ldquo;What time is it?&rdquo; &ldquo;Is there space?&rdquo; Every night.</span></div>
-    <div class="pr-item"><span class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.4" stroke-dasharray="2.4 2.4"/></svg></span><b>Half-empty classes</b><span>Every empty space is hall hire you&rsquo;re already paying for.</span></div>
-  </div>
-  <div class="wrap center sec-cta reveal">
-    <a class="btn btn-primary" href="#demo">Show me how you&rsquo;d fill them <span aria-hidden="true">&rsaquo;</span></a>
-    <p class="sec-cta-note">10 minutes. No hard sell.</p>
-  </div>
-</section>
-
-<!-- ============ HOW IT WORKS ============ -->
-<section id="how" class="section hw" data-tone="light">
+<!-- ============ THE PROOF ============ -->
+<section id="results" class="section" data-tone="white">
   <div class="wrap">
-    <h2 class="reveal">How it works. <span class="dim dim-line">As easy as 1,&nbsp;2,&nbsp;3.</span></h2>
-    <div class="hw-steps">
-
-      <div class="hw-step">
-        <div class="hw-text reveal">
-          <h3>1. Book a 10-minute demo</h3>
-          <p>We show you the parent side, your side and the ads, running on our own academy. Tell us about your classes and where they need filling.</p>
-        </div>
-        <div class="ui reveal" aria-hidden="true">
-          <p class="ui-title">This week</p>
-          <div class="ui-chips">
-            <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>Demo booked</b><small>Tuesday, 10:00 &middot; 10 minutes</small></span></div>
-            <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></span><span class="chip-text"><b>The app, on a real club</b><small>trials, members, payments</small></span></div>
-          </div>
-        </div>
+    <div class="mh-results reveal">
+      <p class="mh-results-tag">OUR OWN ACADEMY &middot; FIRST 3 WEEKS OF ADS</p>
+      <div class="mh-results-row">
+        <div><p class="mh-results-n">&pound;103</p><p class="mh-results-t">spent on ads</p></div>
+        <div><p class="mh-results-n">21</p><p class="mh-results-t">trial bookings</p></div>
+        <div><p class="mh-results-n">4</p><p class="mh-results-t">new members</p></div>
+        <div><p class="mh-results-n">&pound;200</p><p class="mh-results-t">a month in new fees</p></div>
       </div>
-
-      <div class="hw-step">
-        <div class="hw-text reveal">
-          <h3>2. We set it all up <span class="g-free">for you</span></h3>
-          <p>Your website, member app, classes, prices and timetable. We move your members across and help parents move their payments over.</p>
-        </div>
-        <div class="ui reveal" aria-hidden="true">
-          <p class="ui-title">Setting up</p>
-          <div class="ui-chips">
-            <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Website and timetable</b><small>your classes, coaches and prices</small></span></div>
-            <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Member app</b><small>passes, bookings, messages</small></span></div>
-            <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 11h5M18.5 8.5v5"/></svg></span><span class="chip-text"><b>Members moved across</b><small>done for you</small></span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="hw-step">
-        <div class="hw-text reveal">
-          <h3>3. Ads on, trials in</h3>
-          <p>Your first 3 months of ads are on us. Trials book themselves, reminders go out, and new members pay monthly.</p>
-        </div>
-        <div class="ui reveal" aria-hidden="true">
-          <p class="ui-title">Week one</p>
-          <div class="ui-live"><i></i>Live on yourclub.co.uk</div>
-          <div class="ui-chips">
-            <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>3 free trials booked</b><small>from your ads, this week</small></span></div>
-            <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Membership started</b><small>&pound;50 a month</small></span></div>
-          </div>
-          <p class="ui-note">An example week. Results vary by club.</p>
-        </div>
-      </div>
-
+      <p class="mh-results-foot">A North East dance and cheer academy running on One, 21 September to 10 October 2026. Seven more trials were still booked in.</p>
     </div>
   </div>
-  <div class="wrap center sec-cta reveal">
-    <a class="btn btn-primary" href="#demo">Start with step 1 <span aria-hidden="true">&rsaquo;</span></a>
-    <p class="sec-cta-note">A 10-minute call. No card, no commitment.</p>
+</section>
+
+<!-- ============ SINCE 2017 ============ -->
+<section id="story" class="section" data-tone="light">
+  <div class="wrap center">
+    <p class="pr-tag reveal">Since 2017</p>
+    <h2 class="reveal">Nine years running a club. <span class="dim">Now we&rsquo;re passing it on.</span></h2>
+    <p class="lede reveal">One started in our own dance and cheer academy in the North East. Every part of it, from the first ad to the monthly payment, runs our classes every week. We know trial week, show season and the September rush, because we live them too. Now other clubs get the same system, ready-made.</p>
+    <div class="mh-moments reveal" aria-hidden="true"><span>Trial week</span><span>Show season</span><span>The September rush</span><span>Competition kit</span><span>Sibling discounts</span></div>
+    <p class="lede reveal" style="margin-top:28px;font-size:17px">Your members, prices and data are only ever yours. Never shared, never used by anyone else.</p>
   </div>
 </section>
 
@@ -328,11 +289,11 @@
         <a class="pill" href="/clubs">Swim schools</a>
         <a class="pill" href="/clubs">Football academies</a>
         <a class="pill" href="/clubs">Drama schools</a>
-        <a class="pill" href="#demo">Gyms</a>
-        <a class="pill" href="#demo">Personal trainers</a>
-        <a class="pill" href="#demo">Yoga and Pilates</a>
-        <a class="pill" href="#demo">Music schools</a>
-        <a class="pill" href="#demo">Tutors</a>
+        <a class="pill" href="#plan">Gyms</a>
+        <a class="pill" href="#plan">Personal trainers</a>
+        <a class="pill" href="#plan">Yoga and Pilates</a>
+        <a class="pill" href="#plan">Music schools</a>
+        <a class="pill" href="#plan">Tutors</a>
       </div>
     </div>
   </div>
@@ -352,7 +313,7 @@
         <p class="price"><span class="cur">&pound;</span>249<span class="per">/month</span></p>
         <p class="plan-note">Your website, member app, bookings, memberships, payments and ads, run for you.</p>
         <p class="mh-included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8z"/></svg>First 3 months of ads included. Worth &pound;450.</p>
-        <a class="btn btn-primary full" href="#demo" style="margin-top:18px">Book a 10-minute demo</a>
+        <a class="btn btn-primary full" href="#plan" style="margin-top:18px">See if Max can help your business</a>
       </div>
       <ul class="ticks plan-wide-ticks">
         <li class="tick-hero">Your website, built around your classes and timetable</li>
@@ -399,19 +360,8 @@
   </div>
 </section>
 
-<!-- ============ SINCE 2017 ============ -->
-<section id="story" class="section" data-tone="light">
-  <div class="wrap center">
-    <p class="pr-tag reveal">Since 2017</p>
-    <h2 class="reveal">Nine years running a club. <span class="dim">Now we&rsquo;re passing it on.</span></h2>
-    <p class="lede reveal">One started in our own dance and cheer academy in the North East. Every part of it, from the first ad to the monthly payment, runs our classes every week. We know trial week, show season and the September rush, because we live them too. Now other clubs get the same system, ready-made.</p>
-    <div class="mh-moments reveal" aria-hidden="true"><span>Trial week</span><span>Show season</span><span>The September rush</span><span>Competition kit</span><span>Sibling discounts</span></div>
-    <p class="lede reveal" style="margin-top:28px;font-size:17px">Your members, prices and data are only ever yours. Never shared, never used by anyone else.</p>
-  </div>
-</section>
-
 <!-- ============ FAQ ============ -->
-<section id="faq" class="section" data-tone="white">
+<section id="faq" class="section" data-tone="light">
   <div class="wrap center">
     <h2 class="reveal">Questions.</h2>
   </div>
@@ -448,25 +398,54 @@
   </div>
 </section>
 
-<!-- ============ JUST A WEBSITE ============
-     The £9.99 sites, as the smaller option: their page is /websites. -->
-<section id="websites" class="section up" data-tone="light">
-  <div class="wrap">
-    <div class="up-card reveal">
-      <div class="up-text">
-        <p class="up-tag">Not ready for the full system?</p>
-        <h2>Just a website. <span class="dim">From &pound;9.99 a month.</span></h2>
-        <p class="lede">A website built for you and live within 24 hours, with your web address, hosting and changes included. Any business, any trade.</p>
-        <a class="btn btn-ghost" href="/websites">See websites <span aria-hidden="true">&rsaquo;</span></a>
-        <p class="plan-up">Move up to the full system any month.</p>
-      </div>
-      <div class="up-side">
-        <div class="up-chips" aria-hidden="true">
-          <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Live the day you join</b><small>yourbusiness.co.uk</small></span></div>
-          <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>Found on Google</b><small>in your town</small></span></div>
-          <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></span><span class="chip-text"><b>New enquiry</b><small>from the form on your site</small></span></div>
+<!-- ============ FREE GROWTH PLAN ============
+     Three sliders straight under the hero, then a short form, then the plan:
+     Max for a business that can carry it, an honest "you don't need Max yet"
+     and Business for one that can't. The sums are growth-model.js, shared
+     with api/plan.js so the screen and the email agree. -->
+<section id="plan" class="section mh-spaces" data-tone="white">
+  <div class="wrap center">
+    <p class="mh-kicker reveal">Free check</p>
+    <h2 class="reveal">Could Max help your business? <span class="dim dim-line">Let&rsquo;s find out.</span></h2>
+    <p class="lede reveal mh-plan-lede">Max isn&rsquo;t for everyone. Enter your numbers and your details to see if it&rsquo;s right for you. If it is, we&rsquo;ll show you exactly how we&rsquo;d run it. Free, no card.</p>
+    <div class="mh-calc reveal" id="gpCard">
+      <div id="gpOne">
+        <div class="mh-slide">
+          <div class="mh-slide-top"><label for="gMembers">Members you have now</label><output id="gMembersOut" for="gMembers">40</output></div>
+          <input id="gMembers" class="mh-range" type="range" min="0" max="500" step="1" value="40">
         </div>
+        <div class="mh-slide">
+          <div class="mh-slide-top"><label for="gSpaces">Spaces you could still fill</label><output id="gSpacesOut" for="gSpaces">20</output></div>
+          <input id="gSpaces" class="mh-range" type="range" min="0" max="300" step="1" value="20">
+        </div>
+        <div class="mh-slide">
+          <div class="mh-slide-top"><label for="gFee">What a member pays a month</label><output id="gFeeOut" for="gFee">&pound;50</output></div>
+          <input id="gFee" class="mh-range" type="range" min="10" max="500" step="5" value="50">
+        </div>
+        <div class="mh-calc-out" aria-live="polite">
+          <p class="mh-calc-pre" id="gPre">Your empty spaces are costing you</p>
+          <p class="mh-calc-big" id="gLoss">&pound;12,000</p>
+          <p class="mh-calc-sub" id="gLossSub">every single year.</p>
+          <p class="mh-calc-cover" id="gFix">&pound;249 a month could fix that. Just 5 new members cover it.</p>
+          <p class="mh-calc-full" id="gFull">&pound;3,000 a month with every space filled</p>
+        </div>
+        <button class="btn btn-primary mh-plan-go" type="button" id="gGo">See if Max can help my business <span aria-hidden="true">&rsaquo;</span></button>
       </div>
+
+      <form id="gpTwo" class="mh-plan-form" novalidate hidden>
+        <p class="mh-plan-step">Enter your details to see if Max can help your business.</p>
+        <div class="mh-field"><label for="gBusiness">Business name</label><input id="gBusiness" type="text" autocomplete="organization" maxlength="120" required></div>
+        <div class="mh-field"><label for="gType">What do you run?</label>
+          <select id="gType"><option value="kids">Kids&rsquo; club</option><option value="dance">Dance or cheer school</option><option value="gymnastics">Gymnastics</option><option value="martial">Martial arts</option><option value="swim">Swim school</option><option value="sport">Football or sport</option><option value="gym">Gym or personal training</option><option value="yoga">Yoga or Pilates</option><option value="music">Music or tutoring</option><option value="other">Something else</option></select></div>
+        <div class="mh-field"><label for="gName">Your name</label><input id="gName" type="text" autocomplete="name" maxlength="120" required></div>
+        <div class="mh-field"><label for="gEmail">Email</label><input id="gEmail" type="email" autocomplete="email" maxlength="254" required></div>
+        <div class="mh-field"><label for="gPhone">Phone <span style="font-weight:400">(optional)</span></label><input id="gPhone" type="tel" autocomplete="tel" maxlength="30"></div>
+        <div class="mh-field"><label for="gTown">Town <span style="font-weight:400">(optional)</span></label><input id="gTown" type="text" autocomplete="address-level2" maxlength="80"></div>
+        <div class="mh-hp" aria-hidden="true"><label for="gWebsite">Leave this empty</label><input id="gWebsite" type="text" tabindex="-1" autocomplete="off"></div>
+        <p class="note wide" id="gNote" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary wide" type="submit" id="gSend">Check my business</button>
+        <button class="mh-plan-back wide" type="button" id="gBack">&lsaquo; Change my numbers</button>
+      </form>
     </div>
   </div>
 </section>
@@ -474,7 +453,7 @@
 <!-- ============ BOOK A DEMO ============
      The request goes in as an enquiry on Kanvas One: stored, pushed to the
      phone, emailed, and answered to the club straight away. -->
-<section id="demo" class="section cta-end" data-tone="white">
+<section id="demo" class="section cta-end" data-tone="light">
   <div class="wrap mh-demo">
     <div>
       <h2 class="reveal">See it running in a real club. <span class="dim">10 minutes.</span></h2>
@@ -509,12 +488,35 @@
   </div>
 </section>
 
+<!-- ============ JUST A WEBSITE ============
+     The £9.99 sites, as the smaller option: their page is /websites. -->
+<section id="websites" class="section up" data-tone="white">
+  <div class="wrap">
+    <div class="up-card reveal">
+      <div class="up-text">
+        <p class="up-tag">Not ready for the full system?</p>
+        <h2>Just a website. <span class="dim">From &pound;9.99 a month.</span></h2>
+        <p class="lede">A website built for you and live within 24 hours, with your web address, hosting and changes included. Any business, any trade.</p>
+        <a class="btn btn-ghost" href="/websites">See websites <span aria-hidden="true">&rsaquo;</span></a>
+        <p class="plan-up">Move up to the full system any month.</p>
+      </div>
+      <div class="up-side">
+        <div class="up-chips" aria-hidden="true">
+          <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Live the day you join</b><small>yourbusiness.co.uk</small></span></div>
+          <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>Found on Google</b><small>in your town</small></span></div>
+          <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></span><span class="chip-text"><b>New enquiry</b><small>from the form on your site</small></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 </main>
 
 <!-- The plan, drawn from the same numbers the email uses. -->
 <dialog class="mh-dialog" id="gpPlan" aria-labelledby="gpPlanHead">
   <button class="mh-dialog-x" type="button" data-close aria-label="Close">&times;</button>
-  <p class="mh-kicker">Your free growth plan</p>
+  <p class="mh-kicker">Good news</p>
   <h2 id="gpPlanHead"></h2>
   <div class="mh-plan-stats" id="gpStats"></div>
   <ol class="mh-plan-steps" id="gpSteps"></ol>
@@ -552,7 +554,7 @@
 </dialog>
 
 <div class="sticky-cta" id="stickyCta" hidden>
-  <a class="btn btn-primary" href="#demo">Book a 10-minute demo</a>
+  <a class="btn btn-primary" href="#plan">See if Max can help</a>
 </div>
 
 <footer class="foot" data-tone="light">
@@ -562,7 +564,7 @@
       <p class="foot-by">by Kanvas</p>
     </div>
     <p class="ft-tag">Full classes, run for you. Built in our own kids&rsquo; club, running since 2017.</p>
-    <a class="btn btn-primary" href="#demo" style="margin-top:6px">Book a 10-minute demo</a>
+    <a class="btn btn-primary" href="#plan" style="margin-top:6px">See if Max can help</a>
 
     <div class="ft-cols">
       <nav class="ft-col" aria-label="One">
@@ -627,10 +629,15 @@
     $('gSpacesOut').textContent = n.spaces;
     $('gFeeOut').textContent = money(n.fee);
     fill($('gMembers')); fill($('gSpaces')); fill($('gFee'));
-    $('gTotal').textContent = money(p.total);
-    $('gGap').textContent = p.spaces
-      ? money(p.gapYear) + ' a year in spaces you’re not filling'
-      : 'Full already. Nice.';
+    var lose = p.spaces > 0;
+    $('gPre').textContent = lose ? 'Your empty spaces are costing you' : 'No empty spaces. Nice.';
+    $('gLoss').textContent = lose ? money(p.gapYear) : money(p.total);
+    $('gLossSub').textContent = lose ? 'every single year.' : 'coming in every month.';
+    $('gFix').textContent = lose
+      ? '£249 a month could fix that. Just ' + p.cover + ' new member' + (p.cover === 1 ? ' covers' : 's cover') + ' it.'
+      : 'Max can still run it all for you, for the fees of ' + p.cover + ' member' + (p.cover === 1 ? '' : 's') + '.';
+    $('gFull').textContent = money(p.total) + ' a month with every space filled';
+    $('gFull').hidden = !lose;
   }
   ['gMembers', 'gSpaces', 'gFee'].forEach(function (id) { $(id).addEventListener('input', calc); });
   calc();
@@ -664,7 +671,7 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   function showMax(p, who) {
-    $('gpPlanHead').textContent = who.business + ': here’s how we’d run it.';
+    $('gpPlanHead').textContent = 'Max can help ' + who.business + '. Here’s how we’d run it.';
     var stats = stat(money(p.total), 'a month, full');
     var steps;
     if (p.mode === 'fill') {
@@ -713,7 +720,7 @@
     if (!EMAIL.test(v('gEmail'))) return bad('That email doesn’t look right.', 'gEmail');
     var n = numbers();
     var who = { business: v('gBusiness'), type: $('gType').value };
-    btn.disabled = true; btn.textContent = 'Working it out…';
+    btn.disabled = true; btn.textContent = 'Checking…';
     fetch('/api/plan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -729,14 +736,14 @@
       .then(function (res) {
         if (!res.ok) throw new Error((res.d && res.d.error) || 'failed');
         var p = G.plan(n);
-        btn.disabled = false; btn.textContent = 'Show my plan';
+        btn.disabled = false; btn.textContent = 'Check my business';
         try { if (window.fbq) window.fbq('track', 'Lead', { content_category: 'growth-plan' }, { eventID: res.d.id }); } catch (err) {}
         if (p.recommend === 'max') showMax(p, who); else showAdvice(p, who);
       })
       .catch(function (err) {
         note.className = 'note wide bad';
         note.textContent = (err && err.message && err.message !== 'failed') ? err.message : 'That didn’t send. Try again, or email hello@kanvas.one.';
-        btn.disabled = false; btn.textContent = 'Show my plan';
+        btn.disabled = false; btn.textContent = 'Check my business';
       });
   });
 
