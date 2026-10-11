@@ -700,13 +700,6 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
    on the homepage they take the orange. */
 body.home .wm-dot{background:linear-gradient(90deg,#e8553d 0%,#f6a46b 100%);-webkit-background-clip:text;background-clip:text}
 body.home .g-free{background:linear-gradient(100deg,#b93d1f 0%,#c2410c 40%,#e8553d 100%);-webkit-background-clip:text;background-clip:text}
-/* A soft peach glow behind the hero, like light through the brand colour. */
-body.home .mh{position:relative;isolation:isolate;overflow-x:clip}
-body.home .mh::before{
-  content:"";position:absolute;z-index:-1;left:50%;top:-80px;width:min(1100px,140vw);height:760px;transform:translateX(-50%);
-  background:radial-gradient(closest-side,rgba(246,164,107,.28),rgba(242,122,82,.12) 55%,rgba(255,255,255,0) 100%);
-  pointer-events:none;
-}
 /* Phones: the headline sized to sit on two lines, never leaving "back." alone. */
 @media (max-width:600px){.mh h1{max-width:none;font-size:clamp(32px,calc((100vw - 44px) / 9.3),44px)}}
 /* The plan's lead features in bold ink, with the accent kept to the ticks. */
