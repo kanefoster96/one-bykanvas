@@ -9,11 +9,16 @@
 body.home{
   --paper:#f5f5f7;
   --dim:#86868b;
-  /* One accent: green, which already means free or included, as a
-     gradient for the free-page ask and the hints of colour. */
-  --green-2:#34c17a;
-  --green-3:#5fd18f;
-  --grad:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);
+  /* One accent: a warm orange, from coral to peach. The solid shade is
+     dark enough for text on white and on the soft tint; the gradient is
+     for icon tiles and the hints of colour. */
+  --good:#c2410c;
+  --good-soft:#fdeee6;
+  --good-dark:#ff9b73;
+  --green-2:#f27a52;
+  --green-3:#f6a46b;
+  --grad:linear-gradient(135deg,#e8553d 0%,#f27a52 55%,#f6a46b 100%);
+  --grad-deep:linear-gradient(135deg,#c2410c 0%,#e8553d 100%);
   --r-card:28px;
   --shadow:0 18px 50px rgba(29,29,31,.08);
   --shadow-sm:0 8px 24px rgba(29,29,31,.08),0 1px 2px rgba(29,29,31,.05);
@@ -23,11 +28,11 @@ body.home{
 /* ---------- Type ---------- */
 body.home h2{font-weight:700;font-size:clamp(32px,5vw,50px);letter-spacing:-.035em;line-height:1.04;text-wrap:balance}
 body.home h3{font-weight:700;letter-spacing:-.025em}
-/* The second clause of a two-tone headline: the emphasis, in the green
-   gradient (one emphasis colour per title, so nothing else in it is green). */
+/* The second clause of a two-tone headline: the emphasis, in the orange
+   gradient (one emphasis colour per title, so nothing else in it is orange). */
 .dim{
   padding-right:.08em;margin-right:-.08em;
-  background:linear-gradient(100deg,#126b2c 0%,#1a7f37 42%,#22a356 100%);
+  background:linear-gradient(100deg,#b93d1f 0%,#c2410c 40%,#e8553d 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;
   -webkit-box-decoration-break:clone;box-decoration-break:clone;
@@ -35,7 +40,7 @@ body.home h3{font-weight:700;letter-spacing:-.025em}
 @supports not ((-webkit-background-clip:text) or (background-clip:text)){
   .dim{background:none;color:var(--good);-webkit-text-fill-color:currentColor}
 }
-/* The green clause on a line of its own. */
+/* The orange clause on a line of its own. */
 .dim-line{display:block;width:fit-content}
 @media (forced-colors:active){.dim{background:none;color:CanvasText;-webkit-text-fill-color:CanvasText}}
 [data-tone="light"]{background:var(--paper)}
@@ -154,7 +159,7 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
 .hh .mini-row input:focus{box-shadow:none}
 .hh .mini-row input.err{box-shadow:inset 0 -2px 0 #d93025}
 .hh .mini-go{flex:0 0 50px;width:50px;height:50px;background:var(--grad)}
-.hh .mini-go:hover{box-shadow:0 6px 18px rgba(26,127,55,.3)}
+.hh .mini-go:hover{box-shadow:0 6px 18px rgba(194,65,12,.3)}
 .hh .mini-step label{text-align:center}
 
 
@@ -218,7 +223,7 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
   .hh-chip small{font-size:10.5px}
   /* Inside the screen edge, never cut off by it. */
   .hh-chip-1{left:12px;top:30px}
-  .hh-chip-2{right:12px;top:38%}
+  .hh-chip-2{right:12px;top:auto;bottom:5%}
   .hh-chip-3{display:none}
 }
 
@@ -396,7 +401,7 @@ body.home .section{padding:clamp(72px,10vw,120px) 0}
   font-size:14.5px;line-height:1.3;font-weight:500;
 }
 .rows li i{flex:0 0 22px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:700}
-.rows-good li{background:var(--good-soft);color:#13622a}
+.rows-good li{background:var(--good-soft);color:#9a3412}
 .rows-good li i{background:var(--good);color:#fff}
 .rows-bad li{background:var(--paper);color:var(--ink-2)}
 .rows-bad li i{background:#d1d1d6;color:#fff}
@@ -419,7 +424,7 @@ body.home .plan .badge{
   position:static;transform:none;display:inline-flex;margin:0 0 12px;
   font-size:12px;font-weight:700;letter-spacing:.02em;padding:7px 13px;
 }
-body.home .badge-green{background:var(--grad)}
+body.home .badge-green{background:var(--grad-deep)}
 body.home .price{font-size:54px;font-weight:700;letter-spacing:-.045em;margin-top:12px}
 body.home .plan .btn{height:50px;font-weight:600}
 body.home .plan-note{min-height:0}
@@ -429,7 +434,7 @@ body.home .bill-opt{color:#b8b8c2}
 body.home .bill-opt.is-on{color:var(--ink)}
 body.home .bill-save{background:var(--good);color:#fff}
 body.home .bill-opt.is-on .bill-save{background:var(--good-soft);color:var(--good)}
-/* The Boost stays green: everything in it is free with an annual plan. */
+/* The Boost stays in the accent: everything in it is free with an annual plan. */
 body.home .boost{border-radius:var(--r-card);max-width:none;display:grid;grid-template-columns:1fr 1.4fr;gap:clamp(16px,3vw,36px);align-items:start;padding:clamp(26px,4vw,40px)}
 body.home .boost h3{font-size:clamp(22px,2.8vw,28px);letter-spacing:-.03em;margin-bottom:8px}
 body.home .boost .ticks{margin:0}
@@ -533,7 +538,7 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 .ft-made{margin:4px 0 0;font-size:13.5px}
 .ft-status{display:inline-flex;align-items:center;gap:8px}
 .ft-status{font-weight:500;color:var(--ink)}
-/* A status light: a steady green dot with a soft ring pulsing out from it. */
+/* A status light: a steady accent dot with a soft ring pulsing out from it. */
 .ft-status i{position:relative;width:9px;height:9px;border-radius:50%;background:#22a356;flex:0 0 9px}
 .ft-status i::after{
   content:"";position:absolute;inset:0;border-radius:50%;background:#22a356;
@@ -595,7 +600,7 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 
 /* The academy's numbers, on black. */
 .mh-results{border-radius:var(--radius-lg);background:var(--ink);color:#fff;padding:36px 22px;text-align:center}
-.mh-results-tag{margin:0;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--good-dark)}
+.mh-results-tag{margin:0;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--good-dark);text-wrap:balance}
 .mh-results-row{display:grid;grid-template-columns:repeat(2,1fr);gap:28px 12px;margin:28px 0 24px}
 @media (min-width:760px){.mh-results-row{grid-template-columns:repeat(4,1fr)}.mh-results{padding:52px 40px}}
 .mh-results-n{margin:0;font-size:clamp(40px,6vw,58px);font-weight:700;letter-spacing:-.04em;line-height:1}
@@ -686,6 +691,24 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 .mh-range::-moz-range-progress{height:8px;border-radius:999px;background:var(--good)}
 .mh-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:30px;height:30px;margin-top:-11px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 8px rgba(0,0,0,.22),0 0 0 1px rgba(0,0,0,.06)}
 .mh-range::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 8px rgba(0,0,0,.22),0 0 0 1px rgba(0,0,0,.06)}
-.mh-range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(26,127,55,.3),0 2px 8px rgba(0,0,0,.22)}
-.mh-range:focus-visible::-moz-range-thumb{box-shadow:0 0 0 4px rgba(26,127,55,.3),0 2px 8px rgba(0,0,0,.22)}
+.mh-range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(194,65,12,.3),0 2px 8px rgba(0,0,0,.22)}
+.mh-range:focus-visible::-moz-range-thumb{box-shadow:0 0 0 4px rgba(194,65,12,.3),0 2px 8px rgba(0,0,0,.22)}
 .mh-spaces .sec-cta{margin-top:30px}
+
+/* ---------- Warm orange, everywhere on this page ----------
+   The wordmark dot and the free-word gradient live in styles.css in green;
+   on the homepage they take the orange. */
+body.home .wm-dot{background:linear-gradient(90deg,#e8553d 0%,#f6a46b 100%);-webkit-background-clip:text;background-clip:text}
+body.home .g-free{background:linear-gradient(100deg,#b93d1f 0%,#c2410c 40%,#e8553d 100%);-webkit-background-clip:text;background-clip:text}
+/* A soft peach glow behind the hero, like light through the brand colour. */
+body.home .mh{position:relative;isolation:isolate;overflow-x:clip}
+body.home .mh::before{
+  content:"";position:absolute;z-index:-1;left:50%;top:-80px;width:min(1100px,140vw);height:760px;transform:translateX(-50%);
+  background:radial-gradient(closest-side,rgba(246,164,107,.28),rgba(242,122,82,.12) 55%,rgba(255,255,255,0) 100%);
+  pointer-events:none;
+}
+/* Phones: the headline sized to sit on two lines, never leaving "back." alone. */
+@media (max-width:600px){.mh h1{max-width:none;font-size:clamp(32px,calc((100vw - 44px) / 9.3),44px)}}
+/* The plan's lead features in bold ink, with the accent kept to the ticks. */
+body.home .plan-wide-ticks li.tick-hero{color:var(--ink)}
+#understand .dim-line{margin-inline:auto}
