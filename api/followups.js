@@ -230,7 +230,7 @@ function growthOne(lead, site) {
       to: lead.email,
       subject: `What happened in our own club, ${biz}`,
       html: emailHtml({
-        preheader: '£103 of ads, 21 trial bookings, 4 new members, in three weeks.',
+        preheader: '£103 of ads, 21 trial bookings and £2,400 a year in new fees, in three weeks.',
         heading: 'What happened in our own club',
         lines: [
           `When we put together the plan for <strong>${esc(lead.business)}</strong>, the numbers came from somewhere real: our own dance and cheer academy, running on this system since 2017.`,
@@ -240,11 +240,11 @@ function growthOne(lead, site) {
           { label: 'Spent on ads', value: '£103' },
           { label: 'Trial bookings', value: '21' },
           { label: 'New members', value: '4' },
-          { label: 'New fees', value: '£200 a month' }
+          { label: 'New fees', value: '£2,400 a year' }
         ],
         perks: [
           '<strong>Nobody chased anyone.</strong> Trials booked themselves, reminders went out, and the follow-up with the link to join did the rest.',
-          '<strong>Those 4 members pay every month</strong>, so the £103 keeps paying back long after the ads stopped.',
+          '<strong>Those 4 members pay £50 every month</strong>: £2,400 a year from £103 of ads, still paying back long after the ads stopped.',
           '<strong>Your first 3 months of ads are on us</strong>, so the first trials cost you nothing.'
         ],
         ctaText: 'Start Max — £249 a month',
@@ -254,7 +254,7 @@ function growthOne(lead, site) {
         footerLinks: standardFooter(site)
       }),
       text: `When we put together the plan for ${lead.business}, the numbers came from our own dance and cheer academy.\n\n`
-        + 'First three weeks of ads: £103 spent, 21 trial bookings, 4 new members, £200 a month in new fees.\n\n'
+        + 'First three weeks of ads: £103 spent, 21 trial bookings, 4 new members, £2,400 a year in new fees.\n\n'
         + 'Your first 3 months of ads are on us.\n\n'
         + `Start Max: ${start}\n\nRather talk first? Just reply.\n`
     };
