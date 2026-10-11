@@ -1757,7 +1757,9 @@ function leadCard(row) {
     + (row.name && row.business ? ' · ' + row.name : '')));
   head.appendChild(names);
 
-  var chip = el('span', 'plan-chip' + (free ? ' is-free' : ''), free ? 'Free example' : 'Enquiry');
+  var growth = row.source === 'growth-plan';
+  var chip = el('span', 'plan-chip' + (free || growth ? ' is-free' : ''),
+    free ? 'Free example' : growth ? 'Free plan: ' + (row.plan_interest === 'max' ? 'Max' : 'Business') : 'Enquiry');
   head.appendChild(chip);
   card.appendChild(head);
 
@@ -1771,7 +1773,7 @@ function leadCard(row) {
   if (row.campaign) card.appendChild(el('p', 'cust-sub', 'From: ' + row.campaign));
 
   if (row.about) card.appendChild(el('p', 'queue-what', row.about));
-  if (!free && row.plan_interest) {
+  if (!free && !growth && row.plan_interest) {
     card.appendChild(el('p', 'cust-sub', 'Interested in ' + row.plan_interest
       + (row.want_app ? ', wants an app' : '')));
   }
