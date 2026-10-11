@@ -71,7 +71,7 @@ function planNote(plan, name, site) {
         ],
         ctaText: 'See what Business does',
         ctaHref: `${site}/plans.html#business`,
-        ctaNote: 'It is &pound;49 a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.',
+        ctaNote: 'It is &pound;50 a month. If you ever want it, switch from your account and your site comes with you. If not, nothing changes.',
         footer: 'You&rsquo;re getting this because your Kanvas One plan went live about a month ago. It is the only email like it.',
         footerLinks: standardFooter(site)
       }),
@@ -104,7 +104,7 @@ function planNote(plan, name, site) {
       ],
       ctaText: 'See what Max does',
       ctaHref: `${site}/plans.html#max`,
-      ctaNote: 'It is &pound;249 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.',
+      ctaNote: 'It is &pound;250 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.',
       footer: 'You&rsquo;re getting this because your Kanvas One plan went live about a month ago. It is the only email like it.',
       footerLinks: standardFooter(site)
     }),
@@ -190,13 +190,13 @@ function lastOne(lead, site) {
           + 'your words and photos made by us. No setup fee.',
         'Pay for the year and it&rsquo;s 2 months free plus the Launch Boost: your first month '
           + 'spent getting you found on Google.',
-        'Want bookings, payments and live chat? Business is &pound;49 a month, first month half price. Either way, this is '
+        'Want bookings, payments and live chat? Business is &pound;50 a month, first month half price. Either way, this is '
           + 'the last email about it, and nothing else will follow.'
       ],
       offer: offerBox(site),
       ctaText: 'Put it live — £9.99 a month',
       ctaHref: joinHref(site, lead, 'starter'),
-      ctaNote: `Or <a href="${esc(joinHref(site, lead, 'business'))}" style="color:inherit;">Business, &pound;49 a month, with bookings and payments</a>.`,
+      ctaNote: `Or <a href="${esc(joinHref(site, lead, 'business'))}" style="color:inherit;">Business, &pound;50 a month, with bookings and payments</a>.`,
       footer: 'You&rsquo;re getting this because you asked for a free example at '
             + 'kanvas.one. This is the last email about it.',
       footerLinks: standardFooter(site)
@@ -247,7 +247,7 @@ function growthOne(lead, site) {
           '<strong>Those 4 members pay £50 every month</strong>: £2,400 a year from £103 of ads, still paying back long after the ads stopped.',
           '<strong>Your first 3 months of ads are on us</strong>, so the first trials cost you nothing.'
         ],
-        ctaText: 'Start Max — £249 a month',
+        ctaText: 'Start Max — £250 a month',
         ctaHref: start,
         ctaNote: 'Rather talk it through first? Reply and we&rsquo;ll find 10 minutes.',
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. One more email follows, then we leave you be.',
@@ -264,21 +264,21 @@ function growthOne(lead, site) {
     to: lead.email,
     subject: `Any questions about your plan, ${biz}?`,
     html: emailHtml({
-      preheader: 'Business, £49 a month: your website, bookings and payments, run for you.',
+      preheader: 'Business, £50 a month: your website, bookings and payments, run for you.',
       heading: 'Any questions?',
       lines: [
         `A couple of days ago we suggested <strong>Business</strong> for <strong>${esc(lead.business)}</strong>, rather than Max.`,
         'If anything wasn&rsquo;t clear, or you want to know how it would work for your classes, just reply. A real person answers, usually the same working day.',
-        '<strong>Business is &pound;49 a month</strong>, no setup fee: your website looked after for you, bookings and payments online, live chat, and changes made within 48 hours.'
+        '<strong>Business is &pound;50 a month</strong>, no setup fee: your website looked after for you, bookings and payments online, live chat, and changes made within 48 hours.'
       ],
-      ctaText: 'Start with Business — £49 a month',
+      ctaText: 'Start with Business — £50 a month',
       ctaHref: start,
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. One more email follows, then we leave you be.',
       footerLinks: standardFooter(site)
     }),
     text: `A couple of days ago we suggested Business for ${lead.business}, rather than Max.\n\n`
       + 'If anything wasn’t clear, just reply. A real person answers.\n\n'
-      + `Business is £49 a month, no setup fee: ${start}\n`
+      + `Business is £50 a month, no setup fee: ${start}\n`
   };
 }
 
@@ -296,18 +296,18 @@ function growthTwo(lead, site) {
         preheader: 'What it really costs, and what happens if it doesn’t work.',
         heading: 'The two questions everyone asks',
         lines: [
-          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;249 a month for everything: website, member app, trial bookings, memberships, payments and the ads run for you. The first 3 months of ads are included. From month 4 you choose: fund your own ad budget, or we keep paying and each new member from the ads pays their first month to us.',
+          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;250 a month for everything: website, member app, trial bookings, memberships, payments and the ads run for you. The first 3 months of ads are included. From month 4 you choose: fund your own ad budget, or we keep paying and each new member from the ads pays their first month to us.',
           '<strong>&ldquo;What if it doesn&rsquo;t work?&rdquo;</strong> There&rsquo;s a 3-month minimum, unless we don&rsquo;t get you at least 10 trial bookings in that time. Then you can leave whenever you like.',
-          'And when your classes are full, we pause the ads. You just pay the &pound;249.',
+          'And when your classes are full, we pause the ads. You just pay the &pound;250.',
           'This is the last email about your plan. If now isn&rsquo;t the time, no hard feelings.'
         ],
-        ctaText: 'Start Max — £249 a month',
+        ctaText: 'Start Max — £250 a month',
         ctaHref: start,
         ctaNote: 'Or reply with anything you&rsquo;d like to ask.',
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
         footerLinks: standardFooter(site)
       }),
-      text: '"What does it really cost?" £249 a month for everything, first 3 months of ads included. From month 4: fund your own ads, or we keep paying and each new member from the ads pays their first month to us.\n\n'
+      text: '"What does it really cost?" £250 a month for everything, first 3 months of ads included. From month 4: fund your own ads, or we keep paying and each new member from the ads pays their first month to us.\n\n'
         + '"What if it doesn’t work?" 3-month minimum, unless we don’t get you 10 trial bookings; then leave whenever you like.\n\n'
         + 'When you’re full, we pause the ads.\n\n'
         + `Start Max: ${start}\n\nThis is the last email about your plan.\n`
@@ -329,7 +329,7 @@ function growthTwo(lead, site) {
         '<strong>Trial bookings, reminders and follow-ups</strong> that turn trials into members without you chasing.',
         '<strong>A member app</strong> for bookings, passes, messages and payments.'
       ],
-      ctaText: 'Start with Business — £49 a month',
+      ctaText: 'Start with Business — £50 a month',
       ctaHref: start,
       ctaNote: `Switch to Max from your account any month. <a href="${esc(max)}" style="color:inherit;">Or start on Max now.</a>`,
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',

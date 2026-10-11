@@ -319,7 +319,7 @@ ${b.maxPitch ? `<section class="section">
     <article class="plan">
       <div class="badge">Get booked</div>
       <h3>Business</h3>
-      <p class="price"><span class="cur">&pound;</span>49<span class="per">/month</span></p>
+      <p class="price"><span class="cur">&pound;</span>50<span class="per">/month</span></p>
       <p class="plan-note">Everything in Starter, plus:</p>
       <ul class="ticks">
         <li class="tick-hero">Bookings, payments and live chat</li>
@@ -331,7 +331,7 @@ ${b.maxPitch ? `<section class="section">
     <article class="plan">
       <div class="badge">Add growth</div>
       <h3>Max</h3>
-      <p class="price"><span class="cur">&pound;</span>249<span class="per">/month</span></p>
+      <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">An end-to-end system for your kind of business, run for you:</p>
       <ul class="ticks">
         <li class="tick-hero">Your Facebook and Instagram ads, run by us. You set the budget</li>
@@ -423,7 +423,7 @@ function planCard(f) {
   if (f.plan === 'max') return `    <article class="plan featured">
       <div class="badge">Add growth</div>
       <h3>Max</h3>
-      <p class="price"><span class="cur">&pound;</span>249<span class="per">/month</span></p>
+      <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">Your site, designed and built, plus us going and getting you customers every month.</p>
       <p class="plan-free">No setup fees</p>
       <a class="btn btn-primary full" href="/get-started.html?plan=max${maxParam(f.slug)}">Add growth</a>
@@ -441,7 +441,7 @@ function planCard(f) {
   return `    <article class="plan featured">
       <div class="badge">Get booked</div>
       <h3>Business</h3>
-      <p class="price"><span class="cur">&pound;</span>49<span class="per">/month</span></p>
+      <p class="price"><span class="cur">&pound;</span>50<span class="per">/month</span></p>
       <p class="plan-note">Your site, designed and built for you, plus the features that take the work off your phone.</p>
       <p class="plan-free">No setup fees</p>
       <a class="btn btn-primary full" href="/get-started.html?plan=business">Choose Business</a>
@@ -459,8 +459,8 @@ function planCard(f) {
 /* Where a feature page's Get started goes: the plan the feature lives on. */
 function featureStart(f) {
   return f.plan === 'max'
-    ? { href: '/get-started.html?plan=max', label: 'Get started, &pound;249 a month &rsaquo;' }
-    : { href: '/get-started.html?plan=business', label: 'Get started, &pound;49 a month &rsaquo;' };
+    ? { href: '/get-started.html?plan=max', label: 'Get started, &pound;250 a month &rsaquo;' }
+    : { href: '/get-started.html?plan=business', label: 'Get started, &pound;50 a month &rsaquo;' };
 }
 
 function featurePage(f) {
@@ -517,7 +517,7 @@ ${NAV}<section class="page-hero">
   <div class="wrap center">
     <h1 class="reveal">${f.h1}</h1>
     <p class="lede reveal">${lines(f.lede)}</p>
-    <p class="micro reveal hero-note">Built into your own website, set up for you. ${f.plan === 'max' ? '&pound;249 a month, no setup fee.' : 'From &pound;49 a month, no setup fee.'}</p>
+    <p class="micro reveal hero-note">Built into your own website, set up for you. ${f.plan === 'max' ? '&pound;250 a month, no setup fee.' : 'From &pound;50 a month, no setup fee.'}</p>
 
     <div class="typebox reveal" aria-hidden="true">
       <span class="typebox-text" id="typeDemo" data-lines="${JSON.stringify(f.lines).replace(/"/g, '&quot;')}"></span>
@@ -657,7 +657,7 @@ ${JSON.stringify({
   areaServed: 'GB',
   url: url,
   description: m.desc,
-  offers: { '@type': 'Offer', price: '249', priceCurrency: 'GBP', description: 'Per month. Ad spend paid separately by the customer.' }
+  offers: { '@type': 'Offer', price: '250', priceCurrency: 'GBP', description: 'Per month. Ad spend paid separately by the customer.' }
 })}
 </script>
 <script type="application/ld+json">
@@ -688,7 +688,7 @@ ${nav}<!-- 1. The promise, the price, the ask. -->
     </div>
     <p class="hero-pill reveal">${m.name}</p>
     <h1 class="reveal">${m.promise}</h1>
-    <p class="lede reveal">&pound;249 a month. No setup fee. Live within 24 hours of joining.</p>
+    <p class="lede reveal">&pound;250 a month. No setup fee. Live within 24 hours of joining.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
       <a class="btn btn-ghost" href="/plans.html">All the plans</a>
@@ -771,7 +771,7 @@ ${m.why.map(([lead, rest]) => `    <p><b>${lead}</b>${rest}</p>`).join('\n')}
     <h2 class="reveal">What it costs.</h2>
   </div>
   <div class="wrap cost reveal">
-    <p class="price"><span class="cur">&pound;</span>249<span class="per">/month</span></p>
+    <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
     <p>No setup fee. Same price whatever your business type.</p>
     <p>${MAX.AD_SPEND}</p>
     <p>One price, with the website, the ads, the ranking work, the bookings and the follow-ups in it.</p>

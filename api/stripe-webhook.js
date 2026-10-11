@@ -15,7 +15,7 @@ const { sendMetaEvent } = require('./_meta.js');
 
 const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' }; // must match admin.js/account.js
 
-/* £9.99, £49, £2,490: pence only when there are any. */
+/* £9.99, £50, £2,500: pence only when there are any. */
 function money(pence) {
   const p = Number(pence) || 0;
   return '£' + (p % 100
