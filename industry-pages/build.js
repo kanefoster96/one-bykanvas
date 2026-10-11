@@ -436,7 +436,7 @@ function planCard(f) {
         <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
         <li class="tick-hero">Business email at your own address</li>
       </ul>
-      <p class="plan-up">Built for your kind of business: <a href="/max/trades">Trades</a>, <a href="/max/clubs">Clubs</a>, <a href="/max/salon">Salon</a>, or <a href="#" data-max-other>another</a>.</p>
+      <p class="plan-up">Built for your kind of business: <a href="/max/trades">Trades</a>, <a href="/clubs">Kids&rsquo; clubs</a>, <a href="/max/salon">Salon</a>, or <a href="#" data-max-other>another</a>.</p>
     </article>`;
   return `    <article class="plan featured">
       <div class="badge">Get booked</div>
@@ -610,7 +610,7 @@ for (const f of FEATURES) {
 function maxHref(slug) {
   if (['trades', 'cleaners', 'gardeners', 'electricians', 'heating-engineers', 'mobile-car-valeters'].includes(slug)) return '/max/trades';
   if (['salons', 'barbers', 'hairdressers', 'lash-artists', 'makeup-artists', 'nail-techs'].includes(slug)) return '/max/salon';
-  if (slug === 'gyms' || slug === 'kids-clubs') return '/max/clubs';
+  if (slug === 'kids-clubs') return '/clubs';
   return '/plans.html#max';
 }
 /* The type the wizard carries onto the profile, so the setup form need
@@ -621,7 +621,7 @@ function maxParam(slug) {
 }
 function maxLabel(slug) {
   const h = maxHref(slug);
-  return h === '/max/trades' ? 'See Trades Max' : h === '/max/salon' ? 'See Salon Max' : h === '/max/clubs' ? 'See Clubs Max' : 'See Max';
+  return h === '/max/trades' ? 'See Trades Max' : h === '/max/salon' ? 'See Salon Max' : h === '/clubs' ? 'See the kids&rsquo; clubs system' : 'See Max';
 }
 
 function maxPage(m) {
