@@ -810,3 +810,20 @@ body.home .faq details[open]{box-shadow:var(--glass-shadow),0 14px 40px rgba(255
 .mh-num input::-webkit-outer-spin-button,.mh-num input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .mh-num input:focus{outline:none}
 .mh-slide-top{align-items:center}
+/* The promises, stacked under the plan. */
+.mh-promises{max-width:760px;margin:30px auto 0}
+.mh-promises-t{margin:0 0 12px;text-align:center;font-size:17px;font-weight:700;color:var(--ink)}
+.mh-promise-list{display:grid;gap:12px}
+@media (min-width:760px){.mh-promise-list{grid-template-columns:repeat(3,1fr)}}
+.mh-promise-list div{padding:20px 20px 18px;border-radius:var(--radius);background:var(--glass);box-shadow:var(--glass-shadow);text-align:left}
+.mh-promise-list b{display:block;margin-bottom:6px;font-size:16.5px;letter-spacing:-.01em;color:var(--ink)}
+.mh-promise-list b::before{content:"";display:inline-block;width:9px;height:9px;margin-right:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon-glow);vertical-align:1px}
+.mh-promise-list span{display:block;font-size:15px;line-height:1.45;color:#55555a}
+.mh-compare .sum{font-weight:700;background:rgba(255,79,18,.06)}
+.mh-compare .sum span:last-child{color:var(--ink);white-space:normal}
+/* Design pass: the plan's list in one weight, promises as wide as the
+   options above them, and a little air before a button's arrow. */
+body.home .plan-wide-ticks li,body.home .plan-wide-ticks li.tick-hero{color:var(--ink);font-weight:500}
+.mh-promises{max-width:none}
+body.home .btn > span[aria-hidden="true"]{margin-left:.35em}
+body.home .plan-wide .btn{justify-content:center}
