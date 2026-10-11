@@ -146,18 +146,16 @@
   // One source of truth for the nav. Pages only need an empty #menu element;
   // the header itself stays in the markup so it renders without JavaScript.
   var MENU = [
-    { label: 'Get started',     href: '/join' },
-    { label: 'How it works',    href: '/how-it-works.html' },
-    { label: "What\u2019s included", href: '/whats-included.html' },
-    { label: 'Features',        href: '/features.html' },
-    { label: 'Examples',        href: '/examples' },
-    { label: 'Reviews',         href: '/reviews.html' },
-    { label: 'See all plans',   href: '/plans.html' },
-    { label: 'Max', children: [
-      { label: 'Trades Max', href: '/max/trades' },
-      { label: 'Kids\u2019 clubs', href: '/clubs' },
-      { label: 'Salon Max',  href: '/max/salon' },
-      { label: 'Other',      other: true }
+    { label: 'Book a demo',     href: '/#demo' },
+    { label: 'What it does',    href: '/#features' },
+    { label: 'How it works',    href: '/#how' },
+    { label: 'Pricing',         href: '/#plans' },
+    { label: 'Kids\u2019 clubs', href: '/clubs' },
+    { label: 'Websites from \u00a39.99', children: [
+      { label: 'Websites',       href: '/websites' },
+      { label: 'How it works',   href: '/how-it-works.html' },
+      { label: 'Examples',       href: '/examples' },
+      { label: 'See all plans',  href: '/plans.html' }
     ] },
     { label: 'Contact',         href: '/contact.html' }
   ];
@@ -261,7 +259,7 @@
       ? '<a class="btn btn-ghost" href="/account.html">Your account</a>' +
         '<button class="btn btn-primary" type="button" id="navLogout">Log out</button>'
       : '<a class="btn btn-ghost" href="/login.html">Log in</a>' +
-        '<a class="btn btn-primary" href="/get-started.html">Get started</a>';
+        '<a class="btn btn-primary" href="/#demo">Book a demo</a>';
     nav.appendChild(actions);
     menu.appendChild(nav);
 

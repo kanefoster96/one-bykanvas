@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Small Business Websites from £9.99 a Month, Built for You | Kanvas One</title>
+<meta name="description" content="Your website built for you and live within 24 hours, £9.99 a month. Kanvas One designs, builds and hosts it, with your web address and unlimited changes to your words and photos included. Web design for Newcastle, the North East and the UK.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="Kanvas One: small business websites built for you, from £9.99 a month">
+<meta property="og:description" content="Your website built for you and live within 24 hours, £9.99 a month with your web address, hosting and unlimited changes included.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kanvas One">
+<meta property="og:image" content="https://kanvas.one/assets/og-image.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta property="og:image:alt" content="Kanvas One — the right website for your business. A request being typed: add online payments to my site.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://kanvas.one/websites">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How much does a website cost?", "acceptedAnswer": {"@type": "Answer", "text": "£9.99 a month for Starter: your website built for you and live within 24 hours, with your web address, hosting, security, support and unlimited changes to your words and photos included. No setup fee, no VAT, cancel any month. Not sure? See your design free first, in your inbox within 24 hours. A local agency typically charges £1,000 to £3,000 or more up front for the same kind of site."}}, {"@type": "Question", "name": "Is the build really free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. No setup fee, no build fee. Your first month puts you live within 24 hours. If you upgrade to Business, your features follow within 14 days, or the next month is free."}}, {"@type": "Question", "name": "What if I don’t like it?", "acceptedAnswer": {"@type": "Answer", "text": "Tell us and we change it. Changes to your words and photos are included, as many as you like, and there’s no contract: cancel any month."}}, {"@type": "Question", "name": "What do you need from me to start?", "acceptedAnswer": {"@type": "Answer", "text": "Your business name, a link to you online, and your email. Photos and prices later, if you have them. If not, we’ll sort that."}}, {"@type": "Question", "name": "What does a change cost once I'm live?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing. Ask for edits whenever you need them, as many as you like, and we work through them in turn. On Business they&rsquo;re done within 48 hours. Live tools like a menu or your prices are yours to change instantly."}}, {"@type": "Question", "name": "What happens if I cancel?", "acceptedAnswer": {"@type": "Answer", "text": "No exit fee, no further payments. Your site stays up to the end of the month you paid for, and your domain transfers to you."}}]}
+</script>
+<link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
+<link rel="stylesheet" href="styles.css?v=139">
+<link rel="stylesheet" href="home.css?v=22">
+</head>
+<body class="home page-websites">
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ============ NAV ============
+     The wordmark, the chat icon, the burger. The free-page ask is the
+     banner pill under it. -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one<span class="wm-dot">.</span></a>
+    <button class="nav-chat" id="navChat" type="button" aria-label="Chat with us" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+
+<!-- Built by script.js so the nav has one source of truth across pages. -->
+<div class="menu" id="menu" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+
+<main id="main">
+
+<!-- ============ HERO ============
+     The "one." block as it was, quiet and centred, with the three-step
+     form (hero.js). Under it, the frame cycling real customer sites, three
+     outcome chips floating round it on dotted leaders, and the mascot
+     peeking over its edge. On a phone the frame is a phone. -->
+<section class="hh" data-tone="white">
+  <div class="wrap">
+    <h1 class="reveal">one<span class="wm-dot">.</span><span class="sr-only"> Kanvas One: small business websites built for you, live in 24 hours, from £9.99 a month</span></h1>
+    <p class="hero-by reveal">by <span>Kanvas</span></p>
+    <p class="sub reveal">Websites for <span class="type-wrap"><span id="heroTrade">trades</span><span class="type-caret" aria-hidden="true"></span>.</span></p>
+    <form class="hero-form reveal" id="newFree" novalidate>
+        <!-- One row: the business name, then the join page with it filled in
+             (hero.js). -->
+        <div class="mini-step" id="newStep1">
+          <div class="mini-row">
+            <input id="newName" type="text" autocomplete="organization" autocapitalize="words" placeholder="What&rsquo;s your business name?" aria-label="Your business name" enterkeyhint="go">
+            <button class="mini-go" id="newNext" type="submit" aria-label="Get started"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+        <p class="note" id="newNote" role="status" aria-live="polite"></p>
+        <p class="micro" id="newMicro">Built for you, live in 24 hours. &pound;9.99 a month, or &pound;99 a year.</p>
+      </form>
+  </div>
+
+  <div class="hh-scene reveal" aria-hidden="true">
+    <div class="hh-frame">
+      <div class="hh-bar"><i></i><i></i><i></i><i class="hh-url">yourbusiness.co.uk</i><span class="hh-build">Building<i>.</i><i>.</i><i>.</i></span></div>
+      <div class="hh-screen hh-cycle">
+        <img src="assets/desktop-dance.jpg" alt="" width="1640" height="846" decoding="async">
+        <img src="assets/examples/desktop/hairdressers.jpg" alt="" width="1601" height="801" loading="lazy" decoding="async">
+        <img src="assets/examples/desktop/electricians.jpg" alt="" width="1601" height="801" loading="lazy" decoding="async">
+        <img src="assets/examples/desktop/cake-makers.jpg" alt="" width="1601" height="801" loading="lazy" decoding="async">
+      </div>
+    </div>
+    <div class="hh-phone-wrap">
+      <div class="hh-screen hh-cycle-5">
+        <img src="assets/phone-kanvasone.jpg" alt="" style="background:#ffffff" width="1272" height="2260" decoding="async">
+        <img src="assets/phone-academy.jpg" alt="" style="background:#000000" width="1264" height="2260" loading="lazy" decoding="async">
+        <img class="hh-ex" src="assets/examples/phone/hairdressers.jpg" alt="" style="background:#442c20" width="780" height="1692" loading="lazy" decoding="async">
+        <img class="hh-ex" src="assets/examples/phone/electricians.jpg" alt="" style="background:#282d27" width="780" height="1692" loading="lazy" decoding="async">
+        <img class="hh-ex" src="assets/examples/phone/nail-techs.jpg" alt="" style="background:#fdf0f7" width="780" height="1692" loading="lazy" decoding="async">
+      </div>
+    </div>
+
+    <div class="chip hh-chip hh-chip-1"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>Found on Google</b><small>&ldquo;plumber near me&rdquo; &middot; your town</small></span></div>
+    <div class="chip hh-chip hh-chip-2"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></span><span class="chip-text"><b>New enquiry</b><small>from the form on your site</small></span></div>
+    <div class="chip hh-chip hh-chip-3"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span><span class="chip-text"><b>Tapped to call</b><small>from your site, just now</small></span></div>
+
+  </div>
+</section>
+
+<!-- ============ WHAT STARTER DOES ============
+     Five cards, all Starter: speed, no effort, a person, buttons placed to
+     win customers, and watching where visitors go. Business and Max are
+     upgrades further down, not the pitch. -->
+<section id="features" class="section oc" data-tone="light">
+  <div class="wrap">
+    <h2 class="reveal">What your site does <span class="dim">from the day it goes live.</span></h2>
+  </div>
+  <div class="rail oc-rail" data-rail="outcomes" role="region" aria-label="What your site does">
+    <article class="oc-card reveal">
+      <div class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div>
+      <h3>Live within 24 hours.</h3>
+      <p>On your own address the day you join. Web address, hosting and security included.</p>
+      <div class="oc-chips">
+        <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></span><span class="chip-text"><b>Your page is ready</b><small>in your inbox, within 24 hours</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Live the day you join</b><small>myamazingbusiness.co.uk</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>Found on Google</b><small>in your town</small></span></div>
+      </div>
+    </article>
+
+    <article class="oc-card reveal">
+      <div class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></div>
+      <h3>Nothing for you to do.</h3>
+      <p>Send a photo or a line from your phone. We make the change, every month, as part of the price.</p>
+      <div class="oc-chips">
+        <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></span><span class="chip-text"><b>&ldquo;New prices from Monday&rdquo;</b><small>you, from the van</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-dot"><svg class="dot" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#000" fill-rule="evenodd" d="M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z"><animate attributeName="d" dur="5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;0.46;0.94;1" keySplines="0 0 1 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" values="M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M152.00 258.00 C152.00 234.80 170.80 216.00 194.00 216.00 C217.20 216.00 236.00 234.80 236.00 258.00 C236.00 264.63 230.63 270.00 224.00 270.00 C217.37 270.00 212.00 264.63 212.00 258.00 C212.00 248.06 203.94 240.00 194.00 240.00 C184.06 240.00 176.00 248.06 176.00 258.00 C176.00 264.63 170.63 270.00 164.00 270.00 C157.37 270.00 152.00 264.63 152.00 258.00 Z M276.00 258.00 C276.00 234.80 294.80 216.00 318.00 216.00 C341.20 216.00 360.00 234.80 360.00 258.00 C360.00 264.63 354.63 270.00 348.00 270.00 C341.37 270.00 336.00 264.63 336.00 258.00 C336.00 248.06 327.94 240.00 318.00 240.00 C308.06 240.00 300.00 248.06 300.00 258.00 C300.00 264.63 294.63 270.00 288.00 270.00 C281.37 270.00 276.00 264.63 276.00 258.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M152.00 258.00 C152.00 234.80 170.80 216.00 194.00 216.00 C217.20 216.00 236.00 234.80 236.00 258.00 C236.00 264.63 230.63 270.00 224.00 270.00 C217.37 270.00 212.00 264.63 212.00 258.00 C212.00 248.06 203.94 240.00 194.00 240.00 C184.06 240.00 176.00 248.06 176.00 258.00 C176.00 264.63 170.63 270.00 164.00 270.00 C157.37 270.00 152.00 264.63 152.00 258.00 Z M276.00 258.00 C276.00 234.80 294.80 216.00 318.00 216.00 C341.20 216.00 360.00 234.80 360.00 258.00 C360.00 264.63 354.63 270.00 348.00 270.00 C341.37 270.00 336.00 264.63 336.00 258.00 C336.00 248.06 327.94 240.00 318.00 240.00 C308.06 240.00 300.00 248.06 300.00 258.00 C300.00 264.63 294.63 270.00 288.00 270.00 C281.37 270.00 276.00 264.63 276.00 258.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z"/></path></svg></span><span class="chip-text"><b>On it</b><small>Kanvas One support &middot; 10 mins later</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Done</b><small>live on your site</small></span></div>
+      </div>
+    </article>
+
+    <article class="oc-card reveal">
+      <div class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
+      <h3>A person who answers.</h3>
+      <p>Message our team from your phone. Same working day, every time. No ticket, no queue.</p>
+      <div class="oc-chips">
+        <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></span><span class="chip-text"><b>&ldquo;Can you swap the photo?&rdquo;</b><small>you, 08:52</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-dot"><svg class="dot" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#000" fill-rule="evenodd" d="M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z"><animate attributeName="d" dur="5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;0.46;0.94;1" keySplines="0 0 1 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" values="M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M152.00 258.00 C152.00 234.80 170.80 216.00 194.00 216.00 C217.20 216.00 236.00 234.80 236.00 258.00 C236.00 264.63 230.63 270.00 224.00 270.00 C217.37 270.00 212.00 264.63 212.00 258.00 C212.00 248.06 203.94 240.00 194.00 240.00 C184.06 240.00 176.00 248.06 176.00 258.00 C176.00 264.63 170.63 270.00 164.00 270.00 C157.37 270.00 152.00 264.63 152.00 258.00 Z M276.00 258.00 C276.00 234.80 294.80 216.00 318.00 216.00 C341.20 216.00 360.00 234.80 360.00 258.00 C360.00 264.63 354.63 270.00 348.00 270.00 C341.37 270.00 336.00 264.63 336.00 258.00 C336.00 248.06 327.94 240.00 318.00 240.00 C308.06 240.00 300.00 248.06 300.00 258.00 C300.00 264.63 294.63 270.00 288.00 270.00 C281.37 270.00 276.00 264.63 276.00 258.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M152.00 258.00 C152.00 234.80 170.80 216.00 194.00 216.00 C217.20 216.00 236.00 234.80 236.00 258.00 C236.00 264.63 230.63 270.00 224.00 270.00 C217.37 270.00 212.00 264.63 212.00 258.00 C212.00 248.06 203.94 240.00 194.00 240.00 C184.06 240.00 176.00 248.06 176.00 258.00 C176.00 264.63 170.63 270.00 164.00 270.00 C157.37 270.00 152.00 264.63 152.00 258.00 Z M276.00 258.00 C276.00 234.80 294.80 216.00 318.00 216.00 C341.20 216.00 360.00 234.80 360.00 258.00 C360.00 264.63 354.63 270.00 348.00 270.00 C341.37 270.00 336.00 264.63 336.00 258.00 C336.00 248.06 327.94 240.00 318.00 240.00 C308.06 240.00 300.00 248.06 300.00 258.00 C300.00 264.63 294.63 270.00 288.00 270.00 C281.37 270.00 276.00 264.63 276.00 258.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z"/></path></svg></span><span class="chip-text"><b>Kanvas One support &middot; 09:40</b><small>&ldquo;Swapped, and fixed the hours too.&rdquo;</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Done</b><small>before lunch</small></span></div>
+      </div>
+    </article>
+
+    <article class="oc-card reveal">
+      <div class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l12 9-5 1 3 6-2 1-3-6-4 4z"/></svg></div>
+      <h3>Built to get you customers.</h3>
+      <p>Call and enquiry buttons placed where people decide, on every page, on a phone.</p>
+      <div class="oc-chips">
+        <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span><span class="chip-text"><b>Tapped to call</b><small>from your prices page</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></span><span class="chip-text"><b>New enquiry &middot; Sam R.</b><small>&ldquo;Can you do Thursday?&rdquo;</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11.5a7 7 0 0 0-14 0C5 14.5 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="chip-text"><b>Found you on Maps</b><small>two streets away</small></span></div>
+      </div>
+    </article>
+
+    <article class="oc-card reveal">
+      <div class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
+      <h3>We watch, and suggest.</h3>
+      <p>We see where visitors go and what they tap, and suggest the next change. Then we make it.</p>
+      <div class="oc-chips">
+        <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="chip-text"><b>Most visitors land on Prices</b><small>this month</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg></span><span class="chip-text"><b>Suggested</b><small>a call button on that page</small></span></div>
+        <div class="chip"><span class="tile tile-sm tile-dot"><svg class="dot" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#000" fill-rule="evenodd" d="M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z"><animate attributeName="d" dur="5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;0.46;0.94;1" keySplines="0 0 1 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" values="M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M152.00 258.00 C152.00 234.80 170.80 216.00 194.00 216.00 C217.20 216.00 236.00 234.80 236.00 258.00 C236.00 264.63 230.63 270.00 224.00 270.00 C217.37 270.00 212.00 264.63 212.00 258.00 C212.00 248.06 203.94 240.00 194.00 240.00 C184.06 240.00 176.00 248.06 176.00 258.00 C176.00 264.63 170.63 270.00 164.00 270.00 C157.37 270.00 152.00 264.63 152.00 258.00 Z M276.00 258.00 C276.00 234.80 294.80 216.00 318.00 216.00 C341.20 216.00 360.00 234.80 360.00 258.00 C360.00 264.63 354.63 270.00 348.00 270.00 C341.37 270.00 336.00 264.63 336.00 258.00 C336.00 248.06 327.94 240.00 318.00 240.00 C308.06 240.00 300.00 248.06 300.00 258.00 C300.00 264.63 294.63 270.00 288.00 270.00 C281.37 270.00 276.00 264.63 276.00 258.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M152.00 258.00 C152.00 234.80 170.80 216.00 194.00 216.00 C217.20 216.00 236.00 234.80 236.00 258.00 C236.00 264.63 230.63 270.00 224.00 270.00 C217.37 270.00 212.00 264.63 212.00 258.00 C212.00 248.06 203.94 240.00 194.00 240.00 C184.06 240.00 176.00 248.06 176.00 258.00 C176.00 264.63 170.63 270.00 164.00 270.00 C157.37 270.00 152.00 264.63 152.00 258.00 Z M276.00 258.00 C276.00 234.80 294.80 216.00 318.00 216.00 C341.20 216.00 360.00 234.80 360.00 258.00 C360.00 264.63 354.63 270.00 348.00 270.00 C341.37 270.00 336.00 264.63 336.00 258.00 C336.00 248.06 327.94 240.00 318.00 240.00 C308.06 240.00 300.00 248.06 300.00 258.00 C300.00 264.63 294.63 270.00 288.00 270.00 C281.37 270.00 276.00 264.63 276.00 258.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z"/></path></svg></span><span class="chip-text"><b>Added</b><small>by us, from your message</small></span></div>
+      </div>
+    </article>
+
+  </div>
+  <div class="rail-nav oc-nav">
+    <button class="rail-btn" data-rail-dir="-1" aria-label="Previous">&lsaquo;</button>
+    <button class="rail-btn" data-rail-dir="1" aria-label="Next">&rsaquo;</button>
+  </div>
+  <p class="wrap center micro reveal">All of that is Starter, &pound;9.99 a month. Want bookings, payments and live chat on top? <a href="#business">That&rsquo;s Business</a>.</p>
+  <div class="wrap center sec-cta reveal">
+    <a class="btn btn-primary" href="/join">Get my website <span aria-hidden="true">&rsaquo;</span></a>
+    <p class="sec-cta-note">Built for you, live in 24 hours. &pound;9.99 a month.</p>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS (Brief 4) ============ -->
+<section id="how" class="section hw" data-tone="white">
+  <div class="wrap">
+    <h2 class="reveal">How it works. <span class="dim dim-line">As easy as 1,&nbsp;2,&nbsp;3.</span></h2>
+    <div class="hw-steps">
+
+      <div class="hw-step">
+        <div class="hw-text reveal">
+          <h3>1. Tell us your name</h3>
+          <p>Your business name, your email, your web address and a link to where you&rsquo;re online now. Two minutes.</p>
+        </div>
+        <div class="ui reveal" aria-hidden="true">
+          <div class="ui-bar"><i></i><i></i><i></i></div>
+          <div class="ui-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h10M4 17h7"/></svg><span class="ui-typed">My Amazing Business<span class="type-caret"></span></span></div>
+          <div class="ui-sources"><span class="ui-src">Instagram</span><span class="ui-src">Facebook</span><span class="ui-src">Checkatrade</span></div>
+        </div>
+      </div>
+
+      <div class="hw-step">
+        <div class="hw-text reveal">
+          <h3>2. We build it <span class="g-free">for you</span></h3>
+          <p>From your Instagram, Facebook or current site: your photos, your words, your prices. Want something changed? Just ask.</p>
+        </div>
+        <div class="ui reveal" aria-hidden="true">
+          <div class="ui-mail">
+            <div class="ui-mail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></div>
+            <div><b>Your site is ready</b><span>hello@kanvas.one · 11:40</span></div>
+          </div>
+          <div class="ui-mail-body">
+            <div class="ui-mini-phone"><div class="hh-screen"><img class="hh-ex" src="assets/examples/phone/hairdressers.jpg" alt="" style="background:#442c20" width="780" height="1692" loading="lazy" decoding="async"></div></div>
+            <div class="ui-choices">
+              <span class="ui-choice ui-choice-yes"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Love it</span>
+              <span class="ui-choice ui-choice-no">Change something</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hw-step">
+        <div class="hw-text reveal">
+          <h3>3. Live within 24 hours</h3>
+          <p>On your own address the day you join. Then edits whenever you need them, made by us, from a message on your phone.</p>
+        </div>
+        <div class="ui reveal" aria-hidden="true">
+          <p class="ui-title">Day one</p>
+          <div class="ui-live"><i></i>Live on myamazingbusiness.co.uk</div>
+          <div class="ui-chips">
+            <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></span><span class="chip-text"><b>New enquiry</b><small>from your site, just now</small></span></div>
+            <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span><span class="chip-text"><b>Tapped to call</b><small>from your prices page</small></span></div>
+          </div>
+          <p class="ui-note">No setup fee. Cancel any month.</p>
+        </div>
+      </div>
+
+    </div>
+    <p class="hw-more reveal"><a href="/how-it-works.html">The long version &rsaquo;</a></p>
+  </div>
+  <div class="wrap center sec-cta reveal">
+    <a class="btn btn-primary" href="/join">Start step 1 <span aria-hidden="true">&rsaquo;</span></a>
+    <p class="sec-cta-note">Two minutes. Your business name first.</p>
+  </div>
+</section>
+
+<!-- ============ ANY BUSINESS (Brief 5) ============
+     The search types through the trades and lights the matching pill
+     (home.js); each pill opens the page for that trade (/free, with the
+     trade in its green pill and its example in the phone). -->
+<section id="any" class="section ab" data-tone="light">
+  <div class="wrap">
+    <div class="ab-card reveal">
+      <h2>Any trade, <span class="dim">from barbers to boiler engineers.</span></h2>
+      <p class="lede">Designed around how your customers find you and book you. No templates.</p>
+      <form class="ab-search" id="abSearch" role="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg>
+        <span class="ab-field">
+          <input id="abInput" type="text" placeholder="Barbers" aria-label="Search your trade" autocomplete="off" enterkeyhint="go">
+          <span class="ab-measure" id="abMeasure" aria-hidden="true"></span>
+          <span class="type-caret" id="abCaret" aria-hidden="true"></span>
+        </span>
+      </form>
+      <div class="ab-pills" id="abPills">
+        <a class="pill" href="/free?trade=trades" data-trade="trades">Trades</a>
+        <a class="pill" href="/free?trade=hair" data-trade="hairdressers hair">Hairdressers</a>
+        <a class="pill" href="/free?trade=lash" data-trade="lash artists lash techs">Lash artists</a>
+        <a class="pill" href="/free?trade=mua" data-trade="makeup artists mua">Makeup artists</a>
+        <a class="pill" href="/free?trade=cake" data-trade="cake makers bakers cakes">Cake makers</a>
+        <a class="pill" href="/free?trade=elec" data-trade="electricians">Electricians</a>
+        <a class="pill" href="/free?trade=boiler" data-trade="heating engineers boiler plumbers">Heating engineers</a>
+        <a class="pill" href="/free?trade=kids" data-trade="kids clubs classes">Kids&rsquo; clubs</a>
+        <a class="pill" href="/free?trade=nails" data-trade="nail techs nails">Nail techs</a>
+        <a class="pill" href="/free?trade=valet" data-trade="mobile car valeters valeting detailing">Car valeters</a>
+        <a class="pill" href="/free?trade=driving" data-trade="driving instructors driving schools">Driving instructors</a>
+        <a class="pill" href="/free?trade=barbers" data-trade="barbers">Barbers</a>
+        <a class="pill" href="/free?trade=cafes" data-trade="cafés coffee shops">Coffee shops</a>
+        <a class="pill" href="/free?trade=gyms" data-trade="gyms">Gyms</a>
+        <a class="pill" href="/free?trade=cleaners" data-trade="cleaners">Cleaners</a>
+        <a class="pill" href="/free?trade=tutors" data-trade="tutors">Tutors</a>
+        <a class="pill" href="/free?trade=photographers" data-trade="photographers">Photographers</a>
+        <a class="pill" href="/free?trade=gardeners" data-trade="gardeners">Gardeners</a>
+        <a class="pill" href="/free?trade=dance" data-trade="dance schools clubs">Dance schools</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap center sec-cta reveal">
+    <a class="btn btn-primary" href="/join">Get yours, &pound;9.99 a month <span aria-hidden="true">&rsaquo;</span></a>
+    <p class="sec-cta-note">Whatever you do, we build it around you.</p>
+  </div>
+</section>
+
+<!-- ============ THE PROMISE ============
+     The Love-It Promise as four short tiles, no ticks: how little they do,
+     how fast, and that it stays right. The five-year maths lives in the
+     comparison pop-up, opened from the plan. -->
+<section id="offer" class="section pr" data-tone="white">
+  <div class="wrap center">
+    <p class="pr-tag reveal">The Love-It Promise</p>
+    <h2 class="reveal">Live in 24 hours. <span class="dim">Changed until you love it.</span></h2>
+  </div>
+  <div class="wrap pr-strip reveal">
+    <div class="pr-item"><span class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></span><b>Built from your page</b><span>Send your Instagram or Facebook. We do the rest.</span></div>
+    <div class="pr-item"><span class="tile tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><b>Live within 24 hours</b><span>On your own address.</span></div>
+    <div class="pr-item"><span class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></span><b>Unlimited changes</b><span>To your words and photos, made by us.</span></div>
+    <div class="pr-item"><span class="tile tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 20h11M8.5 20V9a4 4 0 0 1 8 0M6 13h7"/></svg></span><b>No setup fee</b><span>Cancel any month.</span></div>
+  </div>
+  <div class="wrap center sec-cta reveal">
+    <a class="btn btn-primary" href="/join">Get started <span aria-hidden="true">&rsaquo;</span></a>
+    <p class="sec-cta-note">Live in 24 hours. Cancel any month.</p>
+  </div>
+</section>
+
+<!-- ============ THE PLAN: STARTER ============
+     One plan sold: the site, built for you and hosted, live within 24
+     hours, unlimited changes to words and photos made by us, £9.99 a
+     month, no setup fee. Business and Max are
+     upgrades, each in its own section. The ids starter, business and max
+     and the data-m/data-y prices stay for the toggle and the menu links. -->
+<section id="plans" class="section" data-tone="white">
+  <div class="wrap center">
+    <h2 class="reveal">Your site, built for you. <span class="dim">&pound;9.99 a month.</span></h2>
+    <p class="lede reveal">Live on your own address within 24 hours. Unlimited changes to your words and photos, made by us.<span class="gap"></span>No setup fee. Cancel any month.</p>
+  </div>
+
+  <div class="wrap center">
+    <div class="bill-toggle bill-toggle-page reveal" role="group" aria-label="Billing period">
+      <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
+      <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free + Boost</span></button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <article class="plan featured plan-wide reveal" id="starter">
+      <div class="plan-wide-head">
+        <div class="badge badge-green">The site</div>
+        <h3>Starter</h3>
+        <p class="price" data-m="9.99" data-y="99"><span class="cur">&pound;</span>9.99<span class="per">/month</span></p>
+        <p class="plan-note">Built for you from our designs. Found on Google. Called and messaged from the site. Looked after, every month.</p>
+        <p class="plan-free">No setup fees</p>
+        <a class="btn btn-primary full" href="/join">Choose Starter</a>
+        <p class="plan-up plan-cmp"><a href="/plans.html" id="cmpOpen">How it compares with a traditional website &rsaquo;</a></p>
+      </div>
+      <ul class="ticks plan-wide-ticks">
+        <li class="tick-hero">Live on your own address within 24 hours</li>
+        <li class="tick-hero">Contact form and click to call, placed where customers decide</li>
+        <li>Found on Google in your town</li>
+        <li>Web address, hosting and security included</li>
+        <li class="tick-hero">Unlimited changes to your words and photos, made by us, from a message on your phone</li>
+        <li>We watch where visitors go and suggest what to change next</li>
+        <li>We answer the same working day</li>
+      </ul>
+    </article>
+  </div>
+
+  <!-- What paying for the year gets. -->
+  <div class="wrap">
+    <aside class="boost boost-line reveal">
+      <p><strong>Annual plans: 2 months free, and the Launch Boost.</strong> Your first month is spent getting you found: your Google Business Profile set up, a page for every service and town you cover, and your first reviews asked for.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ UPGRADE: BUSINESS ============ -->
+<section id="business" class="section up" data-tone="light">
+  <div class="wrap">
+    <div class="up-card reveal">
+      <div class="up-text">
+        <p class="up-tag">Upgrade, when you&rsquo;re ready</p>
+        <h2>Business. <span class="dim">Get booked.</span></h2>
+        <p class="lede">Everything in Starter, plus bookings, payments and live chat on your site, a review asked for after every job, and changes done within 48 hours.</p>
+        <p class="price" data-m="49" data-y="490"><span class="cur">&pound;</span>49<span class="per">/month</span></p>
+        <a class="btn btn-ghost" href="/get-started.html?plan=business">Choose Business</a>
+        <p class="plan-up">Your features built within 14 days, or your next month is free. Move between plans any month.</p>
+      </div>
+      <div class="up-side">
+        <div class="up-chips" aria-hidden="true">
+          <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>New booking</b><small>Tue 10:00 &middot; Sam R.</small></span></div>
+          <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 20h11M8.5 20V9a4 4 0 0 1 8 0M6 13h7"/></svg></span><span class="chip-text"><b>Deposit paid</b><small>&pound;40 &middot; card</small></span></div>
+          <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8 14.12 9.09 20.75 9.16 15.42 13.11 17.41 19.44 12 15.6 6.59 19.44 8.58 13.11 3.25 9.16 9.88 9.09Z"/></svg></span><span class="chip-text"><b>New 5-star review</b><small>asked for automatically</small></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- The comparison as a popup, opened from the Starter card. The five-year
+     card lives here rather than on the page; without JavaScript the link
+     goes to the plans page and its comparison instead. -->
+<dialog class="cmp-dialog" id="cmpDialog" aria-label="Kanvas One compared with other websites">
+  <button class="cmp-close" type="button" data-close aria-label="Close">&times;</button>
+  <div class="cmp-dialog-body">
+    <div class="pr-card" id="fiveyear">
+      <p class="pr-tag">The five-year maths</p>
+      <h3>A website that never goes out of date.</h3>
+      <div class="fy-cols">
+        <div>
+          <h4>A traditional website</h4>
+          <ul class="rows rows-bad">
+            <li><i>!</i>&pound;3,000+ before you see a thing</li>
+            <li><i>!</i>&pound;100 to &pound;200 for every change</li>
+            <li><i>!</i>Hosting, database and email on top</li>
+            <li><i>!</i>Looks dated by year five</li>
+            <li><i>!</i>Your problem when it breaks</li>
+            <li><i>!</i>Stuck with it once it&rsquo;s paid for</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Kanvas One</h4>
+          <ul class="rows rows-good">
+            <li><i>&#10003;</i>Live in 24 hours, from &pound;9.99 a month</li>
+            <li><i>&#10003;</i>Changes made for you</li>
+            <li><i>&#10003;</i>Web address, hosting and security included</li>
+            <li><i>&#10003;</i>Never stands still &mdash; it grows with you</li>
+            <li><i>&#10003;</i>Fixed, updated and looked after</li>
+            <li><i>&#10003;</i>Cancel any month</li>
+          </ul>
+        </div>
+      </div>
+      <p class="fy-sum"><strong>Five years of Kanvas One is under &pound;600.</strong> A traditional site costs five times that before hosting, changes, or the rebuild.</p>
+    </div>
+  </div>
+  <div class="cmp-dialog-actions">
+    <a class="btn btn-primary" href="/join">Get started &rsaquo;</a>
+    <button class="btn btn-ghost" type="button" data-close>Keep browsing</button>
+  </div>
+</dialog>
+
+<!-- ============ REVIEWS (Brief 8) ============ -->
+<section id="reviews" class="section" data-tone="light">
+  <div class="wrap center">
+    <h2 class="reveal">Built by us. <span class="dim">Working for them.</span></h2>
+  </div>
+  <!-- Filled by reviews.js: Google if /api/reviews is configured, otherwise
+       the placeholder set in that file. -->
+  <div class="rail" id="rail" data-reviews="6" role="region" aria-label="Customer reviews"></div>
+  <div class="rail-nav">
+    <button class="rail-btn" data-dir="-1" aria-label="Previous reviews">&lsaquo;</button>
+    <button class="rail-btn" data-dir="1" aria-label="Next reviews">&rsaquo;</button>
+  </div>
+  <p class="wrap center rail-more"><a href="/reviews.html">Read all reviews &rsaquo;</a></p>
+  <div class="wrap center sec-cta reveal">
+    <a class="btn btn-primary" href="/join">Join them <span aria-hidden="true">&rsaquo;</span></a>
+    <p class="sec-cta-note">&pound;9.99 a month, or &pound;99 a year.</p>
+  </div>
+</section>
+
+<!-- ============ FAQ (Brief 8) ============
+     Five questions: the ones that stop a sale, not the ones that explain the
+     service. Everything else is on the plans and what's-included pages. -->
+<section id="faq" class="section" data-tone="white">
+  <div class="wrap center">
+    <h2 class="reveal">Questions.</h2>
+  </div>
+  <div class="wrap faq reveal">
+    <details>
+      <summary>How much does a website cost?</summary>
+      <div class="ans"><p>&pound;9.99 a month for Starter: your website built for you and live within 24 hours, with your web address, hosting, security, support and unlimited changes to your words and photos included. No setup fee, no VAT, cancel any month. Not sure? See your design free first, in your inbox within 24 hours. A local agency typically charges &pound;1,000 to &pound;3,000 or more up front for the same kind of site.</p></div>
+    </details>
+    <details>
+      <summary>Is the build really free?</summary>
+      <div class="ans"><p>Yes. No setup fee, no build fee. Join for &pound;9.99 a month and you&rsquo;re live within 24 hours. If you upgrade to Business, your features follow within 14 days, or the next month is free.</p></div>
+    </details>
+    <details>
+      <summary>What if I don&rsquo;t like it?</summary>
+      <div class="ans"><p>Tell us and we change it. Changes to your words and photos are included, as many as you like, and there&rsquo;s no contract: cancel any month.</p></div>
+    </details>
+    <details>
+      <summary>What do you need from me to start?</summary>
+      <div class="ans"><p>Your business name, a link to you online, and your email. Photos and prices later, if you have them. If not, we&rsquo;ll sort that.</p></div>
+    </details>
+    <details>
+      <summary>What does a change cost once I'm live?</summary>
+      <div class="ans"><p>Nothing. Ask for changes to your words and photos whenever you need them, as many as you like, and we work through them in turn. On Business they&rsquo;re done within 48 hours. Live tools like a menu or your prices are yours to change instantly.</p></div>
+    </details>
+    <details>
+      <summary>What happens if I cancel?</summary>
+      <div class="ans"><p>No exit fee, no further payments. Your site stays up to the end of the month you paid for, and your domain transfers to you.</p></div>
+    </details>
+    <p class="ask reveal">Still got a question? <a href="mailto:hello@kanvas.one?subject=Question%20about%20Kanvas%20One">Email us</a> &mdash; we answer the same working day.</p>
+  </div>
+  <div class="wrap center sec-cta reveal">
+    <a class="btn btn-primary" href="/join">Start for &pound;9.99 <span aria-hidden="true">&rsaquo;</span></a>
+    <p class="sec-cta-note">No setup fee. No contract.</p>
+  </div>
+</section>
+
+<!-- ============ UPGRADE: MAX ============ -->
+<section id="max" class="section up" data-tone="light">
+  <div class="wrap">
+    <div class="up-card reveal">
+      <div class="up-text">
+        <p class="up-tag">Want it all run for you?</p>
+        <h2>Max. <span class="dim">&pound;249 a month.</span></h2>
+        <p class="lede">Everything in Business, plus your Facebook and Instagram ads, your Google ranking, reviews, referrals and follow-up emails, all run for you. Business email at your own address, and first in the queue.</p>
+        <p class="price" data-m="249" data-y="2,490"><span class="cur">&pound;</span>249<span class="per">/month</span></p>
+        <details class="max-pick">
+          <summary><span class="btn btn-ghost">Choose your business type</span></summary>
+          <div class="max-pick-scrim"></div>
+          <div class="max-pick-list">
+            <a href="/max/trades">Trades Max</a>
+            <a href="/clubs">Kids&rsquo; clubs</a>
+            <a href="/max/salon">Salon Max</a>
+            <button type="button" data-max-other>Other</button>
+          </div>
+        </details>
+        <p class="plan-up">Same price whatever the type. You pay your own ad spend.</p>
+      </div>
+      <div class="up-side">
+        <div class="up-chips" aria-hidden="true">
+          <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="chip-text"><b>Ads running</b><small>Facebook and Instagram &middot; your budget</small></span></div>
+          <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>Ranking worked on</b><small>Google, every month</small></span></div>
+          <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></span><span class="chip-text"><b>Follow-up sent</b><small>written and sent by us</small></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSING ASK ============
+     One ask, repeated: get started. The field is a link back to the hero
+     form (data-to-form), so the form lives once. -->
+<section id="start" class="section ce cta-end" data-tone="white">
+  <div class="wrap center">
+    <div class="ce-dot reveal"><svg class="dot" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="dotGradCe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a7f37"/><stop offset=".6" stop-color="#34c17a"/><stop offset="1" stop-color="#5fd18f"/></linearGradient></defs><path fill="url(#dotGradCe)" fill-rule="evenodd" d="M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z"><animate attributeName="d" dur="5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;0.46;0.94;1" keySplines="0 0 1 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" values="M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M152.00 258.00 C152.00 234.80 170.80 216.00 194.00 216.00 C217.20 216.00 236.00 234.80 236.00 258.00 C236.00 264.63 230.63 270.00 224.00 270.00 C217.37 270.00 212.00 264.63 212.00 258.00 C212.00 248.06 203.94 240.00 194.00 240.00 C184.06 240.00 176.00 248.06 176.00 258.00 C176.00 264.63 170.63 270.00 164.00 270.00 C157.37 270.00 152.00 264.63 152.00 258.00 Z M276.00 258.00 C276.00 234.80 294.80 216.00 318.00 216.00 C341.20 216.00 360.00 234.80 360.00 258.00 C360.00 264.63 354.63 270.00 348.00 270.00 C341.37 270.00 336.00 264.63 336.00 258.00 C336.00 248.06 327.94 240.00 318.00 240.00 C308.06 240.00 300.00 248.06 300.00 258.00 C300.00 264.63 294.63 270.00 288.00 270.00 C281.37 270.00 276.00 264.63 276.00 258.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M152.00 258.00 C152.00 234.80 170.80 216.00 194.00 216.00 C217.20 216.00 236.00 234.80 236.00 258.00 C236.00 264.63 230.63 270.00 224.00 270.00 C217.37 270.00 212.00 264.63 212.00 258.00 C212.00 248.06 203.94 240.00 194.00 240.00 C184.06 240.00 176.00 248.06 176.00 258.00 C176.00 264.63 170.63 270.00 164.00 270.00 C157.37 270.00 152.00 264.63 152.00 258.00 Z M276.00 258.00 C276.00 234.80 294.80 216.00 318.00 216.00 C341.20 216.00 360.00 234.80 360.00 258.00 C360.00 264.63 354.63 270.00 348.00 270.00 C341.37 270.00 336.00 264.63 336.00 258.00 C336.00 248.06 327.94 240.00 318.00 240.00 C308.06 240.00 300.00 248.06 300.00 258.00 C300.00 264.63 294.63 270.00 288.00 270.00 C281.37 270.00 276.00 264.63 276.00 258.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z"/></path></svg></div>
+    <h2 class="reveal">Live in 24 hours. <span class="dim">&pound;9.99 a month.</span></h2>
+    <p class="lede reveal">Built for you from the page you already have, looked after for you.<span class="gap"></span>Or &pound;99 for the whole year.</p>
+    <a class="gfield reveal" href="#newFree" data-to-form><span class="gfield-text">What&rsquo;s your business name?</span><span class="gfield-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span></a>
+    <p class="micro reveal">No setup fees. Live within 24 hours. Cancel anytime.</p>
+    <div class="ce-chips reveal" aria-hidden="true">
+      <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg></span><span class="chip-text"><b>Found on Google</b><small>in your town</small></span></div>
+      <div class="chip"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg></span><span class="chip-text"><b>New enquiry</b><small>from your site</small></span></div>
+      <div class="chip"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Changed</b><small>by us, this month</small></span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER (Brief 9) ============ -->
+<footer class="foot" data-tone="light">
+  <div class="wrap">
+    <div class="ft-top">
+      <svg class="ft-dot" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#000" fill-rule="evenodd" d="M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z"><animate attributeName="d" dur="5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;0.46;0.94;1" keySplines="0 0 1 1;0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1" values="M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M152.00 258.00 C152.00 234.80 170.80 216.00 194.00 216.00 C217.20 216.00 236.00 234.80 236.00 258.00 C236.00 264.63 230.63 270.00 224.00 270.00 C217.37 270.00 212.00 264.63 212.00 258.00 C212.00 248.06 203.94 240.00 194.00 240.00 C184.06 240.00 176.00 248.06 176.00 258.00 C176.00 264.63 170.63 270.00 164.00 270.00 C157.37 270.00 152.00 264.63 152.00 258.00 Z M276.00 258.00 C276.00 234.80 294.80 216.00 318.00 216.00 C341.20 216.00 360.00 234.80 360.00 258.00 C360.00 264.63 354.63 270.00 348.00 270.00 C341.37 270.00 336.00 264.63 336.00 258.00 C336.00 248.06 327.94 240.00 318.00 240.00 C308.06 240.00 300.00 248.06 300.00 258.00 C300.00 264.63 294.63 270.00 288.00 270.00 C281.37 270.00 276.00 264.63 276.00 258.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M152.00 258.00 C152.00 234.80 170.80 216.00 194.00 216.00 C217.20 216.00 236.00 234.80 236.00 258.00 C236.00 264.63 230.63 270.00 224.00 270.00 C217.37 270.00 212.00 264.63 212.00 258.00 C212.00 248.06 203.94 240.00 194.00 240.00 C184.06 240.00 176.00 248.06 176.00 258.00 C176.00 264.63 170.63 270.00 164.00 270.00 C157.37 270.00 152.00 264.63 152.00 258.00 Z M276.00 258.00 C276.00 234.80 294.80 216.00 318.00 216.00 C341.20 216.00 360.00 234.80 360.00 258.00 C360.00 264.63 354.63 270.00 348.00 270.00 C341.37 270.00 336.00 264.63 336.00 258.00 C336.00 248.06 327.94 240.00 318.00 240.00 C308.06 240.00 300.00 248.06 300.00 258.00 C300.00 264.63 294.63 270.00 288.00 270.00 C281.37 270.00 276.00 264.63 276.00 258.00 Z;M16 256 a240 240 0 1 0 480 0 a240 240 0 1 0 -480 0 Z M162.00 236.00 C162.00 210.59 176.33 190.00 194.00 190.00 C211.67 190.00 226.00 210.59 226.00 236.00 C226.00 242.72 224.98 249.35 223.00 255.44 C221.03 261.53 218.15 266.92 214.57 271.24 C208.81 278.19 201.52 282.00 194.00 282.00 C186.48 282.00 179.19 278.19 173.43 271.24 C169.85 266.92 166.97 261.53 165.00 255.44 C163.02 249.35 162.00 242.72 162.00 236.00 Z M286.00 236.00 C286.00 210.59 300.33 190.00 318.00 190.00 C335.67 190.00 350.00 210.59 350.00 236.00 C350.00 242.72 348.98 249.35 347.00 255.44 C345.03 261.53 342.15 266.92 338.57 271.24 C332.81 278.19 325.52 282.00 318.00 282.00 C310.48 282.00 303.19 278.19 297.43 271.24 C293.85 266.92 290.97 261.53 289.00 255.44 C287.02 249.35 286.00 242.72 286.00 236.00 Z"/></path></svg>
+      <p class="foot-logo">one<span class="wm-dot">.</span></p>
+      <p class="foot-by">by Kanvas</p>
+    </div>
+    <p class="ft-tag">A website for your business, built for you and looked after. From &pound;9.99 a month.</p>
+    <a class="gfield ft-field" href="#newFree" data-to-form><span class="gfield-text">Your business name</span><span class="gfield-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span></a>
+
+    <div class="ft-cols">
+      <nav class="ft-col" aria-label="Company">
+        <h4>Company</h4>
+        <a href="/how-it-works.html">How it works</a><a href="/whats-included.html">What&rsquo;s included</a><a href="/features.html">Features</a><a href="/reviews.html">Reviews</a><a href="/plans.html">Plans</a><a href="/get-started.html">Get started</a>
+      </nav>
+      <nav class="ft-col" aria-label="Features">
+        <h4>Features</h4>
+        <a href="/booking-system-for-small-business.html">Booking system</a><a href="/take-payments-online-small-business.html">Online payments</a><a href="/facebook-ads-for-local-businesses.html">Facebook and Instagram ads</a><a href="/website-with-live-chat.html">Live chat</a><a href="/get-google-reviews-automatically.html">Google reviews automatically</a>
+      </nav>
+      <nav class="ft-col" aria-label="Websites by business type">
+        <h4>Business types</h4>
+        <a href="/websites-for-trades.html">Trades</a><a href="/websites-for-hairdressers.html">Hairdressers</a><a href="/websites-for-lash-artists.html">Lash artists</a><a href="/websites-for-makeup-artists.html">Makeup artists</a><a href="/websites-for-cake-makers.html">Cake makers</a><a href="/websites-for-electricians.html">Electricians</a><a href="/websites-for-heating-engineers.html">Heating engineers</a><a href="/websites-for-kids-clubs.html">Kids&rsquo; clubs</a><a href="/websites-for-nail-techs.html">Nail techs</a><a href="/websites-for-mobile-car-valeters.html">Mobile car valeters</a><a href="/websites-for-driving-instructors.html">Driving instructors</a><a href="/websites-for-barbers.html">Barbers</a><a href="/websites-for-coffee-shops.html">Coffee shops</a><a href="/websites-for-gyms.html">Gyms</a><a href="/websites-for-cleaners.html">Cleaners</a><a href="/websites-for-tutors.html">Tutors</a><a href="/websites-for-photographers.html">Photographers</a><a href="/websites-for-gardeners.html">Gardeners</a>
+      </nav>
+      <nav class="ft-col" aria-label="Areas">
+        <h4>Areas</h4>
+        <a href="/web-design-newcastle">Web design Newcastle</a><a href="/web-design-northumberland">Web design Northumberland</a>
+      </nav>
+      <nav class="ft-col" aria-label="Legal">
+        <h4>Legal</h4>
+        <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
+      </nav>
+    </div>
+
+    <hr class="ft-rule">
+    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Your site goes live on your own address within 24 hours of joining; the features you ask for are built within 14 days of joining, or your next month is free (see terms). Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. Cancel anytime &mdash; no further payments are taken.</p>
+    <div class="ft-bottom">
+      <div>
+        <p class="foot-copy">© <span id="year">2026</span> Kanvas One. All rights reserved.</p>
+        <p class="ft-made">Proudly made in the North East</p>
+      </div>
+      <p class="ft-status" role="status"><i aria-hidden="true"></i>All Kanvas One sites online</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Forwards an auth link that fell back to the Site URL. Must run first. -->
+<script src="auth-landing.js?v=1"></script>
+<script src="consent.js?v=9"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="session.js?v=3"></script>
+<script src="script.js?v=36"></script>
+<script src="reviews.js?v=5"></script>
+<script src="hero.js?v=4"></script>
+<script src="home.js?v=5"></script>
+<script src="chat.js?v=10" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
+<script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
+<script src="admin-pill.js?v=8"></script>
+</body>
+</html>
