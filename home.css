@@ -827,3 +827,15 @@ body.home .plan-wide-ticks li,body.home .plan-wide-ticks li.tick-hero{color:var(
 .mh-promises{max-width:none}
 body.home .btn > span[aria-hidden="true"]{margin-left:.35em}
 body.home .plan-wide .btn{justify-content:center}
+/* Hero trust: one quiet pill, stars and where they come from. */
+.mh-trust{display:inline-flex;align-items:center;gap:10px;margin:0;padding:8px 16px 8px 12px;border-radius:999px;background:var(--glass);font-size:14.5px;color:var(--ink-2)}
+.mh-trust b{color:var(--ink);font-weight:700}
+.mh-trust .mh-star-row{display:inline-flex;gap:2px}
+.mh-trust .mh-star-row svg{width:15px;height:15px}
+@media (max-width:420px){.mh-trust{font-size:13px;gap:8px;padding:7px 12px 7px 10px}.mh-trust .mh-star-row svg{width:13px;height:13px}}
+/* The main button: the orange, as a gradient, lit. Deep enough at both
+   ends for white text. */
+body.home .btn-primary{background:linear-gradient(135deg,#c93e09 0%,#ef4a10 100%);color:#fff;box-shadow:0 8px 22px rgba(255,79,18,.28)}
+body.home .btn-primary:hover{background:linear-gradient(135deg,#b63807 0%,#de440e 100%);box-shadow:0 10px 26px rgba(255,79,18,.34)}
+body.home .btn-primary:focus-visible{outline:3px solid rgba(255,79,18,.45);outline-offset:3px}
+@media (max-width:420px){.mh-trust-long{display:none}}
