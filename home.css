@@ -839,3 +839,7 @@ body.home .btn-primary{background:linear-gradient(135deg,#c93e09 0%,#ef4a10 100%
 body.home .btn-primary:hover{background:linear-gradient(135deg,#b63807 0%,#de440e 100%);box-shadow:0 10px 26px rgba(255,79,18,.34)}
 body.home .btn-primary:focus-visible{outline:3px solid rgba(255,79,18,.45);outline-offset:3px}
 @media (max-width:420px){.mh-trust-long{display:none}}
+/* Just the stars. */
+.mh-trust-stars{padding:0;background:none}
+.mh-trust-stars .mh-star-row{gap:4px}
+.mh-trust-stars .mh-star-row svg{width:22px;height:22px}
