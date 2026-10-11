@@ -784,3 +784,8 @@ dialog.mh-dialog h2{margin:0;font-size:clamp(24px,4.4vw,30px);letter-spacing:-.0
 @media (min-width:520px){.mh-dialog-cta{grid-template-columns:1fr 1fr}}
 .mh-dialog-cta .btn{width:100%;justify-content:center;min-height:52px}
 .mh-dialog-small{margin:14px 0 0;font-size:13px;color:var(--ink-3);text-align:center}
+.mh-calc-pre{margin:0 0 10px;font-size:15px;font-weight:600;color:var(--ink-2)}
+.mh-calc-out .mh-calc-big{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding-right:.04em}
+.mh-calc-out .mh-calc-sub{margin-top:8px;font-size:19px;font-weight:600;color:var(--ink)}
+.mh-calc-full{margin:14px 0 0;font-size:14px;color:var(--ink-3)}
+#plan .dim-line{margin-inline:auto}
