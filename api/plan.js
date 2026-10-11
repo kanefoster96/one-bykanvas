@@ -52,7 +52,7 @@ function maxSteps(p) {
       '<strong>Weeks 1 and 2.</strong> We build your website, member app and timetable, and move your members across.',
       `<strong>Week 3.</strong> Ads go live for the classes with spaces. In our own academy, &pound;${growth.AVG.adBudget} a month of ads brought around ${p.trials} trial bookings and ${p.perMonth} new members a month.`,
       `<strong>At that pace</strong>, your ${p.spaces} spaces would fill in about ${p.months} month${p.months === 1 ? '' : 's'}.`,
-      `<strong>${p.cover} new member${p.cover === 1 ? '' : 's'}</strong> at ${money(p.fee)} cover the &pound;249, and the first 3 months of ads are on us.`,
+      `<strong>${p.cover} new member${p.cover === 1 ? '' : 's'}</strong> at ${money(p.fee)} cover the &pound;250, and the first 3 months of ads are on us.`,
       '<strong>Every trial</strong> gets reminders and a follow-up with the link to join, and members pay monthly by card, automatically.'
     ];
   }
@@ -89,7 +89,7 @@ function maxEmail(site, lead, p, type) {
       ],
       details,
       perks: steps,
-      ctaText: 'Start Max — £249 a month',
+      ctaText: 'Start Max — £250 a month',
       ctaHref: start,
       ctaNote: 'First 3 months of ads included. 3-month minimum, unless we don&rsquo;t get you 10 trial bookings; then leave any time. '
         + 'Rather talk first? Just reply and we&rsquo;ll find 10 minutes.',
@@ -99,7 +99,7 @@ function maxEmail(site, lead, p, type) {
     text: `Your growth plan, ${lead.business}\n\n`
       + `Members now: ${p.members}\nRoom for: ${p.capacity}\nSpaces empty: ${p.spaces}\nFee a month: ${money(p.fee)}\nWhen full: ${money(p.total)} a month\n\n`
       + steps.map((s) => '- ' + s.replace(/<[^>]+>/g, '').replace(/&pound;/g, '£').replace(/&rsquo;/g, '’')).join('\n')
-      + `\n\nStart Max, £249 a month: ${start}\n\n`
+      + `\n\nStart Max, £250 a month: ${start}\n\n`
       + 'First 3 months of ads included. 3-month minimum, unless we don’t get you 10 trial bookings; then leave any time.\n'
       + 'Rather talk first? Just reply.\n'
   };
@@ -126,10 +126,10 @@ function businessEmail(site, lead, p, type) {
       heading: 'We don\u2019t think you need Max yet',
       lines: [
         `Thanks for telling us about <strong>${esc(lead.business)}</strong>. Honestly, ${why}.`,
-        'We&rsquo;d start you on <strong>Business, &pound;49 a month</strong>: &pound;200 a month less than Max, with your website, bookings and payments run for you.'
+        'We&rsquo;d start you on <strong>Business, &pound;50 a month</strong>: &pound;200 a month less than Max, with your website, bookings and payments run for you.'
       ],
       perks,
-      ctaText: 'Start with Business — £49 a month',
+      ctaText: 'Start with Business — £50 a month',
       ctaHref: start,
       ctaNote: `When you open a new class or want the ads running, Max is there. <a href="${esc(max)}" style="color:inherit;">Prefer Max now?</a> Or just reply with any questions.`,
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. Two short follow-ups come after this, then we leave you be.',
@@ -137,7 +137,7 @@ function businessEmail(site, lead, p, type) {
     }),
     text: `Your plan, ${lead.business}\n\n`
       + `Thanks for telling us about ${lead.business}. Honestly, ${why.replace(/&rsquo;/g, '’')}.\n\n`
-      + 'We’d start you on Business, £49 a month: £200 a month less than Max, with your website, bookings and payments run for you.\n\n'
+      + 'We’d start you on Business, £50 a month: £200 a month less than Max, with your website, bookings and payments run for you.\n\n'
       + `Start with Business: ${start}\n\nPrefer Max now? ${max}\n`
   };
 }

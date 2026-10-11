@@ -79,7 +79,7 @@
      (the WELCOME26 code checkout applies to monthly Business). */
   var PRICES = {
     starter:  { month: 9.99, year: 99,  first: 9.99 },
-    business: { month: 49,   year: 490, first: 24.5 }
+    business: { month: 50,   year: 500, first: 25 }
   };
   function plan() { return answers.plan === 'business' ? 'business' : 'starter'; }
   function money(n) { return '£' + (n % 1 ? n.toFixed(2) : String(n)); }
@@ -397,7 +397,7 @@
     var on = plan() === 'business';
     $('bizCard').classList.toggle('is-on', on);
     $('bizBtn').setAttribute('aria-checked', on ? 'true' : 'false');
-    $('bizState').textContent = on ? 'On · first month £24.50' : 'Everything you picked stays';
+    $('bizState').textContent = on ? 'On · first month £25' : 'Everything you picked stays';
   }
   $('bizBtn').addEventListener('click', function () {
     answers.plan = plan() === 'business' ? 'starter' : 'business';

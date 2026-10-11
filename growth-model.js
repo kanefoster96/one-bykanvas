@@ -19,10 +19,10 @@
     trialCost: 5,    // £103 / 21 trials
     memberCost: 26   // £103 / 4 members
   };
-  var PRICE = { max: 249, business: 49 };
+  var PRICE = { max: 250, business: 50 };
 
   /* Never shown. A business that can take £3,000 a month or more when it is
-     full can carry £249 for the whole system; under that, we recommend
+     full can carry £250 for the whole system; under that, we recommend
      Business and say why. */
   var MAX_FROM = 3000;
   /* A fifth or more of the places empty: the plan leads with filling them.

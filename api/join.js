@@ -4,7 +4,7 @@
  * addresses, the features they want (Starter's, or Business), optionally
  * their socials, a booking page or site and up to 20 photos, then their
  * email - and sends them to Stripe: £9.99 a month or £99 a year for
- * Starter, £49 a month or £490 a year for Business. Only once that is paid
+ * Starter, £50 a month or £500 a year for Business. Only once that is paid
  * do they choose a password. Max still goes through the get-started wizard,
  * which makes the account first.
  *
