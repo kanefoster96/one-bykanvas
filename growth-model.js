@@ -74,7 +74,7 @@
     return 'members=' + whole(n.members, 0, 5000) + '&capacity=' + whole(n.capacity, 0, 10000) + '&fee=' + whole(n.fee, 1, 5000);
   }
 
-  /* What they run, as get-started.html's Max models know it. */
+  /* What they run, as get-started.html's One models know it. */
   function maxModel(type) {
     return ['gym', 'yoga', 'music', 'other'].indexOf(type) === -1 ? 'clubs' : 'other';
   }

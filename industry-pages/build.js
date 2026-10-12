@@ -47,7 +47,7 @@ const ICO_COLORS = ['ico-blue', 'ico-green', 'ico-purple', 'ico-orange', 'ico-pi
 const INDUSTRIES = require('./industries.js');
 const FEATURES = require('./features.js');
 const MAX = require('./max.js');
-/* The 90-day promise on the Max pages: written, not yet switched on. */
+/* The 90-day promise on the One pages: written, not yet switched on. */
 const MAX_GUARANTEE = false;
 const CASES = INDUSTRIES.CASES || [];
 
@@ -136,7 +136,7 @@ const NAV = `<header class="nav" id="nav">
 
 /* The offer, straight after the hero: pay, and the site is built for
    you from the page you already have. Trade and local pages send it to
-   /join; the feature and Max pages pass their own plan. */
+   /join; the feature and One pages pass their own plan. */
 function joinCta(href, label, micro) {
   return `<section class="section pt0">
   <div class="wrap center">
@@ -330,7 +330,7 @@ ${b.maxPitch ? `<section class="section">
     </article>
     <article class="plan">
       <div class="badge">Add growth</div>
-      <h3>Max</h3>
+      <h3>One</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">An end-to-end system for your kind of business, run for you:</p>
       <ul class="ticks">
@@ -422,7 +422,7 @@ function featureLinks(exceptSlug) {
 function planCard(f) {
   if (f.plan === 'max') return `    <article class="plan featured">
       <div class="badge">Add growth</div>
-      <h3>Max</h3>
+      <h3>One</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">Your site, designed and built, plus us going and getting you customers every month.</p>
       <p class="plan-free">No setup fees</p>
@@ -605,7 +605,7 @@ for (const f of FEATURES) {
   console.log('wrote', path.basename(file));
 }
 
-/* ---------------------------------------------------------- Max pages */
+/* ---------------------------------------------------------- One pages */
 /* Which model a trade page points at; the rest go to the picker. */
 function maxHref(slug) {
   if (['trades', 'cleaners', 'gardeners', 'electricians', 'heating-engineers', 'mobile-car-valeters'].includes(slug)) return '/max/trades';
@@ -614,14 +614,14 @@ function maxHref(slug) {
   return '/plans.html#max';
 }
 /* The type the wizard carries onto the profile, so the setup form need
-   not ask. Empty for a trade with no Max of its own. */
+   not ask. Empty for a trade with no One of its own. */
 function maxParam(slug) {
   const h = maxHref(slug);
   return h.startsWith('/max/') ? '&max=' + h.slice(5) : '';
 }
 function maxLabel(slug) {
   const h = maxHref(slug);
-  return h === '/max/trades' ? 'See Trades Max' : h === '/max/salon' ? 'See Salon Max' : h === '/clubs' ? 'See the kids&rsquo; clubs system' : 'See Max';
+  return h === '/max/trades' ? 'See One for trades' : h === '/max/salon' ? 'See One for salons' : h === '/clubs' ? 'See the kids&rsquo; clubs system' : 'See One';
 }
 
 function maxPage(m) {
@@ -788,7 +788,7 @@ ${m.why.map(([lead, rest]) => `    <p><b>${lead}</b>${rest}</p>`).join('\n')}
 ${MAX_GUARANTEE ? `  <div class="wrap">
     <div class="promise reveal">
       <p class="promise-name">The 90-day promise</p>
-      <ul class="promise-lines"><li>Run ${m.name} for 90 days with ads at &pound;10 a day or more.</li><li>If you have not had more enquiries than in the 90 days before, the next three months of Max are free.</li></ul>
+      <ul class="promise-lines"><li>Run ${m.name} for 90 days with ads at &pound;10 a day or more.</li><li>If you have not had more enquiries than in the 90 days before, the next three months of One are free.</li></ul>
     </div>
   </div>
 ` : ''}  <div class="wrap center">
@@ -821,8 +821,8 @@ ${m.faq.map(([q, a]) => `    <details>
       <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
       <a class="btn btn-ghost" href="/plans.html">All the plans</a>
     </div>
-    <nav class="ind-links reveal" aria-label="Other Max models">
-      <span>Max for:</span>${MAX.filter((x) => x.slug !== m.slug).map((x) => `<a href="/max/${x.slug}">${x.name}</a>`).join('')}<a href="#" data-max-other>Another business</a>
+    <nav class="ind-links reveal" aria-label="Other One models">
+      <span>One for:</span>${MAX.filter((x) => x.slug !== m.slug).map((x) => `<a href="/max/${x.slug}">${x.name}</a>`).join('')}<a href="#" data-max-other>Another business</a>
     </nav>
   </div>
 </section>

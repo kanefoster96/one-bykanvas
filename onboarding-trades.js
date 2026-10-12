@@ -1,4 +1,4 @@
-/* one — the trades, for the Max setup form.
+/* one — the trades, for the One setup form.
  *
  * The questions on the form are the same for every trade. What changes
  * is the list of suggestions under each one, and that list lives here.

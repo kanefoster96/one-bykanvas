@@ -71,7 +71,7 @@ const COMMON_FAQ = [
   ['What if I don&rsquo;t like it?', 'Tell us and we change it. Changes to your words and photos are unlimited, and there&rsquo;s no contract: cancel any month.'],
   ['Do I have to take card payments?', 'No. Cash and bank transfer work too.'],
   ['How do the bookings and payments actually work?', 'We set them up with you after you join, the way you already work. Five minutes.'],
-  ['Do I need Max?', 'Only if you want to climb Google every month. Business includes local SEO at launch.'],
+  ['Do I need One?', 'Only if you want to climb Google every month. Business includes local SEO at launch.'],
   ['What happens if I cancel?', 'No exit fee. Your site goes offline and your domain transfers to you free.']
 ];
 
@@ -143,7 +143,7 @@ module.exports = [
     buildNote: 'Send us the photos on your phone and a list of what you do. We write the pages and you&rsquo;re live within 24 hours.',
     steps: steps(['Tell us your trade, your patch and how you like to work', 'What you do, where you cover, how customers book and pay.']),
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
-    maxPitch: { heading: MAX_HEADING, text: 'The trades on page one for &ldquo;electrician Cramlington&rdquo; keep adding pages and reviews. Business gets you there. Max keeps you there, every month.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The trades on page one for &ldquo;electrician Cramlington&rdquo; keep adding pages and reviews. Business gets you there. One keeps you there, every month.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;9.99 a month, no setup fee. One callout a month covers it many times over. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -181,7 +181,7 @@ module.exports = [
     buildNote: 'Tell us your treatments and prices and send your best photos. We build the site and the booking, and you&rsquo;re live within 24 hours.',
     steps: steps(['Tell us your treatments, your prices and your team', 'What you offer, who does what, how you want bookings to work.']),
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
-    maxPitch: { heading: MAX_HEADING, text: 'The salons top for &ldquo;hairdresser near me&rdquo; keep adding pages, reviews and photos. Business gets you there. Max keeps you there.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The salons top for &ldquo;hairdresser near me&rdquo; keep adding pages, reviews and photos. Business gets you there. One keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;9.99 a month, no setup fee. One colour appointment a month covers it many times over. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -219,7 +219,7 @@ module.exports = [
     buildNote: 'Send your price list, your hours and a dozen photos. We do the rest and you&rsquo;re live within 24 hours.',
     steps: steps(['Tell us your prices, your hours and your barbers', 'What you charge, when you open, who works which days.']),
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
-    maxPitch: { heading: MAX_HEADING, text: 'Six barbers within a mile, all on Google. The one that keeps adding reviews and pages stays top. Business gets you there. Max keeps you there.' },
+    maxPitch: { heading: MAX_HEADING, text: 'Six barbers within a mile, all on Google. The one that keeps adding reviews and pages stays top. Business gets you there. One keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;9.99 a month, no setup fee. One cut a month covers it. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -257,7 +257,7 @@ module.exports = [
     buildNote: 'Send your menu and some photos. We build the site and you&rsquo;re live within 24 hours.',
     steps: steps(['Tell us your menu, your hours and what you want to sell online', 'What&rsquo;s on the board, when you open, whether you want orders online.']),
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
-    maxPitch: { heading: MAX_HEADING, text: 'Visitors search &ldquo;coffee near me&rdquo; and pick from the top three. Business gets you in the running. Max keeps you there, every season.' },
+    maxPitch: { heading: MAX_HEADING, text: 'Visitors search &ldquo;coffee near me&rdquo; and pick from the top three. Business gets you in the running. One keeps you there, every season.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;9.99 a month, no setup fee. Three flat whites a month covers it. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -295,7 +295,7 @@ module.exports = [
     buildNote: 'Tell us your classes, prices and how memberships work. We build the site and you&rsquo;re live within 24 hours.',
     steps: steps(['Tell us your classes, your prices and how memberships work', 'What you run, what it costs, whether there is a trial.']),
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
-    maxPitch: { heading: MAX_HEADING, text: 'January is decided in December. Business gets you ranking at launch. Max keeps you climbing every month.' },
+    maxPitch: { heading: MAX_HEADING, text: 'January is decided in December. Business gets you ranking at launch. One keeps you climbing every month.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;9.99 a month, no setup fee. One membership a month covers it many times over. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -333,7 +333,7 @@ module.exports = [
     buildNote: 'Tell us your services, prices and areas. We write the pages and you&rsquo;re live within 24 hours.',
     steps: steps(['Tell us your services, your prices and your patch', 'What you clean, what you charge, where you go.']),
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
-    maxPitch: { heading: MAX_HEADING, text: 'The cleaners top for &ldquo;cleaner near me&rdquo; are the ones whose sites keep growing. Business gets you ranking. Max keeps you climbing.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The cleaners top for &ldquo;cleaner near me&rdquo; are the ones whose sites keep growing. Business gets you ranking. One keeps you climbing.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;9.99 a month, no setup fee. One regular clean a month covers it many times over. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -371,7 +371,7 @@ module.exports = [
     buildNote: 'Tell us your subjects, levels and rates. We write the pages and you&rsquo;re live within 24 hours.',
     steps: steps(['Tell us your subjects, your levels and your rates', 'What you teach, to whom, what it costs, how you take bookings.']),
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
-    maxPitch: { heading: MAX_HEADING, text: 'September and January are decided on Google. Business gets you ranking at launch. Max keeps you climbing.' },
+    maxPitch: { heading: MAX_HEADING, text: 'September and January are decided on Google. Business gets you ranking at launch. One keeps you climbing.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;9.99 a month, no setup fee. One lesson a month covers it many times over. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -409,7 +409,7 @@ module.exports = [
     buildNote: 'Send us your best shots and your packages. We build the galleries and you&rsquo;re live within 24 hours.',
     steps: steps(['Send your best work, your packages and your genres', 'A folder of photos, and what you shoot, what it costs, how you want enquiries to work.']),
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
-    maxPitch: { heading: MAX_HEADING, text: 'Couples book a year out, from one Google search. Business gets you ranking at launch. Max keeps you in that search, every month.' },
+    maxPitch: { heading: MAX_HEADING, text: 'Couples book a year out, from one Google search. Business gets you ranking at launch. One keeps you in that search, every month.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;9.99 a month, no setup fee. One booking covers the year. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -447,7 +447,7 @@ module.exports = [
     buildNote: 'Send job photos and a list of services. We write the pages and you&rsquo;re live within 24 hours.',
     steps: steps(['Tell us your services, your patch and send the job photos', 'The photos on your phone, and what you do, where you go, how you like to quote.']),
     stepsLine: 'Unlimited changes included. Message us from your phone and it&rsquo;s done within 48 hours.',
-    maxPitch: { heading: MAX_HEADING, text: 'Spring is decided in February, when everyone searches at once. Business gets you ranking at launch. Max keeps you climbing.' },
+    maxPitch: { heading: MAX_HEADING, text: 'Spring is decided in February, when everyone searches at once. Business gets you ranking at launch. One keeps you climbing.' },
     promise: PROMISE,
     pricingExtra: ['Starter is &pound;9.99 a month, no setup fee. One lawn cut a month covers it. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -482,7 +482,7 @@ module.exports = [
     buildNote: 'Send us your Instagram and your price list. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your Instagram', 'Your work, your prices and where you are. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds bookings, payments and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The salons top for &ldquo;hairdresser near me&rdquo; keep adding pages, reviews and photos. Starter gets you found. Max keeps you there.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The salons top for &ldquo;hairdresser near me&rdquo; keep adding pages, reviews and photos. Starter gets you found. One keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is less than one cut and colour. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -516,7 +516,7 @@ module.exports = [
     buildNote: 'Send us your Instagram and your lash menu. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your Instagram', 'Your work, your prices and where you are. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds bookings, deposits and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The lash artists top on Google keep adding photos, pages and reviews. Starter gets you found. Max keeps you there.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The lash artists top on Google keep adding photos, pages and reviews. Starter gets you found. One keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is less than one infill. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -550,7 +550,7 @@ module.exports = [
     buildNote: 'Send us your Instagram and your packages. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your Instagram', 'Your work, your packages and the areas you cover. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds deposits, bookings and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The artists brides find first keep adding photos, pages and reviews. Starter gets you found. Max keeps you there.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The artists brides find first keep adding photos, pages and reviews. Starter gets you found. One keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month, and one bride a year pays for it many times over. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -584,7 +584,7 @@ module.exports = [
     buildNote: 'Send us your Instagram and your flavours. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your Instagram', 'Your cakes, your flavours and how ordering works. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds deposits, online ordering and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The cake makers top on Google keep adding photos, pages and reviews. Starter gets you found. Max keeps you there.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The cake makers top on Google keep adding photos, pages and reviews. Starter gets you found. One keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is less than one birthday cake. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -618,7 +618,7 @@ module.exports = [
     buildNote: 'Send us your Facebook or Instagram and your timetable. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your Facebook or Instagram', 'Your classes, your timetable and where you are. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds trial bookings confirmed automatically, payments and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The clubs parents find first keep adding pages, photos and reviews. Starter gets you found. Max keeps your classes full.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The clubs parents find first keep adding pages, photos and reviews. Starter gets you found. One keeps your classes full.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month, and one new family a year pays for it many times over. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -652,7 +652,7 @@ module.exports = [
     buildNote: 'Send us your Facebook, Checkatrade or Trust a Trader link. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your link', 'Your Facebook, Checkatrade or Trust a Trader page. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds online bookings, payments and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The electricians on page one for &ldquo;electrician Cramlington&rdquo; keep adding pages and reviews. Starter gets you found. Max keeps you there.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The electricians on page one for &ldquo;electrician Cramlington&rdquo; keep adding pages and reviews. Starter gets you found. One keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is less than one callout. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -686,7 +686,7 @@ module.exports = [
     buildNote: 'Send us your Facebook, Checkatrade or Trust a Trader link. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your link', 'Your Facebook, Checkatrade or Trust a Trader page. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds online bookings, service reminders and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The engineers booked for weeks keep adding pages and reviews. Starter gets you found. Max keeps you there, every month.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The engineers booked for weeks keep adding pages and reviews. Starter gets you found. One keeps you there, every month.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is less than one boiler service. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -720,7 +720,7 @@ module.exports = [
     buildNote: 'Send us your Instagram and your nail menu. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your Instagram', 'Your sets, your prices and where you are. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds bookings, deposits and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The nail techs top for &ldquo;nails near me&rdquo; keep adding photos, pages and reviews. Starter gets you found. Max keeps you there.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The nail techs top for &ldquo;nails near me&rdquo; keep adding photos, pages and reviews. Starter gets you found. One keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is less than one set of nails. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -754,7 +754,7 @@ module.exports = [
     buildNote: 'Send us your Facebook or Instagram and your packages. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your Facebook or Instagram', 'Your packages, your prices and where you cover. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds bookings, deposits and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The valeters booked for weeks keep adding photos, pages and reviews. Starter gets you found. Max keeps you there.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The valeters booked for weeks keep adding photos, pages and reviews. Starter gets you found. One keeps you there.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is less than one full valet. About &pound;2.30 a week, no VAT.'],
     faq: [
@@ -788,7 +788,7 @@ module.exports = [
     buildNote: 'Send us your Facebook or Instagram and your prices. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your Facebook or Instagram', 'Your prices, your car and where you cover. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds online booking, payments and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The instructors with a waiting list keep adding pages, pass photos and reviews. Starter gets you found. Max keeps the diary full.' },
+    maxPitch: { heading: MAX_HEADING, text: 'The instructors with a waiting list keep adding pages, pass photos and reviews. Starter gets you found. One keeps the diary full.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is less than one lesson. About &pound;2.30 a week, no VAT.'],
     faq: [

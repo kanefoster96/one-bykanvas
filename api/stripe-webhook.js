@@ -13,7 +13,7 @@ const { PLANS } = require('./_plans.js');
 const { notify, notifyAdmin } = require('./_notify.js');
 const { sendMetaEvent } = require('./_meta.js');
 
-const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' }; // must match admin.js/account.js
+const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'One' }; // must match admin.js/account.js
 
 /* £9.99, £50, £2,500: pence only when there are any. */
 function money(pence) {
@@ -191,7 +191,7 @@ module.exports = async function handler(req, res) {
 
     /* active_plan is what the account page rations points from. selected_plan
        cannot do that job: the customer can write it, so anyone could grant
-       themselves Max. This column is only ever written here, and it is cleared
+       themselves One. This column is only ever written here, and it is cleared
        the moment the subscription stops being live. */
     let entitled = (sub.metadata && sub.metadata.plan) || null;
 
@@ -331,7 +331,7 @@ module.exports = async function handler(req, res) {
       ? `Here&rsquo;s what happens now. We register <strong>${esc(domain || 'your web address')}</strong> and build your site from the page you sent us. It goes live <strong>within 24 hours</strong>, and you get an email the moment it is.`
       : `Here&rsquo;s what happens now. <strong>Today</strong> we register your web address and put your page live on it, and you get an email the moment it is. <strong>Then</strong> we build the features you asked for, within 14 days &mdash; or your next month is free. If we need anything from you &mdash; photos, prices, an offer &mdash; we&rsquo;ll ask.`;
     const askText = patch.active_plan === 'max'
-      ? `One thing that helps now: fill in the Max setup form. Your services and prices, how you get `
+      ? `One thing that helps now: fill in the One setup form. Your services and prices, how you get `
         + `customers today, how you book and take payment, and the access we need. All optional, save any `
         + `time, and we see what changed: ${site}/onboarding.html`
       : starter
@@ -346,7 +346,7 @@ module.exports = async function handler(req, res) {
         : `One thing that helps now: send us photos, your services and prices, and anything about `
           + `your business that isn't already online. From your account: ${site}/account.html`;
     const askHtml = patch.active_plan === 'max'
-      ? `One thing that helps now: fill in the <strong>Max setup form</strong>. Your services and prices, how you get customers today, how you book and take payment, and the access we need. All optional, save any time, and we see what changed.`
+      ? `One thing that helps now: fill in the <strong>One setup form</strong>. Your services and prices, how you get customers today, how you book and take payment, and the access we need. All optional, save any time, and we see what changed.`
       : starter
         ? (noLink
             ? `<strong>One thing that makes your site better:</strong> reply with a link to your Instagram, Facebook or current website, and we&rsquo;ll build from your photos and words there. Extra photos, your logo or your prices are welcome too. Changes to your words and photos are unlimited, any time.`
@@ -354,7 +354,7 @@ module.exports = async function handler(req, res) {
         : `One thing that helps now: send us photos, your services and prices, and anything about your business that isn&rsquo;t already online. Everything lives in your account from here: your plan, your requests, and your site.`;
 
     const cta = patch.active_plan === 'max'
-      ? { text: 'Open the Max setup form', href: `${site}/onboarding.html`, note: 'Two minutes now saves a week later.' }
+      ? { text: 'Open the One setup form', href: `${site}/onboarding.html`, note: 'Two minutes now saves a week later.' }
       : accountLink
         ? { text: 'Make your account', href: accountLink, note: 'Choose a password to see your site and ask for changes.' }
         : starter
@@ -458,7 +458,7 @@ module.exports = async function handler(req, res) {
     console.log('webhook: cancellation admin email', adminResult);
   }
 
-  /* A Max renewal is the cue for that month's SEO and improvement work,
+  /* A One renewal is the cue for that month's SEO and improvement work,
      so it lands in admin notifications rather than relying on memory. The
      first invoice is skipped - "New customer joined" already covers it. */
   async function announceMaxRenewal(invoice) {
@@ -468,8 +468,8 @@ module.exports = async function handler(req, res) {
     const { data: p } = await admin.from('profiles')
       .select('id, business_name, active_plan').eq('stripe_customer_id', customerId).maybeSingle();
     if (!p || p.active_plan !== 'max') return;
-    await notifyAdmin(admin, 'Max plan renewed',
-      (p.business_name || 'A Max customer')
+    await notifyAdmin(admin, 'One plan renewed',
+      (p.business_name || 'A One customer')
       + " paid for another month. Their SEO update is due - do the work, write it up in their SEO updates box and it emails them the report.");
   }
 

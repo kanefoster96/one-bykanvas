@@ -996,7 +996,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ url: await handoffUrl(db, caller, target, req) });
     }
 
-    /* One of our own pages, inside the app: the Max setup form. Only
+    /* One of our own pages, inside the app: the One setup form. Only
        known pages open. The admin may name a customer; the form itself
        checks that. */
     if (action === 'page') {

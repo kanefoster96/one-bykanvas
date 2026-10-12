@@ -15,7 +15,7 @@ var loading = document.getElementById('loading');
 var app     = document.getElementById('app');
 var note    = document.getElementById('adminNote');
 
-var PLAN_NAME   = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' };
+var PLAN_NAME   = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'One' };
 var PLAN_PRICE  = { starter: 999, business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
 var STATUS_NAME = { new: 'Open', accepted: 'Open', waiting: 'Waiting on customer', in_progress: 'In progress', done: 'Done', declined: 'Done' };
 /* info is a business-details change the customer made themselves - free, and
@@ -585,7 +585,7 @@ function appConfigRow(p) {
     var phones = el('div', 'app-config-grid');
     var phoneIn = el('input', 'admin-input'); phoneIn.type = 'tel'; phoneIn.placeholder = '+44 20 3000 0000'; phoneIn.value = c.phone_number || '';
     var fwdIn = el('input', 'admin-input'); fwdIn.type = 'tel'; fwdIn.placeholder = '+44 7700 900123'; fwdIn.value = c.forward_to || '';
-    var f1 = el('label', 'app-config-field'); f1.appendChild(el('span', null, 'Site phone number (Twilio, Max only)')); f1.appendChild(phoneIn);
+    var f1 = el('label', 'app-config-field'); f1.appendChild(el('span', null, 'Site phone number (Twilio, One only)')); f1.appendChild(phoneIn);
     var f2 = el('label', 'app-config-field'); f2.appendChild(el('span', null, 'Rings through to')); f2.appendChild(fwdIn);
     phones.appendChild(f1); phones.appendChild(f2);
     wrap.appendChild(el('h3', 'req-list-title', 'Missed calls answered by text'));
@@ -1212,7 +1212,7 @@ function customerListRow(p) {
 var customerSearch = '';
 var customerPlan = 'all';
 var customerStatus = 'all';
-var CUSTOMER_PLAN_CHIPS = [['all', 'All'], ['starter', 'Starter'], ['business', 'Business'], ['max', 'Max']];
+var CUSTOMER_PLAN_CHIPS = [['all', 'All'], ['starter', 'Starter'], ['business', 'Business'], ['max', 'One']];
 var CUSTOMER_STATUS_CHIPS = [['all', 'Any status'], ['active', 'Active'], ['past_due', 'Past due'],
   ['cancelling', 'Cancelling'], ['no_password', 'Paid, no password']];
 
@@ -1624,9 +1624,9 @@ function customerDetail(p) {
   if (p.active_plan === 'max') {
     wrap.appendChild(el('h3', 'req-list-title', 'SEO updates'));
     wrap.appendChild(seoLogPanel(p));
-    /* Their Max setup form, as they left it. A save here pushes them. */
-    wrap.appendChild(el('h3', 'req-list-title', 'Max setup'));
-    var setupLink = el('a', 'btn btn-ghost', 'Open their Max setup');
+    /* Their One setup form, as they left it. A save here pushes them. */
+    wrap.appendChild(el('h3', 'req-list-title', 'One setup'));
+    var setupLink = el('a', 'btn btn-ghost', 'Open their One setup');
     setupLink.href = '/onboarding.html?user=' + encodeURIComponent(p.id);
     var setupNote = el('p', 'cust-sub', 'What they sell, how they sell it, who they sell to. Anything you change there, they hear about in the app.');
     wrap.appendChild(setupLink);
@@ -1759,7 +1759,7 @@ function leadCard(row) {
 
   var growth = row.source === 'growth-plan';
   var chip = el('span', 'plan-chip' + (free || growth ? ' is-free' : ''),
-    free ? 'Free example' : growth ? 'Free plan: ' + (row.plan_interest === 'max' ? 'Max' : 'Business') : 'Enquiry');
+    free ? 'Free example' : growth ? 'Free plan: ' + (row.plan_interest === 'max' ? 'One' : 'Business') : 'Enquiry');
   head.appendChild(chip);
   card.appendChild(head);
 
@@ -1851,7 +1851,7 @@ function previewSender(row) {
   wrap.appendChild(row2);
   wrap.appendChild(el('p', 'hint', 'They get the design on the button, '
     + (row.requested_domain ? row.requested_domain + ' to claim, ' : '')
-    + 'what the site could do, the three plans with Max first, and WELCOME26 for 50% off their first month.'));
+    + 'what the site could do, the three plans with One first, and WELCOME26 for 50% off their first month.'));
   wrap.appendChild(note);
   wrap.appendChild(badgeSnippet(row));
   return wrap;
@@ -2114,7 +2114,7 @@ function billingPanel(p) {
     box.appendChild(a1);
     box.appendChild(document.createTextNode(' (Starter) or '));
     box.appendChild(a2);
-    box.appendChild(document.createTextNode(' (Business, Max) to sign up again.'));
+    box.appendChild(document.createTextNode(' (Business, One) to sign up again.'));
     return box;
   }
 
@@ -2181,7 +2181,7 @@ function billingPanel(p) {
     var row = el('div', 'k1-row');
     var plan = el('select', 'admin-select');
     plan.setAttribute('aria-label', 'New plan');
-    [['starter', 'Starter'], ['business', 'Business'], ['max', 'Max']].forEach(function (pair) {
+    [['starter', 'Starter'], ['business', 'Business'], ['max', 'One']].forEach(function (pair) {
       var o = el('option', null, pair[1]); o.value = pair[0];
       if (pair[0] === planOf(p)) o.selected = true;
       plan.appendChild(o);
@@ -3072,7 +3072,7 @@ function renderTemplatesSection() {
  */
 var AUDIENCE_LABEL = {
   all: 'Everyone', customers: 'Paying customers', contacts: 'Contacts (no plan yet)',
-  starter: 'Starter plan', business: 'Business plan', pro: 'Pro plan', max: 'Max plan'
+  starter: 'Starter plan', business: 'Business plan', pro: 'Pro plan', max: 'One plan'
 };
 var bcImageUrl = null;
 

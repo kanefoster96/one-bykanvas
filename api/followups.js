@@ -90,11 +90,11 @@ function planNote(plan, name, site) {
   return {
     subject: 'A month in: getting more people to find you',
     html: emailHtml({
-      preheader: 'No ask here. Just what Max does, in case any of it is useful.',
+      preheader: 'No ask here. Just what One does, in case any of it is useful.',
       heading: 'A month in',
       lines: [
         `The site for <strong>${who}` + '</strong> has been live a month now. No ask here, just what the plan above yours does, in case any of it is useful.',
-        'Max is your site plus us going and getting customers for it:'
+        'One is your site plus us going and getting customers for it:'
       ],
       perks: [
         '<strong>Your Facebook and Instagram ads, run for you.</strong> You set the budget and change it whenever you like. We write the offer, build the ad and the form, and send you a note each month saying what it cost and what came in.',
@@ -102,7 +102,7 @@ function planNote(plan, name, site) {
         '<strong>Reviews, referrals and upsells asked for automatically</strong>, and the follow-up emails written and sent for you.',
         '<strong>Business email at your own address.</strong> Built per business type: Trades, Clubs, Salon, or yours.'
       ],
-      ctaText: 'See what Max does',
+      ctaText: 'See what One does',
       ctaHref: `${site}/plans.html#max`,
       ctaNote: 'It is &pound;250 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.',
       footer: 'You&rsquo;re getting this because your Kanvas One plan went live about a month ago. It is the only email like it.',
@@ -110,7 +110,7 @@ function planNote(plan, name, site) {
     }),
     text: `The site for ${name || 'your business'} has been live a month now. No ask here, just what `
         + `the plan above yours does, in case any of it is useful.\n\n`
-        + `Max is your site plus us going and getting customers for it:\n`
+        + `One is your site plus us going and getting customers for it:\n`
         + `- Your Facebook and Instagram ads, run for you. You set the budget and change it whenever you like.\n`
         + `- Your Google ranking worked on every month.\n`
         + `- Reviews, referrals and upsells asked for automatically, and the follow-up emails written and sent for you.\n`
@@ -127,7 +127,7 @@ function offerBox(site) {
     text: '<strong>Want bookings and payments too?</strong><br>'
         + 'Tap the code for 50% off your first month of Business.',
     note: 'It comes with you &mdash; nothing to copy, and it is already '
-        + 'on the bill when you pay. Works on Business and Max. Starter is &pound;9.99 a month from day one.'
+        + 'on the bill when you pay. Works on Business and One. Starter is &pound;9.99 a month from day one.'
   };
 }
 
@@ -215,12 +215,12 @@ function lastOne(lead, site) {
 
 /* ---- free growth plan follow-ups ------------------------------------- */
 /* What they run, read back off the lead's summary line, only to pick the
-   right Max model for the start link. */
+   right One model for the start link. */
 function planType(about) {
   return /Gym or personal|Yoga|Music|Something else/.test(String(about || '')) ? 'other' : 'kids';
 }
 
-/* Day 2. Max: what actually happened in our academy. Business: any questions. */
+/* Day 2. One: what actually happened in our academy. Business: any questions. */
 function growthOne(lead, site) {
   const biz = String(lead.business).replace(/[\r\n]+/g, ' ');
   const type = planType(lead.about);
@@ -247,7 +247,7 @@ function growthOne(lead, site) {
           '<strong>Those 4 members pay £50 every month</strong>: £2,400 a year from £103 of ads, still paying back long after the ads stopped.',
           '<strong>Your first 3 months of ads are on us</strong>, so the first trials cost you nothing.'
         ],
-        ctaText: 'Start Max — £250 a month',
+        ctaText: 'Start One — £250 a month',
         ctaHref: start,
         ctaNote: 'Rather talk it through first? Reply and we&rsquo;ll find 10 minutes.',
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. One more email follows, then we leave you be.',
@@ -256,7 +256,7 @@ function growthOne(lead, site) {
       text: `When we put together the plan for ${lead.business}, the numbers came from our own dance and cheer academy.\n\n`
         + 'First three weeks of ads: £103 spent, 21 trial bookings, 4 new members, £2,400 a year in new fees.\n\n'
         + 'Your first 3 months of ads are on us.\n\n'
-        + `Start Max: ${start}\n\nRather talk first? Just reply.\n`
+        + `Start One: ${start}\n\nRather talk first? Just reply.\n`
     };
   }
   const start = startHref(site, 'business', lead.business, type);
@@ -267,7 +267,7 @@ function growthOne(lead, site) {
       preheader: 'Business, £50 a month: your website, bookings and payments, run for you.',
       heading: 'Any questions?',
       lines: [
-        `A couple of days ago we suggested <strong>Business</strong> for <strong>${esc(lead.business)}</strong>, rather than Max.`,
+        `A couple of days ago we suggested <strong>Business</strong> for <strong>${esc(lead.business)}</strong>, rather than One.`,
         'If anything wasn&rsquo;t clear, or you want to know how it would work for your classes, just reply. A real person answers, usually the same working day.',
         '<strong>Business is &pound;50 a month</strong>, no setup fee: your website looked after for you, bookings and payments online, live chat, and changes made within 48 hours.'
       ],
@@ -276,14 +276,14 @@ function growthOne(lead, site) {
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. One more email follows, then we leave you be.',
       footerLinks: standardFooter(site)
     }),
-    text: `A couple of days ago we suggested Business for ${lead.business}, rather than Max.\n\n`
+    text: `A couple of days ago we suggested Business for ${lead.business}, rather than One.\n\n`
       + 'If anything wasn’t clear, just reply. A real person answers.\n\n'
       + `Business is £50 a month, no setup fee: ${start}\n`
   };
 }
 
-/* Day 6, the last one. Max: the two questions everyone asks. Business: when
-   you're ready to grow, here's what Max adds. */
+/* Day 6, the last one. One: the two questions everyone asks. Business: when
+   you're ready to grow, here's what One adds. */
 function growthTwo(lead, site) {
   const biz = String(lead.business).replace(/[\r\n]+/g, ' ');
   const type = planType(lead.about);
@@ -301,7 +301,7 @@ function growthTwo(lead, site) {
           'And when your classes are full, we pause the ads. You just pay the &pound;250.',
           'This is the last email about your plan. If now isn&rsquo;t the time, no hard feelings.'
         ],
-        ctaText: 'Start Max — £250 a month',
+        ctaText: 'Start One — £250 a month',
         ctaHref: start,
         ctaNote: 'Or reply with anything you&rsquo;d like to ask.',
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
@@ -310,7 +310,7 @@ function growthTwo(lead, site) {
       text: '"What does it really cost?" £250 a month for everything, first 3 months of ads included. From month 4: fund your own ads, or we keep paying and each new member from the ads pays their first month to us.\n\n'
         + '"What if it doesn’t work?" 3-month minimum, unless we don’t get you 10 trial bookings; then leave whenever you like.\n\n'
         + 'When you’re full, we pause the ads.\n\n'
-        + `Start Max: ${start}\n\nThis is the last email about your plan.\n`
+        + `Start One: ${start}\n\nThis is the last email about your plan.\n`
     };
   }
   const start = startHref(site, 'business', lead.business, type);
@@ -319,10 +319,10 @@ function growthTwo(lead, site) {
     to: lead.email,
     subject: `When you're ready to grow, ${biz}`,
     html: emailHtml({
-      preheader: 'Business now, Max when you open a new class. Last email from us.',
+      preheader: 'Business now, One when you open a new class. Last email from us.',
       heading: 'When you\u2019re ready to grow',
       lines: [
-        `Business is still what we&rsquo;d suggest for <strong>${esc(lead.business)}</strong> today. When you open a new class or want more members, Max adds:`
+        `Business is still what we&rsquo;d suggest for <strong>${esc(lead.business)}</strong> today. When you open a new class or want more members, One adds:`
       ],
       perks: [
         '<strong>Facebook and Instagram ads, run for you</strong>, shown to families nearby for the classes with spaces. First 3 months included.',
@@ -331,12 +331,12 @@ function growthTwo(lead, site) {
       ],
       ctaText: 'Start with Business — £50 a month',
       ctaHref: start,
-      ctaNote: `Switch to Max from your account any month. <a href="${esc(max)}" style="color:inherit;">Or start on Max now.</a>`,
+      ctaNote: `Switch to One from your account any month. <a href="${esc(max)}" style="color:inherit;">Or start on One now.</a>`,
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
       footerLinks: standardFooter(site)
     }),
-    text: `Business is still what we'd suggest for ${lead.business} today. When you open a new class, Max adds ads run for you, trial bookings and follow-ups, and a member app.\n\n`
-      + `Start with Business: ${start}\nOr Max: ${max}\n\nThis is the last email about your plan.\n`
+    text: `Business is still what we'd suggest for ${lead.business} today. When you open a new class, One adds ads run for you, trial bookings and follow-ups, and a member app.\n\n`
+      + `Start with Business: ${start}\nOr One: ${max}\n\nThis is the last email about your plan.\n`
   };
 }
 

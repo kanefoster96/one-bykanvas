@@ -1,11 +1,11 @@
-/* one — the Max setup form.
+/* one — the One setup form.
  *
  * Loads what they have saved (api/onboarding.js GET, which starts the
  * contact section from the profile), fills the form, uploads photos to
  * the photos bucket as they are chosen, and saves the whole thing on Save
  * (POST), which also tells us what changed. Everything is optional; the
  * progress line counts sections with anything in them. The add-on at the
- * end follows the Max picked at the top.
+ * end follows the One picked at the top.
  */
 (function () {
   'use strict';
@@ -41,7 +41,7 @@
     document.querySelectorAll('input[name="' + name + '"]').forEach(function (i) { i.checked = i.value === val; });
   }
 
-  /* ---- the add-on for their Max ---- */
+  /* ---- the add-on for their One ---- */
   function showAddon() {
     var model = radio('model');
     document.querySelectorAll('.ob-addon').forEach(function (sec) {
@@ -393,19 +393,19 @@
       var data = await r.json();
       if (!r.ok) throw new Error(data.error || 'Could not load the form.');
       if (data.plan !== 'max') {
-        loading.innerHTML = '<p>The Max setup form is for Max customers. <a href="/plans.html#max">See Max</a>, or <a href="/account.html">go back to your account</a>.</p>';
+        loading.innerHTML = '<p>The One setup form is for One customers. <a href="/plans.html#max">See One</a>, or <a href="/account.html">go back to your account</a>.</p>';
         if (window.kanvasReady) window.kanvasReady();
         return;
       }
       viewer = data.viewer || 'owner';
       if (viewer === 'admin') {
-        document.title = (data.business || 'A customer') + ': Max setup';
-        $('obTitle').textContent = (data.business || 'Their') + ' Max setup.';
+        document.title = (data.business || 'A customer') + ': One setup';
+        $('obTitle').textContent = (data.business || 'Their') + ' One setup.';
         $('obLede').textContent = 'Their answers, as they left them. Anything you change here, they hear about in the app the moment you save.';
         var back = document.querySelector('.ob-back'); if (back) { back.href = '/admin.html'; back.innerHTML = '&larr; Admin'; }
       }
       fill(data.answers);
-      /* They chose their Max on the way in: no need to ask again. The
+      /* They chose their One on the way in: no need to ask again. The
          radio stays set underneath, so the right add-ons show. */
       var modelSec = document.querySelector('[data-section="model"]');
       if (modelSec && viewer === 'owner' && data.maxModel && radio('model') === data.maxModel) modelSec.hidden = true;

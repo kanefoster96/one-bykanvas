@@ -2,7 +2,7 @@
    endpoint, the webhook and the account page. Prices are in pence.
 
    Requests are unlimited on every plan; what a plan buys is queue position
-   (Max first, then Business) plus its extras. Pro is legacy - no longer
+   (One first, then Business) plus its extras. Pro is legacy - no longer
    sold anywhere, kept here so an existing Pro subscription still resolves
    to its price and label. The points numbers
    below are legacy: the requests table's check constraint still expects a
@@ -18,12 +18,12 @@
    photos made by us. No setup fee, and no half-price first month: £9.99 is
    the offer, and it covers the domain from the first payment. Every page
    and email leads with it. Business is the step up (bookings, payments,
-   chat, changes within 48 hours), Max is add growth. */
+   chat, changes within 48 hours), One is add growth. */
 const PLANS = {
   starter:  { label: 'Kanvas One — Starter',  amount: 999,   yearly: 9900,   points: 1 },
   business: { label: 'Kanvas One — Business', amount: 5000,  yearly: 50000,  points: 1 },
   pro:      { label: 'Kanvas One — Pro',      amount: 12000,                 points: 3 },
-  max:      { label: 'Kanvas One — Max',      amount: 25000,  yearly: 250000, points: 5 }
+  max:      { label: 'One by Kanvas',      amount: 25000,  yearly: 250000, points: 5 }
 };
 
 /* What a request costs, and what it would cost paid for on its own. */
@@ -32,7 +32,7 @@ const REQUEST_COST = {
   feature: { points: 3, amount: 12000 }
 };
 
-/* The code every new monthly Business or Max customer gets (created in
+/* The code every new monthly Business or One customer gets (created in
    Stripe: 50% off, first month only). Applied by default at checkout on a
    monthly plan; never on Starter, whose £9.99 is already the offer, and
    never on annual, where the bonus is the Launch Boost instead. */

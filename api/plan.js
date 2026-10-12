@@ -6,7 +6,7 @@
  *
  * The sums live in growth-model.js, shared with the page, so the plan on
  * screen and the plan in the email are the same plan. What is decided here:
- * which plan we recommend (Max when the business can take £3,000 a month or
+ * which plan we recommend (One when the business can take £3,000 a month or
  * more when full, Business otherwise), and that is never said as a rule.
  *
  * The lead lands in leads with source 'growth-plan' and plan_interest set to
@@ -44,7 +44,7 @@ function startHref(site, which, business, type) {
   return `${site}/get-started.html?${q.join('&')}`;
 }
 
-/* The steps of the plan, as sentences. Shared by the Max email; the page
+/* The steps of the plan, as sentences. Shared by the One email; the page
    draws its own from the same numbers. */
 function maxSteps(p) {
   if (p.mode === 'fill') {
@@ -89,7 +89,7 @@ function maxEmail(site, lead, p, type) {
       ],
       details,
       perks: steps,
-      ctaText: 'Start Max — £250 a month',
+      ctaText: 'Start One — £250 a month',
       ctaHref: start,
       ctaNote: 'First 3 months of ads included. 3-month minimum, unless we don&rsquo;t get you 10 trial bookings; then leave any time. '
         + 'Rather talk first? Just reply and we&rsquo;ll find 10 minutes.',
@@ -99,7 +99,7 @@ function maxEmail(site, lead, p, type) {
     text: `Your growth plan, ${lead.business}\n\n`
       + `Members now: ${p.members}\nRoom for: ${p.capacity}\nSpaces empty: ${p.spaces}\nFee a month: ${money(p.fee)}\nWhen full: ${money(p.total)} a month\n\n`
       + steps.map((s) => '- ' + s.replace(/<[^>]+>/g, '').replace(/&pound;/g, '£').replace(/&rsquo;/g, '’')).join('\n')
-      + `\n\nStart Max, £250 a month: ${start}\n\n`
+      + `\n\nStart One, £250 a month: ${start}\n\n`
       + 'First 3 months of ads included. 3-month minimum, unless we don’t get you 10 trial bookings; then leave any time.\n'
       + 'Rather talk first? Just reply.\n'
   };
@@ -122,23 +122,23 @@ function businessEmail(site, lead, p, type) {
     to: lead.email,
     subject: oneLine(`Your plan, ${lead.business}`),
     html: emailHtml({
-      preheader: 'We don’t think you need Max yet. Here’s what we’d do instead.',
-      heading: 'We don\u2019t think you need Max yet',
+      preheader: 'We don’t think you need One yet. Here’s what we’d do instead.',
+      heading: 'We don\u2019t think you need One yet',
       lines: [
         `Thanks for telling us about <strong>${esc(lead.business)}</strong>. Honestly, ${why}.`,
-        'We&rsquo;d start you on <strong>Business, &pound;50 a month</strong>: &pound;200 a month less than Max, with your website, bookings and payments run for you.'
+        'We&rsquo;d start you on <strong>Business, &pound;50 a month</strong>: &pound;200 a month less than One, with your website, bookings and payments run for you.'
       ],
       perks,
       ctaText: 'Start with Business — £50 a month',
       ctaHref: start,
-      ctaNote: `When you open a new class or want the ads running, Max is there. <a href="${esc(max)}" style="color:inherit;">Prefer Max now?</a> Or just reply with any questions.`,
+      ctaNote: `When you open a new class or want the ads running, One is there. <a href="${esc(max)}" style="color:inherit;">Prefer One now?</a> Or just reply with any questions.`,
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. Two short follow-ups come after this, then we leave you be.',
       footerLinks: standardFooter(site)
     }),
     text: `Your plan, ${lead.business}\n\n`
       + `Thanks for telling us about ${lead.business}. Honestly, ${why.replace(/&rsquo;/g, '’')}.\n\n`
-      + 'We’d start you on Business, £50 a month: £200 a month less than Max, with your website, bookings and payments run for you.\n\n'
-      + `Start with Business: ${start}\n\nPrefer Max now? ${max}\n`
+      + 'We’d start you on Business, £50 a month: £200 a month less than One, with your website, bookings and payments run for you.\n\n'
+      + `Start with Business: ${start}\n\nPrefer One now? ${max}\n`
   };
 }
 
@@ -177,7 +177,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true, id: crypto.randomUUID(), plan: p });
     }
 
-    const rec = p.recommend === 'max' ? 'Max' : 'Business';
+    const rec = p.recommend === 'max' ? 'One' : 'Business';
     const about = [
       `Free growth plan: ${TYPES[type]}${town ? ' in ' + town : ''}.`,
       `${p.members} members now, room for ${p.capacity} (${p.spaces} spaces empty), ${money(p.fee)} a month each.`,

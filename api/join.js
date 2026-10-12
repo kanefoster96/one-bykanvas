@@ -5,7 +5,7 @@
  * their socials, a booking page or site and up to 20 photos, then their
  * email - and sends them to Stripe: £9.99 a month or £99 a year for
  * Starter, £50 a month or £500 a year for Business. Only once that is paid
- * do they choose a password. Max still goes through the get-started wizard,
+ * do they choose a password. One still goes through the get-started wizard,
  * which makes the account first.
  *
  * Five actions, one endpoint:

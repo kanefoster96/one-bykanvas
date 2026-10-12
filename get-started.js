@@ -16,7 +16,7 @@
     var refParam = new URLSearchParams(location.search).get('ref');
     if (refParam) localStorage.setItem(REF_KEY, refParam.toUpperCase().slice(0, 20));
   } catch (e) {}
-  /* ?max= from a Max page's button: which Max they chose (trades, clubs,
+  /* ?max= from a One page's button: which One they chose (trades, clubs,
      salon, other). Saved on the profile with the rest, so the setup form
      can skip the question. */
   var MAX_MODEL = (function () {
@@ -123,7 +123,7 @@
     starter:  { label: 'Starter',  price: '£9.99', yearly: '£99' },
     business: { label: 'Business', price: '£50', half: '£25',    yearly: '£500' },
     pro:      { label: 'Pro',      price: '£120' },
-    max:      { label: 'Max',      price: '£250', half: '£125',   yearly: '£2,500' }
+    max:      { label: 'One',      price: '£250', half: '£125',   yearly: '£2,500' }
   };
 
   /* Monthly or annual, shared with the plans page through the same stash;
@@ -984,10 +984,10 @@
   });
 
   /* The step up, offered once at the moment they are choosing. Starter
-   * sees what Business unlocks. Business sees Max framed as the launch
+   * sees what Business unlocks. Business sees One framed as the launch
    * months - SEO and texts while the site is new, then step down to
    * Business once the ranking is where they want it, keeping the ranking.
-   * Max sees nothing: there is nowhere up to go. The pay step repeats it
+   * One sees nothing: there is nowhere up to go. The pay step repeats it
    * as one line, and both routes only ever change the radio - the summary
    * is rebuilt from it when they press Next.
    */
@@ -1014,7 +1014,7 @@
       business: {
         to: 'max',
         tag: 'Add growth',
-        head: 'Max: the whole thing run for you, from ads to reviews.',
+        head: 'One: the whole thing run for you, from ads to reviews.',
         list: [
           'Your Facebook and Instagram ads, set up, run and tracked by us. You set the budget',
           'Your Google ranking worked on every month',
@@ -1022,7 +1022,7 @@
           'Business email, and first in the queue'
         ],
         note: 'We need a photo or a line of text; we do the rest. <strong>Your price is locked for as long as you stay.</strong> Step down any month; you keep the ranking.',
-        btn: 'Add growth — Max, £250 a month',
+        btn: 'Add growth — One, £250 a month',
         line: 'Want us to go and get you customers? '
       }
     };
