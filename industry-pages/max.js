@@ -1,7 +1,11 @@
 /* The One models: one per business type, each an end-to-end system that is
  * built, tested and repeated for that type. Built by build.js into
- * /max/<slug>.html. Same price whatever the type; the customer pays their
- * own ad spend on top.
+ * /max/<slug>.html. Same price whatever the type. Month 1 is the build,
+ * months 2 to 4 of ads are on us. From month 5 a membership business (clubs)
+ * pays us each new member's first month if we fund the ads; a business whose
+ * customers buy one-off jobs or visits (trades, salons) pays a flat fee per
+ * new job instead, since a first payment could be a whole boiler. Or they
+ * fund their own ads. They can switch any time.
  *
  * Trades is the first and the fullest. Clubs and Salon carry the same
  * structure; each carries its own examples.
@@ -18,19 +22,39 @@
  *   why                  four [bold lead, sentence] pairs
  *   faq                  [question, answer] pairs; also structured data
  */
-const AD_SPEND = 'You pay your own ad spend on top, straight to Meta. &pound;150 to &pound;300 for the first month is enough to learn what works.';
+/* The ads deal, said the same way on every model. unit: what one new
+   customer is called for that business; fee: what we take per new one when
+   we fund the ads from month 5. */
+const PER_JOB = 30;
+function adDeal(m) {
+  const pay = m.unit === 'member'
+    ? 'and each new member who joins after a trial pays their first month to us'
+    : `for &pound;${PER_JOB} per new ${m.unit} booked through your site`;
+  return `Month 1 we build it. Months 2 to 4, your ads are on us, up to &pound;150 a month. From month 5, we keep funding them ${pay}, or you pay Meta yourself and keep every penny. Switch between the two any time.`;
+}
+function adFaq(m) {
+  const pay = m.unit === 'member'
+    ? 'each new member who joins after a trial pays their first month to us'
+    : `you pay &pound;${PER_JOB} for each new ${m.unit} booked through your site`;
+  const out = [
+    ['Who pays for the ads?', `For months 2, 3 and 4, we do, up to &pound;150 a month. Month 1 is spent building and testing everything, so the ads land on a site that works. From month 5 you choose: we keep paying and ${pay}, or you pay Meta directly on your own ad account. Switch between the two any time. If nothing new comes in from the ads we pay for, you pay nothing for them.`]
+  ];
+  if (m.unit !== 'member') out.push([`Why &pound;${PER_JOB} a ${m.unit}, and not the first payment like clubs?`, `Clubs and classes pay us a new member&rsquo;s first month, because members pay every month after. Your customers mostly pay for one ${m.unit} at a time, and some of those are big, so a flat &pound;${PER_JOB} a ${m.unit} is fairer to you. Busy enough that it adds up? Switch to paying for your own ads and keep the difference.`]);
+  return out;
+}
 
 module.exports = [
   {
     slug: 'trades',
     icon: '<path d="m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9"/><path d="m18 15 4-4"/><path d="m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5"/>',
     name: 'One for trades',
+    unit: 'job',
     promise: 'Your phone rings with jobs. The rest is done for you.',
-    desc: 'One for trades: a website, ads, local SEO, quotes, bookings, payments, reviews and referrals, built and run for plumbers, electricians, roofers and builders. £250 a month, no setup fee, you pay your own ad spend. Live within 24 hours of joining.',
+    desc: 'One for trades: a website, ads, local SEO, quotes, bookings, payments, reviews and referrals, built and run for plumbers, electricians, roofers and builders. £250 a month, no setup fee, 3 months of ads on us, cancel any time. Live within 24 hours of joining.',
     who: 'Plumbers, electricians, gas engineers, roofers, builders, plasterers, landscapers. One or two vans, good at the work, want more of it, and no time to do the marketing yourself.',
     stages: [
       { name: 'Get found', intro: 'Every job starts with someone searching, or scrolling.', items: [
-        'Your Facebook and Instagram ads, written, built and run for you. You set the budget',
+        'Your Facebook and Instagram ads, written, built and run for you. 3 months of ads on us',
         'A page for every service you do and every town you cover',
         'Your Google Business Profile set up, verified and worked on every month',
         'Your reviews shown on your site and on Google Maps'
@@ -56,7 +80,7 @@ module.exports = [
     ],
     you: [
       'Send a photo, or a line about the job you want more of',
-      'Set the ad budget, and change it whenever you like',
+      'Choose who funds the ads from month 5, and switch whenever you like',
       'Answer the enquiries that come in',
       'Do the job'
     ],
@@ -69,7 +93,7 @@ module.exports = [
     ],
     value: [
       ['Your website, designed, built and hosted', 'Found, trusted, and contacted in one tap'],
-      ['Facebook and Instagram ads, run for you', 'New enquiries every week, on a budget you set'],
+      ['Facebook and Instagram ads, run for you', 'Enquiries from people nearby, 3 months of ads on us'],
       ['Local SEO, worked on every month', 'Higher on Google and Maps in your towns, for good'],
       ['Quotes, bookings, deposits and payments', 'Jobs booked and paid without a phone call'],
       ['Review and referral requests, automatic', 'More reviews, and customers who bring the next one'],
@@ -84,8 +108,6 @@ module.exports = [
       ['You keep it all.', 'The site, the reviews, the ranking and the customer list are yours. Step down to Business any month and they stay.']
     ],
     faq: [
-      ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works. Below about &pound;10 a day there is not enough to learn from.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['Will it definitely bring jobs?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, the follow-ups, and a note every month showing what it brought in, so you decide with numbers.'],
       ['What if I already have a website?', 'We build the new one, move your address across, and nothing goes offline in between. Your reviews and ranking come with you.'],
       ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;50. Move up to One for trades any month.']
@@ -95,12 +117,13 @@ module.exports = [
     slug: 'clubs',
     icon: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
     name: 'One for clubs',
+    unit: 'member',
     promise: 'New members every week. Trials, sign-ups and renewals, run for you.',
-    desc: 'One for clubs: a website, ads, local SEO, trial bookings, memberships, payments, reviews and referrals, built and run for dance schools, gyms, martial arts and sports clubs. £250 a month, no setup fee, you pay your own ad spend. Live within 24 hours of joining.',
+    desc: 'One for clubs: a website, ads, local SEO, trial bookings, memberships, payments, reviews and referrals, built and run for dance schools, gyms, martial arts and sports clubs. £250 a month, no setup fee, 3 months of ads on us, cancel any time. Live within 24 hours of joining.',
     who: 'Dance schools, gyms, martial arts, cheer, swim schools, sports clubs. You run the classes and the shows; you want every class full and every term renewed; you have no evenings left for the admin.',
     stages: [
       { name: 'Get found', intro: 'Every new member starts with a parent, or a person, searching.', items: [
-        'Your Facebook and Instagram ads, written, built and run for you. You set the budget',
+        'Your Facebook and Instagram ads, written, built and run for you. 3 months of ads on us',
         'A page for every class, age group and venue',
         'Your Google Business Profile set up, verified and worked on every month',
         'Your shows, grades, results and photos on the site, where a parent looks before they book'
@@ -126,7 +149,7 @@ module.exports = [
     ],
     you: [
       'Send a photo, or a line about the class you want to fill',
-      'Set the ad budget, and change it whenever you like',
+      'Choose who funds the ads from month 5, and switch whenever you like',
       'Run the trials and the classes',
       'Tell us when a term, a show or a camp is coming, and we sell it'
     ],
@@ -139,7 +162,7 @@ module.exports = [
     ],
     value: [
       ['Your website, designed, built and hosted', 'Found, trusted, and a trial booked in one tap'],
-      ['Facebook and Instagram ads, run for you', 'New trials every week, on a budget you set'],
+      ['Facebook and Instagram ads, run for you', 'Trial bookings from families nearby, 3 months of ads on us'],
       ['Local SEO, worked on every month', 'Higher on Google and Maps for your area, for good'],
       ['Trial bookings, memberships and payments', 'Members signed up and paid without a form to chase'],
       ['Review and referral requests, automatic', 'More reviews, and members who bring a friend'],
@@ -154,8 +177,6 @@ module.exports = [
       ['You keep it all.', 'The site, the reviews, the ranking and the member list are yours. Step down to Business any month and they stay.']
     ],
     faq: [
-      ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['Does it handle consent forms and medical details?', 'Yes. They are filled in when a parent books the trial, kept against the member, and there for the coach on the register. Nothing on paper.'],
       ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;50. Move up to One for clubs any month.']
     ]
@@ -164,12 +185,13 @@ module.exports = [
     slug: 'salon',
     icon: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88"/><path d="M14.47 14.48 20 20"/><path d="M8.12 8.12 12 12"/>',
     name: 'One for salons',
+    unit: 'client',
     promise: 'A full book, fewer no-shows, and clients who come back on their own.',
-    desc: 'One for salons: a website, ads, local SEO, online booking with deposits, payments, reviews, rebooking and referrals, built and run for salons, barbers, nail techs and beauty rooms. £250 a month, no setup fee, you pay your own ad spend. Live within 24 hours of joining.',
+    desc: 'One for salons: a website, ads, local SEO, online booking with deposits, payments, reviews, rebooking and referrals, built and run for salons, barbers, nail techs and beauty rooms. £250 a month, no setup fee, 3 months of ads on us, cancel any time. Live within 24 hours of joining.',
     who: 'Hair salons, barbers, nail techs, lash and brow rooms, beauty clinics. You do the work and the client comes back for you; you want a full book and fewer gaps; you have no time to chase the ones who drift.',
     stages: [
       { name: 'Get found', intro: 'Every new client starts with a search, or a photo they saw.', items: [
-        'Your Facebook and Instagram ads, written, built and run for you. You set the budget',
+        'Your Facebook and Instagram ads, written, built and run for you. 3 months of ads on us',
         'A page for every service, with your prices and your work',
         'Your Google Business Profile set up, verified and worked on every month',
         'Your before and afters and your team on the site, where a client looks before they book'
@@ -195,7 +217,7 @@ module.exports = [
     ],
     you: [
       'Send a photo of your work, or a line about the service you want more of',
-      'Set the ad budget, and change it whenever you like',
+      'Choose who funds the ads from month 5, and switch whenever you like',
       'Do the appointments',
       'Tell us about a new service, an offer or a quiet week, and we fill it'
     ],
@@ -208,7 +230,7 @@ module.exports = [
     ],
     value: [
       ['Your website, designed, built and hosted', 'Found, trusted, and booked in one tap'],
-      ['Facebook and Instagram ads, run for you', 'New clients every week, on a budget you set'],
+      ['Facebook and Instagram ads, run for you', 'New clients from people nearby, 3 months of ads on us'],
       ['Local SEO, worked on every month', 'Higher on Google and Maps in your town, for good'],
       ['Online booking, deposits and payments', 'A full book, fewer no-shows, no booking app taking a cut'],
       ['Review, rebooking and referral emails, automatic', 'More reviews, and clients who come back on their own'],
@@ -223,12 +245,12 @@ module.exports = [
       ['You keep it all.', 'The site, the reviews, the ranking and the client list are yours. Step down to Business any month and they stay.']
     ],
     faq: [
-      ['How much should the ad budget be?', 'Your call, and you can change it any time. &pound;150 to &pound;300 for the first month is enough to learn what works.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
       ['Can each stylist have their own diary?', 'Yes. Clients book a person or the first free chair, each stylist sees their own day, and a stylist who leaves takes nothing with them.'],
       ['Can I start smaller?', 'Yes. Starter is the site for &pound;9.99 a month, Business adds bookings and payments for &pound;50. Move up to One for salons any month.']
     ]
   }
 ];
 
-module.exports.AD_SPEND = AD_SPEND;
+module.exports.adDeal = adDeal;
+module.exports.adFaq = adFaq;
+module.exports.PER_JOB = PER_JOB;

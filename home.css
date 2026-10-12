@@ -855,3 +855,7 @@ body.home .btn-primary:focus-visible{outline:3px solid rgba(255,79,18,.45);outli
 .mh .hh-scene{margin-top:clamp(40px,5vw,56px)}
 .mh .hh-chip::after{display:none}
 @media (max-width:600px){.mh{padding-bottom:48px}.mh .hh-scene{margin-top:40px}}
+
+/* Trades and salons, pointed to their own One under the members list. */
+.ab-more{margin:20px 0 0;max-width:52ch;font-size:15px;line-height:1.5;color:var(--ink-2);text-align:left;position:relative;z-index:2}
+.ab-more a{color:var(--good);font-weight:600}
