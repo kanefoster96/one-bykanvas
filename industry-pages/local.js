@@ -94,7 +94,7 @@ module.exports = [
     file: 'web-design-newcastle',
     rich: true,
     icons: STARTER_ICONS,
-    docTitle: 'Web Design Newcastle: Websites Built for You from £9.99 a Month | Kanvas One',
+    docTitle: 'Website Builder & Web Design Newcastle, £9.99 a Month | Kanvas One',
     ogTitle: 'Web design in Newcastle: your website built for you, live in 24 hours, from £9.99 a month',
     serviceName: 'Website design for small businesses in Newcastle upon Tyne',
     areaServed: [
@@ -111,7 +111,7 @@ module.exports = [
     heroNote: 'Small business websites for Newcastle, North Tyneside, Gateshead and Northumberland. No setup fee, no contract.',
     trust: STARTER_TRUST,
     trustLine: 'Send us your Facebook, Instagram or old site. We do the rest.',
-    desc: 'Web design in Newcastle for small businesses. Your website built for you and live within 24 hours, £9.99 a month with your web address, hosting and changes included. No agency fees, cancel any month.',
+    desc: 'Website builder and web design in Newcastle for small businesses. Built for you and live in 24 hours, £9.99 a month with your web address and hosting. Cancel any month.',
     features: features({
       live: 'A proper site for your business, designed, written and put online by us. You don&rsquo;t touch a thing.',
       google: 'Written around what people in Newcastle actually search: &ldquo;electrician Heaton&rdquo;, &ldquo;cake maker Gosforth&rdquo;, &ldquo;nails Whitley Bay&rdquo;.'
@@ -125,7 +125,7 @@ module.exports = [
     buildNote: 'Send us your business name and a link to you online. We build the site and you&rsquo;re live within 24 hours.',
     steps: STEPS,
     stepsLine: 'Business, &pound;50 a month, adds bookings, payments, live chat and priority changes within 48 hours, any month.',
-    maxPitch: { heading: 'Want us to go and get you customers?', text: 'Starter gets you a proper site and found on Google. One runs your ads and works on your Google ranking every month, for businesses that want to grow fast.' },
+    maxPitch: { heading: 'Want us to go and get you customers?', text: 'Starter gets you a proper site and found on Google. Business gets you booked. One runs your ads and works on your Google ranking every month, with 3 months of ads on us.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is about &pound;2.30 a week, no VAT. Most agencies charge that for hosting alone.'],
     faq: [
@@ -143,7 +143,7 @@ module.exports = [
     file: 'web-design-northumberland',
     rich: true,
     icons: STARTER_ICONS,
-    docTitle: 'Web Design Northumberland: Websites Built for You, From £9.99 a Month | Kanvas One',
+    docTitle: 'Website Builder & Web Design Northumberland, £9.99 a Month | Kanvas One',
     ogTitle: 'Web design in Northumberland: your website built for you, live in 24 hours, from £9.99 a month',
     serviceName: 'Website design for small businesses in Northumberland',
     areaServed: [
@@ -177,7 +177,7 @@ module.exports = [
     buildNote: 'Send us your business name and your Facebook or Instagram. We build the site and you&rsquo;re live within 24 hours.',
     steps: STEPS,
     stepsLine: 'Business, &pound;50 a month, adds bookings, payments, live chat and priority changes within 48 hours, any month.',
-    maxPitch: { heading: 'Want us to go and get you customers?', text: 'Starter gets you a proper site and found on Google. One runs your ads and works on your Google ranking every month, for businesses that want to grow fast.' },
+    maxPitch: { heading: 'Want us to go and get you customers?', text: 'Starter gets you a proper site and found on Google. Business gets you booked. One runs your ads and works on your Google ranking every month, with 3 months of ads on us.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is about &pound;2.30 a week, no VAT. No setup fee and no contract.'],
     faq: [
