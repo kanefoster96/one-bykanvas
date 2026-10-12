@@ -90,28 +90,27 @@ module.exports = [
     short: 'Facebook and Instagram ads',
     search: 'Facebook and Instagram ads for local businesses, run for you',
     h1: 'Facebook and Instagram ads, run for you.',
-    lede: 'You set the budget. We write the offer, build the ad and the form, run it, and tell you each month what it cost and what came in.',
-    desc: 'Facebook and Instagram ads for local businesses, set up, run and tracked for you. You set the budget and change it any time; We write the offer, build the ad and the form, and report every month. Part of One, £250 a month, no setup fee.',
+    lede: '3 months of ads on us. We write the offer, build the ad and the form, run it, and tell you each month what it cost and what came in.',
+    desc: 'Facebook and Instagram ads for local businesses, set up, run and tracked for you. We write the offer, build the ad and the form, and report every month. Part of One, £250 a month, with 3 months of ads on us.',
     pain: 'You boosted a post once and got likes from people three hundred miles away. An agency wanted &pound;600 a month before the budget. So the ads never got done, and the phone stays as quiet as it was.',
     lines: ['Run a Facebook ad for my boiler service offer', 'Get me more customers in my town', 'Put a form on my site the ad can send people to', 'Tell me what the ads brought in this month'],
     how: [
       ['A photo, or a line of text', 'The job you want more of, and a picture of it. That is all we need from you, plus access to your Facebook page.'],
-      ['We build the offer, the ad and the form', 'Written for your town and your trade, pointing at a page on your own site that turns a click into a call. Live within 7 days.'],
-      ['You set the budget, we run it', 'Paid by you straight to Meta, changed whenever you like. Every month, a note: what ran, what it cost, what came in.']
+      ['We build the offer, the ad and the form', 'Written for your town and your trade, pointing at a page on your own site that turns a click into a call. Live in month 2, once your site is built and tested.'],
+      ['3 months of ads on us', 'Month 1 we build it all. Months 2 to 4 we pay for your ads, up to &pound;150 a month. Every month, a note: what ran, what it cost, what came in.']
     ],
     gets: [
       'The offer, the ad and the landing form, written and built for you',
       'Ads shown to people in your area, not the whole country',
-      'A budget you set and can change or pause any time, from &pound;10 a day',
-      'Your first ad live within 7 days',
+      'Your ads paid for by us in months 2 to 4, up to &pound;150 a month',
+      'Your first ad live in month 2, once your site is tested',
       'A monthly note: spend, enquiries, cost per enquiry, what changed',
       'Every enquiry from the ads followed up by email if it goes quiet'
     ],
     plan: 'max',
     planLine: 'Ads are part of One: &pound;250 a month with the website, the ranking work and the follow-up emails in it. No setup fee, and your price is locked for as long as you stay.',
     faq: [
-      ['How much should the budget be?', 'Your call, and you can change it any time. Below about &pound;10 a day there is not enough to learn from, so that is where we suggest starting.'],
-      ['Who pays Meta?', 'You do, directly, on your own ad account. We never hold or spend your advertising money. The &pound;250 is for the work.'],
+      ['Who pays for the ads?', 'For months 2, 3 and 4, we do, up to &pound;150 a month. From month 5 you choose, and can switch any time: we keep paying and take each new member&rsquo;s first month (or, for trades and salons, 20% of each new customer&rsquo;s first payment taken online through your site), or you pay Meta directly on your own ad account.'],
       ['Will it definitely bring customers?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, and a note every month showing what it brought in, so you can decide with numbers.'],
       ['What do you need from me?', 'A photo or a line about the job you want more of, and admin access to your Facebook page. We do the rest.']
     ]
