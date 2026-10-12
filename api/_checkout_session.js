@@ -74,14 +74,16 @@ async function openCheckout({ stripe, admin, user, profile, plan, billing, offer
      and the code box withheld on the Stripe page for annual sessions. */
   const annual = String(billing || '').toLowerCase() === 'annual'
     && Number.isFinite(PLANS[plan].yearly);
-  /* Every new monthly Business or One customer gets the first month at
-     half price: the site says so, so it is applied whether or not they
-     carried a code. Starter's £9.99 is the offer itself, so it never gets
-     the half-price code, but a partner or referral code still applies.
-     A partner or referral code they did bring wins. */
+  /* Every new monthly Business customer gets the first month at half
+     price: the site says so, so it is applied whether or not they carried
+     a code. Starter's £9.99 is the offer itself, and One's offer is the
+     first 3 months of ads, so neither gets the half-price code, but a
+     partner or referral code still applies. A partner or referral code
+     they did bring wins. */
   const brought = String(offer || '').trim().toUpperCase();
+  const noHalf = plan === 'starter' || plan === 'max';
   const wanted = annual ? ''
-    : plan === 'starter' ? (brought === PREVIEW_OFFER.code ? '' : brought)
+    : noHalf ? (brought === PREVIEW_OFFER.code ? '' : brought)
     : (brought || PREVIEW_OFFER.code);
   if (wanted && /^[A-Z0-9._-]{3,40}$/.test(wanted)) {
     try {
@@ -129,10 +131,10 @@ async function openCheckout({ stripe, admin, user, profile, plan, billing, offer
     metadata: Object.assign({}, metadata, { supabase_user_id: user.id, plan }),
     success_url: successUrl || `${origin}/account.html?checkout=success`,
     cancel_url: cancelUrl || `${origin}/account.html?checkout=cancelled`,
-    /* No code box on Starter: £9.99 is the offer, and the box would let
-       the half-price code be typed in by hand. A partner's code still
-       applies, from their link (the offer, resolved above). */
-    ...(discounts ? { discounts } : (annual || plan === 'starter') ? {} : { allow_promotion_codes: true })
+    /* No code box on Starter or One: the box would let the half-price
+       code be typed in by hand. A partner's code still applies, from
+       their link (the offer, resolved above). */
+    ...(discounts ? { discounts } : (annual || noHalf) ? {} : { allow_promotion_codes: true })
   });
 
   return session;

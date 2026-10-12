@@ -11,7 +11,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=5">
-<link rel="stylesheet" href="styles.css?v=140">
+<link rel="stylesheet" href="styles.css?v=141">
 <script>
 /* Starter is paid first now, on /join. Anyone sent here for it (or with no
    plan named, which means Starter) goes there with what they brought;
@@ -77,7 +77,7 @@
       <!-- ============ 2. the business ============ -->
       <section class="wiz-step" data-step="2" aria-label="Choose a plan" hidden>
         <h1>Your plan.</h1>
-        <p class="wiz-sub">Starter is the site, &pound;9.99 a month. Business gets you booked. One fills your sessions, run for you. Move between them any month.</p>
+        <p class="wiz-sub" id="planSub">Starter is the site, &pound;9.99 a month. Business gets you booked. One fills your sessions, run for you. Move between them any month.</p>
 
         <!-- Starter first, and chosen: it is the offer on every page. Business
              is the step up, then One. -->
@@ -87,7 +87,7 @@
         </div>
 
         <!-- What each way of paying gets, said once above the plans. -->
-        <p class="bill-note" id="billNote"><b>Monthly:</b> Starter is &pound;9.99 from day one; Business and One are half price for the first month. <b>Annual:</b> two months free, plus the Launch Boost &mdash; your first month spent getting you found. <button class="linkish inline" type="button" id="boostMore">What&rsquo;s in it?</button></p>
+        <p class="bill-note" id="billNote"><b>Monthly:</b> <span data-std-only>Starter is &pound;9.99 from day one; Business is half price for the first month.</span><span data-one-only hidden>&pound;250 a month, no setup fee, and the first 3 months of ads on us.</span> <b>Annual:</b> two months free, plus the Launch Boost &mdash; your first month spent getting you found. <button class="linkish inline" type="button" id="boostMore">What&rsquo;s in it?</button></p>
         <ul class="ticks boost-list" id="boostList" hidden>
           <li>Your Google Business Profile set up, verified and filled in</li>
           <li>A page for every service you offer and every town you cover</li>
@@ -151,6 +151,10 @@
           </div>
         </div>
 
+        <!-- Sent here for One (the free profit plan recommended it, or they
+             pressed a One button): One on its own, and the other plans one
+             quiet tap away rather than sat beside it as cards. -->
+        <button class="linkish pick-others" id="pickOthers" type="button" hidden>Don&rsquo;t want ads or an app? See our other plans</button>
 
         <!-- The step up from whichever plan is picked, said once, optional.
              Starter is shown what Business unlocks; Business is shown One
@@ -166,10 +170,15 @@
 
         <p class="note" id="note3" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
-        <ul class="assure">
+        <ul class="assure" data-std-only>
           <li>No setup fee</li>
           <li>Move up or down any time</li>
           <li>Cancel anytime</li>
+        </ul>
+        <ul class="assure" data-one-only hidden>
+          <li>No setup fee</li>
+          <li>First 3 months of ads on us</li>
+          <li>10 trial bookings, or leave any time</li>
         </ul>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
@@ -396,7 +405,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=34"></script>
+<script src="get-started.js?v=35"></script>
 <script src="chat.js?v=10" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
