@@ -859,3 +859,22 @@ body.home .btn-primary:focus-visible{outline:3px solid rgba(255,79,18,.45);outli
 /* Trades and salons, pointed to their own One under the members list. */
 .ab-more{margin:20px 0 0;max-width:52ch;font-size:15px;line-height:1.5;color:var(--ink-2);text-align:left;position:relative;z-index:2}
 .ab-more a{color:var(--good);font-weight:600}
+
+/* ---------- Everything included ---------- */
+.ev{margin:0 auto clamp(64px,9vw,104px)}
+.ev .lede{margin:14px auto 0;max-width:40ch}
+.ev-grid{columns:3 280px;column-gap:16px;margin-top:clamp(28px,4vw,40px);text-align:left}
+.ev-card{display:inline-block;width:100%;break-inside:avoid;margin:0 0 16px;padding:24px 24px 16px;border-radius:var(--radius-lg)}
+.ev-card h3{margin:0;font-size:17px;font-weight:700;letter-spacing:-.01em}
+.ev-card .ticks{margin-top:14px}
+.ev-card .ticks li{margin:0 0 11px;font-size:15px;line-height:1.4;color:var(--ink)}
+.ev-card .ticks li b{font-weight:600}
+.ev-card .ticks li.tick-hero{color:var(--ink)}
+.ev-card .ticks li.tick-hero b{color:var(--good)}
+.ev-card .ticks li span{display:block;margin-top:2px;font-weight:400;font-size:14px;color:var(--ink-3)}
+.ev-cta{margin-top:clamp(28px,4vw,36px)}
+.ev-then{margin-top:0}
+body.home .ev-card{background:var(--glass);border:0;box-shadow:var(--glass-shadow);--ink-2:#55555a;--ink-3:#6e6e73}
+@media (max-width:560px){.mh-compare span:last-child{white-space:normal}}
+.ev-link{display:block;margin-top:14px;text-align:center;font-size:15px;font-weight:600;color:var(--good)}
+.ev-link:hover{text-decoration:underline;text-underline-offset:3px}
