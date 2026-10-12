@@ -3,9 +3,9 @@
  * /max/<slug>.html. Same price whatever the type. Month 1 is the build,
  * months 2 to 4 of ads are on us. From month 5 a membership business (clubs)
  * pays us each new member's first month if we fund the ads; a business whose
- * customers buy one-off jobs or visits (trades, salons) pays a flat fee per
- * new job instead, since a first payment could be a whole boiler. Or they
- * fund their own ads. They can switch any time.
+ * customers buy one-off jobs or visits (trades, salons) pays a share of each
+ * new customer's first online payment instead, since a first payment could
+ * be a whole boiler. Or they fund their own ads. They can switch any time.
  *
  * Trades is the first and the fullest. Clubs and Salon carry the same
  * structure; each carries its own examples.
@@ -23,23 +23,27 @@
  *   faq                  [question, answer] pairs; also structured data
  */
 /* The ads deal, said the same way on every model. unit: what one new
-   customer is called for that business; fee: what we take per new one when
-   we fund the ads from month 5. */
-const PER_JOB = 30;
+   customer is called for that business. From month 5, if we fund the ads,
+   a membership business pays us each new member's first month; anyone else
+   pays SHARE per cent of each new customer's first payment. Only payments
+   taken online through their site count: the site records every one, so
+   nothing rests on trust, and repeat customers (an email seen before) never
+   count. Cash or card in person? Then they fund their own ads. */
+const SHARE = 20;
 function adDeal(m) {
   const pay = m.unit === 'member'
     ? 'and each new member who joins after a trial pays their first month to us'
-    : `for &pound;${PER_JOB} per new ${m.unit} booked through your site`;
+    : `for ${SHARE}% of each new customer&rsquo;s first payment taken online through your site`;
   return `Month 1 we build it. Months 2 to 4, your ads are on us, up to &pound;150 a month. From month 5, we keep funding them ${pay}, or you pay Meta yourself and keep every penny. Switch between the two any time.`;
 }
 function adFaq(m) {
   const pay = m.unit === 'member'
     ? 'each new member who joins after a trial pays their first month to us'
-    : `you pay &pound;${PER_JOB} for each new ${m.unit} booked through your site`;
+    : `you pay ${SHARE}% of each new customer&rsquo;s first payment taken online through your site`;
   const out = [
-    ['Who pays for the ads?', `For months 2, 3 and 4, we do, up to &pound;150 a month. Month 1 is spent building and testing everything, so the ads land on a site that works. From month 5 you choose: we keep paying and ${pay}, or you pay Meta directly on your own ad account. Switch between the two any time. If nothing new comes in from the ads we pay for, you pay nothing for them.`]
+    ['Who pays for the ads?', `For months 2, 3 and 4, we do, up to &pound;150 a month. Month 1 is spent building and testing everything, so the ads land on a site that works. From month 5 you choose: we keep paying and ${pay}, or you pay Meta directly on your own ad account. Switch between the two any time. If nothing new comes in, you pay nothing for the ads.`]
   ];
-  if (m.unit !== 'member') out.push([`Why &pound;${PER_JOB} a ${m.unit}, and not the first payment like clubs?`, `Clubs and classes pay us a new member&rsquo;s first month, because members pay every month after. Your customers mostly pay for one ${m.unit} at a time, and some of those are big, so a flat &pound;${PER_JOB} a ${m.unit} is fairer to you. Busy enough that it adds up? Switch to paying for your own ads and keep the difference.`]);
+  if (m.unit !== 'member') out.push([`Why ${SHARE}% of the first payment, and not the whole first payment like clubs?`, `Clubs and classes pay us a new member&rsquo;s first month, because members pay every month after. Your customers mostly pay for one ${m.unit} at a time, so ${SHARE}% is fairer: a &pound;100 ${m.unit} is &pound;20 to us, a &pound;300 one is &pound;60. Only new customers who pay online through your site count, so it&rsquo;s tracked for you and nothing is guesswork, and repeat customers are always yours. Take cash or card in person? Then paying for your own ads is the simpler choice. And if our share ever comes to more than the &pound;150 we spend on your ads, we email you to say so, so you can switch to paying for your own and keep the difference.`]);
   return out;
 }
 
@@ -253,4 +257,4 @@ module.exports = [
 
 module.exports.adDeal = adDeal;
 module.exports.adFaq = adFaq;
-module.exports.PER_JOB = PER_JOB;
+module.exports.SHARE = SHARE;

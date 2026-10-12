@@ -431,7 +431,7 @@ function planCard(f) {
         <li>Your website, designed and built for you, live the day you join</li>
         <li>Bookings, payments and live chat. Changes within 48 hours</li>
         <li class="tick-hero">Your Facebook and Instagram ads, set up, run and tracked by us</li>
-        <li class="tick-hero">Your first ad live within 7 days</li>
+        <li class="tick-hero">Your first ad live in month 2, once your site is tested</li>
         <li class="tick-hero">Your Google ranking worked on every month</li>
         <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
         <li class="tick-hero">Business email at your own address</li>
