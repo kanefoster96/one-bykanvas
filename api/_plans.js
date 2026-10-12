@@ -35,7 +35,7 @@ const REQUEST_COST = {
 /* The code every new monthly Business customer gets (created in Stripe:
    50% off, first month only). Applied by default at checkout on monthly
    Business; never on Starter, whose £9.99 is already the offer, never on
-   One, whose offer is the first 3 months of ads, and never on annual,
+   One, whose offer is 3 months of ads (months 2 to 4), and never on annual,
    where the bonus is the Launch Boost instead. */
 const PREVIEW_OFFER = { code: 'WELCOME26' };
 

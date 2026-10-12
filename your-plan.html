@@ -44,7 +44,7 @@
       <ol class="mh-plan-steps mh-calc" id="maxSteps"></ol>
       <div class="mh-plan-rec">
         <p class="mh-plan-rec-t"><b>We&rsquo;d recommend One</b> &middot; &pound;250 a month</p>
-        <p>First 3 months of ads included. 10 trial bookings in your first 3 months, or leave any time.</p>
+        <p>Month 1 we build it. Months 2 to 4, your ads are on us, worth &pound;450. No contract: cancel any time.</p>
       </div>
       <div class="mh-dialog-cta">
         <a class="btn btn-primary" id="startMax" href="/get-started.html?plan=max">Start One</a>
@@ -124,17 +124,17 @@
       stats.appendChild(stat(p.spaces, 'spaces to fill'));
       stats.appendChild(stat('~' + p.months + ' mo', 'to fill them'));
       steps = [
-        ['Within 14 days.', 'We build your website and timetable, set up your member app, and move your members across. Store versions of the app follow, as Apple and Google review them.'],
-        ['Then the ads.', 'Ads go live for the classes with spaces. In our own academy, £' + G.AVG.adBudget + ' a month brought around ' + p.trials + ' trials and ' + p.perMonth + ' new members a month.'],
+        ['Month 1: we build it.', 'Your website and timetable within 14 days, your member app set up, and your members moved across. Then we test it all, so the ads land on something that works. Store versions of the app follow, as Apple and Google review them.'],
+        ['Months 2 to 4: the ads, on us.', 'Ads go live for the classes with spaces. In our own academy, £' + G.AVG.adBudget + ' a month brought around ' + p.trials + ' trials and ' + p.perMonth + ' new members a month.'],
         ['At that pace', 'your ' + p.spaces + ' spaces fill in about ' + p.months + ' month' + (p.months === 1 ? '' : 's') + '.'],
-        [p.cover + ' new member' + (p.cover === 1 ? '' : 's'), 'at ' + money(p.fee) + ' cover the £250. The first 3 months of ads are on us.'],
+        [p.cover + ' new member' + (p.cover === 1 ? '' : 's'), 'at ' + money(p.fee) + ' cover the £250. Months 2 to 4 of ads are on us.'],
         ['Every trial', 'gets reminders and a follow-up with the link to join, and members pay monthly by card, automatically.']
       ];
     } else {
       stats.appendChild(stat(p.members, 'members'));
       stats.appendChild(stat('Standby', 'ads, until you grow'));
       steps = [
-        ['Within 14 days.', 'We build your website and timetable, set up your member app, and move your members across. Store versions of the app follow, as Apple and Google review them.'],
+        ['Month 1: we build it.', 'Your website and timetable within 14 days, your member app set up, and your members moved across. Store versions of the app follow, as Apple and Google review them.'],
         ['Payments run themselves.', 'Monthly memberships by card, failed payments chased for you.'],
         ['Trials and follow-ups', 'sent for you, every time, so nobody slips through.'],
         ['A real person to message', 'for any change, and a monthly report on how it’s going.'],

@@ -51,15 +51,15 @@ function startHref(site, which, business, type, leadId) {
 function maxSteps(p) {
   if (p.mode === 'fill') {
     return [
-      '<strong>Within 14 days.</strong> We build your website and timetable, set up your member app, and move your members across. Store versions of the app follow, as Apple and Google review them.',
-      `<strong>Then the ads.</strong> Ads go live for the classes with spaces. In our own academy, &pound;${growth.AVG.adBudget} a month of ads brought around ${p.trials} trial bookings and ${p.perMonth} new members a month.`,
+      '<strong>Month 1: we build it.</strong> Your website and timetable within 14 days, your member app set up, and your members moved across, then all of it tested. Store versions of the app follow, as Apple and Google review them.',
+      `<strong>Months 2 to 4: the ads, on us.</strong> Ads go live for the classes with spaces. In our own academy, &pound;${growth.AVG.adBudget} a month of ads brought around ${p.trials} trial bookings and ${p.perMonth} new members a month.`,
       `<strong>At that pace</strong>, your ${p.spaces} spaces would fill in about ${p.months} month${p.months === 1 ? '' : 's'}.`,
-      `<strong>${p.cover} new member${p.cover === 1 ? '' : 's'}</strong> at ${money(p.fee)} cover the &pound;250, and the first 3 months of ads are on us.`,
+      `<strong>${p.cover} new member${p.cover === 1 ? '' : 's'}</strong> at ${money(p.fee)} cover the &pound;250, and months 2 to 4 of ads are on us.`,
       '<strong>Every trial</strong> gets reminders and a follow-up with the link to join, and members pay monthly by card, automatically.'
     ];
   }
   return [
-    '<strong>Within 14 days.</strong> We build your website and timetable, set up your member app, and move your members across. Store versions of the app follow, as Apple and Google review them.',
+    '<strong>Month 1: we build it.</strong> Your website and timetable within 14 days, your member app set up, and your members moved across, then all of it tested. Store versions of the app follow, as Apple and Google review them.',
     '<strong>Payments run themselves.</strong> Monthly memberships taken by card, failed payments chased for you.',
     '<strong>Trials, reminders and follow-ups</strong> sent for you, every time, so nobody slips through.',
     '<strong>A real person to message</strong> for any change, and a monthly report on how it is going.',
@@ -93,7 +93,7 @@ function maxEmail(site, lead, p, type) {
       perks: steps,
       ctaText: 'Start One — £250 a month',
       ctaHref: start,
-      ctaNote: 'First 3 months of ads included. 3-month minimum, unless we don&rsquo;t get you 10 trial bookings; then leave any time. '
+      ctaNote: '3 months of ads included, worth &pound;450. No contract: cancel any time. '
         + 'Rather talk first? Just reply and we&rsquo;ll find 10 minutes.',
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. The figures are what happened in our own academy, not a promise. Two short follow-ups come after this, then we leave you be.',
       footerLinks: standardFooter(site)
@@ -102,7 +102,7 @@ function maxEmail(site, lead, p, type) {
       + `Members now: ${p.members}\nRoom for: ${p.capacity}\nSpaces empty: ${p.spaces}\nFee a month: ${money(p.fee)}\nWhen full: ${money(p.total)} a month\n\n`
       + steps.map((s) => '- ' + s.replace(/<[^>]+>/g, '').replace(/&pound;/g, '£').replace(/&rsquo;/g, '’')).join('\n')
       + `\n\nStart One, £250 a month: ${start}\n\n`
-      + 'First 3 months of ads included. 3-month minimum, unless we don’t get you 10 trial bookings; then leave any time.\n'
+      + '3 months of ads included, worth £450. No contract: cancel any time.\n'
       + 'Rather talk first? Just reply.\n'
   };
 }
