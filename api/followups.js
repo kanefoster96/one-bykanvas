@@ -250,12 +250,13 @@ function growthOne(lead, site) {
         ctaText: 'Start One — £250 a month',
         ctaHref: start,
         ctaNote: 'Rather talk it through first? Reply and we&rsquo;ll find 10 minutes.',
-        footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. One more email follows, then we leave you be.',
+        footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. The figures are our own academy&rsquo;s, not a promise: what ads bring depends on your type of club and your local area. One more email follows, then we leave you be.',
         footerLinks: standardFooter(site)
       }),
       text: `When we put together the plan for ${lead.business}, the numbers came from our own dance and cheer academy.\n\n`
         + 'First three weeks of ads: £103 spent, 21 trial bookings, 4 new members, £2,400 a year in new fees.\n\n'
         + 'Months 2 to 4 of your ads are on us.\n\n'
+        + 'These are our own academy’s numbers, not a promise: what ads bring depends on your type of club and your local area.\n\n'
         + `Start One: ${start}\n\nRather talk first? Just reply.\n`
     };
   }
