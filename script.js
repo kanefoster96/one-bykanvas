@@ -146,17 +146,12 @@
   // One source of truth for the nav. Pages only need an empty #menu element;
   // the header itself stays in the markup so it renders without JavaScript.
   var MENU = [
-    { label: 'Book a demo',     href: '/#demo' },
-    { label: 'What it does',    href: '/#features' },
-    { label: 'How it works',    href: '/#how' },
-    { label: 'Pricing',         href: '/#plans' },
+    { label: 'Free profit plan', href: '/profit-plan' },
+    { label: 'How it works',    href: '/#one' },
+    { label: 'Results',         href: '/#results' },
+    { label: 'Pricing',         href: '/#everything' },
+    { label: 'Questions',       href: '/#faq' },
     { label: 'Kids\u2019 clubs', href: '/clubs' },
-    { label: 'Websites from \u00a39.99', children: [
-      { label: 'Websites',       href: '/websites' },
-      { label: 'How it works',   href: '/how-it-works.html' },
-      { label: 'Examples',       href: '/examples' },
-      { label: 'See all plans',  href: '/plans.html' }
-    ] },
     { label: 'Contact',         href: '/contact.html' }
   ];
 
@@ -259,7 +254,7 @@
       ? '<a class="btn btn-ghost" href="/account.html">Your account</a>' +
         '<button class="btn btn-primary" type="button" id="navLogout">Log out</button>'
       : '<a class="btn btn-ghost" href="/login.html">Log in</a>' +
-        '<a class="btn btn-primary" href="/#demo">Book a demo</a>';
+        '<a class="btn btn-primary" href="/profit-plan">Get my free profit plan</a>';
     nav.appendChild(actions);
     menu.appendChild(nav);
 
