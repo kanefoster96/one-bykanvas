@@ -7,8 +7,8 @@
  *
  * The id is the lead row's UUID: random, unguessable, and only ever sent
  * to the address that asked for the example. Nothing here is returned that
- * the person did not type in themselves, and only free-example leads
- * answer - an enquiry never carried a "join" link.
+ * the person did not type in themselves, and only free-example and
+ * free-check leads answer - an enquiry never carried a "join" link.
  */
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv } = require('./_env.js');
@@ -37,10 +37,21 @@ module.exports = async function handler(req, res) {
       auth: { persistSession: false, autoRefreshToken: false }
     });
     const { data: lead, error } = await db.from('leads')
-      .select('name, business, email, handle, requested_domain, source')
+      .select('name, business, email, handle, requested_domain, source, about')
       .eq('id', id).maybeSingle();
     if (error) throw new Error(error.message);
-    if (!lead || lead.source !== 'free-preview') return res.status(404).json({ error: 'Not a lead.' });
+    if (!lead || ['free-preview', 'growth-plan'].indexOf(lead.source) === -1) return res.status(404).json({ error: 'Not a lead.' });
+
+    /* A free-check lead's first line says what they run and where:
+       "Free growth plan: Dance or cheer school in Wallsend." */
+    let type = '', summary = '';
+    if (lead.source === 'growth-plan') {
+      /* And the numbers they put in, kept with their setup for the build. */
+      const lines = String(lead.about || '').split('\n');
+      summary = lines.slice(1, 3).join(' ').trim();
+      const m = /^Free growth plan: ([^\n]+?)(?: in [^\n]+)?\.\s*$/m.exec(String(lead.about || ''));
+      if (m && m[1] !== 'Something else') type = m[1].replace(/\u2019/g, "'");
+    }
 
     return res.status(200).json({
       /* The mini form has no name field and sends the business as the name,
@@ -49,7 +60,10 @@ module.exports = async function handler(req, res) {
       business: lead.business || '',
       email: lead.email || '',
       handle: lead.handle || '',
-      domain: lead.requested_domain || ''
+      domain: lead.requested_domain || '',
+      type,
+      summary,
+      from: lead.source === 'growth-plan' ? 'check' : 'example'
     });
   } catch (err) {
     console.error('lead-prefill:', err && err.message);
