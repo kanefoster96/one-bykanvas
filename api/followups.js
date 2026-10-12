@@ -296,7 +296,7 @@ function growthTwo(lead, site) {
         preheader: 'What it really costs, and what happens if it doesn’t work.',
         heading: 'The two questions everyone asks',
         lines: [
-          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;250 a month for everything: website, member app, trial bookings, memberships, payments and the ads run for you. Month 1 we build it, and months 2 to 4 of ads are on us. From month 5, we keep paying for your ads and each new member from them pays their first month to us, or you fund your own ad budget.',
+          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;250 a month for everything: website, member app, trial bookings, memberships, payments and the ads run for you. Month 1 we build it, and months 2 to 4 of ads are on us. From month 5, we keep paying for your ads and each new member who joins after a trial pays their first month to us, or you fund your own ad budget.',
           '<strong>&ldquo;What if it doesn&rsquo;t work?&rdquo;</strong> There&rsquo;s no contract and no minimum. Cancel any time from your account.',
           'And when your classes are full, we pause the ads. You just pay the &pound;250.',
           'This is the last email about your plan. If now isn&rsquo;t the time, no hard feelings.'
@@ -307,7 +307,7 @@ function growthTwo(lead, site) {
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
         footerLinks: standardFooter(site)
       }),
-      text: '"What does it really cost?" £250 a month for everything. Month 1 we build it, months 2 to 4 of ads are on us. From month 5: we keep paying for your ads and each new member from them pays their first month to us, or you fund your own.\n\n'
+      text: '"What does it really cost?" £250 a month for everything. Month 1 we build it, months 2 to 4 of ads are on us. From month 5: we keep paying for your ads and each new member who joins after a trial pays their first month to us, or you fund your own.\n\n'
         + '"What if it doesn’t work?" No contract, no minimum. Cancel any time.\n\n'
         + 'When you’re full, we pause the ads.\n\n'
         + `Start One: ${start}\n\nThis is the last email about your plan.\n`
