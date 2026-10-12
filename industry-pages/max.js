@@ -24,24 +24,23 @@
  */
 /* The ads deal, said the same way on every model. unit: what one new
    customer is called for that business. From month 5, if we fund the ads,
-   a membership business pays us each new member's first month; anyone else
-   pays SHARE per cent of each new customer's first payment. Only payments
+   each new customer on a monthly membership pays us their first month (it
+   is ongoing revenue); anything else, a term, a course, a one-off job,
+   pays SHARE per cent of the first payment. Only payments
    taken online through their site count: the site records every one, so
    nothing rests on trust, and repeat customers (an email seen before) never
    count. Cash or card in person? Then they fund their own ads. */
 const SHARE = 20;
 function adDeal(m) {
   const pay = m.unit === 'member'
-    ? 'and each new member who joins after a trial pays their first month to us'
-    : `for ${SHARE}% of each new customer&rsquo;s first payment taken online through your site`;
+    ? `and each new monthly member pays their first month to us (a termly fee or a course: ${SHARE}% of the first payment)`
+    : `for ${SHARE}% of each new customer&rsquo;s first payment taken online through your site (a monthly plan: their first month)`;
   return `Month 1 we build it. Months 2 to 4, your ads are on us, up to &pound;150 a month. From month 5, we keep funding them ${pay}, or you pay Meta yourself and keep every penny. Switch between the two any time.`;
 }
 function adFaq(m) {
-  const pay = m.unit === 'member'
-    ? 'each new member who joins after a trial pays their first month to us'
-    : `you pay ${SHARE}% of each new customer&rsquo;s first payment taken online through your site`;
+  const pay = `each new customer who pays online through your site pays us their first month if they&rsquo;re on a monthly membership or plan, or ${SHARE}% of their first payment if it&rsquo;s anything else, like ${m.unit === 'member' ? 'a term or a course' : 'a one-off job, a visit, a course or a term'}`;
   const out = [
-    ['Who pays for the ads?', `For months 2, 3 and 4, we do, up to &pound;150 a month. Month 1 is spent building and testing everything, so the ads land on a site that works. From month 5 you choose: we keep paying and ${pay}, or you pay Meta directly on your own ad account. Switch between the two any time. If nothing new comes in, you pay nothing for the ads.`]
+    ['Who pays for the ads?', `For months 2, 3 and 4, we do, up to &pound;150 a month. Month 1 is spent building and testing everything, so the ads land on a site that works. From month 5 you choose: we keep paying and ${pay}. Or you pay Meta directly on your own ad account. Switch between the two any time. If nothing new comes in, you pay nothing for the ads.`]
   ];
   if (m.unit !== 'member') out.push([`Why ${SHARE}% of the first payment, and not the whole first payment like clubs?`, `Clubs and classes pay us a new member&rsquo;s first month, because members pay every month after. Your customers mostly pay for one ${m.unit} at a time, so ${SHARE}% is fairer: a &pound;100 ${m.unit} is &pound;20 to us, a &pound;300 one is &pound;60. Only new customers who pay online through your site count, so it&rsquo;s tracked for you and nothing is guesswork, and repeat customers are always yours. Take cash or card in person? Then paying for your own ads is the simpler choice. And if our share ever comes to more than the &pound;150 we spend on your ads, we email you to say so, so you can switch to paying for your own and keep the difference.`]);
   return out;
