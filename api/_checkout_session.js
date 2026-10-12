@@ -74,7 +74,7 @@ async function openCheckout({ stripe, admin, user, profile, plan, billing, offer
      and the code box withheld on the Stripe page for annual sessions. */
   const annual = String(billing || '').toLowerCase() === 'annual'
     && Number.isFinite(PLANS[plan].yearly);
-  /* Every new monthly Business or Max customer gets the first month at
+  /* Every new monthly Business or One customer gets the first month at
      half price: the site says so, so it is applied whether or not they
      carried a code. Starter's £9.99 is the offer itself, so it never gets
      the half-price code, but a partner or referral code still applies.

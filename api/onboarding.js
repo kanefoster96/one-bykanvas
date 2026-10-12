@@ -1,9 +1,9 @@
-/* The Max onboarding form: what a customer tells us to build their system.
+/* The One onboarding form: what a customer tells us to build their system.
  *
  *   GET   -> { answers, updatedAt, plan, business, viewer }   their saved answers
  *   POST  { answers }  -> { ok, changed }   save, and tell the other side what changed
  *
- * The admin can open any Max customer's form with ?user=<id> (GET) or
+ * The admin can open any One customer's form with ?user=<id> (GET) or
  * user in the body (POST). A save by the customer emails and pushes the
  * admin; a save by the admin pushes the customer, so both hear the
  * moment the other changes something.
@@ -27,7 +27,7 @@ const { notifyAdmin, notify } = require('./_notify.js');
 
 /* The sections, in the order the form shows them, for the email. */
 const SECTIONS = [
-  ['model', 'Which Max'],
+  ['model', 'Which One'],
   ['contact', 'How customers reach you'],
   ['services', 'What you do and what it costs'],
   ['services_generated', 'Generated images for now'],
@@ -55,7 +55,7 @@ const MAX_BYTES = 60000;
 
 /* The answers that shape the build, in plain words. Anything on this list
    left blank or "not sure" is the admin's to decide, and the email says so
-   under its own heading. Add-on sections count only for the Max picked. */
+   under its own heading. Add-on sections count only for the One picked. */
 const DECISIONS = {
   contact: { area: 'areas covered', base: 'where they set off from', reach: 'when customers can reach them', customers_live: 'where their customer details live now' },
   offer: { job: 'the job to advertise', upsells: 'the upsells', addons: 'the add-on for any visit', moment: 'when they mention extra work' },
@@ -186,7 +186,7 @@ module.exports = async function handler(req, res) {
       for (const [col, key] of Object.entries(MIRROR)) {
         if (!contact[key] && profile && profile[col]) contact[key] = profile[col];
       }
-      /* Which Max they bought, from the wizard: the form starts on it and
+      /* Which One they bought, from the wizard: the form starts on it and
          need not ask. */
       const maxModel = (profile && profile.max_model) || null;
       return res.status(200).json({
@@ -201,7 +201,7 @@ module.exports = async function handler(req, res) {
 
     /* ---- POST: save ---- */
     if (plan !== 'max') {
-      return res.status(403).json({ error: 'The Max setup form is for Max customers.' });
+      return res.status(403).json({ error: 'The One setup form is for One customers.' });
     }
     const incoming = clean(body.answers) || {};
     if (JSON.stringify(incoming).length > MAX_BYTES) {
@@ -209,7 +209,7 @@ module.exports = async function handler(req, res) {
     }
 
     const before = Object.assign({}, (row && row.answers) || {});
-    /* The Max they bought was shown as already answered: saving it back is
+    /* The One they bought was shown as already answered: saving it back is
        not a change worth telling anyone about. */
     if (!before.model && profile && profile.max_model && incoming.model === profile.max_model) before.model = profile.max_model;
     const changed = SECTIONS.filter(([key]) => JSON.stringify(before[key] || null) !== JSON.stringify(incoming[key] || null)).map(([, label]) => label);
@@ -239,7 +239,7 @@ module.exports = async function handler(req, res) {
 
     /* The admin changed it: the customer hears in the app, on their phone. */
     if (viewer === 'admin') {
-      await notify(db, ownerId, 'We updated your Max setup', `Changed: ${changed.join(', ')}.`, '/onboarding.html',
+      await notify(db, ownerId, 'We updated your One setup', `Changed: ${changed.join(', ')}.`, '/onboarding.html',
         { kind: 'max_setup', deepLink: { kind: 'max_setup' } });
       return res.status(200).json({ ok: true, changed });
     }
@@ -250,7 +250,7 @@ module.exports = async function handler(req, res) {
     const site = ourSiteUrl();
     const decide = undecided(incoming);
     const text = [
-      `${name} updated their Max setup: ${changed.join(', ')}.`,
+      `${name} updated their One setup: ${changed.join(', ')}.`,
       '',
       'YOU DECIDE (left blank or not sure):',
       ...(decide.length ? decide : ['  nothing - every question has an answer']),
@@ -263,13 +263,13 @@ module.exports = async function handler(req, res) {
 
     const result = await sendEmail({
       to: adminAddresses(),
-      subject: `Max setup updated: ${name} (${changed.join(', ')})`,
+      subject: `One setup updated: ${name} (${changed.join(', ')})`,
       text,
       replyTo: user.email
     });
     console.log('onboarding: notify email', result);
 
-    await notifyAdmin(db, 'Max setup updated', `${name} changed: ${changed.join(', ')}.`, `/onboarding.html?user=${ownerId}`,
+    await notifyAdmin(db, 'One setup updated', `${name} changed: ${changed.join(', ')}.`, `/onboarding.html?user=${ownerId}`,
       { kind: 'max_setup', deepLink: { kind: 'max_setup', user: ownerId } });
 
     return res.status(200).json({ ok: true, changed });

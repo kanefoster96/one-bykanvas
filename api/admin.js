@@ -324,7 +324,7 @@ module.exports = async function handler(req, res) {
         t.images = (t.admin_images || []).map((p) => ({ path: p, url: tplSigned[p] })).filter((x) => x.url);
       });
 
-      // Logged history of monthly SEO updates for Max customers - enough
+      // Logged history of monthly SEO updates for One customers - enough
       // rows to tell whether this billing period already has one, and to
       // show the log itself on a customer's page.
       const { data: seoUpdates, error: seoError } = await db
@@ -702,7 +702,7 @@ module.exports = async function handler(req, res) {
       const plan = String(body.plan || '').toLowerCase();
       const interval = body.interval === 'year' ? 'year' : body.interval === 'month' ? 'month' : undefined;
       if (!userId) return res.status(400).json({ error: 'Which customer?' });
-      if (!['starter', 'business', 'max'].includes(plan)) return res.status(400).json({ error: 'Plans are Starter, Business or Max.' });
+      if (!['starter', 'business', 'max'].includes(plan)) return res.status(400).json({ error: 'Plans are Starter, Business or One.' });
       const { STRIPE_SECRET_KEY } = process.env;
       if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe is not configured.' });
       const { data: who, error: whoErr } = await db.from('profiles')
@@ -751,7 +751,7 @@ module.exports = async function handler(req, res) {
     /* ---- bring a membership back --------------------------------------
      * Only possible while it is still running and merely set to end. One
      * that has already ended cannot be restarted from here: they sign up
-     * again (Starter on /join, Business and Max on /get-started). */
+     * again (Starter on /join, Business and One on /get-started). */
     if (action === 'reactivate') {
       const userId = String(body.userId || '');
       if (!userId) return res.status(400).json({ error: 'Which customer?' });
@@ -760,7 +760,7 @@ module.exports = async function handler(req, res) {
       const { data: who, error: whoErr } = await db.from('profiles')
         .select('stripe_subscription_id').eq('id', userId).maybeSingle();
       if (whoErr) throw new Error(whoErr.message);
-      const ended = { error: 'That membership has ended, so it cannot be restarted here. Send them to ' + ourSiteUrl() + '/join (Starter) or ' + ourSiteUrl() + '/get-started (Business or Max) to sign up again.', ended: true };
+      const ended = { error: 'That membership has ended, so it cannot be restarted here. Send them to ' + ourSiteUrl() + '/join (Starter) or ' + ourSiteUrl() + '/get-started (Business or One) to sign up again.', ended: true };
       if (!who || !who.stripe_subscription_id) return res.status(400).json(ended);
       const stripe = new Stripe(STRIPE_SECRET_KEY);
       let sub;
@@ -1329,7 +1329,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    // ---- write: log a Max customer's SEO update for this billing period ----
+    // ---- write: log a One customer's SEO update for this billing period ----
     if (action === 'logSeoUpdate') {
       const userId = String(body.userId || '');
       const note = String(body.note || '').trim();
@@ -1340,7 +1340,7 @@ module.exports = async function handler(req, res) {
       if (error) throw new Error(error.message);
       await notify(db, userId, 'Your monthly update', note.slice(0, 200), '/account.html');
 
-      /* The note is the paid deliverable on Max, so it goes to their inbox
+      /* The note is the paid deliverable on One, so it goes to their inbox
          too - a report of work done, not optional marketing, so it sends
          without the notify opt-out gate and carries no unsubscribe link. */
       const { data: who } = await db.auth.admin.getUserById(userId);

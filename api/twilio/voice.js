@@ -63,7 +63,7 @@ module.exports = async function handler(req, res) {
     const onMax = prof && prof.active_plan === 'max';
     let texted = 'skipped';
     if (onMax && textable(from)) texted = await sendSms({ from: site.phone_number, to: from, body: textFor(site, business) });
-    else if (!onMax) console.log('twilio voice: text-back is a Max feature; site', site.id, 'is on', prof && prof.active_plan);
+    else if (!onMax) console.log('twilio voice: text-back is a One feature; site', site.id, 'is on', prof && prof.active_plan);
     await db.from('call_log').insert({ site_id: site.id, kind: 'missed', from_number: from || null, texted_at: texted === 'sent' ? new Date().toISOString() : null });
     // The missed call lives in the caller's text thread, so calling or
     // texting them back is one tap from the notification.

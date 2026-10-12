@@ -848,3 +848,10 @@ body.home .btn-primary:focus-visible{outline:3px solid rgba(255,79,18,.45);outli
 .mh-info:hover,.mh-info[aria-expanded="true"]{background:var(--good);color:#fff}
 .mh-info:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
 .mh-info-note{max-width:440px;margin:12px auto 0;padding:12px 16px;border-radius:14px;background:var(--glass);box-shadow:var(--glass-shadow);font-size:14.5px;line-height:1.45;color:#55555a;text-align:left}
+/* Room under the hero mock-up: the tilted frame and the phone sit fully
+   on white, with the same air below them as above, and the chips lose
+   the dashed leaders that hung into the next section. */
+.mh{padding-bottom:clamp(48px,6vw,80px)}
+.mh .hh-scene{margin-top:clamp(40px,5vw,56px)}
+.mh .hh-chip::after{display:none}
+@media (max-width:600px){.mh{padding-bottom:48px}.mh .hh-scene{margin-top:40px}}

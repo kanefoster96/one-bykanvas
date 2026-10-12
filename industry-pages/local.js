@@ -125,14 +125,14 @@ module.exports = [
     buildNote: 'Send us your business name and a link to you online. We build the site and you&rsquo;re live within 24 hours.',
     steps: STEPS,
     stepsLine: 'Business, &pound;50 a month, adds bookings, payments, live chat and priority changes within 48 hours, any month.',
-    maxPitch: { heading: 'Want us to go and get you customers?', text: 'Starter gets you a proper site and found on Google. Max runs your ads and works on your Google ranking every month, for businesses that want to grow fast.' },
+    maxPitch: { heading: 'Want us to go and get you customers?', text: 'Starter gets you a proper site and found on Google. One runs your ads and works on your Google ranking every month, for businesses that want to grow fast.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is about &pound;2.30 a week, no VAT. Most agencies charge that for hosting alone.'],
     faq: [
       ['How much does a website cost in Newcastle?', 'From a local agency, a small business website typically costs &pound;1,000 to &pound;3,000 or more up front, with hosting and changes often charged on top. With Kanvas One it&rsquo;s &pound;9.99 a month, live within 24 hours, with your web address, hosting, security, support and changes to your words and photos included. No VAT.'],
       ['How quickly can my website be live?', 'Within 24 hours of joining, on your own web address. Send us your Facebook, Instagram or old site when you join, and most businesses are online the next day.'],
       ['Is the web address included?', 'Yes. We register your web address (yourbusiness.co.uk or similar) and renew it for as long as you&rsquo;re with us. If you already own one, we use that instead.'],
-      ['Will my site show up on Google in Newcastle?', 'Every site is written around what customers in your area search for, set up for Google and AI search, and linked to your Google listing. No honest company can promise you the top spot. Max, &pound;250 a month, works on your ranking every month.'],
+      ['Will my site show up on Google in Newcastle?', 'Every site is written around what customers in your area search for, set up for Google and AI search, and linked to your Google listing. No honest company can promise you the top spot. One, &pound;250 a month, works on your ranking every month.'],
       ['Are you local?', 'Yes. We&rsquo;re a North East team working with businesses across Newcastle, North Tyneside and Northumberland, including a dance school in North Tyneside. Everything is done online, and you can message us any time.']
     ].concat(LOCAL_FAQ_END),
     endLine: 'Got a question? Email <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20Newcastle%20business">hello@kanvas.one</a> and we reply.',
@@ -177,13 +177,13 @@ module.exports = [
     buildNote: 'Send us your business name and your Facebook or Instagram. We build the site and you&rsquo;re live within 24 hours.',
     steps: STEPS,
     stepsLine: 'Business, &pound;50 a month, adds bookings, payments, live chat and priority changes within 48 hours, any month.',
-    maxPitch: { heading: 'Want us to go and get you customers?', text: 'Starter gets you a proper site and found on Google. Max runs your ads and works on your Google ranking every month, for businesses that want to grow fast.' },
+    maxPitch: { heading: 'Want us to go and get you customers?', text: 'Starter gets you a proper site and found on Google. One runs your ads and works on your Google ranking every month, for businesses that want to grow fast.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month is about &pound;2.30 a week, no VAT. No setup fee and no contract.'],
     faq: [
       ['How much does a website cost in Northumberland?', 'A small business website from an agency typically costs &pound;1,000 to &pound;3,000 or more up front, plus hosting and changes. With Kanvas One it&rsquo;s &pound;9.99 a month, live within 24 hours, with your web address, hosting, security, support and changes to your words and photos included. No VAT.'],
       ['I only have a Facebook page. Is that enough to start?', 'Yes. Plenty of businesses start from just a Facebook or Instagram page. We take your photos, services and reviews from it and design the site for you.'],
-      ['I cover lots of towns. Will I show up in all of them?', 'Your site names every town you cover, written the way people search, and links to your Google listing. No honest company can promise the top spot. Max, &pound;250 a month, works on your ranking town by town every month.'],
+      ['I cover lots of towns. Will I show up in all of them?', 'Your site names every town you cover, written the way people search, and links to your Google listing. No honest company can promise the top spot. One, &pound;250 a month, works on your ranking town by town every month.'],
       ['How quickly can my website be live?', 'Within 24 hours of joining, on your own web address.'],
       ['Are you local?', 'Yes. We&rsquo;re a North East team working with businesses across Northumberland, Newcastle and North Tyneside. Everything is done online, so it&rsquo;s the same whether you&rsquo;re in Cramlington or Berwick.']
     ].concat(LOCAL_FAQ_END),

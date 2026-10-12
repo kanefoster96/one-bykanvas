@@ -325,7 +325,7 @@
 
   /* -------------------------------------------------------- max setup -- */
 
-  /* The Max setup form, from the website, inside the Support tab. The
+  /* The One setup form, from the website, inside the Support tab. The
      server hands off the session the way it does for a dashboard. The
      admin arrives here from a "setup updated" notification, on the
      customer's form. */
@@ -1359,7 +1359,7 @@
      finish it from here: the site's address to mark it live, or where the
      example lives to send it. Both go through the same admin actions the
      desktop page uses. */
-  var PLAN_WORD = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' };
+  var PLAN_WORD = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'One' };
 
   /* An @handle opens on Instagram (a guess, but the likelier one); a link
      opens as it is; anything else is just shown. */

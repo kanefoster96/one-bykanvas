@@ -73,7 +73,7 @@ function joinHref(site, plan, domain, leadId) {
 }
 
 /* The thing to press: Starter, the page live for £9.99 a month. Business
-   beside it at £50, for the person who already knows they want bookings. Max
+   beside it at £50, for the person who already knows they want bookings. One
    is offered after they have said yes, in the wizard. */
 function planCards(site, domain, leadId) {
   const live = domain ? 'Live on ' + esc(domain) + ' today.' : 'Live on your own address today.';

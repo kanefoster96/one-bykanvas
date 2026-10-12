@@ -15,7 +15,7 @@
 <script>
 /* Starter is paid first now, on /join. Anyone sent here for it (or with no
    plan named, which means Starter) goes there with what they brought;
-   Business and Max, and the ready-email links (?lead=, ?domain=), stay. */
+   Business and One, and the ready-email links (?lead=, ?domain=), stay. */
 (function () {
   try {
     var q = new URLSearchParams(location.search);
@@ -77,17 +77,17 @@
       <!-- ============ 2. the business ============ -->
       <section class="wiz-step" data-step="2" aria-label="Choose a plan" hidden>
         <h1>Your plan.</h1>
-        <p class="wiz-sub">Starter is the site, &pound;9.99 a month. Business gets you booked. Max adds growth. Move between them any month.</p>
+        <p class="wiz-sub">Starter is the site, &pound;9.99 a month. Business gets you booked. One adds growth. Move between them any month.</p>
 
         <!-- Starter first, and chosen: it is the offer on every page. Business
-             is the step up, then Max. -->
+             is the step up, then One. -->
         <div class="bill-toggle bill-toggle-wiz" role="group" aria-label="Billing period">
           <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
           <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free + Boost</span></button>
         </div>
 
         <!-- What each way of paying gets, said once above the plans. -->
-        <p class="bill-note" id="billNote"><b>Monthly:</b> Starter is &pound;9.99 from day one; Business and Max are half price for the first month. <b>Annual:</b> two months free, plus the Launch Boost &mdash; your first month spent getting you found. <button class="linkish inline" type="button" id="boostMore">What&rsquo;s in it?</button></p>
+        <p class="bill-note" id="billNote"><b>Monthly:</b> Starter is &pound;9.99 from day one; Business and One are half price for the first month. <b>Annual:</b> two months free, plus the Launch Boost &mdash; your first month spent getting you found. <button class="linkish inline" type="button" id="boostMore">What&rsquo;s in it?</button></p>
         <ul class="ticks boost-list" id="boostList" hidden>
           <li>Your Google Business Profile set up, verified and filled in</li>
           <li>A page for every service you offer and every town you cover</li>
@@ -134,7 +134,7 @@
           <label class="pick-row" data-plan="max">
             <input type="radio" name="plan" value="max">
             <span class="pick-main">
-              <span class="pick-head"><b>Max</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
+              <span class="pick-head"><b>One</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
               <span class="pick-note"><b class="pick-flag">Add growth</b>An end-to-end system for your kind of business, run for you.</span>
             </span>
           </label>
@@ -152,7 +152,7 @@
 
 
         <!-- The step up from whichever plan is picked, said once, optional.
-             Starter is shown what Business unlocks; Business is shown Max
+             Starter is shown what Business unlocks; Business is shown One
              as a launch-months choice they can step down from. Filled by
              get-started.js from what is selected. -->
         <div class="pick-up" id="planUp" hidden>

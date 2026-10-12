@@ -416,7 +416,7 @@ document.getElementById('bizForm').addEventListener('submit', async function (e)
    queue position, not allowance. Kept as a map so entitledPlan() can tell a
    real plan from junk in the column. */
 var PLAN_POINTS = { starter: 1, business: 1, pro: 3, max: 5 }; // values legacy, keys authoritative
-var PLAN_NAME   = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'Max' };
+var PLAN_NAME   = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'One' };
 
 /* The plan we ration points from is active_plan, written only by the Stripe
    webhook. selected_plan is whatever the customer last picked and they can
@@ -731,7 +731,7 @@ var STATUS_TEXT = {
   paused:             ['Paused', 'Your subscription is paused.']
 };
 
-var PLAN_LABEL = { starter: 'Starter — £9.99/month', business: 'Business — £50/month', pro: 'Pro — £120/month', max: 'Max — £250/month' };
+var PLAN_LABEL = { starter: 'Starter — £9.99/month', business: 'Business — £50/month', pro: 'Pro — £120/month', max: 'One — £250/month' };
 
 function showBilling(row) {
   var badge = document.getElementById('billBadge');
@@ -765,7 +765,7 @@ function showBilling(row) {
     var head = (up ? 'Upgrading' : 'Downgrading') + ' from ' + PLAN_NAME[current] +
       ' to ' + PLAN_NAME[chosen] + ' \u2014 ' + (PERK[chosen] || '') + '.';
 
-    /* Stepping down from Max: the ranking work stays done; the texts are
+    /* Stepping down from One: the ranking work stays done; the texts are
        the one thing that stops, and can be kept on for an add-on. */
     var leavingMax = !up && current === 'max';
 
@@ -834,7 +834,7 @@ function showBilling(row) {
   var upEl = document.getElementById('billUp');
   var UP = {
     starter: { to: 'business', text: 'Business, £50 a month, adds bookings, payments, reviews asked for automatically, live chat, and priority changes made by us within 48 hours. ' },
-    business: { to: 'max', text: 'For £200 more, Max gets you customers: your Facebook and Instagram ads set up, run and tracked by us on a budget you set, your Google ranking worked on every month, review, referral and follow-up emails sent for you, and business email. Built per business type. Step down any month — you keep the ranking. ' }
+    business: { to: 'max', text: 'For £200 more, One gets you customers: your Facebook and Instagram ads set up, run and tracked by us on a budget you set, your Google ranking worked on every month, review, referral and follow-up emails sent for you, and business email. Built per business type. Step down any month — you keep the ranking. ' }
   };
   var step = subscribed && UP[current];
   upEl.hidden = !step;

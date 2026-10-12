@@ -123,7 +123,7 @@
         .map(function (k) { return String(q.get(k) || '').trim().slice(0, 40); })
         .filter(Boolean);
       if (!bits.length && q.get('fbclid')) bits.push('facebook');
-      /* ?t= names which Max model (or "max-other") the free example is for,
+      /* ?t= names which One model (or "max-other") the free example is for,
          so the lead carries it. */
       var t = String(q.get('t') || '').trim().toLowerCase().slice(0, 20);
       if (/^[a-z-]+$/.test(t)) bits.push('t=' + t);
@@ -160,8 +160,8 @@
     { label: 'Contact',         href: '/contact.html' }
   ];
 
-  /* ---------- Max for another business type ----------
-   * One modal, put on any page that asks for it: the Max card's "Other",
+  /* ---------- One for another business type ----------
+   * One modal, put on any page that asks for it: the One card's "Other",
    * and the menu's. Native <dialog>, no library. */
   function maxOther() {
     var d = document.getElementById('maxOther');
@@ -171,13 +171,13 @@
       d.className = 'one-modal';
       d.innerHTML =
         '<button class="one-modal-x" type="button" aria-label="Close">\u00d7</button>' +
-        '<p class="one-modal-tag">Max</p>' +
-        '<h2>Max for your business</h2>' +
+        '<p class="one-modal-tag">One</p>' +
+        '<h2>One for your business</h2>' +
         '<p>We\u2019ll build an end-to-end website model for your business. It gets you new customers through ads and SEO, ' +
         'asks for more money at the right moments with upsells and add-ons, and prompts reviews and referrals automatically, ' +
         'with payments, bookings and follow-up emails handling everything in between. All included for \u00a3250 a month.</p>' +
         '<p class="one-modal-small">Tell us what you do and we\u2019ll show you how it would work for you.</p>' +
-        '<a class="btn btn-primary full" href="/get-started.html?plan=max&max=other">Start Max</a>';
+        '<a class="btn btn-primary full" href="/get-started.html?plan=max&max=other">Start One</a>';
       document.body.appendChild(d);
       d.querySelector('.one-modal-x').addEventListener('click', function () { d.close(); });
       d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
@@ -490,7 +490,7 @@
       return;
     }
 
-    /* The plan <select> shows prices ("Max — £250/month"); the endpoint wants
+    /* The plan <select> shows prices ("One — £250/month"); the endpoint wants
        the plan key. Read the option's position rather than parsing its text,
        so a price change never quietly stops this matching. */
     var planEl = document.getElementById('plan');

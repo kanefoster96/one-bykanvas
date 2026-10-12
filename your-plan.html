@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Your Free Check Result | Kanvas One</title>
-<meta name="description" content="Your free check result: whether Max can help your business, and how we would run it for you.">
+<meta name="description" content="Your free check result: whether One can help your business, and how we would run it for you.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
 <link rel="stylesheet" href="styles.css?v=139">
-<link rel="stylesheet" href="home.css?v=39">
+<link rel="stylesheet" href="home.css?v=40">
 </head>
 <body class="home page-plan">
 
@@ -31,23 +31,23 @@
 
 <!-- The free check's result, drawn from the address (?members=&capacity=
      &fee=&business=&type=&id=) with growth-model.js, the same sums the email
-     used. Max when it fits; otherwise the honest "you don't need Max yet"
-     and Business. &view=max shows the Max plan anyway, as its own address. -->
+     used. One when it fits; otherwise the honest "you don't need One yet"
+     and Business. &view=max shows the One plan anyway, as its own address. -->
 <main id="main" class="mh-page">
   <div class="wrap mh-page-wrap">
 
     <section id="resMax" hidden>
       <p class="mh-kicker">Good news</p>
-      <h1 class="mh-page-h" id="maxHead">Max can help your business.</h1>
+      <h1 class="mh-page-h" id="maxHead">One can help your business.</h1>
       <p class="mh-page-sub">Here&rsquo;s how we&rsquo;d run it for you.</p>
       <div class="mh-plan-stats" id="maxStats"></div>
       <ol class="mh-plan-steps mh-calc" id="maxSteps"></ol>
       <div class="mh-plan-rec">
-        <p class="mh-plan-rec-t"><b>We&rsquo;d recommend Max</b> &middot; &pound;250 a month</p>
+        <p class="mh-plan-rec-t"><b>We&rsquo;d recommend One</b> &middot; &pound;250 a month</p>
         <p>First 3 months of ads included. 10 trial bookings in your first 3 months, or leave any time.</p>
       </div>
       <div class="mh-dialog-cta">
-        <a class="btn btn-primary" id="startMax" href="/get-started.html?plan=max">Start Max</a>
+        <a class="btn btn-primary" id="startMax" href="/get-started.html?plan=max">Start One</a>
         <a class="btn btn-ghost" href="/#demo">Book a 10-minute chat</a>
       </div>
       <p class="mh-dialog-small">We&rsquo;ve emailed you a copy. The figures are what happened in our own academy, not a promise.</p>
@@ -55,7 +55,7 @@
 
     <section id="resBiz" hidden>
       <p class="mh-kicker">Your result</p>
-      <h1 class="mh-page-h">We don&rsquo;t think you need Max yet.</h1>
+      <h1 class="mh-page-h">We don&rsquo;t think you need One yet.</h1>
       <p class="mh-page-sub" id="bizWhy"></p>
       <div class="mh-plan-rec">
         <p class="mh-plan-rec-t"><b>Business</b> &middot; &pound;50 a month <span class="mh-save">&pound;200 a month less</span></p>
@@ -68,9 +68,9 @@
       </div>
       <div class="mh-dialog-cta">
         <a class="btn btn-primary" id="startBiz" href="/get-started.html?plan=business">Start with Business</a>
-        <a class="btn btn-ghost" id="stillMax" href="#">I&rsquo;d still like Max</a>
+        <a class="btn btn-ghost" id="stillMax" href="#">I&rsquo;d still like One</a>
       </div>
-      <p class="mh-dialog-small">We&rsquo;ve emailed you this too. When you open a new class, Max can switch the ads on.</p>
+      <p class="mh-dialog-small">We&rsquo;ve emailed you this too. When you open a new class, One can switch the ads on.</p>
     </section>
 
   </div>
@@ -114,8 +114,8 @@
   }
 
   function showMax() {
-    document.title = 'Max can help ' + business + ' | Kanvas One';
-    $('maxHead').textContent = 'Max can help ' + business + '.';
+    document.title = 'One can help ' + business + ' | Kanvas One';
+    $('maxHead').textContent = 'One can help ' + business + '.';
     var stats = $('maxStats'), steps;
     stats.appendChild(stat(money(p.total), 'a month, full'));
     if (p.mode === 'fill') {
