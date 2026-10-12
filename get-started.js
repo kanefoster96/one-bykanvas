@@ -760,14 +760,15 @@
        or not they carried the code, so "due today" is the half (a partner
        or referral code they brought is named instead, and Stripe shows what
        it takes off). One: full price, the ads are the offer. Annual: two
-       months free and the Launch Boost. */
+       months free, plus the Launch Boost on Starter and Business (One
+       already does that work, so its annual is just the two months). */
     var offer = (window.ONE_SESSION && window.ONE_SESSION.offerCode
                  && window.ONE_SESSION.offerCode()) || '';
     var other = offer && offer !== 'WELCOME26';
     $('sumDue').textContent = annual ? plan.yearly : (other || !plan.half ? plan.price : plan.half);
     if ($('sumOfferRow')) {
       $('sumOffer').textContent = annual
-        ? '2 months free + the Launch Boost'
+        ? (answers.selected_plan === 'max' ? '2 months free' : '2 months free + the Launch Boost')
         : (other ? offer + ' applied at checkout'
           : plan.half ? '50% off your first month'
           : answers.selected_plan === 'max' ? 'First 3 months of ads on us'
@@ -817,7 +818,7 @@
         : answers.selected_plan === 'starter'
         ? ' With your contact form and click to call. Your first change of the month, whenever you like.'
         : ' Then we build the features you asked for within 14 days \u2014 or your next month is free.'));
-      if (annual) promise.appendChild(document.createTextNode(' Your first month: the Launch Boost.'));
+      if (annual && !isOne) promise.appendChild(document.createTextNode(' Your first month: the Launch Boost.'));
     }
 
     /* The payment button is always offered. If the session is not there yet
@@ -1031,6 +1032,9 @@
     });
     document.querySelectorAll('[data-one-only]').forEach(function (el) { el.hidden = !one; });
     document.querySelectorAll('[data-std-only]').forEach(function (el) { el.hidden = one; });
+    /* The Launch Boost list belongs to Starter and Business; One has it built in. */
+    var boost = document.getElementById('boostList');
+    if (boost && one) boost.hidden = true;
   }
   document.getElementById('pick').addEventListener('change', paintPlanCopy);
   paintPlanCopy();

@@ -39,8 +39,9 @@ const REQUEST_COST = {
    where the bonus is the Launch Boost instead. */
 const PREVIEW_OFFER = { code: 'WELCOME26' };
 
-/* What an annual plan gets on top of two months free: the first month
-   after going live spent on being found. Work, not a ranking promise, and
+/* What an annual Starter or Business plan gets on top of two months free:
+   the first month after going live spent on being found. One already does
+   this work every month, so annual One is just the two months free. Work, not a ranking promise, and
    the same list every time so it can be handed to a builder. */
 const LAUNCH_BOOST = {
   name: 'The Launch Boost',
