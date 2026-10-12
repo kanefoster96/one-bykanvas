@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = 139;
+const CSS_V = '140';
 const SCRIPT_V = 36;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -229,10 +229,10 @@ ${JSON.stringify({
   mainEntity: faqFor(b).map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
-` : ''}<link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
-<link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
-<link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
-<link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
+` : ''}<link rel="icon" href="assets/favicon.svg?v=5" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=5">
 <link rel="stylesheet" href="styles.css?v=${CSS_V}">
 </head>
 <body>
@@ -503,10 +503,10 @@ ${JSON.stringify({
   mainEntity: f.faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
-<link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
-<link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
-<link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
-<link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
+<link rel="icon" href="assets/favicon.svg?v=5" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=5">
 <link rel="stylesheet" href="styles.css?v=${CSS_V}">
 </head>
 <body>
@@ -667,10 +667,10 @@ ${JSON.stringify({
   mainEntity: m.faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
-<link rel="icon" href="/assets/favicon.svg?v=4" type="image/svg+xml">
-<link rel="icon" href="/assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
-<link rel="icon" href="/assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
-<link rel="apple-touch-icon" href="/assets/favicon-180.png?v=4">
+<link rel="icon" href="/assets/favicon.svg?v=5" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
+<link rel="icon" href="/assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="/assets/favicon-180.png?v=5">
 <link rel="stylesheet" href="/styles.css?v=${CSS_V}">
 </head>
 <body>

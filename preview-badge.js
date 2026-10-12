@@ -35,7 +35,7 @@
   var DISMISSED = 'one.badge-hidden';
   var FONT = '-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif';
   var INK = '#1d1d1f', INK2 = '#6e6e73', INK3 = '#86868b', LINE = '#e8e8ed';
-  var GOOD = '#1a7f37', GOOD_BG = '#eef8f1', GOOD_LINE = '#c8e6d3';
+  var GOOD = '#c93e09', GOOD_BG = '#fff0e8', GOOD_LINE = '#ffd5c2';
 
   var tag = document.currentScript;
   if (!tag) {

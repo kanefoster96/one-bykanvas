@@ -11,9 +11,9 @@
   --line:#d2d2d7;
   --line-soft:#e8e8ed;
   /* Green means one thing only: included, or free. Never decoration. */
-  --good:#1a7f37;
-  --good-soft:#e7f6ec;
-  --good-dark:#5fd18f;   /* on the black app section */
+  --good:#c93e09;
+  --good-soft:#fff0e8;
+  --good-dark:#ff7a3d;   /* on the black app section */
   --blue:#1d1d1f;
   --blue-dark:#000000;
   --radius:18px;
@@ -183,7 +183,7 @@ body.locked{overflow:hidden}
      was cut off. Padding widens the painted area; the negative margin keeps
      the spacing as it was. */
   padding-right:.12em;margin-right:-.12em;
-  background:linear-gradient(90deg,#1a7f37 0%,#2fb36a 100%);
+  background:linear-gradient(90deg,#c93e09 0%,#ff4f12 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;
 }
@@ -200,7 +200,7 @@ body.locked{overflow:hidden}
    not supported, and the system colour in high-contrast modes. */
 .g-free{
   padding-right:.08em;margin-right:-.08em;
-  background:linear-gradient(100deg,#126b2c 0%,#1a7f37 42%,#22a356 100%);
+  background:linear-gradient(100deg,#b63807 0%,#c93e09 42%,#ff4f12 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;
   -webkit-box-decoration-break:clone;box-decoration-break:clone;
@@ -783,7 +783,7 @@ body.dialog-open{overflow:hidden}
 /* And the case for it, under the three cards rather than crammed into one. */
 .seo-pitch{
   margin-top:34px;padding:clamp(26px,4vw,38px);border-radius:var(--radius-lg);
-  background:var(--good-soft);border:1px solid rgba(26,127,55,.18);
+  background:var(--good-soft);border:1px solid rgba(255,79,18,.18);
 }
 /* Qualified: .seo-pitch p below is more specific than a lone class and was
    painting this grey. */
@@ -1050,7 +1050,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .today{
   max-width:520px;margin:clamp(22px,4vw,30px) auto 0;text-align:center;
   padding:clamp(24px,4vw,32px);border-radius:var(--radius-lg);
-  background:var(--good-soft);border:1px solid rgba(26,127,55,.18);
+  background:var(--good-soft);border:1px solid rgba(255,79,18,.18);
 }
 .today-tag{margin:0 0 6px;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--good)}
 .today-due{margin:0;font-size:clamp(46px,9vw,60px);font-weight:700;letter-spacing:-.04em;line-height:1.05;color:var(--ink)}
@@ -1324,7 +1324,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .check input{width:18px;height:18px;accent-color:var(--blue)}
 .lead .btn{grid-column:1/-1;margin-top:6px}
 .formnote{grid-column:1/-1;margin:2px 0 0;font-size:14px;min-height:20px;color:var(--ink-2)}
-.formnote.ok{color:#1a7f37}
+.formnote.ok{color:#c93e09}
 .formnote.bad{color:#d93025}
 
 /* ---------- Footer ---------- */
@@ -1444,7 +1444,7 @@ a.hero-pill:hover .pill-go{opacity:1}
    account page has nine. Collapsed rather than display:none so the live region
    stays in the accessibility tree and still announces when it fills. */
 .note:empty{margin:0;min-height:0}
-.note.ok{color:#1a7f37}
+.note.ok{color:#c93e09}
 .note.bad{color:#d93025}
 
 .linkish{
@@ -1642,7 +1642,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .dom-block .pick{margin-bottom:0}
 .dom-block .pick-row + .pick-row{margin-top:8px}
 .dom-block .dom-state{margin:0}
-.free-tag{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:980px;background:#e8f7ee;color:var(--good);font-size:11.5px;font-weight:700;letter-spacing:.02em;vertical-align:1px}
+.free-tag{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:980px;background:#fff0e8;color:var(--good);font-size:11.5px;font-weight:700;letter-spacing:.02em;vertical-align:1px}
 .join .dom-type{margin:16px 0 0}
 .join .dom-type .hint{margin:0}
 
@@ -1656,7 +1656,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .feat em{margin-top:4px;font-style:normal;font-size:11px;font-weight:700;color:var(--good);letter-spacing:.02em}
 .feat-tick{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.18);color:transparent;transition:background .2s var(--ease),box-shadow .2s var(--ease)}
 .feat-tick svg{width:12px;height:12px}
-.feat.is-on{background:#f2faf4;box-shadow:0 1px 3px rgba(26,127,55,.12),inset 0 0 0 1.5px var(--good);animation:join-pick .3s var(--ease)}
+.feat.is-on{background:#fff6f1;box-shadow:0 1px 3px rgba(255,79,18,.12),inset 0 0 0 1.5px var(--good);animation:join-pick .3s var(--ease)}
 .feat.is-on .feat-tick{background:var(--good);box-shadow:none;color:#fff}
 .biz-card{margin:0;padding:18px 16px 16px;border-radius:18px;background:#161618;color:#fff;transition:box-shadow .2s var(--ease)}
 .biz-card.is-on{box-shadow:0 0 0 2px var(--good)}
@@ -1664,30 +1664,30 @@ a.hero-pill:hover .pill-go{opacity:1}
 .biz-name{font-size:17px;font-weight:700;letter-spacing:-.01em}
 .biz-price{font-size:13px;color:rgba(255,255,255,.7);text-align:right}
 .biz-price b{font-size:20px;color:#fff}
-.biz-price small{display:block;font-size:11.5px;color:#5fd18f;font-weight:600}
+.biz-price small{display:block;font-size:11.5px;color:#ff7a3d;font-weight:600}
 .biz-sub{margin:10px 0 12px;font-size:13.5px;color:rgba(255,255,255,.72);line-height:1.4}
 .biz-list{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:7px}
 .biz-list li{position:relative;padding-left:22px;font-size:14px;line-height:1.35}
-.biz-list li::before{content:"";position:absolute;left:3px;top:4px;width:10px;height:6px;border-left:2px solid #5fd18f;border-bottom:2px solid #5fd18f;transform:rotate(-45deg)}
+.biz-list li::before{content:"";position:absolute;left:3px;top:4px;width:10px;height:6px;border-left:2px solid #ff7a3d;border-bottom:2px solid #ff7a3d;transform:rotate(-45deg)}
 /* The Business switch: one tap on, one tap off. */
 .biz-switch{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;margin:0;padding:12px 12px 12px 14px;border:0;border-radius:14px;background:rgba(255,255,255,.08);color:#fff;font:inherit;text-align:left;cursor:pointer;transition:background .2s var(--ease)}
 .biz-switch:hover{background:rgba(255,255,255,.12)}
-.biz-switch:focus-visible{outline:2px solid #5fd18f;outline-offset:2px}
+.biz-switch:focus-visible{outline:2px solid #ff7a3d;outline-offset:2px}
 .biz-switch-t{display:flex;flex-direction:column;gap:2px;min-width:0}
 .biz-switch-t b{font-size:15px;font-weight:600}
 .biz-switch-t small{font-size:12.5px;color:rgba(255,255,255,.65)}
 .sw{position:relative;flex:0 0 auto;width:50px;height:30px;border-radius:999px;background:rgba(255,255,255,.25);transition:background .25s var(--ease)}
 .sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .25s var(--ease)}
-[aria-checked="true"] > .sw{background:#34c17a}
+[aria-checked="true"] > .sw{background:#ff4f12}
 [aria-checked="true"] > .sw i{transform:translateX(20px)}
-.biz-card.is-on .biz-switch-t small{color:#5fd18f}
+.biz-card.is-on .biz-switch-t small{color:#ff7a3d}
 
 /* Monthly or yearly: a pill switch, and the one price under it. */
 .pill-toggle{display:flex;gap:4px;padding:4px;margin:0 0 12px;border-radius:999px;background:#f0f0f3}
 .pill-toggle button{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:var(--ink-2);font:inherit;font-size:14.5px;font-weight:600;cursor:pointer;transition:background .2s var(--ease),color .2s var(--ease),box-shadow .2s var(--ease)}
 .pill-toggle button[aria-checked="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .pill-toggle button:focus-visible{outline:2px solid var(--good);outline-offset:1px}
-.pill-save{padding:2px 7px;border-radius:999px;background:#e8f7ee;color:var(--good);font-size:11px;font-weight:700;white-space:nowrap}
+.pill-save{padding:2px 7px;border-radius:999px;background:#fff0e8;color:var(--good);font-size:11px;font-weight:700;white-space:nowrap}
 .price-card{margin:0 0 16px;padding:14px 16px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);text-align:center}
 .price-big{margin:0;font-size:15px;color:var(--ink-3)}
 .price-big b{font-size:32px;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
@@ -1711,17 +1711,17 @@ a.hero-pill:hover .pill-go{opacity:1}
 .join-steps li.is-on{color:var(--ink)}
 .join-steps li.is-on i{background:var(--ink);color:#fff;transform:scale(1.08)}
 .join-steps li.is-done i{background:var(--good);color:#fff}
-.join .wiz-bar i{background:linear-gradient(90deg,#1a7f37,#34c17a)}
+.join .wiz-bar i{background:linear-gradient(90deg,#c93e09,#ff4f12)}
 
 
 
 .join-dot{display:flex;align-items:flex-end;gap:12px;margin:0 0 18px}
-.join .join-face{width:52px;height:52px;flex:0 0 auto;box-shadow:0 8px 20px rgba(26,127,55,.22)}
+.join .join-face{width:52px;height:52px;flex:0 0 auto;box-shadow:0 8px 20px rgba(255,79,18,.22)}
 .join .join-face .dot-eyes{gap:11px}
 .join .join-face .dot-eyes i{width:8px;height:13px}
 /* Dot looks at the box you are in (join.js sets the transform). */
 .join .join-face .dot-eyes.is-aiming{animation:none;transition:transform .25s var(--ease)}
-.join-say{position:relative;margin:0 0 6px;padding:10px 14px;border-radius:16px 16px 16px 4px;background:#f2faf4;color:#14532d;font-size:14.5px;font-weight:500;line-height:1.4;animation:join-say .45s var(--ease) both}
+.join-say{position:relative;margin:0 0 6px;padding:10px 14px;border-radius:16px 16px 16px 4px;background:#fff6f1;color:#14532d;font-size:14.5px;font-weight:500;line-height:1.4;animation:join-say .45s var(--ease) both}
 @keyframes join-say{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
 .wiz-step:not([hidden]) .join-face{animation:join-hop .6s var(--ease)}
 @keyframes join-hop{30%{transform:translateY(-8px)}60%{transform:translateY(0)}75%{transform:translateY(-3px)}}
@@ -2233,7 +2233,7 @@ a.hero-pill:hover .pill-go{opacity:1}
   flex:0 0 auto;font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
   padding:6px 12px;border-radius:980px;background:var(--bg-grey);color:var(--ink-2);
 }
-.bill-badge.is-live{background:#e7f6ec;color:#1a7f37}
+.bill-badge.is-live{background:#fff0e8;color:#c93e09}
 .bill-badge.is-warn{background:#fdecea;color:#b3261e}
 .bill-actions{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
 .bill-pick{flex:1;min-width:190px;margin-bottom:0}
@@ -2387,7 +2387,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .cmp tbody tr:nth-child(even) th,.cmp tbody tr:nth-child(even) td{background:#fafafa}
 .cmp tbody tr:last-child th,.cmp tbody tr:last-child td{border-bottom:0}
 .cmp td.cmp-hot,.cmp th.cmp-hot{background:#f1f8f3;color:var(--ink);font-weight:500}
-.cmp thead th.cmp-hot{background:#e7f6ec}
+.cmp thead th.cmp-hot{background:#fff0e8}
 .cmp tbody tr:nth-child(even) td.cmp-hot{background:#ecf6ef}
 .tick-y{color:var(--good);font-size:16px;font-weight:600}
 .cmp .free{color:var(--good);font-weight:600}
@@ -2455,7 +2455,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .notif-count{
   display:inline-grid;place-items:center;min-width:22px;height:22px;
   margin-left:8px;padding:0 6px;border-radius:999px;
-  background:#1a7f37;color:#fff;font-size:12.5px;font-weight:700;
+  background:#c93e09;color:#fff;font-size:12.5px;font-weight:700;
   vertical-align:2px;
 }
 .notif-list{list-style:none;margin:0;padding:0}
@@ -2468,7 +2468,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .notif-title{font-weight:600;font-size:15px}
 .notif-item.is-unread .notif-title::before{
   content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
-  background:#1a7f37;margin-right:8px;vertical-align:2px;
+  background:#c93e09;margin-right:8px;vertical-align:2px;
 }
 .notif-when{font-size:12.5px;color:#86868b;white-space:nowrap}
 .notif-body{font-size:14px;color:#515154;margin:0}
@@ -2488,7 +2488,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .nav-count{
   position:absolute;top:1px;right:-1px;
   display:grid;place-items:center;min-width:17px;height:17px;padding:0 4px;
-  border-radius:999px;background:#1a7f37;color:#fff;
+  border-radius:999px;background:#c93e09;color:#fff;
   font-size:11px;font-weight:700;border:2px solid #fff;
 }
 /* A one-line answer when the bell has nothing to show. */
@@ -2570,7 +2570,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .pick-ok{
   margin:12px 2px 0;padding:11px 14px;
   background:#f0f8f1;border:1px solid #c4e3c9;border-radius:12px;
-  color:#1a7f37;font-size:13.5px;line-height:1.5;
+  color:#c93e09;font-size:13.5px;line-height:1.5;
 }
 .pick-warn{
   margin:12px 2px 0;padding:11px 14px;
@@ -2667,7 +2667,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .req-card-snippet{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
 .req-card-meta{font-size:12.5px;color:var(--ink-3)}
 .req-card.is-unread .req-card-meta::before{
-  content:"";display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:#1a7f37;vertical-align:1px;
+  content:"";display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:#c93e09;vertical-align:1px;
 }
 .req-empty{margin:28px 0 0;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
 .req-empty a{color:var(--ink);font-weight:600}
@@ -2764,7 +2764,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .attach-icon svg{width:19px;height:19px}
 .attach-count{
   position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;
-  background:#1a7f37;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;border:2px solid #fff;
+  background:#c93e09;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;border:2px solid #fff;
 }
 #replyNote{margin-top:6px;min-height:0}
 
@@ -2913,10 +2913,10 @@ a.hero-pill:hover .pill-go{opacity:1}
 .plan-mini{
   display:flex;align-items:center;gap:18px;max-width:822px;margin:18px auto 0;
   padding:16px 22px;border-radius:var(--radius);background:var(--good-soft);
-  border:1px solid rgba(26,127,55,.18);color:var(--ink);text-decoration:none;
+  border:1px solid rgba(255,79,18,.18);color:var(--ink);text-decoration:none;
   transition:transform .2s var(--ease),box-shadow .2s var(--ease);
 }
-.plan-mini:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,127,55,.12);text-decoration:none}
+.plan-mini:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,79,18,.12);text-decoration:none}
 .plan-mini-price{flex:0 0 auto;font-size:26px;font-weight:700;letter-spacing:-.03em;color:var(--good);line-height:1}
 .plan-mini-price .cur{font-size:16px;vertical-align:top;margin-right:1px}
 .plan-mini-price .per{font-size:12.5px;font-weight:500;letter-spacing:0;color:var(--good);opacity:.8;margin-left:2px}
@@ -3024,7 +3024,7 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 /* The Max models' own mark: an app-style icon at the top of each page. */
 .max-app{position:relative;width:88px;height:88px;margin:0 auto 18px;border-radius:24px;background:linear-gradient(160deg,#ffffff,#f2f4f2);border:1px solid var(--line-soft);box-shadow:0 10px 30px rgba(0,0,0,.08),inset 0 1px 0 #fff;display:grid;place-items:center;color:var(--ink)}
 .max-app svg{width:44px;height:44px}
-.max-app-pill{position:absolute;right:-10px;bottom:-10px;padding:5px 9px;border-radius:980px;background:var(--good);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;line-height:1;border:3px solid #fff;box-shadow:0 4px 12px rgba(26,127,55,.35)}
+.max-app-pill{position:absolute;right:-10px;bottom:-10px;padding:5px 9px;border-radius:980px;background:var(--good);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;line-height:1;border:3px solid #fff;box-shadow:0 4px 12px rgba(255,79,18,.35)}
 
 /* ---------- The Max setup form ---------- */
 .panel-lede{margin:-8px 0 16px;font-size:15px;line-height:1.55;color:var(--ink-2)}
@@ -3106,8 +3106,8 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .offer-pill .mini-row input{border:0;border-radius:0;padding:0;background:transparent;font-size:16px;height:100%}
 .offer-pill .mini-row input:focus{box-shadow:none}
 .offer-pill .mini-row input.err{box-shadow:inset 0 -2px 0 #d93025}
-.offer-pill .mini-go{flex:0 0 50px;width:50px;height:50px;background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%)}
-.offer-pill .mini-go:hover{box-shadow:0 6px 18px rgba(26,127,55,.3)}
+.offer-pill .mini-go{flex:0 0 50px;width:50px;height:50px;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%)}
+.offer-pill .mini-go:hover{box-shadow:0 6px 18px rgba(255,79,18,.3)}
 .offer-pill .mini-step label{text-align:center}
 .offer-hero .hero-after{margin-top:16px}
 /* /free: one headline, then the box. */
@@ -3148,13 +3148,13 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .sb-quote cite{display:block;margin-top:6px;font-size:13px;font-style:normal;color:var(--ink-3)}
 @media (prefers-reduced-motion:reduce){.sb-screen img{animation:none}}
 /* The promise in the price box. */
-.today-promise{margin:18px auto 0;max-width:34ch;padding:16px 18px;border-radius:16px;background:#fff;border:1px solid rgba(26,127,55,.18);text-align:left}
+.today-promise{margin:18px auto 0;max-width:34ch;padding:16px 18px;border-radius:16px;background:#fff;border:1px solid rgba(255,79,18,.18);text-align:left}
 .today-promise-name{margin:0 0 8px;font-size:15px;font-weight:700;color:var(--ink)}
 .today-promise ul{list-style:none;margin:0;padding:0}
 .today-promise li{position:relative;padding:3px 0 3px 22px;font-size:14px;line-height:1.45;color:var(--ink-2)}
 .today-promise li::before{content:"";position:absolute;left:2px;top:9px;width:10px;height:6px;border-left:2px solid var(--good);border-bottom:2px solid var(--good);transform:rotate(-45deg)}
 .dot-face{position:relative;display:block;width:92px;height:92px;border-radius:50%;
-  background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);box-shadow:0 12px 32px rgba(26,127,55,.22)}
+  background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);box-shadow:0 12px 32px rgba(255,79,18,.22)}
 .dot-eyes{position:absolute;left:0;right:0;top:34%;display:flex;justify-content:center;gap:20px;animation:dot-look 7s ease-in-out infinite}
 .dot-eyes i{display:block;width:14px;height:23px;border-radius:50%;background:#fff;animation:dot-blink 4.2s ease-in-out infinite}
 @keyframes dot-look{0%,14%{transform:translate(0,0)}20%,36%{transform:translate(-9px,-2px)}42%,58%{transform:translate(9px,-2px)}64%,80%{transform:translate(0,6px)}86%,100%{transform:translate(0,0)}}
@@ -3205,14 +3205,14 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .exg-end{max-width:520px;margin:clamp(48px,7vw,72px) auto 0;text-align:center}
 .exg-end h2{font-size:clamp(26px,4vw,34px);font-weight:700;letter-spacing:-.03em}
 .exg-end p{margin:10px 0 22px;color:var(--ink-2)}
-.exg-btn{background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);color:#fff}
-.exg-btn:hover{color:#fff;box-shadow:0 10px 24px -10px rgba(26,127,55,.6)}
+.exg-btn{background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);color:#fff}
+.exg-btn:hover{color:#fff;box-shadow:0 10px 24px -10px rgba(255,79,18,.6)}
 /* /free: the example for their trade, under the sites we've built. */
 .sb-example{margin-top:18px;font-size:14.5px;font-weight:600}
 /* From an ad: their trade's example site in the phone, and a button to it. */
 .sb-screen img.sb-example-shot{object-fit:cover;object-position:top;padding-top:11%}
 .sb-screen.is-single img{opacity:1;animation:none}
-.sb-example .sb-preview{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:999px;background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);color:#fff;font-size:16px;font-weight:600;text-decoration:none;box-shadow:0 10px 24px -12px rgba(26,127,55,.6)}
+.sb-example .sb-preview{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:999px;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);color:#fff;font-size:16px;font-weight:600;text-decoration:none;box-shadow:0 10px 24px -12px rgba(255,79,18,.6)}
 .sb-example .sb-preview:hover{text-decoration:none;color:#fff;transform:translateY(-1px)}
 .sb-note{margin:14px auto 0;max-width:34ch;font-size:14px;line-height:1.5;color:var(--ink-3)}
 .sb-example a{color:var(--good);text-decoration:none}
@@ -3228,8 +3228,8 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .offer-alt{margin:10px 0 0;text-align:center}
 .offer-alt .linkish{font-size:14.5px;font-weight:600;color:var(--good);text-decoration:underline;text-underline-offset:3px;background:none;border:0;padding:6px 4px;cursor:pointer}
 .offer-alt[hidden]{display:none}
-.today-go{display:flex;align-items:center;justify-content:center;margin:16px 0 0;min-height:50px;border-radius:999px;background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);color:#fff;font-size:16px;font-weight:600;text-decoration:none}
-.today-go:hover{color:#fff;text-decoration:none;box-shadow:0 10px 24px -12px rgba(26,127,55,.6)}
+.today-go{display:flex;align-items:center;justify-content:center;margin:16px 0 0;min-height:50px;border-radius:999px;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);color:#fff;font-size:16px;font-weight:600;text-decoration:none}
+.today-go:hover{color:#fff;text-decoration:none;box-shadow:0 10px 24px -12px rgba(255,79,18,.6)}
 /* Not sure? The free design, offered once before they go. */
 .notsure{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:16px;background:rgba(10,10,12,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:ns-fade .2s ease-out}
 .notsure[hidden]{display:none}
@@ -3243,6 +3243,17 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .notsure-face .dot-eyes i{width:10px;height:16px}
 .notsure-card h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.03em}
 .notsure-card p{margin:10px 0 0;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
-.notsure-go{display:flex;width:100%;align-items:center;justify-content:center;margin:20px 0 0;min-height:52px;border:0;border-radius:999px;background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);color:#fff;font:600 16px var(--font);cursor:pointer}
+.notsure-go{display:flex;width:100%;align-items:center;justify-content:center;margin:20px 0 0;min-height:52px;border:0;border-radius:999px;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);color:#fff;font:600 16px var(--font);cursor:pointer}
 .notsure-keep{margin-top:6px;min-height:44px;padding:0 16px;border:0;background:none;color:var(--ink-3);font:500 14.5px var(--font);cursor:pointer}
 @media (prefers-reduced-motion:reduce){.notsure,.notsure-card{animation:none}}
+
+/* ---------- Checkout in the brand orange ----------
+   The sign-up wizard (/get-started, /join): the main button is the orange
+   gradient the homepage uses, white text at AA at both ends; the progress
+   bar and picked plan wear the same orange. */
+.wiz .btn-primary{background:linear-gradient(135deg,#c93e09 0%,#ef4a10 100%);color:#fff;box-shadow:0 8px 22px rgba(255,79,18,.25)}
+.wiz .btn-primary:hover{background:linear-gradient(135deg,#b63807 0%,#de440e 100%)}
+.wiz .btn-primary:focus-visible{outline:3px solid rgba(255,79,18,.45);outline-offset:3px}
+.wiz-bar i{background:linear-gradient(90deg,#c93e09,#ff4f12)}
+.wiz .pick-row.is-on{border-color:#ff4f12;box-shadow:0 0 0 1px #ff4f12}
+.wiz .pick-feats .ticks li.tick-hero{color:var(--ink)}

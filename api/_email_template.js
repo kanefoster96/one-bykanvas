@@ -23,10 +23,10 @@ const WARN_BG = '#fdf6e9';
 const WARN_LINE = '#f0e2c4';
 const WARN_INK = '#8a5a17';
 /* The same green the site uses, and for the same reason: included, or free. */
-const GOOD = '#1a7f37';
-const GOOD_BG = '#eef8f1';
-const GOOD_LINE = '#c8e6d3';
-const GOOD_INK = '#1c6b33';
+const GOOD = '#c93e09';
+const GOOD_BG = '#fff0e8';
+const GOOD_LINE = '#ffd5c2';
+const GOOD_INK = '#9a3412';
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -43,7 +43,7 @@ function brand() {
      radius is round everywhere except Outlook desktop, which ignores the
      radius and lands on the square it would have drawn anyway. */
   const dot = `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                 <tr><td width="3" height="3" style="width:3px;height:3px;font-size:0;line-height:3px;background:#34c17a;border-radius:50%;">&nbsp;</td></tr>
+                 <tr><td width="3" height="3" style="width:3px;height:3px;font-size:0;line-height:3px;background:#ff4f12;border-radius:50%;">&nbsp;</td></tr>
                </table>`;
 
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
