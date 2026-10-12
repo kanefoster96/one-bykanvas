@@ -47,7 +47,7 @@
     if (!others) return;
     var std = sub ? sub.textContent : '';
     document.body.classList.add('one-focus');
-    if (sub) sub.textContent = 'One fills your sessions, run for you: your website, member app, trial bookings, payments and ads.';
+    if (sub) sub.textContent = 'One is built to fill your sessions, run for you: your website, member app, trial bookings, payments and ads.';
     others.hidden = false;
     others.addEventListener('click', function () {
       document.body.classList.remove('one-focus');

@@ -95,7 +95,7 @@ function maxEmail(site, lead, p, type) {
       ctaHref: start,
       ctaNote: '3 months of ads included, worth &pound;450. No contract: cancel any time. '
         + 'Rather talk first? Just reply and we&rsquo;ll find 10 minutes.',
-      footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. The figures are what happened in our own academy, not a promise. Two short follow-ups come after this, then we leave you be.',
+      footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. The figures are what happened in our own academy, not a promise: what ads bring depends on your type of club and your local area. Two short follow-ups come after this, then we leave you be.',
       footerLinks: standardFooter(site)
     }),
     text: `Your growth plan, ${lead.business}\n\n`
