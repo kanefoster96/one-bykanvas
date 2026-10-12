@@ -37,6 +37,25 @@
     });
   })();
 
+  /* Sent here for One (?plan=max: the free profit plan recommended it, or a
+     One button): One shown on its own, no Starter and Business cards beside
+     it to talk them down. The others stay one quiet tap away. */
+  (function oneFocus() {
+    if (new URLSearchParams(location.search).get('plan') !== 'max') return;
+    var others = document.getElementById('pickOthers');
+    var sub = document.getElementById('planSub');
+    if (!others) return;
+    var std = sub ? sub.textContent : '';
+    document.body.classList.add('one-focus');
+    if (sub) sub.textContent = 'One fills your sessions, run for you: your website, member app, trial bookings, payments and ads.';
+    others.hidden = false;
+    others.addEventListener('click', function () {
+      document.body.classList.remove('one-focus');
+      if (sub) sub.textContent = std;
+      others.hidden = true;
+    });
+  })();
+
   /* ?domain= from the ready email: the address they were offered with their
      example. It goes first in the list on the address step, selected, and
      is checked again there like any other - nothing was reserved. The lead
@@ -128,7 +147,7 @@
     starter:  { label: 'Starter',  price: '£9.99', yearly: '£99' },
     business: { label: 'Business', price: '£50', half: '£25',    yearly: '£500' },
     pro:      { label: 'Pro',      price: '£120' },
-    max:      { label: 'One',      price: '£250', half: '£125',   yearly: '£2,500' }
+    max:      { label: 'One',      price: '£250', yearly: '£2,500' }
   };
 
   /* Monthly or annual, shared with the plans page through the same stash;
@@ -736,11 +755,12 @@
     $('sumPrice').textContent = annual ? plan.yearly + '/year' : plan.price + '/month';
     $('sumEmail').textContent = answers.email || '—';
 
-    /* What this way of paying includes, next to the price. Monthly: the
-       first month at half price, applied at checkout whether or not they
-       carried the code, so "due today" is the half (a partner or referral
-       code they brought is named instead, and Stripe shows what it takes
-       off). Annual: two months free and the Launch Boost. */
+    /* What this way of paying includes, next to the price. Monthly
+       Business: the first month at half price, applied at checkout whether
+       or not they carried the code, so "due today" is the half (a partner
+       or referral code they brought is named instead, and Stripe shows what
+       it takes off). One: full price, the ads are the offer. Annual: two
+       months free and the Launch Boost. */
     var offer = (window.ONE_SESSION && window.ONE_SESSION.offerCode
                  && window.ONE_SESSION.offerCode()) || '';
     var other = offer && offer !== 'WELCOME26';
@@ -748,7 +768,10 @@
     if ($('sumOfferRow')) {
       $('sumOffer').textContent = annual
         ? '2 months free + the Launch Boost'
-        : (other ? offer + ' applied at checkout' : (plan.half ? '50% off your first month' : 'No setup fee, cancel any month'));
+        : (other ? offer + ' applied at checkout'
+          : plan.half ? '50% off your first month'
+          : answers.selected_plan === 'max' ? 'First 3 months of ads on us'
+          : 'No setup fee, cancel any month');
     }
 
     /* The address they chose, shown in a browser bar so the thing they are
@@ -801,9 +824,10 @@
        the click recovers it, so an unconfirmed address is something to sort out
        after paying rather than a gate in front of it. */
     $('payThen').hidden = Boolean(answers.hasSession);
-    /* The downsell only makes sense from above Starter. */
+    /* The downsell is for Business only: nothing below Starter, and One
+       is never talked down at the card. */
     var down = $('payDown');
-    if (down) down.hidden = answers.selected_plan === 'starter';
+    if (down) down.hidden = answers.selected_plan !== 'business';
   }
 
 
