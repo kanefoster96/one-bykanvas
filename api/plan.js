@@ -37,10 +37,12 @@ function looksLikeEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s); }
 const money = growth.money;
 
 /* Into get-started with the plan chosen and their name already typed. */
-function startHref(site, which, business, type) {
+function startHref(site, which, business, type, leadId) {
   const q = ['plan=' + which];
   if (which === 'max') q.push('max=' + growth.maxModel(type));
   q.push('business=' + encodeURIComponent(business));
+  /* Their details from the free check, filled in at sign-up. */
+  if (leadId) q.push('lead=' + encodeURIComponent(leadId));
   return `${site}/get-started.html?${q.join('&')}`;
 }
 
@@ -66,7 +68,7 @@ function maxSteps(p) {
 }
 
 function maxEmail(site, lead, p, type) {
-  const start = startHref(site, 'max', lead.business, type);
+  const start = startHref(site, 'max', lead.business, type, lead.id);
   const details = [
     { label: 'Members now', value: String(p.members) },
     { label: 'Room for', value: String(p.capacity) },
@@ -106,8 +108,8 @@ function maxEmail(site, lead, p, type) {
 }
 
 function businessEmail(site, lead, p, type) {
-  const start = startHref(site, 'business', lead.business, type);
-  const max = startHref(site, 'max', lead.business, type);
+  const start = startHref(site, 'business', lead.business, type, lead.id);
+  const max = startHref(site, 'max', lead.business, type, lead.id);
   const why = p.mode === 'run'
     ? 'you&rsquo;re already nearly full, so paying for ads you don&rsquo;t need isn&rsquo;t worth it'
     : 'at the size you are now, we&rsquo;d rather you didn&rsquo;t pay for more than you need';

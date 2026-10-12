@@ -34,7 +34,7 @@
      again. Their details go to api/plan.js; the result opens on /your-plan. -->
 <main id="main" class="mh-page">
   <div class="wrap mh-page-wrap">
-    <p class="mh-kicker">Free check &middot; step 2 of 2</p>
+    <p class="mh-kicker">Free profit plan &middot; step 2 of 2</p>
     <h1 class="mh-page-h">Let&rsquo;s see if One can help <span class="dim">your business.</span></h1>
 
     <div class="mh-numbers" id="numbers">
@@ -44,7 +44,7 @@
         <div><b id="nFee">&pound;50</b><span>a month each</span></div>
       </div>
       <p class="mh-numbers-line" id="nLine">That leaves <b>20 spaces</b> empty, costing you <b>&pound;12,000</b> every single year.</p>
-      <a class="mh-numbers-edit" id="nEdit" href="/#plan">&lsaquo; Change my numbers</a>
+      <a class="mh-numbers-edit" id="nEdit" href="/profit-plan">&lsaquo; Change my numbers</a>
     </div>
 
     <form class="mh-calc mh-plan-form" id="checkForm" novalidate>
@@ -83,7 +83,7 @@
   var G = window.GrowthModel, money = G.money;
   var q = new URLSearchParams(location.search);
   // No numbers? Back to the sliders: this page is step two, not a front door.
-  if (!q.get('members') || !q.get('capacity') || !q.get('fee')) { location.replace('/#plan'); return; }
+  if (!q.get('members') || !q.get('capacity') || !q.get('fee')) { location.replace('/profit-plan'); return; }
   var n = { members: q.get('members'), capacity: q.get('capacity'), fee: q.get('fee') };
   var p = G.plan(n);
 
@@ -93,7 +93,7 @@
   $('nLine').innerHTML = p.spaces > 0
     ? 'That leaves <b>' + p.spaces + ' space' + (p.spaces === 1 ? '' : 's') + '</b> empty, costing you <b>' + money(p.gapYear) + '</b> every single year.'
     : 'Every space is full: <b>' + money(p.total) + '</b> coming in every month.';
-  $('nEdit').href = '/?' + G.query(p) + '#plan';
+  $('nEdit').href = '/profit-plan?' + G.query(p);
 
   var shownAt = Date.now();
   var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;

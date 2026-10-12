@@ -60,6 +60,7 @@
   /* ?lead= from the ready email or the card on their example: what they
      told us when they asked for it, filled in so the first screen is a
      check rather than a form. The password is still theirs to choose. */
+  var checkSummary = '';
   (function prefillFromLead() {
     var id = '';
     try { id = String(new URLSearchParams(location.search).get('lead') || '').trim(); } catch (e) {}
@@ -75,10 +76,14 @@
         set('contact_name', d.name);
         set('business_name', d.business);
         set('email', d.email);
+        set('business_type', d.type);
+        if (d.summary) checkSummary = String(d.summary).slice(0, 400);
         if (d.domain && !wantDomain) wantDomain = d.domain;
         var sub = document.querySelector('.wiz-step[data-step="1"] .wiz-sub');
         if (sub && (d.business || d.email)) {
-          sub.textContent = 'Your details from your free example are filled in. Check them, choose a password, and you’re in.';
+          sub.textContent = d.from === 'check'
+            ? 'Your details from your free profit plan are filled in. Check them, choose a password, and you’re in.'
+            : 'Your details from your free example are filled in. Check them, choose a password, and you’re in.';
         }
         var pw = document.getElementById(d.name ? 'password' : 'contact_name');
         if (pw && !document.activeElement.value) { try { pw.focus({ preventScroll: true }); } catch (e) {} }
@@ -807,6 +812,8 @@
       domain_owned:     Boolean(answers.domain_owned),
       site_goals:     answers.site_uses ? answers.site_uses.join('\n') : null
     };
+    /* What they told the free profit plan, kept with their setup. */
+    if (checkSummary) row.site_goals = (row.site_goals ? row.site_goals + '\n\n' : '') + 'From their free profit plan: ' + checkSummary;
     /* Only written when known: a later run of the wizard must not wipe it. */
     if (MAX_MODEL && answers.selected_plan === 'max') row.max_model = MAX_MODEL;
     return row;

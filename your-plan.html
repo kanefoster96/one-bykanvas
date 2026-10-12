@@ -94,7 +94,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var G = window.GrowthModel, money = G.money;
   var q = new URLSearchParams(location.search);
-  if (!q.get('members') || !q.get('capacity') || !q.get('fee')) { location.replace('/#plan'); return; }
+  if (!q.get('members') || !q.get('capacity') || !q.get('fee')) { location.replace('/profit-plan'); return; }
   var p = G.plan({ members: q.get('members'), capacity: q.get('capacity'), fee: q.get('fee') });
   var business = String(q.get('business') || '').trim().slice(0, 120) || 'your business';
   var type = String(q.get('type') || 'other');
@@ -103,6 +103,8 @@
     var s = ['plan=' + which];
     if (which === 'max') s.push('max=' + G.maxModel(type));
     if (q.get('business')) s.push('business=' + encodeURIComponent(business));
+    // Their details from the free check, filled in at sign-up.
+    if (/^[0-9a-f-]{36}$/i.test(q.get('id') || '')) s.push('lead=' + q.get('id'));
     return '/get-started.html?' + s.join('&');
   }
   function stat(big, small) {
