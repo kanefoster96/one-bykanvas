@@ -245,7 +245,7 @@ function growthOne(lead, site) {
         perks: [
           '<strong>Nobody chased anyone.</strong> Trials booked themselves, reminders went out, and the follow-up with the link to join did the rest.',
           '<strong>Those 4 members pay £50 every month</strong>: £2,400 a year from £103 of ads, still paying back long after the ads stopped.',
-          '<strong>Your first 3 months of ads are on us</strong>, so the first trials cost you nothing.'
+          '<strong>Months 2 to 4 of your ads are on us</strong>, so the first trials cost you nothing. Month 1 is spent building it all.'
         ],
         ctaText: 'Start One — £250 a month',
         ctaHref: start,
@@ -255,7 +255,7 @@ function growthOne(lead, site) {
       }),
       text: `When we put together the plan for ${lead.business}, the numbers came from our own dance and cheer academy.\n\n`
         + 'First three weeks of ads: £103 spent, 21 trial bookings, 4 new members, £2,400 a year in new fees.\n\n'
-        + 'Your first 3 months of ads are on us.\n\n'
+        + 'Months 2 to 4 of your ads are on us.\n\n'
         + `Start One: ${start}\n\nRather talk first? Just reply.\n`
     };
   }
@@ -296,8 +296,8 @@ function growthTwo(lead, site) {
         preheader: 'What it really costs, and what happens if it doesn’t work.',
         heading: 'The two questions everyone asks',
         lines: [
-          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;250 a month for everything: website, member app, trial bookings, memberships, payments and the ads run for you. The first 3 months of ads are included. From month 4 you choose: fund your own ad budget, or we keep paying and each new member from the ads pays their first month to us.',
-          '<strong>&ldquo;What if it doesn&rsquo;t work?&rdquo;</strong> There&rsquo;s a 3-month minimum, unless we don&rsquo;t get you at least 10 trial bookings in that time. Then you can leave whenever you like.',
+          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;250 a month for everything: website, member app, trial bookings, memberships, payments and the ads run for you. Month 1 we build it, and months 2 to 4 of ads are on us. From month 5, we keep paying for your ads and each new member from them pays their first month to us, or you fund your own ad budget.',
+          '<strong>&ldquo;What if it doesn&rsquo;t work?&rdquo;</strong> There&rsquo;s no contract and no minimum. Cancel any time from your account.',
           'And when your classes are full, we pause the ads. You just pay the &pound;250.',
           'This is the last email about your plan. If now isn&rsquo;t the time, no hard feelings.'
         ],
@@ -307,8 +307,8 @@ function growthTwo(lead, site) {
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
         footerLinks: standardFooter(site)
       }),
-      text: '"What does it really cost?" £250 a month for everything, first 3 months of ads included. From month 4: fund your own ads, or we keep paying and each new member from the ads pays their first month to us.\n\n'
-        + '"What if it doesn’t work?" 3-month minimum, unless we don’t get you 10 trial bookings; then leave whenever you like.\n\n'
+      text: '"What does it really cost?" £250 a month for everything. Month 1 we build it, months 2 to 4 of ads are on us. From month 5: we keep paying for your ads and each new member from them pays their first month to us, or you fund your own.\n\n'
+        + '"What if it doesn’t work?" No contract, no minimum. Cancel any time.\n\n'
         + 'When you’re full, we pause the ads.\n\n'
         + `Start One: ${start}\n\nThis is the last email about your plan.\n`
     };
@@ -325,7 +325,7 @@ function growthTwo(lead, site) {
         `Business is still what we&rsquo;d suggest for <strong>${esc(lead.business)}</strong> today. When you open a new class or want more members, One adds:`
       ],
       perks: [
-        '<strong>Facebook and Instagram ads, run for you</strong>, shown to families nearby for the classes with spaces. First 3 months included.',
+        '<strong>Facebook and Instagram ads, run for you</strong>, shown to families nearby for the classes with spaces. 3 months of ads included.',
         '<strong>Trial bookings, reminders and follow-ups</strong> that turn trials into members without you chasing.',
         '<strong>A member app</strong> for bookings, passes, messages and payments.'
       ],

@@ -87,7 +87,7 @@
         </div>
 
         <!-- What each way of paying gets, said once above the plans. -->
-        <p class="bill-note" id="billNote"><b>Monthly:</b> <span data-std-only>Starter is &pound;9.99 from day one; Business is half price for the first month.</span><span data-one-only hidden>&pound;250 a month, no setup fee, and the first 3 months of ads on us.</span> <b>Annual:</b> two months free<span data-std-only>, plus the Launch Boost &mdash; your first month spent getting you found. <button class="linkish inline" type="button" id="boostMore">What&rsquo;s in it?</button></span><span data-one-only hidden>. Getting you found on Google is already part of One.</span></p>
+        <p class="bill-note" id="billNote"><b>Monthly:</b> <span data-std-only>Starter is &pound;9.99 from day one; Business is half price for the first month.</span><span data-one-only hidden>&pound;250 a month, no setup fee, 3 months of ads on us, and cancel any time.</span> <b>Annual:</b> two months free<span data-std-only>, plus the Launch Boost &mdash; your first month spent getting you found. <button class="linkish inline" type="button" id="boostMore">What&rsquo;s in it?</button></span><span data-one-only hidden>. Getting you found on Google is already part of One.</span></p>
         <ul class="ticks boost-list" id="boostList" hidden>
           <li>Your Google Business Profile set up, verified and filled in</li>
           <li>A page for every service you offer and every town you cover</li>
@@ -135,7 +135,7 @@
             <input type="radio" name="plan" value="max">
             <span class="pick-main">
               <span class="pick-head"><b>One</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
-              <span class="pick-note"><b class="pick-flag">Fill your sessions</b>Website, member app, trial bookings, payments and ads, run for you. First 3 months of ads on us.</span>
+              <span class="pick-note"><b class="pick-flag">Fill your sessions</b>Website, member app, trial bookings, payments and ads, run for you. 3 months of ads on us.</span>
             </span>
           </label>
           <div class="pick-feats" data-plan="max">
@@ -144,9 +144,9 @@
               <li class="tick-hero">Your website and member app, built around your sessions and timetable</li>
               <li class="tick-hero">Trial bookings, reminders and follow-ups that turn trials into members</li>
               <li class="tick-hero">Memberships and monthly payments, taken automatically</li>
-              <li class="tick-hero">Facebook and Instagram ads, run for you. First 3 months on us</li>
+              <li class="tick-hero">Facebook and Instagram ads, run for you. Months 2 to 4 on us</li>
               <li class="tick-hero">Bring-a-friend referrals and a monthly report</li>
-              <li class="tick-hero">10 trial bookings in your first 3 months, or leave any time</li>
+              <li class="tick-hero">No contract: cancel any time</li>
             </ul>
           </div>
         </div>
@@ -177,8 +177,8 @@
         </ul>
         <ul class="assure" data-one-only hidden>
           <li>No setup fee</li>
-          <li>First 3 months of ads on us</li>
-          <li>10 trial bookings, or leave any time</li>
+          <li>3 months of ads on us</li>
+          <li>Cancel any time</li>
         </ul>
         <button class="linkish wiz-back" data-back type="button">Back</button>
       </section>
@@ -291,7 +291,7 @@
       <!-- ============ 4. payment ============ -->
       <section class="wiz-step" data-step="5" aria-label="Payment" hidden>
         <h1>Your plan.</h1>
-        <p class="wiz-sub" data-one="Your website ready within 14 days, and your ads can start then.">Your first month puts you live today.</p>
+        <p class="wiz-sub" data-one="Month 1 we build and test it all. Months 2 to 4, your ads are on us.">Your first month puts you live today.</p>
 
         <!-- Their address in a browser bar, so the thing they are buying is on
              screen before they pay for it. -->
@@ -349,15 +349,15 @@
         </ul>
         <ul class="assure" data-one-only hidden>
           <li>No setup fee</li>
-          <li>First 3 months of ads on us</li>
-          <li>10 trial bookings, or leave any time</li>
+          <li>3 months of ads on us</li>
+          <li>Cancel any time</li>
         </ul>
 
         <!-- Card details are collected by Stripe Checkout on Stripe's own
              pages. We never see or handle a card number. -->
         <div class="paynote" id="payNow">
           <p><strong>Card handled by Stripe.</strong></p>
-          <p data-one="You&rsquo;ll finish on Stripe&rsquo;s secure page &mdash; we never see your card details. A 3-month minimum, then monthly, unless we don&rsquo;t get you 10 trial bookings in that time.">You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month puts your page live on your own address today; your features follow within 14 days.</p>
+          <p data-one="You&rsquo;ll finish on Stripe&rsquo;s secure page &mdash; we never see your card details. Monthly, with no contract: cancel any time from your account.">You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month puts your page live on your own address today; your features follow within 14 days.</p>
         </div>
         <button class="linkish" id="fixEmail" type="button">That email isn't right</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
@@ -376,7 +376,7 @@
           <li data-std-only><b>Live today.</b> We register your web address and put your page on it, and email you the moment it&rsquo;s live.</li>
           <li data-std-only><b>Your features, within 14 days.</b> Bookings, payments, reviews &mdash; whatever you asked for, built while you&rsquo;re already online. Or your next month is free.</li>
           <li data-one-only hidden><b>Tell us about your sessions.</b> Your classes, timetable, prices and photos, in the setup form in your account. We&rsquo;ll be in touch to fill in the rest.</li>
-          <li data-one-only hidden><b>Ready within 14 days.</b> Your website, member app and trial bookings, with your members moved across. Then your ads go on, the first 3 months on us.</li>
+          <li data-one-only hidden><b>Ready within 14 days.</b> Your website, member app and trial bookings, with your members moved across. Then, from month 2, your ads go on, with months 2 to 4 on us.</li>
           <li data-one-only hidden><b>Your app in the stores.</b> It works from your website on day one; the App Store and Google Play versions follow within up to 8 weeks, as Apple and Google review them.</li>
         </ol>
 
@@ -405,7 +405,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=36"></script>
+<script src="get-started.js?v=37"></script>
 <script src="chat.js?v=10" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

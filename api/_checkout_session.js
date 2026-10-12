@@ -77,7 +77,7 @@ async function openCheckout({ stripe, admin, user, profile, plan, billing, offer
   /* Every new monthly Business customer gets the first month at half
      price: the site says so, so it is applied whether or not they carried
      a code. Starter's £9.99 is the offer itself, and One's offer is the
-     first 3 months of ads, so neither gets the half-price code, but a
+     3 months of ads, so neither gets the half-price code, but a
      partner or referral code still applies. A partner or referral code
      they did bring wins. */
   const brought = String(offer || '').trim().toUpperCase();

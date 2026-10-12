@@ -771,7 +771,7 @@
         ? (answers.selected_plan === 'max' ? '2 months free' : '2 months free + the Launch Boost')
         : (other ? offer + ' applied at checkout'
           : plan.half ? '50% off your first month'
-          : answers.selected_plan === 'max' ? 'First 3 months of ads on us'
+          : answers.selected_plan === 'max' ? '3 months of ads on us'
           : 'No setup fee, cancel any month');
     }
 
@@ -814,7 +814,7 @@
         : domain ? 'Live on ' + domain + ' today.' : 'Live on your own address today.';
       promise.appendChild(strong);
       promise.appendChild(document.createTextNode(isOne
-        ? ' Your website' + (domain ? ' on ' + domain : '') + ', member app and trial bookings, then your ads, with the first 3 months of ad spend on us.'
+        ? ' Your website' + (domain ? ' on ' + domain : '') + ', member app and trial bookings. Your ads start in month 2, and months 2 to 4 of ad spend are on us.'
         : answers.selected_plan === 'starter'
         ? ' With your contact form and click to call. Your first change of the month, whenever you like.'
         : ' Then we build the features you asked for within 14 days \u2014 or your next month is free.'));
@@ -1015,8 +1015,8 @@
   }
 
   /* One reads differently from a website plan: the words that promise a
-     site live today become the One process (ready within 14 days, ads, the
-     10-trial promise). Elements carry their One text in data-one; the
+     site live today become the One process (month 1 the build, months 2 to
+     4 the ads on us, cancel any time). Elements carry their One text in data-one; the
      website text is kept the first time we swap so it can come back. */
   function paintPlanCopy() {
     var chosen = document.querySelector('input[name="plan"]:checked');
@@ -1080,7 +1080,7 @@
         tag: 'Fill your sessions',
         head: 'One: the whole system run for you, from the first ad to the monthly payment.',
         list: [
-          'Facebook and Instagram ads, run for you. First 3 months on us',
+          'Facebook and Instagram ads, run for you. Months 2 to 4 on us',
           'Trial bookings, reminders and follow-ups that turn trials into members',
           'Memberships and monthly payments, taken automatically',
           'A member app, and bring-a-friend referrals'
