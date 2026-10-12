@@ -897,3 +897,22 @@ body.home .ev-card{background:var(--glass);border:0;box-shadow:var(--glass-shado
 .fx-steps b{display:block;font-size:16px;font-weight:700;letter-spacing:-.01em}
 .fx-steps li span:not(.fx-n){display:block;margin-top:4px;font-size:15px;line-height:1.45;color:var(--ink-2)}
 body.home .fx-card{background:var(--glass);border:0;box-shadow:var(--glass-shadow);--ink-2:#55555a;--ink-3:#6e6e73}
+
+/* ---------- Solid cards ----------
+   The content cards in the deep orange with white type; every other panel
+   in plain white, so no pale orange is left. White on #c93e09 is 4.9:1. */
+body.home .oc-card,body.home .ui,body.home .ab-card,body.home .up-card,
+body.home .mh-calc,body.home .mh-choice article,body.home .mh-promise,body.home .mh-compare,
+body.home .mh-form,body.home .plan,body.home .faq details,body.home .mh-moments span{background:#fff}
+body.home .mh-compare .sum{background:#f5f5f7}
+body.home .pr-item,body.home .fx-card,body.home .ev-card{
+  background:#c93e09;box-shadow:0 18px 40px -22px rgba(201,62,9,.65);
+  --ink:#fff;--ink-2:rgba(255,255,255,.88);--ink-3:rgba(255,255,255,.78);color:#fff;
+}
+body.home .pr-item b,body.home .fx-card h3,body.home .ev-card h3{color:#fff}
+body.home .pr-item .tile{background:#fff;color:#c93e09;box-shadow:none}
+body.home .fx-tag{color:#ffd9c7}
+body.home .ev-card .ticks li,body.home .ev-card .ticks li.tick-hero,body.home .ev-card .ticks li.tick-hero b{color:#fff}
+body.home .ev-card .ticks li::before,body.home .ev-card .ticks li.tick-hero::before{border-color:#fff}
+body.home .mh-calc-cover{background:none;color:#c93e09;padding:0 6px;font-weight:700}
+body.home .mh-info-note{background:#f5f5f7}
