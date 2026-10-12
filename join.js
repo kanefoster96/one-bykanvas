@@ -637,7 +637,7 @@
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var box = document.createElement('div');
     box.className = 'join-confetti';
-    var colours = ['#1a7f37', '#34c17a', '#5fd18f', '#1d1d1f', '#f5b83d', '#e5484d', '#4f7cff'];
+    var colours = ['#c93e09', '#ff4f12', '#ff7a3d', '#1d1d1f', '#f5b83d', '#e5484d', '#4f7cff'];
     for (var i = 0; i < 70; i++) {
       var c = document.createElement('i');
       c.style.left = Math.random() * 100 + '%';

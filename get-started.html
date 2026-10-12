@@ -7,11 +7,11 @@
 <meta name="description" content="Tell us about your business and we'll build your site. Live on your own address within 24 hours you join, your features built within 14 days, no setup cost.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
-<link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
-<link rel="icon" href="assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
-<link rel="icon" href="assets/favicon-192.png?v=4" sizes="192x192" type="image/png">
-<link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
-<link rel="stylesheet" href="styles.css?v=139">
+<link rel="icon" href="assets/favicon.svg?v=5" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=5">
+<link rel="stylesheet" href="styles.css?v=140">
 <script>
 /* Starter is paid first now, on /join. Anyone sent here for it (or with no
    plan named, which means Starter) goes there with what they brought;
@@ -49,7 +49,7 @@
 
       <!-- ============ 1. about you ============ -->
       <section class="wiz-step" data-step="1" aria-label="About you">
-        <h1>Let's get you online.</h1>
+        <h1 data-one="Let&rsquo;s fill your sessions.">Let's get you online.</h1>
         <p class="wiz-sub">First, the basics. Takes about two minutes.</p>
         <div class="field"><label for="contact_name">Your name <span class="opt">(optional)</span></label><input id="contact_name" type="text" autocomplete="name"></div>
       <div class="hp" aria-hidden="true">
@@ -77,7 +77,7 @@
       <!-- ============ 2. the business ============ -->
       <section class="wiz-step" data-step="2" aria-label="Choose a plan" hidden>
         <h1>Your plan.</h1>
-        <p class="wiz-sub">Starter is the site, &pound;9.99 a month. Business gets you booked. One adds growth. Move between them any month.</p>
+        <p class="wiz-sub">Starter is the site, &pound;9.99 a month. Business gets you booked. One fills your sessions, run for you. Move between them any month.</p>
 
         <!-- Starter first, and chosen: it is the offer on every page. Business
              is the step up, then One. -->
@@ -135,17 +135,18 @@
             <input type="radio" name="plan" value="max">
             <span class="pick-main">
               <span class="pick-head"><b>One</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
-              <span class="pick-note"><b class="pick-flag">Add growth</b>An end-to-end system for your kind of business, run for you.</span>
+              <span class="pick-note"><b class="pick-flag">Fill your sessions</b>Website, member app, trial bookings, payments and ads, run for you. First 3 months of ads on us.</span>
             </span>
           </label>
           <div class="pick-feats" data-plan="max">
             <ul class="ticks">
               <li>Everything in Business</li>
-              <li class="tick-hero">Your Facebook and Instagram ads, set up, run and tracked by us. You set the budget</li>
-              <li class="tick-hero">Your Google ranking worked on every month</li>
-              <li class="tick-hero">Reviews, referrals and upsells, asked for automatically</li>
-              <li class="tick-hero">Follow-up emails, written and sent for you</li>
-              <li class="tick-hero">Business email. First in the queue</li>
+              <li class="tick-hero">Your website and member app, built around your sessions and timetable</li>
+              <li class="tick-hero">Trial bookings, reminders and follow-ups that turn trials into members</li>
+              <li class="tick-hero">Memberships and monthly payments, taken automatically</li>
+              <li class="tick-hero">Facebook and Instagram ads, run for you. First 3 months on us</li>
+              <li class="tick-hero">Bring-a-friend referrals and a monthly report</li>
+              <li class="tick-hero">10 trial bookings in your first 3 months, or leave any time</li>
             </ul>
           </div>
         </div>
@@ -174,7 +175,7 @@
       </section>
       <section class="wiz-step" data-step="3" aria-label="Your business" hidden>
         <h1>What do you do?</h1>
-        <p class="wiz-sub">So we build the right kind of site for you.</p>
+        <p class="wiz-sub" data-one="So we build the right system for you.">So we build the right kind of site for you.</p>
         <div class="field">
           <label for="business_type">Type of business</label>
           <input id="business_type" type="text" list="types" placeholder="Café, barber, landscaping…">
@@ -187,12 +188,12 @@
         </div>
 
         <div id="useBlock">
-        <p class="wiz-label">Three things you want the site to do</p>
+        <p class="wiz-label" data-one="Three things you want One to do">Three things you want the site to do</p>
         <!-- A combobox: type your own, or open the list and pick. The list
              is the shared feature library, filtered as they type, minus
              anything already in another box. -->
         <div class="field combo">
-          <input id="use1" type="text" placeholder="Show customers my live menu" aria-label="First thing you want the site to do"
+          <input id="use1" type="text" placeholder="Show customers my live menu" data-one-ph="Fill my empty sessions" aria-label="First thing you want the site to do"
                  autocomplete="off" role="combobox" aria-expanded="false" aria-controls="useList1" aria-autocomplete="list">
           <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           <ul class="combo-list" id="useList1" role="listbox" hidden></ul>
@@ -201,7 +202,7 @@
              is the shared feature library, filtered as they type, minus
              anything already in another box. -->
         <div class="field combo">
-          <input id="use2" type="text" placeholder="Take bookings without phone calls" aria-label="Second thing you want the site to do"
+          <input id="use2" type="text" placeholder="Take bookings without phone calls" data-one-ph="Take trial bookings online" aria-label="Second thing you want the site to do"
                  autocomplete="off" role="combobox" aria-expanded="false" aria-controls="useList2" aria-autocomplete="list">
           <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           <ul class="combo-list" id="useList2" role="listbox" hidden></ul>
@@ -210,12 +211,12 @@
              is the shared feature library, filtered as they type, minus
              anything already in another box. -->
         <div class="field combo">
-          <input id="use3" type="text" placeholder="Get found by people searching nearby" aria-label="Third thing you want the site to do"
+          <input id="use3" type="text" placeholder="Get found by people searching nearby" data-one-ph="Take memberships monthly" aria-label="Third thing you want the site to do"
                  autocomplete="off" role="combobox" aria-expanded="false" aria-controls="useList3" aria-autocomplete="list">
           <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           <ul class="combo-list" id="useList3" role="listbox" hidden></ul>
         </div>
-        <p class="hint">All three built within 14 days of joining, or your next month is free.</p>
+        <p class="hint" data-one="All three set up within 14 days, with your website.">All three built within 14 days of joining, or your next month is free.</p>
         </div>
         <!-- On Starter the features block above is hidden (the plan step
              does it) and this line stands in: the page is the site. -->
@@ -281,7 +282,7 @@
       <!-- ============ 4. payment ============ -->
       <section class="wiz-step" data-step="5" aria-label="Payment" hidden>
         <h1>Your plan.</h1>
-        <p class="wiz-sub">Your first month puts you live today.</p>
+        <p class="wiz-sub" data-one="Your website ready within 14 days, and your ads can start then.">Your first month puts you live today.</p>
 
         <!-- Their address in a browser bar, so the thing they are buying is on
              screen before they pay for it. -->
@@ -326,23 +327,28 @@
         <!-- Shown while their address is still unconfirmed: the next thing to do
              after paying, not a gate in front of it. -->
         <p class="pay-then" id="payThen" hidden>Next, please confirm your email &mdash; we&rsquo;ve sent you a link.</p>
-        <p class="pay-proof">Designed and built by our team to get your business more customers online. Message us any time, no ticket queue.</p>
+        <p class="pay-proof" data-one="Built in our own kids&rsquo; club and run for you by our team. Message us any time, no ticket queue.">Designed and built by our team to get your business more customers online. Message us any time, no ticket queue.</p>
         <!-- The downsell, for the person hesitating at the card: keep the page,
              lose the features, for less. Hidden once they are on Starter. -->
         <button class="linkish" id="payDown" type="button" hidden>Not sure you need bookings and chat? Switch to Starter, &pound;9.99 a month, and keep this page live.</button>
 
         <!-- The three things someone hesitates over, answered on the way past. -->
-        <ul class="assure">
+        <ul class="assure" data-std-only>
           <li>No setup fee</li>
           <li>Cancel anytime</li>
           <li>Live within 24 hours</li>
+        </ul>
+        <ul class="assure" data-one-only hidden>
+          <li>No setup fee</li>
+          <li>First 3 months of ads on us</li>
+          <li>10 trial bookings, or leave any time</li>
         </ul>
 
         <!-- Card details are collected by Stripe Checkout on Stripe's own
              pages. We never see or handle a card number. -->
         <div class="paynote" id="payNow">
           <p><strong>Card handled by Stripe.</strong></p>
-          <p>You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month puts your page live on your own address today; your features follow within 14 days.</p>
+          <p data-one="You&rsquo;ll finish on Stripe&rsquo;s secure page &mdash; we never see your card details. A 3-month minimum, then monthly, unless we don&rsquo;t get you 10 trial bookings in that time.">You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month puts your page live on your own address today; your features follow within 14 days.</p>
         </div>
         <button class="linkish" id="fixEmail" type="button">That email isn't right</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
@@ -358,8 +364,11 @@
 
         <ol class="next-list">
           <li><b id="doneHead">Check your email.</b> <span id="confirmLine">Confirm your address so you can get into your account.</span></li>
-          <li><b>Live today.</b> We register your web address and put your page on it, and email you the moment it&rsquo;s live.</li>
-          <li><b>Your features, within 14 days.</b> Bookings, payments, reviews &mdash; whatever you asked for, built while you&rsquo;re already online. Or your next month is free.</li>
+          <li data-std-only><b>Live today.</b> We register your web address and put your page on it, and email you the moment it&rsquo;s live.</li>
+          <li data-std-only><b>Your features, within 14 days.</b> Bookings, payments, reviews &mdash; whatever you asked for, built while you&rsquo;re already online. Or your next month is free.</li>
+          <li data-one-only hidden><b>Tell us about your sessions.</b> Your classes, timetable, prices and photos, in the setup form in your account. We&rsquo;ll be in touch to fill in the rest.</li>
+          <li data-one-only hidden><b>Ready within 14 days.</b> Your website, member app and trial bookings, with your members moved across. Then your ads go on, the first 3 months on us.</li>
+          <li data-one-only hidden><b>Your app in the stores.</b> It works from your website on day one; the App Store and Google Play versions follow within up to 8 weeks, as Apple and Google review them.</li>
         </ol>
 
         <div class="paynote">

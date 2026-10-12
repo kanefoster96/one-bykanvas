@@ -770,7 +770,9 @@
       var free = document.createElement('b');
       free.textContent = 'Free with your plan.';
       note.appendChild(free);
-      note.appendChild(document.createTextNode(' Registered for you today, and your site is live on it within 24 hours.'));
+      note.appendChild(document.createTextNode(answers.selected_plan === 'max'
+        ? ' Registered for you today, and your new site goes on it within 14 days.'
+        : ' Registered for you today, and your site is live on it within 24 hours.'));
     }
     $('sumDomainRow').hidden = !domain;
     $('sumDomain').textContent = domain || '\u2014';
@@ -782,9 +784,14 @@
     if (promise) {
       promise.textContent = '';
       var strong = document.createElement('b');
-      strong.textContent = domain ? 'Live on ' + domain + ' today.' : 'Live on your own address today.';
+      var isOne = answers.selected_plan === 'max';
+      strong.textContent = isOne
+        ? 'Ready within 14 days.'
+        : domain ? 'Live on ' + domain + ' today.' : 'Live on your own address today.';
       promise.appendChild(strong);
-      promise.appendChild(document.createTextNode(answers.selected_plan === 'starter'
+      promise.appendChild(document.createTextNode(isOne
+        ? ' Your website' + (domain ? ' on ' + domain : '') + ', member app and trial bookings, then your ads, with the first 3 months of ad spend on us.'
+        : answers.selected_plan === 'starter'
         ? ' With your contact form and click to call. Your first change of the month, whenever you like.'
         : ' Then we build the features you asked for within 14 days \u2014 or your next month is free.'));
       if (annual) promise.appendChild(document.createTextNode(' Your first month: the Launch Boost.'));
@@ -982,6 +989,28 @@
     });
   }
 
+  /* One reads differently from a website plan: the words that promise a
+     site live today become the One process (ready within 14 days, ads, the
+     10-trial promise). Elements carry their One text in data-one; the
+     website text is kept the first time we swap so it can come back. */
+  function paintPlanCopy() {
+    var chosen = document.querySelector('input[name="plan"]:checked');
+    var one = chosen ? chosen.value === 'max' : MAX_MODEL !== null;
+    document.body.classList.toggle('is-one', one);
+    document.querySelectorAll('[data-one]').forEach(function (el) {
+      if (!el.hasAttribute('data-std')) el.setAttribute('data-std', el.innerHTML);
+      el.innerHTML = one ? el.getAttribute('data-one') : el.getAttribute('data-std');
+    });
+    document.querySelectorAll('[data-one-ph]').forEach(function (el) {
+      if (!el.hasAttribute('data-std-ph')) el.setAttribute('data-std-ph', el.placeholder);
+      el.placeholder = one ? el.getAttribute('data-one-ph') : el.getAttribute('data-std-ph');
+    });
+    document.querySelectorAll('[data-one-only]').forEach(function (el) { el.hidden = !one; });
+    document.querySelectorAll('[data-std-only]').forEach(function (el) { el.hidden = one; });
+  }
+  document.getElementById('pick').addEventListener('change', paintPlanCopy);
+  paintPlanCopy();
+
   /* keep the plan rows visually in sync with the radio */
   document.getElementById('pick').addEventListener('change', function () {
     document.querySelectorAll('.pick-row').forEach(function (row) {
@@ -1020,16 +1049,16 @@
       },
       business: {
         to: 'max',
-        tag: 'Add growth',
-        head: 'One: the whole thing run for you, from ads to reviews.',
+        tag: 'Fill your sessions',
+        head: 'One: the whole system run for you, from the first ad to the monthly payment.',
         list: [
-          'Your Facebook and Instagram ads, set up, run and tracked by us. You set the budget',
-          'Your Google ranking worked on every month',
-          'Reviews, referrals and follow-up emails, automatic',
-          'Business email, and first in the queue'
+          'Facebook and Instagram ads, run for you. First 3 months on us',
+          'Trial bookings, reminders and follow-ups that turn trials into members',
+          'Memberships and monthly payments, taken automatically',
+          'A member app, and bring-a-friend referrals'
         ],
         note: 'We need a photo or a line of text; we do the rest. <strong>Your price is locked for as long as you stay.</strong> Step down any month; you keep the ranking.',
-        btn: 'Add growth — One, £250 a month',
+        btn: 'Switch to One — £250 a month',
         line: 'Want us to go and get you customers? '
       }
     };

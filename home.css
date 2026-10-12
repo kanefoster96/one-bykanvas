@@ -547,9 +547,9 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 .ft-status{display:inline-flex;align-items:center;gap:8px}
 .ft-status{font-weight:500;color:var(--ink)}
 /* A status light: a steady accent dot with a soft ring pulsing out from it. */
-.ft-status i{position:relative;width:9px;height:9px;border-radius:50%;background:#22a356;flex:0 0 9px}
+.ft-status i{position:relative;width:9px;height:9px;border-radius:50%;background:#ff4f12;flex:0 0 9px}
 .ft-status i::after{
-  content:"";position:absolute;inset:0;border-radius:50%;background:#22a356;
+  content:"";position:absolute;inset:0;border-radius:50%;background:#ff4f12;
   animation:statusPulse 2s ease-out infinite;
 }
 @keyframes statusPulse{0%{transform:scale(1);opacity:.55}80%,100%{transform:scale(2.8);opacity:0}}

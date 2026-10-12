@@ -829,7 +829,7 @@ ${abSplit(e)}
 <!-- A made-up business, so it is never offered to someone searching for it. -->
 <meta name="robots" content="noindex, follow">
 <meta name="theme-color" content="${dark ? '#111111' : e.theme.bg}">
-<link rel="icon" href="/assets/favicon.svg?v=4" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon.svg?v=5" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${e.fonts}&display=swap">
@@ -880,9 +880,9 @@ function shell(o) {
 <meta property="og:image" content="https://kanvas.one/assets/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="${o.canonical}">
-<link rel="icon" href="/assets/favicon.svg?v=4" type="image/svg+xml">
-<link rel="icon" href="/assets/favicon-32.png?v=4" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="/assets/favicon-180.png?v=4">
+<link rel="icon" href="/assets/favicon.svg?v=5" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/assets/favicon-180.png?v=5">
 <link rel="stylesheet" href="/styles.css?v=${o.cssV}">
 </head>
 <body>
