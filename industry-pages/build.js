@@ -625,6 +625,8 @@ function maxLabel(slug) {
 }
 
 function maxPage(m) {
+  /* The ads deal first in the questions: it is the one everyone asks. */
+  const faq = MAX.adFaq(m).concat(m.faq);
   const url = `https://kanvas.one/max/${m.slug}`;
   const start = `/get-started.html?plan=max&max=${m.slug}`;
   /* Pages live in /max/, so every asset path is absolute. */
@@ -657,14 +659,14 @@ ${JSON.stringify({
   areaServed: 'GB',
   url: url,
   description: m.desc,
-  offers: { '@type': 'Offer', price: '250', priceCurrency: 'GBP', description: 'Per month. Ad spend paid separately by the customer.' }
+  offers: { '@type': 'Offer', price: '250', priceCurrency: 'GBP', description: 'Per month. Month 1 the build, months 2 to 4 of ad spend included. Cancel any time.' }
 })}
 </script>
 <script type="application/ld+json">
 ${JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: m.faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
+  mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
 <link rel="icon" href="/assets/favicon.svg?v=5" type="image/svg+xml">
@@ -681,10 +683,10 @@ ${nav}<!-- 1. The promise, the price, the ask. -->
 <section class="page-hero">
   <div class="wrap center">
     <!-- The product's own mark: an app-style icon with the model's tool in
-         it and the green MAX pill on its corner. -->
+         it and the ONE pill on its corner. -->
     <div class="max-app reveal" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${m.icon}</svg>
-      <span class="max-app-pill">MAX</span>
+      <span class="max-app-pill">ONE</span>
     </div>
     <p class="hero-pill reveal">${m.name}</p>
     <h1 class="reveal">${m.promise}</h1>
@@ -693,7 +695,7 @@ ${nav}<!-- 1. The promise, the price, the ask. -->
       <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
       <a class="btn btn-ghost" href="/plans">All the plans</a>
     </div>
-    <p class="fineprint reveal">${MAX.AD_SPEND}</p>
+    <p class="fineprint reveal">${MAX.adDeal(m)}</p>
   </div>
 </section>
 
@@ -773,7 +775,7 @@ ${m.why.map(([lead, rest]) => `    <p><b>${lead}</b>${rest}</p>`).join('\n')}
   <div class="wrap cost reveal">
     <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
     <p>No setup fee. Same price whatever your business type.</p>
-    <p>${MAX.AD_SPEND}</p>
+    <p>${MAX.adDeal(m)}</p>
     <p>One price, with the website, the ads, the ranking work, the bookings and the follow-ups in it.</p>
     <p><strong>Your price is locked</strong> for as long as you stay on it. If the price goes up later, it goes up for new customers, not for you.</p>
   </div>
@@ -805,7 +807,7 @@ ${MAX_GUARANTEE ? `  <div class="wrap">
     <h2 class="reveal">Questions.</h2>
   </div>
   <div class="wrap faq reveal">
-${m.faq.map(([q, a]) => `    <details>
+${faq.map(([q, a]) => `    <details>
       <summary>${q}</summary>
       <div class="ans"><p>${a}</p></div>
     </details>`).join('\n')}
