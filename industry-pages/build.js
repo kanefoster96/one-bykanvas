@@ -57,7 +57,7 @@ const CASES = INDUSTRIES.CASES || [];
 function linkStrip(exceptSlug) {
   return INDUSTRIES
     .filter((b) => b.slug !== exceptSlug)
-    .map((b) => `<a href="/websites-for-${b.slug}.html">${b.link}</a>`)
+    .map((b) => `<a href="/websites-for-${b.slug}">${b.link}</a>`)
     .join('');
 }
 
@@ -154,11 +154,11 @@ const FOOT = `<footer class="foot">
     <p class="foot-logo">one<span class="wm-dot">.</span></p>
     <p class="foot-by">by Kanvas</p>
     <nav class="foot-links" aria-label="Footer">
-      <a href="/how-it-works.html">How it works</a><a href="/whats-included.html">What&rsquo;s included</a><a href="/features.html">Features</a><a href="/reviews.html">Reviews</a><a href="/plans.html">Plans</a><a href="/get-started.html">Get started</a>
+      <a href="/how-it-works">How it works</a><a href="/whats-included">What&rsquo;s included</a><a href="/features">Features</a><a href="/reviews">Reviews</a><a href="/plans">Plans</a><a href="/get-started.html">Get started</a>
     </nav>
     <p class="foot-local">Web design in <a href="/web-design-newcastle">Newcastle</a> and <a href="/web-design-northumberland">Northumberland</a>, and websites for small businesses across the UK.</p>
     <nav class="foot-legal-links" aria-label="Legal">
-      <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/cookies.html">Cookies</a><a href="/contact.html">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
+      <a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/cookies">Cookies</a><a href="/contact">Contact</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
     </nav>
     <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. Your site goes live on your own address within 24 hours of joining; the features you ask for are built within 14 days of joining, or your next month is free (see terms). Your web address is included for as long as your plan is active. It is registered and renewed by us on your behalf; if you leave, we transfer it to you. Cancel anytime &mdash; no further payments are taken.</p>
     <p class="foot-copy">© <span id="year">2026</span> Kanvas One. All rights reserved.</p>
@@ -334,15 +334,15 @@ ${b.maxPitch ? `<section class="section">
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
       <p class="plan-note">An end-to-end system for your kind of business, run for you:</p>
       <ul class="ticks">
-        <li class="tick-hero">Your Facebook and Instagram ads, run by us. You set the budget</li>
+        <li class="tick-hero">Your Facebook and Instagram ads, run by us. 3 months on us</li>
         <li class="tick-hero">Your Google ranking worked on every month</li>
-        <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
+        <li class="tick-hero">Bookings, reminders, follow-ups and reviews, automatic</li>
       </ul>
-      <p class="plan-up">Same price whatever the type. You pay your own ad spend.</p>
+      <p class="plan-up">Month 1 we build it, months 2 to 4 of ads are on us. Cancel any time.</p>
       <a class="btn btn-ghost full" href="${maxHref(b.slug)}">${maxLabel(b.slug)} &rsaquo;</a>
     </article>
   </div>
-  <p class="wrap center micro reveal">No setup fee on any plan. Business is half price for your first month. Or pay for the year: 2 months free and the Launch Boost.</p>
+  <p class="wrap center micro reveal">No setup fee on any plan. Business is half price for your first month, and One comes with 3 months of ads on us. Or pay for the year: 2 months free, plus the Launch Boost on Starter and Business.</p>
 </section>
 ` : ''}${b.faq ? `<section class="section grey">
   <div class="wrap center">
@@ -371,7 +371,7 @@ ${(b.pricingExtra || []).map((l) => `    <p class="micro reveal">${l}</p>`).join
     <p class="ask reveal">${b.endLine}</p>
 ` : `    <div class="cta-row reveal">
       <a class="btn btn-primary" href="#join">Get started &rsaquo;</a>
-      <a class="btn btn-ghost" href="/plans.html">See all plans</a>
+      <a class="btn btn-ghost" href="/plans">See all plans</a>
     </div>
     <p class="micro reveal">&pound;9.99 a month, or &pound;99 a year. No setup fees. Cancel any month.</p>
     <p class="ask reveal">Rather talk it through? <a href="mailto:hello@kanvas.one?subject=Website%20for%20my%20business">Email us</a> and we answer &mdash; usually the same working day.</p>
@@ -416,7 +416,7 @@ for (const b of INDUSTRIES.concat(LOCAL)) {
    site, what they get, the plan it lives on, and how to start. */
 function featureLinks(exceptSlug) {
   return FEATURES.filter((f) => f.slug !== exceptSlug)
-    .map((f) => `<a href="/${f.slug}.html">${f.short}</a>`).join('');
+    .map((f) => `<a href="/${f.slug}">${f.short}</a>`).join('');
 }
 
 function planCard(f) {
@@ -579,7 +579,7 @@ ${f.faq.map(([q, a]) => `    <details>
     <p class="lede reveal">Built for you from the page you already have. We change it until you love it.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="${start.href}">${start.label}</a>
-      <a class="btn btn-ghost" href="/plans.html">All the plans</a>
+      <a class="btn btn-ghost" href="/plans">All the plans</a>
     </div>
     <p class="micro reveal">From &pound;9.99 a month. No setup fees. No contract, cancel any month.</p>
     <nav class="ind-links reveal" aria-label="Other features">
@@ -611,7 +611,7 @@ function maxHref(slug) {
   if (['trades', 'cleaners', 'gardeners', 'electricians', 'heating-engineers', 'mobile-car-valeters'].includes(slug)) return '/max/trades';
   if (['salons', 'barbers', 'hairdressers', 'lash-artists', 'makeup-artists', 'nail-techs'].includes(slug)) return '/max/salon';
   if (slug === 'kids-clubs') return '/clubs';
-  return '/plans.html#max';
+  return '/plans#max';
 }
 /* The type the wizard carries onto the profile, so the setup form need
    not ask. Empty for a trade with no One of its own. */
@@ -691,7 +691,7 @@ ${nav}<!-- 1. The promise, the price, the ask. -->
     <p class="lede reveal">&pound;250 a month. No setup fee. Live within 24 hours of joining.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
-      <a class="btn btn-ghost" href="/plans.html">All the plans</a>
+      <a class="btn btn-ghost" href="/plans">All the plans</a>
     </div>
     <p class="fineprint reveal">${MAX.AD_SPEND}</p>
   </div>
@@ -819,7 +819,7 @@ ${m.faq.map(([q, a]) => `    <details>
     <p class="lede reveal">Your site built for you from the page you already have, then the rest run for you.<span class="gap"></span>No contract. Cancel any month.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
-      <a class="btn btn-ghost" href="/plans.html">All the plans</a>
+      <a class="btn btn-ghost" href="/plans">All the plans</a>
     </div>
     <nav class="ind-links reveal" aria-label="Other One models">
       <span>One for:</span>${MAX.filter((x) => x.slug !== m.slug).map((x) => `<a href="/max/${x.slug}">${x.name}</a>`).join('')}<a href="#" data-max-other>Another business</a>
