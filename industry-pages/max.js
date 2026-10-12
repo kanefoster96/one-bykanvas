@@ -31,18 +31,15 @@
    nothing rests on trust, and repeat customers (an email seen before) never
    count. Cash or card in person? Then they fund their own ads. */
 const SHARE = 20;
+const RULE = `each new customer pays us their first subscription payment if they&rsquo;re on a membership or repeat subscription, or ${SHARE}% of their first payment if you invoice them or they pay for a one-off service. Only their first payment counts`;
 function adDeal(m) {
-  const pay = m.unit === 'member'
-    ? `and each new monthly member pays their first month to us (a termly fee or a course: ${SHARE}% of the first payment)`
-    : `for ${SHARE}% of each new customer&rsquo;s first payment taken online through your site (a monthly plan: their first month)`;
-  return `Month 1 we build it. Months 2 to 4, your ads are on us, up to &pound;150 a month. From month 5, we keep funding them ${pay}, or you pay Meta yourself and keep every penny. Switch between the two any time.`;
+  return `Month 1 we build it. Months 2 to 4, your ads are on us, up to &pound;150 a month. From month 5, we keep funding them and ${RULE}. Or you pay Meta yourself, pause whenever you like, and keep every penny. Switch any time: tell us and we swap straight away.`;
 }
 function adFaq(m) {
-  const pay = `each new customer who pays online through your site pays us their first month if they&rsquo;re on a monthly membership or plan, or ${SHARE}% of their first payment if it&rsquo;s anything else, like ${m.unit === 'member' ? 'a term or a course' : 'a one-off job, a visit, a course or a term'}`;
   const out = [
-    ['Who pays for the ads?', `For months 2, 3 and 4, we do, up to &pound;150 a month. Month 1 is spent building and testing everything, so the ads land on a site that works. From month 5 you choose: we keep paying and ${pay}. Or you pay Meta directly on your own ad account. Switch between the two any time. If nothing new comes in, you pay nothing for the ads.`]
+    ['Who pays for the ads?', `For months 2, 3 and 4, we do, up to &pound;150 a month. Month 1 is spent building and testing everything, so the ads land on a site that works. From month 5 you choose: we keep paying and ${RULE}, then everything they pay is yours. Or you pay Meta directly on your own ad account, and pause it whenever you like. Want to switch? Tell us and we swap straight away, and every new customer from then on is fully yours. If nothing new comes in from the ads we pay for, you pay nothing for them.`]
   ];
-  if (m.unit !== 'member') out.push([`Why ${SHARE}% of the first payment, and not the whole first payment like clubs?`, `Clubs and classes pay us a new member&rsquo;s first month, because members pay every month after. Your customers mostly pay for one ${m.unit} at a time, so ${SHARE}% is fairer: a &pound;100 ${m.unit} is &pound;20 to us, a &pound;300 one is &pound;60. Only new customers who pay online through your site count, so it&rsquo;s tracked for you and nothing is guesswork, and repeat customers are always yours. Take cash or card in person? Then paying for your own ads is the simpler choice. And if our share ever comes to more than the &pound;150 we spend on your ads, we email you to say so, so you can switch to paying for your own and keep the difference.`]);
+  if (m.unit !== 'member') out.push([`Why ${SHARE}% of the first payment, and not the whole first payment like a membership?`, `A membership keeps paying you every month, so its first payment comes to us. A ${m.unit} paid for once is different, and some are big, so ${SHARE}% of the first payment is fairer: a &pound;100 ${m.unit} is &pound;20 to us, a &pound;300 one is &pound;60. Only new customers who pay online through your site count, so it&rsquo;s tracked for you, and repeat customers are always yours. We&rsquo;re the ones putting &pound;150 a month into your ads, at our risk. Take cash or card in person, or busy enough that our share adds up? Pay for your own ads instead and keep the difference. If our share ever comes to more than the &pound;150 we spend, we email you to say so.`]);
   return out;
 }
 
@@ -257,3 +254,4 @@ module.exports = [
 module.exports.adDeal = adDeal;
 module.exports.adFaq = adFaq;
 module.exports.SHARE = SHARE;
+module.exports.RULE = RULE;
