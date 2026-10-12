@@ -710,7 +710,7 @@ body.home .g-free{background:none;color:var(--neon);-webkit-text-fill-color:var(
 @media (max-width:600px){.mh h1{max-width:none;font-size:clamp(32px,calc((100vw - 44px) / 9.3),44px)}}
 /* The plan's lead features in bold ink, with the accent kept to the ticks. */
 body.home .plan-wide-ticks li.tick-hero{color:var(--ink)}
-#understand .dim-line{margin-inline:auto}
+#understand .dim-line,#one .dim-line,#results .dim-line{margin-inline:auto}
 
 /* Neon marks: the non-text accents in the bright shade, with a soft glow
    on the solid pieces so they read as lit. */
@@ -878,3 +878,22 @@ body.home .ev-card{background:var(--glass);border:0;box-shadow:var(--glass-shado
 @media (max-width:560px){.mh-compare span:last-child{white-space:normal}}
 .ev-link{display:block;margin-top:14px;text-align:center;font-size:15px;font-weight:600;color:var(--good)}
 .ev-link:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- The three struggles, then One's fix for each ---------- */
+.pr-strip.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:860px){.pr-strip.three{grid-template-columns:1fr}}
+.fx-lede{margin:16px auto 0;max-width:46ch}
+.fx-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:clamp(28px,4vw,40px)}
+@media (max-width:860px){.fx-grid{grid-template-columns:1fr}}
+.fx-card{padding:26px 24px;border-radius:var(--radius-lg);text-align:left}
+.fx-tag{margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--good)}
+.fx-card h3{margin:0;font-size:20px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.fx-card p:last-child{margin:10px 0 0;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+.fx-steps-h{margin:clamp(44px,6vw,64px) 0 0;text-align:center;font-size:clamp(22px,3vw,28px);font-weight:700;letter-spacing:-.02em}
+.fx-steps{list-style:none;margin:22px auto 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1000px}
+@media (max-width:860px){.fx-steps{grid-template-columns:1fr;max-width:560px}}
+.fx-steps li{display:flex;gap:14px;align-items:flex-start;text-align:left}
+.fx-n{flex:0 0 34px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;color:#fff;background:linear-gradient(135deg,#c93e09,#ff4f12);box-shadow:0 6px 16px var(--neon-glow,rgba(255,79,18,.3))}
+.fx-steps b{display:block;font-size:16px;font-weight:700;letter-spacing:-.01em}
+.fx-steps li span:not(.fx-n){display:block;margin-top:4px;font-size:15px;line-height:1.45;color:var(--ink-2)}
+body.home .fx-card{background:var(--glass);border:0;box-shadow:var(--glass-shadow);--ink-2:#55555a;--ink-3:#6e6e73}

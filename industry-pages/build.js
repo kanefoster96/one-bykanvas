@@ -18,7 +18,7 @@ const OUT = path.join(__dirname, '..');
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
 const CSS_V = '141';
-const SCRIPT_V = 36;
+const SCRIPT_V = 39;
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -305,10 +305,10 @@ ${b.stepsLine ? `  <div class="wrap center reveal">
 </section>
 ${b.maxPitch ? `<section class="section">
   <div class="wrap center">
-    <h2 class="reveal">${b.maxPitch.heading}</h2>
-    <p class="lede reveal">${lines(b.maxPitch.text)}</p>
+    <h2 class="reveal">${oneFits(b) ? b.maxPitch.heading : 'Want customers to book and pay online?'}</h2>
+    <p class="lede reveal">${oneFits(b) ? lines(b.maxPitch.text) : 'Starter gets you a proper site and found on Google.<span class="gap"></span>Business adds bookings, payments, live chat and reviews asked for automatically.'}</p>
   </div>
-  <div class="wrap plans three reveal">
+  <div class="wrap plans${oneFits(b) ? ' three' : ''} reveal">
     <article class="plan featured">
       <div class="badge">The site</div>
       <h3>Starter</h3>
@@ -328,7 +328,7 @@ ${b.maxPitch ? `<section class="section">
       </ul>
       <a class="btn btn-ghost full" href="/get-started.html?plan=business">Choose Business &rsaquo;</a>
     </article>
-    <article class="plan">
+${oneFits(b) ? `    <article class="plan">
       <div class="badge">Add growth</div>
       <h3>One</h3>
       <p class="price"><span class="cur">&pound;</span>250<span class="per">/month</span></p>
@@ -341,8 +341,8 @@ ${b.maxPitch ? `<section class="section">
       <p class="plan-up">Month 1 we build it, months 2 to 4 of ads are on us. Cancel any time.</p>
       <a class="btn btn-ghost full" href="${maxHref(b.slug)}">${maxLabel(b.slug)} &rsaquo;</a>
     </article>
-  </div>
-  <p class="wrap center micro reveal">No setup fee on any plan. Business is half price for your first month, and One comes with 3 months of ads on us. Or pay for the year: 2 months free, plus the Launch Boost on Starter and Business.</p>
+` : ''}  </div>
+  <p class="wrap center micro reveal">No setup fee on any plan. Business is half price for your first month${oneFits(b) ? ', and One comes with 3 months of ads on us' : ''}. Or pay for the year: 2 months free, plus the Launch Boost on Starter and Business.</p>
 </section>
 ` : ''}${b.faq ? `<section class="section grey">
   <div class="wrap center">
@@ -436,7 +436,7 @@ function planCard(f) {
         <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
         <li class="tick-hero">Business email at your own address</li>
       </ul>
-      <p class="plan-up">Built for your kind of business: <a href="/max/trades">Trades</a>, <a href="/clubs">Kids&rsquo; clubs</a>, <a href="/max/salon">Salon</a>, or <a href="#" data-max-other>another</a>.</p>
+      <p class="plan-up">Built for clubs, classes and personal trainers. <a href="/clubs">See it for kids&rsquo; clubs</a>.</p>
     </article>`;
   return `    <article class="plan featured">
       <div class="badge">Get booked</div>
@@ -605,13 +605,20 @@ for (const f of FEATURES) {
   console.log('wrote', path.basename(file));
 }
 
+/* One is for clubs, classes and services that run on members. Pages for
+   other businesses sell Starter and Business only; the local area pages
+   keep One, since clubs search by town too. */
+function oneFits(b) {
+  return !!b.file || ['kids-clubs', 'gyms', 'tutors', 'driving-instructors'].includes(b.slug);
+}
+
 /* ---------------------------------------------------------- One pages */
 /* Which model a trade page points at; the rest go to the picker. */
 function maxHref(slug) {
   if (['trades', 'cleaners', 'gardeners', 'electricians', 'heating-engineers', 'mobile-car-valeters'].includes(slug)) return '/max/trades';
   if (['salons', 'barbers', 'hairdressers', 'lash-artists', 'makeup-artists', 'nail-techs'].includes(slug)) return '/max/salon';
   if (slug === 'kids-clubs') return '/clubs';
-  return '/plans#max';
+  return '/#one';
 }
 /* The type the wizard carries onto the profile, so the setup form need
    not ask. Empty for a trade with no One of its own. */
