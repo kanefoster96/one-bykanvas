@@ -101,7 +101,7 @@ function planCards(site, domain, leadId) {
       ],
       ctaText: 'Choose Business — £25 today', ctaHref: joinHref(site, 'business', domain, leadId)
     }],
-    note: 'Business: 50% off your first month. Or pay for the year on any plan: 2 months free and the Launch Boost, '
+    note: 'Business: 50% off your first month. Or pay for the year: 2 months free and the Launch Boost, '
         + 'your first month spent getting you found on Google.<br>'
         + 'Designed and built by our team to get your business more customers online. Message us any time.'
   };
