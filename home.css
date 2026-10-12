@@ -511,7 +511,7 @@ body.home .faq summary::after{
 body.home .faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
 body.home .faq summary:hover{color:var(--ink)}
 body.home .faq summary:hover::after{background-color:var(--paper)}
-body.home .ans{margin:0 -22px;padding:14px 22px 20px;background:var(--paper);border-radius:0 0 20px 20px}
+body.home .ans{margin:0 -22px;padding:4px 22px 20px;background:none;border-radius:0 0 20px 20px}
 body.home .faq .ask{margin-top:18px;text-align:center}
 
 /* ---------- Closing ask ---------- */
