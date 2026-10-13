@@ -980,3 +980,39 @@ body.home .mh-info-note{background:#f5f5f7}
 
 /* The result page's recommendation: neutral, like every other panel now. */
 .mh-plan-rec{background:#f5f5f7!important}
+
+/* ---------- Alternating bands ----------
+   White and near-black sections in turn, each dark band fading in from and
+   out to the white around it, so every section reads as a fresh start rather
+   than one long white page. Cards follow their band: dark cards on dark,
+   soft grey on white. Orange stays for marks, ticks and the buttons. */
+body.home{--band:#08080a;--fade:clamp(70px,9vw,140px)}
+body.home .band-dark{--after:#fff;color:#f5f5f2;
+  background:linear-gradient(#fff 0,var(--band) var(--fade),var(--band) calc(100% - var(--fade)),var(--after) 100%)!important;
+  padding-top:calc(var(--fade) + clamp(28px,5vw,56px));padding-bottom:calc(var(--fade) + clamp(28px,5vw,56px))}
+body.home .band-last{--after:var(--paper)}
+body.home .band-dark h2,body.home .band-dark > .wrap > h3,body.home .band-dark .fx-steps-h{color:#f5f5f2}
+body.home .band-dark .lede,body.home .band-dark .micro,body.home .band-dark .mh-kicker{color:rgba(245,245,242,.72)}
+body.home .band-dark .pr-tag{color:#ff7a3d}
+/* cards on dark */
+body.home .band-dark .pr-item,body.home .band-dark .ev-card{background:#151518;border:1px solid rgba(255,255,255,.09);box-shadow:none;
+  --ink:#f5f5f2;--ink-2:rgba(245,245,242,.74);--ink-3:rgba(245,245,242,.6);color:#f5f5f2}
+body.home .band-dark .pr-item .tile{background:linear-gradient(135deg,#c93e09,#ff4f12);color:#fff}
+body.home .band-dark .ev-card .ticks li,body.home .band-dark .ev-card .ticks li.tick-hero{color:#f5f5f2}
+body.home .band-dark .ev-card .ticks li.tick-hero b{color:#ff7a3d}
+body.home .band-dark .ev-card .ticks li span{color:rgba(245,245,242,.6)}
+body.home .band-dark .ev-card .ticks li::before,body.home .band-dark .ev-card .ticks li.tick-hero::before{border-color:#ff4f12}
+/* the cost table on dark */
+body.home .band-dark .mh-compare{background:#151518;border-color:rgba(255,255,255,.1)}
+body.home .band-dark .mh-compare > *{border-color:rgba(255,255,255,.08)!important}
+body.home .band-dark .mh-compare span:last-child{color:rgba(245,245,242,.7)}
+body.home .band-dark .mh-compare .sum{background:rgba(255,255,255,.06)}
+body.home .band-dark .mh-compare .sum span:last-child{color:#f5f5f2}
+body.home .band-dark .mh-compare .us{background:#f5f5f2;color:#08080a}
+body.home .band-dark .mh-compare .us span:last-child{color:#c93e09}
+/* cards on white: soft grey, dark type, orange only on the small tag */
+body.home .fx-card{background:#f5f5f7;box-shadow:none;--ink:#1d1d1f;--ink-2:#55555a;--ink-3:#6e6e73;color:#1d1d1f}
+body.home .fx-card h3{color:#1d1d1f}
+body.home .fx-tag{color:#c93e09}
+body.home #faq details{background:#f5f5f7}
+body.home #results .fd{margin-top:clamp(28px,4vw,40px)}
