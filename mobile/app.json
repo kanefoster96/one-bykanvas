@@ -21,9 +21,6 @@
       "bundleIdentifier": "one.kanvas.app",
       "buildNumber": "1",
       "supportsTablet": false,
-      "associatedDomains": [
-        "applinks:kanvas.one"
-      ],
       "config": {
         "usesNonExemptEncryption": false
       },
@@ -47,23 +44,6 @@
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.POST_NOTIFICATIONS"
-      ],
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "autoVerify": true,
-          "data": [
-            {
-              "scheme": "https",
-              "host": "kanvas.one",
-              "pathPrefix": "/app"
-            }
-          ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
-        }
       ]
     },
     "web": {
