@@ -1022,15 +1022,19 @@
   /* One reads differently from a website plan: the words that promise a
      site live today (Starter) or ready in 7 to 14 days (Business) become
      the One process (month 1 the build, months 2 to
-     4 the ads on us, cancel any time). Elements carry their One text in data-one; the
-     website text is kept the first time we swap so it can come back. */
+     4 the ads on us, cancel any time). Elements carry their One text in data-one,
+     and their Business text in data-biz where it differs from Starter's; the
+     Starter text is kept the first time we swap so it can come back. */
   function paintPlanCopy() {
     var chosen = document.querySelector('input[name="plan"]:checked');
     var one = chosen ? chosen.value === 'max' : MAX_MODEL !== null;
+    var biz = !one && chosen ? chosen.value === 'business' : false;
     document.body.classList.toggle('is-one', one);
-    document.querySelectorAll('[data-one]').forEach(function (el) {
+    document.querySelectorAll('[data-one], [data-biz]').forEach(function (el) {
       if (!el.hasAttribute('data-std')) el.setAttribute('data-std', el.innerHTML);
-      el.innerHTML = one ? el.getAttribute('data-one') : el.getAttribute('data-std');
+      el.innerHTML = one && el.hasAttribute('data-one') ? el.getAttribute('data-one')
+        : biz && el.hasAttribute('data-biz') ? el.getAttribute('data-biz')
+        : el.getAttribute('data-std');
     });
     document.querySelectorAll('[data-one-ph]').forEach(function (el) {
       if (!el.hasAttribute('data-std-ph')) el.setAttribute('data-std-ph', el.placeholder);
@@ -1038,6 +1042,10 @@
     });
     document.querySelectorAll('[data-one-only]').forEach(function (el) { el.hidden = !one; });
     document.querySelectorAll('[data-std-only]').forEach(function (el) { el.hidden = one; });
+    /* After data-std-only, so these win: Starter goes live within 24 hours,
+       Business is ready in 7 to 14 days. */
+    document.querySelectorAll('[data-starter-only]').forEach(function (el) { el.hidden = one || biz; });
+    document.querySelectorAll('[data-biz-only]').forEach(function (el) { el.hidden = !biz; });
     /* The Launch Boost list belongs to Starter and Business; One has it built in. */
     var boost = document.getElementById('boostList');
     if (boost && one) boost.hidden = true;
