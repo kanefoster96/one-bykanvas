@@ -1057,3 +1057,15 @@ body.home .ap-row::-webkit-scrollbar{display:none}
 body.home .ap-fig{flex:0 0 min(74vw,260px);scroll-snap-align:center}
 body.home .ap-hp{width:100%}
 body.home .ap-fig figcaption{margin-top:18px}
+
+/* ---------- Conversion pass ---------- */
+.mh-proofline{margin:24px 0 0;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.mh-proofline b{color:var(--ink);font-weight:700}
+@media (max-width:600px){.mh-proofline span{display:block}}
+.fx-dream{display:block;margin-bottom:8px;color:var(--ink);font-weight:700}
+@media (min-width:861px){.fx-steps4{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+.ev-bonus{list-style:none;display:grid;gap:12px;max-width:860px;margin:28px auto 8px;padding:0;text-align:left}
+@media (min-width:760px){.ev-bonus{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ev-bonus li{padding:18px 20px;border-radius:20px;background:rgba(255,79,18,.1);border:1px solid rgba(255,79,18,.35);color:#f5f5f2}
+.ev-bonus b{display:block;font-size:16.5px;letter-spacing:-.01em;color:#ff7a3d}
+.ev-bonus span{display:block;margin-top:4px;font-size:14px;line-height:1.4;color:rgba(245,245,242,.78)}

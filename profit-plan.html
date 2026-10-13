@@ -11,7 +11,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=5">
 <link rel="stylesheet" href="styles.css?v=144">
-<link rel="stylesheet" href="home.css?v=55">
+<link rel="stylesheet" href="home.css?v=57">
 </head>
 <body class="home page-check page-profit">
 
@@ -82,5 +82,17 @@
 <script src="growth-model.js?v=2"></script>
 <script src="free-check.js?v=1"></script>
 <script src="/onemark.js?v=2" defer></script>
+<script>
+/* Message match: an ad for one kind of club lands on wording for that club.
+   Reads the ad's link tag (utm_content) or ?club=. Unknown tags change nothing. */
+(function () {
+  var who = { 'dance': 'Dance and cheer school owners', 'martial-arts': 'Martial arts club owners', 'drama': 'Drama school owners',
+    'boxing': 'Boxing club owners', 'toddler': 'Baby and toddler class owners', 'gymnastics': 'Gymnastics club owners' };
+  var q = new URLSearchParams(location.search), k = (q.get('club') || q.get('utm_content') || '').toLowerCase(), w = who[k];
+  var h = document.querySelector('.mh-page-h');
+  if (!w || !h) return;
+  h.innerHTML = w + ', what are your empty spots costing you? <span class="dim">Let\u2019s find out.</span>';
+})();
+</script>
 </body>
 </html>
