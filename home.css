@@ -1012,3 +1012,38 @@ body.home .fx-card h3{color:#1d1d1f}
 body.home .fx-tag{color:#c93e09}
 body.home #faq details{background:#f5f5f7}
 body.home #results .fd{margin-top:clamp(28px,4vw,40px)}
+
+/* ---------- Hero, take two ----------
+   Room to breathe on the design scale (8, 16, 24, 32, 48, 64), a stronger
+   orange sweep, and the app drawn live beside the copy instead of a
+   screenshot that loads late. Two columns from 1024px. */
+body.home{--grad-text:linear-gradient(90deg,#b8320a 0%,#f0450f 48%,#ff6a1f 100%)}
+.mh{padding:clamp(48px,8vw,96px) 0 clamp(64px,8vw,112px)}
+.mh h1{margin-top:32px}
+.mh .sub{margin-top:24px}
+.mh-risk{margin-top:32px}
+.mh .mh-cta{margin-top:32px}
+.mh-in{margin-top:16px}
+.claim-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:15.5px;font-weight:600;color:var(--good);text-decoration:none}
+.claim-link:hover{text-decoration:underline}
+.mh-cta .claim-link{display:flex;justify-content:center}
+.sec-cta .claim-link,.ev-cta + .claim-link{display:block;margin-top:14px}
+body.home .band-dark .claim-link{color:#ff7a3d}
+.mh-visual{display:flex;justify-content:center;margin-top:56px}
+.mh-phone{width:min(300px,74vw)}
+@media (min-width:1024px){
+  .mh-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:64px;text-align:left}
+  .mh-proof{align-items:flex-start}
+  .mh h1{margin-left:0;max-width:13ch;font-size:clamp(56px,5.2vw,74px)}
+  .mh .sub{margin-left:0}
+  .mh-risk{justify-content:flex-start;margin-left:0}
+  .mh-cta{margin-left:0}
+  .mh-info-note{margin-left:0}
+  .mh-visual{margin-top:0}
+  .mh-phone{width:340px}
+}
+
+/* The ads offer, where "Claim £150 a month for ads" lands */
+.mh-claim{display:flex;align-items:flex-start;gap:10px;max-width:520px;margin:20px auto 0;padding:14px 18px;border-radius:16px;background:#f5f5f7;font-size:15.5px;line-height:1.45;color:#55555a;text-align:left}
+.mh-claim b{color:var(--ink);font-weight:600}
+.mh-claim svg{flex:0 0 20px;width:20px;height:20px;margin-top:1px;color:var(--neon)}
