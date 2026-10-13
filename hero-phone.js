@@ -25,6 +25,7 @@
     wifi: '<svg width="32" height="24" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M2 6.5a14 14 0 0120 0M5.5 10a9 9 0 0113 0M9 13.4a4 4 0 016 0"/></svg>',
     bat: '<svg width="48" height="24" viewBox="0 0 48 24" fill="none"><rect x="1.5" y="1.5" width="40" height="21" rx="6" stroke="currentColor" stroke-width="2.4"/><rect x="5" y="5" width="33" height="14" rx="3" fill="currentColor"/><rect x="44" y="8" width="3" height="8" rx="1.5" fill="currentColor"/></svg>'
   };
+  var AP = '<span class="hp-ap"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.2 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.8 1.2 1.8 2.6 3.1 2.5 1.3-.1 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.4-.9-2.4-4.1zM14 5.2c.7-.8 1.1-1.9 1-3-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.2-.6 2.9-1.4z"/></svg>Pay</span>';
   var T = IC.tick, CLUB = 'Your Club', LOGO = '<span class="hp-lg">' + IC.star + '</span>';
 
   function qr(seed, on, off) {
@@ -65,14 +66,17 @@
       '<div class="hp-mail"><div class="hp-mh"><b>YOUR CLUB</b><span>AFTER THE TRIAL</span></div><div class="hp-mb"><h3>Ava was brilliant! \u2b50</h3><p>Thanks for coming to Hip Hop. We\u2019d love Ava to join us every week, and her spot is saved for her.</p>' +
       '<div class="hp-mbox"><b>\ud83d\udcc5 Every Tuesday</b>Hip Hop \u00b7 5:30pm \u00b7 Coach Jess</div><div class="hp-join" id="hp-join"><span id="hp-joint">Join Your Club</span><span class="hp-joined" id="hp-joined">' + T + 'Membership started</span></div><p class="hp-small">Pay monthly by card. Cancel any time.</p></div></div>' +
       ban('hp-b-follow', 'How was Ava\u2019s first class?', true) },
-    { id: 'payset', tab: 0, label: 'Easy payment setup', html:
+    { id: 'payset', tab: 0, ov: true, label: 'Easy payment setup', html:
       '<p class="hp-ttl">Join Hip Hop</p><p class="hp-sub">Monthly membership \u00b7 cancel any time</p>' +
       '<div class="hp-cd" style="margin-top:26px">' + row('Hip Hop<span class="hp-s">Tuesdays \u00b7 5:30pm</span>', '', ok('Spot saved')) + row('Ava Morgan<span class="hp-s">Age 7</span>', '', '') + '</div>' +
-      '<p class="hp-lab">Pay monthly by card</p>' +
-      '<div class="hp-fi2"><span id="hp-cn"></span><i class="hp-car" id="hp-car"></i></div>' +
-      '<div class="hp-fi2r"><div class="hp-fi2"><span id="hp-ce"></span></div><div class="hp-fi2"><span id="hp-cv"></span></div></div>' +
-      '<div class="hp-paybtn" id="hp-paybtn"><span id="hp-payt">Start membership</span><span class="hp-joined" id="hp-payok">' + T + 'Membership started</span></div>' +
-      '<p class="hp-sub" style="text-align:center;margin-top:16px!important">Paid automatically each month. Nothing to chase.</p>' },
+      '<p class="hp-lab">Pay monthly</p>' +
+      '<div class="hp-apb" id="hp-apb">' + AP + '</div>' +
+      '<p class="hp-sub" style="text-align:center;margin-top:16px!important">or pay by card</p>' +
+      '<div class="hp-allok" id="hp-payok">' + T + 'Membership started</div>' +
+      '<div class="hp-sheet" id="hp-sheet"><div class="hp-shh">' + AP + '<span>Cancel</span></div>' +
+      '<div class="hp-shr"><span class="hp-visa">VISA</span><div><b>Visa \u2022\u2022\u2022\u2022 4242</b><span>Ava\u2019s mum</span></div></div>' +
+      '<div class="hp-shr"><span class="hp-shl">' + IC.star + '</span><div><b>Your Club</b><span>Hip Hop membership \u00b7 monthly</span></div></div>' +
+      '<div class="hp-shc" id="hp-shc"><span class="hp-fid" id="hp-fid"><i></i></span><b id="hp-sht">Confirm with Side Button</b></div></div>' },
     { id: 'reg', tab: 1, label: 'Live on your registers', html:
       '<p class="hp-ttl">Hip Hop</p><p class="hp-sub">Register \u00b7 Tuesday 5:30pm</p>' +
       '<p class="hp-lab">Members</p><div class="hp-cd hp-pad"><p class="hp-big"><span id="hp-rc">18</span> of 20</p><div class="hp-bar"><i id="hp-rbar"></i></div></div>' +
@@ -234,10 +238,17 @@
     '.hp-styp{margin-left:26px;display:inline-flex;gap:8px;padding:22px 24px;border-radius:32px;background:#e9e9eb}.hp-styp i{width:12px;height:12px;border-radius:50%;background:#8e8e93}',
     '.hp-sinp{position:absolute;left:24px;right:24px;bottom:44px;display:flex;gap:16px;align-items:center}.hp-sinp span{width:70px;height:70px;border-radius:50%;border:1px solid #ddd;display:grid;place-items:center;font:300 40px/1 Inter,sans-serif;color:#111}.hp-sinp div{flex:1;padding:20px 26px;border:1px solid #ddd;border-radius:999px;font:400 26px/1 Inter,sans-serif;color:#b0b0b5}',
     /* payment setup */
-    '.hp-fi2{height:76px;border-radius:18px;background:#000;border:1px solid rgba(255,255,255,.14);padding:0 22px;display:flex;align-items:center;font:500 26px/1 Inter,sans-serif;letter-spacing:.04em;margin-bottom:14px}',
-    '.hp-fi2r{display:grid;grid-template-columns:1fr 1fr;gap:14px}',
-    '.hp-car{display:inline-block;width:2px;height:30px;background:#f5f5f2;margin-left:2px}',
-    '.hp-paybtn{position:relative;margin-top:16px;padding:26px;border-radius:999px;background:#2563eb;color:#fff;text-align:center;font:700 26px/1 Inter,sans-serif;overflow:hidden}',
+    '.hp-v.hp-ov{overflow:visible;z-index:7}',
+    '.hp-ap{display:inline-flex;align-items:center;gap:2px;font:600 34px/1 -apple-system,Inter,sans-serif;letter-spacing:-.01em}.hp-ap svg{width:34px;height:34px;margin-top:-6px}',
+    '.hp-apb{display:flex;justify-content:center;align-items:center;height:92px;border-radius:22px;background:#fff;color:#000}',
+    '.hp-sheet{position:absolute;left:-32px;right:-32px;bottom:-120px;z-index:8;background:#1c1c1e;border-radius:44px 44px 0 0;padding:30px 34px 60px;box-shadow:0 -20px 60px rgba(0,0,0,.6);transform:translateY(110%)}',
+    '.hp-shh{display:flex;justify-content:space-between;align-items:center;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,.1)}.hp-shh .hp-ap{font-size:38px;color:#fff}.hp-shh > span:last-child{font:500 24px/1 Inter,sans-serif;color:#0a84ff}',
+    '.hp-shr{display:flex;gap:20px;align-items:center;padding:22px 0;border-bottom:1px solid rgba(255,255,255,.1)}.hp-shr b{display:block;font:600 24px/1.2 Inter,sans-serif}.hp-shr div span{display:block;font:500 19px/1.3 Inter,sans-serif;color:rgba(245,245,242,.6);margin-top:4px}',
+    '.hp-visa{flex:none;width:76px;height:50px;border-radius:8px;background:linear-gradient(135deg,#1a1f71,#2b48c4);color:#fff;display:grid;place-items:center;font:italic 800 17px/1 Inter,sans-serif;letter-spacing:.04em}',
+    '.hp-shl{flex:none;width:50px;height:50px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#60a5fa);display:grid;place-items:center}.hp-shl svg{width:60%;height:60%}',
+    '.hp-shc{display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:30px}.hp-shc b{font:600 23px/1 Inter,sans-serif;color:rgba(245,245,242,.85)}',
+    '.hp-fid{position:relative;width:86px;height:86px;border-radius:50%;border:4px solid rgba(255,255,255,.35);display:grid;place-items:center}',
+    '.hp-fid i{width:40px;height:22px;border-left:6px solid #fff;border-bottom:6px solid #fff;transform:rotate(-45deg) translate(3px,-4px);opacity:0}',
     /* register, members */
     '.hp-tag.hp-new{border-color:rgba(96,165,250,.5);color:#93c5fd;background:rgba(96,165,250,.16)}',
     '.hp-pill{padding:8px 16px;border-radius:999px;font:700 18px/1 Inter,sans-serif;white-space:nowrap}.hp-pg{background:rgba(34,197,94,.14);color:#22c55e}.hp-pa{background:rgba(245,158,11,.16);color:#fbbf24}',
@@ -258,7 +269,7 @@
     var scr = SCREENS.filter(function (s) { return list.indexOf(s.id) > -1; });
     host.innerHTML = '<div class="hp-box"><div class="hp-in"><div class="hp-phone"><div class="hp-scr">' + sbar() +
       '<div class="hp-hd">' + LOGO + '<span>' + IC.bell + '</span></div>' +
-      scr.map(function (s) { return '<div class="hp-v' + (s.full ? ' hp-full' : '') + (s.light ? ' hp-light' : '') + (s.id === 'sms' ? ' hp-white' : '') + '" id="hp-' + s.id + '">' + s.html + '</div>'; }).join('') +
+      scr.map(function (s) { return '<div class="hp-v' + (s.full ? ' hp-full' : '') + (s.light ? ' hp-light' : '') + (s.id === 'sms' ? ' hp-white' : '') + (s.ov ? ' hp-ov' : '') + '" id="hp-' + s.id + '">' + s.html + '</div>'; }).join('') +
       '<div class="hp-tb"><i>' + IC.home + '</i><i>' + IC.cal + '</i><i>' + IC.chat + '</i><i>' + IC.shop + '</i><i class="hp-qrb">' + IC.qr + '</i></div>' +
       '</div></div></div></div><p class="hp-cap">' + scr.map(function (s) { return '<span>' + s.label + '</span>'; }).join('') + '</p>';
 
@@ -311,14 +322,15 @@
         var b = pop(p(u, 1.8, .4)); show($('hp-sout'), cl(b * 1.4), 'scale(' + (.92 + .08 * b) + ')');
       },
       payset: function (u) {
-        var num = '4242 4242 4242 4242', n = Math.round(cl((u - .3) / .8) * num.length);
-        $('hp-cn').textContent = num.slice(0, n) || 'Card number'; $('hp-cn').style.opacity = n ? 1 : .45;
-        $('hp-car').style.display = u < 1.1 && Math.floor(u * 4) % 2 === 0 ? 'inline-block' : 'none';
-        $('hp-ce').textContent = u > 1.2 ? '08 / 28' : 'MM / YY'; $('hp-ce').style.opacity = u > 1.2 ? 1 : .45;
-        $('hp-cv').textContent = u > 1.4 ? '\u2022\u2022\u2022' : 'CVC'; $('hp-cv').style.opacity = u > 1.4 ? 1 : .45;
-        var g = eo(p(u, 1.95, .3)); $('hp-paybtn').style.background = g > 0 ? green(g) : '#2563eb';
-        $('hp-paybtn').style.transform = 'scale(' + (u > 1.8 && u < 1.95 ? .96 : 1) + ')';
-        $('hp-payt').style.opacity = 1 - g; $('hp-payok').style.opacity = g;
+        $('hp-apb').style.transform = 'scale(' + (u > .7 && u < .85 ? .95 : 1) + ')';
+        var up = eo(p(u, .85, .4)), down = eo(p(u, 2.35, .35));
+        $('hp-sheet').style.transform = 'translateY(' + (110 * (1 - up) + 110 * down) + '%)';
+        var conf = p(u, 1.5, .5), done = u > 2.0, fid = $('hp-fid');
+        fid.style.borderColor = done ? '#30d158' : 'rgba(255,255,255,' + (.35 + .5 * Math.abs(Math.sin(conf * Math.PI * 2))) + ')';
+        fid.style.background = done ? '#30d158' : 'transparent';
+        fid.firstChild.style.opacity = done ? 1 : 0;
+        $('hp-sht').textContent = done ? 'Done' : 'Confirm with Side Button';
+        var a = pop(p(u, 2.5, .45)); show($('hp-payok'), cl(a * 1.4), 'scale(' + (.92 + .08 * a) + ')');
       },
       reg: function (u) {
         var k = pop(p(u, .7, .45)); show($('hp-avr'), cl(k * 1.4), 'translateX(' + (60 * (1 - k)) + 'px)');
