@@ -76,7 +76,7 @@ function card([h, p], iconKey, color) {
 const DEFAULT_STEPS = [
   ['Tell us about the business', 'What you do, your prices, your photos. Five minutes.'],
   ['We build it for you', 'Design, writing, web address, hosting and security. All in the price.'],
-  ['Live within 24 hours, features in 14', 'Live on your own address within 24 hours of joining. Features within 14 days, or your next month is free.']
+  ['Live within 24 hours', 'Starter is live on your own address within 24 hours of joining. Business, with your features, is ready within 14 days, often sooner, or your next month is free.']
 ];
 const STEP_COLORS = ['ico-blue', 'ico-purple', 'ico-green'];
 
@@ -429,7 +429,7 @@ function planCard(f) {
       <p class="plan-free">No setup fees</p>
       <a class="btn btn-primary full" href="/get-started.html?plan=max${maxParam(f.slug)}">Add growth</a>
       <ul class="ticks">
-        <li>Your website, designed and built for you, live the day you join</li>
+        <li>Your website, designed and built for you, ready in 7 to 14 days</li>
         <li>Bookings, payments and live chat. Changes within 48 hours</li>
         <li class="tick-hero">Your Facebook and Instagram ads, set up, run and tracked by us</li>
         <li class="tick-hero">Your first ad live in month 2, once your site is tested</li>
@@ -447,11 +447,11 @@ function planCard(f) {
       <p class="plan-free">No setup fees</p>
       <a class="btn btn-primary full" href="/get-started.html?plan=business">Choose Business</a>
       <ul class="ticks">
-        <li>Live on your own address within 24 hours of joining</li>
+        <li>Your site and features, built together and ready in 7 to 14 days</li>
         <li class="tick-hero">Bookings, payments and live chat</li>
         <li class="tick-hero">Reviews asked for automatically</li>
         <li class="tick-hero">Priority changes, made by us within 48 hours</li>
-        <li class="tick-hero">Your three features built within 14 days, or your next month is free</li>
+        <li class="tick-hero">Not ready within 14 days? Your next month is free</li>
       </ul>
       <p class="plan-up">Just want the site, with a contact form and click to call? <a href="/join">Starter is &pound;9.99 a month</a>.</p>
     </article>`;
@@ -534,7 +534,7 @@ ${NAV}<section class="page-hero">
     <p class="lede reveal pain">${f.pain}</p>
   </div>
 </section>
-${joinCta(start.href, start.label, 'Built for you from the page you already have, live within 24 hours. Just want the site? <a href="/join">Starter is &pound;9.99 a month, or &pound;99 a year</a>.')}
+${joinCta(start.href, start.label, 'Built for you from the page you already have, ready in 7 to 14 days. Just want the site? <a href="/join">Starter is &pound;9.99 a month, or &pound;99 a year</a>, live within 24 hours.')}
 
 <section class="section pt0">
   <div class="wrap center">
@@ -576,7 +576,7 @@ ${f.faq.map(([q, a]) => `    <details>
 
 <section class="section grey cta-end">
   <div class="wrap center">
-    <h2 class="reveal">Your website, live within <span class="g-free">24 hours.</span></h2>
+    <h2 class="reveal">Your website, ready in <span class="g-free">7 to 14 days.</span></h2>
     <p class="lede reveal">Built for you from the page you already have. We change it until you love it.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="${start.href}">${start.label}</a>
@@ -698,7 +698,7 @@ ${nav}<!-- 1. The promise, the price, the ask. -->
     </div>
     <p class="hero-pill reveal">${m.name}</p>
     <h1 class="reveal">${m.promise}</h1>
-    <p class="lede reveal">&pound;250 a month. No setup fee. Live within 24 hours of joining.</p>
+    <p class="lede reveal">&pound;250 a month. No setup fee. Your website ready in 7 to 14 days.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
       <a class="btn btn-ghost" href="/plans">All the plans</a>
@@ -793,7 +793,7 @@ ${m.why.map(([lead, rest]) => `    <p><b>${lead}</b>${rest}</p>`).join('\n')}
 <section id="offer" class="section">
   <div class="wrap center">
     <h2 class="reveal">No risk to try it.</h2>
-    <ul class="assure trust reveal"><li>Live within 24 hours of joining</li><li>No setup fee</li><li>No contract, cancel any month</li><li>Your web address is yours</li></ul>
+    <ul class="assure trust reveal"><li>Your website ready in 7 to 14 days</li><li>No setup fee</li><li>No contract, cancel any month</li><li>Your web address is yours</li></ul>
   </div>
 ${MAX_GUARANTEE ? `  <div class="wrap">
     <div class="promise reveal">
@@ -825,7 +825,7 @@ ${faq.map(([q, a]) => `    <details>
 <!-- 10. The ask. -->
 <section class="section cta-end">
   <div class="wrap center">
-    <h2 class="reveal">Live within <span class="g-free">24 hours.</span></h2>
+    <h2 class="reveal">Ready in <span class="g-free">7 to 14 days.</span></h2>
     <p class="lede reveal">Your site built for you from the page you already have, then the rest run for you.<span class="gap"></span>No contract. Cancel any month.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>

@@ -320,27 +320,27 @@ module.exports = async function handler(req, res) {
     if (starter && domain) facts.push({ label: 'Web address', value: domain });
     facts.push({ label: 'Started', value: started });
 
-    /* One: the build starts from the setup form, the site follows within a
-       few days of it, and the app waits on Apple and Google, not us. */
+    /* One: the build starts from the setup form, the site is ready in 7 to
+       14 days, and the app waits on Apple and Google, not us. */
     const one = patch.active_plan === 'max';
     const nowText = one
-      ? `Here's what happens now. Step 1 is your setup form, below. Your website is usually ready `
-        + `within a few days of it. Then we build your app and send it to Apple and Google for you; `
+      ? `Here's what happens now. Step 1 is your setup form, below. Your website is ready `
+        + `in 7 to 14 days. Then we build your app and send it to Apple and Google for you; `
         + `how long they take to approve it is up to them, usually 1 to 4 weeks. Until then, the app's `
         + `features work on your website. Your ads start once it's all ready, usually from month 2, `
         + `and months 2 to 4 of ad spend are on us, up to £100 a month.`
       : starter
       ? `Here's what happens now. We register ${domain || 'your web address'} and build your site from the page you sent us. `
         + `It goes live within 24 hours, and you get an email the moment it is.`
-      : `Here's what happens now. Today we register your web address and put your page live on it, `
-        + `and you get an email the moment it is. `
-        + `Then we build the features you asked for, within 14 days - or your next month is free. `
+      : `Here's what happens now. We register your web address and build your site and the features `
+        + `you asked for, together. It's ready in 7 to 14 days, and you get an email the moment it's live. `
+        + `If it isn't ready within 14 days, your next month is free. `
         + `If we need anything from you - photos, prices, an offer - we'll ask.`;
     const nowHtml = one
-      ? `Here&rsquo;s what happens now. <strong>Step 1</strong> is your setup form, below. Your website is usually ready <strong>within a few days</strong> of it. Then we build your app and send it to Apple and Google for you; how long they take to approve it is up to them, usually 1 to 4 weeks. Until then, the app&rsquo;s features work on your website. Your ads start once it&rsquo;s all ready, usually from month 2, and months 2 to 4 of ad spend are on us, up to &pound;100 a month.`
+      ? `Here&rsquo;s what happens now. <strong>Step 1</strong> is your setup form, below. Your website is ready <strong>in 7 to 14 days</strong>. Then we build your app and send it to Apple and Google for you; how long they take to approve it is up to them, usually 1 to 4 weeks. Until then, the app&rsquo;s features work on your website. Your ads start once it&rsquo;s all ready, usually from month 2, and months 2 to 4 of ad spend are on us, up to &pound;100 a month.`
       : starter
       ? `Here&rsquo;s what happens now. We register <strong>${esc(domain || 'your web address')}</strong> and build your site from the page you sent us. It goes live <strong>within 24 hours</strong>, and you get an email the moment it is.`
-      : `Here&rsquo;s what happens now. <strong>Today</strong> we register your web address and put your page live on it, and you get an email the moment it is. <strong>Then</strong> we build the features you asked for, within 14 days &mdash; or your next month is free. If we need anything from you &mdash; photos, prices, an offer &mdash; we&rsquo;ll ask.`;
+      : `Here&rsquo;s what happens now. We register your web address and build your site and the features you asked for, together. It&rsquo;s ready <strong>in 7 to 14 days</strong>, and you get an email the moment it&rsquo;s live. If it isn&rsquo;t ready within 14 days, your next month is free. If we need anything from you &mdash; photos, prices, an offer &mdash; we&rsquo;ll ask.`;
     const askText = one
       ? `Complete your setup: ${site}/onboarding.html\n`
         + `It takes about 10 minutes, saves as you go, and you can skip anything you're not sure of.\n\n`

@@ -685,12 +685,16 @@
             window.k1.payment({ amount: pence, ref: d.sub || sessionId, email: accountEmail, description: (paidPlan === 'business' ? 'Business' : 'Starter') + ', ' + (d.annual ? 'yearly' : 'monthly') });
           });
         }
+        // Starter goes live within 24 hours; Business is built with its
+        // features and ready in 7 to 14 days.
+        var biz = paidPlan === 'business';
+        if (biz) $('doneSub').textContent = 'Our team is building your site and your features. It’s ready in 7 to 14 days. We’ll email you the moment it is.';
         if (d.domain) {
           $('doneSub').textContent = '';
-          $('doneSub').append('Our team is building your site. It goes live at ');
+          $('doneSub').append(biz ? 'Our team is building your site and your features. It goes live at ' : 'Our team is building your site. It goes live at ');
           var b = document.createElement('b');
           b.textContent = d.domain;
-          $('doneSub').append(b, ' within 24 hours. We’ll email you the moment it is.');
+          $('doneSub').append(b, biz ? ' in 7 to 14 days. We’ll email you the moment it is.' : ' within 24 hours. We’ll email you the moment it is.');
         }
         if (!d.needsAccount) {
           $('accountBox').hidden = true;

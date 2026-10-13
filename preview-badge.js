@@ -97,7 +97,7 @@
   var card = null, pill = null;
 
   var STARTER_LINE = 'This page, live on your address within 24 hours. Contact form and click to call. Found on Google. Unlimited changes to your words and photos, made by us.';
-  var BUSINESS_LINE = 'Everything in Starter, plus bookings, payments and live chat. Changes within 48 hours.';
+  var BUSINESS_LINE = 'Everything in Starter, plus bookings, payments and live chat. Ready in 7 to 14 days, then changes within 48 hours.';
 
   function button(text, href, filled) {
     var a = make('a', {

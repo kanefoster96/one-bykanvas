@@ -25,7 +25,7 @@ const PROMISE = {
   name: 'The Love-It Promise',
   lines: [
     'We change it until you love it. Words and photos, as often as you like.',
-    'Live on your own address within 24 hours of joining. Your features built within 14 days, or your next month is free.',
+    'Starter is live on your own address within 24 hours of joining. Business, with your features, is ready within 14 days, often sooner, or your next month is free.',
     'No contract. Cancel any month, with no exit fee.',
     'Your web address is yours. Leave, and we transfer it to you free.'
   ]
@@ -59,7 +59,7 @@ function steps(one) {
   return [
     one,
     ['We build it for you', 'Design, writing, web address, hosting and security. All done by us, all in the price.'],
-    ['Live within 24 hours, features in 14', 'Live on your own address within 24 hours of joining. Your features within 14 days, or your next month is free. Then unlimited changes, within 48 hours.']
+    ['Live within 24 hours', 'Starter is live on your own address within 24 hours of joining. Business, with your features, is ready within 14 days, often sooner, or your next month is free. Then unlimited changes, within 48 hours.']
   ];
 }
 

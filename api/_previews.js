@@ -97,7 +97,7 @@ function planCards(site, domain, leadId) {
         'Bookings, payments and live chat',
         'Reviews asked for automatically after every job',
         'Priority changes, made by us within 48 hours',
-        'Your three features built within 14 days, or your next month is free'
+        'Your site and three features ready within 14 days, or your next month is free'
       ],
       ctaText: 'Choose Business — £25 today', ctaHref: joinHref(site, 'business', domain, leadId)
     }],
@@ -112,8 +112,8 @@ const NEXT = {
   title: 'What happens when you say yes',
   ticks: true,
   items: [
-    'Today: we register your web address and put this page live on it, with your contact form and click to call',
-    'On Business: the three features you choose at signup, built within 14 days, or your next month is free',
+    'On Starter: today we register your web address and put this page live on it, with your contact form and click to call',
+    'On Business: your site and the three features you choose at signup, ready within 14 days, or your next month is free',
     'Any time: changes are free, before and after you join'
   ]
 };
@@ -223,8 +223,8 @@ async function sendLeadPreview(db, id, url, opts) {
         + `with a contact form and click to call, found on Google, and changes to your words and photos made by us. `
         + `No setup fee. Cancel any month.\n`
         + `${joinHref(site, 'starter', claimable, lead.id)}\n\n`
-        + `Want bookings, payments and live chat? Business is GBP 50 a month, with changes done within 48 hours `
-        + `and your three features built within 14 days or your next month is free.\n`
+        + `Want bookings, payments and live chat? Business is GBP 50 a month: your site and three features ready `
+        + `within 14 days or your next month is free, then changes done within 48 hours.\n`
         + `${joinHref(site, 'business', claimable, lead.id)}\n\n`
         + `Designed and built by our team to get your business more customers online. Message us any time.\n\n`
         + `50% off your first month of Business, applied when you join. Or pay for the year on any plan: `
