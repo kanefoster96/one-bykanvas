@@ -20,7 +20,7 @@
   var CODE = '';
 
   function shareText() {
-    return 'Kanvas One builds your website for you, live within 24 hours, from £9.99 '
+    return 'Kanvas One builds your website for you, live within 24 hours on Starter at £9.99 '
       + 'a month. Use my code '
       + CODE + ' when you join: ' + LINK;
   }

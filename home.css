@@ -680,6 +680,8 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 .mh-risk{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 22px;max-width:640px;margin:26px auto 0;padding:0}
 .mh-risk li{display:inline-flex;align-items:center;gap:7px;font-size:15.5px;font-weight:600;color:var(--ink)}
 .mh-risk svg{width:18px;height:18px;flex:0 0 18px;color:var(--good)}
+/* In the hero's copy column, the three promises read as one list. */
+.mh-copy .mh-risk{flex-direction:column;align-items:flex-start;gap:10px}
 .mh .mh-cta{margin-top:26px}
 @media (max-width:600px){.mh-risk{flex-direction:column;align-items:flex-start;gap:10px;width:fit-content}.mh .hh-phone-wrap{margin-bottom:0}.mh .hh-scene{min-height:0}}
 

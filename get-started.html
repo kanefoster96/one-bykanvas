@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Get started — Kanvas One</title>
-<meta name="description" content="Tell us about your business and we'll build your site. Live on your own address within 24 hours you join, your features built within 14 days, no setup cost.">
+<meta name="description" content="Tell us about your business and we'll build your site. Starter is live on your own address within 24 hours of joining; Business, features and all, is ready in 7 to 14 days. No setup cost.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg?v=5" type="image/svg+xml">
@@ -128,7 +128,7 @@
               <li class="tick-hero">Bookings, payments and live chat</li>
               <li class="tick-hero">Your dashboard, live chat and payment alerts in the app</li>
               <li class="tick-hero">Reviews asked for automatically</li>
-              <li class="tick-hero">Your three features built within 14 days, or your next month is free</li>
+              <li class="tick-hero">Your site and three features ready within 14 days, or your next month is free</li>
               <li class="tick-hero">Priority changes, made by us within 48 hours</li>
             </ul>
           </div>
@@ -228,7 +228,7 @@
           <button class="combo-toggle" type="button" tabindex="-1" aria-label="Show ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           <ul class="combo-list" id="useList3" role="listbox" hidden></ul>
         </div>
-        <p class="hint" data-one="All three set up with your website, live in a few days.">All three built within 14 days of joining, or your next month is free.</p>
+        <p class="hint" data-one="All three set up with your website, live in 7 to 14 days.">All three built with your site, ready within 14 days of joining, or your next month is free.</p>
         </div>
         <!-- On Starter the features block above is hidden (the plan step
              does it) and this line stands in: the page is the site. -->
@@ -294,7 +294,7 @@
       <!-- ============ 4. payment ============ -->
       <section class="wiz-step" data-step="5" aria-label="Payment" hidden>
         <h1>Your plan.</h1>
-        <p class="wiz-sub" data-one="Month 1 we build and test it all. Months 2 to 4, your ads are on us.">Your first month puts you live today.</p>
+        <p class="wiz-sub" data-one="Month 1 we build and test it all. Months 2 to 4, your ads are on us." data-biz="Your site and features, ready in 7 to 14 days.">Your first month puts you live today.</p>
 
         <!-- Their address in a browser bar, so the thing they are buying is on
              screen before they pay for it. -->
@@ -320,9 +320,10 @@
           <div class="sumrow" id="sumOfferRow"><span>Included</span><b class="sum-free" id="sumOffer">50% off your first month</b></div>
         </div>
 
-        <!-- The promise, where the price is: live today, features within 14
-             days or the next month is free. Filled in with their address. -->
-        <p class="pay-promise" id="payPromise"><b>Live on your own address today.</b> Then we build the features you asked for within 14 days &mdash; or your next month is free.</p>
+        <!-- The promise, where the price is: Starter live today, Business
+             ready in 7 to 14 days or the next month is free, One on its own
+             timeline. Filled in with their plan and address. -->
+        <p class="pay-promise" id="payPromise"><b>Live on your own address today.</b> With your contact form and click to call. Your first change of the month, whenever you like.</p>
 
         <!-- Most people have no code, so the box waits behind a line. -->
         <details class="dom-have ref-have">
@@ -348,7 +349,8 @@
         <ul class="assure" data-std-only>
           <li>No setup fee</li>
           <li>Cancel anytime</li>
-          <li>Live within 24 hours</li>
+          <li data-starter-only>Live within 24 hours</li>
+          <li data-biz-only hidden>Ready in 7 to 14 days</li>
         </ul>
         <ul class="assure" data-one-only hidden>
           <li>No setup fee</li>
@@ -361,7 +363,7 @@
              pages. We never see or handle a card number. -->
         <div class="paynote" id="payNow">
           <p><strong>Card handled by Stripe.</strong></p>
-          <p data-one="You&rsquo;ll finish on Stripe&rsquo;s secure page &mdash; we never see your card details. Monthly, with no contract: cancel any time from your account.">You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month puts your page live on your own address today; your features follow within 14 days.</p>
+          <p data-one="You&rsquo;ll finish on Stripe&rsquo;s secure page &mdash; we never see your card details. Monthly, with no contract: cancel any time from your account." data-biz="You&rsquo;ll finish on Stripe&rsquo;s secure page &mdash; we never see your card details. Your site and features are ready on your own address in 7 to 14 days.">You'll finish on Stripe's secure page &mdash; we never see your card details. Your first month puts your page live on your own address today.</p>
         </div>
         <button class="linkish" id="fixEmail" type="button">That email isn't right</button>
         <button class="linkish wiz-back" data-back type="button">Back</button>
@@ -377,11 +379,12 @@
 
         <ol class="next-list">
           <li><b id="doneHead">Check your email.</b> <span id="confirmLine">Confirm your address so you can get into your account.</span></li>
-          <li data-std-only><b>Live today.</b> We register your web address and put your page on it, and email you the moment it&rsquo;s live.</li>
-          <li data-std-only><b>Your features, within 14 days.</b> Bookings, payments, reviews &mdash; whatever you asked for, built while you&rsquo;re already online. Or your next month is free.</li>
+          <li data-std-only data-starter-only><b>Live today.</b> We register your web address and put your page on it, and email you the moment it&rsquo;s live.</li>
+          <li data-std-only data-biz-only hidden><b>Ready in 7 to 14 days.</b> We register your web address and build your site and features on it together, and email you the moment it&rsquo;s live.</li>
+          <li data-std-only data-biz-only hidden><b>Your features, built with it.</b> Bookings, payments, reviews &mdash; whatever you asked for. Ready within 14 days, often sooner, or your next month is free.</li>
           <li data-one-only hidden><b>Tell us about your sessions.</b> Your classes, timetable, prices and photos, in the setup form in your account. We&rsquo;ll be in touch to fill in the rest.</li>
-          <li data-one-only hidden><b>Your website in a few days.</b> With trial bookings ready to go, then your members moved across. Once everything&rsquo;s ready, usually from month 2, your ads go on, with months 2 to 4 on us.</li>
-          <li data-one-only hidden><b>Your own branded app, for your coaches and members.</b> We send it to Apple and Google for review, which takes 1 to 4 weeks, and until then every app feature works on your website. It&rsquo;s published under your own Apple and Google developer accounts (about &pound;79 a year to Apple and a one-off $25 to Google, paid to them, not us).</li>
+          <li data-one-only hidden><b>Your website in 7 to 14 days.</b> With trial bookings ready to go, then your members moved across. Once everything&rsquo;s ready, usually from month 2, your ads go on, with months 2 to 4 on us.</li>
+          <li data-one-only hidden><b>Your own branded app, for your coaches and members.</b> We send it to Apple and Google as soon as your developer accounts are ready. Their review takes 1 to 4 weeks, and until then every app feature works on your website. It&rsquo;s published under your own Apple and Google developer accounts (about &pound;79 a year to Apple and a one-off $25 to Google, paid to them, not us).</li>
         </ol>
 
         <div class="paynote">
@@ -409,8 +412,8 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=38"></script>
-<script src="chat.js?v=12" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
+<script src="get-started.js?v=39"></script>
+<script src="chat.js?v=13" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
 <script src="/onemark.js?v=2" defer></script>

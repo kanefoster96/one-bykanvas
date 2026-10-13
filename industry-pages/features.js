@@ -27,12 +27,12 @@ module.exports = [
     search: 'Booking system for small businesses, built into your website',
     h1: 'A booking system on your own website.',
     lede: 'Customers pick a slot, pay a deposit and get a reminder. You find out on your phone. No app to send them to, no back-and-forth.',
-    desc: 'A booking system built into your own website, set up for you: customers pick a slot, pay a deposit and get a text reminder. Built and run for you from £50 a month, no setup fee. Your site live within 24 hours of joining.',
+    desc: 'A booking system built into your own website, set up for you: customers pick a slot, pay a deposit and get a text reminder. Built and run for you from £50 a month, no setup fee. Your site and bookings ready in 7 to 14 days.',
     pain: 'Every booking is three messages. What days have you got, what time, can you do Saturday. Then a no-show, because nothing was paid and nothing reminded them. The booking apps want a cut, a monthly fee, and your customers on their site instead of yours.',
     lines: ['Let customers book a slot on my site', 'Take a £10 deposit when they book', 'Text them a reminder the day before', 'Show my availability so they stop asking'],
     how: [
       ['Tell us how you work', 'Your services, how long each takes, when you are open, what deposit you want. Five minutes.'],
-      ['We build it into your site', 'The calendar, the deposit, the confirmation and the reminder. On your own address, matching your site, within 14 days of joining.'],
+      ['We build it into your site', 'The calendar, the deposit, the confirmation and the reminder. On your own address, matching your site, ready in 7 to 14 days.'],
       ['Bookings arrive on your phone', 'Each one with the name, the service and the deposit paid. Change your hours yourself, any time.']
     ],
     gets: [
@@ -50,7 +50,7 @@ module.exports = [
       ['Can I take a deposit?', 'Yes, any amount you like, or the full price. It goes to your bank through Stripe, and a customer who paid a deposit turns up.'],
       ['What if I already use a booking app?', 'Keep it if you like it. Most people move because the app takes a fee per booking, or sends their customers to the app&rsquo;s site instead of theirs.'],
       ['Do my customers need an account?', 'No. Name, phone, pick a slot, pay. Their history is kept for you, not gated behind a login for them.'],
-      ['How long does it take?', 'Your site is live the day you join. The booking system is built within 14 days, or your next month is free.']
+      ['How long does it take?', '7 to 14 days. Your site and the booking system are built together and ready within 14 days of joining, often sooner, or your next month is free.']
     ]
   },
   {
@@ -59,7 +59,7 @@ module.exports = [
     search: 'Take payments online for your small business, on your own website',
     h1: 'Take payments on your own website.',
     lede: 'Deposits, invoices, products, gift vouchers. Paid by card on your site, straight to your bank, while you are on a job.',
-    desc: 'Take card payments on your own website: deposits, invoices, products and gift vouchers, paid straight to your bank. Set up for you from £50 a month, no setup fee. Your site live within 24 hours of joining.',
+    desc: 'Take card payments on your own website: deposits, invoices, products and gift vouchers, paid straight to your bank. Set up for you from £50 a month, no setup fee. Your site and payments ready in 7 to 14 days.',
     pain: 'Chasing bank transfers. Cash that has to be counted. A card machine that costs monthly whether you use it or not. Customers who want to pay now, at eleven at night, and cannot.',
     lines: ['Take deposits on my site', 'Let people pay an invoice by card', 'Sell gift vouchers online', 'Add a small shop to my site'],
     how: [
@@ -121,7 +121,7 @@ module.exports = [
     search: 'A website with live chat, answered from your phone',
     h1: 'Live chat on your website, answered from your phone.',
     lede: 'The question they would have rung about, answered in a message, kept with their name. No app for them, no desk for you.',
-    desc: 'Live chat built into your own website and answered from your phone: enquiries, questions and quotes in one place, kept against the customer’s name. Set up for you from £50 a month, no setup fee. Your site live within 24 hours of joining.',
+    desc: 'Live chat built into your own website and answered from your phone: enquiries, questions and quotes in one place, kept against the customer’s name. Set up for you from £50 a month, no setup fee. Your site and chat ready in 7 to 14 days.',
     pain: 'Half your enquiries are the same four questions. They arrive on Facebook, Instagram, WhatsApp, text and email, and one of them always gets missed. The one you miss was the job.',
     lines: ['Add live chat to my site', 'Answer questions from my phone', 'Keep every enquiry in one place', 'Let people send me a photo of the job'],
     how: [
@@ -144,7 +144,7 @@ module.exports = [
       ['Is it a bot?', 'No. It is you, from your phone. The site answers the common questions in the page itself, so the chat is for the ones that need you.'],
       ['Can they send photos?', 'Yes. A photo of the boiler, the garden, the nails they want. It saves the first visit for most trades.'],
       ['Where do the messages go?', 'Your phone, and your account on Kanvas One, where every customer&rsquo;s chats, bookings and payments sit together.'],
-      ['How long does it take?', 'Your site is live the day you join. The chat is built within 14 days, or your next month is free.']
+      ['How long does it take?', '7 to 14 days. Your site and the chat are built together and ready within 14 days of joining, often sooner, or your next month is free.']
     ]
   },
   {
@@ -153,7 +153,7 @@ module.exports = [
     search: 'Get Google reviews automatically, after every job',
     h1: 'Google reviews asked for after every job, automatically.',
     lede: 'A message the day after, with the link. You never have to ask, and the reviews are what move you up the map.',
-    desc: 'Get Google reviews automatically: a message to every customer the day after the job, with the link, sent by your website. Set up for you from £50 a month, no setup fee. Your site live within 24 hours of joining.',
+    desc: 'Get Google reviews automatically: a message to every customer the day after the job, with the link, sent by your website. Set up for you from £50 a month, no setup fee. Your site and review requests ready in 7 to 14 days.',
     pain: 'You know reviews are what people check. You mean to ask. The job is done, the van is loaded, and asking feels awkward, so the customer who was delighted never says so where anyone can see it.',
     lines: ['Ask every customer for a Google review', 'Send the review link the day after the job', 'Show my reviews on my site', 'Get me higher on Google Maps in my town'],
     how: [
@@ -176,7 +176,7 @@ module.exports = [
       ['What does the message say?', 'A short thank-you from your business and the link. You see it before it goes live and can change the wording any time.'],
       ['What if someone leaves a bad one?', 'You get a nudge, and you reply. A calm reply to a bad review is read by more people than the review itself.'],
       ['Do I need a Google Business Profile?', 'Yes, and if you have none we set it up and verify it with you. It is the listing that appears on Maps.'],
-      ['How long does it take?', 'Your site is live the day you join. The review requests are running within 14 days, or your next month is free.']
+      ['How long does it take?', '7 to 14 days. Your site is built and the review requests are running within 14 days of joining, often sooner, or your next month is free.']
     ]
   }
 ];
