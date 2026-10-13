@@ -982,15 +982,11 @@ body.home .mh-info-note{background:#f5f5f7}
 .mh-plan-rec{background:#f5f5f7!important}
 
 /* ---------- Alternating bands ----------
-   White and near-black sections in turn, each dark band fading in from and
-   out to the white around it, so every section reads as a fresh start rather
-   than one long white page. Cards follow their band: dark cards on dark,
+   White and near-black sections in turn, with a clean edge between them, so
+   every section reads as a fresh start rather than one long white page. Cards follow their band: dark cards on dark,
    soft grey on white. Orange stays for marks, ticks and the buttons. */
-body.home{--band:#08080a;--fade:clamp(70px,9vw,140px)}
-body.home .band-dark{--after:#fff;color:#f5f5f2;
-  background:linear-gradient(#fff 0,var(--band) var(--fade),var(--band) calc(100% - var(--fade)),var(--after) 100%)!important;
-  padding-top:calc(var(--fade) + clamp(28px,5vw,56px));padding-bottom:calc(var(--fade) + clamp(28px,5vw,56px))}
-body.home .band-last{--after:var(--paper)}
+body.home{--band:#08080a}
+body.home .band-dark{color:#f5f5f2;background:var(--band)!important}
 body.home .band-dark h2,body.home .band-dark > .wrap > h3,body.home .band-dark .fx-steps-h{color:#f5f5f2}
 body.home .band-dark .lede,body.home .band-dark .micro,body.home .band-dark .mh-kicker{color:rgba(245,245,242,.72)}
 body.home .band-dark .pr-tag{color:#ff7a3d}
