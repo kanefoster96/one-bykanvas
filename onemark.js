@@ -18,8 +18,8 @@
 
   var SKIP = /^(SCRIPT|STYLE|NOSCRIPT|TEXTAREA|INPUT|SELECT|OPTION|TITLE|CODE|PRE|SVG|BUTTON)$/;
   // "One" followed by these words means the number, not the product.
-  var PLAIN = /^\s*(system|price|place|tap|fixed|or|of|simple|page|login|app for|thing)\b/i;
-  var WORD = /\bOne\b(?![-‐‑'’])/g;
+  var PLAIN = /^\s*(system|price|place|tap|fixed|or|of|simple|page|login|app for|thing|timetable)\b/i;
+  var WORD = /\bOne\b(?![-\u2010\u2011'\u2019])/g;
 
   function skippable(el) {
     for (; el && el !== document.body; el = el.parentElement) {
