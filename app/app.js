@@ -1,10 +1,11 @@
 /* one — the One app.
  *
- * A notification layer, live chat and analytics for a site we built. Five
- * tabs: Dashboard (their own site's dashboard, opened inside the app),
- * Analytics (the beacon's numbers), Payments (money in, once Stripe is
- * connected), Chat (only when the site has live chat) and Support (the
- * Requests feature, loaded from the same requests.js the website uses).
+ * A notification layer, live chat and analytics for a site we built.
+ * Business: Dashboard (their own site's dashboard, opened inside the app),
+ * Analytics (the beacon's numbers), Chat (only when the site has live chat)
+ * and Support (the Requests feature, loaded from the same requests.js the
+ * website uses). Starter: Home (site status and analytics), Messages (the
+ * contact form) and Support. Payments stays hidden until Stripe Connect.
  *
  * Runs in a browser at kanvas.one/app and, unchanged, inside the native
  * wrapper (Capacitor). Native is detected at runtime: API calls go to
@@ -153,11 +154,12 @@
 
   /* ------------------------------------------------------------ tabs -- */
 
-  var TABS = ['Website', 'Dashboard', 'Analytics', 'Payments', 'Chat', 'Support'];
+  var TABS = ['Messages', 'Dashboard', 'Analytics', 'Payments', 'Chat', 'Support'];
 
   function showTab(next) {
     if (next === 'Chat' && !hasModule('chat') && !contactsAllowed() && !isStarter()) next = homeTab();
-    if (next === 'Website' && !isStarter()) next = homeTab();
+    if (next === 'Messages' && !isStarter()) next = homeTab();
+    if (next === 'Payments') next = homeTab(); // nothing to show until Stripe Connect lands
     tab = next;
     if (typeof closeSetup === 'function') closeSetup();
     TABS.forEach(function (t) {
@@ -168,10 +170,10 @@
       b.setAttribute('aria-current', b.dataset.tab === tab ? 'page' : 'false');
     });
     window.scrollTo(0, 0);
-    if (tab === 'Analytics') loadAnalytics();
+    if (tab === 'Analytics') { loadAnalytics(); if (isStarter()) renderSiteCard(); }
     if (tab === 'Dashboard') { var p = pendingPath; pendingPath = null; renderDashboard(p); }
     if (tab === 'Support') loadRequests();
-    if (tab === 'Website') renderWebsite();
+    if (tab === 'Messages') loadMessages();
     if (tab !== 'Support') clearTimeout(supportTimer);
     if (tab === 'Support' && supportMode === 'chat') showSupportChat();
     if (tab === 'Chat') { if (openConv && !pendingConv) schedulePoll(); else { openConv = null; openContact = null; $('chatThread').hidden = true; $('contactScreen').hidden = true; $('tabChat').classList.remove('is-thread'); $('chatList').hidden = false; if (chatMode === 'contacts') loadContacts(); else loadChats(); } }
@@ -265,8 +267,8 @@
     movePull(PULL_HOLD, true);
     var work = [];
     try {
-      if (tab === 'Analytics') { anCache = {}; work.push(loadAnalytics()); }
-      else if (tab === 'Website') work.push(renderWebsite());
+      if (tab === 'Analytics') { anCache = {}; work.push(loadAnalytics()); if (isStarter()) work.push(renderSiteCard()); }
+      else if (tab === 'Messages') work.push(loadMessages());
       else if (tab === 'Chat') work.push(openContact && openContact.id ? loadContact(openContact.id) : openConv ? openThread(openConv.id) : chatMode === 'contacts' ? loadContacts() : loadChats());
       else if (tab === 'Support' && supportMode === 'chat') work.push(loadSupportChat(true));
       else if (tab === 'Support') {
@@ -306,20 +308,22 @@
 
   /* Where the app opens: the Dashboard, the first tab, once the site has
      one connected; the numbers until then, rather than an empty screen. */
-  function homeTab() { return isStarter() ? 'Website' : site && site.dashboard_url ? 'Dashboard' : 'Analytics'; }
+  function homeTab() { return isStarter() ? 'Analytics' : site && site.dashboard_url ? 'Dashboard' : 'Analytics'; }
 
   /* ---------------------------------------------------------- starter -- */
 
-  /* Starter has no dashboard, so its app is three tabs: the website and
-     whether it is up, Support for edits, and a chat straight
-     to Kane. The other tabs are hidden, not gated. */
+  /* Starter has no dashboard, so its app is three tabs: Home (whether the
+     site is up, then its numbers), Messages (what the contact form brought
+     in) and Support (edits, and a chat straight to Kane). The other tabs
+     are hidden, not gated. */
   function isStarter() { return !!(me && me.user && !me.user.is_admin && me.user.plan === 'starter'); }
   function applyPlanUi() {
     var s = isStarter();
-    $('navSite').hidden = !s;
+    $('navMsgs').hidden = !s;
     $('navDash').hidden = s;
-    document.querySelector('.oa-nav-btn[data-tab="Analytics"]').hidden = s;
-    document.querySelector('.oa-nav-btn[data-tab="Payments"]').hidden = s;
+    $('navAnLabel').textContent = s ? 'Home' : 'Analytics';
+    $('anSite').hidden = !s;
+    $('navPay').hidden = true; // an empty "coming soon" tab is the kind App Review turns down
     $('setupCard').hidden = !(me && me.user && !me.user.is_admin && me.user.plan === 'max');
   }
 
@@ -358,28 +362,89 @@
   $('setupOpen').addEventListener('click', function () { openSetup('/onboarding.html'); });
   $('setupBack').addEventListener('click', function () { closeSetup(); loadRequests(); });
 
-  async function renderWebsite() {
+  /* Starter's home: is the site up? Checked from the server each time the
+     tab opens, so "online" means reachable now, not when it was built. */
+  async function renderSiteCard() {
     var dot = $('siteDot'), title = $('siteStatusTitle'), hint = $('siteStatusHint');
     var url = site && site.url ? String(site.url).replace(/\/+$/, '') : '';
-    $('siteUrlText').textContent = url.replace(/^https?:\/\//, '');
+    var host = url.replace(/^https?:\/\//, '');
     $('siteOpen').hidden = !url;
-    $('sitePlanText').textContent = (site && site.plan) || 'Starter';
-    $('sitePlanHint').textContent = 'Unlimited edits to what is on your site: photos, wording, numbers, hours, prices. Ask under Support whenever you need one, as many as you like.';
     dot.className = 'oa-status-dot';
-    if (!site) { title.textContent = 'We have not started your site yet.'; hint.textContent = 'It appears here the moment we do.'; return; }
-    title.textContent = 'Checking your website…'; hint.textContent = '';
+    if (!site) { title.textContent = 'We have not started your site yet'; hint.textContent = 'It appears here the moment we do.'; return; }
+    title.textContent = 'Checking your website…'; hint.textContent = host;
     try {
       var s = await api({ action: 'site_status', site_id: site.site_id });
-      if (tab !== 'Website') return;
-      if (!s.live) { dot.classList.add('is-building'); title.textContent = 'Your website is being built'; hint.textContent = 'It goes live here the moment it is ready, and you will hear about it.'; }
-      else if (s.online) { dot.classList.add('is-on'); title.textContent = 'Your website is online'; hint.textContent = 'Working and reachable. Checked just now' + (s.ms ? ', answered in ' + (s.ms < 1000 ? s.ms + ' ms' : (s.ms / 1000).toFixed(1) + ' s') : '') + '.'; }
-      else if (s.online === false) { dot.classList.add('is-off'); title.textContent = 'Your website is not responding'; hint.textContent = 'Checked just now from here. Pull down to check again; if it stays like this, tell Kane in the chat and it will be looked at straight away.'; }
+      if (tab !== 'Analytics') return;
+      if (!s.live) { dot.classList.add('is-building'); title.textContent = 'Your website is being built'; hint.textContent = 'It goes live the moment it is ready, and you will get a notification.'; }
+      else if (s.online) { dot.classList.add('is-on'); title.textContent = 'Your website is live'; hint.textContent = host; }
+      else if (s.online === false) { dot.classList.add('is-off'); title.textContent = 'Your website is not responding'; hint.textContent = 'Pull down to check again. If it stays like this, tell Kane under Support.'; }
       else { title.textContent = 'No address yet'; hint.textContent = 'Your website address appears here once it is set.'; }
     } catch (err) { title.textContent = 'Could not check just now'; hint.textContent = err.message; }
   }
   $('siteOpen').addEventListener('click', function () { if (site && site.url) openExternal(site.url); });
-  $('siteRequest').addEventListener('click', function () { location.hash = '#new'; showTab('Support'); });
-  $('siteChat').addEventListener('click', function () { showTab('Support'); setSupportMode('chat'); });
+
+  /* ---------------------------------------------------------- messages -- */
+
+  /* Starter's inbox: the contact form's messages, read here and answered
+     from the phone's own mail or phone app (mailto:/tel: leave the app in
+     the shell). Nothing is sent from here. "New" is anything since they
+     last opened the tab, remembered on this phone. */
+  var msgOpenId = null;   // a tapped notification's enquiry, to scroll to
+  function msgSeenKey() { return 'oa-msgs-seen:' + (site ? site.site_id : ''); }
+  // Never opened on this phone: the last week counts as new, not every message ever sent.
+  function msgSeen() { var week = Date.now() - 7 * 864e5; try { return Number(localStorage.getItem(msgSeenKey())) || week; } catch (e) { return week; } }
+  function markMsgsSeen() { try { localStorage.setItem(msgSeenKey(), String(Date.now())); } catch (e) { /* no storage: the badge just clears */ } $('navMsgsCount').hidden = true; }
+  function paintMsgBadge(list) {
+    var since = msgSeen();
+    var n = list.filter(function (m) { return new Date(m.created_at).getTime() > since; }).length;
+    var b = $('navMsgsCount'); b.textContent = String(n); b.hidden = n === 0 || tab === 'Messages';
+  }
+  async function loadMessages(badgeOnly) {
+    if (!site || !isStarter()) return;
+    try {
+      var res = await api({ action: 'enquiries', site_id: site.site_id });
+      var list = res.enquiries || [];
+      if (badgeOnly) { paintMsgBadge(list); return; }
+      var since = msgSeen();
+      renderMessages(list, since);
+      markMsgsSeen();
+      say($('msgNote'), '');
+    } catch (err) { if (!badgeOnly) say($('msgNote'), err.message, 'bad'); }
+  }
+  function renderMessages(list, since) {
+    var ol = $('msgList'); ol.innerHTML = '';
+    $('msgEmpty').hidden = list.length > 0;
+    var target = null;
+    list.forEach(function (m) {
+      var li = el('li', 'oa-msg');
+      if (since && new Date(m.created_at).getTime() > since) li.classList.add('is-new');
+      var head = el('div', 'oa-msg-head');
+      var who = m.name || m.email || m.phone || 'Someone';
+      head.appendChild(el('b', 'oa-msg-who', who));
+      head.appendChild(el('span', 'oa-msg-when', ago(m.created_at)));
+      li.appendChild(head);
+      li.appendChild(el('p', 'oa-msg-body', m.message));
+      var meta = [m.email, m.phone].filter(function (v) { return v && v !== who; }).join(' · ');
+      if (meta) li.appendChild(el('p', 'oa-msg-meta', meta));
+      var acts = el('div', 'oa-status-actions');
+      if (m.email) {
+        var subj = 'Re: your message to ' + ((site && site.name) || 'us');
+        var a = el('a', 'oa-chip oa-chip-dark', 'Email ' + (m.name ? m.name.split(' ')[0] : 'them'));
+        a.href = 'mailto:' + m.email + '?subject=' + encodeURIComponent(subj);
+        acts.appendChild(a);
+      }
+      if (m.phone) {
+        var c = el('a', 'oa-chip', 'Call');
+        c.href = 'tel:' + String(m.phone).replace(/[^\d+]/g, '');
+        acts.appendChild(c);
+      }
+      li.appendChild(acts);
+      if (msgOpenId && m.id === msgOpenId) { li.classList.add('is-open'); target = li; }
+      ol.appendChild(li);
+    });
+    msgOpenId = null;
+    if (target) setTimeout(function () { target.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 60);
+  }
 
   /* The chat with Kane, on the Support tab for every business: the
      customer's side of a conversation on kanvas.one's own site, polled
@@ -534,26 +599,17 @@
     if (link && link.kind === 'support' && link.id) { location.hash = 'r/' + link.id; showTab('Support'); return; }
     if (n.href && /^\/requests\.html#(r\/.+)$/.test(n.href)) { location.hash = RegExp.$1; showTab('Support'); return; }
     if (n.href && /^\/admin\.html#r\/(.+)$/.test(n.href)) { pendingRequest = RegExp.$1; showTab('Support'); return; }
-    /* Starter has no dashboard: the Dashboard tab is hidden for them, so
-       anything that would open there lands on Website instead - an
-       enquiry with a card saying what came in, a link (their site going
-       live) in the browser. */
+    /* Starter has no dashboard: an enquiry opens Messages at that message,
+       a link (their site going live) the browser, anything else Home. */
     if (isStarter()) {
-      showTab('Website');
-      if ((link && (link.kind === 'enquiry' || link.kind === 'person')) || n.kind === 'person') showEnquiryCard(n);
-      else if (n.href && /^https:\/\//.test(n.href)) openExternal(n.href);
+      if ((link && (link.kind === 'enquiry' || link.kind === 'person')) || n.kind === 'enquiry' || n.kind === 'person') { msgOpenId = link && link.id; showTab('Messages'); return; }
+      if (n.href && /^https:\/\//.test(n.href)) { showTab('Analytics'); openExternal(n.href); return; }
+      showTab('Analytics');
       return;
     }
     if (link && link.path && site && site.dashboard_url) { pendingPath = link.path; showTab('Dashboard'); return; }
     if (n.href && /^https:\/\//.test(n.href)) { showTab('Dashboard'); openExternal(n.href); return; }
     showTab('Dashboard');
-  }
-
-  function showEnquiryCard(n) {
-    $('siteEnquiryTitle').textContent = (n && n.title) || 'New enquiry from your site';
-    $('siteEnquiryBody').textContent = (n && n.body) || '';
-    $('siteEnquiryBody').hidden = !(n && n.body);
-    $('siteEnquiry').hidden = false;
   }
 
   function openExternal(url) {
@@ -889,7 +945,7 @@
     if (d.funnel) drawFunnel(d.funnel, !!d.chat, !!d.money);
 
     $('anMoneyCard').hidden = !d.money;
-    $('anMoneyOff').hidden = !!d.money;
+    $('anMoneyOff').hidden = !!d.money || isStarter(); // Starter: no "not connected" cards, just its numbers
     if (d.money) {
       var m = d.money;
       $('anTaken').textContent = pounds(m.amount, m.currency);
@@ -903,7 +959,7 @@
     }
 
     $('anChatCard').hidden = !d.chat;
-    $('anChatOff').hidden = !!d.chat;
+    $('anChatOff').hidden = !!d.chat || isStarter();
     if (d.chat) {
       $('anConvs').textContent = fmt(d.chat.conversations);
       delta($('anConvsDelta'), d.chat.conversations, d.chat.previous.conversations);
@@ -1817,7 +1873,7 @@
 
   /* --------------------------------------------------------- activity -- */
 
-  var ICON = { money_in: '£', money_failed: '!', money_refund: '↩', money_cancelled: '✕', work: '🛠', booking: '📅', person: '👤', chat: '💬', review: '★', support: '?' };
+  var ICON = { money_in: '£', money_failed: '!', money_refund: '↩', money_cancelled: '✕', work: '🛠', booking: '📅', person: '👤', enquiry: '✉', chat: '💬', review: '★', support: '?' };
 
   function ago(iso) {
     var d = new Date(iso);
@@ -1919,7 +1975,7 @@
       // must not light the bell.
       refreshMe().catch(function () {});
       if (tab === 'Support' && supportMode === 'chat') loadSupportChat(true);
-      if (isStarter()) return;
+      if (isStarter()) { loadMessages(tab !== 'Messages'); return; }
       if (hasModule('chat')) loadChats();
       if (tab === 'Support' && me.user && me.user.is_admin && $('adminThread').hidden) loadAdminInbox();
       if (tab === 'Support' && !(me.user && me.user.is_admin) && ONE.refreshRequestBadge) ONE.refreshRequestBadge();
@@ -1992,6 +2048,7 @@
     else showTab(/^(new|r\/)/.test(h) ? 'Support' : homeTab());
     setupPush();
     if (hasModule('chat')) { listenChat(); loadChats(); schedulePoll(); }
+    if (isStarter() && tab !== 'Messages') loadMessages(true);
     nativeReady();
     if (nativeLink) { var l = nativeLink; nativeLink = null; openLink(l); }
   }

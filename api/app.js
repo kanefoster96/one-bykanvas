@@ -970,6 +970,15 @@ module.exports = async function handler(req, res) {
     if (action === 'chat_set') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json({ conversation: await chatSet(db, site, body.conversation_id, body) }); }
 
     if (action === 'site_status') { const site = await siteFor({ db }, caller, body.site_id); return res.status(200).json(await siteStatus(site)); }
+    /* The contact form's messages, newest first: the Messages tab. Read
+       only; the owner answers from their own phone or mail app. */
+    if (action === 'enquiries') {
+      const site = await siteFor({ db }, caller, body.site_id);
+      const { data, error } = await db.from('enquiries').select('id, name, email, phone, message, page, created_at')
+        .eq('site_id', site.id).order('created_at', { ascending: false }).limit(100);
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ enquiries: data || [] });
+    }
     if (action === 'support_get') return res.status(200).json(await supportGet(db, caller));
     if (action === 'support_send') return res.status(200).json(await supportSend(db, caller, body.body));
 
