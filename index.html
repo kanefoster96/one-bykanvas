@@ -25,7 +25,7 @@
 <link rel="icon" href="assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=5">
 <link rel="stylesheet" href="styles.css?v=144">
-<link rel="stylesheet" href="home.css?v=54">
+<link rel="stylesheet" href="home.css?v=55">
 </head>
 <body class="home">
 
@@ -53,9 +53,10 @@
      Under that, the academy itself on a screen, with what the system does
      floating round it. -->
 <section class="mh" data-tone="white">
-  <div class="wrap">
+  <div class="wrap mh-grid">
+    <div class="mh-copy">
     <div class="mh-proof reveal">
-      <p class="mh-founder"><img src="assets/kane-sm.jpg?v=2" alt="" width="64" height="64"><span>Built by Kane in our own dance school, <b>running since 2017</b></span></p>
+      <p class="mh-founder"><img src="assets/kane-sm.jpg?v=2" alt="" width="64" height="64"><span>One was designed, built and tested by a kids&rsquo; club</span></p>
     </div>
     <h1 class="reveal">Everything you need to fill your club. <span class="mh-off">And run it.</span></h1>
     <p class="sub reveal">Your own website and app, built to turn people nearby into loyal, paying members. Ads in your local area included in your monthly price, all set up and run by our team.</p>
@@ -65,24 +66,14 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Ads included, or switch them off <button class="mh-info" type="button" aria-expanded="false" aria-controls="adsNote" aria-label="How the ads work">i</button></li>
     </ul>
     <p class="mh-info-note" id="trialNote" hidden>If your first 3 months of ads bring fewer than 10 trial bookings, your next 3 months of One are free. Our risk, not yours.</p>
-    <p class="mh-info-note" id="adsNote" hidden>Month 1, we build it. Months 2 to 4, we pay your ads, worth &pound;450. After that, keep them on, fund them yourself, or switch them off.</p>
+    <p class="mh-info-note" id="adsNote" hidden>Month 1, we build it. Then we pay for your ads, up to &pound;150 a month, until you take them over or pause them. Months 2 to 4 are on us; from month 5, each new member&rsquo;s first payment comes to us instead. Switch any time.</p>
     <div class="mh-cta reveal">
       <a class="btn btn-primary" href="/profit-plan">Get my free profit plan</a>
+      <a class="claim-link" href="/profit-plan">Claim &pound;150 a month for ads <span aria-hidden="true">&rsaquo;</span></a>
       <p class="mh-in"><a href="#" data-chat-open>Prefer to talk first? Chat with Kane</a> &middot; <a href="/login.html">Log in</a></p>
     </div>
-  </div>
-
-  <div class="hh-scene reveal" aria-hidden="true">
-    <div class="hh-frame">
-      <div class="hh-bar"><i></i><i></i><i></i><i class="hh-url">yourclub.co.uk</i></div>
-      <div class="hh-screen"><img src="assets/desktop-dance.jpg" alt="" width="1640" height="846" decoding="async"></div>
     </div>
-    <div class="hh-phone-wrap">
-      <div class="hh-screen"><img src="assets/phone-academy.jpg" alt="" style="background:#000" width="1264" height="2260" decoding="async"></div>
-    </div>
-    <div class="chip hh-chip hh-chip-1"><span class="tile tile-sm tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/></svg></span><span class="chip-text"><b>Free trial booked</b><small>Street dance &middot; Mon 6:15pm</small></span></div>
-    <div class="chip hh-chip hh-chip-2"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="chip-text"><b>Membership started</b><small>&pound;50 a month, paid automatically</small></span></div>
-    <div class="chip hh-chip hh-chip-3"><span class="tile tile-sm tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></span><span class="chip-text"><b>Wednesday cheer is full</b><small>Ads paused for that class</small></span></div>
+    <div class="mh-visual reveal"><div class="mh-phone" id="heroPhone" aria-hidden="true"></div></div>
   </div>
 </section>
 
@@ -134,7 +125,7 @@
   </div>
   <div class="wrap center sec-cta reveal">
     <a class="btn btn-primary" href="/profit-plan">Get my free profit plan <span aria-hidden="true">&rsaquo;</span></a>
-    <p class="sec-cta-note">Free, two minutes, no card.</p>
+    <a class="claim-link" href="/profit-plan">Claim &pound;150 a month for ads <span aria-hidden="true">&rsaquo;</span></a>
   </div>
 </section>
 
@@ -316,6 +307,7 @@
       </article>
       </div>
       <a class="btn btn-primary ev-cta reveal" href="/profit-plan">Get my free profit plan</a>
+      <a class="claim-link reveal" href="/profit-plan">Claim &pound;150 a month for ads <span aria-hidden="true">&rsaquo;</span></a>
     </div>
 
     <h2 class="reveal ev-then">What it would cost <span class="dim">separately.</span></h2>
@@ -442,6 +434,7 @@
     </div>
     <p class="ft-tag">Everything you need to fill your club and run it. Built in our own dance school, running since 2017.</p>
     <a class="btn btn-primary" href="/profit-plan" style="margin-top:6px">Get my free profit plan</a>
+    <a class="claim-link" href="/profit-plan">Claim &pound;150 a month for ads <span aria-hidden="true">&rsaquo;</span></a>
 
     <div class="ft-cols">
       <nav class="ft-col" aria-label="One">
@@ -502,6 +495,7 @@
 
 })();
 </script>
+<script src="/hero-phone.js?v=3" defer></script>
 <script src="/onemark.js?v=2" defer></script>
 </body>
 </html>
