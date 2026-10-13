@@ -135,7 +135,7 @@ h3{font-size:21px;letter-spacing:-.02em}
 }
 .menu-link:hover{opacity:.55}
 .menu-actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
-.menu-actions .btn{flex:1 1 140px}
+.menu-actions .btn{flex:1 1 140px;justify-content:center;text-align:center;white-space:nowrap}
 .menu-inner > *{opacity:0;transform:translateY(-8px)}
 .menu.open .menu-inner > *{animation:menuIn .42s var(--ease) forwards}
 .menu.open .menu-inner > *:nth-child(1){animation-delay:.02s}

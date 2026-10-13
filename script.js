@@ -254,7 +254,7 @@
       ? '<a class="btn btn-ghost" href="/account.html">Your account</a>' +
         '<button class="btn btn-primary" type="button" id="navLogout">Log out</button>'
       : '<a class="btn btn-ghost" href="/login.html">Log in</a>' +
-        '<a class="btn btn-primary" href="/profit-plan">Get my free profit plan</a>';
+        '<a class="btn btn-primary" href="/profit-plan">Get my free plan</a>';
     nav.appendChild(actions);
     menu.appendChild(nav);
 
