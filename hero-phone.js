@@ -1,12 +1,10 @@
-/* The homepage hero phone: One's member app, drawn and animated in the page
+/* The homepage app phones: One's member app, drawn and animated in the page
    (no screenshots to wait for), cycling through a trial from booking to
    member: the website form, the trial pass email, the follow-up, the parent
    feed, a payment, the register and QR check-in. Everything is drawn at
    720px wide and scaled to fit, so it stays sharp at any size. Pauses when
    off screen; with reduced motion it just steps between finished screens. */
 (function () {
-  var host = document.getElementById('heroPhone');
-  if (!host) return;
 
   var IC = {
     tick: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
@@ -269,127 +267,137 @@
   ].join('');
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
-  host.innerHTML = '<div class="hp-box"><div class="hp-in"><div class="hp-phone"><div class="hp-scr">' + sbar() +
-    '<div class="hp-hd">' + LOGO + '<span>' + IC.bell + '</span></div>' +
-    SCREENS.map(function (s) { return '<div class="hp-v' + (s.full ? ' hp-full' : '') + (s.light ? ' hp-light' : '') + (s.id === 'sms' ? ' hp-white' : '') + '" id="hp-' + s.id + '">' + s.html + '</div>'; }).join('') +
-    '<div class="hp-tb"><i>' + IC.home + '</i><i>' + IC.cal + '</i><i>' + IC.chat + '</i><i>' + IC.shop + '</i><i class="hp-qrb">' + IC.qr + '</i></div>' +
-    '</div></div></div></div><p class="hp-cap">' + SCREENS.map(function (s) { return '<span>' + s.label + '</span>'; }).join('') + '</p>';
+  /* One phone per host: the hero cycles through every screen with a caption;
+     each card in the app section ([data-hp-screen]) replays its one screen. */
+  function mount(host, list, cap) {
+    var scr = SCREENS.filter(function (s) { return list.indexOf(s.id) > -1; });
+    host.innerHTML = '<div class="hp-box"><div class="hp-in"><div class="hp-phone"><div class="hp-scr">' + sbar() +
+      '<div class="hp-hd">' + LOGO + '<span>' + IC.bell + '</span></div>' +
+      scr.map(function (s) { return '<div class="hp-v' + (s.full ? ' hp-full' : '') + (s.light ? ' hp-light' : '') + (s.id === 'sms' ? ' hp-white' : '') + '" id="hp-' + s.id + '">' + s.html + '</div>'; }).join('') +
+      '<div class="hp-tb"><i>' + IC.home + '</i><i>' + IC.cal + '</i><i>' + IC.chat + '</i><i>' + IC.shop + '</i><i class="hp-qrb">' + IC.qr + '</i></div>' +
+      '</div></div></div></div><p class="hp-cap">' + scr.map(function (s) { return '<span>' + s.label + '</span>'; }).join('') + '</p>';
 
-  var $ = function (id) { return document.getElementById(id); };
-  var inner = host.querySelector('.hp-in'), box = host.querySelector('.hp-box');
-  var views = SCREENS.map(function (s) { return $('hp-' + s.id); });
-  var caps = [].slice.call(host.querySelectorAll('.hp-cap span')), tabs = [].slice.call(host.querySelectorAll('.hp-tb i'));
-  function fit() { inner.style.transform = 'scale(' + (box.clientWidth / 720) + ')'; }
-  fit(); window.addEventListener('resize', fit);
+    host.innerHTML = host.innerHTML.replace(/ id="(hp-[^"]+)"/g, ' data-k="$1"');
+    if (!cap) { var cp = host.querySelector('.hp-cap'); if (cp) cp.remove(); }
+    var $ = function (id) { return host.querySelector('[data-k="' + id + '"]'); };
+    var inner = host.querySelector('.hp-in'), box = host.querySelector('.hp-box');
+    var views = scr.map(function (s) { return $('hp-' + s.id); });
+    var caps = [].slice.call(host.querySelectorAll('.hp-cap span')), tabs = [].slice.call(host.querySelectorAll('.hp-tb i'));
+    function fit() { inner.style.transform = 'scale(' + (box.clientWidth / 720) + ')'; }
+    fit(); window.addEventListener('resize', fit);
 
-  function cl(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
-  function eo(x) { x = cl(x); return 1 - Math.pow(1 - x, 3); }
-  function pop(x) { x = cl(x); var c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
-  function p(t, a, d) { return cl((t - a) / d); }
-  function show(el, o, tr) { if (!el) return; el.style.opacity = o; el.style.transform = tr || ''; }
-  function banner(el, u, a, b) { var k = pop(p(u, a, .45)), out = p(u, b, .3); show(el, cl(k * 1.5) * (1 - out), 'translateY(' + (-150 * (1 - k) - 150 * out) + 'px)'); }
-  var green = function (g) { return 'rgb(' + Math.round(17 + (34 - 17) * g) + ',' + Math.round(17 + (197 - 17) * g) + ',' + Math.round(17 + (94 - 17) * g) + ')'; };
+    function cl(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+    function eo(x) { x = cl(x); return 1 - Math.pow(1 - x, 3); }
+    function pop(x) { x = cl(x); var c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+    function p(t, a, d) { return cl((t - a) / d); }
+    function show(el, o, tr) { if (!el) return; el.style.opacity = o; el.style.transform = tr || ''; }
+    function banner(el, u, a, b) { var k = pop(p(u, a, .45)), out = p(u, b, .3); show(el, cl(k * 1.5) * (1 - out), 'translateY(' + (-150 * (1 - k) - 150 * out) + 'px)'); }
+    var green = function (g) { return 'rgb(' + Math.round(17 + (34 - 17) * g) + ',' + Math.round(17 + (197 - 17) * g) + ',' + Math.round(17 + (94 - 17) * g) + ')'; };
 
-  var A = {
-    web: function (u) {
-      var n = Math.floor(cl((u - .3) / .45) * 3 + .001);
-      $('hp-fnt').textContent = 'Ava'.slice(0, n); $('hp-fat').textContent = u > 1.05 ? '7' : '';
-      $('hp-fn').classList.toggle('on', u < 1); $('hp-fa').classList.toggle('on', u >= 1 && u < 1.4);
-      $('hp-nx').style.background = u > 1.15 ? '#f5f5f2' : '#5a5a5e'; $('hp-nx').style.transform = 'scale(' + (u > 1.35 && u < 1.47 ? .94 : 1) + ')';
-      var sw = eo(p(u, 1.5, .3)); show($('hp-w1'), 1 - sw, 'translateX(' + (-60 * sw) + 'px)'); show($('hp-w2'), sw, 'translateX(' + (60 * (1 - sw)) + 'px)');
-      $('hp-st2').classList.toggle('on', u > 1.5);
-      var k = pop(p(u, 2.0, .4)); show($('hp-okp'), cl(k * 1.4), 'scale(' + (.9 + .1 * k) + ')');
-    },
-    mail: function (u) { banner($('hp-b-mail'), u, .1, 1.0); },
-    follow: function (u) {
-      banner($('hp-b-follow'), u, .1, 1.0);
-      var g = eo(p(u, 1.8, .3)); $('hp-join').style.background = green(g); $('hp-join').style.transform = 'scale(' + (u > 1.65 && u < 1.8 ? .96 : 1) + ')';
-      $('hp-joint').style.opacity = 1 - g; $('hp-joined').style.opacity = g;
-    },
+    var A = {
+      web: function (u) {
+        var n = Math.floor(cl((u - .3) / .45) * 3 + .001);
+        $('hp-fnt').textContent = 'Ava'.slice(0, n); $('hp-fat').textContent = u > 1.05 ? '7' : '';
+        $('hp-fn').classList.toggle('on', u < 1); $('hp-fa').classList.toggle('on', u >= 1 && u < 1.4);
+        $('hp-nx').style.background = u > 1.15 ? '#f5f5f2' : '#5a5a5e'; $('hp-nx').style.transform = 'scale(' + (u > 1.35 && u < 1.47 ? .94 : 1) + ')';
+        var sw = eo(p(u, 1.5, .3)); show($('hp-w1'), 1 - sw, 'translateX(' + (-60 * sw) + 'px)'); show($('hp-w2'), sw, 'translateX(' + (60 * (1 - sw)) + 'px)');
+        $('hp-st2').classList.toggle('on', u > 1.5);
+        var k = pop(p(u, 2.0, .4)); show($('hp-okp'), cl(k * 1.4), 'scale(' + (.9 + .1 * k) + ')');
+      },
+      mail: function (u) { banner($('hp-b-mail'), u, .1, 1.0); },
+      follow: function (u) {
+        banner($('hp-b-follow'), u, .1, 1.0);
+        var g = eo(p(u, 1.8, .3)); $('hp-join').style.background = green(g); $('hp-join').style.transform = 'scale(' + (u > 1.65 && u < 1.8 ? .96 : 1) + ')';
+        $('hp-joint').style.opacity = 1 - g; $('hp-joined').style.opacity = g;
+      },
 
 
 
-    qrs: function (u) {
-      var sc = $('hp-scan'), a = .5, b = 1.4, k = p(u, a, b - a);
-      sc.style.opacity = u > a && u < b + .1 ? 1 : 0; sc.style.top = (60 + 300 * (.5 - .5 * Math.cos(k * Math.PI * 2))) + 'px';
-      $('hp-done').style.opacity = eo(p(u, b, .3)); $('hp-done').querySelector('.hp-ck').style.transform = 'scale(' + pop(p(u, b + .05, .45)) + ')';
-      $('hp-att').textContent = u > b + .4 ? '97%' : '96%';
-    },
-    ad: function (u) {
-      var k = eo(p(u, 0, .6)); $('hp-adp').style.transform = 'translateY(' + (300 * (1 - k)) + 'px)';
-      var r = p(u, 1.6, .5); $('hp-adrp').style.opacity = u > 1.6 && u < 2.15 ? .9 * (1 - r) : 0; $('hp-adrp').style.transform = 'scale(' + (1 + 16 * r) + ')';
-      $('hp-adc').style.background = u > 1.55 && u < 2.0 ? '#2a2a2e' : '#1c1c1f';
-    },
-    sms: function (u) {
-      $('hp-sty').style.display = u < .8 ? 'inline-flex' : 'none';
-      [].forEach.call($('hp-sty').children, function (d, i) { d.style.opacity = .35 + .65 * (.5 + .5 * Math.sin(u * 10 - i * 1.2)); });
-      var a = pop(p(u, .8, .4)); show($('hp-sin'), cl(a * 1.4), 'scale(' + (.92 + .08 * a) + ')');
-      var b = pop(p(u, 1.8, .4)); show($('hp-sout'), cl(b * 1.4), 'scale(' + (.92 + .08 * b) + ')');
-    },
-    payset: function (u) {
-      var num = '4242 4242 4242 4242', n = Math.round(cl((u - .3) / .8) * num.length);
-      $('hp-cn').textContent = num.slice(0, n) || 'Card number'; $('hp-cn').style.opacity = n ? 1 : .45;
-      $('hp-car').style.display = u < 1.1 && Math.floor(u * 4) % 2 === 0 ? 'inline-block' : 'none';
-      $('hp-ce').textContent = u > 1.2 ? '08 / 28' : 'MM / YY'; $('hp-ce').style.opacity = u > 1.2 ? 1 : .45;
-      $('hp-cv').textContent = u > 1.4 ? '\u2022\u2022\u2022' : 'CVC'; $('hp-cv').style.opacity = u > 1.4 ? 1 : .45;
-      var g = eo(p(u, 1.95, .3)); $('hp-paybtn').style.background = g > 0 ? green(g) : '#2563eb';
-      $('hp-paybtn').style.transform = 'scale(' + (u > 1.8 && u < 1.95 ? .96 : 1) + ')';
-      $('hp-payt').style.opacity = 1 - g; $('hp-payok').style.opacity = g;
-    },
-    reg: function (u) {
-      var k = pop(p(u, .7, .45)); show($('hp-avr'), cl(k * 1.4), 'translateX(' + (60 * (1 - k)) + 'px)');
-      $('hp-avr').style.background = 'rgba(96,165,250,' + (.16 * (1 - p(u, 1.8, .7))) + ')';
-      var c = u > .7 ? 19 : 18; $('hp-rc').textContent = c; $('hp-rbar').style.width = (c / 20 * 100) + '%';
-      banner($('hp-b-reg'), u, .8, 2.3);
-    },
-    feed: function (u) {
-      banner($('hp-b-feed'), u, .1, 1.1);
-      var h = Math.round(14 * eo(p(u, .5, 1.3))); $('hp-hc').textContent = h; $('hp-hrt').firstChild.outerHTML = h > 0 ? IC.heartf : IC.heart;
-      $('hp-cc').textContent = u > 1.2 ? 3 : 0;
-      var s = pop(p(u, .45, .4)); show($('hp-sent'), cl(s * 1.4), 'scale(' + (.9 + .1 * s) + ')');
-      [['hp-m1', 1.2], ['hp-m2', 1.9]].forEach(function (c) { var k = eo(p(u, c[1], .35)); show($(c[0]), k, 'translateY(' + (20 * (1 - k)) + 'px)'); });
-    },
-    mem: function (u) {
-      var pz = u > 1.0; $('hp-leo').textContent = pz ? 'Paused' : 'Pause'; $('hp-leo').style.background = pz ? 'rgba(245,245,242,.18)' : '#f5f5f2'; $('hp-leo').style.color = pz ? '#f5f5f2' : '#0a0a0c';
-      $('hp-leo').style.transform = 'scale(' + (u > .85 && u < 1.0 ? .92 : 1) + ')';
-      var sl = u > 1.8; $('hp-mia').innerHTML = sl ? T + 'Sent' : 'Send link'; $('hp-mia').className = sl ? 'hp-ok' : 'hp-btnw';
-      $('hp-mia').style.transform = 'scale(' + (u > 1.65 && u < 1.8 ? .92 : 1) + ')';
-    },
-    emg: function (u) {
-      var r = (u % 1.1) / 1.1; $('hp-call').style.boxShadow = u > 1.2 ? '0 0 0 ' + (18 * r) + 'px rgba(34,197,94,' + (.45 * (1 - r)) + ')' : 'none';
+      qrs: function (u) {
+        var sc = $('hp-scan'), a = .5, b = 1.4, k = p(u, a, b - a);
+        sc.style.opacity = u > a && u < b + .1 ? 1 : 0; sc.style.top = (60 + 300 * (.5 - .5 * Math.cos(k * Math.PI * 2))) + 'px';
+        $('hp-done').style.opacity = eo(p(u, b, .3)); $('hp-done').querySelector('.hp-ck').style.transform = 'scale(' + pop(p(u, b + .05, .45)) + ')';
+        $('hp-att').textContent = u > b + .4 ? '97%' : '96%';
+      },
+      ad: function (u) {
+        var k = eo(p(u, 0, .6)); $('hp-adp').style.transform = 'translateY(' + (300 * (1 - k)) + 'px)';
+        var r = p(u, 1.6, .5); $('hp-adrp').style.opacity = u > 1.6 && u < 2.15 ? .9 * (1 - r) : 0; $('hp-adrp').style.transform = 'scale(' + (1 + 16 * r) + ')';
+        $('hp-adc').style.background = u > 1.55 && u < 2.0 ? '#2a2a2e' : '#1c1c1f';
+      },
+      sms: function (u) {
+        $('hp-sty').style.display = u < .8 ? 'inline-flex' : 'none';
+        [].forEach.call($('hp-sty').children, function (d, i) { d.style.opacity = .35 + .65 * (.5 + .5 * Math.sin(u * 10 - i * 1.2)); });
+        var a = pop(p(u, .8, .4)); show($('hp-sin'), cl(a * 1.4), 'scale(' + (.92 + .08 * a) + ')');
+        var b = pop(p(u, 1.8, .4)); show($('hp-sout'), cl(b * 1.4), 'scale(' + (.92 + .08 * b) + ')');
+      },
+      payset: function (u) {
+        var num = '4242 4242 4242 4242', n = Math.round(cl((u - .3) / .8) * num.length);
+        $('hp-cn').textContent = num.slice(0, n) || 'Card number'; $('hp-cn').style.opacity = n ? 1 : .45;
+        $('hp-car').style.display = u < 1.1 && Math.floor(u * 4) % 2 === 0 ? 'inline-block' : 'none';
+        $('hp-ce').textContent = u > 1.2 ? '08 / 28' : 'MM / YY'; $('hp-ce').style.opacity = u > 1.2 ? 1 : .45;
+        $('hp-cv').textContent = u > 1.4 ? '\u2022\u2022\u2022' : 'CVC'; $('hp-cv').style.opacity = u > 1.4 ? 1 : .45;
+        var g = eo(p(u, 1.95, .3)); $('hp-paybtn').style.background = g > 0 ? green(g) : '#2563eb';
+        $('hp-paybtn').style.transform = 'scale(' + (u > 1.8 && u < 1.95 ? .96 : 1) + ')';
+        $('hp-payt').style.opacity = 1 - g; $('hp-payok').style.opacity = g;
+      },
+      reg: function (u) {
+        var k = pop(p(u, .7, .45)); show($('hp-avr'), cl(k * 1.4), 'translateX(' + (60 * (1 - k)) + 'px)');
+        $('hp-avr').style.background = 'rgba(96,165,250,' + (.16 * (1 - p(u, 1.8, .7))) + ')';
+        var c = u > .7 ? 19 : 18; $('hp-rc').textContent = c; $('hp-rbar').style.width = (c / 20 * 100) + '%';
+        banner($('hp-b-reg'), u, .8, 2.3);
+      },
+      feed: function (u) {
+        banner($('hp-b-feed'), u, .1, 1.1);
+        var h = Math.round(14 * eo(p(u, .5, 1.3))); $('hp-hc').textContent = h; $('hp-hrt').firstChild.outerHTML = h > 0 ? IC.heartf : IC.heart;
+        $('hp-cc').textContent = u > 1.2 ? 3 : 0;
+        var s = pop(p(u, .45, .4)); show($('hp-sent'), cl(s * 1.4), 'scale(' + (.9 + .1 * s) + ')');
+        [['hp-m1', 1.2], ['hp-m2', 1.9]].forEach(function (c) { var k = eo(p(u, c[1], .35)); show($(c[0]), k, 'translateY(' + (20 * (1 - k)) + 'px)'); });
+      },
+      mem: function (u) {
+        var pz = u > 1.0; $('hp-leo').textContent = pz ? 'Paused' : 'Pause'; $('hp-leo').style.background = pz ? 'rgba(245,245,242,.18)' : '#f5f5f2'; $('hp-leo').style.color = pz ? '#f5f5f2' : '#0a0a0c';
+        $('hp-leo').style.transform = 'scale(' + (u > .85 && u < 1.0 ? .92 : 1) + ')';
+        var sl = u > 1.8; $('hp-mia').innerHTML = sl ? T + 'Sent' : 'Send link'; $('hp-mia').className = sl ? 'hp-ok' : 'hp-btnw';
+        $('hp-mia').style.transform = 'scale(' + (u > 1.65 && u < 1.8 ? .92 : 1) + ')';
+      },
+      emg: function (u) {
+        var r = (u % 1.1) / 1.1; $('hp-call').style.boxShadow = u > 1.2 ? '0 0 0 ' + (18 * r) + 'px rgba(34,197,94,' + (.45 * (1 - r)) + ')' : 'none';
+      }
+    };
+
+    var SEG = 3.3, N = scr.length, TOTAL = N === 1 ? SEG + 1.4 : SEG * N, cur = -1;
+    function seek(t) {
+      scr.forEach(function (s, i) {
+        var a = i * SEG, u = t - a;
+        var fin = i === 0 ? Math.max(p(t, 0, .25), p(t, TOTAL - .25, .25)) : p(t, a, .25); // the first screen also fades in at the loop's end
+        var o = Math.min(fin, i === N - 1 ? 1 - p(t, TOTAL - .25, .25) : 1 - p(t, a + SEG - .2, .25));
+        if (i === 0 && t > TOTAL - .3) { u = 0; }
+        views[i].style.opacity = o;
+        if (u > -.3 && u < SEG + .3) A[s.id](u);
+      });
+      var c = Math.max(0, Math.min(N - 1, Math.floor(t / SEG)));
+      if (c !== cur) {
+        cur = c; caps.forEach(function (e, i) { e.classList.toggle('on', i === c); });
+        tabs.forEach(function (e, i) { e.classList.toggle('on', i === scr[c].tab && i < 4); });
+      }
     }
-  };
 
-  var SEG = 3.3, N = SCREENS.length, TOTAL = SEG * N, cur = -1;
-  function seek(t) {
-    SCREENS.forEach(function (s, i) {
-      var a = i * SEG, u = t - a;
-      var fin = i === 0 ? Math.max(p(t, 0, .25), p(t, TOTAL - .25, .25)) : p(t, a, .25); // the first screen also fades in at the loop's end
-      var o = Math.min(fin, i === N - 1 ? 1 - p(t, TOTAL - .25, .25) : 1 - p(t, a + SEG - .2, .25));
-      if (i === 0 && t > TOTAL - .3) { u = 0; }
-      views[i].style.opacity = o;
-      if (u > -.3 && u < SEG + .3) A[s.id](u);
-    });
-    var c = Math.max(0, Math.min(N - 1, Math.floor(t / SEG)));
-    if (c !== cur) {
-      cur = c; caps.forEach(function (e, i) { e.classList.toggle('on', i === c); });
-      tabs.forEach(function (e, i) { e.classList.toggle('on', i === SCREENS[c].tab && i < 4); });
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var visible = true, start = performance.now(), paused = 0, raf = 0;
+    function frame(now) {
+      var t = (((now - start) / 1000) % TOTAL + TOTAL) % TOTAL;
+      if (reduce) t = Math.floor(t / SEG) * SEG + SEG - .3;
+      seek(t); raf = requestAnimationFrame(frame);
     }
+    function run(on) {
+      if (on && !raf) { start += performance.now() - paused; raf = requestAnimationFrame(frame); }
+      else if (!on && raf) { cancelAnimationFrame(raf); raf = 0; paused = performance.now(); }
+    }
+    seek(reduce ? SEG - .3 : 2.6); paused = performance.now();
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; run(visible && !document.hidden); }, { threshold: .05 }).observe(host);
+    else run(true);
+    document.addEventListener('visibilitychange', function () { run(visible && !document.hidden); });
   }
-
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var visible = true, start = performance.now(), paused = 0, raf = 0;
-  function frame(now) {
-    var t = (((now - start) / 1000) % TOTAL + TOTAL) % TOTAL;
-    if (reduce) t = Math.floor(t / SEG) * SEG + SEG - .3;
-    seek(t); raf = requestAnimationFrame(frame);
-  }
-  function run(on) {
-    if (on && !raf) { start += performance.now() - paused; raf = requestAnimationFrame(frame); }
-    else if (!on && raf) { cancelAnimationFrame(raf); raf = 0; paused = performance.now(); }
-  }
-  seek(reduce ? SEG - .3 : 2.6); paused = performance.now();
-  if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; run(visible && !document.hidden); }, { threshold: .05 }).observe(host);
-  else run(true);
-  document.addEventListener('visibilitychange', function () { run(visible && !document.hidden); });
+  var hero = document.getElementById('heroPhone');
+  if (hero) mount(hero, SCREENS.map(function (s) { return s.id; }), true);
+  [].forEach.call(document.querySelectorAll('[data-hp-screen]'), function (el) { mount(el, [el.getAttribute('data-hp-screen')], false); });
 })();
