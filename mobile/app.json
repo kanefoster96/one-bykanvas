@@ -28,7 +28,7 @@
       "package": "one.kanvas.app",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#ffffff",
+        "backgroundColor": "#08080a",
         "foregroundImage": "./assets/adaptive-icon.png"
       },
       "permissions": [
@@ -53,7 +53,7 @@
         "expo-notifications",
         {
           "icon": "./assets/notification-icon.png",
-          "color": "#1d1d1f",
+          "color": "#c93e09",
           "defaultChannel": "one"
         }
       ],
