@@ -20,6 +20,8 @@
     heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0112 7.6 4.3 4.3 0 0119.5 10c0 5.4-7.5 10-7.5 10z"/></svg>',
     heartf: '<svg viewBox="0 0 24 24" fill="#ff3b5c" stroke="#ff3b5c" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0112 7.6 4.3 4.3 0 0119.5 10c0 5.4-7.5 10-7.5 10z"/></svg>',
     mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>',
+    arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+    phone: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1z"/></svg>',
     star: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2.8l2.75 5.6 6.15.9-4.45 4.33 1.05 6.12L12 16.87l-5.5 2.88 1.05-6.12L3.1 9.3l6.15-.9z"/></svg>',
     sig: '<svg width="34" height="22" viewBox="0 0 34 22" fill="currentColor"><rect x="0" y="14" width="6" height="8" rx="1.5"/><rect x="9" y="10" width="6" height="12" rx="1.5"/><rect x="18" y="5" width="6" height="17" rx="1.5"/><rect x="27" y="0" width="6" height="22" rx="1.5"/></svg>',
     wifi: '<svg width="32" height="24" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M2 6.5a14 14 0 0120 0M5.5 10a9 9 0 0113 0M9 13.4a4 4 0 016 0"/></svg>',
@@ -40,7 +42,13 @@
   var ok = function (txt) { return '<b class="hp-ok">' + T + txt + '</b>'; };
 
   var SCREENS = [
-    { id: 'web', full: true, label: 'Trials booked on your website', html:
+    { id: 'ad', full: true, label: 'We run ads to parents near you', html:
+      sbar() + '<div class="hp-igt"><b>Feed</b><span>' + IC.heart + IC.chat + '</span></div>' +
+      '<div class="hp-adp" id="hp-adp"><div class="hp-adh">' + LOGO + '<div><b>' + CLUB + '</b><span>Sponsored</span></div><i>\u00b7\u00b7\u00b7</i></div>' +
+      '<div class="hp-adi"><p>FREE TRIAL CLASS</p><b>Hip Hop</b><span>Ages 7 to 11 \u00b7 near you</span></div>' +
+      '<div class="hp-adc" id="hp-adc"><span>Book a free trial</span>' + IC.arrow + '<i class="hp-rp" id="hp-adrp"></i></div>' +
+      '<p class="hp-adt"><b>' + CLUB + '</b> Try a class free this week.</p></div>' },
+    { id: 'web', full: true, label: 'They book a free trial on your website', html:
       sbar() + '<div class="hp-wnav">' + LOGO + '<span class="hp-hb"><i></i><i></i><i></i></span></div>' +
       '<div class="hp-wproof"><span class="hp-avs"><i style="background:#f59e0b"></i><i style="background:#6366f1"></i><i style="background:#ec4899"></i><i style="background:#10b981"></i></span><div><p class="hp-stars">\u2605\u2605\u2605\u2605\u2605</p><p>Loved by local parents</p></div></div>' +
       '<p class="hp-wh">Book a free trial class.<span>No card needed.</span></p>' +
@@ -53,42 +61,64 @@
       '<div class="hp-mail"><div class="hp-mh"><b>YOUR CLUB</b><span>FREE TRIAL PASS</span></div><div class="hp-mb"><h3>You\u2019re booked in! \ud83c\udf89</h3><p>Ava\u2019s free trial is confirmed. We can\u2019t wait to meet her!</p>' +
       '<div class="hp-mbox"><b>\u23f0 Day and time</b>Hip Hop \u00b7 Tuesday \u00b7 5:30pm</div><p>Just show this QR code when you arrive.</p><div class="hp-mqr">' + qr(11, '#000', '#fff') + '</div></div></div>' +
       ban('hp-b-mail', 'Ava\u2019s trial is confirmed \ud83c\udf89', true) },
+    { id: 'sms', full: true, light: true, label: 'A reminder text, so they turn up', html:
+      sbar(1) + '<div class="hp-snav"><span class="hp-sa">' + IC.star + '</span><b>' + CLUB + ' \u203a</b></div>' +
+      '<p class="hp-smeta">Text Message \u00b7 SMS<br>Today 09:00</p>' +
+      '<span class="hp-styp" id="hp-sty"><i></i><i></i><i></i></span>' +
+      '<p class="hp-sin" id="hp-sin">Hi! Reminder: Ava\u2019s free Hip Hop trial is tomorrow at 5:30pm. Comfy clothes and a water bottle. See you there!</p>' +
+      '<p class="hp-sout" id="hp-sout">Thank you, we\u2019ll be there! \ud83d\ude0a</p>' +
+      '<div class="hp-sinp"><span>+</span><div>Text Message \u00b7 SMS</div></div>' },
     { id: 'follow', full: true, light: true, label: 'A follow-up, so they join', html:
       sbar(1) + '<div class="hp-mnav"><span class="hp-bk">\u2039</span><b>How was Ava\u2019s first class?</b></div>' +
       '<div class="hp-mail"><div class="hp-mh"><b>YOUR CLUB</b><span>AFTER THE TRIAL</span></div><div class="hp-mb"><h3>Ava was brilliant! \u2b50</h3><p>Thanks for coming to Hip Hop. We\u2019d love Ava to join us every week, and her spot is saved for her.</p>' +
       '<div class="hp-mbox"><b>\ud83d\udcc5 Every Tuesday</b>Hip Hop \u00b7 5:30pm \u00b7 Coach Jess</div><div class="hp-join" id="hp-join"><span id="hp-joint">Join Your Club</span><span class="hp-joined" id="hp-joined">' + T + 'Membership started</span></div><p class="hp-small">Pay monthly by card. Cancel any time.</p></div></div>' +
       ban('hp-b-follow', 'How was Ava\u2019s first class?', true) },
-    { id: 'feed', tab: 0, label: 'Updates every parent sees', html:
-      '<div class="hp-cmp"><div class="hp-cin"><span class="hp-me">JP</span>What\u2019s on your mind?</div><div class="hp-cam">' + IC.cam + '</div></div>' +
-      '<div class="hp-post"><div class="hp-ph">' + LOGO + '<div><b>' + CLUB + '</b> <span class="hp-tag hp-w">OFFICIAL</span><span class="hp-d">Today \u00b7 07:15</span></div></div>' +
-      '<p class="hp-pt">Half term: we\u2019re open all week</p><p class="hp-pb">Every class runs as normal through half term, same days and times. Nothing to book, just come along.</p>' +
-      '<div class="hp-re"><span id="hp-hrt">' + IC.heart + '<i id="hp-hc">0</i></span><span>' + IC.chat + '<i id="hp-cc">0</i></span></div>' +
-      '<div class="hp-sent" id="hp-sent">' + T + 'Sent to every parent and coach</div>' +
-      '<div class="hp-cm" id="hp-cm1"><span class="hp-a" style="background:#f59e0b">RB</span><div><b>Rachel B.</b><p>Perfect, thanks for confirming!</p></div></div>' +
-      '<div class="hp-cm" id="hp-cm2"><span class="hp-a" style="background:#d946ef">SM</span><div><b>Sam M.</b><p>Away Monday but back for Wednesday</p></div></div></div>' +
-      ban('hp-b-feed', 'Half term: we\u2019re open all week') },
-    { id: 'pay', tab: 0, label: 'Payments taken for you', html:
-      '<p class="hp-ttl">Payments</p><p class="hp-sub">This month</p>' +
-      '<p class="hp-lab">Members paid</p><div class="hp-cd hp-pad"><p class="hp-big"><span id="hp-pd">38</span> of 40</p><div class="hp-bar"><i id="hp-pbar"></i></div></div>' +
-      '<p class="hp-lab">Done for you</p><div class="hp-cd">' +
-      row('Card declined<span class="hp-s">Maisie\u2019s membership</span>', '', '<b class="hp-wait" id="hp-py1">Retrying\u2026</b>') +
-      row('Ava joined<span class="hp-s">New membership</span>', '', '<b class="hp-wait" id="hp-py2">Pending</b>') +
-      row('Payment reminders<span class="hp-s">Sent automatically</span>', '', ok('On')) + '</div>' +
-      '<div class="hp-allok" id="hp-allok">' + T + 'All caught up</div>' +
-      ban('hp-b-pay', 'Payment received: Ava\u2019s membership \ud83c\udf89') },
-    { id: 'reg', tab: 1, label: 'Registers on your phone', html:
-      '<p class="hp-ttl">Hip Hop</p><p class="hp-sub">Register \u00b7 today</p>' +
-      '<p class="hp-lab">Checked in</p><div class="hp-cd hp-pad"><p class="hp-big"><span id="hp-rc">16</span> of 19</p><div class="hp-bar"><i id="hp-rbar"></i></div></div>' +
+    { id: 'payset', tab: 0, label: 'Easy payment setup', html:
+      '<p class="hp-ttl">Join Hip Hop</p><p class="hp-sub">Monthly membership \u00b7 cancel any time</p>' +
+      '<div class="hp-cd" style="margin-top:26px">' + row('Hip Hop<span class="hp-s">Tuesdays \u00b7 5:30pm</span>', '', ok('Spot saved')) + row('Ava Morgan<span class="hp-s">Age 7</span>', '', '') + '</div>' +
+      '<p class="hp-lab">Pay monthly by card</p>' +
+      '<div class="hp-fi2"><span id="hp-cn"></span><i class="hp-car" id="hp-car"></i></div>' +
+      '<div class="hp-fi2r"><div class="hp-fi2"><span id="hp-ce"></span></div><div class="hp-fi2"><span id="hp-cv"></span></div></div>' +
+      '<div class="hp-paybtn" id="hp-paybtn"><span id="hp-payt">Start membership</span><span class="hp-joined" id="hp-payok">' + T + 'Membership started</span></div>' +
+      '<p class="hp-sub" style="text-align:center;margin-top:16px!important">Paid automatically each month. Nothing to chase.</p>' },
+    { id: 'reg', tab: 1, label: 'Live on your registers', html:
+      '<p class="hp-ttl">Hip Hop</p><p class="hp-sub">Register \u00b7 Tuesday 5:30pm</p>' +
+      '<p class="hp-lab">Members</p><div class="hp-cd hp-pad"><p class="hp-big"><span id="hp-rc">18</span> of 20</p><div class="hp-bar"><i id="hp-rbar"></i></div></div>' +
       '<p class="hp-lab">Register</p><div class="hp-cd">' +
-      row('Leo P.', '<span class="hp-tag hp-m">Member</span>', ok('In')) +
-      row('Isla K.', '<span class="hp-tag hp-m">Member</span>', ok('In')) +
-      row('Ava M.', '<span class="hp-tag hp-f" id="hp-avt">Free trial</span>', '<b class="hp-btnw" id="hp-avi">Check in</b>', 'hp-avr') +
-      row('Noah T.', '<span class="hp-tag hp-m">Member</span>', '<b class="hp-btnw" id="hp-noi">Check in</b>') + '</div>' +
-      ban('hp-b-reg', 'Ava checked in \u00b7 now a member \ud83c\udf89') },
-    { id: 'qrs', tab: 4, label: 'QR check-in at the door', html:
+      row('Leo P.', '<span class="hp-tag hp-m">Member</span>', '') +
+      row('Isla K.', '<span class="hp-tag hp-m">Member</span>', '') +
+      row('Ava M.', '<span class="hp-tag hp-new" id="hp-avt">New member</span>', ok('Added'), 'hp-avr') +
+      row('Noah T.', '<span class="hp-tag hp-m">Member</span>', '') + '</div>' +
+      ban('hp-b-reg', 'Ava is on the Hip Hop register \ud83c\udf89') },
+    { id: 'qrs', tab: 4, label: 'Scan in every class for attendance', html:
       '<div class="hp-av">A<em>' + IC.cam + '</em></div><p class="hp-nm">Ava Morgan</p><p class="hp-mp"><span>Monthly membership</span></p>' +
       '<div class="hp-sts"><div><b id="hp-att">96%</b><span>Attendance</span></div><div><b>2</b><span>Shows</span></div><div><b>3</b><span>Awards</span></div></div>' +
-      '<p class="hp-lab" style="text-align:center">Scan to check in</p><div class="hp-qrc">' + qr(7, '#fff', '#000') + '<i class="hp-scan" id="hp-scan"></i><div class="hp-done" id="hp-done"><span class="hp-ck">' + T + '</span><b>Checked in</b><span>Hip Hop \u00b7 5:30pm</span></div></div>' }
+      '<p class="hp-lab" style="text-align:center">Scan to check in</p><div class="hp-qrc">' + qr(7, '#fff', '#000') + '<i class="hp-scan" id="hp-scan"></i><div class="hp-done" id="hp-done"><span class="hp-ck">' + T + '</span><b>Checked in</b><span>Hip Hop \u00b7 5:30pm</span></div></div>' },
+    { id: 'feed', tab: 2, label: 'Community posts and in-app chat', html:
+      '<div class="hp-post" style="margin-top:-6px;border-top:0;padding-top:6px"><div class="hp-ph">' + LOGO + '<div><b>' + CLUB + '</b> <span class="hp-tag hp-w">OFFICIAL</span><span class="hp-d">Today \u00b7 07:15</span></div></div>' +
+      '<p class="hp-pt">Half term: we\u2019re open all week</p><p class="hp-pb">Every class runs as normal, same days and times. Just come along!</p>' +
+      '<div class="hp-re"><span id="hp-hrt">' + IC.heart + '<i id="hp-hc">0</i></span><span>' + IC.chat + '<i id="hp-cc">0</i></span></div>' +
+      '<div class="hp-sent" id="hp-sent">' + T + 'Sent to every parent and coach</div></div>' +
+      '<p class="hp-lab">Messages</p><div class="hp-chat2">' +
+      '<p class="hp-bm" id="hp-m1">Does Ava need anything for the show?</p>' +
+      '<div class="hp-bt2" id="hp-m2">' + LOGO + '<p>Just her usual kit. We\u2019ll go through it in class!</p></div></div>' +
+      ban('hp-b-feed', 'Half term: we\u2019re open all week') },
+    { id: 'mem', tab: 0, label: 'Memberships, easy to manage', html:
+      '<p class="hp-ttl">Memberships</p><p class="hp-sub">40 active \u00b7 all paid by card</p>' +
+      '<p class="hp-lab">Members</p><div class="hp-cd">' +
+      row('Ava Morgan<span class="hp-s">Hip Hop \u00b7 monthly</span>', '', '<b class="hp-pill hp-pg">Active</b>') +
+      row('Leo Parker<span class="hp-s">Street Dance \u00b7 monthly</span>', '', '<b class="hp-btnw" id="hp-leo">Pause</b>') +
+      row('Isla Khan<span class="hp-s">Two classes \u00b7 sibling discount</span>', '', '<b class="hp-pill hp-pg">Active</b>') +
+      row('Mia Reid<span class="hp-s">Card expiring</span>', '', '<b class="hp-btnw" id="hp-mia">Send link</b>') + '</div>' +
+      '<p class="hp-sub" style="margin-top:22px!important">Pause, change or cancel in a tap. Parents can update their own card.</p>' },
+    { id: 'emg', tab: 0, label: 'Emergency contacts on hand', html:
+      '<div class="hp-av" style="width:150px;height:150px;font-size:64px">A</div><p class="hp-nm">Ava Morgan</p><p class="hp-sub" style="text-align:center">Hip Hop \u00b7 age 7</p>' +
+      '<p class="hp-lab">Emergency contacts</p><div class="hp-cd">' +
+      row('Sarah Morgan<span class="hp-s">Mum \u00b7 07700 900123</span>', '', '<b class="hp-call" id="hp-call">' + IC.phone + '</b>') +
+      row('James Morgan<span class="hp-s">Dad \u00b7 07700 900456</span>', '', '<b class="hp-call">' + IC.phone + '</b>') + '</div>' +
+      '<p class="hp-lab">Medical and consent</p><div class="hp-cd">' +
+      row('Asthma<span class="hp-s">Inhaler in her bag</span>', '', '<b class="hp-pill hp-pa">Note</b>') +
+      row('Photo consent', '', ok('Given')) + '</div>' }
   ];
 
   var css = [
@@ -201,6 +231,38 @@
     '.hp-done{position:absolute;inset:0;background:#06140b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0}',
     '.hp-ck{width:120px;height:120px;border-radius:50%;background:#22c55e;display:grid;place-items:center;color:#06140b}.hp-ck svg{width:64px;height:64px}',
     '.hp-done b{font:700 32px/1 Inter,sans-serif}.hp-done span{font:500 21px/1 Inter,sans-serif;color:rgba(245,245,242,.7)}',
+    /* ad */
+    '.hp-igt{display:flex;justify-content:space-between;align-items:center;height:92px;padding:0 30px;border-bottom:1px solid rgba(255,255,255,.08)}.hp-igt b{font:700 30px/1 Inter,sans-serif}.hp-igt span{display:flex;gap:22px}.hp-igt svg{width:34px;height:34px}',
+    '.hp-adh{display:flex;align-items:center;gap:14px;padding:18px 24px}.hp-adh b{display:block;font:700 23px/1.2 Inter,sans-serif}.hp-adh span{display:block;font:500 18px/1.2 Inter,sans-serif;color:rgba(245,245,242,.6);margin-top:3px}.hp-adh i{margin-left:auto;font:700 28px/1 Inter,sans-serif;font-style:normal;color:rgba(245,245,242,.7)}',
+    '.hp-adi{height:560px;background:radial-gradient(120% 90% at 85% 10%,#93c5fd 0,#2563eb 45%,#0b2a6b 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:40px 40px 46px;position:relative;overflow:hidden}',
+    '.hp-adi::before{content:"";position:absolute;right:-90px;top:-90px;width:380px;height:380px;border-radius:50%;border:44px solid rgba(255,255,255,.14)}',
+    '.hp-adi p{font:800 22px/1 Inter,sans-serif;letter-spacing:.2em;color:rgba(255,255,255,.88)}.hp-adi b{display:block;margin-top:14px;font:900 86px/.95 Inter,sans-serif;letter-spacing:-.045em;color:#fff}.hp-adi span{display:block;margin-top:16px;font:600 27px/1.3 Inter,sans-serif;color:rgba(255,255,255,.92)}',
+    '.hp-adc{position:relative;display:flex;justify-content:space-between;align-items:center;padding:24px 26px;background:#1c1c1f;font:700 24px/1 Inter,sans-serif;overflow:hidden}.hp-adc svg{width:26px;height:26px}',
+    '.hp-rp{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:rgba(255,255,255,.25);opacity:0}',
+    '.hp-adt{padding:18px 26px;font:500 22px/1.45 Inter,sans-serif;color:rgba(245,245,242,.88)}.hp-adt b{font-weight:700}',
+    /* sms */
+    '.hp-v.hp-light.hp-white{background:#fff}',
+    '.hp-snav{text-align:center;padding:6px 0 20px;border-bottom:1px solid #eee;background:#fff}',
+    '.hp-sa{display:grid;place-items:center;width:100px;height:100px;margin:0 auto;border-radius:50%;background:linear-gradient(135deg,#2563eb,#60a5fa)}.hp-sa svg{width:56%;height:56%}',
+    '.hp-snav b{display:inline-block;margin-top:12px;padding:10px 22px;border:1px solid #e3e3e3;border-radius:999px;font:700 23px/1 Inter,sans-serif}',
+    '.hp-smeta{text-align:center;font:500 18px/1.4 Inter,sans-serif;color:#8e8e93;margin:26px 0 12px!important}',
+    '.hp-sin{margin:0 0 0 26px!important;max-width:78%;background:#e9e9eb;border-radius:32px;padding:18px 24px;font:400 25px/1.38 Inter,sans-serif;color:#000;opacity:0;transform-origin:0 0}',
+    '.hp-sout{margin:16px 26px 0 auto!important;max-width:66%;background:#34c759;color:#fff;border-radius:32px;padding:18px 24px;font:400 25px/1.38 Inter,sans-serif;opacity:0;transform-origin:100% 0}',
+    '.hp-styp{margin-left:26px;display:inline-flex;gap:8px;padding:22px 24px;border-radius:32px;background:#e9e9eb}.hp-styp i{width:12px;height:12px;border-radius:50%;background:#8e8e93}',
+    '.hp-sinp{position:absolute;left:24px;right:24px;bottom:44px;display:flex;gap:16px;align-items:center}.hp-sinp span{width:70px;height:70px;border-radius:50%;border:1px solid #ddd;display:grid;place-items:center;font:300 40px/1 Inter,sans-serif;color:#111}.hp-sinp div{flex:1;padding:20px 26px;border:1px solid #ddd;border-radius:999px;font:400 26px/1 Inter,sans-serif;color:#b0b0b5}',
+    /* payment setup */
+    '.hp-fi2{height:76px;border-radius:18px;background:#000;border:1px solid rgba(255,255,255,.14);padding:0 22px;display:flex;align-items:center;font:500 26px/1 Inter,sans-serif;letter-spacing:.04em;margin-bottom:14px}',
+    '.hp-fi2r{display:grid;grid-template-columns:1fr 1fr;gap:14px}',
+    '.hp-car{display:inline-block;width:2px;height:30px;background:#f5f5f2;margin-left:2px}',
+    '.hp-paybtn{position:relative;margin-top:16px;padding:26px;border-radius:999px;background:#2563eb;color:#fff;text-align:center;font:700 26px/1 Inter,sans-serif;overflow:hidden}',
+    /* register, members */
+    '.hp-tag.hp-new{border-color:rgba(96,165,250,.5);color:#93c5fd;background:rgba(96,165,250,.16)}',
+    '.hp-pill{padding:8px 16px;border-radius:999px;font:700 18px/1 Inter,sans-serif;white-space:nowrap}.hp-pg{background:rgba(34,197,94,.14);color:#22c55e}.hp-pa{background:rgba(245,158,11,.16);color:#fbbf24}',
+    '.hp-call{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#22c55e;color:#06140b}.hp-call svg{width:28px;height:28px}',
+    /* chat */
+    '.hp-chat2{display:flex;flex-direction:column;gap:12px}',
+    '.hp-bm{align-self:flex-end;max-width:82%;padding:16px 22px;border-radius:30px;background:#f1f1ee;color:#0a0a0c;font:500 22px/1.35 Inter,sans-serif;opacity:0}',
+    '.hp-bt2{display:flex;gap:12px;align-items:flex-end;opacity:0}.hp-bt2 .hp-lg{width:44px;height:44px}.hp-bt2 p{max-width:82%;padding:16px 22px;border-radius:26px;background:#131316;border:1px solid rgba(255,255,255,.12);font:500 22px/1.38 Inter,sans-serif}',
     /* caption under the phone */
     '.hp-cap{position:relative;height:1.5em;margin-top:18px;text-align:center;font-weight:600;font-size:15px;color:var(--ink-2,#55555a)}',
     '.hp-cap span{position:absolute;left:0;right:0;transition:opacity .35s,transform .35s;opacity:0;transform:translateY(6px)}.hp-cap span.on{opacity:1;transform:none}'
@@ -209,7 +271,7 @@
 
   host.innerHTML = '<div class="hp-box"><div class="hp-in"><div class="hp-phone"><div class="hp-scr">' + sbar() +
     '<div class="hp-hd">' + LOGO + '<span>' + IC.bell + '</span></div>' +
-    SCREENS.map(function (s) { return '<div class="hp-v' + (s.full ? ' hp-full' : '') + (s.light ? ' hp-light' : '') + '" id="hp-' + s.id + '">' + s.html + '</div>'; }).join('') +
+    SCREENS.map(function (s) { return '<div class="hp-v' + (s.full ? ' hp-full' : '') + (s.light ? ' hp-light' : '') + (s.id === 'sms' ? ' hp-white' : '') + '" id="hp-' + s.id + '">' + s.html + '</div>'; }).join('') +
     '<div class="hp-tb"><i>' + IC.home + '</i><i>' + IC.cal + '</i><i>' + IC.chat + '</i><i>' + IC.shop + '</i><i class="hp-qrb">' + IC.qr + '</i></div>' +
     '</div></div></div></div><p class="hp-cap">' + SCREENS.map(function (s) { return '<span>' + s.label + '</span>'; }).join('') + '</p>';
 
@@ -244,39 +306,61 @@
       var g = eo(p(u, 1.8, .3)); $('hp-join').style.background = green(g); $('hp-join').style.transform = 'scale(' + (u > 1.65 && u < 1.8 ? .96 : 1) + ')';
       $('hp-joint').style.opacity = 1 - g; $('hp-joined').style.opacity = g;
     },
-    feed: function (u) {
-      banner($('hp-b-feed'), u, .2, 1.3);
-      var h = Math.round(14 * eo(p(u, .7, 1.4))); $('hp-hc').textContent = h; $('hp-hrt').firstChild.outerHTML = h > 0 ? IC.heartf : IC.heart;
-      var s = pop(p(u, .55, .4)); show($('hp-sent'), cl(s * 1.4), 'scale(' + (.9 + .1 * s) + ')');
-      [['hp-cm1', 1.3], ['hp-cm2', 1.8]].forEach(function (c) { var k = eo(p(u, c[1], .35)); show($(c[0]), k, 'translateY(' + (20 * (1 - k)) + 'px)'); });
-      $('hp-cc').textContent = u > 1.8 ? 2 : u > 1.3 ? 1 : 0;
-    },
-    pay: function (u) {
-      var k = eo(p(u, .2, 1.1)); $('hp-pbar').style.width = (95 * k + 2.5 * p(u, 1.0, .2) + 2.5 * p(u, 1.5, .2)) + '%';
-      $('hp-pd').textContent = u > 1.0 ? (u > 1.5 ? 40 : 39) : 38;
-      $('hp-py1').innerHTML = u > 1.0 ? T + 'Paid' : 'Retrying\u2026'; $('hp-py1').className = u > 1.0 ? 'hp-ok' : 'hp-wait';
-      $('hp-py2').innerHTML = u > 1.5 ? T + 'Paid' : 'Pending'; $('hp-py2').className = u > 1.5 ? 'hp-ok' : 'hp-wait';
-      banner($('hp-b-pay'), u, 1.45, 2.6);
-      var a = pop(p(u, 2.0, .45)); show($('hp-allok'), cl(a * 1.4), 'scale(' + (.92 + .08 * a) + ')');
-    },
-    reg: function (u) {
-      var inA = u > .9, inN = u > 1.7;
-      $('hp-avi').outerHTML = inA ? '<b class="hp-ok" id="hp-avi">' + T + 'In</b>' : '<b class="hp-btnw" id="hp-avi">Check in</b>';
-      $('hp-noi').outerHTML = inN ? '<b class="hp-ok" id="hp-noi">' + T + 'In</b>' : '<b class="hp-btnw" id="hp-noi">Check in</b>';
-      $('hp-avt').textContent = inA ? 'Member' : 'Free trial'; $('hp-avt').className = 'hp-tag ' + (inA ? 'hp-m' : 'hp-f');
-      $('hp-avr').style.background = 'rgba(34,197,94,' + (inA ? .14 * (1 - p(u, 1.6, .6)) : 0) + ')';
-      var c = 16 + (inA ? 1 : 0) + (inN ? 1 : 0); $('hp-rc').textContent = c; $('hp-rbar').style.width = (c / 19 * 100) + '%';
-      banner($('hp-b-reg'), u, .95, 2.4);
-    },
+
+
+
     qrs: function (u) {
       var sc = $('hp-scan'), a = .5, b = 1.4, k = p(u, a, b - a);
       sc.style.opacity = u > a && u < b + .1 ? 1 : 0; sc.style.top = (60 + 300 * (.5 - .5 * Math.cos(k * Math.PI * 2))) + 'px';
       $('hp-done').style.opacity = eo(p(u, b, .3)); $('hp-done').querySelector('.hp-ck').style.transform = 'scale(' + pop(p(u, b + .05, .45)) + ')';
       $('hp-att').textContent = u > b + .4 ? '97%' : '96%';
+    },
+    ad: function (u) {
+      var k = eo(p(u, 0, .6)); $('hp-adp').style.transform = 'translateY(' + (300 * (1 - k)) + 'px)';
+      var r = p(u, 1.6, .5); $('hp-adrp').style.opacity = u > 1.6 && u < 2.15 ? .9 * (1 - r) : 0; $('hp-adrp').style.transform = 'scale(' + (1 + 16 * r) + ')';
+      $('hp-adc').style.background = u > 1.55 && u < 2.0 ? '#2a2a2e' : '#1c1c1f';
+    },
+    sms: function (u) {
+      $('hp-sty').style.display = u < .8 ? 'inline-flex' : 'none';
+      [].forEach.call($('hp-sty').children, function (d, i) { d.style.opacity = .35 + .65 * (.5 + .5 * Math.sin(u * 10 - i * 1.2)); });
+      var a = pop(p(u, .8, .4)); show($('hp-sin'), cl(a * 1.4), 'scale(' + (.92 + .08 * a) + ')');
+      var b = pop(p(u, 1.8, .4)); show($('hp-sout'), cl(b * 1.4), 'scale(' + (.92 + .08 * b) + ')');
+    },
+    payset: function (u) {
+      var num = '4242 4242 4242 4242', n = Math.round(cl((u - .3) / .8) * num.length);
+      $('hp-cn').textContent = num.slice(0, n) || 'Card number'; $('hp-cn').style.opacity = n ? 1 : .45;
+      $('hp-car').style.display = u < 1.1 && Math.floor(u * 4) % 2 === 0 ? 'inline-block' : 'none';
+      $('hp-ce').textContent = u > 1.2 ? '08 / 28' : 'MM / YY'; $('hp-ce').style.opacity = u > 1.2 ? 1 : .45;
+      $('hp-cv').textContent = u > 1.4 ? '\u2022\u2022\u2022' : 'CVC'; $('hp-cv').style.opacity = u > 1.4 ? 1 : .45;
+      var g = eo(p(u, 1.95, .3)); $('hp-paybtn').style.background = g > 0 ? green(g) : '#2563eb';
+      $('hp-paybtn').style.transform = 'scale(' + (u > 1.8 && u < 1.95 ? .96 : 1) + ')';
+      $('hp-payt').style.opacity = 1 - g; $('hp-payok').style.opacity = g;
+    },
+    reg: function (u) {
+      var k = pop(p(u, .7, .45)); show($('hp-avr'), cl(k * 1.4), 'translateX(' + (60 * (1 - k)) + 'px)');
+      $('hp-avr').style.background = 'rgba(96,165,250,' + (.16 * (1 - p(u, 1.8, .7))) + ')';
+      var c = u > .7 ? 19 : 18; $('hp-rc').textContent = c; $('hp-rbar').style.width = (c / 20 * 100) + '%';
+      banner($('hp-b-reg'), u, .8, 2.3);
+    },
+    feed: function (u) {
+      banner($('hp-b-feed'), u, .1, 1.1);
+      var h = Math.round(14 * eo(p(u, .5, 1.3))); $('hp-hc').textContent = h; $('hp-hrt').firstChild.outerHTML = h > 0 ? IC.heartf : IC.heart;
+      $('hp-cc').textContent = u > 1.2 ? 3 : 0;
+      var s = pop(p(u, .45, .4)); show($('hp-sent'), cl(s * 1.4), 'scale(' + (.9 + .1 * s) + ')');
+      [['hp-m1', 1.2], ['hp-m2', 1.9]].forEach(function (c) { var k = eo(p(u, c[1], .35)); show($(c[0]), k, 'translateY(' + (20 * (1 - k)) + 'px)'); });
+    },
+    mem: function (u) {
+      var pz = u > 1.0; $('hp-leo').textContent = pz ? 'Paused' : 'Pause'; $('hp-leo').style.background = pz ? 'rgba(245,245,242,.18)' : '#f5f5f2'; $('hp-leo').style.color = pz ? '#f5f5f2' : '#0a0a0c';
+      $('hp-leo').style.transform = 'scale(' + (u > .85 && u < 1.0 ? .92 : 1) + ')';
+      var sl = u > 1.8; $('hp-mia').innerHTML = sl ? T + 'Sent' : 'Send link'; $('hp-mia').className = sl ? 'hp-ok' : 'hp-btnw';
+      $('hp-mia').style.transform = 'scale(' + (u > 1.65 && u < 1.8 ? .92 : 1) + ')';
+    },
+    emg: function (u) {
+      var r = (u % 1.1) / 1.1; $('hp-call').style.boxShadow = u > 1.2 ? '0 0 0 ' + (18 * r) + 'px rgba(34,197,94,' + (.45 * (1 - r)) + ')' : 'none';
     }
   };
 
-  var SEG = 3.4, N = SCREENS.length, TOTAL = SEG * N, cur = -1;
+  var SEG = 3.3, N = SCREENS.length, TOTAL = SEG * N, cur = -1;
   function seek(t) {
     SCREENS.forEach(function (s, i) {
       var a = i * SEG, u = t - a;
