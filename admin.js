@@ -276,12 +276,14 @@ function chipBox(p) {
 }
 
 /* "3h ago", "2d ago" - for the build queue, where the hours are the point. */
-function hoursAgo(iso) {
+/* Late means past the plan's promise: Starter live in 24 hours, Business
+   and One ready within 14 days. */
+function hoursAgo(iso, plan) {
   var d = new Date(iso);
   if (isNaN(d)) return { text: '', over: false };
   var h = Math.max(0, Math.floor((Date.now() - d.getTime()) / 36e5));
   var text = h < 1 ? 'Joined under an hour ago' : h < 48 ? 'Joined ' + h + 'h ago' : 'Joined ' + Math.floor(h / 24) + 'd ago';
-  return { text: text, over: h >= 24 };
+  return { text: text, over: h >= (plan === 'starter' ? 24 : 14 * 24) };
 }
 
 function lifetimeSpent(userId) {
@@ -662,10 +664,10 @@ function newBuildCard(p) {
   head.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan] || 'No plan'));
   card.appendChild(head);
 
-  var age = hoursAgo(p.created_at);
+  var age = hoursAgo(p.created_at, p.active_plan);
   if (age.text) {
     card.appendChild(el('p', 'cust-points' + (age.over ? ' is-over' : ''),
-      age.text + (age.over && p.active_plan === 'starter' ? ' · past the 24 hours' : '')));
+      age.text + (age.over ? (p.active_plan === 'starter' ? ' · past the 24 hours' : ' · past the 14 days') : '')));
   }
   var reachB = contactLine(p);
   if (reachB) card.appendChild(reachB);
