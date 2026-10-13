@@ -30,6 +30,18 @@
   var trigger = me.getAttribute('data-trigger') || '';
   var full = me.hasAttribute('data-full');
   var edits = me.hasAttribute('data-edits');
+  /* data-style="sheet": the Kanvas Academy chat. A person, not a brand: their
+     photo and name on the header and on their replies, rounded bubbles, a
+     round send button, a "who's asking?" card, and (optionally) an intro
+     from them with tap-to-ask questions and a one-off teaser card. */
+  var sheet = me.getAttribute('data-style') === 'sheet';
+  var agent = me.getAttribute('data-agent') || '';
+  var avatar = me.getAttribute('data-avatar') || '';
+  var subtitle = me.getAttribute('data-subtitle') || 'Usually replies quickly';
+  var intro = me.getAttribute('data-intro') || '';
+  var quick = (me.getAttribute('data-quick') || '').split('|').filter(Boolean);
+  var teaser = me.getAttribute('data-teaser') || '';
+  if (sheet) full = true;
   var KEY = 'k1chat:' + site;
 
   var saved = null;
@@ -57,23 +69,37 @@
     + '.k1c-details{padding:10px 12px;border-top:1px solid #eee;background:#fafafa;font-size:13px;color:#6e6e73}.k1c-details p{margin:0 0 8px}.k1c-details input{width:100%;box-sizing:border-box;border:1px solid #d2d2d7;border-radius:10px;padding:8px 10px;font:inherit;font-size:16px;margin-bottom:6px}.k1c-details .k1c-row{display:flex;gap:6px}.k1c-details button{border:0;background:' + color + ';color:#fff;border-radius:10px;padding:8px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.k1c-details .k1c-skip{background:none;color:#86868b;font-weight:500}'
     /* data-edits: the pull button that sits on the box, and the card that explains it. */
     + '.k1c-edit{display:flex;justify-content:center;margin:0 0 -1px;padding:6px 12px 0;border-top:1px solid #eee}.k1c-pull{display:inline-flex;align-items:center;gap:6px;border:1px solid #d2d2d7;border-bottom:0;border-radius:12px 12px 0 0;background:#f5f5f7;color:#1d1d1f;font:inherit;font-size:13px;font-weight:600;padding:6px 14px 7px;cursor:pointer;transition:background .2s,color .2s}.k1c-pull:hover{background:#ececf0}.k1c-pull i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#1d1d1f;color:#fff;font-size:13px;line-height:1}'
-    + '.k1c.is-edit .k1c-pull{background:#1a7f37;border-color:#1a7f37;color:#fff}.k1c.is-edit .k1c-pull i{background:#fff;color:#1a7f37}.k1c.is-edit .k1c-form{background:#f2faf4;border-top-color:#bfe3c9}.k1c.is-edit .k1c-form textarea{border-color:#8fcfa1}.k1c.is-edit .k1c-send{background:#1a7f37}.k1c-edit + .k1c-form{border-top:1px solid #d2d2d7}'
+    + '.k1c.is-edit .k1c-pull{background:#c93e09;border-color:#c93e09;color:#fff}.k1c.is-edit .k1c-pull i{background:#fff;color:#c93e09}.k1c.is-edit .k1c-form{background:#fff4ee;border-top-color:#ffd3bf}.k1c.is-edit .k1c-form textarea{border-color:#ff9d74}.k1c.is-edit .k1c-send{background:#c93e09}.k1c-edit + .k1c-form{border-top:1px solid #d2d2d7}'
     + '.k1c-attach{flex:0 0 auto;align-self:flex-end;display:grid;place-items:center;width:42px;height:42px;border:1px solid #d2d2d7;border-radius:12px;background:#fff;color:#1d1d1f;cursor:pointer}.k1c-attach svg{width:20px;height:20px}.k1c-attach:hover{background:#f5f5f7}'
-    + '.k1c-shots{display:flex;gap:8px;padding:10px 12px 0;overflow-x:auto;background:#f2faf4}.k1c-shots[hidden]{display:none}.k1c-shot{position:relative;flex:0 0 auto;width:64px;height:64px;border-radius:10px;overflow:hidden;border:1px solid #bfe3c9;background:#fff}.k1c-shot img{width:100%;height:100%;object-fit:cover;display:block}.k1c-shot button{position:absolute;top:2px;right:2px;width:20px;height:20px;border:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:13px;line-height:20px;padding:0;cursor:pointer}'
+    + '.k1c-shots{display:flex;gap:8px;padding:10px 12px 0;overflow-x:auto;background:#fff4ee}.k1c-shots[hidden]{display:none}.k1c-shot{position:relative;flex:0 0 auto;width:64px;height:64px;border-radius:10px;overflow:hidden;border:1px solid #ffd3bf;background:#fff}.k1c-shot img{width:100%;height:100%;object-fit:cover;display:block}.k1c-shot button{position:absolute;top:2px;right:2px;width:20px;height:20px;border:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:13px;line-height:20px;padding:0;cursor:pointer}'
     + '.k1c-m img{display:block;max-width:100%;border-radius:10px;margin-top:6px}'
-    + '.k1c-hint{margin:0;padding:8px 14px 0;font-size:12.5px;color:#1a7f37;background:#f2faf4}.k1c-hint[hidden]{display:none}'
-    + '.k1c-card{align-self:stretch;border:1px solid #e5e5ea;border-radius:16px;padding:14px;background:#fafafa}.k1c-card b{display:block;font-size:14.5px;margin-bottom:4px}.k1c-card p{margin:0 0 10px;font-size:13.5px;color:#4a4a4f}.k1c-card a{display:inline-block;margin:0 8px 6px 0;padding:8px 13px;border-radius:10px;font-size:13.5px;font-weight:600;text-decoration:none;background:#1d1d1f;color:#fff}.k1c-card a.k1c-ghost{background:none;color:#1d1d1f;border:1px solid #d2d2d7}.k1c-card.k1c-ok{background:#f2faf4;border-color:#bfe3c9}'
+    + '.k1c-hint{margin:0;padding:8px 14px 0;font-size:12.5px;color:#c93e09;background:#fff4ee}.k1c-hint[hidden]{display:none}'
+    + '.k1c-card{align-self:stretch;border:1px solid #e5e5ea;border-radius:16px;padding:14px;background:#fafafa}.k1c-card b{display:block;font-size:14.5px;margin-bottom:4px}.k1c-card p{margin:0 0 10px;font-size:13.5px;color:#4a4a4f}.k1c-card a{display:inline-block;margin:0 8px 6px 0;padding:8px 13px;border-radius:10px;font-size:13.5px;font-weight:600;text-decoration:none;background:#1d1d1f;color:#fff}.k1c-card a.k1c-ghost{background:none;color:#1d1d1f;border:1px solid #d2d2d7}.k1c-card.k1c-ok{background:#fff4ee;border-color:#ffd3bf}'
     /* Dot, beside his tips. */
-    + '.k1c-dot{position:relative;display:inline-block;flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1a7f37 0%,#34c17a 60%,#5fd18f 100%);vertical-align:middle}.k1c-dot .k1c-eyes{position:absolute;left:0;right:0;top:34%;display:flex;justify-content:center;gap:6px;animation:k1c-look 7s ease-in-out infinite}.k1c-dot .k1c-eyes i{display:block;width:5px;height:9px;border-radius:50%;background:#fff;animation:k1c-blink 4.2s ease-in-out infinite}'
+    + '.k1c-dot{position:relative;display:inline-block;flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);vertical-align:middle}.k1c-dot .k1c-eyes{position:absolute;left:0;right:0;top:34%;display:flex;justify-content:center;gap:6px;animation:k1c-look 7s ease-in-out infinite}.k1c-dot .k1c-eyes i{display:block;width:5px;height:9px;border-radius:50%;background:#fff;animation:k1c-blink 4.2s ease-in-out infinite}'
     + '@keyframes k1c-look{0%,14%{transform:none}20%,36%{transform:translate(-3px,-1px)}42%,58%{transform:translate(3px,-1px)}64%,80%{transform:translate(0,2px)}86%,100%{transform:none}}@keyframes k1c-blink{0%,91%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}'
     + '.k1c-headl{display:flex;align-items:center;gap:10px}'
-    + '.k1c-guide{display:flex;gap:9px;align-items:flex-start;align-self:stretch}.k1c-guide .k1c-dot{width:28px;height:28px;margin-top:2px}.k1c-guide .k1c-dot .k1c-eyes{gap:5px}.k1c-guide .k1c-dot .k1c-eyes i{width:4px;height:8px}.k1c-gbody{flex:1;min-width:0;background:#f2faf4;color:#14532d;border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:14px}.k1c-gbody p{margin:0}.k1c-gbody small{display:block;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:#1a7f37;margin-bottom:2px}.k1c-gacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.k1c-gacts a,.k1c-gacts button{border:1px solid #bfe3c9;background:#fff;color:#14532d;border-radius:980px;padding:6px 11px;font:inherit;font-size:12.5px;font-weight:600;text-decoration:none;cursor:pointer}.k1c-gacts a:hover,.k1c-gacts button:hover{background:#e6f5ea}'
-    + '.k1-spot{outline:3px solid #34c17a !important;outline-offset:3px;border-radius:10px;animation:k1-spot 1.2s ease-in-out 2}@keyframes k1-spot{50%{outline-color:rgba(52,193,122,.25)}}'
+    + '.k1c-guide{display:flex;gap:9px;align-items:flex-start;align-self:stretch}.k1c-guide .k1c-dot{width:28px;height:28px;margin-top:2px}.k1c-guide .k1c-dot .k1c-eyes{gap:5px}.k1c-guide .k1c-dot .k1c-eyes i{width:4px;height:8px}.k1c-gbody{flex:1;min-width:0;background:#fff4ee;color:#7a2a06;border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:14px}.k1c-gbody p{margin:0}.k1c-gbody small{display:block;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:#c93e09;margin-bottom:2px}.k1c-gacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.k1c-gacts a,.k1c-gacts button{border:1px solid #ffd3bf;background:#fff;color:#7a2a06;border-radius:980px;padding:6px 11px;font:inherit;font-size:12.5px;font-weight:600;text-decoration:none;cursor:pointer}.k1c-gacts a:hover,.k1c-gacts button:hover{background:#ffe9de}'
+    + '.k1-spot{outline:3px solid #ff4f12 !important;outline-offset:3px;border-radius:10px;animation:k1-spot 1.2s ease-in-out 2}@keyframes k1-spot{50%{outline-color:rgba(255,79,18,.25)}}'
     + '@media (prefers-reduced-motion:reduce){.k1c-dot .k1c-eyes,.k1c-dot .k1c-eyes i,.k1-spot{animation:none}}'
     + '@media (max-width:480px){.k1c{right:10px;left:10px;width:auto;bottom:80px}}'
     /* data-full: the whole screen on a phone, a full-height panel on the right elsewhere. */
     + '.k1c-full{top:12px;right:12px;bottom:12px;width:min(420px,calc(100vw - 24px));max-height:none}'
-    + '@media (max-width:700px){.k1c-full{top:0;right:0;bottom:0;left:0;width:auto;border-radius:0;box-shadow:none;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}}';
+    + '@media (max-width:700px){.k1c-full{top:0;right:0;bottom:0;left:0;width:auto;border-radius:0;box-shadow:none;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}}'
+    /* data-style="sheet": the Kanvas Academy look. */
+    + '.k1s .k1c-head{background:#fff;color:#1d1d1f;border-bottom:1px solid #e5e5ea;padding:12px 14px}.k1s .k1c-head small{opacity:1;color:#6e6e73}.k1s .k1c-head b{font-size:16.5px;font-weight:650;letter-spacing:-.01em}'
+    + '.k1s-av{flex:0 0 auto;width:38px;height:38px;border-radius:50%;object-fit:cover;background:#f0f0f3;display:block}.k1s-av.k1s-sm{width:28px;height:28px}'
+    + '.k1s .k1c-x{width:36px;height:36px;padding:0;border:1px solid #d2d2d7;border-radius:50%;color:#6e6e73;display:grid;place-items:center}.k1s .k1c-x:hover{color:#1d1d1f;border-color:#86868b}.k1s .k1c-x svg{width:16px;height:16px}'
+    + '.k1s .k1c-msgs{padding:16px 14px 8px;gap:4px;background:#fff}'
+    + '.k1s-row{display:flex;align-items:flex-end;gap:8px}.k1s-row.k1s-me{justify-content:flex-end}.k1s-slot{flex:0 0 28px;width:28px;height:28px}.k1s-col{display:flex;flex-direction:column;gap:3px;max-width:80%}.k1s-name{padding:0 4px;font-size:12px;font-weight:600;color:#6e6e73}'
+    + '.k1s .k1c-m{max-width:none;border-radius:22px;padding:10px 15px;font-size:15px}.k1s .k1c-m.k1c-o{background:#f5f5f7;border:1px solid #e5e5ea;border-bottom-left-radius:22px}.k1s .k1c-m.k1c-v{border-bottom-right-radius:22px}.k1s-row+.k1s-row.k1s-new{margin-top:8px}'
+    + '.k1s-quick{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px 36px}.k1s-quick button{border:1px solid #d2d2d7;background:#fff;color:#1d1d1f;border-radius:980px;padding:7px 12px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}.k1s-quick button:hover{border-color:' + color + ';color:' + color + '}'
+    + '.k1s .k1c-form{align-items:flex-end;border-top:1px solid #e5e5ea;padding:10px 12px 6px}.k1s .k1c-form textarea{border-radius:20px;padding:10px 15px;border-color:#e5e5ea;background:#fff}.k1s .k1c-send{flex:0 0 42px;width:42px;height:42px;padding:0;border-radius:50%;display:grid;place-items:center}.k1s .k1c-send svg{width:18px;height:18px}.k1s .k1c-send:disabled{opacity:.5}'
+    + '.k1s-foot{margin:0;padding:0 14px 10px;text-align:center;font-size:11.5px;color:#86868b}'
+    + '.k1s .k1c-details{margin:6px 12px;border:1px solid #e5e5ea;border-radius:18px;background:#fafafa;padding:12px 14px}.k1s .k1c-details .k1s-in{display:flex;flex-wrap:wrap;gap:6px}.k1s .k1c-details input{flex:1 1 140px;width:auto;margin:0}.k1s .k1c-details input[type=tel]{display:none}.k1s .k1c-details .k1c-row{margin-top:8px;align-items:center}.k1s .k1c-details .k1c-save{border-radius:980px;padding:8px 16px}'
+    + '.k1s-teaser{position:fixed;right:16px;bottom:18px;z-index:2147482999;display:flex;align-items:flex-start;gap:10px;max-width:min(330px,calc(100vw - 32px));padding:12px 36px 12px 12px;border-radius:18px;background:#fff;color:#1d1d1f;box-shadow:0 12px 36px rgba(0,0,0,.18);font:14.5px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;animation:k1s-in .35s ease-out}.k1s-teaser b{display:block;font-size:13px}.k1s-teaser p{margin:2px 0 0}.k1s-teaser .k1s-tx{position:absolute;top:6px;right:6px;width:26px;height:26px;border:0;border-radius:50%;background:none;color:#86868b;font-size:18px;line-height:1;cursor:pointer}'
+    + '@keyframes k1s-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.k1s-teaser{animation:none}}'
+    + '@media (max-width:700px){.k1s-teaser{bottom:86px}}';
   function mount() {
   var style = document.createElement('style'); style.textContent = css; document.head.appendChild(style);
 
@@ -91,7 +117,7 @@
     btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg><span class="k1c-n" hidden></span>';
   }
   var panel = document.createElement('div');
-  panel.className = 'k1c' + (full ? ' k1c-full' : ''); panel.hidden = true; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Chat with ' + name);
+  panel.className = 'k1c' + (full ? ' k1c-full' : '') + (sheet ? ' k1s' : ''); panel.hidden = true; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Chat with ' + name);
   var DOT = '<span class="k1c-dot" aria-hidden="true"><span class="k1c-eyes"><i></i><i></i></span></span>';
   panel.innerHTML = '<div class="k1c-head"><div class="k1c-headl"><div><b></b><small>Usually replies quickly</small></div></div><button class="k1c-x" type="button" aria-label="Close">&times;</button></div>'
     + '<div class="k1c-msgs"></div>'
@@ -99,7 +125,29 @@
     + (edits ? '<div class="k1c-edit"><button type="button" class="k1c-pull" aria-pressed="false"><i aria-hidden="true">+</i><span>Add website edit request</span></button></div><p class="k1c-hint" hidden>Tell us the change: words, photos, prices or hours. Add a screenshot of the part to change with the picture button. We make it and let you know.</p>' : '')
     + (edits ? '<div class="k1c-shots" hidden></div>' : '')
     + '<form class="k1c-form">' + (edits ? '<button type="button" class="k1c-attach" aria-label="Add a screenshot or photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-7 7"/></svg></button><input type="file" class="k1c-file" accept="image/*" multiple hidden>' : '') + '<textarea rows="1" placeholder="Write a message" aria-label="Your message" maxlength="2000"></textarea><button class="k1c-send" type="submit">Send</button></form>';
-  panel.querySelector('.k1c-head div b').textContent = name;
+  panel.querySelector('.k1c-head div b').textContent = (sheet && agent) || name;
+  var SEND = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>';
+  if (sheet) {
+    panel.querySelector('.k1c-head small').textContent = subtitle;
+    if (avatar) {
+      var hav = document.createElement('img'); hav.className = 'k1s-av'; hav.src = avatar; hav.alt = '';
+      panel.querySelector('.k1c-headl').insertBefore(hav, panel.querySelector('.k1c-headl').firstChild);
+    }
+    var hx = panel.querySelector('.k1c-x');
+    hx.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>';
+    var sb0 = panel.querySelector('.k1c-send'); sb0.innerHTML = SEND; sb0.setAttribute('aria-label', 'Send message');
+    panel.querySelector('textarea').placeholder = 'Type a message\u2026';
+    var dp = panel.querySelector('.k1c-details p');
+    dp.textContent = 'Who\u2019s asking? Leave an email too and ' + (agent ? 'I\u2019ll' : 'we\u2019ll') + ' reply there if you\u2019ve gone.';
+    var dIns = panel.querySelectorAll('.k1c-details input'), wrapIn = document.createElement('div'); wrapIn.className = 'k1s-in';
+    dIns[0].parentNode.insertBefore(wrapIn, dIns[0]);
+    Array.prototype.forEach.call(dIns, function (el) { wrapIn.appendChild(el); });
+    dIns[1].placeholder = 'Email (optional)';
+    panel.querySelector('.k1c-skip').textContent = 'Skip';
+    var foot = document.createElement('p'); foot.className = 'k1s-foot';
+    foot.textContent = 'Replies come here, and by email if you leave one.';
+    panel.appendChild(foot);
+  }
   if (!btn.parentNode) document.body.appendChild(btn);
   document.body.appendChild(panel);
 
@@ -110,10 +158,44 @@
   var detailsBox = panel.querySelector('.k1c-details');
 
   function sys(text) { var d = document.createElement('div'); d.className = 'k1c-sys'; d.textContent = text; msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; }
+  var lastAuthor = null;
   function add(m) {
-    var d = document.createElement('div'); d.className = 'k1c-m ' + (m.author === 'visitor' ? 'k1c-v' : 'k1c-o'); d.textContent = m.body; d.dataset.id = m.id;
-    msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
+    var d = document.createElement('div'); d.className = 'k1c-m ' + (m.author === 'visitor' ? 'k1c-v' : 'k1c-o'); d.textContent = m.body;
+    if (m.id) d.dataset.id = m.id;
+    if (!sheet) msgs.appendChild(d);
+    else {
+      /* Their photo and name on the first reply of a run, like the academy. */
+      var mine = m.author === 'visitor', first = lastAuthor !== m.author;
+      var row = document.createElement('div'); row.className = 'k1s-row' + (mine ? ' k1s-me' : '') + (first ? ' k1s-new' : '');
+      var col = document.createElement('div'); col.className = 'k1s-col';
+      if (!mine) {
+        var slot = document.createElement('div'); slot.className = 'k1s-slot';
+        if (first && avatar) { var av = document.createElement('img'); av.className = 'k1s-av k1s-sm'; av.src = avatar; av.alt = ''; slot.appendChild(av); }
+        row.appendChild(slot);
+        if (first && agent) { var nm = document.createElement('span'); nm.className = 'k1s-name'; nm.textContent = agent; col.appendChild(nm); }
+      }
+      col.appendChild(d); row.appendChild(col); msgs.appendChild(row);
+      lastAuthor = m.author;
+    }
+    msgs.scrollTop = msgs.scrollHeight;
     if (m.at && (!lastAt || m.at > lastAt)) lastAt = m.at;
+  }
+  /* The opening line: theirs, as a message, with questions to tap; or the
+     plain greeting on every other site. */
+  var quickEl = null;
+  function greet() {
+    lastAuthor = null;
+    if (!sheet || !intro) { sys(greeting); return; }
+    add({ author: 'owner', body: intro });
+    if (quick.length && !conv) {
+      quickEl = document.createElement('div'); quickEl.className = 'k1s-quick';
+      quick.forEach(function (q) {
+        var b = document.createElement('button'); b.type = 'button'; b.textContent = q;
+        b.addEventListener('click', function () { input.value = q; if (quickEl) { quickEl.remove(); quickEl = null; } form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true })); });
+        quickEl.appendChild(b);
+      });
+      msgs.appendChild(quickEl);
+    }
   }
   /* The beacon's id for this tab, when the visitor is being counted, so
      the owner's numbers can tie this chat to the visit. */
@@ -167,10 +249,36 @@
     btn.setAttribute('aria-expanded', String(open));
     // Full screen on a phone: the page behind must not scroll instead.
     if (full && window.innerWidth <= 700) document.documentElement.style.overflow = open ? 'hidden' : '';
+    if (open && tz) { tz.remove(); tz = null; }
     if (open) { renderGuide(); unread = 0; badge.hidden = true; input.focus(); msgs.scrollTop = msgs.scrollHeight; if (conv) poll().then(schedule); }
     else schedule();
   }
   btn.addEventListener('click', function () { setOpen(!open); });
+  /* Any link on the page can open it: <a href="#" data-chat-open>. */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-chat-open]');
+    if (!t) return;
+    e.preventDefault(); if (tz) tz.remove(); setOpen(true);
+  });
+  /* The teaser: once a visit, a few seconds in, never over an open chat or
+     for someone already talking to us. */
+  var tz = null;
+  if (sheet && teaser && !conv) {
+    var seen = false; try { seen = sessionStorage.getItem(KEY + ':t') === '1'; } catch (e) {}
+    if (!seen) setTimeout(function () {
+      if (open || conv) return;
+      try { sessionStorage.setItem(KEY + ':t', '1'); } catch (e) {}
+      tz = document.createElement('div'); tz.className = 'k1s-teaser'; tz.setAttribute('role', 'button'); tz.tabIndex = 0;
+      tz.innerHTML = (avatar ? '<img class="k1s-av" alt="">' : '') + '<div><b></b><p></p></div><button class="k1s-tx" type="button" aria-label="Dismiss">&times;</button>';
+      if (avatar) tz.querySelector('img').src = avatar;
+      tz.querySelector('b').textContent = agent || name;
+      tz.querySelector('p').textContent = teaser;
+      tz.querySelector('.k1s-tx').addEventListener('click', function (e) { e.stopPropagation(); tz.remove(); });
+      tz.addEventListener('click', function () { tz.remove(); setOpen(true); });
+      tz.addEventListener('keydown', function (e) { if (e.key === 'Enter') { tz.remove(); setOpen(true); } });
+      document.body.appendChild(tz);
+    }, 9000);
+  }
   panel.querySelector('.k1c-x').addEventListener('click', function () { setOpen(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) setOpen(false); });
 
@@ -192,6 +300,7 @@
           try { localStorage.setItem(KEY, JSON.stringify(conv)); } catch (er) {}
           return r;
         });
+    if (quickEl) { quickEl.remove(); quickEl = null; }
     p.then(function (r) { add(r.message); showDetails(); schedule(); })
      .catch(function (err) { input.value = text; sys(err.message); })
      .then(function () { sendBtn.disabled = false; });
@@ -255,8 +364,9 @@
     pull.querySelector('i').textContent = on ? '\u00d7' : '+';
     pull.querySelector('span').textContent = on ? 'Website edit request' : 'Add website edit request';
     hint.hidden = !on;
-    input.placeholder = on ? 'What to change?' : 'Write a message';
-    form.querySelector('.k1c-send').textContent = on ? 'Send edit' : 'Send';
+    input.placeholder = on ? 'What to change?' : (sheet ? 'Type a message\u2026' : 'Write a message');
+    if (sheet) form.querySelector('.k1c-send').setAttribute('aria-label', on ? 'Send edit' : 'Send message');
+    else form.querySelector('.k1c-send').textContent = on ? 'Send edit' : 'Send';
     input.focus();
   }
   if (pull) pull.addEventListener('click', function () {
@@ -425,7 +535,7 @@
     }, click ? 250 : 0);
   }
   function renderGuide() {
-    if (!edits) return;
+    if (!edits || sheet) return;
     var g = guideFor();
     if (!g) { if (guideEl) { guideEl.remove(); guideEl = null; } return; }
     if (!guideEl || !guideEl.isConnected) {
@@ -448,7 +558,7 @@
   window.addEventListener('one:guide', function () { if (open) renderGuide(); });
 
   /* First paint: the greeting, then whatever thread is already here. */
-  sys(greeting);
+  greet();
   if (conv) poll().then(schedule);
 
   /* The owner can open a chat with someone browsing. While the owner is
@@ -460,7 +570,7 @@
     return post({ action: 'claim', conversation_id: inv.conversation_id, code: inv.code }).then(function (c) {
       conv = { id: c.conversation_id, token: c.token };
       try { localStorage.setItem(KEY, JSON.stringify(conv)); } catch (er) {}
-      msgs.innerHTML = ''; lastAt = null; sys(greeting);
+      msgs.innerHTML = ''; lastAt = null; greet();
       return poll().then(function () { schedule(); setOpen(true); });
     });
   }
@@ -490,7 +600,7 @@
           conv = { id: r.conversation_id, token: r.token };
           try { localStorage.setItem(KEY, JSON.stringify(conv)); } catch (er) {}
           if (r.name) details.name = r.name;
-          msgs.innerHTML = ''; lastAt = null; sys(greeting);
+          msgs.innerHTML = ''; lastAt = null; greet();
           return poll().then(schedule);
         }).catch(function () { sys('That link has already been used. Send a new message below and we will pick it up.'); });
       }
