@@ -102,16 +102,35 @@ function pushData(row) {
   return { kind: row.kind || 'note', site_id: row.site_id || '', href: row.href || '', deep_link: row.deep_link || null, id: row.id || '' };
 }
 
-async function push(db, who, row) {
+/* Which buttons the phone shows on a notification (the app defines them:
+   Call and Email on an enquiry, Reply on a chat, Call back on a missed call). */
+const CATEGORY = { enquiry: 'enquiry', chat: 'chat', missed_call: 'missed_call' };
+
+/* The number on the app icon: what has arrived since they last opened the
+   bell, the same count the app shows. */
+async function badgeFor(db, who) {
+  if (!who || who === 'admin') return null;
+  try {
+    const { data: prof } = await db.from('profiles').select('notifications_seen_at').eq('id', who).maybeSingle();
+    const since = prof && prof.notifications_seen_at ? prof.notifications_seen_at : new Date(0).toISOString();
+    const { count } = await db.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', who).gt('created_at', since);
+    return typeof count === 'number' ? count : null;
+  } catch (e) { return null; }
+}
+
+/* extra: data for the phone only (a customer's number and email, so Call and
+   Email work from the lock screen); never stored on the notification row. */
+async function push(db, who, row, extra) {
   try {
     const devices = await devicesFor(db, who);
     if (!devices.length) return;
-    const r = await pushTo(db, devices, { title: row.title, body: row.body, data: pushData(row), thread: row.site_id || undefined });
+    const data = Object.assign(pushData(row), extra || {});
+    const r = await pushTo(db, devices, { title: row.title, body: row.body, data, thread: row.site_id || undefined, categoryId: CATEGORY[row.kind] || undefined, badge: await badgeFor(db, who) });
     if (r.sent && row.id) await db.from('notifications').update({ pushed_at: new Date().toISOString() }).eq('id', row.id);
   } catch (err) { console.error('notify: push:', err.message); }
 }
 
-/* opts: { siteId, kind, deepLink } - all optional, for the app's feed. */
+/* opts: { siteId, kind, deepLink, extra } - all optional; extra rides on the push only. */
 async function notify(db, userId, title, body, href, opts) {
   const o = opts || {};
   const row = {
@@ -124,7 +143,7 @@ async function notify(db, userId, title, body, href, opts) {
     deep_link: o.deepLink || null
   };
   const made = await insertRow(db, row);
-  await push(db, userId, Object.assign({}, row, { id: made && made.id }));
+  await push(db, userId, Object.assign({}, row, { id: made && made.id }), o.extra);
 }
 
 async function notifyAdmin(db, title, body, href, opts) {
@@ -155,8 +174,9 @@ async function event(db, siteId, kind, data) {
   if (error || !site) { console.error('notify: event on unknown site', siteId, error && error.message); return null; }
   const w = wording(kind, d, site.labels);
   const deepLink = linkFor(site, d.record || kind, d.id);
+  const phone = d.phone || d.number || null, email = d.email || null;
   await notify(db, site.owner_id, w.title, w.body, deepLink && deepLink.path ? (site.dashboard_url || '') + deepLink.path : null,
-    { siteId: site.id, kind, deepLink });
+    { siteId: site.id, kind, deepLink, extra: phone || email ? { phone: phone || undefined, email: email || undefined } : null });
   return w;
 }
 
