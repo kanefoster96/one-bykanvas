@@ -250,9 +250,34 @@
     // Full screen on a phone: the page behind must not scroll instead.
     if (full && window.innerWidth <= 700) document.documentElement.style.overflow = open ? 'hidden' : '';
     if (open && tz) { tz.remove(); tz = null; }
-    if (open) { renderGuide(); unread = 0; badge.hidden = true; input.focus(); msgs.scrollTop = msgs.scrollHeight; if (conv) poll().then(schedule); }
-    else schedule();
+    if (open) {
+      renderGuide(); unread = 0; badge.hidden = true;
+      /* On a phone, opening must not throw the keyboard up: it hides the
+         header and the first message before anyone has read them. */
+      if (!touch) input.focus();
+      msgs.scrollTop = msgs.scrollHeight; fit();
+      if (conv) poll().then(schedule);
+    }
+    else { unfit(); schedule(); }
   }
+  /* Full screen on a phone, sized to what is actually visible. When the
+     keyboard comes up, iOS Safari scrolls the page and leaves a fixed panel
+     where the page used to be: its top goes off the screen and the site
+     shows underneath. Pinning the panel to the visual viewport keeps the
+     header at the top and the box just above the keyboard. */
+  var touch = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+  var vv = window.visualViewport;
+  function phoneFull() { return full && window.innerWidth <= 700; }
+  function fit() {
+    if (!open || !vv || !phoneFull()) return;
+    panel.style.top = vv.offsetTop + 'px';
+    panel.style.height = vv.height + 'px';
+    panel.style.bottom = 'auto';
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  function unfit() { panel.style.top = ''; panel.style.height = ''; panel.style.bottom = ''; }
+  if (vv) { vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); }
+  input.addEventListener('focus', function () { setTimeout(fit, 60); setTimeout(fit, 350); });
   btn.addEventListener('click', function () { setOpen(!open); });
   /* Any link on the page can open it: <a href="#" data-chat-open>. */
   document.addEventListener('click', function (e) {
