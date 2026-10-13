@@ -17,7 +17,7 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = '142';
+const CSS_V = '144';
 const SCRIPT_V = 40;
 
 /* The same visual language as the homepage cards: a solid colour square with
@@ -628,7 +628,7 @@ function maxParam(slug) {
 }
 function maxLabel(slug) {
   const h = maxHref(slug);
-  return h === '/max/trades' ? 'See One for trades' : h === '/max/salon' ? 'See One for salons' : h === '/clubs' ? 'See the kids&rsquo; clubs system' : 'See One';
+  return h === '/max/trades' ? 'See One for trades' : h === '/max/salon' ? 'See One for salons' : h === '/clubs' ? 'See One for clubs' : 'See One';
 }
 
 function maxPage(m) {

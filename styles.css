@@ -229,7 +229,7 @@ body.locked{overflow:hidden}
   font-size:14px;font-weight:600;letter-spacing:.01em;line-height:1.3;text-align:center;text-decoration:none;
   transition:background .2s var(--ease);
 }
-.free-banner:hover{background:#d7efdf;text-decoration:none}
+.free-banner:hover{background:#ffe0d1;text-decoration:none}
 .free-banner:focus-visible{outline:2px solid var(--good);outline-offset:3px}
 .free-banner .gift{width:16px;height:16px}
 .free-banner .pill-go{margin-left:1px;font-size:16px;line-height:1;opacity:.75}
@@ -382,7 +382,7 @@ body.locked{overflow:hidden}
 .fiveyear-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;text-align:left}
 .fy-col{border-radius:16px;padding:18px 20px}
 .fy-them{background:var(--bg-grey);color:var(--ink-2)}
-.fy-us{background:var(--good-soft);color:var(--ink)}
+.fy-us{background:#f5f5f7;color:var(--ink)}
 .fy-col h4{margin:0 0 10px;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
 .fy-us h4{color:var(--good)}
 .fy-col ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:15px;line-height:1.4}
@@ -651,7 +651,7 @@ body.dialog-open{overflow:hidden}
 .ico{width:42px;height:42px;flex:0 0 42px;border-radius:12px;display:grid;place-items:center;color:#fff}
 .ico svg{width:21px;height:21px}
 .ico-blue{background:#0071e3}
-.ico-green{background:#30a14e}
+.ico-green{background:#c93e09}
 .ico-purple{background:#7d4dd3}
 .ico-orange{background:#e8730c}
 .ico-pink{background:#d63384}
@@ -922,7 +922,7 @@ body.dialog-open{overflow:hidden}
 /* The pill was a label. As a link it needs to look pressable without
    becoming a second button above the logo. */
 a.hero-pill{text-decoration:none;transition:background .2s var(--ease)}
-a.hero-pill:hover{background:#d7efdf;text-decoration:none}
+a.hero-pill:hover{background:#ffe0d1;text-decoration:none}
 a.hero-pill:focus-visible{outline:2px solid var(--good);outline-offset:3px}
 .pill-go{margin-left:1px;font-size:15px;line-height:1;opacity:.75}
 a.hero-pill:hover .pill-go{opacity:1}
@@ -1721,7 +1721,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .join .join-face .dot-eyes i{width:8px;height:13px}
 /* Dot looks at the box you are in (join.js sets the transform). */
 .join .join-face .dot-eyes.is-aiming{animation:none;transition:transform .25s var(--ease)}
-.join-say{position:relative;margin:0 0 6px;padding:10px 14px;border-radius:16px 16px 16px 4px;background:#fff6f1;color:#14532d;font-size:14.5px;font-weight:500;line-height:1.4;animation:join-say .45s var(--ease) both}
+.join-say{position:relative;margin:0 0 6px;padding:10px 14px;border-radius:16px 16px 16px 4px;background:#fff6f1;color:#7a2a06;font-size:14.5px;font-weight:500;line-height:1.4;animation:join-say .45s var(--ease) both}
 @keyframes join-say{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
 .wiz-step:not([hidden]) .join-face{animation:join-hop .6s var(--ease)}
 @keyframes join-hop{30%{transform:translateY(-8px)}60%{transform:translateY(0)}75%{transform:translateY(-3px)}}
@@ -2386,9 +2386,9 @@ a.hero-pill:hover .pill-go{opacity:1}
 .cmp thead td{background:var(--bg-grey)}
 .cmp tbody tr:nth-child(even) th,.cmp tbody tr:nth-child(even) td{background:#fafafa}
 .cmp tbody tr:last-child th,.cmp tbody tr:last-child td{border-bottom:0}
-.cmp td.cmp-hot,.cmp th.cmp-hot{background:#f1f8f3;color:var(--ink);font-weight:500}
-.cmp thead th.cmp-hot{background:#fff0e8}
-.cmp tbody tr:nth-child(even) td.cmp-hot{background:#ecf6ef}
+.cmp td.cmp-hot,.cmp th.cmp-hot{background:#f7f7f9;color:var(--ink);font-weight:500}
+.cmp thead th.cmp-hot{background:#f1f1f4}
+.cmp tbody tr:nth-child(even) td.cmp-hot{background:#f1f1f4}
 .tick-y{color:var(--good);font-size:16px;font-weight:600}
 .cmp .free{color:var(--good);font-weight:600}
 .tick-n{color:#c7c7cc}
@@ -2569,7 +2569,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .pick-feats .ticks{margin:0;padding:2px 10px 0}
 .pick-ok{
   margin:12px 2px 0;padding:11px 14px;
-  background:#f0f8f1;border:1px solid #c4e3c9;border-radius:12px;
+  background:#f5f5f7;border:1px solid #e5e5ea;border-radius:12px;
   color:#c93e09;font-size:13.5px;line-height:1.5;
 }
 .pick-warn{
@@ -2857,7 +2857,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 
 /* The Launch Boost, on the plans page: what an annual plan's first month
    is spent on. */
-.boost{max-width:660px;margin:clamp(28px,4vw,40px) auto 0;padding:clamp(22px,3.5vw,30px) clamp(22px,4vw,34px);background:var(--good-soft);border-radius:var(--radius-lg)}
+.boost{max-width:660px;margin:clamp(28px,4vw,40px) auto 0;padding:clamp(22px,3.5vw,30px) clamp(22px,4vw,34px);background:#f5f5f7;border-radius:var(--radius-lg)}
 .boost-tag{margin:0 0 6px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--good)}
 .boost h3{margin:0 0 8px;font-size:clamp(20px,3vw,24px);letter-spacing:-.02em}
 .boost p{margin:0 0 12px;font-size:15px;line-height:1.55;color:var(--ink-2)}
@@ -3261,3 +3261,11 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 /* Sent to checkout for One: One on its own, the other plans behind a link. */
 .one-focus #pick > [data-plan="starter"],.one-focus #pick > [data-plan="business"]{display:none}
 .wiz .pick-others{display:block;margin:14px auto 0;text-align:center}
+
+/* ---------- Wrapping, site-wide ----------
+   Headings break into even lines; body copy avoids a single word left on
+   its last line. A button that ever has to wrap grows and stays centred
+   instead of spilling out of its pill. */
+h1,h2,h3,h4,.lede,.sub{text-wrap:balance}
+p,li,dd,figcaption,summary{text-wrap:pretty}
+.btn{text-align:center;height:auto;min-height:46px;padding-top:10px;padding-bottom:10px;line-height:1.25}
