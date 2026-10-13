@@ -15,7 +15,7 @@
   else root.GrowthModel = model;
 })(this, function () {
   var AVG = {
-    adBudget: 150,   // £ a month of ads, months 2 to 4 on us (month 1 is the build)
+    adBudget: 100,   // £ a month of ads, months 2 to 4 on us (month 1 is the build), and what we fund after
     trialCost: 5,    // £103 / 21 trials
     memberCost: 26   // £103 / 4 members
   };
