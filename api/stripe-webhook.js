@@ -320,20 +320,33 @@ module.exports = async function handler(req, res) {
     if (starter && domain) facts.push({ label: 'Web address', value: domain });
     facts.push({ label: 'Started', value: started });
 
-    const nowText = starter
+    /* One: the build starts from the setup form, the site follows within a
+       few days of it, and the app waits on Apple and Google, not us. */
+    const one = patch.active_plan === 'max';
+    const nowText = one
+      ? `Here's what happens now. Step 1 is your setup form, below. Your website is usually ready `
+        + `within a few days of it. Then we build your app and send it to Apple and Google for you; `
+        + `how long they take to approve it is up to them, usually 1 to 4 weeks. Until then, the app's `
+        + `features work on your website. Your ads start once it's all ready, usually from month 2, `
+        + `and months 2 to 4 of ad spend are on us, up to £100 a month.`
+      : starter
       ? `Here's what happens now. We register ${domain || 'your web address'} and build your site from the page you sent us. `
         + `It goes live within 24 hours, and you get an email the moment it is.`
       : `Here's what happens now. Today we register your web address and put your page live on it, `
         + `and you get an email the moment it is. `
         + `Then we build the features you asked for, within 14 days - or your next month is free. `
         + `If we need anything from you - photos, prices, an offer - we'll ask.`;
-    const nowHtml = starter
+    const nowHtml = one
+      ? `Here&rsquo;s what happens now. <strong>Step 1</strong> is your setup form, below. Your website is usually ready <strong>within a few days</strong> of it. Then we build your app and send it to Apple and Google for you; how long they take to approve it is up to them, usually 1 to 4 weeks. Until then, the app&rsquo;s features work on your website. Your ads start once it&rsquo;s all ready, usually from month 2, and months 2 to 4 of ad spend are on us, up to &pound;100 a month.`
+      : starter
       ? `Here&rsquo;s what happens now. We register <strong>${esc(domain || 'your web address')}</strong> and build your site from the page you sent us. It goes live <strong>within 24 hours</strong>, and you get an email the moment it is.`
       : `Here&rsquo;s what happens now. <strong>Today</strong> we register your web address and put your page live on it, and you get an email the moment it is. <strong>Then</strong> we build the features you asked for, within 14 days &mdash; or your next month is free. If we need anything from you &mdash; photos, prices, an offer &mdash; we&rsquo;ll ask.`;
-    const askText = patch.active_plan === 'max'
-      ? `One thing that helps now: fill in the One setup form. Your services and prices, how you get `
-        + `customers today, how you book and take payment, and the access we need. All optional, save any `
-        + `time, and we see what changed: ${site}/onboarding.html`
+    const askText = one
+      ? `Complete your setup: ${site}/onboarding.html\n`
+        + `It takes about 10 minutes, saves as you go, and you can skip anything you're not sure of.\n\n`
+        + `One more thing to start today: your Apple and Google developer accounts, in your business's name. `
+        + `Apple can take up to 2 weeks to approve a business account, so the sooner it's started, the sooner `
+        + `your app is live. Reply to this email if you'd like a hand.`
       : starter
         ? (noLink
             ? `One thing that makes your site better: reply with a link to your Instagram, Facebook or `
@@ -345,16 +358,16 @@ module.exports = async function handler(req, res) {
           + (accountLink ? `\n\nAnd make your account, so you can see your site and ask for changes: ${accountLink}` : '')
         : `One thing that helps now: send us photos, your services and prices, and anything about `
           + `your business that isn't already online. From your account: ${site}/account.html`;
-    const askHtml = patch.active_plan === 'max'
-      ? `One thing that helps now: fill in the <strong>One setup form</strong>. Your services and prices, how you get customers today, how you book and take payment, and the access we need. All optional, save any time, and we see what changed.`
+    const askHtml = one
+      ? `<strong>Complete your setup.</strong> It takes about 10 minutes, saves as you go, and you can skip anything you&rsquo;re not sure of.<br><br><strong>One more thing to start today:</strong> your Apple and Google developer accounts, in your business&rsquo;s name. Apple can take up to 2 weeks to approve a business account, so the sooner it&rsquo;s started, the sooner your app is live. Reply to this email if you&rsquo;d like a hand.`
       : starter
         ? (noLink
             ? `<strong>One thing that makes your site better:</strong> reply with a link to your Instagram, Facebook or current website, and we&rsquo;ll build from your photos and words there. Extra photos, your logo or your prices are welcome too. Changes to your words and photos are unlimited, any time.`
             : `<strong>Want anything else on it?</strong> Reply to this email with extra photos, your logo, your prices, or anything about your business that isn&rsquo;t online yet, and we&rsquo;ll add it. Changes to your words and photos are unlimited, any time.`)
         : `One thing that helps now: send us photos, your services and prices, and anything about your business that isn&rsquo;t already online. Everything lives in your account from here: your plan, your requests, and your site.`;
 
-    const cta = patch.active_plan === 'max'
-      ? { text: 'Open the One setup form', href: `${site}/onboarding.html`, note: 'Two minutes now saves a week later.' }
+    const cta = one
+      ? { text: 'Complete your setup', href: `${site}/onboarding.html`, note: 'About 10 minutes. It saves as you go.' }
       : accountLink
         ? { text: 'Make your account', href: accountLink, note: 'Choose a password to see your site and ask for changes.' }
         : starter

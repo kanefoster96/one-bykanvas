@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Set up your club — Kanvas One</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg?v=5" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=5">
+<link rel="stylesheet" href="styles.css?v=145">
+<script src="kanvas-handoff.js?v=6" data-wait></script>
+</head>
+<body class="auth-body">
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one<span class="wm-dot">.</span></a>
+    <a class="nav-icon" id="navBell" href="/notifications.html" hidden aria-label="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg>
+    </a>
+  </div>
+</header>
+
+<!-- The One setup form for clubs: what we need to build a club's site and
+     app from the Kanvas Academy base, in the order we build it. Nothing is
+     required. Every choice has "Other" or "Not sure", which opens a box to
+     say how they do it; anything left blank, we ask about later.
+     Answers save as they type (quietly); "Send" is what tells us.
+     club-setup.js loads, saves, uploads and sends. -->
+<main class="acct-wrap ob-wrap" id="app" hidden>
+  <a class="linkish ob-back" href="/account.html">&larr; Your account</a>
+  <h1 class="biz-title" id="obTitle">Set up your club.</h1>
+  <p class="lede left" id="obLede">Six short sections, in the order we build. Nothing is required: skip anything you&rsquo;re not sure of and we&rsquo;ll ask about it later. Everything saves as you go, so you can stop and come back.</p>
+  <nav class="ob-strip ob-strip-6" aria-label="Sections">
+    <a href="#s-club"><b>1</b> <em>Club</em><span data-step="club"></span></a>
+    <a href="#s-coaches"><b>2</b> <em>Coaches</em><span data-step="coaches"></span></a>
+    <a href="#s-classes"><b>3</b> <em>Classes</em><span data-step="classes"></span></a>
+    <a href="#s-prices"><b>4</b> <em>Prices</em><span data-step="prices"></span></a>
+    <a href="#s-joining"><b>5</b> <em>Joining</em><span data-step="joining"></span></a>
+    <a href="#s-extras"><b>6</b> <em>Extras</em><span data-step="extras"></span></a>
+  </nav>
+  <p class="ob-progress" id="obProgress"></p>
+
+  <form id="obForm" novalidate>
+
+    <section class="panel ob-section" id="s-club" data-section="club">
+      <h2 class="panel-title">1. Your club</h2>
+      <p class="ob-why">The basics for your website and app.</p>
+      <div class="acct-grid">
+        <div class="field full"><label for="cl_name">Club name</label><input id="cl_name" type="text" autocomplete="organization"></div>
+        <div class="field"><label for="cl_teach">What you teach</label><input id="cl_teach" type="text" placeholder="Street dance and cheerleading"></div>
+        <div class="field"><label for="cl_ages">Ages</label><input id="cl_ages" type="text" placeholder="3 to 16, and adults"></div>
+        <div class="field full"><label for="cl_venue">Where classes happen</label><textarea id="cl_venue" rows="2" placeholder="The hall&rsquo;s name and address. Add each one if you use more than one."></textarea></div>
+        <div class="field"><label for="cl_email">Email for parents</label><input id="cl_email" type="email" autocomplete="email"></div>
+        <div class="field"><label for="cl_phone">Phone for parents</label><input id="cl_phone" type="tel" autocomplete="tel"></div>
+        <div class="field full"><label for="cl_social">Instagram, Facebook or TikTok</label><input id="cl_social" type="text" placeholder="@yourclub, or the links"></div>
+        <div class="field full"><label for="cl_website">Your current website <span class="opt">(if you have one)</span></label><input id="cl_website" type="text"></div>
+        <div class="field full"><label for="cl_about">About your club <span class="opt">(optional, we can write this with you)</span></label><textarea id="cl_about" rows="3" placeholder="When you started, who you are, what makes you different"></textarea></div>
+        <div class="field full">
+          <span class="ob-label">Your logo <span class="opt">(optional)</span></span>
+          <div class="ob-photos" id="logoGrid"></div>
+          <label class="btn btn-ghost" for="logoInput">Add your logo</label>
+          <input id="logoInput" type="file" accept="image/*" hidden>
+          <p class="note" id="logoNote" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel ob-section" id="s-coaches" data-section="coaches">
+      <h2 class="panel-title">2. Your coaches</h2>
+      <p class="ob-why">Everyone who teaches or helps run the club. Each one gets their own login to the app.</p>
+      <div id="coachRows"></div>
+      <button class="btn btn-ghost" id="coachAdd" type="button">Add a coach</button>
+    </section>
+
+    <section class="panel ob-section" id="s-classes" data-section="classes">
+      <h2 class="panel-title">3. Classes</h2>
+      <p class="ob-why">One card for each class. Or skip the cards and send us your timetable as it is.</p>
+      <div id="classRows"></div>
+      <button class="btn btn-ghost" id="classAdd" type="button">Add a class</button>
+      <div class="acct-grid ob-gap">
+        <div class="field full"><label for="tt_text">Or paste your timetable</label><textarea id="tt_text" rows="3" placeholder="Mini Movers, 3 to 5, Saturday 9 to 9:45. Street, 8 to 12, Tuesday 5 to 6"></textarea></div>
+        <div class="field full">
+          <span class="ob-label">Or add a photo or screenshot of it</span>
+          <div class="ob-photos" id="ttGrid"></div>
+          <label class="btn btn-ghost" for="ttInput">Add a photo</label>
+          <input id="ttInput" type="file" accept="image/*" multiple hidden>
+          <p class="note" id="ttNote" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel ob-section" id="s-prices" data-section="prices">
+      <h2 class="panel-title">4. Prices</h2>
+      <p class="ob-why">However you charge now. We set the same up for card payments in the app.</p>
+      <div class="acct-grid">
+        <div class="field full">
+          <span class="ob-label">How do people pay?</span>
+          <div class="ob-checks" id="pr_charge">
+            <label class="check"><input type="checkbox" value="Monthly"> Monthly</label>
+            <label class="check"><input type="checkbox" value="Termly"> Termly</label>
+            <label class="check"><input type="checkbox" value="Per class"> Per class</label>
+            <label class="check"><input type="checkbox" value="Yearly"> Yearly</label>
+            <label class="check"><input type="checkbox" value="Other" data-more> Other</label>
+            <label class="check"><input type="checkbox" value="Not sure" data-more> Not sure</label>
+          </div>
+          <input class="ob-more" id="pr_charge_more" type="text" placeholder="Tell us how it works" aria-label="How people pay" hidden>
+        </div>
+        <div class="field full"><label for="pr_prices">Your prices, as they are now</label><textarea id="pr_prices" rows="3" placeholder="1 class a week &pound;30 a month, 2 classes &pound;50. Squad &pound;60. Drop-in &pound;7"></textarea></div>
+        <div class="field full">
+          <span class="ob-label">A joining or registration fee?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="pr_joining_fee" value="No"> No</label>
+            <label class="check"><input type="radio" name="pr_joining_fee" value="Yes" data-more> Yes</label>
+            <label class="check"><input type="radio" name="pr_joining_fee" value="Not sure" data-more> Not sure</label>
+          </div>
+          <input class="ob-more" id="pr_joining_fee_more" type="text" placeholder="How much, and what it covers" aria-label="Joining fee" hidden>
+        </div>
+        <div class="field full">
+          <span class="ob-label">A sibling or family discount?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="pr_sibling" value="No"> No</label>
+            <label class="check"><input type="radio" name="pr_sibling" value="Yes" data-more> Yes</label>
+            <label class="check"><input type="radio" name="pr_sibling" value="Not sure" data-more> Not sure</label>
+          </div>
+          <input class="ob-more" id="pr_sibling_more" type="text" placeholder="What it is, like 10% off the second child" aria-label="Sibling discount" hidden>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel ob-section" id="s-joining" data-section="joining">
+      <h2 class="panel-title">5. Joining</h2>
+      <p class="ob-why">What happens between someone finding you and becoming a member.</p>
+      <div class="acct-grid">
+        <div class="field full">
+          <span class="ob-label">Can new people try a class first?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="jn_trial" value="Free first class"> Free first class</label>
+            <label class="check"><input type="radio" name="jn_trial" value="Free week"> Free week</label>
+            <label class="check"><input type="radio" name="jn_trial" value="Paid trial" data-more> Paid trial</label>
+            <label class="check"><input type="radio" name="jn_trial" value="No trial"> No trial</label>
+            <label class="check"><input type="radio" name="jn_trial" value="Other" data-more> Other</label>
+            <label class="check"><input type="radio" name="jn_trial" value="Not sure" data-more> Not sure</label>
+          </div>
+          <input class="ob-more" id="jn_trial_more" type="text" placeholder="How it works, and the price if it&rsquo;s paid" aria-label="Trial details" hidden>
+        </div>
+        <div class="field full">
+          <span class="ob-label">When can new members start?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="jn_start" value="Any week"> Any week</label>
+            <label class="check"><input type="radio" name="jn_start" value="Start of a term" data-more> Start of a term</label>
+            <label class="check"><input type="radio" name="jn_start" value="Other" data-more> Other</label>
+            <label class="check"><input type="radio" name="jn_start" value="Not sure" data-more> Not sure</label>
+          </div>
+          <input class="ob-more" id="jn_start_more" type="text" placeholder="Your term dates, or how it works" aria-label="When new members start" hidden>
+        </div>
+        <div class="field full">
+          <span class="ob-label">An offer for new members?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="jn_offer" value="No"> No</label>
+            <label class="check"><input type="radio" name="jn_offer" value="Yes" data-more> Yes</label>
+            <label class="check"><input type="radio" name="jn_offer" value="Not sure" data-more> Not sure</label>
+          </div>
+          <input class="ob-more" id="jn_offer_more" type="text" placeholder="Half price first month, a free T-shirt" aria-label="New member offer" hidden>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel ob-section" id="s-extras" data-section="extras">
+      <h2 class="panel-title">6. Extras</h2>
+      <p class="ob-why">Yes or no is enough for now. We&rsquo;ll ask for the details, like photos and prices, when we build them.</p>
+      <div class="acct-grid">
+        <div class="field full">
+          <span class="ob-label">Do members have to wear a uniform in class?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="ex_uniform_required" value="Yes"> Yes</label>
+            <label class="check"><input type="radio" name="ex_uniform_required" value="No"> No</label>
+            <label class="check"><input type="radio" name="ex_uniform_required" value="Not sure"> Not sure</label>
+          </div>
+        </div>
+        <div class="field full">
+          <span class="ob-label">Do you sell uniform?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="ex_uniform_sell" value="Yes"> Yes</label>
+            <label class="check"><input type="radio" name="ex_uniform_sell" value="No"> No</label>
+            <label class="check"><input type="radio" name="ex_uniform_sell" value="Not sure"> Not sure</label>
+          </div>
+        </div>
+        <div class="field full"><label for="ex_uniform_notes">Uniform notes <span class="opt">(optional)</span></label><textarea id="ex_uniform_notes" rows="2" placeholder="Not required, unless they&rsquo;re in a team: then they need bows, poms and the full team uniform"></textarea></div>
+        <div class="field full">
+          <span class="ob-label">Do you take part in competitions?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="ex_competitions" value="Yes" data-more> Yes</label>
+            <label class="check"><input type="radio" name="ex_competitions" value="No"> No</label>
+            <label class="check"><input type="radio" name="ex_competitions" value="Not sure" data-more> Not sure</label>
+          </div>
+          <input class="ob-more" id="ex_competitions_more" type="text" placeholder="Which ones, roughly (optional)" aria-label="Competitions" hidden>
+        </div>
+        <div class="field full">
+          <span class="ob-label">Do you put on shows or showcases with tickets?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="ex_shows" value="Yes" data-more> Yes</label>
+            <label class="check"><input type="radio" name="ex_shows" value="No"> No</label>
+            <label class="check"><input type="radio" name="ex_shows" value="Not sure" data-more> Not sure</label>
+          </div>
+          <input class="ob-more" id="ex_shows_more" type="text" placeholder="Roughly when, and the ticket price (optional)" aria-label="Shows" hidden>
+        </div>
+        <div class="field full">
+          <span class="ob-label">Do you sell anything else, like hoodies or water bottles?</span>
+          <div class="ob-checks">
+            <label class="check"><input type="radio" name="ex_shop" value="Yes" data-more> Yes</label>
+            <label class="check"><input type="radio" name="ex_shop" value="No"> No</label>
+            <label class="check"><input type="radio" name="ex_shop" value="Not sure" data-more> Not sure</label>
+          </div>
+          <input class="ob-more" id="ex_shop_more" type="text" placeholder="What you sell (optional)" aria-label="Other things you sell" hidden>
+        </div>
+        <div class="field full"><label for="ex_anything">Anything else we should know <span class="opt">(optional)</span></label><textarea id="ex_anything" rows="3"></textarea></div>
+      </div>
+    </section>
+
+    <div class="acct-save ob-save ob-save-steady">
+      <button class="btn btn-primary" id="obSend" type="submit">Send to Kanvas One</button>
+      <p class="note" id="obNote" role="status" aria-live="polite">Saves as you go. Send it when you&rsquo;re ready, even half done.</p>
+    </div>
+  </form>
+</main>
+
+<div class="acct-loading" id="loading"><p>Loading&hellip;</p></div>
+
+<template id="coachRow">
+  <div class="svc-row ob-card">
+    <div class="acct-grid">
+      <div class="field"><label>Name</label><input type="text" data-k="name"></div>
+      <div class="field">
+        <label>Role</label>
+        <select data-k="role"><option value="">Not sure</option><option value="Admin">Admin</option><option value="Coach">Coach</option><option value="Admin and coach">Admin and coach</option></select>
+      </div>
+      <div class="field"><label>Email <span class="opt">(for their login)</span></label><input type="email" data-k="email"></div>
+      <div class="field"><label>Classes they teach</label><input type="text" data-k="classes" placeholder="Not sure is fine"></div>
+    </div>
+    <button class="linkish svc-remove" type="button">Remove</button>
+  </div>
+</template>
+
+<template id="classRow">
+  <div class="svc-row ob-card">
+    <div class="acct-grid">
+      <div class="field"><label>Class name</label><input type="text" data-k="name" placeholder="Mini Movers"></div>
+      <div class="field"><label>Ages</label><input type="text" data-k="ages" placeholder="3 to 5"></div>
+      <div class="field">
+        <label>Day</label>
+        <select data-k="day"><option value="">Choose</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select>
+      </div>
+      <div class="field ob-times">
+        <div><label>Starts</label><input type="time" data-k="start"></div>
+        <div><label>Ends</label><input type="time" data-k="end"></div>
+      </div>
+      <div class="field"><label>Coach</label><input type="text" data-k="coach"></div>
+      <div class="field"><label>Most spaces <span class="opt">(if there&rsquo;s a limit)</span></label><input type="number" min="1" inputmode="numeric" data-k="spaces"></div>
+    </div>
+    <button class="linkish svc-remove" type="button">Remove</button>
+  </div>
+</template>
+
+<script src="vendor/supabase.js?v=1"></script>
+<script src="consent.js?v=9"></script>
+<script src="supabase-config.js?v=1"></script>
+<script src="supabase-client.js?v=1"></script>
+<script src="session.js?v=3"></script>
+<script src="club-setup.js?v=1"></script>
+<script src="admin-pill.js?v=8"></script>
+</body>
+</html>

@@ -795,14 +795,15 @@
       free.textContent = 'Free with your plan.';
       note.appendChild(free);
       note.appendChild(document.createTextNode(answers.selected_plan === 'max'
-        ? ' Registered for you today, and your new site goes on it within 14 days.'
+        ? ' Registered for you today, and your new site goes on it within a few days of your setup form.'
         : ' Registered for you today, and your site is live on it within 24 hours.'));
     }
     $('sumDomainRow').hidden = !domain;
     $('sumDomain').textContent = domain || '\u2014';
 
     /* The promise, next to the price: live today, features within 14 days
-       or the next month is free. Built from parts so the address they
+       or the next month is free (One: the site in a few days, the app on
+       Apple and Google's review). Built from parts so the address they
        typed never lands in markup. */
     var promise = $('payPromise');
     if (promise) {
@@ -810,11 +811,11 @@
       var strong = document.createElement('b');
       var isOne = answers.selected_plan === 'max';
       strong.textContent = isOne
-        ? 'Ready within 14 days.'
+        ? 'Your website in a few days.'
         : domain ? 'Live on ' + domain + ' today.' : 'Live on your own address today.';
       promise.appendChild(strong);
       promise.appendChild(document.createTextNode(isOne
-        ? ' Your website' + (domain ? ' on ' + domain : '') + ', member app and trial bookings. Your ads start in month 2, and months 2 to 4 of ad spend are on us.'
+        ? ' On ' + (domain || 'your own address') + ', with trial bookings. Your app goes to Apple and Google for review (1 to 4 weeks). Your ads start in month 2, and months 2 to 4 of ad spend are on us.'
         : answers.selected_plan === 'starter'
         ? ' With your contact form and click to call. Your first change of the month, whenever you like.'
         : ' Then we build the features you asked for within 14 days \u2014 or your next month is free.'));
