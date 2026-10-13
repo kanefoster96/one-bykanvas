@@ -40,12 +40,6 @@
   var ok = function (txt) { return '<b class="hp-ok">' + T + txt + '</b>'; };
 
   var SCREENS = [
-    { id: 'ad', full: true, label: 'We run ads to parents near you', html:
-      sbar() + '<div class="hp-igt"><b>Feed</b><span>' + IC.heart + IC.chat + '</span></div>' +
-      '<div class="hp-adp" id="hp-adp"><div class="hp-adh">' + LOGO + '<div><b>' + CLUB + '</b><span>Sponsored</span></div><i>\u00b7\u00b7\u00b7</i></div>' +
-      '<div class="hp-adi"><p>FREE TRIAL CLASS</p><b>Hip Hop</b><span>Ages 7 to 11 \u00b7 near you</span></div>' +
-      '<div class="hp-adc" id="hp-adc"><span>Book a free trial</span>' + IC.arrow + '<i class="hp-rp" id="hp-adrp"></i></div>' +
-      '<p class="hp-adt"><b>' + CLUB + '</b> Try a class free this week.</p></div>' },
     { id: 'web', full: true, label: 'They book a free trial on your website', html:
       sbar() + '<div class="hp-wnav">' + LOGO + '<span class="hp-hb"><i></i><i></i><i></i></span></div>' +
       '<div class="hp-wproof"><span class="hp-avs"><i style="background:#f59e0b"></i><i style="background:#6366f1"></i><i style="background:#ec4899"></i><i style="background:#10b981"></i></span><div><p class="hp-stars">\u2605\u2605\u2605\u2605\u2605</p><p>Loved by local parents</p></div></div>' +
@@ -229,15 +223,6 @@
     '.hp-done{position:absolute;inset:0;background:#06140b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0}',
     '.hp-ck{width:120px;height:120px;border-radius:50%;background:#22c55e;display:grid;place-items:center;color:#06140b}.hp-ck svg{width:64px;height:64px}',
     '.hp-done b{font:700 32px/1 Inter,sans-serif}.hp-done span{font:500 21px/1 Inter,sans-serif;color:rgba(245,245,242,.7)}',
-    /* ad */
-    '.hp-igt{display:flex;justify-content:space-between;align-items:center;height:92px;padding:0 30px;border-bottom:1px solid rgba(255,255,255,.08)}.hp-igt b{font:700 30px/1 Inter,sans-serif}.hp-igt span{display:flex;gap:22px}.hp-igt svg{width:34px;height:34px}',
-    '.hp-adh{display:flex;align-items:center;gap:14px;padding:18px 24px}.hp-adh b{display:block;font:700 23px/1.2 Inter,sans-serif}.hp-adh span{display:block;font:500 18px/1.2 Inter,sans-serif;color:rgba(245,245,242,.6);margin-top:3px}.hp-adh i{margin-left:auto;font:700 28px/1 Inter,sans-serif;font-style:normal;color:rgba(245,245,242,.7)}',
-    '.hp-adi{height:560px;background:radial-gradient(120% 90% at 85% 10%,#93c5fd 0,#2563eb 45%,#0b2a6b 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:40px 40px 46px;position:relative;overflow:hidden}',
-    '.hp-adi::before{content:"";position:absolute;right:-90px;top:-90px;width:380px;height:380px;border-radius:50%;border:44px solid rgba(255,255,255,.14)}',
-    '.hp-adi p{font:800 22px/1 Inter,sans-serif;letter-spacing:.2em;color:rgba(255,255,255,.88)}.hp-adi b{display:block;margin-top:14px;font:900 86px/.95 Inter,sans-serif;letter-spacing:-.045em;color:#fff}.hp-adi span{display:block;margin-top:16px;font:600 27px/1.3 Inter,sans-serif;color:rgba(255,255,255,.92)}',
-    '.hp-adc{position:relative;display:flex;justify-content:space-between;align-items:center;padding:24px 26px;background:#1c1c1f;font:700 24px/1 Inter,sans-serif;overflow:hidden}.hp-adc svg{width:26px;height:26px}',
-    '.hp-rp{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:rgba(255,255,255,.25);opacity:0}',
-    '.hp-adt{padding:18px 26px;font:500 22px/1.45 Inter,sans-serif;color:rgba(245,245,242,.88)}.hp-adt b{font-weight:700}',
     /* sms */
     '.hp-v.hp-light.hp-white{background:#fff}',
     '.hp-snav{text-align:center;padding:6px 0 20px;border-bottom:1px solid #eee;background:#fff}',
@@ -318,11 +303,6 @@
         sc.style.opacity = u > a && u < b + .1 ? 1 : 0; sc.style.top = (60 + 300 * (.5 - .5 * Math.cos(k * Math.PI * 2))) + 'px';
         $('hp-done').style.opacity = eo(p(u, b, .3)); $('hp-done').querySelector('.hp-ck').style.transform = 'scale(' + pop(p(u, b + .05, .45)) + ')';
         $('hp-att').textContent = u > b + .4 ? '97%' : '96%';
-      },
-      ad: function (u) {
-        var k = eo(p(u, 0, .6)); $('hp-adp').style.transform = 'translateY(' + (300 * (1 - k)) + 'px)';
-        var r = p(u, 1.6, .5); $('hp-adrp').style.opacity = u > 1.6 && u < 2.15 ? .9 * (1 - r) : 0; $('hp-adrp').style.transform = 'scale(' + (1 + 16 * r) + ')';
-        $('hp-adc').style.background = u > 1.55 && u < 2.0 ? '#2a2a2e' : '#1c1c1f';
       },
       sms: function (u) {
         $('hp-sty').style.display = u < .8 ? 'inline-flex' : 'none';
