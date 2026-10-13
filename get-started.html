@@ -81,13 +81,13 @@
 
         <!-- Starter first, and chosen: it is the offer on every page. Business
              is the step up, then One. -->
-        <div class="bill-toggle bill-toggle-wiz" role="group" aria-label="Billing period">
+        <div class="bill-toggle bill-toggle-wiz" role="group" aria-label="Billing period" data-std-only>
           <button type="button" class="bill-opt is-on" data-bill="monthly">Monthly</button>
-          <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save" data-one="2 months free">2 months free + Boost</span></button>
+          <button type="button" class="bill-opt" data-bill="annual">Annual<span class="bill-save">2 months free + Boost</span></button>
         </div>
 
         <!-- What each way of paying gets, said once above the plans. -->
-        <p class="bill-note" id="billNote"><b>Monthly:</b> <span data-std-only>Starter is &pound;9.99 from day one; Business is half price for the first month.</span><span data-one-only hidden>&pound;250 a month, no setup fee, 3 months of ads on us, and cancel any time.</span> <b>Annual:</b> two months free<span data-std-only>, plus the Launch Boost &mdash; your first month spent getting you found. <button class="linkish inline" type="button" id="boostMore">What&rsquo;s in it?</button></span><span data-one-only hidden>. Getting you found on Google is already part of One.</span></p>
+        <p class="bill-note" id="billNote"><b>Monthly:</b> <span data-std-only>Starter is &pound;9.99 from day one; Business is half price for the first month.</span><span data-one-only hidden>&pound;250 a month, no setup fee, 3 months of ads on us, and cancel any time.</span><span data-std-only> <b>Annual:</b> two months free, plus the Launch Boost &mdash; your first month spent getting you found. <button class="linkish inline" type="button" id="boostMore">What&rsquo;s in it?</button></span></p>
         <ul class="ticks boost-list" id="boostList" hidden>
           <li>Your Google Business Profile set up, verified and filled in</li>
           <li>A page for every service you offer and every town you cover</li>
@@ -136,7 +136,7 @@
           <label class="pick-row" data-plan="max">
             <input type="radio" name="plan" value="max">
             <span class="pick-main">
-              <span class="pick-head"><b>One</b><em data-m="£250|/mo" data-y="£2,500|/yr">£250<span>/mo</span></em></span>
+              <span class="pick-head"><b>One</b><em>£250<span>/mo</span></em></span>
               <span class="pick-note"><b class="pick-flag">Fill your sessions</b>Website, member app, trial bookings, payments and ads, run for you. 3 months of ads on us.</span>
             </span>
           </label>
@@ -412,7 +412,7 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="get-started.js?v=39"></script>
+<script src="get-started.js?v=40"></script>
 <script src="chat.js?v=13" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

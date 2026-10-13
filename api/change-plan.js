@@ -27,10 +27,10 @@ const { changePlan } = require('./_change_plan.js');
 const ORDER = ['starter', 'business', 'pro', 'max'];
 
 /* The new price keeps the customer's existing billing interval: an annual
-   subscriber moving Business -> One stays annual, and Stripe prorates
-   within the year (the unused chunk of £500 credits against £2,500 for the
-   remaining months). Without this, a plan change would silently convert an
-   annual customer to monthly billing. */
+   subscriber moving Starter -> Business stays annual, and Stripe prorates
+   within the year. Without this, a plan change would silently convert an
+   annual customer to monthly billing. One is monthly only, so an annual
+   subscriber moving to One goes monthly, with the unused year credited. */
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');

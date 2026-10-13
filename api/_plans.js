@@ -11,7 +11,8 @@
 /* yearly = ten months' money for twelve months of service: "2 months
    free" framing rather than a percentage discount. Starter rounds down to
    a straight £99, a smaller-looking number than £99.90. pro has no yearly
-   price because it is legacy and cannot be bought. */
+   price because it is legacy and cannot be bought; One has none because
+   it is sold monthly only. */
 /* starter is the way in: £9.99 a month for a site built for them from one
    of our designs, live within 24 hours, with their own address, words and
    photos, a contact form and click to call, and changes to the text and
@@ -23,7 +24,7 @@ const PLANS = {
   starter:  { label: 'Kanvas One — Starter',  amount: 999,   yearly: 9900,   points: 1 },
   business: { label: 'Kanvas One — Business', amount: 5000,  yearly: 50000,  points: 1 },
   pro:      { label: 'Kanvas One — Pro',      amount: 12000,                 points: 3 },
-  max:      { label: 'One by Kanvas',      amount: 25000,  yearly: 250000, points: 5 }
+  max:      { label: 'One by Kanvas',      amount: 25000,                  points: 5 }
 };
 
 /* What a request costs, and what it would cost paid for on its own. */

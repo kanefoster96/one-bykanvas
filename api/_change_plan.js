@@ -106,8 +106,12 @@ async function changePlan(stripe, admin, userId, profile, plan, apply, opts) {
   }
 
   const fromInterval = intervalOf(item);
-  const wanted = opts && (opts.interval === 'year' || opts.interval === 'month') ? opts.interval : fromInterval;
-  if (wanted === 'year' && !Number.isFinite(PLANS[plan].yearly)) throw fail(400, 'That plan has no yearly price.');
+  const asked = opts && (opts.interval === 'year' || opts.interval === 'month') ? opts.interval : null;
+  if (asked === 'year' && !Number.isFinite(PLANS[plan].yearly)) throw fail(400, 'That plan has no yearly price.');
+  /* Kept as it is unless asked, except onto a plan sold monthly only (One):
+     an annual subscriber moving there goes monthly, and Stripe credits the
+     unused part of the year against it. */
+  const wanted = asked || (fromInterval === 'year' && !Number.isFinite(PLANS[plan].yearly) ? 'month' : fromInterval);
   const target = priceFor(plan, wanted);
   const intervalChanging = target.interval !== fromInterval;
 
