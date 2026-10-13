@@ -63,6 +63,10 @@ const TEMPLATES = {
     title: 'New ' + L.person + (d.name ? ': ' + d.name : ''),
     body: [d.email, d.phone, d.source].filter(Boolean).join(' · ') || 'Signed up on your site'
   }),
+  enquiry: (d) => ({
+    title: 'New enquiry' + (d.name ? ': ' + d.name : ''),
+    body: trim(d.text, 140) || [d.email, d.phone].filter(Boolean).join(' · ') || 'Sent from your website'
+  }),
   chat: (d) => ({
     title: d.name || 'Visitor on your site',
     body: trim(d.preview, 140) || 'Sent you a message'

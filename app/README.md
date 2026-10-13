@@ -4,10 +4,18 @@ A notification layer, live chat and analytics for the sites we build. The
 web app lives at `/app/` (this folder) and the same files, unchanged, run
 inside a native wrapper (Capacitor) for the App Store and Google Play.
 
-Five tabs: Dashboard (the customer's own site dashboard, opened inside the
-app), Analytics (from `beacon.js` on their site), Payments (money in, once
-Stripe Connect lands), Chat (only for sites with live chat) and Support (the
-Requests feature, from the same `requests.js` the website uses).
+Two versions, from the same page, picked by the plan:
+
+- **Business**: Dashboard (the customer's own site dashboard, opened inside
+  the app, signed in), Analytics (from `beacon.js` on their site), Chat
+  (only for sites with live chat; contacts beside it) and Support (the
+  Requests feature, from the same `requests.js` the website uses, and a
+  chat with Kane).
+- **Starter**: Home (is the site up, then its analytics), Messages (the
+  contact form) and Support. See "Starter's app" below.
+
+One clients get their own branded app, built separately; this one is not
+it. Payments is hidden on every plan until Stripe Connect lands.
 
 ## What every new site gets
 
@@ -186,12 +194,21 @@ owner's phone. Until that is set up, replies go to the business's own inbox.
 A Starter customer has no dashboard, so their app is three tabs, the rest
 hidden (not gated: the same page, `isStarter()` in `app.js`):
 
-- **Website**: whether their site is up (`api/app.js` `site_status` fetches
-  the address from the server when the tab opens; under 500 is online),
-  the address, **Open your website** in the phone's browser, their plan,
-  and two shortcuts: make a request, chat to Kane.
-- **Support**: the Requests feature, where edits are asked
-  for, and the chat with Kane (below).
+- **Home**: whether their site is up (`api/app.js` `site_status` fetches
+  the address from the server each time; under 500 is live), an **Open
+  your website** button, then the same analytics every plan gets.
+- **Messages**: everything their contact form sent (`api/app.js`
+  `enquiries`, newest first, read only). Each message has **Email** and
+  **Call** buttons that open the phone's own mail and phone apps
+  (`mailto:` / `tel:` leave the app in the shell), so nothing is sent
+  from us and nothing costs an email. A dot marks what arrived since they
+  last opened the tab, remembered on the phone; the tab carries a count.
+  A tapped "New enquiry" notification opens the tab at that message.
+- **Support**: the Requests feature, where edits are asked for, and the
+  chat with Kane (below).
+
+Payments is hidden on every plan until Stripe Connect lands: an empty
+"coming soon" tab is the kind of thing App Review turns down.
 
 ## Chat with Kane (every plan)
 
@@ -289,18 +306,20 @@ Number types: UK 01/02 numbers in Twilio are voice only. UK 07 numbers do
 voice and texts, so use an 07 number as the site's number, or pair a
 landline number for calls with an 07 number for texts.
 
-## Enquiries answered straight away
+## Enquiries, to the owner
 
-A contact form on a site posts to `api/enquiry.js`:
+A contact or quote form on a site posts to `api/enquiry.js`:
 
 ```js
 fetch('https://kanvas.one/api/enquiry', { method: 'POST', body: JSON.stringify({ site: '<site id>', name, email, phone, message, page: location.pathname }) });
 ```
 
-The enquiry is stored, pushed to the owner's phone as "New customer", emailed
-to the owner with reply-to set to the sender, and the sender gets "Thanks,
-<business> will be in touch shortly" by email at once. Include a hidden
-`website` field in the form and leave it empty: bots fill it and are dropped.
+The enquiry is stored (Starter's Messages tab reads it back), pushed to the
+owner's phone as "New enquiry: <name>", and emailed to the owner only:
+one email, from our address, with the reply-to set to the customer, so
+pressing Reply in their mail answers the customer from their own mailbox.
+Nothing automatic goes to the customer. Include a hidden `website` field in
+the form and leave it empty: bots fill it and are dropped.
 
 ## The dashboard inside the app
 

@@ -14,7 +14,7 @@
 <link rel="icon" href="../assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="../assets/favicon-180.png?v=5">
 <link rel="stylesheet" href="../styles.css?v=144">
-<link rel="stylesheet" href="app.css?v=21">
+<link rel="stylesheet" href="app.css?v=22">
 </head>
 <body class="oa-body">
 
@@ -72,44 +72,28 @@
     <iframe class="oa-dash-frame" id="dashFrame" title="Your dashboard" hidden></iframe>
   </section>
 
-  <!-- ---- Website (Starter: no dashboard, so the site itself is the first tab) ---- -->
-  <section class="oa-tab" id="tabWebsite" hidden>
-    <div class="oa-tab-head"><h2>Your website</h2></div>
-    <!-- A tapped "new enquiry" notification lands here: Starter has no
-         dashboard to open it in, and the full message is in their email. -->
-    <div class="oa-card" id="siteEnquiry" role="status" hidden>
-      <p class="oa-card-title" id="siteEnquiryTitle">New enquiry from your site</p>
-      <p class="hint" id="siteEnquiryBody"></p>
-      <p class="hint">The full message is in your email. Reply to that email to answer them.</p>
-    </div>
-    <div class="oa-card oa-status">
-      <div class="oa-status-row">
-        <span class="oa-status-dot" id="siteDot"></span>
-        <div class="oa-status-text">
-          <p class="oa-status-title" id="siteStatusTitle">Checking your website…</p>
-          <p class="hint" id="siteStatusHint"></p>
-        </div>
-      </div>
-      <p class="oa-status-url" id="siteUrlText"></p>
-      <button class="btn btn-primary" id="siteOpen" type="button" hidden>Open your website</button>
-    </div>
-    <div class="oa-card">
-      <p class="oa-card-title">Your plan</p>
-      <p class="oa-status-plan" id="sitePlanText"></p>
-      <p class="hint" id="sitePlanHint"></p>
-    </div>
-    <div class="oa-card">
-      <p class="oa-card-title">Need something?</p>
-      <p class="hint">A change to your website, or something not working: send a request and it is done within the month, or chat to Kane.</p>
-      <div class="oa-status-actions">
-        <button class="oa-chip" id="siteRequest" type="button">Make a request</button>
-        <button class="oa-chip oa-chip-dark" id="siteChat" type="button">Chat to Kane</button>
-      </div>
-    </div>
+  <!-- ---- Messages (Starter: what the contact form brought in) ---- -->
+  <section class="oa-tab" id="tabMessages" hidden>
+    <div class="oa-tab-head"><h2>Messages</h2></div>
+    <p class="hint oa-msgs-hint">Everything sent through the contact form on your website, newest first. A copy goes to your email too.</p>
+    <ol class="oa-msgs" id="msgList"></ol>
+    <p class="oa-empty" id="msgEmpty" hidden>No messages yet. When someone sends the contact form on your website, it shows here and you get a notification.</p>
+    <p class="note" id="msgNote" role="status" aria-live="polite"></p>
   </section>
 
   <!-- ---- Analytics ---- -->
   <section class="oa-tab" id="tabAnalytics" hidden>
+    <!-- Starter's home: whether the site is up, above its numbers. -->
+    <div class="oa-card oa-status oa-site-card" id="anSite" hidden>
+      <div class="oa-status-row">
+        <span class="oa-status-dot" id="siteDot"></span>
+        <div class="oa-status-text">
+          <p class="oa-status-title" id="siteStatusTitle">Checking your website&hellip;</p>
+          <p class="hint" id="siteStatusHint"></p>
+        </div>
+      </div>
+      <button class="oa-chip" id="siteOpen" type="button" hidden>Open your website</button>
+    </div>
     <div class="oa-tab-head">
       <h2>Analytics</h2>
       <div class="oa-pills" role="tablist" aria-label="Period">
@@ -532,19 +516,20 @@
 
   <!-- ---- bottom tabs ---- -->
   <nav class="oa-nav" aria-label="Sections">
-    <button class="oa-nav-btn" type="button" data-tab="Website" id="navSite" hidden>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
-      <span>Website</span>
-    </button>
     <button class="oa-nav-btn" type="button" data-tab="Dashboard" id="navDash">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
       <span>Dashboard</span>
     </button>
-    <button class="oa-nav-btn" type="button" data-tab="Analytics">
+    <button class="oa-nav-btn" type="button" data-tab="Analytics" id="navAn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>
-      <span>Analytics</span>
+      <span id="navAnLabel">Analytics</span>
     </button>
-    <button class="oa-nav-btn" type="button" data-tab="Payments">
+    <button class="oa-nav-btn" type="button" data-tab="Messages" id="navMsgs" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>
+      <span>Messages</span>
+      <span class="nav-count oa-nav-count" id="navMsgsCount" hidden>0</span>
+    </button>
+    <button class="oa-nav-btn" type="button" data-tab="Payments" id="navPay" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
       <span>Payments</span>
     </button>
@@ -592,6 +577,6 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=31"></script>
+<script src="app.js?v=32"></script>
 </body>
 </html>
