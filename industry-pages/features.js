@@ -97,12 +97,12 @@ module.exports = [
     how: [
       ['A photo, or a line of text', 'The job you want more of, and a picture of it. That is all we need from you, plus access to your Facebook page.'],
       ['We build the offer, the ad and the form', 'Written for your town and your trade, pointing at a page on your own site that turns a click into a call. Live in month 2, once your site is built and tested.'],
-      ['3 months of ads on us', 'Month 1 we build it all. Months 2 to 4 we pay for your ads, up to &pound;150 a month. Every month, a note: what ran, what it cost, what came in.']
+      ['3 months of ads on us', 'Month 1 we build it all. Months 2 to 4 we pay for your ads, up to &pound;100 a month. Every month, a note: what ran, what it cost, what came in.']
     ],
     gets: [
       'The offer, the ad and the landing form, written and built for you',
       'Ads shown to people in your area, not the whole country',
-      'Your ads paid for by us in months 2 to 4, up to &pound;150 a month',
+      'Your ads paid for by us in months 2 to 4, up to &pound;100 a month',
       'Your first ad live in month 2, once your site is tested',
       'A monthly note: spend, enquiries, cost per enquiry, what changed',
       'Every enquiry from the ads followed up by email if it goes quiet'
@@ -110,7 +110,7 @@ module.exports = [
     plan: 'max',
     planLine: 'Ads are part of One: &pound;250 a month with the website, the ranking work and the follow-up emails in it. No setup fee, and your price is locked for as long as you stay.',
     faq: [
-      ['Who pays for the ads?', 'For months 2, 3 and 4, we do, up to &pound;150 a month. From month 5 you choose, and can switch any time: we keep paying and each new customer pays us their first subscription payment if they&rsquo;re on a membership or repeat subscription (monthly, every three months, any interval), or 20% of their first payment if you invoice them or they pay for a one-off service. Only their first payment counts, then everything they pay is yours. Or you pay Meta directly on your own ad account. Want to switch? Tell us and we swap straight away, and every new customer from then on is fully yours.'],
+      ['Who pays for the ads?', 'For months 2, 3 and 4, we do, up to &pound;100 a month. From month 5 you choose, and can switch any time: we keep paying, up to &pound;100 a month, and each new customer pays us their first subscription payment if they&rsquo;re on a membership or repeat subscription (monthly, every three months, any interval), or 20% of their first payment if you invoice them or they pay for a one-off service. Only their first payment counts, then everything they pay is yours. Or you pay Meta directly on your own ad account. Want to switch? Tell us and we swap straight away, and every new customer from then on is fully yours.'],
       ['Will it definitely bring customers?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, and a note every month showing what it brought in, so you can decide with numbers.'],
       ['What do you need from me?', 'A photo or a line about the job you want more of, and admin access to your Facebook page. We do the rest.']
     ]
