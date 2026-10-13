@@ -3076,6 +3076,15 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .ob-strip a em{font-style:normal}
 .ob-strip a i{display:none;font-style:normal}
 @media (max-width:480px){.ob-strip a{font-size:12.5px;padding:8px 9px}.ob-strip a em{display:none}.ob-strip a i{display:inline}}
+/* The club form: six steps, numbers only on a phone; a start and end time side by side. */
+.ob-strip-6 a{padding:9px 8px}
+@media (max-width:640px){.ob-strip-6 a em{display:none}.ob-strip-6 a{justify-content:center;gap:4px}.ob-strip-6 a span{margin-left:0}}
+.acct-grid .ob-times{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ob-times > div{display:flex;flex-direction:column;gap:7px;min-width:0}
+.acct-grid .ob-times input{padding-left:10px;padding-right:6px;min-width:0}
+.ob-card .acct-grid{margin-top:14px}
+/* The status line under Send keeps its height, so the button never moves as it changes. */
+.ob-save-steady .note{min-height:2.9em}
 
 /* ---- /new: the hero as the lead magnet ---- */
 .hero-points{list-style:none;margin:16px auto 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;max-width:640px}

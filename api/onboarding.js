@@ -10,7 +10,13 @@
  *
  * Everything is optional and can be saved as often as they like. The
  * questions are the same for every trade; onboarding-trades.js holds the
- * suggestions under each one. The five contact fields the account page
+ * suggestions under each one. Clubs have their own, shorter form
+ * (club-setup.html, form: 'club'), with its own sections below.
+ *
+ * A save with quiet: true (the club form, as they type) stores the answers
+ * and tells nobody. A save without it is a "send": it tells the other side
+ * what changed since the last send, and keeps a copy of what was sent
+ * (answers._sent) to compare the next one with. The five contact fields the account page
  * also holds (public_email, phone, address, service_area, opening_hours)
  * are written through to the profile too, so there is one truth for them. Every save that changes anything sends the
  * admin an email naming the sections that changed, with the full answers
@@ -48,6 +54,16 @@ const SECTIONS = [
   ['extras', 'Anything else']
 ];
 
+/* The club form's sections, in its order. */
+const CLUB_SECTIONS = [
+  ['club', 'Your club'],
+  ['coaches', 'Coaches'],
+  ['classes', 'Classes'],
+  ['prices', 'Prices'],
+  ['joining', 'Joining'],
+  ['extras', 'Extras']
+];
+
 /* Profile columns the contact section mirrors. */
 const MIRROR = { public_email: 'email', phone: 'phone', address: 'address', service_area: 'area', opening_hours: 'reach' };
 
@@ -73,6 +89,14 @@ const DECISIONS = {
   salon_how: { no_show: 'no-show policy', rebook: 'rebooking interval', before_first: 'before a first appointment' }
 };
 const JOB_FIELDS = { often: 'how often', price: 'price', pricing: 'how it is priced', flow: 'straight in or ask first' };
+
+/* What we need to copy the Academy for a club, in plain words. */
+const CLUB_DECISIONS = {
+  club: { name: 'club name', teach: 'what they teach', ages: 'ages', venue: 'where classes happen', email: 'email for parents', phone: 'phone for parents' },
+  prices: { charge: 'how people pay', prices: 'their prices' },
+  joining: { trial: 'the trial', start: 'when new members start' },
+  extras: { uniform_required: 'uniform required in class', uniform_sell: 'whether they sell uniform', competitions: 'competitions', shows: 'shows with tickets', shop: 'other things they sell' }
+};
 
 function blank(v) { return v === undefined || v === null || v === '' || v === false || (Array.isArray(v) && !v.length); }
 
@@ -100,6 +124,29 @@ function undecided(answers) {
   return out;
 }
 
+function undecidedClub(answers) {
+  const out = [];
+  for (const [section, fields] of Object.entries(CLUB_DECISIONS)) {
+    const sec = answers[section] || {};
+    const missing = Object.entries(fields).filter(([k]) => blank(sec[k]) || sec[k] === 'Not sure').map(([, label]) => label);
+    if (missing.length) out.push(`  ${section}: ${missing.join(', ')}`);
+  }
+  const coaches = Array.isArray(answers.coaches) ? answers.coaches : [];
+  if (!coaches.length) out.push('  coaches: none added');
+  coaches.forEach((c) => {
+    const missing = [['email', 'email'], ['role', 'role']].filter(([k]) => blank(c[k])).map(([, label]) => label);
+    if (missing.length) out.push(`  ${c.name || 'a coach'}: ${missing.join(', ')}`);
+  });
+  const cl = answers.classes || {};
+  const list = Array.isArray(cl.list) ? cl.list : [];
+  if (!list.length && blank(cl.timetable) && blank(cl.files)) out.push('  classes: no classes or timetable');
+  list.forEach((c) => {
+    const missing = [['day', 'day'], ['start', 'start time'], ['ages', 'ages'], ['coach', 'coach']].filter(([k]) => blank(c[k])).map(([, label]) => label);
+    if (missing.length) out.push(`  ${c.name || 'a class'}: ${missing.join(', ')}`);
+  });
+  return out;
+}
+
 /* Strings, numbers, booleans, and arrays/objects of those, four levels
    deep. Anything else is dropped. */
 function clean(v, depth) {
@@ -118,6 +165,15 @@ function clean(v, depth) {
     return out;
   }
   return undefined;
+}
+
+/* JSON with object keys sorted: the database (jsonb) keeps keys in its own
+   order, so a plain stringify would call an unchanged section changed. */
+function same(a, b) { return stable(a) === stable(b); }
+function stable(v) {
+  if (Array.isArray(v)) return '[' + v.map(stable).join(',') + ']';
+  if (v && typeof v === 'object') return '{' + Object.keys(v).sort().map((k) => JSON.stringify(k) + ':' + stable(v[k])).join(',') + '}';
+  return JSON.stringify(v === undefined ? null : v);
 }
 
 function pretty(v, indent) {
@@ -180,7 +236,7 @@ module.exports = async function handler(req, res) {
     if (rErr) throw new Error(rErr.message);
 
     if (req.method === 'GET') {
-      const answers = (row && row.answers) || {};
+      const { _sent, _sent_at, ...answers } = (row && row.answers) || {};
       /* The contact section starts from what the profile already knows. */
       const contact = Object.assign({}, answers.contact || {});
       for (const [col, key] of Object.entries(MIRROR)) {
@@ -192,6 +248,8 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({
         answers: Object.assign({}, answers, { contact, model: answers.model || maxModel || '' }),
         updatedAt: row ? row.updated_at : null,
+        sentAt: _sent_at || null,
+        unsent: _sent !== undefined && !same(_sent, answers),
         plan,
         business: (profile && profile.business_name) || '',
         viewer,
@@ -208,20 +266,35 @@ module.exports = async function handler(req, res) {
       return res.status(413).json({ error: 'That is more than the form can hold. Trim a section and try again.' });
     }
 
-    const before = Object.assign({}, (row && row.answers) || {});
+    /* Nothing from the browser gets to set what was sent. */
+    delete incoming._sent; delete incoming._sent_at;
+    const quiet = body.quiet === true;
+    const stored = (row && row.answers) || {};
+    const club = incoming.form === 'club';
+    const sections = club ? CLUB_SECTIONS : SECTIONS;
+    /* What was last sent. A row from before sends existed was saved by a
+       form that told us on every save, so all of it counts as sent. */
+    const { _sent: lastSent, _sent_at: lastSentAt, ...legacy } = stored;
+    const sentBefore = lastSent !== undefined ? lastSent : legacy;
+    const before = Object.assign({}, sentBefore);
     /* The One they bought was shown as already answered: saving it back is
        not a change worth telling anyone about. */
     if (!before.model && profile && profile.max_model && incoming.model === profile.max_model) before.model = profile.max_model;
-    const changed = SECTIONS.filter(([key]) => JSON.stringify(before[key] || null) !== JSON.stringify(incoming[key] || null)).map(([, label]) => label);
+    const changed = sections.filter(([key]) => !same(before[key] || null, incoming[key] || null)).map(([, label]) => label);
 
     const now = new Date().toISOString();
+    const sent = quiet
+      ? { _sent: sentBefore, _sent_at: lastSentAt || null }
+      : { _sent: incoming, _sent_at: now };
     const { error: upErr } = await db.from('max_onboarding')
-      .upsert({ user_id: ownerId, answers: incoming, updated_at: now }, { onConflict: 'user_id' });
+      .upsert({ user_id: ownerId, answers: Object.assign({}, incoming, sent), updated_at: now }, { onConflict: 'user_id' });
     if (upErr) throw new Error(upErr.message);
 
     /* Mirror the contact fields onto the profile, so the account page and
        the live site say the same thing. */
-    const contact = incoming.contact || {};
+    const contact = club
+      ? { email: (incoming.club || {}).email, phone: (incoming.club || {}).phone, address: (incoming.club || {}).venue }
+      : (incoming.contact || {});
     const patch = { id: ownerId };
     let mirrored = false;
     for (const [col, key] of Object.entries(MIRROR)) {
@@ -235,11 +308,11 @@ module.exports = async function handler(req, res) {
       if (mErr) console.error('onboarding: profile mirror failed:', mErr.message);
     }
 
-    if (!changed.length) return res.status(200).json({ ok: true, changed: [] });
+    if (quiet || !changed.length) return res.status(200).json({ ok: true, changed: quiet ? undefined : [] });
 
     /* The admin changed it: the customer hears in the app, on their phone. */
     if (viewer === 'admin') {
-      await notify(db, ownerId, 'We updated your One setup', `Changed: ${changed.join(', ')}.`, '/onboarding.html',
+      await notify(db, ownerId, 'We updated your One setup', `Changed: ${changed.join(', ')}.`, club ? '/club-setup.html' : '/onboarding.html',
         { kind: 'max_setup', deepLink: { kind: 'max_setup' } });
       return res.status(200).json({ ok: true, changed });
     }
@@ -248,14 +321,14 @@ module.exports = async function handler(req, res) {
        is the record and nobody has to open the database. */
     const name = (profile && profile.business_name) || user.email || 'A customer';
     const site = ourSiteUrl();
-    const decide = undecided(incoming);
+    const decide = club ? undecidedClub(incoming) : undecided(incoming);
     const text = [
-      `${name} updated their One setup: ${changed.join(', ')}.`,
+      `${name} ${club ? 'sent their club setup' : 'updated their One setup'}: ${changed.join(', ')}.`,
       '',
       'YOU DECIDE (left blank or not sure):',
       ...(decide.length ? decide : ['  nothing - every question has an answer']),
       '',
-      ...SECTIONS.map(([key, label]) => `${changed.includes(label) ? '* ' : '  '}${label.toUpperCase()}\n${pretty(incoming[key])}`).join('\n\n').split('\n'),
+      ...sections.map(([key, label]) => `${changed.includes(label) ? '* ' : '  '}${label.toUpperCase()}\n${pretty(incoming[key])}`).join('\n\n').split('\n'),
       '',
       `Their account: ${site}/admin.html`,
       'Reply to this email to reach them.'
@@ -263,13 +336,13 @@ module.exports = async function handler(req, res) {
 
     const result = await sendEmail({
       to: adminAddresses(),
-      subject: `One setup updated: ${name} (${changed.join(', ')})`,
+      subject: `${club ? 'Club setup sent' : 'One setup updated'}: ${name} (${changed.join(', ')})`,
       text,
       replyTo: user.email
     });
     console.log('onboarding: notify email', result);
 
-    await notifyAdmin(db, 'One setup updated', `${name} changed: ${changed.join(', ')}.`, `/onboarding.html?user=${ownerId}`,
+    await notifyAdmin(db, club ? 'Club setup sent' : 'One setup updated', `${name} changed: ${changed.join(', ')}.`, `${club ? '/club-setup.html' : '/onboarding.html'}?user=${ownerId}`,
       { kind: 'max_setup', deepLink: { kind: 'max_setup', user: ownerId } });
 
     return res.status(200).json({ ok: true, changed });

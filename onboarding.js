@@ -48,7 +48,16 @@
       sec.hidden = sec.getAttribute('data-model') !== model;
     });
   }
-  document.querySelectorAll('input[name="model"]').forEach(function (i) { i.addEventListener('change', showAddon); });
+  document.querySelectorAll('input[name="model"]').forEach(function (i) {
+    i.addEventListener('change', function () {
+      /* Clubs have their own form: go there, it saves the choice. */
+      if (radio('model') === 'clubs') {
+        var q = new URLSearchParams(location.search); q.set('switch', '1');
+        dirty = false; location.href = '/club-setup.html?' + q.toString(); return;
+      }
+      showAddon();
+    });
+  });
 
   /* ---- the trade, and its usual jobs ---- */
   var CATALOG = window.ONE_TRADES || {};
@@ -397,6 +406,8 @@
         if (window.kanvasReady) window.kanvasReady();
         return;
       }
+      /* Clubs have their own form. */
+      if (((data.answers && data.answers.model) || data.maxModel) === 'clubs') { location.replace('/club-setup.html' + location.search); return; }
       viewer = data.viewer || 'owner';
       if (viewer === 'admin') {
         document.title = (data.business || 'A customer') + ': One setup';

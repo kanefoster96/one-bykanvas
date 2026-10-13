@@ -51,7 +51,7 @@ function startHref(site, which, business, type, leadId) {
 function maxSteps(p) {
   if (p.mode === 'fill') {
     return [
-      '<strong>Month 1: we build it.</strong> Your website and timetable within 14 days, your member app set up, and your members moved across, then all of it tested. Store versions of the app follow, as Apple and Google review them.',
+      '<strong>Month 1: we build it.</strong> Your website and timetable live in a few days, then your members moved across and your app sent to Apple and Google (their review takes 1 to 4 weeks). Until then, every app feature works on your website.',
       `<strong>Months 2 to 4: the ads, on us.</strong> Ads go live for the classes with spaces. In our own academy, &pound;${growth.AVG.adBudget} a month of ads brought around ${p.trials} trial bookings and ${p.perMonth} new members a month.`,
       `<strong>At that pace</strong>, your ${p.spaces} spaces would fill in about ${p.months} month${p.months === 1 ? '' : 's'}.`,
       `<strong>${p.cover} new member${p.cover === 1 ? '' : 's'}</strong> at ${money(p.fee)} cover the &pound;250, and months 2 to 4 of ads are on us.`,
@@ -59,7 +59,7 @@ function maxSteps(p) {
     ];
   }
   return [
-    '<strong>Month 1: we build it.</strong> Your website and timetable within 14 days, your member app set up, and your members moved across, then all of it tested. Store versions of the app follow, as Apple and Google review them.',
+    '<strong>Month 1: we build it.</strong> Your website and timetable live in a few days, then your members moved across and your app sent to Apple and Google (their review takes 1 to 4 weeks). Until then, every app feature works on your website.',
     '<strong>Payments run themselves.</strong> Monthly memberships taken by card, failed payments chased for you.',
     '<strong>Trials, reminders and follow-ups</strong> sent for you, every time, so nobody slips through.',
     '<strong>A real person to message</strong> for any change, and a monthly report on how it is going.',
