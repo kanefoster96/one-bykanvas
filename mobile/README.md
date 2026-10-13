@@ -28,6 +28,48 @@ sends to any token of that shape through `exp.host`. The APNs key lives in
 the EAS project (set up once, below), so nothing about push needs
 configuring in Vercel.
 
+## What the phone adds (build 7 onwards)
+
+Announced to the page before it loads as `window.ONE_NATIVE_FEATURES`; the
+web app (and any dashboard framed in it, through `KanvasApp` in
+`kanvas-handoff.js`) only offers what the installed build lists, so an older
+install never shows a button it cannot honour.
+
+| Feature | How the page asks | Notes |
+|---|---|---|
+| Icon badge | `{type:'badge', count}` | The server also sends the count with every push (`_notify.js` `badgeFor`). |
+| Vibration | `{type:'haptic', style}` | light, medium, success, warning, error. |
+| Share sheet | `{type:'share', message, url}` | "Share your website" in Account, and on Starter's Home card. |
+| Rating prompt | `{type:'review'}` | Asked after a reply goes out, once they have used the app on 5 days, at most every 4 months. The phone decides if it shows. |
+| QR scanner | `{type:'scan', id}` -> `onScan({id, data})` | Full-screen, orange frame. For check-in on club dashboards: `KanvasApp.scan()`. |
+| Add to calendar | `{type:'calendar', id, title, start, end, location, notes}` -> `onCalendar({id, saved})` | The phone's own "add event" sheet. `KanvasApp.addToCalendar()`. |
+| Notification buttons | server sends `categoryId` | enquiry: Call, Email (straight to the phone app); chat: Reply (typed on the notification, sent as live chat); missed_call: Call back. |
+| Links open the app | `kanvas.one/app...` | Needs `APPLE_TEAM_ID` and `ANDROID_CERT_SHA256` in Vercel; `api/app-links.js` serves the two verification files from them. Until set, links open in the browser as before. |
+| Wrapper updates | `expo-updates` | See below. |
+
+### Updating the wrapper without a store build
+
+Screens never need this: they are the web app, live the moment kanvas.one
+deploys. This is for `App.js` itself (the bridge, the scanner screen):
+
+```bash
+cd mobile
+eas update --channel production --message "What changed"
+```
+
+Phones fetch it quietly and use it from the next launch. It only reaches
+builds with the same app version (`runtimeVersion` follows `version` in
+app.json): anything that adds a native module, a permission or a plugin
+still needs a new store build, and a `version` bump with it.
+
+### Tap to Pay on iPhone: not in this build
+
+It needs Apple's Tap to Pay entitlement first (requested from Apple by the
+account holder; a build that asks for it before Apple grants it fails to
+sign) and Stripe Connect behind it (Stripe Terminal takes the payment on the
+business's own connected account). Once both are in place it is one more
+module (`@stripe/stripe-terminal-react-native`) and one more build.
+
 ## First time: from nothing to TestFlight
 
 You need: an Apple Developer account (paid), an Expo account, and this repo

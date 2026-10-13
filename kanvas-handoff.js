@@ -15,6 +15,60 @@
  * Needs the Supabase browser library on the page (window.supabase); if it is
  * not there yet, it is fetched from jsDelivr first.
  */
+/* The phone, from a dashboard inside the Kanvas One app.
+ *
+ * Framed in the app, a dashboard can use what the phone can do, through
+ * the app around it. Each call resolves with the answer, or rejects with
+ * 'unavailable' outside the app or on an install too old to have it, so a
+ * dashboard offers the button only when KanvasApp.has() says so:
+ *
+ *   KanvasApp.has('scan')                       -> true / false
+ *   KanvasApp.scan()                            -> Promise<'text in the QR code'>
+ *   KanvasApp.addToCalendar({ title, start, end, location, notes })
+ *                                               -> Promise<true if saved>
+ *   KanvasApp.share({ message, url })           the phone's share sheet
+ *   KanvasApp.haptic('light'|'medium'|'success'|'warning'|'error')
+ *
+ * start and end are ISO strings or anything new Date() reads.
+ */
+(function () {
+  'use strict';
+  var framed = false;
+  try { framed = window.self !== window.top; } catch (e) { framed = true; }
+  var features = [], waiting = {}, n = 0;
+  function ask(op, extra) {
+    if (!framed) return Promise.reject(new Error('unavailable'));
+    var id = 'k' + Date.now().toString(36) + (n++);
+    return new Promise(function (resolve, reject) {
+      waiting[id] = { resolve: resolve, reject: reject };
+      try { window.parent.postMessage(Object.assign({ kanvas: 'native', op: op, id: id }, extra || {}), '*'); }
+      catch (e) { delete waiting[id]; reject(new Error('unavailable')); }
+    });
+  }
+  window.addEventListener('message', function (e) {
+    var m = e.data;
+    if (!m || e.source !== window.parent) return;
+    if (m.kanvas === 'native-features') { features = Array.isArray(m.features) ? m.features : []; return; }
+    if (m.kanvas !== 'native-result' || !waiting[m.id]) return;
+    var w = waiting[m.id]; delete waiting[m.id];
+    if (m.error) w.reject(new Error(m.error));
+    else if ('data' in m) w.resolve(m.data);
+    else w.resolve(!!m.saved);
+  });
+  if (framed) { try { window.parent.postMessage({ kanvas: 'native', op: 'features' }, '*'); } catch (e) { /* not in the app */ } }
+  window.KanvasApp = {
+    has: function (f) { return features.indexOf(f) >= 0; },
+    scan: function () { return ask('scan'); },
+    addToCalendar: function (ev) {
+      ev = ev || {};
+      var start = new Date(ev.start), end = ev.end ? new Date(ev.end) : null;
+      return ask('calendar', { title: ev.title || '', start: isNaN(start) ? '' : start.toISOString(), end: end && !isNaN(end) ? end.toISOString() : '', location: ev.location || '', notes: ev.notes || '' });
+    },
+    share: function (o) { o = o || {}; if (framed) try { window.parent.postMessage({ kanvas: 'native', op: 'share', message: o.message || '', url: o.url || '' }, '*'); } catch (e) {} },
+    haptic: function (style) { if (framed) try { window.parent.postMessage({ kanvas: 'native', op: 'haptic', style: style || 'light' }, '*'); } catch (e) {} }
+  };
+})();
+
 (function () {
   'use strict';
   /* Inside the One app the dashboard is framed. A class on <html> lets

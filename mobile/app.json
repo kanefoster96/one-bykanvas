@@ -9,16 +9,29 @@
     "userInterfaceStyle": "light",
     "backgroundColor": "#ffffff",
     "primaryColor": "#1d1d1f",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2d7868d0-929f-451a-8796-82681204f0f8",
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
       "bundleIdentifier": "one.kanvas.app",
       "buildNumber": "1",
       "supportsTablet": false,
+      "associatedDomains": [
+        "applinks:kanvas.one"
+      ],
       "config": {
         "usesNonExemptEncryption": false
       },
       "infoPlist": {
-        "NSCameraUsageDescription": "So you can take a photo to send with a request or a message.",
+        "NSCameraUsageDescription": "So you can scan QR codes at the door, and take a photo to send with a request or a message.",
         "NSPhotoLibraryUsageDescription": "So you can attach photos to a request or a message.",
+        "NSCalendarsWriteOnlyAccessUsageDescription": "So you can add a booking to your calendar.",
+        "NSCalendarsUsageDescription": "So you can add a booking to your calendar.",
         "UIBackgroundModes": [
           "remote-notification"
         ]
@@ -34,6 +47,23 @@
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.POST_NOTIFICATIONS"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "kanvas.one",
+              "pathPrefix": "/app"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
       ]
     },
     "web": {
@@ -57,7 +87,22 @@
           "defaultChannel": "one"
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "So you can scan QR codes at the door, and take a photo to send with a request or a message.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "So you can add a booking to your calendar."
+        }
+      ],
+      "expo-updates"
     ],
     "extra": {
       "eas": {

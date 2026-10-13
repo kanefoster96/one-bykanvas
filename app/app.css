@@ -428,3 +428,7 @@
 .oa-msg-who{font-weight:700;letter-spacing:-.015em}
 .oa-msg.is-new .oa-msg-who::before{background:var(--or-hi)}
 .oa-msg.is-open{border-color:var(--or)}
+.oa-site-card .oa-status-actions{margin-top:14px}
+.oa-site-card .oa-status-actions .oa-chip{margin-top:0}
+.oa-site-card .oa-chip-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}
+#accountShare{margin-bottom:10px}

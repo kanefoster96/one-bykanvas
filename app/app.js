@@ -41,6 +41,13 @@
   }
   function nativeReady() { toNative({ type: 'ready' }); }
 
+  /* What the installed app can do (announced by the shell before the page
+     loads). An older install lists less, or nothing, and the page simply
+     does not offer what it cannot do. */
+  var FEATURES = (rn && Array.isArray(window.ONE_NATIVE_FEATURES)) ? window.ONE_NATIVE_FEATURES : [];
+  function can(f) { return FEATURES.indexOf(f) >= 0; }
+  function haptic(style) { if (can('haptic')) toNative({ type: 'haptic', style: style || 'light' }); }
+
   if (!window.ONE || !ONE.ready) {
     loading.innerHTML = '<p>Accounts are not connected yet.</p>';
     nativeReady();
@@ -185,6 +192,7 @@
       // Leaving the requests deep view when the tab changes keeps the
       // hash honest; coming back lands on the list.
       if (b.dataset.tab !== 'Support' && location.hash) history.replaceState(null, '', location.pathname);
+      if (b.dataset.tab !== tab) haptic('light');
       showTab(b.dataset.tab);
     });
   });
@@ -262,6 +270,7 @@
   }
   function refreshTab() {
     pull.busy = true;
+    haptic('light');
     pullEl.classList.add('is-busy');
     pullEl.firstChild.style.transform = '';
     movePull(PULL_HOLD, true);
@@ -294,6 +303,8 @@
     reqBadge.textContent = String(n);
     reqBadge.hidden = n === 0;
     $('supportChatDot').hidden = !(u.support > 0) || (tab === 'Support' && supportMode === 'chat');
+    // The number on the app icon: the same unread count the bell shows.
+    if (can('badge')) toNative({ type: 'badge', count: u.notifications || 0 });
   }
   /* The badges, without a reboot. */
   async function refreshMe() {
@@ -382,6 +393,8 @@
     } catch (err) { title.textContent = 'Could not check just now'; hint.textContent = err.message; }
   }
   $('siteOpen').addEventListener('click', function () { if (site && site.url) openExternal(site.url); });
+  $('siteShare').addEventListener('click', shareSite);
+  $('accountShare').addEventListener('click', shareSite);
 
   /* ---------------------------------------------------------- messages -- */
 
@@ -504,6 +517,7 @@
       var box = $('supportMsgs');
       var sys = box.querySelector('.from-system'); if (sys) sys.remove();
       box.appendChild(supportBubble(res.message)); supportCount++;
+      haptic('success');
       box.scrollTop = box.scrollHeight;
     } catch (err) { say($('supportNote'), err.message, 'bad'); }
     $('supportSend').disabled = false;
@@ -595,6 +609,7 @@
     var link = n.deep_link || null;
     if (link && link.kind === 'support_chat') { showTab('Support'); setSupportMode('chat'); return; }
     if (link && link.kind === 'max_setup') { showTab('Support'); openSetup(link.user ? '/onboarding.html?user=' + encodeURIComponent(link.user) : '/onboarding.html'); return; }
+    if (link && link.kind === 'chat' && n.action === 'reply' && n.text && link.id && site) { replyFromNotification(link.id, n.text); return; }
     if (link && link.kind === 'chat') { pendingConv = link.id || null; showTab('Chat'); return; }
     if (link && link.kind === 'support' && link.id) { location.hash = 'r/' + link.id; showTab('Support'); return; }
     if (n.href && /^\/requests\.html#(r\/.+)$/.test(n.href)) { location.hash = RegExp.$1; showTab('Support'); return; }
@@ -610,6 +625,67 @@
     if (link && link.path && site && site.dashboard_url) { pendingPath = link.path; showTab('Dashboard'); return; }
     if (n.href && /^https:\/\//.test(n.href)) { showTab('Dashboard'); openExternal(n.href); return; }
     showTab('Dashboard');
+  }
+
+  /* Reply typed on a chat notification: sent as a live chat (email follows
+     on its own if they have left), then the thread opens on it. */
+  async function replyFromNotification(convId, text) {
+    try {
+      await api({ action: 'chat_reply', site_id: site.site_id, conversation_id: convId, body: String(text).slice(0, 4000), via: 'chat' });
+      haptic('success');
+    } catch (err) { /* the thread shows what went, and the reply box is there */ }
+    pendingConv = convId; showTab('Chat');
+  }
+
+  /* -------------------------------------------- the phone's own features -- */
+
+  /* Ask for a rating at a good moment, rarely: after something went well,
+     once they have used the app on five different days, at most every four
+     months. The phone itself decides whether the prompt actually shows. */
+  function remember(key, fn) { try { return fn(localStorage, key); } catch (e) { return null; } }
+  function noteDayOpened() {
+    remember('oa-days', function (ls, k) { var d = JSON.parse(ls.getItem(k) || '[]'); var t = new Date().toISOString().slice(0, 10); if (d.indexOf(t) < 0) { d.push(t); ls.setItem(k, JSON.stringify(d.slice(-30))); } });
+  }
+  function maybeAskForRating() {
+    if (!can('review')) return;
+    remember('oa-rate', function (ls, k) {
+      var days = JSON.parse(ls.getItem('oa-days') || '[]').length;
+      var last = Number(ls.getItem(k)) || 0;
+      if (days < 5 || Date.now() - last < 120 * 864e5) return;
+      ls.setItem(k, String(Date.now()));
+      setTimeout(function () { toNative({ type: 'review' }); }, 1200);
+    });
+  }
+
+  function shareSite() {
+    if (!site || !site.url || !can('share')) return;
+    toNative({ type: 'share', message: (site.name ? site.name + ': ' : '') + 'have a look at our website', url: site.url });
+  }
+
+  /* Dashboards framed in the app (a club's registers, a salon's bookings)
+     reach the phone through kanvas-handoff.js: window.KanvasApp.scan(),
+     .addToCalendar(), .share(), .haptic(). They post here; this passes it
+     to the shell and posts the answer back to the frame that asked. */
+  var nativeAsks = {};
+  window.addEventListener('message', function (e) {
+    var m = e.data;
+    if (!m || m.kanvas !== 'native' || !e.source) return;
+    var frames = [$('dashFrame'), $('setupFrame')].filter(Boolean).map(function (f) { return f.contentWindow; });
+    if (frames.indexOf(e.source) < 0) return;
+    if (m.op === 'features') { e.source.postMessage({ kanvas: 'native-features', features: FEATURES }, '*'); return; }
+    if (!can(m.op)) { if (m.id) e.source.postMessage({ kanvas: 'native-result', id: m.id, error: 'unavailable' }, '*'); return; }
+    if (m.id) nativeAsks[m.id] = e.source;
+    if (m.op === 'scan') toNative({ type: 'scan', id: m.id });
+    else if (m.op === 'calendar') toNative({ type: 'calendar', id: m.id, title: m.title, start: m.start, end: m.end, location: m.location, notes: m.notes });
+    else if (m.op === 'share') toNative({ type: 'share', message: m.message, url: m.url });
+    else if (m.op === 'haptic') haptic(m.style);
+  });
+  function answerFrame(result) {
+    var w = result && result.id && nativeAsks[result.id];
+    if (!w) return false;
+    delete nativeAsks[result.id];
+    try { w.postMessage(Object.assign({ kanvas: 'native-result' }, result), '*'); } catch (e) { /* the frame moved on */ }
+    return true;
   }
 
   function openExternal(url) {
@@ -1319,6 +1395,7 @@
       ta.value = ''; ta.style.height = 'auto';
       $('chatMsgs').appendChild(chatBubble(r.message));
       openConv = r.conversation;
+      haptic('success'); maybeAskForRating();
       var emailed = r.delivered.indexOf('email') >= 0;
       say($('chatNote'), via === 'email' && emailed ? 'Emailed to them, with a link back to the chat. They can reply to the email too.'
         : emailed ? 'Sent. They’ve left the site, so it went by email as well.'
@@ -1959,7 +2036,7 @@
     d = d && typeof d === 'object' ? d : {};
     var link = d.deep_link;
     if (typeof link === 'string') { try { link = JSON.parse(link); } catch (e) { link = null; } }
-    return { kind: d.kind, href: d.href, deep_link: link || null };
+    return { kind: d.kind, href: d.href, deep_link: link || null, action: d.action || null, text: d.text || null };
   }
   window.ONE_NATIVE = {
     onPushToken: function (t) { if (t) registerDevice(String(t)); },
@@ -1969,6 +2046,8 @@
         : 'Notifications are not available right now.';
     },
     openLink: function (d) { var n = parseNativeLink(d); if (me) openLink(n); else nativeLink = n; },
+    onScan: function (r) { answerFrame(r); },
+    onCalendar: function (r) { if (answerFrame(r)) return; if (r && r.saved) haptic('success'); },
     refresh: function () {
       if (!me) return;
       // Ask what is unread rather than assume: a resume with nothing new
@@ -2036,6 +2115,9 @@
     applyPlanUi();
     applyChatUi();
     paintUnread();
+    noteDayOpened();
+    $('siteShare').hidden = !(can('share') && site && site.url);
+    $('accountShare').hidden = !(can('share') && site && site.url);
     seenAt = Date.now() - 1; // what is unread now stays highlighted until the sheet opens
 
     loading.hidden = true;

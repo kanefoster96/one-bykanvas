@@ -92,6 +92,7 @@ function expoMessageFor(token, note) {
     channelId: 'one'
   };
   if (note.badge != null) m.badge = note.badge;
+  if (note.categoryId) m.categoryId = note.categoryId;
   return m;
 }
 
