@@ -147,7 +147,7 @@
     starter:  { label: 'Starter',  price: '£9.99', yearly: '£99' },
     business: { label: 'Business', price: '£50', half: '£25',    yearly: '£500' },
     pro:      { label: 'Pro',      price: '£120' },
-    max:      { label: 'One',      price: '£250', yearly: '£2,500' }
+    max:      { label: 'One',      price: '£250' }
   };
 
   /* Monthly or annual, shared with the plans page through the same stash;
