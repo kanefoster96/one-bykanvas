@@ -45,7 +45,7 @@
 .oa-nav-btn svg{width:24px;height:24px}
 .oa-nav-btn.is-on{color:var(--ink)}
 .oa-nav-btn:active{background:var(--bg-grey)}
-.oa-nav-count{position:absolute;top:2px;left:calc(50% + 6px)}
+.oa-nav-count{position:absolute;top:2px;left:calc(50% + 6px);right:auto}
 
 /* ---- pills ---- */
 .oa-pills{display:flex;gap:6px;background:var(--bg-grey);padding:3px;border-radius:999px}
@@ -384,3 +384,47 @@
 .oa-msg-body{margin:8px 0 0;font-size:15.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 .oa-msg-meta{margin:8px 0 0;font-size:13.5px;color:var(--ink-2);overflow-wrap:anywhere}
 .oa-msg .oa-status-actions{margin-top:12px}
+
+/* ---- the homepage's theme: white and near-black, solid orange ----
+   Same tokens as home.css: bold tight headings with an orange caps label
+   above, near-black panels (#08080a) with #151518 cards, big white
+   numbers, an orange gradient pill for the one main action, solid orange
+   for marks and the active tab. No pale orange tints. */
+.oa-body{--or:#c93e09;--or-hi:#ff4f12;--or-on-dark:#ff7a3d;--or-grad:linear-gradient(135deg,#c93e09 0%,#ef4a10 100%);--night:#08080a;--night-card:#151518;--night-line:rgba(255,255,255,.09);--on-night:#f5f5f2}
+.oa-tab h2{font-size:30px;font-weight:700;letter-spacing:-.035em;line-height:1.05}
+.oa-login h1{font-size:32px;font-weight:700;letter-spacing:-.035em}
+.oa-card{border-radius:22px}
+.oa-card-title{font-size:12px;font-weight:700;letter-spacing:.07em;color:var(--or)}
+.oa-body .btn-primary,.oa-chip-dark{background:var(--or-grad);border-color:transparent;color:#fff;box-shadow:0 8px 22px rgba(255,79,18,.28)}
+.oa-body .btn-primary:hover,.oa-chip-dark:hover{background:linear-gradient(135deg,#b63807 0%,#de440e 100%)}
+.oa-body .btn-primary:focus-visible,.oa-chip-dark:focus-visible{outline:3px solid rgba(255,79,18,.45);outline-offset:3px}
+.oa-body .btn-primary:disabled{opacity:.6;box-shadow:none}
+.oa-login input:focus{border-color:var(--or);box-shadow:0 0 0 3px rgba(201,62,9,.18)}
+.oa-pill.is-on{background:var(--ink);color:#fff;box-shadow:none}
+.oa-nav-btn.is-on{color:var(--or)}
+.oa-nav-btn.is-on span:not(.nav-count){font-weight:700}
+.oa-dot{background:var(--or-hi)}
+.oa-delta.is-up,.oa-delta.up{color:var(--or)}
+
+/* The numbers: a near-black panel, like the homepage's results card. */
+.oa-tiles{background:var(--night);border-radius:22px;padding:10px;gap:10px}
+.oa-tile{background:var(--night-card);border:1px solid var(--night-line);color:var(--on-night)}
+.oa-tile .oa-tile-label{color:rgba(245,245,242,.62)}
+.oa-tile b{color:#fff;font-weight:700;letter-spacing:-.035em}
+.oa-tile .oa-delta{color:rgba(245,245,242,.5)}
+.oa-tile .oa-delta.is-up{color:var(--or-on-dark)}
+.oa-tile .oa-delta.is-down{color:#ff6b6b}
+.oa-tile b{font-size:32px}
+
+/* Starter's home: the site's status, on the same near-black. */
+.oa-site-card{background:var(--night);color:var(--on-night)}
+.oa-site-card .oa-status-title{color:#fff;font-weight:700;letter-spacing:-.025em}
+.oa-site-card .hint{color:rgba(245,245,242,.62)}
+.oa-site-card .oa-status-dot.is-on{background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.18)}
+.oa-site-card .oa-chip{background:#fff;color:var(--night);border-color:#fff}
+
+/* Messages: soft grey cards, the name bold, new ones marked in orange. */
+.oa-msg{border-radius:22px}
+.oa-msg-who{font-weight:700;letter-spacing:-.015em}
+.oa-msg.is-new .oa-msg-who::before{background:var(--or-hi)}
+.oa-msg.is-open{border-color:var(--or)}
