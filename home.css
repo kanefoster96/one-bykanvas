@@ -1076,3 +1076,5 @@ body.home .ap-fig figcaption{margin-top:18px}
 .mh-founder-chat > span{display:flex;flex-direction:column;gap:2px}
 .mh-founder-chat em{font-style:normal;font-weight:600;color:var(--good)}
 .mh-founder-chat:hover em{text-decoration:underline}
+.mh-founder-chat > span > *{white-space:nowrap}
+@media (max-width:359px){.mh-founder-chat{font-size:12.5px;padding-right:12px}.mh-founder-chat img{width:34px;height:34px;flex-basis:34px}}
