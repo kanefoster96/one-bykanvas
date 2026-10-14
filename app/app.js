@@ -175,6 +175,7 @@
     if (next === 'Chat' && !hasModule('chat') && !contactsAllowed() && !isStarter()) next = homeTab();
     if (next === 'Messages' && !isStarter()) next = homeTab();
     if (next === 'Payments') next = homeTab(); // nothing to show until Stripe Connect lands
+    if (next === 'Dashboard' && !isAdmin() && !(site && site.dashboard_url)) next = homeTab(); // no dashboard connected: no tab
     tab = next;
     if (typeof closeSetup === 'function') closeSetup();
     TABS.forEach(function (t) {
@@ -358,7 +359,9 @@
     document.body.classList.toggle('oa-solo', isOneClient());
     var s = isStarter();
     $('navMsgs').hidden = !s;
-    $('navDash').hidden = s;
+    /* No dashboard connected yet: no tab, rather than a placeholder that
+       reads as unfinished (App Review 2.1). Analytics is home instead. */
+    $('navDash').hidden = s || (!isAdmin() && !(site && site.dashboard_url));
     $('navAnLabel').textContent = s ? 'Home' : 'Analytics';
     $('anSite').hidden = !s;
     $('navPay').hidden = true; // an empty "coming soon" tab is the kind App Review turns down
@@ -686,8 +689,9 @@
       return;
     }
     if (link && link.path && site && site.dashboard_url) { pendingPath = link.path; showTab('Dashboard'); return; }
-    if (n.href && /^https:\/\//.test(n.href)) { showTab('Dashboard'); openExternal(n.href); return; }
-    showTab('Dashboard');
+    var home = site && site.dashboard_url ? 'Dashboard' : 'Analytics';
+    if (n.href && /^https:\/\//.test(n.href)) { showTab(home); openExternal(n.href); return; }
+    showTab(home);
   }
 
   /* Reply typed on a chat notification: sent as a live chat (email follows
