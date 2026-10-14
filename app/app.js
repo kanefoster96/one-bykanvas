@@ -1861,6 +1861,53 @@
   }
   $('buildBack').addEventListener('click', function () { loadAdminInbox(); });
 
+  /* A One club's payments: their own Stripe account, connected to Kanvas
+     One's. Make it and the set-up link, share the link to them, and see
+     when Stripe has switched card payments on. */
+  var STRIPE_WORD = { active: 'Card payments on', pending: 'Waiting for them, or Stripe\u2019s checks', restricted: 'Stripe needs something from them', unsupported: 'Stripe can\u2019t take their payments' };
+  function stripeRow(p) {
+    var card = el('div', 'oa-asked oa-stripe');
+    card.appendChild(el('p', 'oa-stripe-title', 'Their payments (Stripe)'));
+    var line = el('p', 'hint', p.stripe_connect_id ? 'Checking\u2026' : 'Not set up yet.');
+    card.appendChild(line);
+    var acts = el('div', 'oa-status-actions');
+    card.appendChild(acts);
+    function paint(res) {
+      acts.innerHTML = '';
+      if (res && res.account) {
+        p.stripe_connect_id = res.account;
+        line.textContent = (STRIPE_WORD[res.cardPayments] || res.cardPayments)
+          + (res.needsFromClub ? ' \u00b7 ' + res.needsFromClub + ' still to fill in' : '');
+        line.className = 'hint' + (res.cardPayments === 'active' ? ' oa-stripe-ok' : '');
+        var send = el('button', 'oa-chip oa-chip-dark', can('share') ? 'Share set-up link' : 'Copy set-up link');
+        send.type = 'button';
+        send.addEventListener('click', function () {
+          var msg = 'Here\u2019s your link to set up payments for ' + (p.business_name || 'your club') + ':';
+          if (can('share')) { toNative({ type: 'share', message: msg, url: res.link }); return; }
+          try { navigator.clipboard.writeText(res.link).then(function () { line.textContent = 'Copied. Paste it into their chat.'; }); }
+          catch (e) { window.prompt('Copy this link', res.link); }
+        });
+        acts.appendChild(send);
+        var again = el('button', 'oa-chip', 'Check again');
+        again.type = 'button';
+        again.addEventListener('click', function () { run('stripeConnectStatus'); });
+        acts.appendChild(again);
+      } else {
+        var make = el('button', 'oa-chip oa-chip-dark', 'Make their set-up link');
+        make.type = 'button';
+        make.addEventListener('click', function () { run('stripeConnect'); });
+        acts.appendChild(make);
+      }
+    }
+    async function run(action) {
+      line.textContent = action === 'stripeConnect' ? 'Making their Stripe account\u2026' : 'Checking\u2026';
+      try { paint(await apiTo('/api/admin', { action: action, userId: p.id })); }
+      catch (err) { paint(null); line.textContent = err.message; }
+    }
+    if (p.stripe_connect_id) run('stripeConnectStatus'); else paint(null);
+    return card;
+  }
+
   function paintBuild() {
     if (!buildOpen) return;
     var p = board.builds.filter(function (x) { return x.id === buildOpen.id; })[0];
@@ -1885,6 +1932,7 @@
     acts.appendChild(more);
     body.appendChild(acts);
     if (lateOf(p)) body.appendChild(el('p', 'oa-brow-late', 'Past the ' + (p.active_plan === 'starter' ? '24 hours' : '14 days')));
+    if (p.active_plan === 'max') body.appendChild(stripeRow(p));
 
     var asked = el('details', 'oa-asked');
     asked.appendChild(el('summary', null, 'What they asked for'));

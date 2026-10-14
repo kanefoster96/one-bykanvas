@@ -78,7 +78,8 @@
     ] },
     { title: 'Their accounts', steps: [
       ['supabase', 'Database project, schema run'],
-      ['stripe', 'Stripe: plans set up and webhook added'],
+      ['stripe', 'Stripe set-up link sent, card payments on'],
+      ['stripe_plans', 'Plans made in their Stripe, Connect webhook added'],
       ['email_domain', 'Email domain verified'],
       ['twilio', 'Texting number and its webhooks'],
       ['vercel', 'Hosting project, settings and web address']

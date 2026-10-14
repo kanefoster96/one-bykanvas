@@ -692,6 +692,7 @@ function renderBuildSection() {
   title.textContent = p.business_name || p.contact_name || 'Unnamed business';
   wrap.appendChild(buildContactCard(p));
   wrap.appendChild(buildAskedFor(p));
+  if (p.active_plan === 'max') wrap.appendChild(stripeBox(p));
 
   var jobs = window.BUILD_STEPS ? BUILD_STEPS.jobsFor(planOf(p)) : [];
   if (!jobs.length) { wrap.appendChild(el('p', 'site-none', 'No checklist for this plan.')); return; }
@@ -716,6 +717,54 @@ function renderBuildSection() {
     wrap.appendChild(el('h3', 'req-list-title k1-gap', 'Mark it live'));
     wrap.appendChild(siteEditorRow(p));
   }
+}
+
+/* A One club's own Stripe account, connected to ours: make it and the
+   set-up link to send them, then see when Stripe has switched card
+   payments on. The link never expires (api/stripe-onboard.js). */
+var STRIPE_WORD = { active: 'Card payments on', pending: 'Waiting for the club, or for Stripe\u2019s checks', restricted: 'Stripe needs something from the club', unsupported: 'Stripe can\u2019t take card payments for them' };
+function stripeBox(p) {
+  var box = el('div', 'k1-stripe');
+  box.appendChild(el('h3', 'req-list-title', 'Their payments (Stripe)'));
+  var line = el('p', 'cust-sub', p.stripe_connect_id ? 'Checking\u2026' : 'Not set up yet.');
+  box.appendChild(line);
+  var acts = el('div', 'k1-actions');
+  box.appendChild(acts);
+  var link = null;
+
+  function paint(res) {
+    acts.textContent = '';
+    if (res && res.account) {
+      p.stripe_connect_id = res.account;
+      link = res.link;
+      var word = STRIPE_WORD[res.cardPayments] || res.cardPayments;
+      line.textContent = word + (res.needsFromClub ? ' \u00b7 ' + res.needsFromClub + ' thing' + (res.needsFromClub === 1 ? '' : 's') + ' still to fill in' : '') + ' \u00b7 ' + res.account;
+      line.className = 'cust-sub' + (res.cardPayments === 'active' ? ' k1-ok' : '');
+      var copy = el('button', 'btn btn-ghost k1-act', 'Copy set-up link');
+      copy.type = 'button';
+      copy.addEventListener('click', function () {
+        try { navigator.clipboard.writeText(link).then(function () { say('Copied. Send it to them in the app.', 'ok'); }, function () { window.prompt('Copy this link', link); }); }
+        catch (e) { window.prompt('Copy this link', link); }
+      });
+      acts.appendChild(copy);
+      var again = el('button', 'btn btn-ghost k1-act', 'Check again');
+      again.type = 'button';
+      again.addEventListener('click', function () { run('stripeConnectStatus'); });
+      acts.appendChild(again);
+    } else {
+      var make = el('button', 'btn btn-ghost k1-act', 'Make their Stripe set-up link');
+      make.type = 'button';
+      make.addEventListener('click', function () { run('stripeConnect'); });
+      acts.appendChild(make);
+    }
+  }
+  async function run(action) {
+    line.textContent = action === 'stripeConnect' ? 'Making their Stripe account\u2026' : 'Checking\u2026';
+    try { paint(await api({ action: action, userId: p.id })); }
+    catch (err) { line.textContent = err.message; paint(p.stripe_connect_id ? { account: p.stripe_connect_id, link: link, cardPayments: 'pending' } : null); line.textContent = err.message; }
+  }
+  if (p.stripe_connect_id) run('stripeConnectStatus'); else paint(null);
+  return box;
 }
 
 /* Call, WhatsApp, email and their site, a tap each, plus the facts that

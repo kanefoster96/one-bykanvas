@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Payments set up — Kanvas One</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg?v=5" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=5">
+<link rel="stylesheet" href="styles.css?v=145">
+</head>
+<body>
+<!-- Where Stripe sends a One club after its payments set-up. Stripe may
+     still be checking their details, so this says what happens next rather
+     than "done". ?error=1: the set-up link could not reach Stripe. -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one<span class="wm-dot">.</span></a>
+  </div>
+</header>
+<main id="main">
+  <section class="page-hero">
+    <div class="wrap center">
+      <h1 id="scTitle">Thank you! Your payments are set up.</h1>
+      <p class="lede" id="scLede">Stripe is checking your details, which usually takes a few minutes. Kane sees when it&rsquo;s done, and parents&rsquo; payments will go straight to your bank.</p>
+      <p class="micro" id="scMore">If Stripe needs anything else, they&rsquo;ll email you. You can close this page.</p>
+    </div>
+  </section>
+</main>
+<script>
+  if (/[?&]error=1/.test(location.search)) {
+    document.getElementById('scTitle').textContent = 'That didn’t work just now.';
+    document.getElementById('scLede').textContent = 'We couldn’t reach Stripe. Try the link again in a minute, or message Kane in the app.';
+    document.getElementById('scMore').hidden = true;
+  }
+</script>
+</body>
+</html>
