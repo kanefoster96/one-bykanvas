@@ -600,7 +600,9 @@
         files: answers.files.map(function (f) { return f.path; }),
         billing: answers.billing || 'monthly',
         offer: offerCode(), referralCode: referralCode(),
-        website: $('j_website').value
+        website: $('j_website').value,
+        fbc: cookie('_fbc') || (function () { try { return sessionStorage.getItem('one.fbc') || ''; } catch (e) { return ''; } })(),
+        fbp: cookie('_fbp')
       })
     })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d || {} }; }); })

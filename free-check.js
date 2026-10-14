@@ -59,8 +59,18 @@
       : 'One can still run it all for you, for the fees of ' + p.cover + ' member' + (p.cover === 1 ? '' : 's') + '.';
     $('gGo').href = '/check?' + G.query({ members: n.members, capacity: Math.max(n.members, n.capacity), fee: n.fee });
   }
+  /* Meta: someone used the calculator, once a visit, on the first move.
+     Through consent.js, so nothing goes without cookie consent. The plan
+     itself is the Lead, sent when the form on /check is sent. */
+  var used = false;
+  function tellUsed() {
+    if (used) return; used = true;
+    if (window.oneTrack) window.oneTrack('ViewContent', { content_name: 'profit plan calculator', content_category: 'profit-plan' });
+  }
   PAIRS.forEach(function (pr) {
     var slider = $(pr[0]), box = $(pr[1]);
+    slider.addEventListener('input', tellUsed);
+    box.addEventListener('input', tellUsed);
     slider.addEventListener('input', function () { box.value = slider.value; settle(pr[1]); calc(); });
     box.addEventListener('input', calc);
     box.addEventListener('focus', function () { try { box.select(); } catch (e) {} });

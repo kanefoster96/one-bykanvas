@@ -958,7 +958,7 @@
         headers: headers,
         /* Carried from the link in their email, if they came from one, so the
            discount is already on the page they pay from. */
-        body: JSON.stringify(token
+        body: JSON.stringify(Object.assign(token
           ? { plan: answers.selected_plan || 'business', offer: offerCode(),
               billing: billingMode(), referralCode: referralCode() }
           : { plan: answers.selected_plan || 'business',
@@ -966,14 +966,20 @@
               email: answers.email,
               offer: offerCode(),
               billing: billingMode(),
-              referralCode: referralCode() })
+              referralCode: referralCode() },
+          /* The ad click, so the sale can be matched to the ad (api/_meta.js). */
+          window.oneMetaIds ? window.oneMetaIds() : {}))
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');
 
-      if (window.oneTrack) window.oneTrack('InitiateCheckout', {
-        content_category: answers.selected_plan || 'business'
-      });
+      if (window.oneTrack) {
+        var ip = answers.selected_plan || 'business', annualPay = billingMode() === 'annual' && ip !== 'max';
+        window.oneTrack('InitiateCheckout', {
+          content_category: ip, currency: 'GBP',
+          value: annualPay ? ({ starter: 99, business: 500 }[ip] || 0) : ({ starter: 9.99, business: 50, max: 250 }[ip] || 0)
+        });
+      }
       location.href = data.url;
     } catch (err) {
       say(note, ONE.friendlyError(err), 'bad');

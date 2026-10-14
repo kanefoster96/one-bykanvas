@@ -37,7 +37,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { openCheckout, CheckoutError } = require('./_checkout_session.js');
 const { isValidDomain, lookup } = require('./domains.js');
-const { sendMetaEvent } = require('./_meta.js');
+const { sendMetaEvent, adContext } = require('./_meta.js');
 
 const LIVE = ['active', 'trialing', 'past_due', 'unpaid'];
 const SESSION_ID = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
@@ -246,6 +246,7 @@ module.exports = async function handler(req, res) {
       stripe, admin, user, profile, plan, billing, origin,
       offer: body.offer, referralCode: body.referralCode,
       metadata: { source: 'join', billing },
+      ad: adContext(req, body),
       // Stripe fills in {CHECKOUT_SESSION_ID} itself.
       successUrl: `${origin}/join?paid={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${origin}/join?cancelled=1`

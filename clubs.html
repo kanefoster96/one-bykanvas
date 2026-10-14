@@ -704,16 +704,27 @@ p,li,summary,small{text-wrap:pretty}
       v('dWhen') ? 'Best time: ' + v('dWhen') : ''
     ].filter(Boolean).join('\n');
     btn.disabled = true; btn.textContent = 'Sending…';
+    // This page doesn't load script.js, so its two helpers are here too.
+    var eventId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'ev-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+    var cookie = function (k) { var m = document.cookie.match(new RegExp('(?:^|; )' + k + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; };
+    var ids = { fbc: cookie('_fbc'), fbp: cookie('_fbp') };
+    try {
+      var clickId = new URLSearchParams(location.search).get('fbclid');
+      if (clickId && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
+      if (!ids.fbc) ids.fbc = sessionStorage.getItem('one.fbc') || '';
+    } catch (e) { /* private mode */ }
     fetch('/api/enquiry', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ site: SITE, name: v('dName'), email: v('dEmail'), phone: v('dPhone'), message: message, page: '/clubs', website: v('dWebsite') })
+      body: JSON.stringify({ site: SITE, name: v('dName'), email: v('dEmail'), phone: v('dPhone'), message: message, page: '/clubs', website: v('dWebsite'),
+        metaEventId: eventId, fbc: ids.fbc, fbp: ids.fbp })
     })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
         if (!res.ok) throw new Error((res.d && res.d.error) || 'failed');
         $('demoForm').hidden = true; $('demoDone').hidden = false; $('doneHead').focus();
-        try { if (window.fbq) window.fbq('track', 'Lead', { content_name: 'clubs demo' }); } catch (err) {}
+        // The server sends the same Lead with the same id, so Meta counts one.
+        if (window.oneTrack) window.oneTrack('Lead', { content_name: 'clubs demo', content_category: 'max' }, eventId);
       })
       .catch(function (err) {
         note.className = 'note wide bad';
@@ -723,7 +734,7 @@ p,li,summary,small{text-wrap:pretty}
   });
 })();
 </script>
-<script src="/consent.js?v=10"></script>
+<script src="/consent.js?v=11"></script>
 <script src="/beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/onemark.js?v=2" defer></script>
 </body>
