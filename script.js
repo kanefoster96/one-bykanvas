@@ -136,7 +136,7 @@
      and Purchase can be tied to the ad that was clicked (join.js). */
   try {
     var clickId = new URLSearchParams(location.search).get('fbclid');
-    if (clickId && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
+    if (clickId && !/(?:^|; )one_noads=1/.test(document.cookie) && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
   } catch (e) {}
   window.oneFrom = function () {
     try { return sessionStorage.getItem(FROM_KEY) || ''; } catch (e) { return ''; }

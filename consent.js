@@ -66,7 +66,21 @@
       if (memChoice === 'essential') localStorage.setItem(NO_COUNT, '1');
       else localStorage.removeItem(NO_COUNT);
     } catch (e) { /* nothing we can do; the pixel simply will not persist */ }
+    noAdsCookie(memChoice === 'essential');
   }
+
+  /* Reject has to reach the server too, which sends leads and sales to Meta
+     on its own (api/_meta.js). A cookie that only records the refusal. */
+  function noAdsCookie(on) {
+    try {
+      document.cookie = on
+        ? 'one_noads=1; path=/; max-age=31536000; SameSite=Lax; Secure'
+        : 'one_noads=; path=/; max-age=0; SameSite=Lax; Secure';
+      if (on) sessionStorage.removeItem('one.fbc');
+    } catch (e) { /* storage blocked */ }
+  }
+  /* Choices made before the cookie existed. */
+  if (read() === 'essential' && !/(?:^|; )one_noads=1/.test(document.cookie)) noAdsCookie(true);
 
   /* Meta's cookies are first-party on our own domain, so withdrawing consent
      can actually remove them rather than just stopping new ones. */
@@ -152,10 +166,11 @@
      landing URL is kept for the visit (sessionStorage, this tab only). */
   try {
     var clickId = new URLSearchParams(location.search).get('fbclid');
-    if (clickId && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
+    if (clickId && read() !== 'essential' && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
   } catch (e) { /* private mode */ }
   window.oneMetaIds = function () {
     function cookie(n) { var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; }
+    if (read() === 'essential') return { fbc: '', fbp: '' };
     var fbc = cookie('_fbc'), fbp = cookie('_fbp');
     if (!fbc) { try { fbc = sessionStorage.getItem('one.fbc') || ''; } catch (e) { /* private mode */ } }
     return { fbc: fbc, fbp: fbp };

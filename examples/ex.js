@@ -27,7 +27,7 @@
     }
     // Meta's click id, kept as an fbc value for the server's events.
     var clickId = new URLSearchParams(location.search).get('fbclid');
-    if (clickId && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
+    if (clickId && !/(?:^|; )one_noads=1/.test(document.cookie) && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
   } catch (e) { /* private mode: the lead simply has no campaign */ }
 
   /* Which example they looked at, for Meta (only with cookies accepted). */

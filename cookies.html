@@ -56,10 +56,10 @@
   <div class="wrap">
    <div class="legal reveal">
 
-    <p class="legal-meta">Last updated 7 October 2026.</p>
+    <p class="legal-meta">Last updated 14 October 2026.</p>
 
     <div class="legal-key">
-      <p>Two answers on the card. <strong>Accept</strong> lets us load the Meta pixel to measure our ads. <strong>Reject</strong> means no advertising cookie is ever set &mdash; the page does not load the code that would set one &mdash; and it also switches off our own visitor count. You can change your mind at any time, and it takes effect immediately.</p>
+      <p>Two answers on the card. <strong>Accept</strong> lets us load the Meta pixel to measure our ads. <strong>Reject</strong> means no advertising cookie is ever set &mdash; the page does not load the code that would set one &mdash; our server stops telling Meta about forms you send, and our own visitor count is switched off. You can change your mind at any time, and it takes effect immediately.</p>
       <p><button class="btn btn-ghost" type="button" id="cookieSettings" hidden>Change your cookie choice</button></p>
     </div>
 
@@ -93,7 +93,7 @@
     </dl>
     <p>Because it is first-party, cookieless and used only to count, it runs without asking first, as UK law allows for a site&rsquo;s own statistics provided you are told and can say no. Saying no is the <strong>Reject</strong> button on the card, or <strong>Cookie settings</strong> in the footer: from then on, nothing is sent.</p>
 
-    <h2 id="ads">Advertising &mdash; only if you accept</h2>
+    <h2 id="ads">Advertising</h2>
     <p>We advertise on Facebook and Instagram. If you accept, we load the <strong>Meta pixel</strong>, which tells Meta that someone who saw one of our ads went on to enquire or sign up. That is what lets us stop paying for ads that do not work.</p>
     <p>If you press Reject, or never answer, the pixel is not loaded at all. This is worth being precise about: it is not loaded and then told to stay quiet &mdash; the code is never fetched, so there is nothing to set a cookie.</p>
     <dl>
@@ -102,7 +102,14 @@
       <dt>_fbc</dt>
       <dd>Set only if you arrived from a Facebook or Instagram ad. Stores the click identifier from that ad. Expires after three months.</dd>
     </dl>
-    <p>What we send with those events is deliberately thin: that a page was viewed, that an enquiry was submitted and which plan it mentioned, that an account was created, that someone reached the payment page and for which plan, and that a plan was started. We do not pass your name, your email address or a hashed version of either, so Meta cannot match the event to a named person from anything we send.</p>
+    <p>What the pixel sends is deliberately thin: that a page was viewed, that an enquiry was submitted and which plan it mentioned, that an account was created, that someone reached the payment page and for which plan, and that a plan was started. The pixel itself never passes your name or email address.</p>
+    <p><strong>From our server.</strong> Separately from the pixel, when you send us a profit plan, an enquiry or a request for a free example, or start a plan, our server tells Meta that it happened. With it go your email address and phone number (if you gave one), each scrambled one way (hashed) before it leaves us so Meta can only match it to an account it already holds, your IP address and browser type, the kind of form or the plan and its price, and, if you came from one of our ads, that ad&rsquo;s click reference. We never send your name or anything you wrote. This uses no cookie of its own. Pressing <strong>Reject</strong> stops it: we then send Meta nothing about you at all. Our <a href="/privacy#share">privacy notice</a> has the detail.</p>
+    <dl>
+      <dt>one.fbc (session storage, this tab only)</dt>
+      <dd>If you arrive from one of our Facebook or Instagram ads, the ad&rsquo;s click reference is kept until you close the tab, so a form you send from another page can still be matched to that ad. Never kept after you press Reject, and removed when you do.</dd>
+      <dt>one_noads</dt>
+      <dd>Set when you press Reject, so our server knows not to tell Meta anything about you. It holds nothing but the refusal. Expires after a year, or when you press Accept.</dd>
+    </dl>
     <p>Meta is a separate controller for what it does with this. Its privacy policy is at <a href="https://www.facebook.com/privacy/policy" rel="noopener">facebook.com/privacy/policy</a>.</p>
 
     <h2 id="none">What we do not do</h2>
@@ -110,7 +117,7 @@
     <p>No embedded fonts, maps, video players or social buttons. The chat button in the corner is ours too, served from this site and talking only to our server &mdash; nothing loads from another company&rsquo;s server while you read these pages, except the pixel above, and only with your consent.</p>
 
     <h2 id="change">Changing your mind</h2>
-    <p>Withdrawing consent has to be as easy as giving it, so it is the same two buttons. Use the button at the top of this page, or <strong>Cookie settings</strong> in the footer of any page. <strong>Reject</strong> does two things at once: the pixel is never loaded, and our own visitor count leaves you out.</p>
+    <p>Withdrawing consent has to be as easy as giving it, so it is the same two buttons. Use the button at the top of this page, or <strong>Cookie settings</strong> in the footer of any page. <strong>Reject</strong> does three things at once: the pixel is never loaded, our server stops telling Meta about forms you send, and our own visitor count leaves you out.</p>
     <p>If you switch from Accept all to Essential only, we delete the <code>_fbp</code> and <code>_fbc</code> cookies and reload the page, so the pixel is gone rather than merely idle. Events already sent to Meta before you changed your mind cannot be recalled by us; you can ask Meta directly using the rights in its own policy.</p>
     <p>You can also clear everything from your browser&rsquo;s settings, usually under privacy, site data or &ldquo;clear browsing data&rdquo;. Blocking storage for this site entirely is fine &mdash; the pages still work, but you will not be able to stay signed in.</p>
 
@@ -145,10 +152,10 @@
   </div>
 </footer>
 
-<script src="consent.js?v=11"></script>
+<script src="consent.js?v=12"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
-<script src="script.js?v=41"></script>
+<script src="script.js?v=42"></script>
 <script src="chat.js?v=14" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>

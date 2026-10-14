@@ -18,7 +18,7 @@ const OUT = path.join(__dirname, '..');
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
 const CSS_V = '145';
-const SCRIPT_V = 41;
+const SCRIPT_V = 42;
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -165,7 +165,7 @@ const FOOT = `<footer class="foot">
   </div>
 </footer>
 
-<script src="consent.js?v=11"></script>
+<script src="consent.js?v=12"></script>
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>
@@ -854,4 +854,4 @@ for (const m of MAX) {
 
 /* ------------------------------------------------------------- examples */
 /* /examples and one made-up business per trade: examples.js. */
-require('./examples.js').build(OUT, { cssV: 139, scriptV: 41 });
+require('./examples.js').build(OUT, { cssV: 139, scriptV: 42 });
