@@ -363,7 +363,9 @@
         var fin = i === 0 ? Math.max(p(t, 0, .25), p(t, TOTAL - .25, .25)) : p(t, a, .25); // the first screen also fades in at the loop's end
         var o = Math.min(fin, i === N - 1 ? 1 - p(t, TOTAL - .25, .25) : 1 - p(t, a + SEG - .2, .25));
         if (i === 0 && t > TOTAL - .3) { u = 0; }
-        views[i].style.opacity = o;
+        // A card in the swipe row is one screen: always on, never fading
+        // through black, so its first frame is already there before it plays.
+        views[i].style.opacity = row ? 1 : o;
         if (u > -.3 && u < SEG + .3) A[s.id](u);
       });
       var c = Math.max(0, Math.min(N - 1, Math.floor(t / SEG)));
@@ -381,6 +383,13 @@
       seek(t); raf = requestAnimationFrame(frame);
     }
     function run(on) {
+      if (row) {
+        // A row card plays from its first frame each time it reaches the
+        // middle, and goes back to that first frame when it leaves.
+        if (on && !raf) { start = performance.now(); raf = requestAnimationFrame(frame); }
+        else if (!on && raf) { cancelAnimationFrame(raf); raf = 0; if (!reduce) seek(0); }
+        return;
+      }
       if (on && !raf) { start += performance.now() - paused; raf = requestAnimationFrame(frame); }
       else if (!on && raf) { cancelAnimationFrame(raf); raf = 0; paused = performance.now(); }
     }
@@ -390,7 +399,7 @@
     var centred = !row;
     function go() { run(visible && centred && !document.hidden); }
     host._hpCentre = function (on) { if (on !== centred) { centred = on; go(); } };
-    seek(reduce ? SEG - .3 : 2.6); paused = performance.now();
+    seek(reduce ? SEG - .3 : row ? 0 : 2.6); paused = performance.now();
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; go(); }, { threshold: .05 }).observe(host);
     else { visible = true; go(); }
     document.addEventListener('visibilitychange', go);
