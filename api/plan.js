@@ -19,7 +19,7 @@ const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { notifyAdmin } = require('./_notify.js');
-const { sendMetaEvent } = require('./_meta.js');
+const { sendMetaEvent, adContext } = require('./_meta.js');
 const growth = require('../growth-model.js');
 
 const TYPES = {
@@ -199,13 +199,11 @@ module.exports = async function handler(req, res) {
     if (error) throw new Error(error.message);
 
     const site = ourSiteUrl();
-    const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
-    sendMetaEvent({
-      name: 'Lead', eventId: row.id, email,
-      url: `${site}/#plan`,
-      ip: fwd || undefined, userAgent: req.headers['user-agent'] || undefined,
-      custom: { content_category: 'growth-plan', campaign: campaign || undefined }
-    }).catch(() => {});
+    await sendMetaEvent(Object.assign(adContext(req, body), {
+      name: 'Lead', eventId: row.id, email, phone,
+      url: `${site}/check`,
+      custom: { content_category: 'growth-plan', content_name: p.recommend, campaign: campaign || undefined }
+    })).catch(() => {});
 
     /* Theirs first: it is the thing they asked for. Ours is best effort. */
     const mine = p.recommend === 'max' ? maxEmail(site, row, p, type) : businessEmail(site, row, p, type);

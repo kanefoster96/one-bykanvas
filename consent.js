@@ -89,6 +89,9 @@
 
   function loadPixel() {
     if (loaded || !META_PIXEL_ID) return;
+    /* Never on the admin page: our own visits would fill the audiences the
+       ads are built from. */
+    if (/^\/admin(\.html)?$/.test(location.pathname)) return;
     loaded = true;
 
     /* Meta's own loader, written out rather than pasted, so it is readable.
@@ -141,6 +144,26 @@
     if (read() !== 'all') return;
     pending.push([event, params || {}, eventId || null]);
     if (loaded) flush(); else loadPixel();
+  };
+
+  /* The ad click id and Meta's browser id, for any form that tells the
+     server about a lead or a payment, so Meta can tie that event to the ad.
+     The _fbc/_fbp cookies exist only with consent; the click id from the
+     landing URL is kept for the visit (sessionStorage, this tab only). */
+  try {
+    var clickId = new URLSearchParams(location.search).get('fbclid');
+    if (clickId && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
+  } catch (e) { /* private mode */ }
+  window.oneMetaIds = function () {
+    function cookie(n) { var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; }
+    var fbc = cookie('_fbc'), fbp = cookie('_fbp');
+    if (!fbc) { try { fbc = sessionStorage.getItem('one.fbc') || ''; } catch (e) { /* private mode */ } }
+    return { fbc: fbc, fbp: fbp };
+  };
+  /* An event id the browser and the server both send, so Meta counts one. */
+  window.oneEventId = function () {
+    try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
+    return 'ev-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
   };
 
   /* ---------------------------------------------------------------- banner */

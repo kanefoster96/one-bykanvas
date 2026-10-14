@@ -142,6 +142,7 @@
     try { return sessionStorage.getItem(FROM_KEY) || ''; } catch (e) { return ''; }
   };
 
+
   /* ---------- Menu ---------- */
   // One source of truth for the nav. Pages only need an empty #menu element;
   // the header itself stays in the markup so it renders without JavaScript.
@@ -510,7 +511,9 @@
           plan: pickedPlan,
           about: document.getElementById('about').value.trim(),
           website: (document.getElementById('lead_extra') || {}).value || '',
-          elapsed: Date.now() - formShownAt
+          elapsed: Date.now() - formShownAt,
+          campaign: (window.oneFrom && window.oneFrom()) || '',
+          fbc: (window.oneMetaIds ? window.oneMetaIds() : {}).fbc || '', fbp: (window.oneMetaIds ? window.oneMetaIds() : {}).fbp || ''
         })
       });
       var data = await res.json().catch(function () { return {}; });
@@ -521,10 +524,12 @@
       form.reset();
 
       /* Fires only if they accepted cookies; a no-op otherwise. No name or
-         email goes with it - the plan is all Meta needs to optimise on. */
+         email goes with it - the plan is all Meta needs to optimise on. The
+         server sends the same event with the same id (the lead's), so Meta
+         counts it once, with or without cookies. */
       if (window.oneTrack) window.oneTrack('Lead', {
         content_category: pickedPlan
-      });
+      }, data.id || undefined);
     } catch (err) {
       note.textContent = err.message || 'Could not send that. Try again.';
       note.className = 'formnote bad';
@@ -638,7 +643,8 @@
             handle: soc,
             campaign: (window.oneFrom && window.oneFrom()) || '',
             website: hp ? hp.value : '',
-            elapsed: Date.now() - shownAt
+            elapsed: Date.now() - shownAt,
+            fbc: (window.oneMetaIds ? window.oneMetaIds() : {}).fbc || '', fbp: (window.oneMetaIds ? window.oneMetaIds() : {}).fbp || ''
           })
         });
         var data = await res.json().catch(function () { return {}; });

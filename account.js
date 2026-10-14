@@ -145,6 +145,7 @@ async function start() {
 
   loading.hidden = true;
   app.hidden = false;
+  trackPurchase(profile.data);
 
   /* Just back from Stripe and signed in: the webhook writes the status a moment
      later, so refresh once to pick it up. Only from here, where a session is
@@ -152,6 +153,22 @@ async function start() {
   if (CHECKOUT_STATE === 'success' && !(profile.data && profile.data.active_plan)) {
     setTimeout(function () { location.replace('/account.html'); }, 6000);
   }
+}
+
+/* What each plan costs a month, for the checkout and purchase events. */
+var MONTHLY_GBP = { starter: 9.99, business: 50, max: 250 };
+
+/* The browser's copy of the sale, once the plan is live: same event and id
+   (the subscription) as the webhook's, so Meta keeps one. A no-op without
+   cookie consent, and once per checkout. */
+function trackPurchase(row) {
+  var pending;
+  try { pending = sessionStorage.getItem('one.purchase-pending'); } catch (e) {}
+  if (!pending || !row || !row.active_plan || !row.stripe_subscription_id) return;
+  try { sessionStorage.removeItem('one.purchase-pending'); } catch (e) {}
+  if (window.oneTrack) window.oneTrack('Purchase', {
+    currency: 'GBP', value: MONTHLY_GBP[row.active_plan] || 0, content_name: row.active_plan
+  }, row.stripe_subscription_id);
 }
 
 /* The wizard runs before the email is confirmed, so there is no session to
@@ -925,16 +942,17 @@ document.getElementById('payBtn').addEventListener('click', async function () {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
         /* Carried from the link in their email, if they came from one. */
-        body: JSON.stringify({ plan: plan,
+        body: JSON.stringify(Object.assign({ plan: plan,
           offer: (window.ONE_SESSION && window.ONE_SESSION.offerCode
-                  && window.ONE_SESSION.offerCode()) || '' })
+                  && window.ONE_SESSION.offerCode()) || '' },
+          window.oneMetaIds ? window.oneMetaIds() : {}))
       });
       var data = await res.json().catch(function () { return {}; });
       if (!res.ok || !data.url) throw new Error(data.error || 'Could not start checkout.');
 
       /* Same event the wizard sends, so both routes to Stripe look alike to
          Meta. A no-op unless they accepted cookies. */
-      if (window.oneTrack) window.oneTrack('InitiateCheckout', { content_category: plan });
+      if (window.oneTrack) window.oneTrack('InitiateCheckout', { content_category: plan, currency: 'GBP', value: MONTHLY_GBP[plan] || 0 });
       location.href = data.url;
       return;
     }
@@ -1039,14 +1057,11 @@ document.getElementById('payBtn').addEventListener('click', async function () {
   /* Ad conversion. A no-op unless they accepted cookies, and guarded so that
      re-pasting the success URL cannot report a second sale: Stripe redirects
      here once per checkout, but a URL is a thing people paste. */
-  if (state === 'success' && window.oneTrack) {
-    var seen;
-    try { seen = sessionStorage.getItem('one.purchase-tracked'); } catch (e) {}
-    if (!seen) {
-      try { sessionStorage.setItem('one.purchase-tracked', '1'); } catch (e) {}
-      window.oneTrack('Subscribe', { currency: 'GBP' });
-    }
-  }
+  /* The Purchase itself is sent once the plan shows as live (start() reads
+     the profile, the webhook may land a few seconds after this page), with
+     the subscription id as its event id: the same event and id the server
+     sends, so Meta counts the sale once with or without cookies. */
+  if (state === 'success') { try { sessionStorage.setItem('one.purchase-pending', '1'); } catch (e) {} }
 })();
 
 /* ---------------- log out ---------------- */

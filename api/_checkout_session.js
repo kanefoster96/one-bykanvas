@@ -7,13 +7,14 @@
  * else that throws is a 500.
  */
 const { PLANS, PREVIEW_OFFER } = require('./_plans.js');
+const { adMetadata } = require('./_meta.js');
 
 class CheckoutError extends Error {
   constructor(status, message) { super(message); this.status = status; }
 }
 
 async function openCheckout({ stripe, admin, user, profile, plan, billing, offer, referralCode,
-                              origin, successUrl, cancelUrl, metadata }) {
+                              origin, successUrl, cancelUrl, metadata, ad }) {
   /* ---- referral code, if they brought one -----------------------------
    *
    * Validated now, at the moment a typo can still be fixed, and stamped on
@@ -127,7 +128,10 @@ async function openCheckout({ stripe, admin, user, profile, plan, billing, offer
         product_data: { name: PLANS[plan].label + (annual ? ' — Annual (2 months free)' : '') }
       }
     }],
-    subscription_data: { metadata: { supabase_user_id: user.id, plan } },
+    /* The ad click id, browser id, address and browser from this request
+       ride on the subscription, so the webhook's Purchase can be matched to
+       the ad that was clicked (api/_meta.js). */
+    subscription_data: { metadata: Object.assign(adMetadata(ad), { supabase_user_id: user.id, plan, source: (metadata && metadata.source) || 'get-started' }) },
     metadata: Object.assign({}, metadata, { supabase_user_id: user.id, plan }),
     success_url: successUrl || `${origin}/account.html?checkout=success`,
     cancel_url: cancelUrl || `${origin}/account.html?checkout=cancelled`,

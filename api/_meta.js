@@ -20,7 +20,53 @@ function sha256(s) {
   return crypto.createHash('sha256').update(String(s || '').trim().toLowerCase()).digest('hex');
 }
 
-/* { name, eventId, email, url, ip, userAgent, fbc, fbp, value, currency, custom }
+/* A UK number as Meta wants it: digits only, country code first. */
+function normPhone(raw) {
+  let d = String(raw || '').replace(/\D/g, '');
+  if (!d) return '';
+  if (d.startsWith('00')) d = d.slice(2);
+  else if (d.startsWith('0')) d = '44' + d.slice(1);
+  return d.length >= 10 && d.length <= 15 ? d : '';
+}
+
+const FBC = /^fb\.1\.\d{10,14}\.[A-Za-z0-9_-]{10,500}$/;
+const FBP = /^fb\.1\.\d{10,14}\.\d{5,25}$/;
+
+/* What ties an event to the ad that was clicked, from a browser request:
+   the click id and browser id the page sends (body.fbc / body.fbp, checked),
+   and the address and browser the request came from. */
+function adContext(req, body) {
+  const b = body || {};
+  const fwd = String((req.headers && req.headers['x-forwarded-for']) || '').split(',')[0].trim();
+  return {
+    fbc: FBC.test(String(b.fbc || '')) ? String(b.fbc) : undefined,
+    fbp: FBP.test(String(b.fbp || '')) ? String(b.fbp) : undefined,
+    ip: fwd || undefined,
+    userAgent: (req.headers && req.headers['user-agent']) ? String(req.headers['user-agent']).slice(0, 400) : undefined
+  };
+}
+
+/* The same, kept on a Stripe subscription (metadata values are capped at
+   500 characters) so the Purchase the webhook sends later can carry it. */
+function adMetadata(ad) {
+  const md = {};
+  if (ad && ad.fbc) md.meta_fbc = ad.fbc.slice(0, 500);
+  if (ad && ad.fbp) md.meta_fbp = ad.fbp.slice(0, 500);
+  if (ad && ad.ip) md.meta_ip = ad.ip.slice(0, 64);
+  if (ad && ad.userAgent) md.meta_ua = ad.userAgent.slice(0, 400);
+  return md;
+}
+function adFromMetadata(md) {
+  const m = md || {};
+  return {
+    fbc: FBC.test(String(m.meta_fbc || '')) ? m.meta_fbc : undefined,
+    fbp: FBP.test(String(m.meta_fbp || '')) ? m.meta_fbp : undefined,
+    ip: m.meta_ip || undefined,
+    userAgent: m.meta_ua || undefined
+  };
+}
+
+/* { name, eventId, email, phone, url, ip, userAgent, fbc, fbp, value, currency, custom }
    fbc is Meta's click id from the ad (fb.1.<ms>.<fbclid>), fbp its browser
    id: with them Meta can tie the event to the ad that was clicked. */
 async function sendMetaEvent(ev) {
@@ -36,6 +82,8 @@ async function sendMetaEvent(ev) {
     event_source_url: ev.url || undefined,
     user_data: {
       em: ev.email ? [sha256(ev.email)] : undefined,
+      ph: normPhone(ev.phone) ? [sha256(normPhone(ev.phone))] : undefined,
+      country: [sha256('gb')],
       client_ip_address: ev.ip || undefined,
       client_user_agent: ev.userAgent || undefined,
       fbc: ev.fbc || undefined,
@@ -69,4 +117,4 @@ async function sendMetaEvent(ev) {
   }
 }
 
-module.exports = { sendMetaEvent };
+module.exports = { sendMetaEvent, adContext, adMetadata, adFromMetadata, normPhone };

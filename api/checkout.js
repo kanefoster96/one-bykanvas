@@ -10,6 +10,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { PLANS } = require('./_plans.js');
 const { openCheckout, CheckoutError } = require('./_checkout_session.js');
+const { adContext } = require('./_meta.js');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -127,7 +128,8 @@ module.exports = async function handler(req, res) {
 
     const session = await openCheckout({
       stripe, admin, user, profile, plan, origin,
-      billing: body.billing, offer: body.offer, referralCode: body.referralCode
+      billing: body.billing, offer: body.offer, referralCode: body.referralCode,
+      ad: adContext(req, body)
     });
     return res.status(200).json({ url: session.url });
   } catch (err) {

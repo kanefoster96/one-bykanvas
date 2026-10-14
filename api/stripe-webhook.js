@@ -11,7 +11,7 @@ const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { PLANS } = require('./_plans.js');
 const { notify, notifyAdmin } = require('./_notify.js');
-const { sendMetaEvent } = require('./_meta.js');
+const { sendMetaEvent, adFromMetadata } = require('./_meta.js');
 
 const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'One' }; // must match admin.js/account.js
 
@@ -247,21 +247,27 @@ module.exports = async function handler(req, res) {
       await admin.from('profiles')
         .update({ canceled_at: null, winback_sent_at: null }).eq('id', id)
         .then(({ error }) => { if (error) console.error('webhook: winback reset failed:', error.message); });
-      await rewardReferrer(id, patch);
-      await announceNewCustomer(id, patch);
-      await welcomeCustomer(id, patch, sub);
-      await notify(admin, id, 'Welcome to Kanvas One 👋',
-        'Your plan is active and your build is in the queue. Everything lives here from now on.',
-        '/account.html');
-      /* Who and which plan in the notification itself, and a tap opens
-         their build checklist. */
-      const { data: who } = await admin.from('profiles')
-        .select('business_name, contact_name').eq('id', id).maybeSingle();
-      const planWord = { starter: 'Starter', business: 'Business', max: 'One' }[patch.active_plan] || 'A';
-      const name = (who && (who.business_name || who.contact_name)) || 'A new customer';
-      await notifyAdmin(admin, 'New ' + planWord + ' customer: ' + name,
-        name + ' just paid for ' + planWord + '. Their build is now owed. Tap for their checklist.',
-        '/admin.html#b/' + id);
+      /* Announced once per subscription. Signing up sends several Stripe
+         events at once, and a card that failed and then paid comes back
+         "alive" too; without the claim, either sent the welcome, our email,
+         the referral reward and Meta's Purchase again. */
+      if (await claimAnnouncement(id, sub.id)) {
+        await rewardReferrer(id, patch);
+        await announceNewCustomer(id, patch, sub);
+        await welcomeCustomer(id, patch, sub);
+        await notify(admin, id, 'Welcome to Kanvas One 👋',
+          'Your plan is active and your build is in the queue. Everything lives here from now on.',
+          '/account.html');
+        /* Who and which plan in the notification itself, and a tap opens
+           their build checklist. */
+        const { data: who } = await admin.from('profiles')
+          .select('business_name, contact_name').eq('id', id).maybeSingle();
+        const planWord = { starter: 'Starter', business: 'Business', max: 'One' }[patch.active_plan] || 'A';
+        const name = (who && (who.business_name || who.contact_name)) || 'A new customer';
+        await notifyAdmin(admin, 'New ' + planWord + ' customer: ' + name,
+          name + ' just paid for ' + planWord + '. Their build is now owed. Tap for their checklist.',
+          '/admin.html#b/' + id);
+      }
     }
     if (sub.status === 'canceled' && !alreadyCanceled) {
       /* The win-back clock starts here; /api/followups reads it daily. */
@@ -731,9 +737,24 @@ module.exports = async function handler(req, res) {
       + ' did not go through. Stripe will retry over the next week; their plan pauses if it keeps failing.');
   }
 
+  /* True for the one event that gets to announce this subscription: the
+     update only matches while announced_subscription_id is not yet this
+     subscription, and Postgres lets one writer through. A database error
+     falls back to announcing, as before. */
+  async function claimAnnouncement(id, subId) {
+    if (!subId) return true;
+    const { data, error } = await admin.from('profiles')
+      .update({ announced_subscription_id: subId })
+      .eq('id', id)
+      .or('announced_subscription_id.is.null,announced_subscription_id.neq.' + subId)
+      .select('id');
+    if (error) { console.error('webhook: announcement claim failed, announcing anyway:', error.message); return true; }
+    return Boolean(data && data.length);
+  }
+
   /* Everything worth knowing to start the build, in one message. Without this
      a payment lands in the database and nothing says so. */
-  async function announceNewCustomer(id, patch) {
+  async function announceNewCustomer(id, patch, sub) {
     const { data: p } = await admin
       .from('profiles')
       .select('business_name, contact_name, phone, business_type, requested_domain, domain_owned, site_goals, site_uses, existing_links')
@@ -744,16 +765,22 @@ module.exports = async function handler(req, res) {
     const email = (who && who.user && who.user.email) || 'unknown';
     const name = (p && p.business_name) || 'A new customer';
 
-    /* Meta hears about the purchase from here, cookies or not. The plan's
-       monthly price is the value; the subscription id keeps it to one. */
+    /* Meta hears about the purchase from here, cookies or not, with what
+       checkout kept of the ad click (click id, browser id, address,
+       browser) so it can be matched to the ad. The plan's price for the
+       billing period is the value; the subscription id keeps it to one. */
     const plan = PLANS[patch.active_plan];
     if (plan && email !== 'unknown') {
-      sendMetaEvent({
-        name: 'Purchase', eventId: patch.stripe_subscription_id || undefined, email,
-        url: `${ourSiteUrl()}/account.html`,
-        value: plan.amount / 100, currency: 'GBP',
+      const md = (sub && sub.metadata) || {};
+      const item = sub && sub.items && sub.items.data && sub.items.data[0];
+      const yearly = Boolean(item && item.price && item.price.recurring && item.price.recurring.interval === 'year');
+      await sendMetaEvent(Object.assign(adFromMetadata(md), {
+        name: 'Purchase', eventId: patch.stripe_subscription_id || (sub && sub.id) || undefined,
+        email, phone: (p && p.phone) || undefined,
+        url: `${ourSiteUrl()}${md.source === 'join' ? '/join' : '/get-started'}`,
+        value: ((yearly && plan.yearly) ? plan.yearly : plan.amount) / 100, currency: 'GBP',
         custom: { content_name: patch.active_plan }
-      }).catch(() => {});
+      })).catch(() => {});
     }
 
     const domainLine = p && p.requested_domain
