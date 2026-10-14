@@ -775,6 +775,15 @@ function showBilling(row) {
   function describeMove() {
     var move = document.getElementById('billMove');
     var chosen = pick.value;
+    /* A downgrade already scheduled shows as selected_plan ahead of
+       active_plan; choosing the current plan again takes it back. */
+    var due = row && row.selected_plan && row.selected_plan !== current && PLAN_NAME[row.selected_plan];
+    if (current && chosen === current && due) {
+      move.hidden = false;
+      move.textContent = 'You are due to move to ' + due + ' when your plan renews. '
+        + 'Press the button to stay on ' + PLAN_NAME[current] + ' instead. Nothing is charged.';
+      return;
+    }
     if (!current || chosen === current) { move.hidden = true; return; }
 
     var up = ORDER.indexOf(chosen) > ORDER.indexOf(current);
@@ -985,7 +994,10 @@ document.getElementById('payBtn').addEventListener('click', async function () {
     var when = cdata.renewsAt ? new Date(cdata.renewsAt * 1000)
       .toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
 
-    say(note, cdata.upgrading
+    say(note, cdata.undo
+      ? 'You are staying on ' + (PLAN_NAME[cdata.to] || cdata.to) + '. The move to '
+        + (PLAN_NAME[cdata.from] || cdata.from) + ' is cancelled, and nothing was charged.'
+      : cdata.upgrading
       ? 'You are on ' + (PLAN_NAME[cdata.to] || cdata.to) + ' from now. '
         + 'Only the difference for the rest of this month was charged.'
       : 'You will move to ' + (PLAN_NAME[cdata.to] || cdata.to)

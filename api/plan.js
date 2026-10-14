@@ -161,7 +161,7 @@ module.exports = async function handler(req, res) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
     const name = clean(body.name, 200);
     const business = clean(body.business, 200);
-    const email = clean(body.email, 320);
+    const email = clean(body.email, 320).toLowerCase();
     const phone = clean(body.phone, 40);
     const town = clean(body.town, 120);
     const type = Object.prototype.hasOwnProperty.call(TYPES, body.type) ? body.type : 'other';
@@ -205,9 +205,21 @@ module.exports = async function handler(req, res) {
       custom: { content_category: 'growth-plan', content_name: p.recommend, campaign: campaign || undefined }
     })).catch(() => {});
 
+    /* This endpoint is open and emails whatever address is typed in, so the
+       plan email is rationed like lead.js's: after a few in a day to one
+       address the rest go quiet. The lead is kept either way. */
+    let allowed = true;
+    try {
+      const { count } = await db.from('leads')
+        .select('id', { count: 'exact', head: true })
+        .ilike('email', email.replace(/[%_\\]/g, '\\$&'))
+        .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+      if (Number.isFinite(count) && count > 3) allowed = false;
+    } catch (e) { console.error('plan: rate check failed:', e && e.message); }
+
     /* Theirs first: it is the thing they asked for. Ours is best effort. */
     const mine = p.recommend === 'max' ? maxEmail(site, row, p, type) : businessEmail(site, row, p, type);
-    const sent = await sendEmail(mine);
+    const sent = allowed ? await sendEmail(mine) : 'rationed';
     console.log('plan: %s plan to %s -> %s', p.recommend, email, sent);
 
     await sendEmail({

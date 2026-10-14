@@ -309,15 +309,29 @@ function funnel(views, convs, pays, days, now) {
   };
 }
 
+/* Supabase hands back at most 1,000 rows a request whatever the limit, so
+   a busy site's 90 days of views come in pages. make() builds the query
+   afresh each time (a built query runs once). */
+async function pageAll(make, max) {
+  const out = [];
+  for (let from = 0; from < max; from += 1000) {
+    const { data, error } = await make().range(from, Math.min(from + 999, max - 1));
+    if (error) return { data: out.length ? out : null, error: out.length ? null : error };
+    out.push(...(data || []));
+    if (!data || data.length < 1000) break;
+  }
+  return { data: out, error: null };
+}
+
 async function analytics(db, site, daysIn) {
   const days = daysIn === 'today' ? 'today' : [7, 30, 90].includes(Number(daysIn)) ? Number(daysIn) : 30;
   const w = windowFor(days, Date.now());
   const since = new Date(w.prevStart).toISOString();
   const [views, pays, convs, clicks] = await Promise.all([
-    db.from('page_views').select('session, path, referrer, device, country, city, source, from_ad, campaign, created_at').eq('site_id', site.id).gte('created_at', since).order('created_at', { ascending: false }).limit(MAX_ROWS),
+    pageAll(() => db.from('page_views').select('session, path, referrer, device, country, city, source, from_ad, campaign, created_at').eq('site_id', site.id).gte('created_at', since).order('created_at', { ascending: false }), MAX_ROWS),
     db.from('payments').select('ref, amount_pence, refunded_pence, currency, customer_email, session, paid_at').eq('site_id', site.id).gte('paid_at', since).order('paid_at', { ascending: false }).limit(MAX_ROWS),
     db.from('conversations').select('id, session, visitor_email, channel, created_at').eq('site_id', site.id).gte('created_at', since).limit(MAX_ROWS),
-    db.from('page_clicks').select('session, path, label, target, created_at').eq('site_id', site.id).gte('created_at', new Date(w.start).toISOString()).order('created_at', { ascending: false }).limit(MAX_ROWS)
+    pageAll(() => db.from('page_clicks').select('session, path, label, target, created_at').eq('site_id', site.id).gte('created_at', new Date(w.start).toISOString()).order('created_at', { ascending: false }), MAX_ROWS)
   ]);
   if (views.error) throw new Error(views.error.message);
   const bots = botSessions(views.data || []);
@@ -965,7 +979,9 @@ module.exports = async function handler(req, res) {
     if (userError || !userData || !userData.user) return res.status(401).json({ error: 'Your session has expired.' });
     const user = userData.user;
     const email = String(user.email || '').toLowerCase();
-    const caller = { user_id: user.id, email, is_admin: adminEmails().includes(email), via: 'app' };
+    /* Confirmed addresses only, as in admin.js: an account made with one of
+       our addresses but never confirmed is not us. */
+    const caller = { user_id: user.id, email, is_admin: adminEmails().includes(email) && Boolean(user.email_confirmed_at), via: 'app' };
 
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });

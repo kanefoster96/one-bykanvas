@@ -115,6 +115,28 @@ async function changePlan(stripe, admin, userId, profile, plan, apply, opts) {
   const target = priceFor(plan, wanted);
   const intervalChanging = target.interval !== fromInterval;
 
+  /* Taking back a downgrade they scheduled: the cheaper price is already on
+     the subscription, but active_plan still holds this plan until renewal.
+     Putting this plan's price back costs nothing (this period is paid for at
+     it) and clears the marker, so renewal bills this plan again. */
+  const pendingTo = sub.metadata && sub.metadata.plan;
+  const pending = Boolean(sub.metadata && sub.metadata.plan_effective_at) && pendingTo && pendingTo !== current;
+  if (current === plan && !intervalChanging && pending) {
+    if (!apply) {
+      return { ok: true, preview: true, upgrading: false, undo: true, from: pendingTo, to: plan,
+        fromInterval, interval: target.interval, amount: target.amount, renewsAt: sub.current_period_end || item.current_period_end || null, dueNow: 0 };
+    }
+    const keep = Object.assign({}, sub.metadata, { plan, supabase_user_id: userId });
+    delete keep.plan_effective_at;
+    await stripe.subscriptions.update(sub.id, {
+      items: [{ id: item.id, price_data: await priceDataFor(stripe, plan, target.interval), quantity: 1 }],
+      proration_behavior: 'none',
+      metadata: keep
+    });
+    console.log('change-plan: %s kept %s (scheduled move to %s undone)', userId, plan, pendingTo);
+    return { ok: true, upgrading: false, undo: true, from: pendingTo, to: plan, fromInterval,
+      interval: target.interval, amount: target.amount, renewsAt: sub.current_period_end || item.current_period_end || null };
+  }
   if (current === plan && !intervalChanging) {
     throw fail(400, 'That is already your plan.');
   }

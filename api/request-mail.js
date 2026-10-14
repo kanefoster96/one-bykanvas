@@ -210,7 +210,7 @@ module.exports = async function handler(req, res) {
         result = await sendEmail({
           to: email,
           subject: subject.replace(/[\r\n]+/g, ' '),
-          text: `${hi.replace(/&#?\w+;/g, '')}\n\n` + plainText(group, `${done ? 'See your site' : 'Reply in your dashboard'}: ${link}\n\n${tail}`),
+          text: `${hi.replace(/&#?\w+;/g, '')}\n\n` + plainText(group, `${done && prof && prof.site_url ? 'See your site: ' + prof.site_url + '\n' : ''}Reply in your dashboard: ${link}\n\n${tail}`),
           html: emailHtml({
             preheader: group[0].body.slice(0, 120),
             heading: done ? 'Done' : waiting ? 'A quick question' : 'An update on your request',
