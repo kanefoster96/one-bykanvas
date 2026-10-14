@@ -243,7 +243,15 @@
     body.focus();
   }
 
+  /* Inside the Kanvas One app (it sets ONE_API_BASE), Starter does not see
+     the Business features to ask about: App Store guideline 3.1.3(f) allows
+     no call to buy outside the app. Edits only there; the website keeps both. */
+  var inApp = window.ONE_API_BASE !== undefined;
+  function starterInApp() { return inApp && plan === 'starter'; }
+
   function setMode(next) {
+    if (next === 'feature' && starterInApp()) next = 'edit';
+    document.getElementById('modeFeature').hidden = starterInApp();
     mode = next;
     picked = null;
     document.getElementById('modeFeature').classList.toggle('is-on', mode === 'feature');

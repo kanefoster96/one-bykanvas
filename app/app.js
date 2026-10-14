@@ -2142,7 +2142,7 @@
     /* Not requests-badge.js: it repaints the same badge with requests only,
        dropping the support chat's unread. The app's own count covers both. */
     ONE.refreshRequestBadge = function () { refreshMe().catch(function () {}); };
-    [base + 'requests.js?v=7'].forEach(function (src) {
+    [base + 'requests.js?v=8'].forEach(function (src) {
       var s = document.createElement('script');
       s.src = src;
       document.body.appendChild(s);
