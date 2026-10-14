@@ -6,9 +6,34 @@
   var cfg = window.ONE_SUPABASE || {};
   var ready = Boolean(cfg.url && cfg.publishableKey && window.supabase);
 
+  /* A new session's expiry, counted on this device's clock rather than the
+     server's. The token answer carries expires_at as a server timestamp and
+     supabase-js compares it with Date.now(): on a phone whose clock runs an
+     hour or more fast (a different time zone set by hand, as on App
+     Review's iPad), a token made a second ago already looks expired, so
+     every call refreshes it and the app stalls after signing in. Without
+     expires_at, supabase-js uses now + expires_in on the device's own
+     clock. The server still checks the token against its own clock, so
+     nothing lasts longer. Same fix as the Kanvas Academy app. */
+  function expiryOnDeviceClock(response) {
+    if (!response.ok) return response;
+    return response.clone().json().then(function (body) {
+      if (!body || typeof body.access_token !== 'string' || typeof body.expires_in !== 'number' || !('expires_at' in body)) return response;
+      delete body.expires_at;
+      var headers = new Headers(response.headers);
+      headers.delete('content-length');
+      return new Response(JSON.stringify(body), { status: response.status, statusText: response.statusText, headers: headers });
+    }, function () { return response; });
+  }
+  function authFetch(input, init) {
+    var url = typeof input === 'string' ? input : (input && input.url) || '';
+    var res = fetch(input, init);
+    return url.indexOf('/auth/v1/') >= 0 ? res.then(expiryOnDeviceClock) : res;
+  }
+
   window.ONE = {
     ready: ready,
-    db: ready ? window.supabase.createClient(cfg.url, cfg.publishableKey) : null,
+    db: ready ? window.supabase.createClient(cfg.url, cfg.publishableKey, { global: { fetch: authFetch } }) : null,
 
     /* Surfaces a clear message rather than failing silently when unconfigured.
        Reads the public flag so there is one source of truth. */

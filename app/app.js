@@ -130,6 +130,13 @@
   $('forgotLink').addEventListener('click', function (e) {
     if (native) { e.preventDefault(); openExternal(this.href); }
   });
+  /* Privacy policy, terms and support (App Store 5.1.1: the policy has to
+     be reachable inside the app): in the shell, a sheet over the app. */
+  document.querySelectorAll('a[data-out]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (native) { e.preventDefault(); openExternal(this.href); }
+    });
+  });
 
   $('loginForm').addEventListener('submit', async function (e) {
     e.preventDefault();

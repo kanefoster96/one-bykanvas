@@ -284,9 +284,18 @@ function Shell() {
     if (/^(tel|mailto|sms|whatsapp):/i.test(url)) { openOutside(url); return false; }
     if (/^about:/i.test(url)) return true;
     if (!/^https?:/i.test(url)) return false;
-    if (OUR_HOST.test(hostOf(url))) return true;
-    if (req.isTopFrame === false) return true;
-    if (Platform.OS === 'android' && req.isTopFrame === undefined && req.navigationType !== 'click') return true;
+    const inFrame = req.isTopFrame === false
+      || (Platform.OS === 'android' && req.isTopFrame === undefined && req.navigationType !== 'click');
+    /* Frames (the setup form, the admin pages, a customer's dashboard) load
+       where they are. The app's own window stays on /app: any other
+       kanvas.one page (pricing, join, the login page) opens in the in-app
+       sheet, so the marketing site never takes over the app with no way
+       back - what App Review rejected the Kanvas Academy app for. */
+    if (inFrame) return true;
+    if (OUR_HOST.test(hostOf(url))) {
+      if (/^https?:\/\/[^/]+\/app(\/|$|[?#])/i.test(url)) return true;
+      if (/^https?:\/\/[^/]+\/login(\.html)?([?#]|$)/i.test(url)) { web.current && web.current.injectJavaScript("location.replace('" + APP_URL + "');true;"); return false; }
+    }
     openOutside(url);
     return false;
   }, []);
