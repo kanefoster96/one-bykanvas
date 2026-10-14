@@ -504,3 +504,7 @@
 #bTitle{font-size:20px;letter-spacing:-.02em}
 /* Nothing from the request list peeks out between the switch and the chat. */
 #supportChat:not([hidden]) ~ #viewList,#supportChat:not([hidden]) ~ #viewNew{visibility:hidden}
+.oa-stripe-title{margin:0;font-size:14px;font-weight:600}
+.oa-stripe .hint{margin:4px 0 0}
+.oa-stripe .oa-stripe-ok{color:var(--good);font-weight:600}
+.oa-stripe .oa-status-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}

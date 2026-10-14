@@ -24,6 +24,7 @@ const { lookup: domainLookup } = require('./domains.js');
 const { notify } = require('./_notify.js');
 const { notifySiteLive } = require('./_site_live.js');
 const { sendLeadPreview } = require('./_previews.js');
+const connect = require('./_connect.js');
 const { STATUSES: REQUEST_STATUSES, cleanAttachments, addNote, listInbox, listJobs, getThread } = require('./_requests.js');
 
 const DEFAULT_ADMINS = ['kane@kanvas.one'];
@@ -237,7 +238,7 @@ module.exports = async function handler(req, res) {
        live); the app works out which jobs are still open. */
     if (action === 'buildBoard') {
       const cols = 'id, business_name, contact_name, email, phone, business_type, active_plan, site_status, site_url, '
-        + 'requested_domain, domain_owned, services, site_goals, site_uses, existing_links, created_at';
+        + 'requested_domain, domain_owned, services, site_goals, site_uses, existing_links, created_at, stripe_connect_id';
       const { data: profs, error: pErr } = await db.from('profiles').select(cols)
         .not('active_plan', 'is', null).order('created_at', { ascending: true }).limit(2000);
       if (pErr) throw new Error(pErr.message);
@@ -255,6 +256,38 @@ module.exports = async function handler(req, res) {
         live: all.filter((p) => p.site_status === 'live').length,
         builds, steps
       });
+    }
+    /* A One club's own Stripe account, connected to ours. stripeConnect
+       makes it the first time (then returns the same one) and gives the
+       set-up link to send them; stripeConnectStatus says how far Stripe
+       has got. See api/_connect.js. */
+    if (action === 'stripeConnect' || action === 'stripeConnectStatus') {
+      const userId = String(body.userId || '');
+      if (!/^[0-9a-f-]{36}$/i.test(userId)) return res.status(400).json({ error: 'Which customer?' });
+      const { data: prof, error: pErr } = await db.from('profiles')
+        .select('id, business_name, contact_name, active_plan, stripe_connect_id').eq('id', userId).maybeSingle();
+      if (pErr) throw new Error(pErr.message);
+      if (!prof) return res.status(404).json({ error: 'Customer not found.' });
+      if (!prof.stripe_connect_id && action === 'stripeConnect') {
+        // Their login email, so Stripe can reach them about their account.
+        const { data: au } = await db.auth.admin.getUserById(userId);
+        prof.email = (au && au.user && au.user.email) || null;
+      }
+      try {
+        let accountId = prof.stripe_connect_id;
+        if (!accountId) {
+          if (action === 'stripeConnectStatus') return res.status(200).json({ account: null });
+          if (prof.active_plan !== 'max') return res.status(400).json({ error: 'Stripe set-up is for One clubs.' });
+          accountId = await connect.createClubAccount(prof);
+          const { error: uErr } = await db.from('profiles').update({ stripe_connect_id: accountId }).eq('id', userId);
+          if (uErr) throw new Error(uErr.message);
+        }
+        const status = await connect.accountStatus(accountId);
+        return res.status(200).json(Object.assign(status, { link: connect.setupLink(accountId) }));
+      } catch (e) {
+        if (e && e.shown) return res.status(400).json({ error: e.message });
+        throw e;
+      }
     }
     if (action === 'tickStep') {
       const userId = String(body.userId || '');
@@ -284,7 +317,7 @@ module.exports = async function handler(req, res) {
       const PROFILE_COLS = 'id, business_name, contact_name, phone, business_type, active_plan, selected_plan, ' +
                 'subscription_status, current_period_end, points_reset_at, site_url, site_status, requested_domain, domain_owned, ' +
                 'address, service_area, opening_hours, services, site_goals, site_uses, existing_links, ' +
-                'admin_notes, created_at, stripe_customer_id, stripe_subscription_id, campaign_from';
+                'admin_notes, created_at, stripe_customer_id, stripe_subscription_id, campaign_from, stripe_connect_id';
       /* Two reads, merged: everyone with any billing at all (never capped
          in practice, so a paying customer cannot fall off the end of the
          list behind a pile of abandoned sign-ups), plus the newest 200 of
