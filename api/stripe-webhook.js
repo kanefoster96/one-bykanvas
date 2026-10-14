@@ -253,8 +253,15 @@ module.exports = async function handler(req, res) {
       await notify(admin, id, 'Welcome to Kanvas One 👋',
         'Your plan is active and your build is in the queue. Everything lives here from now on.',
         '/account.html');
-      await notifyAdmin(admin, 'New customer joined',
-        'A new ' + (patch.active_plan || '') + ' plan just went live. Their build is now owed.');
+      /* Who and which plan in the notification itself, and a tap opens
+         their build checklist. */
+      const { data: who } = await admin.from('profiles')
+        .select('business_name, contact_name').eq('id', id).maybeSingle();
+      const planWord = { starter: 'Starter', business: 'Business', max: 'One' }[patch.active_plan] || 'A';
+      const name = (who && (who.business_name || who.contact_name)) || 'A new customer';
+      await notifyAdmin(admin, 'New ' + planWord + ' customer: ' + name,
+        name + ' just paid for ' + planWord + '. Their build is now owed. Tap for their checklist.',
+        '/admin.html#b/' + id);
     }
     if (sub.status === 'canceled' && !alreadyCanceled) {
       /* The win-back clock starts here; /api/followups reads it daily. */

@@ -14,7 +14,7 @@
 <link rel="icon" href="../assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="../assets/favicon-180.png?v=5">
 <link rel="stylesheet" href="../styles.css?v=145">
-<link rel="stylesheet" href="app.css?v=25">
+<link rel="stylesheet" href="app.css?v=26">
 </head>
 <body class="oa-body">
 
@@ -391,6 +391,13 @@
     <section id="adminInbox" hidden>
       <div class="req-top"><h1 class="req-h1">Requests</h1></div>
       <p class="hint req-lede">Every job outstanding: sites to build, free designs to make, and what customers have asked for. Ones waiting on you are marked.</p>
+      <!-- The admin page's home, framed: every site in build with its
+           progress, the four job cards and every customer. -->
+      <div class="oa-card oa-setup-card">
+        <p class="oa-card-title">Jobs board</p>
+        <p class="hint">Every build and how far along it is, apps, requests, changes and every customer's site.</p>
+        <div class="oa-status-actions"><button class="oa-chip oa-chip-dark" id="jobsOpen" type="button">Open the jobs board</button></div>
+      </div>
       <!-- The jobs that are not requests: a site owed to a new customer, a
            free example asked for. Each card opens to the details and a box
            to finish it from here. -->
@@ -581,6 +588,6 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=33"></script>
+<script src="app.js?v=34"></script>
 </body>
 </html>

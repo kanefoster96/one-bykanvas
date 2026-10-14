@@ -371,6 +371,7 @@
     $('setupFrame').src = 'about:blank';
   }
   $('setupOpen').addEventListener('click', function () { openSetup('/onboarding.html'); });
+  $('jobsOpen').addEventListener('click', function () { openSetup('/admin.html'); });
   $('setupBack').addEventListener('click', function () { closeSetup(); loadRequests(); });
 
   /* Starter's home: is the site up? Checked from the server each time the
@@ -614,6 +615,10 @@
     if (link && link.kind === 'support' && link.id) { location.hash = 'r/' + link.id; showTab('Support'); return; }
     if (n.href && /^\/requests\.html#(r\/.+)$/.test(n.href)) { location.hash = RegExp.$1; showTab('Support'); return; }
     if (n.href && /^\/admin\.html#r\/(.+)$/.test(n.href)) { pendingRequest = RegExp.$1; showTab('Support'); return; }
+    /* A new customer, or anything else about a build: their checklist on
+       the admin page, framed here. */
+    var b = n.href && /^\/admin\.html#b\/([0-9a-f-]{36})(?:\/(site|app|ads))?$/i.exec(n.href);
+    if (b) { showTab('Support'); openSetup('/admin.html?b=' + b[1] + (b[2] ? '&job=' + b[2] : '')); return; }
     /* Starter has no dashboard: an enquiry opens Messages at that message,
        a link (their site going live) the browser, anything else Home. */
     if (isStarter()) {
@@ -1562,6 +1567,10 @@
     lines.filter(Boolean).forEach(function (l) { body.appendChild(l); });
     /* Their payments, plan, refund and cancel live on the admin page. */
     if (build) {
+      var check = el('button', 'oa-chip oa-chip-dark oa-job-check', 'Open the build checklist');
+      check.type = 'button';
+      check.addEventListener('click', function () { openSetup('/admin.html?b=' + r.id); });
+      body.appendChild(check);
       var bill = el('a', 'oa-job-bill', 'Payments, plan, refund or cancel \u203a');
       bill.href = (window.ONE_API_BASE || '') + '/admin.html#c/' + encodeURIComponent(r.id);
       bill.target = '_blank'; bill.rel = 'noopener';

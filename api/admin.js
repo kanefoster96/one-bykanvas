@@ -223,6 +223,32 @@ module.exports = async function handler(req, res) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
     const action = String(body.action || '');
 
+    // ---- the build checklist: every tick, and ticking one ---------------
+    /* All of them at once: the home page shows every build's progress, and
+       a few hundred short rows is nothing to send. */
+    if (action === 'buildSteps') {
+      const { data, error } = await db.from('build_steps').select('user_id, job, step, done_at');
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ steps: data || [] });
+    }
+    if (action === 'tickStep') {
+      const userId = String(body.userId || '');
+      const job = String(body.job || '');
+      const step = String(body.step || '');
+      if (!/^[0-9a-f-]{36}$/i.test(userId)) return res.status(400).json({ error: 'Which customer?' });
+      if (!['site', 'app', 'ads'].includes(job)) return res.status(400).json({ error: 'Unknown checklist.' });
+      if (!/^[a-z0-9_-]{1,60}$/.test(step)) return res.status(400).json({ error: 'Unknown step.' });
+      if (body.done) {
+        const { error } = await db.from('build_steps')
+          .upsert({ user_id: userId, job, step, done_by: userData.user.email || null }, { onConflict: 'user_id,job,step', ignoreDuplicates: true });
+        if (error) throw new Error(error.message);
+      } else {
+        const { error } = await db.from('build_steps').delete().eq('user_id', userId).eq('job', job).eq('step', step);
+        if (error) throw new Error(error.message);
+      }
+      return res.status(200).json({ ok: true });
+    }
+
     // ---- read: every customer, newest first ----------------------------
     if (action === 'list') {
       /* stripe_subscription_id has to be here: the membership panel decides
