@@ -964,6 +964,9 @@
           : { plan: answers.selected_plan || 'business',
               pendingUserId: answers.pendingUserId,
               email: answers.email,
+              /* No session means saveAnswers could only stash them in this
+                 browser, so checkout writes them to the account. */
+              answers: buildRow(),
               offer: offerCode(),
               billing: billingMode(),
               referralCode: referralCode() },

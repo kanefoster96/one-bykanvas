@@ -373,23 +373,34 @@ module.exports = async function handler(req, res) {
       .limit(200);
     if (error) throw new Error(error.message);
 
-    /* Already a customer? Then the sequence is over - the welcome email took
-       it from here. Matched by email against auth users; at this scale one
-       page covers everyone. */
-    const registered = new Set();
+    /* Paid? Then the sequence is over - the welcome email took it from here.
+       Only paying counts: someone who made an account and stopped at the card
+       still gets the nudges. Every page of users is read, so this holds past
+       the first thousand. */
+    const paying = new Set();
     try {
-      const { data: users } = await db.auth.admin.listUsers({ page: 1, perPage: 1000 });
-      ((users && users.users) || []).forEach((u) => {
-        if (u.email) registered.add(u.email.toLowerCase());
-      });
+      const { data: paid, error: paidErr } = await db.from('profiles')
+        /* Older customers predate subscribed_at; any status means they paid once. */
+        .select('id').or('subscribed_at.not.is.null,subscription_status.not.is.null');
+      if (paidErr) throw paidErr;
+      const paidIds = new Set((paid || []).map((p) => p.id));
+      for (let page = 1; page <= 50; page++) {
+        const { data: users, error: listErr } = await db.auth.admin.listUsers({ page, perPage: 1000 });
+        if (listErr) throw listErr;
+        const list = (users && users.users) || [];
+        list.forEach((u) => {
+          if (u.email && paidIds.has(u.id)) paying.add(u.email.toLowerCase());
+        });
+        if (list.length < 1000) break;
+      }
     } catch (e) {
-      console.error('followups: user list failed, converting-lead check skipped:', e && e.message);
+      console.error('followups: customer list failed, converting-lead check skipped:', e && e.message);
     }
 
     let sentF1 = 0, sentF2 = 0;
     for (const lead of leads || []) {
       if (!lead.email) continue;
-      if (registered.has(String(lead.email).toLowerCase())) continue;
+      if (paying.has(String(lead.email).toLowerCase())) continue;
 
       const age = now - new Date(lead.preview_sent_at).getTime();
       let message = null, stamp = null;
@@ -434,7 +445,7 @@ module.exports = async function handler(req, res) {
 
     for (const lead of plans || []) {
       if (!lead.email) continue;
-      if (registered.has(String(lead.email).toLowerCase())) continue;
+      if (paying.has(String(lead.email).toLowerCase())) continue;
       const age = now - new Date(lead.created_at).getTime();
       let message = null, stamp = null;
       if (!lead.followup1_sent_at && age >= G1_AFTER && age <= G1_UNTIL) {
