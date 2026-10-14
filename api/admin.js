@@ -237,13 +237,19 @@ module.exports = async function handler(req, res) {
        every One customer (their app can still be in build once the site is
        live); the app works out which jobs are still open. */
     if (action === 'buildBoard') {
-      const cols = 'id, business_name, contact_name, email, phone, business_type, active_plan, site_status, site_url, '
+      const cols = 'id, business_name, contact_name, phone, business_type, active_plan, site_status, site_url, '
         + 'requested_domain, domain_owned, services, site_goals, site_uses, existing_links, created_at, stripe_connect_id';
       const { data: profs, error: pErr } = await db.from('profiles').select(cols)
         .not('active_plan', 'is', null).order('created_at', { ascending: true }).limit(2000);
       if (pErr) throw new Error(pErr.message);
       const all = profs || [];
       const builds = all.filter((p) => p.site_status === 'building' || p.active_plan === 'max');
+      /* profiles has no email column: the address lives on the sign-in
+         account, so fetch it for the handful in build. */
+      await Promise.all(builds.map(async (p) => {
+        const { data: au } = await db.auth.admin.getUserById(p.id).catch(() => ({ data: null }));
+        p.email = (au && au.user && au.user.email) || null;
+      }));
       let steps = [];
       if (builds.length) {
         const { data, error } = await db.from('build_steps').select('user_id, job, step')
