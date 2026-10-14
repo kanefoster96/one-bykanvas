@@ -341,8 +341,8 @@ module.exports = async function handler(req, res) {
         + `7 to 14 days after you send it. We build your app and send it to Apple and Google as soon `
         + `as your developer accounts are ready; `
         + `how long they take to approve it is up to them, usually 1 to 4 weeks. Until then, the app's `
-        + `features work on your website. Your ads start once it's all ready, usually from month 2, `
-        + `and months 2 to 4 of ad spend are on us, up to £100 a month.`
+        + `features work on your website. Your ads start once your website and app are both live, `
+        + `usually 4 to 8 weeks after you join, and your first 3 months of ad spend are on us, up to £100 a month.`
       : starter
       ? `Here's what happens now. We register ${domain || 'your web address'} and build your site from the page you sent us. `
         + `It goes live within 24 hours, and you get an email the moment it is.`
@@ -351,7 +351,7 @@ module.exports = async function handler(req, res) {
         + `If it isn't ready within 14 days, your next month is free. `
         + `If we need anything from you - photos, prices, an offer - we'll ask.`;
     const nowHtml = one
-      ? `Here&rsquo;s what happens now. <strong>Step 1</strong> is your setup form, below. Your website is ready <strong>7 to 14 days</strong> after you send it. We build your app and send it to Apple and Google as soon as your developer accounts are ready; how long they take to approve it is up to them, usually 1 to 4 weeks. Until then, the app&rsquo;s features work on your website. Your ads start once it&rsquo;s all ready, usually from month 2, and months 2 to 4 of ad spend are on us, up to &pound;100 a month.`
+      ? `Here&rsquo;s what happens now. <strong>Step 1</strong> is your setup form, below. Your website is ready <strong>7 to 14 days</strong> after you send it. We build your app and send it to Apple and Google as soon as your developer accounts are ready; how long they take to approve it is up to them, usually 1 to 4 weeks. Until then, the app&rsquo;s features work on your website. Your ads start once your website and app are both live, usually <strong>4 to 8 weeks</strong> after you join, and your first 3 months of ad spend are on us, up to &pound;100 a month.`
       : starter
       ? `Here&rsquo;s what happens now. We register <strong>${esc(domain || 'your web address')}</strong> and build your site from the page you sent us. It goes live <strong>within 24 hours</strong>, and you get an email the moment it is.`
       : `Here&rsquo;s what happens now. We register your web address and build your site and the features you asked for, together. It&rsquo;s ready <strong>in 7 to 14 days</strong>, and you get an email the moment it&rsquo;s live. If it isn&rsquo;t ready within 14 days, your next month is free. If we need anything from you &mdash; photos, prices, an offer &mdash; we&rsquo;ll ask.`;

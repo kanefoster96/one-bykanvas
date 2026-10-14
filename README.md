@@ -41,8 +41,8 @@ build command, output directory `.`.
 | Plan     | Price   | Includes |
 |----------|---------|----------|
 | Starter  | £9.99/mo | A live site built for you, contact details, hours, socials, photos, meet the team, found on Google. Unlimited edits through the dashboard, worked through in turn. |
-| Business | £49/mo  | Everything above plus changes within 48 hours, payments online, bookings or orders, customer logins and records, reviews asked for automatically, live chat and forms. |
-| Max      | £249/mo | Everything in Business plus monthly SEO improvements, business email at their own address, first in the queue. |
+| Business | £50/mo  | Everything above plus changes within 48 hours, payments online, bookings or orders, customer logins and records, reviews asked for automatically, live chat and forms. |
+| One (`max`) | £250/mo | Everything in Business plus a member app, trial bookings, memberships, monthly SEO, business email, first in the queue, and Facebook and Instagram ads run for them. Ads start once the website and app are both live; we pay the first 3 months, up to £100 a month. |
 
 Annual is ten months' money for twelve. Prices live in `api/_plans.js` and
 nowhere else. Pro is legacy and no longer sold.

@@ -819,7 +819,7 @@
         : domain ? 'Live on ' + domain + ' today.' : 'Live on your own address today.';
       promise.appendChild(strong);
       promise.appendChild(document.createTextNode(isOne
-        ? ' On ' + (domain || 'your own address') + ', with trial bookings. Your app goes to Apple and Google as soon as your developer accounts are ready, and their review takes 1 to 4 weeks. Your ads start in month 2, and months 2 to 4 of ad spend are on us.'
+        ? ' On ' + (domain || 'your own address') + ', with trial bookings. Your app goes to Apple and Google as soon as your developer accounts are ready, and their review takes 1 to 4 weeks. Your ads start once both are live, usually 4 to 8 weeks after you join, and your first 3 months of ad spend are on us.'
         : isBiz
         ? ' Your site on ' + (domain || 'your own address') + ', with the features you asked for, built together. Not ready within 14 days? Your next month is free.'
         : ' With your contact form and click to call. Your first change of the month, whenever you like.'));
@@ -1030,8 +1030,8 @@
 
   /* One reads differently from a website plan: the words that promise a
      site live today (Starter) or ready in 7 to 14 days (Business) become
-     the One process (month 1 the build, months 2 to
-     4 the ads on us, cancel any time). Elements carry their One text in data-one,
+     the One process (we build first, then the first 3
+     months of ads on us, cancel any time). Elements carry their One text in data-one,
      and their Business text in data-biz where it differs from Starter's; the
      Starter text is kept the first time we swap so it can come back. */
   function paintPlanCopy() {
@@ -1103,7 +1103,7 @@
         tag: 'Fill your sessions',
         head: 'One: the whole system run for you, from the first ad to the monthly payment.',
         list: [
-          'Facebook and Instagram ads, run for you. Months 2 to 4 on us',
+          'Facebook and Instagram ads, run for you. First 3 months on us',
           'Trial bookings, reminders and follow-ups that turn trials into members',
           'Memberships and monthly payments, taken automatically',
           'A member app, and bring-a-friend referrals'

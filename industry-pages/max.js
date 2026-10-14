@@ -1,7 +1,7 @@
 /* The One models: one per business type, each an end-to-end system that is
  * built, tested and repeated for that type. Built by build.js into
- * /max/<slug>.html. Same price whatever the type. Month 1 is the build,
- * months 2 to 4 of ads are on us. From month 5 a membership business (clubs)
+ * /max/<slug>.html. Same price whatever the type. We build first, then the
+ * first 3 months of ads are on us. After that a membership business (clubs)
  * pays us each new member's first month if we fund the ads; a business whose
  * customers buy one-off jobs or visits (trades, salons) pays a share of each
  * new customer's first online payment instead, since a first payment could
@@ -23,7 +23,7 @@
  *   faq                  [question, answer] pairs; also structured data
  */
 /* The ads deal, said the same way on every model. unit: what one new
-   customer is called for that business. From month 5, if we fund the ads,
+   customer is called for that business. After those 3 months, if we fund the ads,
    each new customer on a monthly membership pays us their first month (it
    is ongoing revenue); anything else, a term, a course, a one-off job,
    pays SHARE per cent of the first payment. Only payments
@@ -33,11 +33,11 @@
 const SHARE = 20;
 const RULE = `each new customer pays us their first subscription payment if they&rsquo;re on a membership or repeat subscription, or ${SHARE}% of their first payment if you invoice them or they pay for a one-off service. Only their first payment counts`;
 function adDeal(m) {
-  return `Month 1 we build it. Months 2 to 4, your ads are on us, up to &pound;100 a month. From month 5, we keep funding them, up to &pound;100 a month, and ${RULE}. Or you pay Meta yourself, pause whenever you like, and keep every penny. Switch any time: tell us and we swap straight away.`;
+  return `We build it first. Then your first 3 months of ads are on us, up to &pound;100 a month. After that, we keep funding them, up to &pound;100 a month, and ${RULE}. Or you pay Meta yourself, pause whenever you like, and keep every penny. Switch any time: tell us and we swap straight away.`;
 }
 function adFaq(m) {
   const out = [
-    ['Who pays for the ads?', `For months 2, 3 and 4, we do, up to &pound;100 a month. Month 1 is spent building and testing everything, so the ads land on a site that works. From month 5 you choose: we keep paying, up to &pound;100 a month, and ${RULE}, then everything they pay is yours. Or you pay Meta directly on your own ad account, and pause it whenever you like. Want to switch? Tell us and we swap straight away, and every new customer from then on is fully yours. If nothing new comes in from the ads we pay for, you pay nothing for them.`]
+    ['Who pays for the ads?', `For your first 3 months of ads, we do, up to &pound;100 a month. They start once your website and app are both live, so the ads land on something that works. After that you choose: we keep paying, up to &pound;100 a month, and ${RULE}, then everything they pay is yours. Or you pay Meta directly on your own ad account, and pause it whenever you like. Want to switch? Tell us and we swap straight away, and every new customer from then on is fully yours. If nothing new comes in from the ads we pay for, you pay nothing for them.`]
   ];
   if (m.unit !== 'member') out.push([`Why ${SHARE}% of the first payment, and not the whole first payment like a membership?`, `A membership keeps paying you every month, so its first payment comes to us. A ${m.unit} paid for once is different, and some are big, so ${SHARE}% of the first payment is fairer: a &pound;100 ${m.unit} is &pound;20 to us, a &pound;300 one is &pound;60. Only new customers who pay online through your site count, so it&rsquo;s tracked for you, and repeat customers are always yours. We&rsquo;re the ones putting &pound;100 a month into your ads, at our risk. Take cash or card in person, or busy enough that our share adds up? Pay for your own ads instead and keep the difference. If our share ever comes to more than the &pound;100 we spend, we email you to say so.`]);
   return out;
@@ -80,7 +80,7 @@ module.exports = [
     ],
     you: [
       'Send a photo, or a line about the job you want more of',
-      'Choose who funds the ads from month 5, and switch whenever you like',
+      'Choose who funds the ads after the first 3 months, and switch whenever you like',
       'Answer the enquiries that come in',
       'Do the job'
     ],
@@ -149,7 +149,7 @@ module.exports = [
     ],
     you: [
       'Send a photo, or a line about the class you want to fill',
-      'Choose who funds the ads from month 5, and switch whenever you like',
+      'Choose who funds the ads after the first 3 months, and switch whenever you like',
       'Run the trials and the classes',
       'Tell us when a term, a show or a camp is coming, and we sell it'
     ],
@@ -217,7 +217,7 @@ module.exports = [
     ],
     you: [
       'Send a photo of your work, or a line about the service you want more of',
-      'Choose who funds the ads from month 5, and switch whenever you like',
+      'Choose who funds the ads after the first 3 months, and switch whenever you like',
       'Do the appointments',
       'Tell us about a new service, an offer or a quiet week, and we fill it'
     ],

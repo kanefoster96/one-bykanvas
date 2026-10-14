@@ -44,7 +44,7 @@
       <ol class="mh-plan-steps mh-calc" id="maxSteps"></ol>
       <div class="mh-plan-rec">
         <p class="mh-plan-rec-t"><b>We&rsquo;d recommend One</b> &middot; &pound;250 a month</p>
-        <p>Month 1 we build it. Months 2 to 4, your ads are on us, worth &pound;300. 10 trials in those 3 months, or your next 3 months free. No contract: cancel any time.</p>
+        <p>We build it first. Then your first 3 months of ads are on us, worth &pound;300. 10 trials in those 3 months, or your next 3 months free. No contract: cancel any time.</p>
       </div>
       <div class="mh-dialog-cta">
         <a class="btn btn-primary" id="startMax" href="/get-started.html?plan=max">Start One</a>
@@ -86,7 +86,7 @@
 <script src="supabase-config.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="script.js?v=41"></script>
-<script src="chat.js?v=13" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=2" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One inside it. Ask me anything about it and I&rsquo;ll give you a straight answer." data-quick="How does the 10-trial guarantee work?|Can I see the app?|Is it right for my club?" defer></script>
+<script src="chat.js?v=14" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=2" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One inside it. Ask me anything about it and I&rsquo;ll give you a straight answer." data-quick="How does the 10-trial guarantee work?|Can I see the app?|Is it right for my club?" defer></script>
 <script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="growth-model.js?v=3"></script>
 <script>
@@ -124,17 +124,17 @@
       stats.appendChild(stat(p.spaces, 'spaces to fill'));
       stats.appendChild(stat('~' + p.months + ' mo', 'to fill them'));
       steps = [
-        ['Month 1: we build it.', 'Your website and timetable live in 7 to 14 days, then your members moved across and your app sent to Apple and Google as soon as your developer accounts are ready (their review takes 1 to 4 weeks). Until then, every app feature works on your website. Then we test it all, so the ads land on something that works.'],
-        ['Months 2 to 4: the ads, on us.', 'Ads go live for the classes with spaces. In our own academy, £' + G.AVG.adBudget + ' a month brought around ' + p.trials + ' trials and ' + p.perMonth + ' new members a month.'],
+        ['Weeks 1 to 8: we build it.', 'Your website and timetable live in 7 to 14 days, then your members moved across and your app sent to Apple and Google as soon as your developer accounts are ready (their review takes 1 to 4 weeks). Until then, every app feature works on your website. Once your website and app are both live, usually 4 to 8 weeks after you join, your ads start.'],
+        ['Then 3 months of ads, on us.', 'Ads go live for the classes with spaces. In our own academy, £' + G.AVG.adBudget + ' a month brought around ' + p.trials + ' trials and ' + p.perMonth + ' new members a month.'],
         ['At that pace', 'your ' + p.spaces + ' spaces would fill in about ' + p.months + ' month' + (p.months === 1 ? '' : 's') + '.'],
-        [p.cover + ' new member' + (p.cover === 1 ? '' : 's'), 'at ' + money(p.fee) + ' cover the £250. Months 2 to 4 of ads are on us.'],
+        [p.cover + ' new member' + (p.cover === 1 ? '' : 's'), 'at ' + money(p.fee) + ' cover the £250. Your first 3 months of ads are on us.'],
         ['Every trial', 'gets reminders and a follow-up with the link to join, and members pay monthly by card, automatically.']
       ];
     } else {
       stats.appendChild(stat(p.members, 'members'));
       stats.appendChild(stat('Standby', 'ads, until you grow'));
       steps = [
-        ['Month 1: we build it.', 'Your website and timetable live in 7 to 14 days, then your members moved across and your app sent to Apple and Google as soon as your developer accounts are ready (their review takes 1 to 4 weeks). Until then, every app feature works on your website.'],
+        ['Weeks 1 to 8: we build it.', 'Your website and timetable live in 7 to 14 days, then your members moved across and your app sent to Apple and Google as soon as your developer accounts are ready (their review takes 1 to 4 weeks). Until then, every app feature works on your website.'],
         ['Payments run themselves.', 'Monthly memberships by card, failed payments chased for you.'],
         ['Trials and follow-ups', 'sent for you, every time, so nobody slips through.'],
         ['A real person to message', 'for any change, and a monthly report on how it’s going.'],

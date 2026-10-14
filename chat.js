@@ -533,10 +533,10 @@
      Shown at the top of the chat each time it opens, rewritten in place, so
      it follows the visitor through a form step by step. */
   var TIPS = {
-    '/': { text: 'Hi, I\u2019m Dot! Ask our team anything here. Or start now: two minutes of details, then our team builds your site. Starter is live within 24 hours; Business and One are ready in 7 to 14 days.', actions: [['Get started', '/join'], ['See the plans', '/plans.html']] },
+    '/': { text: 'Hi, I\u2019m Dot! Ask our team anything here. Or start now: two minutes of details, then our team builds your site. Starter is live within 24 hours; Business is ready in 7 to 14 days; One\u2019s website in 7 to 14 days, with its app and ads live in 4 to 8 weeks.', actions: [['Get started', '/join'], ['See the plans', '/plans.html']] },
     '/plans': { text: 'Starter is the website, \u00a39.99 a month. Business adds bookings, payments and chat. One runs your ads and Google too. Not sure? Ask me here.', actions: [['Start on Starter', '/join']] },
     '/free': { text: 'Type your business name in the box and press the arrow. Then it\u2019s your email, your web address and a link to where you are online now.', actions: [['Take me to the box', null, '#business']] },
-    '/how-it-works': { text: 'Three steps: tell us your name, our team builds your site from your Instagram or Facebook, and it goes live: Starter within 24 hours, Business and One in 7 to 14 days.', actions: [['Get started', '/join']] },
+    '/how-it-works': { text: 'Three steps: tell us your name, our team builds your site from your Instagram or Facebook, and it goes live: Starter within 24 hours, Business in 7 to 14 days, and One\u2019s website in 7 to 14 days, with its app and ads live in 4 to 8 weeks.', actions: [['Get started', '/join']] },
     '/requests': { text: 'Every change you ask for lives here. Tap one to see where it\u2019s up to, or reply to it. New one? Tap \u201cAdd website edit request\u201d below.' }
   };
   var guideEl = null;
