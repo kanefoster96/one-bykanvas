@@ -917,8 +917,26 @@ async function supportGet(db, caller) {
   const { data: msgs } = await db.from('messages').select('id, author, body, created_at').eq('conversation_id', conv.id).order('created_at', { ascending: true }).limit(300);
   return { messages: (msgs || []).filter((m) => m.author !== 'system').map((m) => ({ id: m.id, author: m.author, body: m.body, at: m.created_at })) };
 }
-async function supportSend(db, caller, bodyIn) {
-  const text = cleanBody(bodyIn);
+/* Files sent in the chat: paths the app uploaded into the caller's own
+   folder. Each becomes a link signed for a year, in the message itself, so
+   it opens wherever the chat is read (the app, the inbox, an email). */
+const CHAT_FILE_SECONDS = 365 * 24 * 60 * 60;
+async function signChatFiles(db, caller, files) {
+  const list = Array.isArray(files) ? files.slice(0, 5).map(String) : [];
+  const own = new RegExp('^' + caller.user_id + '/chat/[A-Za-z0-9-]{8,64}-[0-4]\\.(png|jpg|webp|pdf)$');
+  if (list.some((f) => !own.test(f))) { const e = new Error('That file is not yours to send.'); e.shown = true; throw e; }
+  if (!list.length) return [];
+  const { data, error } = await db.storage.from('request-attachments').createSignedUrls(list, CHAT_FILE_SECONDS);
+  if (error) throw new Error('chat files: ' + error.message);
+  return (data || []).map((d) => d.signedUrl).filter(Boolean);
+}
+async function supportSend(db, caller, bodyIn, files) {
+  const links = await signChatFiles(db, caller, files);
+  const said = cleanBody(bodyIn);
+  /* The links never get cut off: the words give way first. */
+  const fileText = links.length ? (links.length === 1 ? 'Sent a file:' : 'Sent ' + links.length + ' files:') + '\n' + links.join('\n') : '';
+  const room = Math.max(0, 2000 - fileText.length - 2);
+  const text = links.length ? ((said ? said.slice(0, room) + '\n\n' : '') + fileText) : said;
   if (text.length < 1) { const e = new Error('Write a message first.'); e.shown = true; throw e; }
   const conv = await supportConv(db, caller, true);
   if (conv.blocked_at) { const e = new Error('This chat is closed. Send a request instead.'); e.shown = true; throw e; }
@@ -980,7 +998,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ enquiries: data || [] });
     }
     if (action === 'support_get') return res.status(200).json(await supportGet(db, caller));
-    if (action === 'support_send') return res.status(200).json(await supportSend(db, caller, body.body));
+    if (action === 'support_send') return res.status(200).json(await supportSend(db, caller, body.body, body.files));
 
     if (/^contact/.test(action)) {
       const site = await siteFor({ db }, caller, body.site_id);
@@ -1011,7 +1029,7 @@ module.exports = async function handler(req, res) {
     if (action === 'page') {
       const path = cleanPath(body.path);
       /* The admin page, for the admin only: the jobs board, or one build. */
-      const adminPage = /^\/admin\.html(\?b=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(&job=(site|app|ads))?)?$/i.test(path);
+      const adminPage = /^\/admin\.html(\?(b=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(&job=(site|app|ads))?|c=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|s=customers))?$/i.test(path);
       if (adminPage) {
         if (!caller.is_admin) return res.status(403).json({ error: 'That page is not for this account.' });
         return res.status(200).json({ url: await handoffUrl(db, caller, ourSiteUrl().replace(/\/+$/, '') + path, req) });

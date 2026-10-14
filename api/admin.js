@@ -231,6 +231,31 @@ module.exports = async function handler(req, res) {
       if (error) throw new Error(error.message);
       return res.status(200).json({ steps: data || [] });
     }
+    /* The app's Build tab: who is in build, with what they told us, and
+       their ticks. Everyone on a plan whose site is still being built, and
+       every One customer (their app can still be in build once the site is
+       live); the app works out which jobs are still open. */
+    if (action === 'buildBoard') {
+      const cols = 'id, business_name, contact_name, email, phone, business_type, active_plan, site_status, site_url, '
+        + 'requested_domain, domain_owned, services, site_goals, site_uses, existing_links, created_at';
+      const { data: profs, error: pErr } = await db.from('profiles').select(cols)
+        .not('active_plan', 'is', null).order('created_at', { ascending: true }).limit(2000);
+      if (pErr) throw new Error(pErr.message);
+      const all = profs || [];
+      const builds = all.filter((p) => p.site_status === 'building' || p.active_plan === 'max');
+      let steps = [];
+      if (builds.length) {
+        const { data, error } = await db.from('build_steps').select('user_id, job, step')
+          .in('user_id', builds.map((p) => p.id));
+        if (error) throw new Error(error.message);
+        steps = data || [];
+      }
+      return res.status(200).json({
+        customers: all.length,
+        live: all.filter((p) => p.site_status === 'live').length,
+        builds, steps
+      });
+    }
     if (action === 'tickStep') {
       const userId = String(body.userId || '');
       const job = String(body.job || '');

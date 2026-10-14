@@ -164,6 +164,7 @@
   var TABS = ['Messages', 'Dashboard', 'Analytics', 'Payments', 'Chat', 'Support'];
 
   function showTab(next) {
+    if (isOneClient()) next = 'Support';
     if (next === 'Chat' && !hasModule('chat') && !contactsAllowed() && !isStarter()) next = homeTab();
     if (next === 'Messages' && !isStarter()) next = homeTab();
     if (next === 'Payments') next = homeTab(); // nothing to show until Stripe Connect lands
@@ -281,7 +282,7 @@
       else if (tab === 'Chat') work.push(openContact && openContact.id ? loadContact(openContact.id) : openConv ? openThread(openConv.id) : chatMode === 'contacts' ? loadContacts() : loadChats());
       else if (tab === 'Support' && supportMode === 'chat') work.push(loadSupportChat(true));
       else if (tab === 'Support') {
-        if (me && me.user && me.user.is_admin) work.push(adminOpenId && !$('adminThread').hidden ? openAdminThread(adminOpenId) : loadAdminInbox());
+        if (me && me.user && me.user.is_admin) work.push(adminOpenId && !$('adminThread').hidden ? openAdminThread(adminOpenId) : buildOpen ? loadBoard().then(function () { paintBuild(); }) : loadAdminInbox());
         else if (requestsLoaded) window.dispatchEvent(new Event('hashchange')); // requests.js routes again: list or thread
         else loadRequests();
       }
@@ -319,7 +320,10 @@
 
   /* Where the app opens: the Dashboard, the first tab, once the site has
      one connected; the numbers until then, rather than an empty screen. */
-  function homeTab() { return isStarter() ? 'Analytics' : site && site.dashboard_url ? 'Dashboard' : 'Analytics'; }
+  function homeTab() {
+    if (isAdmin() || isOneClient()) return 'Support';
+    return isStarter() ? 'Analytics' : site && site.dashboard_url ? 'Dashboard' : 'Analytics';
+  }
 
   /* ---------------------------------------------------------- starter -- */
 
@@ -328,7 +332,23 @@
      in) and Support (edits, and a chat straight to Kane). The other tabs
      are hidden, not gated. */
   function isStarter() { return !!(me && me.user && !me.user.is_admin && me.user.plan === 'starter'); }
+  function isAdmin() { return !!(me && me.user && me.user.is_admin); }
+  /* One, while Kane builds their club's own site and app: this app is just
+     the line to him. Requests, the chat (photos and files too) and their
+     setup form, on one screen; no tabs. Their own app takes over the rest. */
+  function isOneClient() { return !!(me && me.user && !me.user.is_admin && me.user.plan === 'max'); }
+  var BUILD_ICON = '<path d="M9 5h10M9 12h10M9 19h10"/><path d="m3.5 5 1.2 1.2L7 4"/><path d="m3.5 12 1.2 1.2L7 11"/><path d="M4 19h2"/>';
   function applyPlanUi() {
+    if (isAdmin()) {
+      /* Kane's app opens on the work: Build first, the Dashboard last. */
+      var nav = document.querySelector('.oa-nav');
+      nav.insertBefore($('navReq'), nav.firstChild);
+      nav.appendChild($('navDash'));
+      $('navReq').querySelector('span:not(.nav-count)').textContent = 'Build';
+      $('navReq').querySelector('svg').innerHTML = BUILD_ICON;
+      $('setupBack').innerHTML = '&lsaquo; Build';
+    }
+    document.body.classList.toggle('oa-solo', isOneClient());
     var s = isStarter();
     $('navMsgs').hidden = !s;
     $('navDash').hidden = s;
@@ -371,7 +391,7 @@
     $('setupFrame').src = 'about:blank';
   }
   $('setupOpen').addEventListener('click', function () { openSetup('/onboarding.html'); });
-  $('jobsOpen').addEventListener('click', function () { openSetup('/admin.html'); });
+  $('jobsOpen').addEventListener('click', function () { openSetup('/admin.html?s=customers'); });
   $('setupBack').addEventListener('click', function () { closeSetup(); loadRequests(); });
 
   /* Starter's home: is the site up? Checked from the server each time the
@@ -481,13 +501,7 @@
     var mine = m.author === 'visitor';
     var wrap = el('div', 'msg ' + (mine ? 'from-owner' : 'from-visitor'));
     wrap.appendChild(el('div', 'msg-who', mine ? 'You' : 'Kane'));
-    var box = el('div', 'msg-body');
-    String(m.body).split(/\n{2,}/).forEach(function (p) {
-      var para = el('p');
-      p.split('\n').forEach(function (line, i) { if (i) para.appendChild(document.createElement('br')); para.appendChild(document.createTextNode(line)); });
-      box.appendChild(para);
-    });
-    wrap.appendChild(box);
+    wrap.appendChild(bodyEl(m.body));
     wrap.appendChild(el('div', 'msg-when', ago(m.at)));
     return wrap;
   }
@@ -507,6 +521,43 @@
     if (tab === 'Support' && supportMode === 'chat') supportTimer = setTimeout(function () { loadSupportChat(true); }, 8000);
   }
   $('supportBody').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(120, this.scrollHeight) + 'px'; });
+  /* Photos and files to Kane: a logo, coach photos, a price list. Up to
+     five at a time, into the customer's own folder in the private
+     request-attachments bucket; the server signs a link to each and puts
+     it in the message, so Kane can open it from his inbox. */
+  var SUPPORT_ACCEPT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'application/pdf': 'pdf' };
+  $('supportFile').addEventListener('change', async function () {
+    var input = this;
+    var files = Array.prototype.slice.call(input.files || [], 0, 5);
+    input.value = '';
+    if (!files.length) return;
+    for (var i = 0; i < files.length; i++) {
+      if (!SUPPORT_ACCEPT[files[i].type]) { say($('supportNote'), files[i].name + ' is not a photo or PDF.', 'bad'); return; }
+      if (files[i].size > 10 * 1024 * 1024) { say($('supportNote'), files[i].name + ' is over 10 MB. Try a smaller one.', 'bad'); return; }
+    }
+    $('supportSend').disabled = true;
+    say($('supportNote'), 'Sending ' + (files.length === 1 ? 'your file' : files.length + ' files') + '…');
+    try {
+      var batch = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2);
+      var paths = [];
+      for (var k = 0; k < files.length; k++) {
+        var path = user.id + '/chat/' + batch + '-' + k + '.' + SUPPORT_ACCEPT[files[k].type];
+        var up = await ONE.db.storage.from('request-attachments').upload(path, files[k], { contentType: files[k].type });
+        if (up.error) throw new Error('Could not upload ' + files[k].name + ': ' + ONE.friendlyError(up.error));
+        paths.push(path);
+      }
+      var ta = $('supportBody'); var text = ta.value.trim();
+      var res = await api({ action: 'support_send', body: text, files: paths });
+      ta.value = ''; ta.style.height = 'auto';
+      say($('supportNote'), 'Sent.', 'ok');
+      var box = $('supportMsgs');
+      var sys = box.querySelector('.from-system'); if (sys) sys.remove();
+      box.appendChild(supportBubble(res.message)); supportCount++;
+      haptic('success');
+      box.scrollTop = box.scrollHeight;
+    } catch (err) { say($('supportNote'), err.message, 'bad'); }
+    $('supportSend').disabled = false;
+  });
   $('supportForm').addEventListener('submit', async function (e) {
     e.preventDefault();
     var ta = $('supportBody'); var text = ta.value.trim();
@@ -618,7 +669,7 @@
     /* A new customer, or anything else about a build: their checklist on
        the admin page, framed here. */
     var b = n.href && /^\/admin\.html#b\/([0-9a-f-]{36})(?:\/(site|app|ads))?$/i.exec(n.href);
-    if (b) { showTab('Support'); openSetup('/admin.html?b=' + b[1] + (b[2] ? '&job=' + b[2] : '')); return; }
+    if (b) { pendingBuild = { id: b[1], job: b[2] || null }; showTab('Support'); return; }
     /* Starter has no dashboard: an enquiry opens Messages at that message,
        a link (their site going live) the browser, anything else Home. */
     if (isStarter()) {
@@ -700,6 +751,34 @@
     } catch (e) { /* fall back */ }
     window.open(url, '_blank', 'noopener');
   }
+  /* requests.js opens links the same way when it runs in here. */
+  window.ONE_OPEN = openExternal;
+
+  /* A message's text as paragraphs, with its links tappable. A link opens
+     in the in-app browser; a file sent in a chat (a signed link to our own
+     storage) reads "Open file" rather than a long address. */
+  var URL_RE = /(https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]])/;
+  function bodyEl(text) {
+    var box = el('div', 'msg-body');
+    String(text == null ? '' : text).split(/\n{2,}/).forEach(function (p) {
+      var para = el('p');
+      p.split('\n').forEach(function (line, i) {
+        if (i) para.appendChild(document.createElement('br'));
+        line.split(URL_RE).forEach(function (bit, j) {
+          if (!bit) return;
+          if (j % 2 === 0) { para.appendChild(document.createTextNode(bit)); return; }
+          var file = /\/storage\/v1\/object\/sign\//.test(bit);
+          var a = el('a', file ? 'msg-file' : 'msg-link', file ? 'Open file' : bit.replace(/^https?:\/\//, ''));
+          a.href = bit;
+          a.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); openExternal(bit); });
+          para.appendChild(a);
+        });
+      });
+      box.appendChild(para);
+    });
+    return box;
+  }
+
   $('dashOpen').addEventListener('click', function (e) {
     if (native) { e.preventDefault(); openExternal(this.href); }
   });
@@ -1257,13 +1336,7 @@
     wrap.dataset.id = m.id;
     var head = el('div', 'msg-who', m.author === 'owner' ? 'You' + (m.emailed ? ' · also emailed' : '') : (openConv ? displayName(openConv) : 'Visitor'));
     wrap.appendChild(head);
-    var box = el('div', 'msg-body');
-    String(m.body).split(/\n{2,}/).forEach(function (p) {
-      var para = el('p');
-      p.split('\n').forEach(function (line, i) { if (i) para.appendChild(document.createElement('br')); para.appendChild(document.createTextNode(line)); });
-      box.appendChild(para);
-    });
-    wrap.appendChild(box);
+    wrap.appendChild(bodyEl(m.body));
     wrap.appendChild(el('div', 'msg-when', (m.author === 'owner' && m.emailed ? 'Also emailed · ' : '') + ago(m.at)));
     return wrap;
   }
@@ -1605,48 +1678,330 @@
     return card;
   }
 
+  /* ------------------------------------------------- the Build tab -- */
+  /*
+   * Kane's first tab. Four counts (sites and apps to build, requests and
+   * changes waiting), All sites, every build with a progress bar, free
+   * designs to make, then customers' requests and changes. A build opens
+   * its checklist; ticks save to the same rows the admin page reads.
+   */
+  var board = { builds: [], ticks: {}, customers: 0, live: 0 };
+  var buildOpen = null;     // { id, job } while a checklist is on screen
+  var pendingBuild = null;  // a build to open once the tab has loaded
+  var bFilter = null;       // 'site' or 'app': the list narrowed by a count
+  var bKind = 'all';        // requests: all, edit or feature
+
+  async function loadBoard() {
+    var res = await apiTo('/api/admin', { action: 'buildBoard' });
+    board.builds = res.builds || [];
+    board.customers = res.customers || 0;
+    board.live = res.live || 0;
+    board.ticks = {};
+    (res.steps || []).forEach(function (t) { setTick(t.user_id, t.job, t.step, true); });
+  }
+  function setTick(uid, job, step, on) {
+    var u = board.ticks[uid] || (board.ticks[uid] = {});
+    var j = u[job] || (u[job] = {});
+    if (on) j[step] = true; else delete j[step];
+  }
+  function progressOf(p, job) {
+    var keys = window.BUILD_STEPS ? BUILD_STEPS.keys(p.active_plan, job) : [];
+    var t = (board.ticks[p.id] && board.ticks[p.id][job]) || {};
+    return { done: keys.filter(function (k) { return t[k]; }).length, total: keys.length };
+  }
+  /* Same rule as the admin page: the site until it is live; on One the app
+     until every step is ticked. Ads run for months, on the checklist only. */
+  function openJobsOf(p) {
+    var out = [];
+    if (p.site_status === 'building') out.push('site');
+    if (p.active_plan === 'max') { var a = progressOf(p, 'app'); if (a.total && a.done < a.total) out.push('app'); }
+    return out;
+  }
+  function lateOf(p) {
+    var h = (Date.now() - new Date(p.created_at).getTime()) / 36e5;
+    return p.site_status === 'building' && h >= (p.active_plan === 'starter' ? 24 : 14 * 24);
+  }
+  var JOB_WORD = { site: 'Website', app: 'App', ads: 'Ads' };
+  function barEl(done, total) {
+    var t = el('span', 'oa-bar'); var f = el('span', 'oa-bar-fill');
+    f.style.width = (total ? Math.round(done / total * 100) : 0) + '%';
+    t.appendChild(f);
+    return t;
+  }
+
   async function loadAdminInbox() {
     $('adminThread').hidden = true;
+    $('adminBuild').hidden = true;
+    buildOpen = null;
     $('adminInbox').hidden = false;
     reqScreen(false);
-    var builds, designs;
+    var designs;
     try {
-      var res = await apiTo('/api/admin', { action: 'requestsInbox' });
-      adminRows = res.requests || [];
-      builds = res.builds || [];
-      designs = res.designs || [];
-    } catch (err) { $('adminEmpty').hidden = false; $('adminEmpty').textContent = 'Could not load requests: ' + err.message; return; }
-    var open = adminRows.filter(function (r) { return r.status !== 'done' && r.status !== 'declined'; });
-    var done = adminRows.filter(function (r) { return r.status === 'done' || r.status === 'declined'; });
-    var buildBox = $('adminBuilds'); buildBox.innerHTML = '';
-    builds.forEach(function (p) { buildBox.appendChild(jobCard('build', p)); });
-    $('adminBuildsTitle').hidden = builds.length === 0;
+      var both = await Promise.all([apiTo('/api/admin', { action: 'requestsInbox' }), loadBoard()]);
+      adminRows = both[0].requests || [];
+      designs = both[0].designs || [];
+    } catch (err) { $('adminEmpty').hidden = false; $('adminEmpty').textContent = 'Could not load: ' + err.message; return; }
     var designBox = $('adminDesigns'); designBox.innerHTML = '';
     designs.forEach(function (l) { designBox.appendChild(jobCard('design', l)); });
     $('adminDesignsTitle').hidden = designs.length === 0;
+    paintBoard();
+    paintRequests();
+    var open = adminRows.filter(function (r) { return r.status !== 'done' && r.status !== 'declined'; });
+    var building = board.builds.filter(function (p) { return openJobsOf(p).length; }).length;
+    var waiting = open.filter(function (r) { return r.last_note_by === 'customer'; }).length + designs.length
+      + board.builds.filter(function (p) { return p.site_status === 'building'; }).length;
+    var badge = $('navReqCount'); badge.textContent = String(waiting); badge.hidden = waiting === 0;
+    if (pendingRequest) { var id = pendingRequest; pendingRequest = null; openAdminThread(id); }
+    else if (pendingBuild) { var pb = pendingBuild; pendingBuild = null; openBuild(pb.id, pb.job); }
+    return building;
+  }
+
+  function openKind(kind) { return adminRows.filter(function (r) { return (r.kind || 'edit') === kind && r.status !== 'done' && r.status !== 'declined'; }); }
+
+  function paintBoard() {
+    var sites = board.builds.filter(function (p) { return p.site_status === 'building'; });
+    var apps = board.builds.filter(function (p) { return openJobsOf(p).indexOf('app') !== -1; });
+    var feats = openKind('feature'), edits = openKind('edit');
+    function mine(rows) { return rows.filter(function (r) { return r.last_note_by === 'customer'; }).length; }
+    var grid = $('bCounts'); grid.innerHTML = '';
+    [
+      { key: 'site', n: sites.length, label: 'Sites to build', hot: sites.some(lateOf), sub: sites.some(lateOf) ? 'Past the promise' : '' },
+      { key: 'app', n: apps.length, label: 'Apps to build' },
+      { key: 'feature', n: feats.length, label: 'Requests', hot: mine(feats) > 0, sub: mine(feats) ? mine(feats) + ' waiting on you' : '' },
+      { key: 'edit', n: edits.length, label: 'Changes', hot: mine(edits) > 0, sub: mine(edits) ? mine(edits) + ' waiting on you' : '' }
+    ].forEach(function (c) {
+      var on = c.key === bFilter || c.key === bKind;
+      var b = el('button', 'oa-btile' + (c.hot ? ' is-hot' : '') + (on ? ' is-on' : ''));
+      b.type = 'button';
+      b.appendChild(el('span', 'oa-btile-n', String(c.n)));
+      b.appendChild(el('span', 'oa-btile-label', c.label));
+      if (c.sub) b.appendChild(el('span', 'oa-btile-sub', c.sub));
+      b.addEventListener('click', function () {
+        haptic('light');
+        if (c.key === 'site' || c.key === 'app') {
+          bFilter = bFilter === c.key ? null : c.key;
+          paintBoard();
+          $('bListTitle').scrollIntoView({ block: 'start', behavior: 'smooth' });
+        } else {
+          setKind(bKind === c.key ? 'all' : c.key);
+          $('adminOpenTitle').scrollIntoView({ block: 'start', behavior: 'smooth' });
+        }
+      });
+      grid.appendChild(b);
+    });
+    $('bAllSub').textContent = board.customers + ' customer' + (board.customers === 1 ? '' : 's') + ' · ' + board.live + ' live';
+
+    var list = $('bList'); list.innerHTML = '';
+    var rows = board.builds.filter(function (p) {
+      var jobs = openJobsOf(p);
+      return jobs.length && (!bFilter || jobs.indexOf(bFilter) !== -1);
+    });
+    $('bListTitle').textContent = bFilter === 'site' ? 'Sites to build' : bFilter === 'app' ? 'Apps to build' : 'In build';
+    if (!rows.length) list.appendChild(el('p', 'req-empty', bFilter ? 'Nothing here.' : 'Nothing in build.'));
+    rows.forEach(function (p) {
+      var row = el('button', 'oa-brow');
+      row.type = 'button';
+      var top = el('span', 'oa-brow-top');
+      top.appendChild(el('span', 'oa-brow-name', p.business_name || p.contact_name || 'Customer'));
+      top.appendChild(el('span', 'req-state is-building', (PLAN_WORD[p.active_plan] || 'Plan')));
+      row.appendChild(top);
+      openJobsOf(p).filter(function (j) { return !bFilter || j === bFilter; }).forEach(function (job) {
+        var g = progressOf(p, job);
+        var line = el('span', 'oa-brow-line');
+        if (p.active_plan === 'max') line.appendChild(el('span', 'oa-brow-job', JOB_WORD[job]));
+        line.appendChild(barEl(g.done, g.total));
+        line.appendChild(el('span', 'oa-brow-count', g.done + ' of ' + g.total));
+        row.appendChild(line);
+      });
+      if (lateOf(p)) row.appendChild(el('span', 'oa-brow-late', 'Joined ' + since(p.created_at) + ' · past the ' + (p.active_plan === 'starter' ? '24 hours' : '14 days')));
+      row.addEventListener('click', function () { openBuild(p.id, bFilter || openJobsOf(p)[0]); });
+      list.appendChild(row);
+    });
+  }
+
+  function setKind(k) {
+    bKind = k;
+    $('bKinds').querySelectorAll('.oa-pill').forEach(function (p) { p.classList.toggle('is-on', p.dataset.kind === k); });
+    paintBoard();
+    paintRequests();
+  }
+  $('bKinds').addEventListener('click', function (e) { var p = e.target.closest('.oa-pill'); if (p) { haptic('light'); setKind(p.dataset.kind); } });
+
+  function paintRequests() {
+    var rows = adminRows.filter(function (r) { return bKind === 'all' || (r.kind || 'edit') === bKind; });
+    var open = rows.filter(function (r) { return r.status !== 'done' && r.status !== 'declined'; });
+    var done = rows.filter(function (r) { return r.status === 'done' || r.status === 'declined'; });
+    /* Waiting on Kane first, then the rest by when they last moved. */
+    open.sort(function (a, b) {
+      var wa = a.last_note_by === 'customer' ? 0 : 1, wb = b.last_note_by === 'customer' ? 0 : 1;
+      return wa - wb || new Date(b.last_note_at) - new Date(a.last_note_at);
+    });
     var openBox = $('adminOpen'); openBox.innerHTML = '';
     open.forEach(function (r) { openBox.appendChild(adminCard(r)); });
-    /* The heading only earns its place once there is something above it. */
-    $('adminOpenTitle').hidden = open.length === 0 || (builds.length === 0 && designs.length === 0);
-    $('adminEmpty').hidden = open.length > 0 || builds.length > 0 || designs.length > 0;
+    $('adminEmpty').textContent = bKind === 'all' ? 'No requests open. Enjoy it.' : 'None open.';
+    $('adminEmpty').hidden = open.length > 0;
     var doneBox = $('adminDone'); doneBox.innerHTML = '';
     done.forEach(function (r) { doneBox.appendChild(adminCard(r)); });
     $('adminDoneWrap').hidden = done.length === 0;
     $('adminDoneCount').textContent = String(done.length);
-    var waiting = open.filter(function (r) { return r.last_note_by === 'customer'; }).length + builds.length + designs.length;
-    var badge = $('navReqCount'); badge.textContent = String(waiting); badge.hidden = waiting === 0;
-    if (pendingRequest) { var id = pendingRequest; pendingRequest = null; openAdminThread(id); }
+  }
+
+  /* One build's checklist, full screen inside the tab. */
+  function openBuild(id, job) {
+    var p = board.builds.filter(function (x) { return x.id === id; })[0];
+    if (!p) { openSetup('/admin.html?b=' + id + (job ? '&job=' + job : '')); return; }
+    var jobs = window.BUILD_STEPS ? BUILD_STEPS.jobsFor(p.active_plan).map(function (j) { return j.job; }) : ['site'];
+    buildOpen = { id: id, job: jobs.indexOf(job) !== -1 ? job : (openJobsOf(p)[0] || jobs[0]) };
+    $('adminInbox').hidden = true;
+    $('adminThread').hidden = true;
+    $('adminBuild').hidden = false;
+    reqScreen(true);
+    paintBuild();
+    window.scrollTo(0, 0);
+  }
+  $('buildBack').addEventListener('click', function () { loadAdminInbox(); });
+
+  function paintBuild() {
+    if (!buildOpen) return;
+    var p = board.builds.filter(function (x) { return x.id === buildOpen.id; })[0];
+    if (!p) { loadAdminInbox(); return; }
+    $('bTitle').textContent = p.business_name || p.contact_name || 'Customer';
+    $('bWho').textContent = [p.contact_name, 'Joined ' + since(p.created_at)].filter(Boolean).join(' · ');
+    $('bPlan').textContent = PLAN_WORD[p.active_plan] || 'Plan';
+    var body = $('bBody'); body.innerHTML = '';
+
+    var acts = el('div', 'oa-status-actions oa-build-acts');
+    function act(text, href, ext) {
+      var a = el('a', 'oa-chip', text); a.href = href;
+      if (ext) a.addEventListener('click', function (e) { e.preventDefault(); openExternal(href); });
+      acts.appendChild(a);
+    }
+    var digits = String(p.phone || '').replace(/[^\d+]/g, '');
+    if (digits) { act('Call', 'tel:' + digits); act('WhatsApp', 'https://wa.me/' + digits.replace(/^\+/, '').replace(/^0/, '44'), true); }
+    if (p.email) act('Email', 'mailto:' + p.email);
+    if (p.site_url) act('Their site', p.site_url, true);
+    var more = el('button', 'oa-chip', 'Customer page'); more.type = 'button';
+    more.addEventListener('click', function () { openSetup('/admin.html?c=' + p.id); });
+    acts.appendChild(more);
+    body.appendChild(acts);
+    if (lateOf(p)) body.appendChild(el('p', 'oa-brow-late', 'Past the ' + (p.active_plan === 'starter' ? '24 hours' : '14 days')));
+
+    var asked = el('details', 'oa-asked');
+    asked.appendChild(el('summary', null, 'What they asked for'));
+    var any = false;
+    [['Trade', p.business_type],
+     ['Web address', p.requested_domain ? p.requested_domain + (p.domain_owned ? ' (theirs, move it across)' : ' (to register)') : null],
+     ['Wants the site to', p.site_goals], ['Asked for', (p.site_uses || []).join(', ')],
+     ['Menu/services', p.services], ['Already online', p.existing_links]
+    ].forEach(function (pair) { if (pair[1]) { any = true; asked.appendChild(jobLine(pair[0], pair[1])); } });
+    if (p.active_plan === 'max') {
+      var setup = el('button', 'oa-chip oa-chip-dark', 'Their club setup answers'); setup.type = 'button';
+      setup.addEventListener('click', function () { openSetup('/onboarding.html?user=' + encodeURIComponent(p.id)); });
+      asked.appendChild(setup); any = true;
+    }
+    if (!any) asked.appendChild(el('p', 'hint', 'Nothing yet.'));
+    body.appendChild(asked);
+
+    var jobs = window.BUILD_STEPS ? BUILD_STEPS.jobsFor(p.active_plan) : [];
+    var cur = jobs.filter(function (j) { return j.job === buildOpen.job; })[0] || jobs[0];
+    if (!cur) return;
+    if (jobs.length > 1) {
+      var pills = el('div', 'oa-pills oa-build-jobs');
+      jobs.forEach(function (j) {
+        var g = progressOf(p, j.job);
+        var b = el('button', 'oa-pill' + (j.job === cur.job ? ' is-on' : ''), j.title + ' ' + g.done + '/' + g.total);
+        b.type = 'button';
+        b.addEventListener('click', function () { haptic('light'); buildOpen.job = j.job; paintBuild(); });
+        pills.appendChild(b);
+      });
+      body.appendChild(pills);
+    }
+    var g0 = progressOf(p, cur.job);
+    var top = el('div', 'oa-build-progress');
+    var bar = barEl(g0.done, g0.total);
+    var count = el('span', 'oa-brow-count', g0.done + ' of ' + g0.total + ' steps');
+    top.appendChild(bar); top.appendChild(count);
+    body.appendChild(top);
+    var note = el('p', 'note'); note.setAttribute('role', 'status');
+
+    function refresh() {
+      var g = progressOf(p, cur.job);
+      bar.firstChild.style.width = (g.total ? Math.round(g.done / g.total * 100) : 0) + '%';
+      count.textContent = g.done + ' of ' + g.total + ' steps';
+      var on = body.querySelector('.oa-build-jobs .is-on');
+      if (on) on.textContent = cur.title + ' ' + g.done + '/' + g.total;
+    }
+
+    cur.groups.forEach(function (group) {
+      var ticks = (board.ticks[p.id] && board.ticks[p.id][cur.job]) || {};
+      var n = group.steps.filter(function (st) { return ticks[st[0]]; }).length;
+      var det = el('details', 'oa-bgroup' + (n === group.steps.length ? ' is-done' : ''));
+      det.open = n < group.steps.length;
+      var sum = el('summary');
+      sum.appendChild(el('span', 'oa-bgroup-title', group.title));
+      var gc = el('span', 'oa-bgroup-count', n + '/' + group.steps.length);
+      sum.appendChild(gc);
+      det.appendChild(sum);
+      function paintGroup() {
+        var t = (board.ticks[p.id] && board.ticks[p.id][cur.job]) || {};
+        var k = group.steps.filter(function (st) { return t[st[0]]; }).length;
+        gc.textContent = k + '/' + group.steps.length;
+        det.classList.toggle('is-done', k === group.steps.length);
+      }
+      group.steps.forEach(function (st) {
+        var lab = el('label', 'oa-bstep');
+        var box = el('input'); box.type = 'checkbox';
+        box.checked = !!ticks[st[0]];
+        lab.appendChild(box);
+        lab.appendChild(el('span', null, st[1]));
+        box.addEventListener('change', async function () {
+          var on = box.checked;
+          haptic(on ? 'success' : 'light');
+          setTick(p.id, cur.job, st[0], on); paintGroup(); refresh();
+          try {
+            await apiTo('/api/admin', { action: 'tickStep', userId: p.id, job: cur.job, step: st[0], done: on });
+            say(note, '');
+          } catch (err) {
+            setTick(p.id, cur.job, st[0], !on); box.checked = !on; paintGroup(); refresh();
+            say(note, 'Not saved: ' + err.message, 'bad');
+          }
+        });
+        det.appendChild(lab);
+      });
+      body.appendChild(det);
+    });
+    body.appendChild(note);
+
+    if (cur.job === 'site' && p.site_status === 'building') {
+      var finish = el('form', 'oa-job-finish');
+      finish.appendChild(el('h3', 'req-list-title', 'Mark it live'));
+      var url = el('input'); url.type = 'url'; url.inputMode = 'url'; url.autocapitalize = 'none';
+      url.placeholder = 'https://their-site.com';
+      url.setAttribute('aria-label', 'Their site address');
+      url.value = p.site_url || (p.requested_domain ? 'https://' + p.requested_domain : '');
+      var go = el('button', 'btn btn-primary', 'Mark it live'); go.type = 'submit';
+      var fnote = el('p', 'note'); fnote.setAttribute('role', 'status');
+      finish.appendChild(url); finish.appendChild(go); finish.appendChild(fnote);
+      finish.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var link = url.value.trim();
+        if (!/^https:\/\/\S+\.\S{2,}/i.test(link)) { say(fnote, 'That needs to be a full https:// address.', 'bad'); url.focus(); return; }
+        go.disabled = true; say(fnote, 'Marking it live…');
+        try {
+          await apiTo('/api/admin', { action: 'setSite', userId: p.id, siteUrl: link, siteStatus: 'live' });
+          p.site_status = 'live'; p.site_url = link;
+          haptic('success');
+          say(fnote, 'Live. They have been told.', 'ok');
+        } catch (err) { say(fnote, err.message, 'bad'); go.disabled = false; }
+      });
+      body.appendChild(finish);
+    }
   }
 
   function noteBubble(n) {
     var wrap = el('div', 'msg ' + (n.author === 'admin' ? 'from-owner' : 'from-visitor') + (n.private ? ' is-private' : ''));
     wrap.appendChild(el('div', 'msg-who', n.author === 'admin' ? (n.private ? 'Private note' : 'You') : 'Them'));
-    var box = el('div', 'msg-body');
-    String(n.body).split(/\n{2,}/).forEach(function (p) {
-      var para = el('p');
-      p.split('\n').forEach(function (line, i) { if (i) para.appendChild(document.createElement('br')); para.appendChild(document.createTextNode(line)); });
-      box.appendChild(para);
-    });
+    var box = bodyEl(n.body);
     if (n.attachments && n.attachments.length) {
       var files = el('div', 'msg-files');
       n.attachments.forEach(function (f, i) { var a = el('a', 'msg-file', 'Photo ' + (i + 1)); a.href = f.url; a.target = '_blank'; a.rel = 'noopener'; files.appendChild(a); });
@@ -1715,7 +2070,7 @@
   });
 
   function loadRequests() {
-    if (me && me.user && me.user.is_admin) { if (pendingRequest || $('adminThread').hidden) loadAdminInbox(); return; }
+    if (me && me.user && me.user.is_admin) { if (pendingRequest || pendingBuild || ($('adminThread').hidden && $('adminBuild').hidden)) loadAdminInbox(); return; }
     reqScreen(/^#r\//.test(location.hash));
     if (requestsLoaded) {
       if (ONE.refreshRequestBadge) ONE.refreshRequestBadge();
@@ -1725,7 +2080,7 @@
     }
     requestsLoaded = true;
     var base = native ? BASE + '/' : '../';
-    [base + 'requests-badge.js?v=1', base + 'requests.js?v=5'].forEach(function (src) {
+    [base + 'requests-badge.js?v=1', base + 'requests.js?v=7'].forEach(function (src) {
       var s = document.createElement('script');
       s.src = src;
       document.body.appendChild(s);
@@ -1743,7 +2098,7 @@
   function contactsAllowed() { return !!site && site.plan !== 'Starter'; }
 
   function applyChatUi() {
-    if (isStarter()) { $('navChat').hidden = true; return; }
+    if (isStarter() || isOneClient()) { $('navChat').hidden = true; return; }
     var chat = hasModule('chat'), people = contactsAllowed();
     $('navChat').hidden = !(chat || people);
     $('navChat').querySelector('span:not(.nav-count)').textContent = chat ? 'Chat' : 'Contacts';
@@ -2065,7 +2420,7 @@
       if (tab === 'Support' && supportMode === 'chat') loadSupportChat(true);
       if (isStarter()) { loadMessages(tab !== 'Messages'); return; }
       if (hasModule('chat')) loadChats();
-      if (tab === 'Support' && me.user && me.user.is_admin && $('adminThread').hidden) loadAdminInbox();
+      if (tab === 'Support' && me.user && me.user.is_admin && $('adminThread').hidden && $('adminBuild').hidden) loadAdminInbox();
       if (tab === 'Support' && !(me.user && me.user.is_admin) && ONE.refreshRequestBadge) ONE.refreshRequestBadge();
     }
   };

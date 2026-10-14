@@ -1548,6 +1548,14 @@ function openFromHash() {
   /* ?b=<id>&job=app: the same, framed in the One app, which can't send a
      hash through its sign-in handoff. */
   var q = new URLSearchParams(location.search);
+  /* ?c=<id>: their customer page; ?s=customers: every customer. From the
+     One app's Build tab. */
+  if (/^[0-9a-f-]{36}$/i.test(q.get('c') || '') || q.get('s') === 'customers') {
+    history.replaceState(null, '', location.pathname + location.hash);
+    switchSection('customers');
+    selectedCustomerId = q.get('c') || null;
+    render();
+  }
   if (/^[0-9a-f-]{36}$/i.test(q.get('b') || '')) {
     var qJob = /^(site|app|ads)$/.test(q.get('job') || '') ? q.get('job') : null;
     history.replaceState(null, '', location.pathname + location.hash);

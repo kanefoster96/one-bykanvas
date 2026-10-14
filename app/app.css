@@ -433,3 +433,74 @@
 .oa-site-card .oa-chip-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}
 #accountShare{margin-bottom:10px}
 .oa-job-check{display:block;margin:12px 0 4px}
+
+/* ---- the admin's Build tab ---- */
+.oa-bgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 10px}
+.oa-btile{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:14px 15px;border:1.5px solid transparent;border-radius:18px;background:var(--bg-grey);font:inherit;color:var(--ink);text-align:left;cursor:pointer}
+.oa-btile.is-on{border-color:var(--ink);background:#fff}
+.oa-btile-n{font-size:28px;font-weight:600;letter-spacing:-.03em;line-height:1.1}
+.oa-btile-label{font-size:14px;font-weight:600}
+.oa-btile-sub{font-size:12.5px;color:var(--ink-3)}
+.oa-btile.is-hot .oa-btile-n,.oa-btile.is-hot .oa-btile-sub{color:#c4321f}
+.oa-allsites{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;border:1px solid var(--line-soft);border-radius:18px;background:#fff;font:inherit;color:var(--ink);text-align:left;cursor:pointer}
+.oa-allsites-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.oa-allsites-title{font-size:15.5px;font-weight:600}
+.oa-allsites .hint{margin:0;font-size:13px}
+.oa-allsites-chev{font-size:22px;line-height:1;color:var(--ink-3)}
+.oa-blist{display:flex;flex-direction:column}
+.oa-brow{display:flex;flex-direction:column;gap:7px;width:100%;padding:14px 0;border:0;border-bottom:1px solid var(--line-soft);background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.oa-brow:last-child{border-bottom:0}
+.oa-brow:active{opacity:.6}
+.oa-brow-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.oa-brow-name{font-size:16px;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.oa-brow-top .req-state{text-transform:none;letter-spacing:0;font-size:12px;padding:4px 10px}
+.oa-brow-line{display:flex;align-items:center;gap:10px}
+.oa-brow-job{flex:0 0 56px;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.oa-bar{flex:1;min-width:50px;height:7px;border-radius:999px;background:var(--bg-grey);overflow:hidden}
+.oa-bar-fill{display:block;height:100%;border-radius:inherit;background:var(--ink);transition:width .25s}
+.oa-brow-count{flex:0 0 auto;font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.oa-brow-late{font-size:12.5px;font-weight:600;color:#c4321f;margin:0}
+.oa-bkinds{display:inline-flex;margin:0 0 6px}
+
+/* One build's checklist */
+.oa-build-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 18px 28px}
+.oa-build-acts{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.oa-build .oa-brow-late{margin-top:8px}
+.oa-asked{margin:14px 0 6px;padding:12px 14px;border-radius:16px;background:var(--bg-grey)}
+.oa-asked summary{font-size:14px;font-weight:600;cursor:pointer}
+.oa-asked .oa-chip{margin-top:10px}
+.oa-build-jobs{display:inline-flex;margin:14px 0 4px}
+.oa-build-progress{display:flex;align-items:center;gap:10px;margin:14px 0 6px}
+.oa-bgroup{border-top:1px solid var(--line-soft)}
+.oa-bgroup summary{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;list-style:none;font-size:15px;font-weight:600;cursor:pointer}
+.oa-bgroup summary::-webkit-details-marker{display:none}
+.oa-bgroup summary::after{content:"\203A";font-size:20px;line-height:1;color:var(--ink-3);transition:transform .15s}
+.oa-bgroup[open] summary::after{transform:rotate(90deg)}
+.oa-bgroup-title{flex:1;min-width:0}
+.oa-bgroup-count{font-size:12.5px;font-weight:500;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.oa-bgroup.is-done .oa-bgroup-count{color:var(--good)}
+.oa-bstep{display:flex;align-items:flex-start;gap:12px;padding:10px 0;font-size:15px;line-height:1.4;cursor:pointer}
+.oa-bstep input{flex:0 0 auto;width:22px;height:22px;margin:0;accent-color:#1d1d1f}
+.oa-bstep input:checked+span{color:var(--ink-3);text-decoration:line-through}
+.oa-bgroup .oa-bstep:last-child{padding-bottom:16px}
+.oa-build .oa-job-finish{margin-top:22px}
+.oa-build .note:empty{display:none}
+
+/* ---- chats: links, files, sending a file ---- */
+.msg-body .msg-link{color:inherit;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}
+.msg-body a.msg-file{display:inline-flex;align-items:center;margin:4px 0;padding:6px 12px;border-radius:999px;background:rgba(0,0,0,.07);color:inherit;font-weight:600;text-decoration:none}
+.oa-attach{flex:0 0 40px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--ink-2);cursor:pointer}
+.oa-attach svg{width:22px;height:22px}
+.oa-attach:active{background:var(--bg-grey)}
+
+/* ---- One, while their own app is built: one screen, no tabs ---- */
+.oa-solo .oa-nav{display:none}
+.oa-solo .one-app{padding-bottom:env(safe-area-inset-bottom)}
+.oa-solo .oa-screen{bottom:env(safe-area-inset-bottom)}
+.oa-solo .oa-setup-frame{height:calc(100vh - 62px - 60px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+/* In the chat, the setup card makes way so the Requests / Chat switch
+   stays in sight above the thread. */
+#tabSupport.is-thread .oa-setup-card{display:none}
+#bTitle{font-size:20px;letter-spacing:-.02em}
+/* Nothing from the request list peeks out between the switch and the chat. */
+#supportChat:not([hidden]) ~ #viewList,#supportChat:not([hidden]) ~ #viewNew{visibility:hidden}

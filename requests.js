@@ -331,7 +331,16 @@
       var para = el('p');
       p.split('\n').forEach(function (line, i) {
         if (i) para.appendChild(document.createElement('br'));
-        para.appendChild(document.createTextNode(line));
+        /* Links Kane sends (a form to fill in, an account to set up) are
+           tappable; in the One app they open in its own browser. */
+        line.split(/(https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]])/).forEach(function (bit, j) {
+          if (!bit) return;
+          if (j % 2 === 0) { para.appendChild(document.createTextNode(bit)); return; }
+          var a = el('a', 'msg-link', bit.replace(/^https?:\/\//, ''));
+          a.href = bit; a.target = '_blank'; a.rel = 'noopener';
+          a.addEventListener('click', function (e) { if (window.ONE_OPEN) { e.preventDefault(); window.ONE_OPEN(bit); } });
+          para.appendChild(a);
+        });
       });
       box.appendChild(para);
     });

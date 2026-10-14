@@ -14,7 +14,7 @@
 <link rel="icon" href="../assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="../assets/favicon-180.png?v=5">
 <link rel="stylesheet" href="../styles.css?v=145">
-<link rel="stylesheet" href="app.css?v=26">
+<link rel="stylesheet" href="app.css?v=27">
 </head>
 <body class="oa-body">
 
@@ -378,6 +378,10 @@
       <div class="thread oa-thread" id="supportMsgs"></div>
       <div class="oa-reply-wrap">
         <form class="oa-reply" id="supportForm" novalidate>
+          <label class="oa-attach" aria-label="Send a photo or file">
+            <input type="file" id="supportFile" accept="image/png,image/jpeg,image/webp,application/pdf" multiple hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.6-8.6a3.7 3.7 0 0 1 5.2 5.2l-8.6 8.6a1.8 1.8 0 0 1-2.6-2.6l7.9-7.9"/></svg>
+          </label>
           <textarea id="supportBody" rows="1" maxlength="2000" placeholder="Write a message" aria-label="Your message"></textarea>
           <button class="oa-send" id="supportSend" type="submit" aria-label="Send">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
@@ -387,31 +391,49 @@
       </div>
     </section>
 
-    <!-- The admin's side: every customer's requests, through /api/admin. -->
+    <!-- The admin's side, the Build tab: every build with how far along it
+         is, then free designs to make, then customers' requests and
+         changes. All through /api/admin, the same as the admin page. -->
     <section id="adminInbox" hidden>
-      <div class="req-top"><h1 class="req-h1">Requests</h1></div>
-      <p class="hint req-lede">Every job outstanding: sites to build, free designs to make, and what customers have asked for. Ones waiting on you are marked.</p>
-      <!-- The admin page's home, framed: every site in build with its
-           progress, the four job cards and every customer. -->
-      <div class="oa-card oa-setup-card">
-        <p class="oa-card-title">Jobs board</p>
-        <p class="hint">Every build and how far along it is, apps, requests, changes and every customer's site.</p>
-        <div class="oa-status-actions"><button class="oa-chip oa-chip-dark" id="jobsOpen" type="button">Open the jobs board</button></div>
-      </div>
-      <!-- The jobs that are not requests: a site owed to a new customer, a
-           free example asked for. Each card opens to the details and a box
-           to finish it from here. -->
-      <h3 class="req-list-title oa-jobs-title" id="adminBuildsTitle" hidden>Sites to build</h3>
-      <div class="req-cards" id="adminBuilds"></div>
+      <div class="req-top"><h1 class="req-h1">Build</h1></div>
+      <div class="oa-bgrid" id="bCounts"></div>
+      <button class="oa-allsites" id="jobsOpen" type="button">
+        <span class="oa-allsites-main"><span class="oa-allsites-title">All sites</span><span class="hint" id="bAllSub">Every customer, searchable</span></span>
+        <span class="oa-allsites-chev" aria-hidden="true">&rsaquo;</span>
+      </button>
+      <h3 class="req-list-title oa-jobs-title" id="bListTitle">In build</h3>
+      <div class="oa-blist" id="bList"></div>
       <h3 class="req-list-title oa-jobs-title" id="adminDesignsTitle" hidden>Free designs to make</h3>
       <div class="req-cards" id="adminDesigns"></div>
-      <h3 class="req-list-title oa-jobs-title" id="adminOpenTitle" hidden>Customer requests</h3>
+      <h3 class="req-list-title oa-jobs-title" id="adminOpenTitle">Requests and changes</h3>
+      <div class="oa-pills oa-bkinds" id="bKinds">
+        <button class="oa-pill is-on" type="button" data-kind="all">All</button>
+        <button class="oa-pill" type="button" data-kind="edit">Changes</button>
+        <button class="oa-pill" type="button" data-kind="feature">Features</button>
+      </div>
       <div class="req-cards" id="adminOpen"></div>
       <p class="req-empty" id="adminEmpty" hidden>Nothing open. Enjoy it.</p>
       <details class="req-done-wrap" id="adminDoneWrap" hidden>
         <summary>Done <span class="req-done-count" id="adminDoneCount"></span></summary>
         <div class="req-cards" id="adminDone"></div>
       </details>
+    </section>
+    <!-- One build: who, what they asked for, and the checklist for their
+         plan. Ticks save as they are made, the same rows the admin page
+         shows, so the checklist can sit open here while the site is built
+         on the desktop. -->
+    <section class="oa-screen oa-build" id="adminBuild" hidden>
+      <div class="oa-conv-head">
+        <button class="oa-icon-btn oa-back" id="buildBack" type="button" aria-label="All builds">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="oa-conv-who">
+          <h2 id="bTitle"></h2>
+          <p class="hint" id="bWho"></p>
+        </div>
+        <span class="req-state is-building" id="bPlan"></span>
+      </div>
+      <div class="oa-build-body" id="bBody"></div>
     </section>
     <section class="oa-screen" id="adminThread" hidden>
       <div class="oa-conv-head">
@@ -588,6 +610,7 @@
 <script src="../supabase-client.js?v=1"></script>
 <script src="../session.js?v=3"></script>
 <script src="../request-catalogue.js?v=1"></script>
-<script src="app.js?v=34"></script>
+<script src="../build-steps.js?v=1"></script>
+<script src="app.js?v=35"></script>
 </body>
 </html>
