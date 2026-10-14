@@ -368,6 +368,9 @@ module.exports = async function handler(req, res) {
       .select('id, business, email, requested_domain, preview_sent_at, followup1_sent_at, followup2_sent_at')
       .eq('source', 'free-preview')
       .not('preview_sent_at', 'is', null)
+      /* Only leads still inside a window: older ones can never be stamped,
+         and left in they would fill the 200 and crowd out new ones. */
+      .gte('preview_sent_at', new Date(now - F2_UNTIL).toISOString())
       .is('followup2_sent_at', null)
       .order('preview_sent_at', { ascending: true })
       .limit(200);
@@ -379,11 +382,17 @@ module.exports = async function handler(req, res) {
        the first thousand. */
     const paying = new Set();
     try {
-      const { data: paid, error: paidErr } = await db.from('profiles')
-        /* Older customers predate subscribed_at; any status means they paid once. */
-        .select('id').or('subscribed_at.not.is.null,subscription_status.not.is.null');
-      if (paidErr) throw paidErr;
-      const paidIds = new Set((paid || []).map((p) => p.id));
+      /* Older customers predate subscribed_at; any status means they paid
+         once. Paged: Supabase hands back at most 1,000 rows a request. */
+      const paidIds = new Set();
+      for (let from = 0; from < 50000; from += 1000) {
+        const { data: paid, error: paidErr } = await db.from('profiles')
+          .select('id').or('subscribed_at.not.is.null,subscription_status.not.is.null')
+          .order('id').range(from, from + 999);
+        if (paidErr) throw paidErr;
+        (paid || []).forEach((p) => paidIds.add(p.id));
+        if (!paid || paid.length < 1000) break;
+      }
       for (let page = 1; page <= 50; page++) {
         const { data: users, error: listErr } = await db.auth.admin.listUsers({ page, perPage: 1000 });
         if (listErr) throw listErr;
@@ -470,7 +479,8 @@ module.exports = async function handler(req, res) {
     const { data: gone, error: wbErr } = await db.from('profiles')
       .select('id, business_name, canceled_at, winback_sent_at, subscription_status')
       .eq('subscription_status', 'canceled')
-      .not('canceled_at', 'is', null)
+      .gte('canceled_at', new Date(now - WB_UNTIL).toISOString())
+      .lte('canceled_at', new Date(now - WB_AFTER).toISOString())
       .is('winback_sent_at', null)
       .limit(100);
     if (wbErr) console.error('followups: winback query failed:', wbErr.message);
@@ -530,7 +540,8 @@ module.exports = async function handler(req, res) {
       .select('id, business_name, active_plan, subscribed_at, plan_note_sent_at, subscription_status')
       .in('subscription_status', ['active', 'trialing'])
       .in('active_plan', ['starter', 'business'])
-      .not('subscribed_at', 'is', null)
+      .gte('subscribed_at', new Date(now - PN_UNTIL).toISOString())
+      .lte('subscribed_at', new Date(now - PN_AFTER).toISOString())
       .is('plan_note_sent_at', null)
       .limit(100);
     if (pnErr) console.error('followups: plan-note query failed:', pnErr.message);

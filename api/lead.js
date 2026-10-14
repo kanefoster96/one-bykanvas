@@ -113,7 +113,8 @@ module.exports = async function handler(req, res) {
 
     const name = clean(body.name, 200);
     const business = clean(body.business, 200);
-    const email = clean(body.email, 320);
+    /* Lower case, so the daily limit below cannot be dodged with capitals. */
+    const email = clean(body.email, 320).toLowerCase();
     const about = clean(body.about, 4000);
     const planRaw = String(body.plan || '').toLowerCase();
     const plan_interest = PLAN_INTEREST.includes(planRaw) ? planRaw : null;
@@ -236,7 +237,7 @@ module.exports = async function handler(req, res) {
         const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
         const { count } = await db.from('leads')
           .select('id', { count: 'exact', head: true })
-          .eq('email', email)
+          .ilike('email', email.replace(/[%_\\]/g, '\\$&'))
           .gte('created_at', dayAgo);
         if (Number.isFinite(count) && count > 3) {
           allowed = false;

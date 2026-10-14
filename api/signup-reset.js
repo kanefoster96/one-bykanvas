@@ -7,14 +7,16 @@
  * would be stuck between an account they cannot use and a signup that will
  * not take. The wizard calls this when it hits that wall.
  *
- * Narrow on purpose: the account must be unconfirmed, older than the half
- * hour the pending-payment path allows (so nobody can wipe a signup that is
+ * Narrow on purpose: the account must be unconfirmed, older than the day
+ * the pending-payment path allows (so nobody can wipe a signup that is
  * in progress), and never subscribed. Anything else is left alone.
  */
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv } = require('./_env.js');
 
-const STALE_AFTER_MS = 30 * 60 * 1000;
+/* The same day checkout gives an unconfirmed signup to pay (checkout.js),
+   so nothing here can wipe a signup that could still be paid for. */
+const STALE_AFTER_MS = 24 * 60 * 60 * 1000;
 const LIVE = ['active', 'trialing', 'past_due', 'unpaid'];
 
 module.exports = async function handler(req, res) {
@@ -48,16 +50,19 @@ module.exports = async function handler(req, res) {
       found = users.find((u) => String(u.email || '').toLowerCase() === email) || null;
       if (users.length < 1000) break;
     }
-    if (!found) return res.status(200).json({ ok: false, reason: 'none' });
-    if (found.email_confirmed_at) return res.status(200).json({ ok: false, reason: 'confirmed' });
+    /* Every no is the same no: this is open to anyone, and a reason would
+       tell them whether an address has an account, or pays. */
+    const no = () => res.status(200).json({ ok: false });
+    if (!found) return no();
+    if (found.email_confirmed_at) return no();
 
     const ageMs = Date.now() - new Date(found.created_at).getTime();
-    if (!(ageMs >= STALE_AFTER_MS)) return res.status(200).json({ ok: false, reason: 'recent' });
+    if (!(ageMs >= STALE_AFTER_MS)) return no();
 
     const { data: profile } = await admin
       .from('profiles').select('subscription_status').eq('id', found.id).maybeSingle();
     if (profile && LIVE.includes(profile.subscription_status)) {
-      return res.status(200).json({ ok: false, reason: 'subscribed' });
+      return no();
     }
 
     const { error: delError } = await admin.auth.admin.deleteUser(found.id);

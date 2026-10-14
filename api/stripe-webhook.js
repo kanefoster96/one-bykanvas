@@ -172,6 +172,17 @@ module.exports = async function handler(req, res) {
     const { data: before } = await admin
       .from('profiles').select('subscription_status, active_plan, points_reset_at, subscribed_at')
       .eq('id', id).maybeSingle();
+    /* No profile and no account: the customer deleted their account from the
+       app, which cancels the plan first, so this is that cancellation
+       arriving afterwards. Writing it would fail on the missing user and
+       have Stripe retry for days, so it is done with here. */
+    if (!before) {
+      const { data: who } = await admin.auth.admin.getUserById(id).catch(() => ({ data: null }));
+      if (!who || !who.user) {
+        console.log('webhook: %s has no account any more, %s ignored', id, sub.status);
+        return;
+      }
+    }
     const wasLive = Boolean(before && isLive(before.subscription_status));
     /* Separately: had the cancellation already been sent? Checked against
        "was it already canceled", not "was it already live" - by the time
@@ -228,8 +239,10 @@ module.exports = async function handler(req, res) {
     }
 
     /* The first time a plan is live, remember when: the month-in email
-       about the plan above theirs counts from here (followups.js). */
-    if (isLive(sub.status) && !(before && before.subscribed_at)) {
+       about the plan above theirs counts from here (followups.js). Only on
+       the event that makes it live: customers from before this column was
+       added have it empty, and a renewal must not make them look new. */
+    if (isLive(sub.status) && !wasLive && !(before && before.subscribed_at)) {
       patch.subscribed_at = new Date().toISOString();
     }
 

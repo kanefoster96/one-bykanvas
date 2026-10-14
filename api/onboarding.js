@@ -210,7 +210,7 @@ module.exports = async function handler(req, res) {
       return res.status(401).json({ error: 'Your session has expired.' });
     }
     const user = userData.user;
-    const isAdmin = !!user.email && adminEmails().includes(String(user.email).toLowerCase());
+    const isAdmin = !!user.email && !!user.email_confirmed_at && adminEmails().includes(String(user.email).toLowerCase());
 
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false }
