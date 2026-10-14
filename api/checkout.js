@@ -71,7 +71,7 @@ module.exports = async function handler(req, res) {
        * That id is the proof. It is a random UUID that only the browser which
        * created the account ever sees, and this path is narrowed so it cannot be
        * used for anything else: the address must match, the account must still
-       * be unconfirmed, it must have been created in the last half hour, and it
+       * be unconfirmed, it must have been created in the last day, and it
        * must not already be subscribed. Anyone with a confirmed account has a
        * session and comes through the branch above.
        */
@@ -93,9 +93,11 @@ module.exports = async function handler(req, res) {
         // Confirmed accounts have a session; this path is not for them.
         return res.status(401).json({ error: 'Log in and try again.' });
       }
+      /* A day covers someone who signs up, gets called away and comes back to
+         the same tab. Past that the confirmation link is the way in. */
       const ageMs = Date.now() - new Date(candidate.created_at).getTime();
-      if (!(ageMs >= 0 && ageMs < 30 * 60 * 1000)) {
-        return res.status(401).json({ error: 'That took too long. Log in and try again.' });
+      if (!(ageMs >= 0 && ageMs < 24 * 60 * 60 * 1000)) {
+        return res.status(401).json({ error: 'Confirm your email with the link we sent you, then log in to pay.' });
       }
       const { data: already } = await admin
         .from('profiles').select('subscription_status').eq('id', pendingId).maybeSingle();
@@ -118,6 +120,18 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'There is already a plan on this account. You can change plan from your account page.' });
     }
 
+    /* Without a session the wizard could not save its answers (RLS), so they
+       come with the request and are written here. Otherwise they would sit in
+       that one browser until the customer confirms their email there, and are
+       lost if they confirm on their phone instead. */
+    const answers = cleanAnswers(body.answers);
+    if (!token && answers) {
+      answers.id = user.id;
+      answers.onboarded_at = new Date().toISOString();
+      const { error: saveError } = await admin.from('profiles').upsert(answers, { onConflict: 'id' });
+      if (saveError) console.error('checkout: saving answers failed:', saveError.message);
+    }
+
     const stripe = new Stripe(STRIPE_SECRET_KEY);
 
     /* ourSiteUrl() falls back to the custom domain, so only reach for the
@@ -138,3 +152,27 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Could not start checkout. Please try again.' });
   }
 };
+
+/* The wizard's answers (get-started.js buildRow), kept to the fields it owns
+   and trimmed, so this cannot be used to write anything else on a profile. */
+const MAX_MODELS = ['trades', 'clubs', 'salon', 'other'];
+function cleanAnswers(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const text = (v, n) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, n) : null);
+  const row = {
+    business_name: text(raw.business_name, 200),
+    contact_name: text(raw.contact_name, 200),
+    business_type: text(raw.business_type, 200),
+    requested_domain: text(raw.requested_domain, 200),
+    domain_owned: Boolean(raw.domain_owned),
+    site_goals: text(raw.site_goals, 4000)
+  };
+  if (Array.isArray(raw.site_uses)) {
+    const uses = raw.site_uses.map((u) => text(u, 200)).filter(Boolean).slice(0, 3);
+    row.site_uses = uses.length ? uses : null;
+  }
+  const plan = String(raw.selected_plan || '').toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(PLANS, plan) && plan !== 'pro') row.selected_plan = plan;
+  if (MAX_MODELS.includes(raw.max_model)) row.max_model = raw.max_model;
+  return row;
+}
