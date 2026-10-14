@@ -854,4 +854,4 @@ for (const m of MAX) {
 
 /* ------------------------------------------------------------- examples */
 /* /examples and one made-up business per trade: examples.js. */
-require('./examples.js').build(OUT, { cssV: 139, scriptV: 42 });
+require('./examples.js').build(OUT, { cssV: CSS_V, scriptV: 42 });

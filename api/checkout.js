@@ -101,7 +101,7 @@ module.exports = async function handler(req, res) {
       }
       const { data: already } = await admin
         .from('profiles').select('subscription_status').eq('id', pendingId).maybeSingle();
-      if (already && (already.subscription_status === 'active' || already.subscription_status === 'trialing')) {
+      if (already && LIVE_STATUSES.includes(already.subscription_status)) {
         return res.status(400).json({ error: 'There is already a plan on this account.' });
       }
       user = candidate;
@@ -116,7 +116,7 @@ module.exports = async function handler(req, res) {
        second checkout on an already-subscribed account would create a second
        subscription billing alongside the first. Plan changes go through
        change-plan.js, which swaps the price on the existing subscription. */
-    if (profile && (profile.subscription_status === 'active' || profile.subscription_status === 'trialing')) {
+    if (profile && LIVE_STATUSES.includes(profile.subscription_status)) {
       return res.status(400).json({ error: 'There is already a plan on this account. You can change plan from your account page.' });
     }
 
@@ -156,6 +156,9 @@ module.exports = async function handler(req, res) {
 /* The wizard's answers (get-started.js buildRow), kept to the fields it owns
    and trimmed, so this cannot be used to write anything else on a profile. */
 const MAX_MODELS = ['trades', 'clubs', 'salon', 'other'];
+/* A subscription in any of these still bills: a second checkout would run a
+   second plan alongside it. past_due is fixed from the card, not a new plan. */
+const LIVE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
 function cleanAnswers(raw) {
   if (!raw || typeof raw !== 'object') return null;
   const text = (v, n) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, n) : null);
