@@ -42,9 +42,13 @@ features (requests.js, `starterInApp`).
 
 ## Every submission
 
-1. **Demo account works and is full.** Business plan, with visits, chats (one
-   waiting for a reply), payments, contacts and a Support thread. Sign in on a
-   phone first. If a reviewer deleted it, rebuild it.
+1. **Demo account works and is full.** `appreview@kanvas.one` (password with
+   Kane, never in the repo): "Little Movers Kids Club", a Business customer
+   with 60 days of visits, chats (one waiting for a reply), payments and a
+   refund, enquiries, contacts and two Support threads. Its dates are relative
+   to when it was built, so rebuild it shortly before each submission, and
+   whenever a reviewer has deleted it: run `scripts/app-review-demo.sql` in the
+   Supabase SQL editor with the password filled in. Sign in on a phone first.
 2. **App Store Connect:** privacy policy URL `https://kanvas.one/privacy`,
    support URL `https://kanvas.one/contact`, App Privacy answers below.
 3. **Screenshots** show only what the demo account can reach.
@@ -57,7 +61,7 @@ features (requests.js, `starterInApp`).
 > are no purchases, prices or sign-up in the app (3.1.3(f)).
 >
 > Demo login (a Business plan customer with sample data):
-> Email: ______  Password: ______
+> Email: appreview@kanvas.one  Password: (from Kane)
 >
 > Things to try:
 > - Analytics: visits to the business's website over the last 30 days.

@@ -39,7 +39,7 @@ begin
     now() - interval '62 days', now(), '', '', '', '', '', '', '', '', false, false);
   insert into auth.identities (id, provider_id, user_id, identity_data, provider, created_at, updated_at, last_sign_in_at)
   values (gen_random_uuid(), demo_id::text, demo_id,
-    jsonb_build_object('sub', demo_id::text, 'email', 'appreview@kanvas.one', 'email_verified', true),
+    jsonb_build_object('sub', demo_id::text, 'email', 'appreview@kanvas.one', 'email_verified', true, 'phone_verified', false),
     'email', now() - interval '62 days', now(), now() - interval '62 days');
 
   -- The profile (made by the signup trigger): a live Business customer.
