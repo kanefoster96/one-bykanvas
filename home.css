@@ -1059,6 +1059,9 @@ body.home .ap-row::-webkit-scrollbar{display:none}
 body.home .ap-fig{flex:0 0 min(74vw,260px);scroll-snap-align:center}
 body.home .ap-hp{width:100%}
 body.home .ap-fig figcaption{margin-top:18px}
+/* On a phone the first and last cards can reach the middle too, rather
+   than sitting against the screen's edge. */
+@media (max-width:860px){body.home .ap-row{margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);padding-left:calc((100vw - min(74vw,260px)) / 2);padding-right:calc((100vw - min(74vw,260px)) / 2)}}
 
 /* ---------- Conversion pass ---------- */
 .mh-proofline{margin:24px 0 0;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
