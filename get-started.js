@@ -302,8 +302,13 @@
          answers the same way for both so it cannot be used to find out who is
          registered. Signing in settles which it is. Without this, someone who
          already has an account is told to confirm an email that never arrives,
-         and never sees the payment button. */
-      if (!answers.hasSession) {
+         and never sees the payment button.
+         A brand-new account comes back with an identity; the stand-in for an
+         address that is already registered comes back with none. A new one
+         cannot sign in until its link is clicked, so it skips straight on
+         with its pendingUserId; checking it would read as a stale account. */
+      var isNew = Boolean(res.data.user && res.data.user.identities && res.data.user.identities.length);
+      if (!answers.hasSession && !isNew) {
         var back = await ONE.db.auth.signInWithPassword({ email: mail, password: pass });
         if (back.data && back.data.session) {
           answers.hasSession = true;

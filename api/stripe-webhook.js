@@ -170,7 +170,7 @@ module.exports = async function handler(req, res) {
        signup, and an updated event for every later change, so without this the
        same customer would be announced several times over. */
     const { data: before } = await admin
-      .from('profiles').select('subscription_status, active_plan, points_reset_at')
+      .from('profiles').select('subscription_status, active_plan, points_reset_at, subscribed_at')
       .eq('id', id).maybeSingle();
     const wasLive = Boolean(before && isLive(before.subscription_status));
     /* Separately: had the cancellation already been sent? Checked against
@@ -616,7 +616,7 @@ module.exports = async function handler(req, res) {
   /* The partner ledger. Every paid invoice from a partner-attributed
      customer records the partner's share: 25% of the PLAN price - the
      invoice subtotal, before the customer's own discount - so it is
-     £12.25 a payment on Business whatever they paid; or a flat rate_pence
+     £12.50 a payment on Business whatever they paid; or a flat rate_pence
      for a partner promised one. Capped at the customer's first 12
      payments: the deal is a year, not forever. unique(invoice_id) makes a
      retried webhook a no-op. */

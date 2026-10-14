@@ -166,8 +166,12 @@ function trackPurchase(row) {
   try { pending = sessionStorage.getItem('one.purchase-pending'); } catch (e) {}
   if (!pending || !row || !row.active_plan || !row.stripe_subscription_id) return;
   try { sessionStorage.removeItem('one.purchase-pending'); } catch (e) {}
+  /* Annual (period ending well over a month out) sends the year's price,
+     as the webhook does. */
+  var yearly = row.current_period_end && (new Date(row.current_period_end).getTime() - Date.now()) > 40 * 864e5;
+  var yearGBP = { starter: 99, business: 500 }[row.active_plan];
   if (window.oneTrack) window.oneTrack('Purchase', {
-    currency: 'GBP', value: MONTHLY_GBP[row.active_plan] || 0, content_name: row.active_plan
+    currency: 'GBP', value: (yearly && yearGBP) || MONTHLY_GBP[row.active_plan] || 0, content_name: row.active_plan
   }, row.stripe_subscription_id);
 }
 
@@ -749,6 +753,7 @@ var STATUS_TEXT = {
 };
 
 var PLAN_LABEL = { starter: 'Starter — £9.99/month', business: 'Business — £50/month', pro: 'Pro — £120/month', max: 'One — £250/month' };
+var YEAR_LABEL = { starter: 'Starter — £99/year', business: 'Business — £500/year' };
 
 function showBilling(row) {
   var badge = document.getElementById('billBadge');
@@ -827,7 +832,12 @@ function showBilling(row) {
   }
 
   var info = STATUS_TEXT[status] || [status, ''];
-  planEl.textContent = PLAN_LABEL[row.selected_plan] || 'Your plan';
+  /* The plan they are on now: during a scheduled downgrade selected_plan
+     already names the next one. A period ending more than ~40 days out is
+     an annual plan (the profile does not store the interval). */
+  var onPlan = entitledPlan(row) || row.selected_plan;
+  var yearly = row.current_period_end && (new Date(row.current_period_end).getTime() - Date.now()) > 40 * 864e5;
+  planEl.textContent = (yearly && YEAR_LABEL[onPlan]) || PLAN_LABEL[onPlan] || 'Your plan';
   stateEl.textContent = info[1];
   badge.hidden = false;
   badge.textContent = info[0];
