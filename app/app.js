@@ -1719,7 +1719,8 @@
   }
   function lateOf(p) {
     var h = (Date.now() - new Date(p.created_at).getTime()) / 36e5;
-    return p.site_status === 'building' && h >= (p.active_plan === 'starter' ? 24 : 14 * 24);
+    /* Starter 24 hours, Business 14 days, One 8 weeks to its ads (admin.js). */
+    return p.site_status === 'building' && h >= ({ starter: 24, business: 14 * 24, max: 56 * 24 }[p.active_plan] || 14 * 24);
   }
   var JOB_WORD = { site: 'Website', app: 'App', ads: 'Ads' };
   function barEl(done, total) {

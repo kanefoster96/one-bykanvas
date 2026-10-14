@@ -245,7 +245,7 @@ function growthOne(lead, site) {
         perks: [
           '<strong>Nobody chased anyone.</strong> Trials booked themselves, reminders went out, and the follow-up with the link to join did the rest.',
           '<strong>Those 4 members pay £50 every month</strong>: £2,400 a year from £103 of ads, still paying back long after the ads stopped.',
-          '<strong>Months 2 to 4 of your ads are on us</strong>, so the first trials cost you nothing. Month 1 is spent building it all.'
+          '<strong>Your first 3 months of ads are on us</strong>, so the first trials cost you nothing. We build it all first.'
         ],
         ctaText: 'Start One — £250 a month',
         ctaHref: start,
@@ -255,7 +255,7 @@ function growthOne(lead, site) {
       }),
       text: `When we put together the plan for ${lead.business}, the numbers came from our own dance and cheer academy.\n\n`
         + 'First three weeks of ads: £103 spent, 21 trial bookings, 4 new members, £2,400 a year in new fees.\n\n'
-        + 'Months 2 to 4 of your ads are on us.\n\n'
+        + 'Your first 3 months of ads are on us.\n\n'
         + 'These are our own academy’s numbers, not a promise: what ads bring depends on your type of club and your local area.\n\n'
         + `Start One: ${start}\n\nRather talk first? Just reply.\n`
     };
@@ -297,7 +297,7 @@ function growthTwo(lead, site) {
         preheader: 'What it really costs, and what happens if it doesn’t work.',
         heading: 'The two questions everyone asks',
         lines: [
-          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;250 a month for everything: website, member app, trial bookings, memberships, payments and the ads run for you. Month 1 we build it, and months 2 to 4 of ads are on us. From month 5, we keep paying for your ads, up to &pound;100 a month, and a new member on a membership or subscription pays their first subscription payment to us (invoices and one-off fees: 20% of the first payment), or you fund your own ads. Switch any time, straight away.',
+          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;250 a month for everything: website, member app, trial bookings, memberships, payments and the ads run for you. We build it first, then your first 3 months of ads are on us. After that, we keep paying for your ads, up to &pound;100 a month, and a new member on a membership or subscription pays their first subscription payment to us (invoices and one-off fees: 20% of the first payment), or you fund your own ads. Switch any time, straight away.',
           '<strong>&ldquo;What if it doesn&rsquo;t work?&rdquo;</strong> There&rsquo;s no contract and no minimum. Cancel any time from your account.',
           'And when your classes are full, we pause the ads. You just pay the &pound;250.',
           'This is the last email about your plan. If now isn&rsquo;t the time, no hard feelings.'
@@ -308,7 +308,7 @@ function growthTwo(lead, site) {
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
         footerLinks: standardFooter(site)
       }),
-      text: '"What does it really cost?" £250 a month for everything. Month 1 we build it, months 2 to 4 of ads are on us. From month 5: we keep paying for your ads, up to £100 a month, and a new member on a membership or subscription pays their first subscription payment to us (invoices and one-off fees: 20% of the first payment), or you fund your own. Switch any time, straight away.\n\n'
+      text: '"What does it really cost?" £250 a month for everything. We build it first, then your first 3 months of ads are on us. After that: we keep paying for your ads, up to £100 a month, and a new member on a membership or subscription pays their first subscription payment to us (invoices and one-off fees: 20% of the first payment), or you fund your own. Switch any time, straight away.\n\n'
         + '"What if it doesn’t work?" No contract, no minimum. Cancel any time.\n\n'
         + 'When you’re full, we pause the ads.\n\n'
         + `Start One: ${start}\n\nThis is the last email about your plan.\n`

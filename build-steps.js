@@ -126,10 +126,11 @@
     ] },
     { title: 'Run', steps: [
       ['adverts', 'Adverts made'],
-      ['live', 'Campaign live (month 2)'],
-      ['month_2', 'Month 2 checked: spend and trials'],
-      ['month_3', 'Month 3 checked'],
-      ['month_4', 'Month 4 checked: 10-Trial Promise met?']
+      ['live', 'Campaign live (after site and app)'],
+      /* Keys kept from when ads ran in months 2 to 4 of the plan. */
+      ['month_2', 'Ads month 1 checked: spend and trials'],
+      ['month_3', 'Ads month 2 checked'],
+      ['month_4', 'Ads month 3 checked: 10-Trial Promise met?']
     ] }
   ];
 

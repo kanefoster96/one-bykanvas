@@ -287,13 +287,17 @@ function chipBox(p) {
 
 /* "3h ago", "2d ago" - for the build queue, where the hours are the point. */
 /* Late means past the plan's promise: Starter live in 24 hours, Business
-   and One ready within 14 days. */
+   ready within 14 days, One's ads running within 8 weeks. */
+var PROMISE_HOURS = { starter: 24, business: 14 * 24, max: 56 * 24 };
+function promiseText(plan) {
+  return plan === 'starter' ? ' · past the 24 hours' : plan === 'max' ? ' · past the 8 weeks' : ' · past the 14 days';
+}
 function hoursAgo(iso, plan) {
   var d = new Date(iso);
   if (isNaN(d)) return { text: '', over: false };
   var h = Math.max(0, Math.floor((Date.now() - d.getTime()) / 36e5));
   var text = h < 1 ? 'Joined under an hour ago' : h < 48 ? 'Joined ' + h + 'h ago' : 'Joined ' + Math.floor(h / 24) + 'd ago';
-  return { text: text, over: h >= (plan === 'starter' ? 24 : 14 * 24) };
+  return { text: text, over: h >= (PROMISE_HOURS[plan] || 14 * 24) };
 }
 
 function lifetimeSpent(userId) {
@@ -564,7 +568,7 @@ function renderHome() {
     });
     if (openJobs(p)[0] === 'site') {
       var age = hoursAgo(p.created_at, p.active_plan);
-      if (age.over) row.appendChild(el('span', 'k1-build-late', age.text + (p.active_plan === 'starter' ? ' · past the 24 hours' : ' · past the 14 days')));
+      if (age.over) row.appendChild(el('span', 'k1-build-late', age.text + promiseText(p.active_plan)));
     }
     row.addEventListener('click', function () { openBuild(p.id, openJobs(p)[0]); });
     box.appendChild(row);
@@ -782,7 +786,7 @@ function buildContactCard(p) {
   if (p.site_status === 'building') {
     var age = hoursAgo(p.created_at, p.active_plan);
     if (age.over) card.appendChild(el('p', 'cust-points is-over',
-      age.text + (p.active_plan === 'starter' ? ' · past the 24 hours' : ' · past the 14 days')));
+      age.text + promiseText(p.active_plan)));
   }
 
   var acts = el('div', 'k1-actions');
@@ -1139,7 +1143,7 @@ function newBuildCard(p) {
   var age = hoursAgo(p.created_at, p.active_plan);
   if (age.text) {
     card.appendChild(el('p', 'cust-points' + (age.over ? ' is-over' : ''),
-      age.text + (age.over ? (p.active_plan === 'starter' ? ' · past the 24 hours' : ' · past the 14 days') : '')));
+      age.text + (age.over ? promiseText(p.active_plan) : '')));
   }
   var reachB = contactLine(p);
   if (reachB) card.appendChild(reachB);

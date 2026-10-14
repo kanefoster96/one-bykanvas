@@ -18,7 +18,7 @@ const OUT = path.join(__dirname, '..');
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
 const CSS_V = '145';
-const SCRIPT_V = 40;
+const SCRIPT_V = 41;
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -171,7 +171,7 @@ const FOOT = `<footer class="foot">
 <script src="script.js?v=${SCRIPT_V}"></script>
 <script src="/onemark.js?v=2" defer></script>
 <script src="reviews.js?v=5"></script>
-<script src="chat.js?v=13" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
+<script src="chat.js?v=14" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
@@ -339,7 +339,7 @@ ${oneFits(b) ? `    <article class="plan">
         <li class="tick-hero">Your Google ranking worked on every month</li>
         <li class="tick-hero">Bookings, reminders, follow-ups and reviews, automatic</li>
       </ul>
-      <p class="plan-up">Month 1 we build it, months 2 to 4 of ads are on us. Cancel any time.</p>
+      <p class="plan-up">We build it first, then your first 3 months of ads are on us. Cancel any time.</p>
       <a class="btn btn-ghost full" href="${maxHref(b.slug)}">${maxLabel(b.slug)} &rsaquo;</a>
     </article>
 ` : ''}  </div>
@@ -432,7 +432,7 @@ function planCard(f) {
         <li>Your website, designed and built for you, ready in 7 to 14 days</li>
         <li>Bookings, payments and live chat. Changes within 48 hours</li>
         <li class="tick-hero">Your Facebook and Instagram ads, set up, run and tracked by us</li>
-        <li class="tick-hero">Your first ad live in month 2, once your site is tested</li>
+        <li class="tick-hero">Your first ad live once your site and app are tested</li>
         <li class="tick-hero">Your Google ranking worked on every month</li>
         <li class="tick-hero">Reviews, referrals and follow-up emails, automatic</li>
         <li class="tick-hero">Business email at your own address</li>
@@ -667,7 +667,7 @@ ${JSON.stringify({
   areaServed: 'GB',
   url: url,
   description: m.desc,
-  offers: { '@type': 'Offer', price: '250', priceCurrency: 'GBP', description: 'Per month. Month 1 the build, months 2 to 4 of ad spend included. Cancel any time.' }
+  offers: { '@type': 'Offer', price: '250', priceCurrency: 'GBP', description: 'Per month. We build it first, then the first 3 months of ad spend are included. Cancel any time.' }
 })}
 </script>
 <script type="application/ld+json">
@@ -854,4 +854,4 @@ for (const m of MAX) {
 
 /* ------------------------------------------------------------- examples */
 /* /examples and one made-up business per trade: examples.js. */
-require('./examples.js').build(OUT, { cssV: 139, scriptV: 36 });
+require('./examples.js').build(OUT, { cssV: 139, scriptV: 41 });
