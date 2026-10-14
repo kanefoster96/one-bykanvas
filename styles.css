@@ -1897,7 +1897,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 .cust-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
 .cust-names{min-width:0}
 .cust-names h3{font-size:17px;font-weight:600;letter-spacing:-.02em;overflow-wrap:anywhere}
-.cust-sub{margin:4px 0 0;font-size:13.5px;color:var(--ink-3)}
+.cust-sub{margin:4px 0 0;font-size:13.5px;color:var(--ink-3);overflow-wrap:anywhere}
 .cust-points{margin:10px 0 0;font-size:13.5px;color:var(--ink-2)}
 .cust-reach{margin:8px 0 0;font-size:13.5px;color:var(--ink-3)}
 .cust-reach a{color:var(--ink);font-weight:500}

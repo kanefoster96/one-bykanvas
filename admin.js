@@ -241,7 +241,7 @@ function openCountFor(userId) {
 }
 
 /* How each plan's requests are treated - the thing the plan actually buys. */
-var PLAN_QUEUE = { starter: 'monthly, by email', business: 'in turn', pro: 'priority', max: 'top priority' };
+var PLAN_QUEUE = { starter: 'in turn, after Business', business: 'in turn', pro: 'priority', max: 'top priority' };
 
 /* Queue rank for sorting: lower goes first. */
 function planRankFor(userId) {
@@ -1850,7 +1850,7 @@ function featureEditor(p) {
     wrap.appendChild(list);
   }
 
-  wrap.appendChild(el('p', 'cust-sub', 'Write up what was improved this month. Logging it emails the customer the note as their monthly report and drops it in their notifications.'));
+  wrap.appendChild(el('p', 'cust-sub', 'Something new on their site. Adding it emails them that it is live and drops it in their notifications.'));
 
   var form = el('div', 'feature-add');
   var input = el('input', 'admin-input');
