@@ -59,6 +59,12 @@ var SECTIONS = [
 var activeSection = null; // null = the menu itself
 var selectedCustomerId = null;
 var selectedContactId = null;
+/* The build checklist: ticks by customer, then job, then step key. The
+   steps themselves are in build-steps.js. */
+var buildTicks = {};
+var buildUserId = null;   // a customer's build page is open
+var buildJob = null;      // which of their checklists: site, app or ads
+var buildList = null;     // or a list of builds: 'site' or 'app'
 
 if (!ONE.ready) {
   loading.innerHTML = '<p>Accounts are not connected yet.</p>';
@@ -90,9 +96,13 @@ async function api(payload) {
 
 async function load() {
   try {
-    var both = await Promise.all([api({ action: 'list' }), api({ action: 'requestsInbox' })]);
+    /* The checklist ticks fail quietly: the page is still useful at 0 of 30. */
+    var both = await Promise.all([api({ action: 'list' }), api({ action: 'requestsInbox' }),
+      api({ action: 'buildSteps' }).catch(function () { return { steps: [] }; })]);
     state = both[0];
     inbox = both[1].requests || [];
+    buildTicks = {};
+    (both[2].steps || []).forEach(function (t) { setTick(t.user_id, t.job, t.step, true); });
 
     /* Three numbers, one glance: which stage of the funnel leaks. Fails
        quietly - the dashboard matters more than the strip. */
@@ -352,7 +362,12 @@ function switchSection(key) {
   if (/^#r\//.test(location.hash)) history.replaceState(null, '', location.pathname);
   selectedCustomerId = null;
   selectedContactId = null;
+  buildUserId = null;
+  buildJob = null;
+  buildList = null;
+  if (/^#b\//.test(location.hash)) history.replaceState(null, '', location.pathname);
   render();
+  if (key === null) window.scrollTo(0, 0);
   /* The audience counts are asked for when the section opens rather than at
      boot: they are a server round trip nobody needs until they are looking. */
   if (key === 'marketing') loadAudiences();
@@ -389,7 +404,8 @@ var SECTION_IDS = {
   requests: 'sectionRequests', enquiries: 'sectionEnquiries',
   customers: 'sectionCustomers', contacts: 'sectionContacts',
   plans: 'sectionPlans', payments: 'sectionPayments', partners: 'sectionPartners',
-  templates: 'sectionTemplates', marketing: 'sectionMarketing'
+  templates: 'sectionTemplates', marketing: 'sectionMarketing',
+  build: 'sectionBuild'
 };
 
 function render() {
@@ -406,6 +422,8 @@ function render() {
   var onMenu = activeSection === null;
   var nav = document.getElementById('adminNav');
   nav.hidden = !onMenu;
+  document.getElementById('adminHome').hidden = !onMenu;
+  if (onMenu) renderHome();
   if (onMenu) renderMenu({
     requests: inbox.filter(waitingOnMe).length + unbuilt.length,
     customers: pendingSeo.length
@@ -430,6 +448,411 @@ function render() {
   else if (activeSection === 'payments') renderPaymentsSection();
   else if (activeSection === 'partners') renderPartnersSection();
   else if (activeSection === 'templates') renderTemplatesSection();
+  else if (activeSection === 'build') renderBuildSection();
+}
+
+/* ---------------- the home: every job at a glance ---------------- */
+/*
+ * Above the menu: All sites (every customer, searchable, in Customers), then
+ * every build in progress with how far along it is, then four cards for the
+ * work that is owed, and a line of what has come in. Each opens the place
+ * to do that work.
+ */
+
+function setTick(userId, job, step, on) {
+  var u = buildTicks[userId] || (buildTicks[userId] = {});
+  var j = u[job] || (u[job] = {});
+  if (on) j[step] = true; else delete j[step];
+}
+
+function profileById(id) { return state.profiles.filter(function (x) { return x.id === id; })[0] || null; }
+
+/* Steps done out of the steps on the list now, so a step taken off the list
+   later can never push a build past 100%. */
+function jobProgress(p, job) {
+  var keys = window.BUILD_STEPS ? BUILD_STEPS.keys(planOf(p), job) : [];
+  var ticks = (buildTicks[p.id] && buildTicks[p.id][job]) || {};
+  var done = keys.filter(function (k) { return ticks[k]; }).length;
+  return { done: done, total: keys.length };
+}
+
+/* The jobs still open for a customer, in checklist order: the site until
+   it is marked live, and on One the app until every step is ticked. Ads run
+   for months and live on the build page, not here. */
+function openJobs(p) {
+  if (!p.active_plan) return [];
+  var out = [];
+  if (p.site_status === 'building') out.push('site');
+  if (p.active_plan === 'max') {
+    var app = jobProgress(p, 'app');
+    if (app.total && app.done < app.total) out.push('app');
+  }
+  return out;
+}
+
+function inBuild() {
+  return state.profiles.filter(function (p) { return openJobs(p).length; })
+    .slice().sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+}
+
+var JOB_WORD = { site: 'Website', app: 'App', ads: 'Ads' };
+
+function buildSummary(p) {
+  var jobs = openJobs(p);
+  if (!jobs.length) return 'nothing open';
+  return jobs.map(function (j) { var g = jobProgress(p, j); return JOB_WORD[j] + ' ' + g.done + '/' + g.total; }).join(' · ');
+}
+
+function bar(done, total) {
+  var track = el('span', 'k1-bar');
+  var fill = el('span', 'k1-bar-fill');
+  fill.style.width = (total ? Math.round(done / total * 100) : 0) + '%';
+  track.appendChild(fill);
+  track.setAttribute('role', 'progressbar');
+  track.setAttribute('aria-valuemin', '0');
+  track.setAttribute('aria-valuemax', String(total));
+  track.setAttribute('aria-valuenow', String(done));
+  return track;
+}
+
+/* A tappable card: a button, so it works with the keyboard and in the app. */
+function homeCard(cls, onOpen) {
+  var b = el('button', 'k1-card ' + (cls || ''));
+  b.type = 'button';
+  b.addEventListener('click', onOpen);
+  return b;
+}
+
+function renderHome() {
+  var home = document.getElementById('adminHome');
+  home.textContent = '';
+
+  /* All sites */
+  var customers = state.profiles.filter(isCustomer);
+  var live = customers.filter(function (p) { return p.site_status === 'live'; }).length;
+  var all = homeCard('k1-card-wide', function () { switchSection('customers'); });
+  var allText = el('span', 'k1-card-main');
+  allText.appendChild(el('span', 'k1-card-title', 'All sites'));
+  allText.appendChild(el('span', 'k1-card-sub', customers.length
+    ? customers.length + ' customer' + (customers.length === 1 ? '' : 's') + ' · ' + live + ' live'
+    : 'No customers yet'));
+  all.appendChild(allText);
+  all.appendChild(el('span', 'menu-chevron', '›'));
+  home.appendChild(all);
+
+  /* In build: one line per customer, one bar per job still open */
+  var building = inBuild();
+  var box = el('div', 'k1-card k1-card-wide k1-build-box');
+  var head = el('div', 'k1-build-head');
+  head.appendChild(el('span', 'k1-card-title', 'In build'));
+  head.appendChild(el('span', 'k1-card-sub', building.length ? String(building.length) : 'Nothing in build'));
+  box.appendChild(head);
+  building.forEach(function (p) {
+    var row = el('button', 'k1-build-row');
+    row.type = 'button';
+    var top = el('span', 'k1-build-top');
+    top.appendChild(el('span', 'k1-build-name', p.business_name || p.contact_name || 'Unnamed business'));
+    top.appendChild(el('span', 'plan-chip', PLAN_NAME[p.active_plan] || 'No plan'));
+    row.appendChild(top);
+    openJobs(p).forEach(function (job) {
+      var g = jobProgress(p, job);
+      var line = el('span', 'k1-build-line');
+      if (p.active_plan === 'max') line.appendChild(el('span', 'k1-build-job', JOB_WORD[job]));
+      line.appendChild(bar(g.done, g.total));
+      line.appendChild(el('span', 'k1-build-count', g.done + ' of ' + g.total + ' steps'));
+      row.appendChild(line);
+    });
+    if (openJobs(p)[0] === 'site') {
+      var age = hoursAgo(p.created_at, p.active_plan);
+      if (age.over) row.appendChild(el('span', 'k1-build-late', age.text + (p.active_plan === 'starter' ? ' · past the 24 hours' : ' · past the 14 days')));
+    }
+    row.addEventListener('click', function () { openBuild(p.id, openJobs(p)[0]); });
+    box.appendChild(row);
+  });
+  home.appendChild(box);
+
+  /* The four cards */
+  var sites = state.profiles.filter(function (p) { return p.active_plan && p.site_status === 'building'; });
+  var apps = state.profiles.filter(function (p) { return openJobs(p).indexOf('app') !== -1; });
+  function openOf(kind) { return inbox.filter(function (r) { return (r.kind || 'edit') === kind && !isDoneReq(r); }); }
+  var features = openOf('feature');
+  var changes = openOf('edit');
+  function mine(rows) { return rows.filter(waitingOnMe).length; }
+
+  var grid = el('div', 'k1-grid');
+  [
+    { title: 'Sites to build', n: sites.length, sub: lateLine(sites), hot: sites.some(function (p) { return hoursAgo(p.created_at, p.active_plan).over; }),
+      open: function () { openBuildList('site'); } },
+    { title: 'Apps to build', n: apps.length, sub: apps.length ? 'One customers' : 'None waiting',
+      open: function () { openBuildList('app'); } },
+    { title: 'Requests', n: features.length, sub: mine(features) ? mine(features) + ' waiting on you' : 'New features', hot: mine(features) > 0,
+      open: function () { openInbox('feature'); } },
+    { title: 'Changes', n: changes.length, sub: mine(changes) ? mine(changes) + ' waiting on you' : 'Edits to sites', hot: mine(changes) > 0,
+      open: function () { openInbox('edit'); } }
+  ].forEach(function (c) {
+    var card = homeCard('k1-card-small' + (c.hot ? ' is-hot' : ''), c.open);
+    card.appendChild(el('span', 'k1-card-n', String(c.n)));
+    card.appendChild(el('span', 'k1-card-title', c.title));
+    card.appendChild(el('span', 'k1-card-sub', c.sub));
+    grid.appendChild(card);
+  });
+  home.appendChild(grid);
+
+  /* New in: free designs to make, free profit plans and enquiries this week */
+  var strip = homeCard('k1-strip', function () { switchSection('enquiries'); });
+  strip.appendChild(el('span', 'k1-strip-label', 'New in'));
+  var bits = el('span', 'k1-strip-bits');
+  if (!leadState.loaded) {
+    bits.textContent = leadState.error ? 'Couldn’t load enquiries' : 'Loading…';
+    if (!leadState.error) loadLeads(false);
+  } else {
+    var week = Date.now() - 7 * 864e5;
+    var recent = function (r) { return new Date(r.created_at).getTime() >= week; };
+    var designs = leadState.rows.filter(function (r) { return r.source === 'free-preview' && !r.preview_sent_at; }).length;
+    var plans = leadState.rows.filter(function (r) { return r.source === 'growth-plan' && recent(r); }).length;
+    var asks = leadState.rows.filter(function (r) { return r.source !== 'free-preview' && r.source !== 'growth-plan' && recent(r); }).length;
+    bits.textContent = designs + ' free design' + (designs === 1 ? '' : 's') + ' to make · '
+      + plans + ' profit plan' + (plans === 1 ? '' : 's') + ' · '
+      + asks + ' enquir' + (asks === 1 ? 'y' : 'ies') + ' this week';
+  }
+  strip.appendChild(bits);
+  strip.appendChild(el('span', 'menu-chevron', '›'));
+  home.appendChild(strip);
+}
+
+function lateLine(sites) {
+  if (!sites.length) return 'All built';
+  var late = sites.filter(function (p) { return hoursAgo(p.created_at, p.active_plan).over; }).length;
+  return late ? late + ' past the promise' : 'On time';
+}
+
+function openInbox(kind) {
+  inboxKind = kind;
+  inboxFilter = 'all';
+  inboxSearch = '';
+  switchSection('requests');
+}
+
+function openBuildList(job) {
+  switchSection('build');
+  buildList = job;
+  render();
+}
+
+function openBuild(userId, job) {
+  var p = profileById(userId);
+  if (!p) { say('That customer isn’t on this account.', 'bad'); return; }
+  var jobs = window.BUILD_STEPS ? BUILD_STEPS.jobsFor(planOf(p)).map(function (j) { return j.job; }) : ['site'];
+  activeSection = 'build';
+  openRequestId = null;
+  thread = null;
+  selectedCustomerId = null;
+  buildList = null;
+  buildUserId = userId;
+  buildJob = jobs.indexOf(job) !== -1 ? job : (openJobs(p).filter(function (j) { return jobs.indexOf(j) !== -1; })[0] || jobs[0]);
+  if (location.hash) history.replaceState(null, '', location.pathname);
+  render();
+  window.scrollTo(0, 0);
+}
+
+/* ---------------- a build: who, what they asked for, the checklist ---------------- */
+
+function renderBuildSection() {
+  var wrap = document.getElementById('buildBody');
+  var title = document.getElementById('buildTitle');
+  wrap.textContent = '';
+
+  var p = buildUserId && profileById(buildUserId);
+  title.classList.toggle('k1-build-title', !!p);
+  if (!p) {
+    var job = buildList || 'site';
+    title.textContent = job === 'app' ? 'Apps to build' : 'Sites to build';
+    var rows = inBuild().filter(function (x) { return openJobs(x).indexOf(job) !== -1; });
+    if (!rows.length) { wrap.appendChild(el('p', 'site-none', job === 'app' ? 'No apps waiting.' : 'Every site is built.')); return; }
+    rows.forEach(function (x) {
+      var g = jobProgress(x, job);
+      var row = el('button', 'k1-build-row');
+      row.type = 'button';
+      var top = el('span', 'k1-build-top');
+      top.appendChild(el('span', 'k1-build-name', ownerLabel(x)));
+      top.appendChild(el('span', 'plan-chip', PLAN_NAME[x.active_plan] || 'No plan'));
+      row.appendChild(top);
+      var line = el('span', 'k1-build-line');
+      line.appendChild(bar(g.done, g.total));
+      line.appendChild(el('span', 'k1-build-count', g.done + ' of ' + g.total + ' steps'));
+      row.appendChild(line);
+      var age = hoursAgo(x.created_at, x.active_plan);
+      if (age.text) row.appendChild(el('span', age.over && job === 'site' ? 'k1-build-late' : 'k1-build-age', age.text));
+      row.addEventListener('click', function () { openBuild(x.id, job); });
+      wrap.appendChild(row);
+    });
+    return;
+  }
+
+  title.textContent = p.business_name || p.contact_name || 'Unnamed business';
+  wrap.appendChild(buildContactCard(p));
+  wrap.appendChild(buildAskedFor(p));
+
+  var jobs = window.BUILD_STEPS ? BUILD_STEPS.jobsFor(planOf(p)) : [];
+  if (!jobs.length) { wrap.appendChild(el('p', 'site-none', 'No checklist for this plan.')); return; }
+  var current = jobs.filter(function (j) { return j.job === buildJob; })[0] || jobs[0];
+  buildJob = current.job;
+
+  if (jobs.length > 1) {
+    var tabs = el('div', 'chip-row k1-job-tabs');
+    jobs.forEach(function (j) {
+      var g = jobProgress(p, j.job);
+      var t = el('button', 'filter-chip' + (j.job === current.job ? ' is-on' : ''), j.title + ' ' + g.done + '/' + g.total);
+      t.type = 'button';
+      t.addEventListener('click', function () { buildJob = j.job; render(); });
+      tabs.appendChild(t);
+    });
+    wrap.appendChild(tabs);
+  }
+
+  wrap.appendChild(checklist(p, current));
+
+  if (current.job === 'site') {
+    wrap.appendChild(el('h3', 'req-list-title k1-gap', 'Mark it live'));
+    wrap.appendChild(siteEditorRow(p));
+  }
+}
+
+/* Call, WhatsApp, email and their site, a tap each, plus the facts that
+   decide how urgent this is: the plan, when they paid, past the promise. */
+function buildContactCard(p) {
+  var card = el('div', 'k1-card k1-card-wide k1-contact');
+  var head = el('div', 'cust-head');
+  var names = el('div', 'cust-names');
+  names.appendChild(el('h3', null, p.contact_name || 'No name given'));
+  names.appendChild(el('p', 'cust-sub', [p.business_type, 'Joined ' + when(p.created_at)].filter(Boolean).join(' · ')));
+  head.appendChild(names);
+  head.appendChild(chipBox(p));
+  card.appendChild(head);
+
+  if (p.site_status === 'building') {
+    var age = hoursAgo(p.created_at, p.active_plan);
+    if (age.over) card.appendChild(el('p', 'cust-points is-over',
+      age.text + (p.active_plan === 'starter' ? ' · past the 24 hours' : ' · past the 14 days')));
+  }
+
+  var acts = el('div', 'k1-actions');
+  function act(href, text, external) {
+    var a = el('a', 'btn btn-ghost k1-act', text);
+    a.href = href;
+    if (external) { a.target = '_blank'; a.rel = 'noopener'; }
+    acts.appendChild(a);
+  }
+  var digits = String(p.phone || '').replace(/[^\d+]/g, '');
+  if (digits) {
+    act('tel:' + digits, 'Call');
+    var wa = digits.replace(/^\+/, '').replace(/^0/, '44');
+    act('https://wa.me/' + wa, 'WhatsApp', true);
+  }
+  if (p.email) act('mailto:' + p.email, 'Email');
+  if (p.site_url) act(p.site_url, 'Their site', true);
+  var more = el('button', 'btn btn-ghost k1-act', 'Customer page');
+  more.type = 'button';
+  more.addEventListener('click', function () {
+    activeSection = 'customers';
+    buildUserId = null;
+    selectedCustomerId = p.id;
+    render();
+    window.scrollTo(0, 0);
+  });
+  acts.appendChild(more);
+  card.appendChild(acts);
+  var reach = contactLine(p);
+  if (reach) card.appendChild(reach);
+  return card;
+}
+
+function buildAskedFor(p) {
+  var box = el('div', 'k1-asked');
+  box.appendChild(el('h3', 'req-list-title', 'What they asked for'));
+  var lines = onboardingLines(p);
+  var had = lines.childNodes.length;
+  box.appendChild(lines);
+  var want = domainWantLine(p);
+  if (want) { box.appendChild(want); had++; }
+  if (p.active_plan === 'max') {
+    var a = el('a', 'btn btn-ghost k1-act k1-setup-link', 'Their club setup answers');
+    a.href = '/club-setup.html?user=' + encodeURIComponent(p.id);
+    box.appendChild(a);
+    had++;
+  }
+  if (!had) box.appendChild(el('p', 'site-none', 'Nothing yet. Their answers show here once they fill in the form.'));
+  return box;
+}
+
+/* Each heading folds; a finished heading starts folded so what is left is
+   what you see. A tick saves straight away and is undone if the save fails. */
+function checklist(p, job) {
+  var wrap = el('div', 'k1-checklist');
+  var g = jobProgress(p, job.job);
+  var top = el('div', 'k1-check-top');
+  var count = el('span', 'k1-build-count', g.done + ' of ' + g.total + ' steps');
+  var track = bar(g.done, g.total);
+  top.appendChild(track);
+  top.appendChild(count);
+  wrap.appendChild(top);
+
+  function refresh() {
+    var now = jobProgress(p, job.job);
+    count.textContent = now.done + ' of ' + now.total + ' steps';
+    track.firstChild.style.width = (now.total ? Math.round(now.done / now.total * 100) : 0) + '%';
+    track.setAttribute('aria-valuenow', String(now.done));
+    var tab = document.querySelector('.k1-job-tabs .filter-chip.is-on');
+    if (tab) tab.textContent = job.title + ' ' + now.done + '/' + now.total;
+  }
+
+  job.groups.forEach(function (group) {
+    var ticks = (buildTicks[p.id] && buildTicks[p.id][job.job]) || {};
+    var groupDone = group.steps.filter(function (s) { return ticks[s[0]]; }).length;
+    var det = el('details', 'k1-group');
+    det.open = groupDone < group.steps.length;
+    var sum = el('summary');
+    sum.appendChild(el('span', 'k1-group-title', group.title));
+    var gc = el('span', 'k1-group-count', groupDone + '/' + group.steps.length);
+    sum.appendChild(gc);
+    det.appendChild(sum);
+
+    group.steps.forEach(function (step) {
+      var label = el('label', 'k1-step');
+      var box = el('input');
+      box.type = 'checkbox';
+      box.checked = !!ticks[step[0]];
+      label.appendChild(box);
+      label.appendChild(el('span', null, step[1]));
+      box.addEventListener('change', async function () {
+        var on = box.checked;
+        setTick(p.id, job.job, step[0], on);
+        paintGroup();
+        refresh();
+        try {
+          await api({ action: 'tickStep', userId: p.id, job: job.job, step: step[0], done: on });
+          say('');
+        } catch (err) {
+          setTick(p.id, job.job, step[0], !on);
+          box.checked = !on;
+          paintGroup();
+          refresh();
+          say(err.message, 'bad');
+        }
+      });
+      det.appendChild(label);
+    });
+
+    function paintGroup() {
+      var t = (buildTicks[p.id] && buildTicks[p.id][job.job]) || {};
+      var n = group.steps.filter(function (s) { return t[s[0]]; }).length;
+      gc.textContent = n + '/' + group.steps.length;
+      det.classList.toggle('is-done', n === group.steps.length);
+    }
+    det.classList.toggle('is-done', groupDone === group.steps.length);
+    wrap.appendChild(det);
+  });
+  return wrap;
 }
 
 /* ---------------- shared: the site address/status editor ---------------- */
@@ -705,7 +1128,13 @@ var INBOX_CHIPS = [
   ['waiting', 'Waiting on customer'], ['done', 'Done']
 ];
 
+/* Which kind of request: changes to what is there, or new features. Set by
+   the Changes and Requests cards on the home, and by the chips. */
+var inboxKind = 'all';
+var INBOX_KINDS = [['all', 'Everything'], ['edit', 'Changes'], ['feature', 'Features'], ['info', 'Business info']];
+
 function inboxMatches(r) {
+  if (inboxKind !== 'all' && (r.kind || 'edit') !== inboxKind) return false;
   if (inboxFilter === 'mine' && !waitingOnMe(r)) return false;
   if (inboxFilter === 'in_progress' && r.status !== 'in_progress') return false;
   if (inboxFilter === 'waiting' && (inboxRank(r) !== 2)) return false;
@@ -793,6 +1222,18 @@ function renderInbox(wrap) {
     chips.appendChild(b);
   });
   tools.appendChild(chips);
+  var kinds = el('div', 'chip-row');
+  INBOX_KINDS.forEach(function (c) {
+    var b = el('button', 'filter-chip' + (inboxKind === c[0] ? ' is-on' : ''), c[1]);
+    b.type = 'button';
+    b.addEventListener('click', function () {
+      inboxKind = c[0];
+      Array.prototype.forEach.call(kinds.children, function (x) { x.classList.toggle('is-on', x === b); });
+      paintInboxRows(rowsWrap);
+    });
+    kinds.appendChild(b);
+  });
+  tools.appendChild(kinds);
   wrap.appendChild(tools);
 
   var rowsWrap = el('div');
@@ -1104,6 +1545,17 @@ function openFromHash() {
     history.replaceState(null, '', location.pathname);
     render();
   }
+  /* ?b=<id>&job=app: the same, framed in the One app, which can't send a
+     hash through its sign-in handoff. */
+  var q = new URLSearchParams(location.search);
+  if (/^[0-9a-f-]{36}$/i.test(q.get('b') || '')) {
+    var qJob = /^(site|app|ads)$/.test(q.get('job') || '') ? q.get('job') : null;
+    history.replaceState(null, '', location.pathname + location.hash);
+    openBuild(q.get('b'), qJob);
+  }
+  /* #b/<id> or #b/<id>/app: their build checklist, from a notification. */
+  var b = /^#b\/([\w-]{1,64})(?:\/(site|app|ads))?$/.exec(location.hash || '');
+  if (b) openBuild(b[1], b[2] || null);
 }
 window.addEventListener('hashchange', openFromHash);
 
@@ -1613,6 +2065,12 @@ function customerDetail(p) {
   wrap.appendChild(accountFacts(p));
   if (p.needs_password) wrap.appendChild(resendLinkRow(p));
 
+  if (isCustomer(p)) {
+    var toBuild = el('button', 'btn btn-ghost admin-save k1-to-build', 'Build checklist · ' + buildSummary(p));
+    toBuild.type = 'button';
+    toBuild.addEventListener('click', function () { openBuild(p.id, null); });
+    wrap.appendChild(toBuild);
+  }
   wrap.appendChild(siteEditorRow(p));
   wrap.appendChild(appConfigRow(p));
 

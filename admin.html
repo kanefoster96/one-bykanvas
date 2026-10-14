@@ -36,6 +36,62 @@
 .k1-billing .pay-row{gap:10px}
 .k1-billing .pay-main{min-width:0;overflow-wrap:anywhere}
 @media (max-width:480px){.k1-row .admin-select,.k1-row .btn{flex:1 1 auto}}
+/* The home: All sites, In build, four job cards, the New in line. */
+.k1-home{display:flex;flex-direction:column;gap:12px;margin-top:26px}
+.k1-home + .admin-menu{margin-top:12px}
+.k1-card{display:flex;align-items:center;gap:12px;width:100%;padding:18px clamp(18px,4vw,24px);background:#fff;border:1px solid var(--line-soft);border-radius:var(--radius);font-family:inherit;color:var(--ink);text-align:left}
+button.k1-card{cursor:pointer;transition:border-color .15s var(--ease)}
+button.k1-card:hover{border-color:var(--line)}
+.k1-card-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.k1-card-title{font-size:16.5px;font-weight:600;letter-spacing:-.01em}
+.k1-card-sub{font-size:13.5px;color:var(--ink-3)}
+.k1-build-box{flex-direction:column;align-items:stretch;gap:0;padding-bottom:6px}
+.k1-build-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-bottom:6px}
+.k1-build-row{display:flex;flex-direction:column;gap:7px;width:100%;padding:14px 0;border:0;border-top:1px solid var(--line-soft);background:none;font-family:inherit;color:inherit;text-align:left;cursor:pointer}
+.k1-build-row:hover{opacity:.75}
+#buildBody > .k1-build-row:first-child{border-top:0;padding-top:0}
+.k1-build-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.k1-build-name{font-size:15.5px;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.k1-build-line{display:flex;align-items:center;gap:10px}
+.k1-build-job{flex:0 0 58px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.k1-bar{flex:1;min-width:60px;height:7px;border-radius:980px;background:var(--bg-grey);overflow:hidden}
+.k1-bar-fill{display:block;height:100%;border-radius:inherit;background:var(--ink);transition:width .25s var(--ease)}
+.k1-build-count{flex:0 0 auto;font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.k1-build-late{font-size:12.5px;font-weight:600;color:#b3261e}
+.k1-build-age{font-size:12.5px;color:var(--ink-3)}
+.k1-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.k1-card-small{flex-direction:column;align-items:flex-start;gap:2px;min-height:118px}
+.k1-card-n{font-size:30px;font-weight:600;letter-spacing:-.03em;line-height:1.1;margin-bottom:4px}
+.k1-card-small.is-hot .k1-card-n,.k1-card-small.is-hot .k1-card-sub{color:#b3261e}
+.k1-strip{padding:13px clamp(18px,4vw,24px)}
+.k1-strip-label{flex:0 0 auto;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.k1-strip-bits{flex:1;min-width:0;font-size:14px;color:var(--ink-2)}
+@media (max-width:720px){.k1-grid{grid-template-columns:repeat(2,1fr)}}
+/* A build page */
+.k1-contact{flex-direction:column;align-items:stretch;gap:0;margin-bottom:22px}
+.k1-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.k1-act{height:38px;padding:0 16px;font-size:14px;display:inline-flex;align-items:center;text-decoration:none}
+.k1-asked{margin-bottom:26px}
+.k1-asked .cust-sub{color:var(--ink-2);line-height:1.5}
+.k1-setup-link{display:inline-flex;align-items:center;margin-top:12px;text-decoration:none}
+.k1-job-tabs{margin:0 0 14px}
+.k1-check-top{display:flex;align-items:center;gap:12px;margin:0 0 10px}
+.k1-group{border-top:1px solid var(--line-soft)}
+.k1-group:last-child{border-bottom:1px solid var(--line-soft)}
+.k1-group summary{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 0;cursor:pointer;list-style:none;font-size:15.5px;font-weight:600}
+.k1-group summary::-webkit-details-marker{display:none}
+.k1-group summary::after{content:"\203A";font-size:20px;line-height:1;color:var(--ink-3);transition:transform .15s var(--ease)}
+.k1-group[open] summary::after{transform:rotate(90deg)}
+.k1-group-title{flex:1;min-width:0}
+.k1-group-count{font-size:13px;font-weight:500;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.k1-group.is-done .k1-group-count{color:var(--good)}
+.k1-step{display:flex;align-items:flex-start;gap:12px;padding:9px 0 9px 2px;font-size:15px;line-height:1.4;cursor:pointer}
+.k1-step input{flex:0 0 auto;width:20px;height:20px;margin:0;accent-color:#1d1d1f}
+.k1-step input:checked + span{color:var(--ink-3);text-decoration:line-through}
+.k1-group .k1-step:last-child{padding-bottom:16px}
+.k1-gap{margin-top:28px}
+.panel-title.k1-build-title{font-size:24px;font-weight:600;letter-spacing:-.025em;text-transform:none;color:var(--ink);overflow-wrap:anywhere}
+.k1-to-build{margin-top:14px}
 </style>
 <!-- Framed inside the One app: drop the site's header and footer so this
      reads as a screen of the app. Set before first paint so nothing flashes. -->
@@ -65,6 +121,7 @@
        business, with a count badge where something needs doing. A section
        opens as its own page, and the back link below returns here. Built
        by JS so the badge counts live in the one place that knows them. -->
+  <div class="k1-home" id="adminHome"></div>
   <nav class="admin-menu" id="adminNav" aria-label="Admin sections"></nav>
   <button class="linkish admin-back" id="backToMenu" type="button" hidden>&larr; Menu</button>
 
@@ -75,6 +132,14 @@
     <h2 class="panel-title">Requests</h2>
     <div id="newBuilds"></div>
     <div id="queue"></div>
+  </section>
+
+  <!-- A customer's build: who they are, what they asked for, and the
+       checklist for their plan (One has Website, App and Ads). Or a list of
+       builds, from the Sites to build and Apps to build cards. -->
+  <section class="panel" id="sectionBuild" hidden>
+    <h2 class="panel-title" id="buildTitle">Build</h2>
+    <div id="buildBody"></div>
   </section>
 
   <!-- Anyone with a paid, active plan. Click through for their site, requests,
@@ -195,7 +260,8 @@
 <script src="supabase-client.js?v=1"></script>
 <script src="session.js?v=3"></script>
 <script src="feature-ideas.js?v=2"></script>
-<script src="admin.js?v=53"></script>
+<script src="build-steps.js?v=1"></script>
+<script src="admin.js?v=54"></script>
 <script src="admin-pill.js?v=8"></script>
 </body>
 </html>

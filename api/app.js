@@ -1010,6 +1010,12 @@ module.exports = async function handler(req, res) {
        checks that. */
     if (action === 'page') {
       const path = cleanPath(body.path);
+      /* The admin page, for the admin only: the jobs board, or one build. */
+      const adminPage = /^\/admin\.html(\?b=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(&job=(site|app|ads))?)?$/i.test(path);
+      if (adminPage) {
+        if (!caller.is_admin) return res.status(403).json({ error: 'That page is not for this account.' });
+        return res.status(200).json({ url: await handoffUrl(db, caller, ourSiteUrl().replace(/\/+$/, '') + path, req) });
+      }
       const m = /^\/onboarding\.html(\?user=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))?$/i.exec(path);
       if (!m) return res.status(400).json({ error: 'That page does not open in the app.' });
       if (m[2] && !caller.is_admin) return res.status(403).json({ error: 'That form is not yours.' });
