@@ -1,5 +1,7 @@
 /* Meta's Conversions API: the two events that matter, sent from the server
- * so that a visitor who declined cookies still counts.
+ * so that a lead or sale counts even when the pixel is not loaded (the
+ * visitor has not answered the cookie card). Pressing Reject stops these
+ * too: see optedOut below and privacy.html section 5.
  *
  *   Lead      - a free example asked for   (api/lead.js), or a business
  *               name and email given on /join (api/join.js, action lead)
@@ -39,6 +41,7 @@ function adContext(req, body) {
   const b = body || {};
   const fwd = String((req.headers && req.headers['x-forwarded-for']) || '').split(',')[0].trim();
   return {
+    optOut: optedOut(req),
     fbc: FBC.test(String(b.fbc || '')) ? String(b.fbc) : undefined,
     fbp: FBP.test(String(b.fbp || '')) ? String(b.fbp) : undefined,
     ip: fwd || undefined,
@@ -46,10 +49,17 @@ function adContext(req, body) {
   };
 }
 
+/* Pressing Reject on the cookie card sets one_noads (consent.js), and then
+   nothing about that visitor goes to Meta from the server either. */
+function optedOut(req) {
+  return /(?:^|;\s*)one_noads=1(?:;|$)/.test(String((req && req.headers && req.headers.cookie) || ''));
+}
+
 /* The same, kept on a Stripe subscription (metadata values are capped at
    500 characters) so the Purchase the webhook sends later can carry it. */
 function adMetadata(ad) {
   const md = {};
+  if (ad && ad.optOut) return { meta_optout: '1' };
   if (ad && ad.fbc) md.meta_fbc = ad.fbc.slice(0, 500);
   if (ad && ad.fbp) md.meta_fbp = ad.fbp.slice(0, 500);
   if (ad && ad.ip) md.meta_ip = ad.ip.slice(0, 64);
@@ -59,6 +69,7 @@ function adMetadata(ad) {
 function adFromMetadata(md) {
   const m = md || {};
   return {
+    optOut: m.meta_optout === '1',
     fbc: FBC.test(String(m.meta_fbc || '')) ? m.meta_fbc : undefined,
     fbp: FBP.test(String(m.meta_fbp || '')) ? m.meta_fbp : undefined,
     ip: m.meta_ip || undefined,
@@ -71,7 +82,7 @@ function adFromMetadata(md) {
    id: with them Meta can tie the event to the ad that was clicked. */
 async function sendMetaEvent(ev) {
   const token = String(process.env.META_CAPI_TOKEN || '').trim();
-  if (!token) return 'skipped';
+  if (!token || ev.optOut) return 'skipped';
   const pixel = String(process.env.META_PIXEL_ID || PIXEL_DEFAULT).trim();
 
   const data = {
@@ -117,4 +128,4 @@ async function sendMetaEvent(ev) {
   }
 }
 
-module.exports = { sendMetaEvent, adContext, adMetadata, adFromMetadata, normPhone };
+module.exports = { sendMetaEvent, adContext, adMetadata, adFromMetadata, normPhone, optedOut };

@@ -55,7 +55,7 @@
      for the Lead and Purchase the server sends. */
   try {
     var clickId = q.get('fbclid');
-    if (clickId && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
+    if (clickId && !/(?:^|; )one_noads=1/.test(document.cookie) && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
   } catch (e) {}
 
   var fromLink = String(q.get('business') || '').trim().slice(0, 120);

@@ -17,7 +17,7 @@ const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
 const EX_CSS_V = 11;
-const EX_JS_V = 8;
+const EX_JS_V = 9;
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
 
@@ -851,7 +851,7 @@ ${e.layout.order.map((k) => SECTIONS[k](e)).join('\n')}
 ${footer(e)}
 ${modal(e)}
 ${pill(e)}
-<script src="/consent.js?v=11"></script>
+<script src="/consent.js?v=12"></script>
 <script src="/examples/ex.js?v=${EX_JS_V}"></script>
 <script src="/beacon.js?v=6" data-site="${SITE_ID}" defer></script>
 </body>
@@ -922,7 +922,7 @@ ${o.body}
   </div>
 </footer>
 
-<script src="/consent.js?v=11"></script>
+<script src="/consent.js?v=12"></script>
 <script src="/supabase-config.js?v=1"></script>
 <script src="/session.js?v=3"></script>
 <script src="/script.js?v=${o.scriptV}"></script>

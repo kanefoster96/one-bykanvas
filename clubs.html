@@ -710,7 +710,7 @@ p,li,summary,small{text-wrap:pretty}
     var ids = { fbc: cookie('_fbc'), fbp: cookie('_fbp') };
     try {
       var clickId = new URLSearchParams(location.search).get('fbclid');
-      if (clickId && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
+      if (clickId && !/(?:^|; )one_noads=1/.test(document.cookie) && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
       if (!ids.fbc) ids.fbc = sessionStorage.getItem('one.fbc') || '';
     } catch (e) { /* private mode */ }
     fetch('/api/enquiry', {
@@ -734,7 +734,7 @@ p,li,summary,small{text-wrap:pretty}
   });
 })();
 </script>
-<script src="/consent.js?v=11"></script>
+<script src="/consent.js?v=12"></script>
 <script src="/beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/onemark.js?v=2" defer></script>
 </body>

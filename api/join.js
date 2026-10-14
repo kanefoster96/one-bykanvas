@@ -37,7 +37,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { openCheckout, CheckoutError } = require('./_checkout_session.js');
 const { isValidDomain, lookup } = require('./domains.js');
-const { sendMetaEvent, adContext } = require('./_meta.js');
+const { sendMetaEvent, adContext, optedOut } = require('./_meta.js');
 
 const LIVE = ['active', 'trialing', 'past_due', 'unpaid'];
 const SESSION_ID = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
@@ -125,6 +125,7 @@ module.exports = async function handler(req, res) {
     const fbp = /^fb\.1\.\d{10,14}\.\d{5,25}$/.test(String(body.fbp || '')) ? String(body.fbp) : undefined;
     const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
     await sendMetaEvent({
+      optOut: optedOut(req),
       name: 'Lead', eventId, email: email || undefined, fbc, fbp,
       url: `${ourSiteUrl()}/join`,
       ip: fwd || undefined, userAgent: req.headers['user-agent'] || undefined,
