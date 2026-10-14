@@ -265,7 +265,7 @@
 
   /* One phone per host: the hero cycles through every screen with a caption;
      each card in the app section ([data-hp-screen]) replays its one screen. */
-  function mount(host, list, cap) {
+  function mount(host, list, cap, row) {
     var scr = SCREENS.filter(function (s) { return list.indexOf(s.id) > -1; });
     host.innerHTML = '<div class="hp-box"><div class="hp-in"><div class="hp-phone"><div class="hp-scr">' + sbar() +
       '<div class="hp-hd">' + LOGO + '<span>' + IC.bell + '</span></div>' +
@@ -384,12 +384,36 @@
       if (on && !raf) { start += performance.now() - paused; raf = requestAnimationFrame(frame); }
       else if (!on && raf) { cancelAnimationFrame(raf); raf = 0; paused = performance.now(); }
     }
+    /* In the app section's swipe row only the card nearest the middle
+       plays; the others hold still until they are swiped to the centre
+       (see centreRow below). */
+    var centred = !row;
+    function go() { run(visible && centred && !document.hidden); }
+    host._hpCentre = function (on) { if (on !== centred) { centred = on; go(); } };
     seek(reduce ? SEG - .3 : 2.6); paused = performance.now();
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; run(visible && !document.hidden); }, { threshold: .05 }).observe(host);
-    else run(true);
-    document.addEventListener('visibilitychange', function () { run(visible && !document.hidden); });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; go(); }, { threshold: .05 }).observe(host);
+    else { visible = true; go(); }
+    document.addEventListener('visibilitychange', go);
   }
   var hero = document.getElementById('heroPhone');
   if (hero) mount(hero, SCREENS.map(function (s) { return s.id; }), true);
-  [].forEach.call(document.querySelectorAll('[data-hp-screen]'), function (el) { mount(el, [el.getAttribute('data-hp-screen')], false); });
+  [].forEach.call(document.querySelectorAll('[data-hp-screen]'), function (el) { mount(el, [el.getAttribute('data-hp-screen')], false, el.closest('.ap-row')); });
+
+  /* Exactly one card in each swipe row is "centred": the one whose middle
+     is nearest the row's middle. Checked on scroll and resize. */
+  [].forEach.call(document.querySelectorAll('.ap-row'), function (row) {
+    var hosts = [].slice.call(row.querySelectorAll('[data-hp-screen]'));
+    if (!hosts.length) return;
+    var queued = false;
+    function centreRow() {
+      queued = false;
+      var r = row.getBoundingClientRect(), mid = r.left + r.width / 2, best = null, bestD = Infinity;
+      hosts.forEach(function (h) { var b = h.getBoundingClientRect(), d = Math.abs(b.left + b.width / 2 - mid); if (d < bestD) { bestD = d; best = h; } });
+      hosts.forEach(function (h) { if (h._hpCentre) h._hpCentre(h === best); });
+    }
+    function later() { if (!queued) { queued = true; requestAnimationFrame(centreRow); } }
+    row.addEventListener('scroll', later, { passive: true });
+    window.addEventListener('resize', later);
+    centreRow();
+  });
 })();
