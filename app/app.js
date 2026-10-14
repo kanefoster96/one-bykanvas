@@ -1374,10 +1374,11 @@
   var via = 'chat';
   function setVia(v) {
     via = v;
-    document.querySelectorAll('.oa-via-btn').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.via === v)); });
+    /* #chatVia only: the admin reply-mode buttons share the class. */
+    document.querySelectorAll('#chatVia .oa-via-btn').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.via === v)); });
     if (openConv) viaHint(openConv);
   }
-  document.querySelectorAll('.oa-via-btn').forEach(function (b) { b.addEventListener('click', function () { if (!b.disabled) setVia(b.dataset.via); }); });
+  document.querySelectorAll('#chatVia .oa-via-btn').forEach(function (b) { b.addEventListener('click', function () { if (!b.disabled) setVia(b.dataset.via); }); });
   function viaHint(c) {
     var off = $('chatOffline');
     if (c.online) off.textContent = via === 'email' ? 'They’re on your site now, so live chat reaches them straight away. Email works too.' : 'They’re on your site now.';
@@ -1717,6 +1718,8 @@
     if (p.active_plan === 'max') { var a = progressOf(p, 'app'); if (a.total && a.done < a.total) out.push('app'); }
     return out;
   }
+  /* What "late" is measured against, as worded on the board (admin.js too). */
+  function promiseOf(p) { return { starter: '24 hours', max: '8 weeks' }[p.active_plan] || '14 days'; }
   function lateOf(p) {
     var h = (Date.now() - new Date(p.created_at).getTime()) / 36e5;
     /* Starter 24 hours, Business 14 days, One 8 weeks to its ads (admin.js). */
@@ -1814,7 +1817,7 @@
         line.appendChild(el('span', 'oa-brow-count', g.done + ' of ' + g.total));
         row.appendChild(line);
       });
-      if (lateOf(p)) row.appendChild(el('span', 'oa-brow-late', 'Joined ' + since(p.created_at) + ' · past the ' + (p.active_plan === 'starter' ? '24 hours' : '14 days')));
+      if (lateOf(p)) row.appendChild(el('span', 'oa-brow-late', 'Joined ' + since(p.created_at) + ' · past the ' + promiseOf(p)));
       row.addEventListener('click', function () { openBuild(p.id, bFilter || openJobsOf(p)[0]); });
       list.appendChild(row);
     });
@@ -1932,7 +1935,7 @@
     more.addEventListener('click', function () { openSetup('/admin.html?c=' + p.id); });
     acts.appendChild(more);
     body.appendChild(acts);
-    if (lateOf(p)) body.appendChild(el('p', 'oa-brow-late', 'Past the ' + (p.active_plan === 'starter' ? '24 hours' : '14 days')));
+    if (lateOf(p)) body.appendChild(el('p', 'oa-brow-late', 'Past the ' + promiseOf(p)));
     if (p.active_plan === 'max') body.appendChild(stripeRow(p));
 
     var asked = el('details', 'oa-asked');
@@ -2129,7 +2132,10 @@
     }
     requestsLoaded = true;
     var base = native ? BASE + '/' : '../';
-    [base + 'requests-badge.js?v=1', base + 'requests.js?v=7'].forEach(function (src) {
+    /* Not requests-badge.js: it repaints the same badge with requests only,
+       dropping the support chat's unread. The app's own count covers both. */
+    ONE.refreshRequestBadge = function () { refreshMe().catch(function () {}); };
+    [base + 'requests.js?v=7'].forEach(function (src) {
       var s = document.createElement('script');
       s.src = src;
       document.body.appendChild(s);

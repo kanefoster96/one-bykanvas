@@ -802,7 +802,7 @@ function showBilling(row) {
 
     move.hidden = false;
     move.textContent = head + (up
-      ? ' You only pay the difference for the rest of this month.'
+      ? ' You only pay the difference for the rest of this billing period.'
       : ' Nothing to pay now, and you keep your current plan until it renews.'
         + (leavingMax ? ' Everything done to your ranking so far stays done. Texts to your customers stop on ' + PLAN_NAME[chosen] + ' \u2014 message us before you switch if you\u2019d like to keep them on as an add-on.' : ''));
 
@@ -814,8 +814,13 @@ function showBilling(row) {
     planPreview(chosen).then(function (p) {
       if (mine !== previewSeq || !p) return;
       if (typeof p.dueNow === 'number') {
+        /* The price after this comes from the preview: change-plan keeps the
+           interval, so an annual customer moves to the yearly price. */
+        var then = typeof p.amount === 'number'
+          ? money(p.amount) + (p.interval === 'year' ? '/year' : '/month')
+          : PLAN_LABEL[chosen].split(' \u2014 ')[1];
         move.textContent = head + ' You pay ' + money(p.dueNow) + ' today for the rest of '
-          + 'this month, then ' + PLAN_LABEL[chosen].split(' \u2014 ')[1] + '.';
+          + 'this billing period, then ' + then + '.';
       }
     });
   }
@@ -999,7 +1004,7 @@ document.getElementById('payBtn').addEventListener('click', async function () {
         + (PLAN_NAME[cdata.from] || cdata.from) + ' is cancelled, and nothing was charged.'
       : cdata.upgrading
       ? 'You are on ' + (PLAN_NAME[cdata.to] || cdata.to) + ' from now. '
-        + 'Only the difference for the rest of this month was charged.'
+        + 'Only the difference for the rest of this billing period was charged.'
       : 'You will move to ' + (PLAN_NAME[cdata.to] || cdata.to)
         + (when ? ' on ' + when : ' at your next renewal')
         + '. Nothing has been charged, and your current plan runs until then.',
