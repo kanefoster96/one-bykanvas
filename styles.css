@@ -3533,3 +3533,6 @@ body.home .band-dark :is(.oc-card,.ab-card,.up-card) .lede{color:#6e6e73}
 .join-body .wiz-step{box-shadow:none}
 .join-body .join-steps li.is-on i{background:var(--or-grad);color:#fff}
 .join-body .nav{background:#fff}
+/* A photo in a message shows light grey while it loads, never a black
+   square (the request card it can sit in is black). */
+.msg-file img{background:#f2f2f4}
