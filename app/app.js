@@ -1108,7 +1108,7 @@
     if (d.funnel) drawFunnel(d.funnel, !!d.chat, !!d.money);
 
     $('anMoneyCard').hidden = !d.money;
-    $('anMoneyOff').hidden = !!d.money || isStarter(); // Starter: no "not connected" cards, just its numbers
+    $('anMoneyOff').hidden = true; // a companion app: no cards describing features they don't have (App Store 3.1.3(f))
     if (d.money) {
       var m = d.money;
       $('anTaken').textContent = pounds(m.amount, m.currency);
@@ -1122,7 +1122,7 @@
     }
 
     $('anChatCard').hidden = !d.chat;
-    $('anChatOff').hidden = !!d.chat || isStarter();
+    $('anChatOff').hidden = true;
     if (d.chat) {
       $('anConvs').textContent = fmt(d.chat.conversations);
       delta($('anConvsDelta'), d.chat.conversations, d.chat.previous.conversations);

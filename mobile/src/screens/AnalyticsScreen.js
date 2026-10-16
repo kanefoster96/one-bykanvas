@@ -292,8 +292,6 @@ export default function AnalyticsScreen() {
               </View>
               {!d.money.count ? <Text style={s.hint}>No payments in this period yet.</Text> : null}
             </Card>
-          ) : !isStarter ? (
-            <Card style={s.card}><Label orange>Money in</Label><Text style={s.hint}>Payments aren’t connected on this site yet. Once they are, every payment shows here: how much was taken, how many people paid, and how many of your visitors became customers.</Text></Card>
           ) : null}
 
           {d.chat ? (
@@ -304,8 +302,6 @@ export default function AnalyticsScreen() {
                 <View style={s.mini}><Text style={s.miniLabel}>Went on to pay</Text><Text style={s.miniN}>{d.money ? fmt((d.funnel || {}).messaged_and_paid) : '–'}</Text><Text style={[s.delta, { marginLeft: 0 }]}>{d.money ? ((d.funnel || {}).messaged ? pct(d.funnel.messaged_and_paid, d.funnel.messaged) + ' of them' : '') : 'once payments are connected'}</Text></View>
               </View>
             </Card>
-          ) : !isStarter ? (
-            <Card style={s.card}><Label orange>Live chat</Label><Text style={s.hint}>Live chat isn’t on this site yet. With it, visitors can message you from any page and you answer from the Chat tab; the numbers here show how many do, and how many go on to pay.</Text></Card>
           ) : null}
 
           <Card style={s.card}><Label orange>Top pages</Label><View style={{ marginTop: 8 }}><BarList rows={d.pages} keyName="path" nName="views" empty="No pages viewed yet." label={pageName} /></View></Card>
