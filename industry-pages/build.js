@@ -281,7 +281,7 @@ ${b.also ? `  <div class="wrap center also reveal">
   </div>
 ` : ''}</section>
 
-${b.extra || ''}<section class="section grey">
+${b.extra || ''}<section class="section band-dark">
   <div class="wrap center">
     <h2 class="reveal">How it works.</h2>
     <p class="lede reveal">${lines(b.buildNote)}</p>
@@ -297,7 +297,7 @@ ${b.stepsLine ? `  <div class="wrap center reveal">
   </div>
 ` : ''}</section>
 
-<section class="section grey">
+<section class="section">
   <div class="wrap center">
     <h2 class="reveal">Built by us. Working for them.</h2>
   </div>
@@ -307,7 +307,7 @@ ${b.stepsLine ? `  <div class="wrap center reveal">
     <button class="rail-btn" data-dir="1" aria-label="Next reviews">&rsaquo;</button>
   </div>
 </section>
-${b.maxPitch ? `<section class="section">
+${b.maxPitch ? `<section class="section band-dark">
   <div class="wrap center">
     <h2 class="reveal">${oneFits(b) ? b.maxPitch.heading : 'Want customers to book and pay online?'}</h2>
     <p class="lede reveal">${oneFits(b) ? lines(b.maxPitch.text) : 'Starter gets you a proper site and found on Google.<span class="gap"></span>Business adds bookings, payments, live chat and reviews asked for automatically.'}</p>
@@ -348,7 +348,7 @@ ${oneFits(b) ? `    <article class="plan">
 ` : ''}  </div>
   <p class="wrap center micro reveal">No setup fee on any plan. Business is half price for your first month${oneFits(b) ? ', and One comes with 3 months of ads on us' : ''}. Or pay for the year: 2 months free, plus the Launch Boost on Starter and Business.</p>
 </section>
-` : ''}${b.faq ? `<section class="section grey">
+` : ''}${b.faq ? `<section class="section">
   <div class="wrap center">
     <h2 class="reveal">Questions.</h2>
   </div>
@@ -359,7 +359,7 @@ ${faqFor(b).map(([q, a]) => `    <details>
     </details>`).join('\n')}
   </div>
 </section>
-` : ''}<section class="section grey cta-end">
+` : ''}<section class="section band-dark cta-end">
   <div class="wrap center">
     <h2 class="reveal">Your website, live within <span class="g-free">24 hours.</span></h2>
     <p class="lede reveal">${b.promise ? 'Our side of the deal, in writing.' : 'Built for you from the page you already have. We change it until you love it.'}</p>
@@ -548,7 +548,7 @@ ${stepCards({ steps: f.how })}
   </div>
 </section>
 
-<section class="section grey">
+<section class="section band-dark">
   <div class="wrap center">
     <h2 class="reveal">What you get.</h2>
   </div>
@@ -577,7 +577,7 @@ ${f.faq.map(([q, a]) => `    <details>
   </div>
 </section>
 
-<section class="section grey cta-end">
+<section class="section band-dark cta-end">
   <div class="wrap center">
     <h2 class="reveal">Your website, ready in <span class="g-free">7 to 14 days.</span></h2>
     <p class="lede reveal">Built for you from the page you already have. We change it until you love it.</p>
@@ -737,7 +737,7 @@ ${s.items.map((t) => `        <li>${t}</li>`).join('\n')}
 </section>
 
 <!-- 4. What you do, what we do. -->
-<section class="section grey">
+<section class="section band-dark">
   <div class="wrap center">
     <h2 class="reveal">What you do. What we do.</h2>
   </div>
@@ -779,7 +779,7 @@ ${m.why.map(([lead, rest]) => `    <p><b>${lead}</b>${rest}</p>`).join('\n')}
 </section>
 
 <!-- 7. What it costs. -->
-<section class="section grey">
+<section class="section band-dark">
   <div class="wrap center">
     <h2 class="reveal">What it costs.</h2>
   </div>
@@ -813,7 +813,7 @@ ${MAX_GUARANTEE ? `  <div class="wrap">
 </section>
 
 <!-- 9. Questions. -->
-<section class="section grey">
+<section class="section">
   <div class="wrap center">
     <h2 class="reveal">Questions.</h2>
   </div>
@@ -826,7 +826,7 @@ ${faq.map(([q, a]) => `    <details>
 </section>
 
 <!-- 10. The ask. -->
-<section class="section cta-end">
+<section class="section band-dark cta-end">
   <div class="wrap center">
     <h2 class="reveal">Ready in <span class="g-free">7 to 14 days.</span></h2>
     <p class="lede reveal">Your site built for you from the page you already have, then the rest run for you.<span class="gap"></span>No contract. Cancel any month.</p>

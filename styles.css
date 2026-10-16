@@ -3439,3 +3439,97 @@ textarea.rq-field{min-height:130px;resize:vertical}
 /* Status pills on the palette: in progress (and plan names) black, waiting orange. */
 .req-state.is-building{background:var(--ink);color:#fff}
 .req-state.is-waiting{background:#fff1ea;color:#c2410c}
+
+/* ================= Black bands, site-wide =================
+   The homepage's rhythm on every page: white sections and near-black ones
+   in turn, the closing call to action always black. A band redefines the
+   colour variables, so the components inside (cards, ticks, questions,
+   the price promise) turn light-on-dark without rules of their own. Form
+   fields keep dark text on white. */
+.band-dark{
+  --ink:#f5f5f2;--ink-2:rgba(245,245,242,.74);--ink-3:rgba(245,245,242,.58);
+  --line:rgba(255,255,255,.16);--line-soft:rgba(255,255,255,.09);--bg-grey:#151518;
+  --blue:#f5f5f2;--blue-dark:#fff;--good:#ff7a3d;--good-soft:rgba(255,122,61,.13);
+  background:#08080a;color:var(--ink)
+}
+.band-dark :is(h1,h2,h3,h4,summary){color:var(--ink)}
+.band-dark :is(.card,.plan,.cmp-wrap,.use-chip){border-color:rgba(255,255,255,.09);box-shadow:none}
+.band-dark .plan{background:#151518}
+.band-dark .plan.featured{border-color:rgba(255,255,255,.3)}
+.band-dark .badge{background:var(--or-grad)}
+.band-dark :is(input,select,textarea){--ink:#1d1d1f;color:#1d1d1f;background:#fff}
+.band-dark .btn-ghost{background:transparent;border-color:rgba(255,255,255,.55);color:#fff}
+.band-dark .btn-ghost:hover{background:#fff;border-color:#fff;color:#08080a}
+.band-dark .rail-btn{background:transparent;border-color:rgba(255,255,255,.3);color:#fff}
+.band-dark .rail-btn:hover{background:#fff;border-color:#fff;color:#08080a}
+.band-dark .ico-blue,.band-dark .ico-grey{background:#2a2a2f}
+.band-dark a:not(.btn):not(.card){color:var(--ink)}
+.band-dark .card:hover{box-shadow:none}
+.band-dark .g-free{background:var(--or-text);-webkit-background-clip:text;background-clip:text}
+
+/* Icon tiles on the palette everywhere: black, or the orange gradient. */
+.ico-blue,.ico-grey{background:#1d1d1f}
+.ico-purple,.ico-pink,.ico-orange,.ico-green{background:var(--or-grad)}
+
+/* The second line of a heading in the orange gradient (as on the homepage). */
+.dim{background:var(--or-text);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){.dim{background:none;color:#ef4a10;-webkit-text-fill-color:currentColor}}
+.dim-line{display:block;width:fit-content}
+/* White cards that stay white inside a black band (the comparison table,
+   the written promise): the light colours come back inside them. */
+.band-dark :is(.cmp-wrap,.promise){
+  --ink:#1d1d1f;--ink-2:#6e6e73;--ink-3:#86868b;--line:#d2d2d7;--line-soft:#e8e8ed;--bg-grey:#f5f5f7;
+  --good:#c93e09;--good-soft:#fff0e8;color:var(--ink)
+}
+.band-dark .promise{background:#fff}
+.band-dark .cmp-wrap a:not(.btn){color:var(--ink)}
+/* Review avatars on the palette. */
+.av1{background:#1d1d1f}.av2{background:linear-gradient(135deg,#c93e09,#ef4a10)}.av3{background:#3a3a3f}.av4{background:#c93e09}.av5{background:#ef4a10}
+.band-dark .two-col .col{background:#151518}
+.band-dark :is(.boost,.trades .card,.nots p){background:#151518;border-color:rgba(255,255,255,.09)}
+/* The profit plan steps on black, like the homepage's closing section: the
+   calculator, the form and the plan stay white cards with dark text. */
+.band-dark :is(.mh-calc,.mh-form,.mh-claim){
+  --ink:#1d1d1f;--ink-2:#6e6e73;--ink-3:#86868b;--line:#d2d2d7;--line-soft:#e8e8ed;--bg-grey:#f5f5f7;
+  --good:#c93e09;--good-soft:#fff0e8;color:var(--ink)
+}
+.band-dark :is(.mh-calc,.mh-form,.mh-claim) :is(h1,h2,h3,h4,summary){color:var(--ink)}
+.band-dark .mh-page-sub{color:var(--ink-2)}
+.band-dark .mh-claim{background:#151518;color:var(--on-night-2,rgba(245,245,242,.7));--ink:#f5f5f2}
+.mh-page.band-dark{min-height:100vh}
+.band-dark .mh-plan-rec{--ink:#1d1d1f;--ink-2:#6e6e73;--ink-3:#86868b;color:var(--ink)}
+.band-dark .mh-plan-rec :is(b,strong){color:var(--ink)}
+.band-dark .mh-plan-stats div{background:#151518;box-shadow:inset 0 0 0 1px rgba(255,255,255,.09)}
+.band-dark .mh-plan-stats b{background:var(--or-text);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.band-dark .mh-plan-stats span{color:rgba(245,245,242,.6)}
+.band-dark .mh-numbers{background:#151518;border-color:rgba(255,255,255,.09)}
+.band-dark .mh-numbers b{color:var(--ink)}
+.band-dark .mh-numbers span,.band-dark .mh-numbers-line{color:var(--ink-2)}
+.band-dark .mh-numbers-line b{color:#ff7a3d}
+/* Black cards flip the colour variables too, so anything inside them that
+   uses --ink (labels, links, notes) turns light; form fields stay white. */
+.card-night{
+  --ink:#f5f5f2;--ink-2:rgba(245,245,242,.74);--ink-3:rgba(245,245,242,.58);
+  --line:rgba(255,255,255,.16);--line-soft:rgba(255,255,255,.09);--bg-grey:#151518;
+  --blue:#f5f5f2;--good:#ff7a3d;--good-soft:rgba(255,122,61,.13)
+}
+.card-night :is(input,select,textarea){--ink:#1d1d1f;color:#1d1d1f;background:#fff}
+.card-night :is(label,.field span,.linkish){color:var(--ink-2)}
+.card-night .linkish:hover{color:#fff}
+.card-night .bill-plan{color:var(--ink)}
+/* The Websites page's big white cards stay white with dark text on black. */
+.band-dark :is(.oc-card,.ab-card,.up-card,.gfield,.ce-chips .chip){
+  --ink:#1d1d1f;--ink-2:#6e6e73;--ink-3:#86868b;--line:#d2d2d7;--line-soft:#e8e8ed;--bg-grey:#f5f5f7;
+  --good:#c93e09;--good-soft:#fff0e8;color:var(--ink)
+}
+.band-dark :is(.oc-card,.ab-card,.up-card,.gfield,.ce-chips .chip) :is(h1,h2,h3,h4,b,strong){color:var(--ink)}
+body.home .band-dark :is(.oc-card,.ab-card,.up-card) .lede{color:#6e6e73}
+.band-dark .ab-card .pill.is-on{color:#fff}
+/* Sign-up on black, like the profit plan steps: the step cards stay white. */
+.join-body{background:#08080a}
+.join-body .wiz-top{
+  --ink:#f5f5f2;--ink-2:rgba(245,245,242,.74);--ink-3:rgba(245,245,242,.58);--line:rgba(255,255,255,.16);--line-soft:rgba(255,255,255,.12);--bg-grey:#26262b
+}
+.join-body .wiz-step{box-shadow:none}
+.join-body .join-steps li.is-on i{background:var(--or-grad);color:#fff}
+.join-body .nav{background:#fff}
