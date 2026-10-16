@@ -531,57 +531,49 @@
     if (tab === 'Support' && supportMode === 'chat') supportTimer = setTimeout(function () { loadSupportChat(true); }, 8000);
   }
   $('supportBody').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(120, this.scrollHeight) + 'px'; });
-  /* Photos and files to Kane: a logo, coach photos, a price list. Up to
-     five at a time, into the customer's own folder in the private
-     request-attachments bucket; the server signs a link to each and puts
-     it in the message, so Kane can open it from his inbox. */
-  var SUPPORT_ACCEPT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'application/pdf': 'pdf' };
-  $('supportFile').addEventListener('change', async function () {
-    var input = this;
-    var files = Array.prototype.slice.call(input.files || [], 0, 5);
-    input.value = '';
-    if (!files.length) return;
-    for (var i = 0; i < files.length; i++) {
-      if (!SUPPORT_ACCEPT[files[i].type]) { say($('supportNote'), files[i].name + ' is not a photo or PDF.', 'bad'); return; }
-      if (files[i].size > 10 * 1024 * 1024) { say($('supportNote'), files[i].name + ' is over 10 MB. Try a smaller one.', 'bad'); return; }
-    }
-    $('supportSend').disabled = true;
-    say($('supportNote'), 'Sending ' + (files.length === 1 ? 'your file' : files.length + ' files') + '…');
-    try {
-      var batch = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2);
-      var paths = [];
-      for (var k = 0; k < files.length; k++) {
-        var path = user.id + '/chat/' + batch + '-' + k + '.' + SUPPORT_ACCEPT[files[k].type];
-        var up = await ONE.db.storage.from('request-attachments').upload(path, files[k], { contentType: files[k].type });
-        if (up.error) throw new Error('Could not upload ' + files[k].name + ': ' + ONE.friendlyError(up.error));
-        paths.push(path);
-      }
-      var ta = $('supportBody'); var text = ta.value.trim();
-      var res = await api({ action: 'support_send', body: text, files: paths });
-      ta.value = ''; ta.style.height = 'auto';
-      say($('supportNote'), 'Sent.', 'ok');
-      var box = $('supportMsgs');
-      var sys = box.querySelector('.from-system'); if (sys) sys.remove();
-      box.appendChild(supportBubble(res.message)); supportCount++;
-      haptic('success');
-      box.scrollTop = box.scrollHeight;
-    } catch (err) { say($('supportNote'), err.message, 'bad'); }
-    $('supportSend').disabled = false;
+  /* Photos and files to Kane: a logo, coach photos, a price list. Picked
+     ones wait above the box as thumbnails (attach-tray.js), so a wrong pick
+     can come off before sending. Up to five at a time, into the customer's
+     own folder in the private request-attachments bucket; the server signs
+     a link to each and puts it in the message, so Kane can open it from his
+     inbox. */
+  var SUPPORT_EXT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'application/pdf': 'pdf' };
+  var supportTray = ONE.attachTray({
+    input: $('supportFile'),
+    into: $('supportForm'),
+    max: 5,
+    say: function (m, kind) { say($('supportNote'), m, kind); }
   });
   $('supportForm').addEventListener('submit', async function (e) {
     e.preventDefault();
     var ta = $('supportBody'); var text = ta.value.trim();
-    if (!text) return;
+    var files = supportTray.files();
+    if (!text && !files.length) return;
     $('supportSend').disabled = true;
+    supportTray.busy(true);
+    if (files.length) say($('supportNote'), 'Sending ' + (files.length === 1 ? 'your file' : files.length + ' files') + '…');
     try {
-      var res = await api({ action: 'support_send', body: text });
+      var payload = { action: 'support_send', body: text };
+      if (files.length) {
+        var batch = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2);
+        payload.files = [];
+        for (var k = 0; k < files.length; k++) {
+          var path = user.id + '/chat/' + batch + '-' + k + '.' + SUPPORT_EXT[files[k].type];
+          var up = await ONE.db.storage.from('request-attachments').upload(path, files[k], { contentType: files[k].type });
+          if (up.error) throw new Error('Could not upload ' + files[k].name + ': ' + ONE.friendlyError(up.error));
+          payload.files.push(path);
+        }
+      }
+      var res = await api(payload);
       ta.value = ''; ta.style.height = 'auto'; say($('supportNote'), '');
+      supportTray.clear();
       var box = $('supportMsgs');
       var sys = box.querySelector('.from-system'); if (sys) sys.remove();
       box.appendChild(supportBubble(res.message)); supportCount++;
       haptic('success');
       box.scrollTop = box.scrollHeight;
     } catch (err) { say($('supportNote'), err.message, 'bad'); }
+    supportTray.busy(false);
     $('supportSend').disabled = false;
   });
 
@@ -2146,7 +2138,7 @@
     /* Not requests-badge.js: it repaints the same badge with requests only,
        dropping the support chat's unread. The app's own count covers both. */
     ONE.refreshRequestBadge = function () { refreshMe().catch(function () {}); };
-    [base + 'requests.js?v=0704a970'].forEach(function (src) {
+    [base + 'requests.js?v=5bfd8922'].forEach(function (src) {
       var s = document.createElement('script');
       s.src = src;
       document.body.appendChild(s);
