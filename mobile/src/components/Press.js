@@ -20,7 +20,7 @@ function split(style) {
   return [outer, inner];
 }
 
-export default function Press({ onPress, onLongPress, style, children, disabled, feel = 'light', scale = 0.97, accessibilityLabel, accessibilityRole = 'button', hitSlop, testID }) {
+export default function Press({ onPress, onLongPress, style, children, disabled, feel = 'light', scale = 0.97, accessibilityLabel, accessibilityRole = 'button', hitSlop, testID, onLayout }) {
   const v = useRef(new Animated.Value(0)).current;
   const to = (n) => Animated.spring(v, { toValue: n, useNativeDriver: true, speed: 40, bounciness: n ? 0 : 6 }).start();
   const s = v.interpolate({ inputRange: [0, 1], outputRange: [1, scale] });
@@ -39,6 +39,7 @@ export default function Press({ onPress, onLongPress, style, children, disabled,
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled: !!disabled }}
       style={outer}
+      onLayout={onLayout}
     >
       <Animated.View style={[inner, { transform: [{ scale: s }], opacity: disabled ? 0.45 : o }]}>{children}</Animated.View>
     </Pressable>

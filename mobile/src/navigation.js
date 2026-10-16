@@ -12,16 +12,18 @@
  */
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from './components/Icon';
 import Press from './components/Press';
 import { Badge } from './components/ui';
 import { C } from './theme';
+import { SUPABASE_URL } from './config';
+import { initials } from './lib/format';
 import { useApp } from './state/app';
 import { haptic } from './lib/phone';
 import { choose } from './components/chat';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { loadChats, startLive, stopLive, useChats } from './state/chat';
 import { bus } from './lib/bus';
 import { api } from './lib/api';
@@ -81,19 +83,31 @@ function HeadButtons({ navigation }) {
   );
 }
 
-/* Which site the tabs are about, top left, when there is more than one. */
-function SitePicker() {
+/* Top left on every tab: their logo and business name, in bold black.
+   No page title: the tab bar already says which page this is. With more
+   than one site (Kane), tapping it switches site. */
+function logoUrl(site) {
+  return site && site.logo_path ? SUPABASE_URL + '/storage/v1/object/public/avatars/' + site.logo_path.split('/').map(encodeURIComponent).join('/') : null;
+}
+function Brand() {
   const { sites, site, selectSite } = useApp();
-  if (!site) return null;
+  const [broken, setBroken] = useState(false);
+  if (!site) return <Text style={s.brandName}>one<Text style={{ color: C.or }}>.</Text></Text>;
   const many = sites.length > 1;
+  const url = logoUrl(site);
   const pick = async () => {
     const i = await choose('Which site?', sites.map((x) => x.name || x.url || 'Site'));
     if (i >= 0) { haptic.select(); selectSite(sites[i].site_id); }
   };
   return (
-    <Press onPress={many ? pick : undefined} feel={many ? 'light' : null} disabled={false} style={s.site} accessibilityLabel={many ? 'Change site' : undefined}>
-      <Text style={s.siteText} numberOfLines={1}>{site.name || 'Your site'}</Text>
-      {many ? <Icon name="down" size={15} color={C.ink2} stroke={2.2} /> : null}
+    <Press onPress={many ? pick : undefined} feel={many ? 'light' : null} scale={many ? 0.97 : 1} style={s.brand} accessibilityLabel={many ? 'Change site' : site.name}>
+      {url && !broken ? (
+        <Image source={{ uri: url }} style={s.logo} onError={() => setBroken(true)} />
+      ) : (
+        <View style={[s.logo, s.logoNone]}><Text style={s.logoText}>{initials(site.name)}</Text></View>
+      )}
+      <Text style={s.brandName} numberOfLines={1}>{site.name || 'Your site'}</Text>
+      {many ? <Icon name="down" size={16} color={C.ink} stroke={2.4} /> : null}
     </Press>
   );
 }
@@ -105,8 +119,8 @@ function tabStack(name, Component, title, opts) {
         <TabStack.Screen name={name + 'Home'} component={Component}
           options={({ navigation }) => Object.assign({
             title,
-            headerLargeTitle: Platform.OS === 'ios',
-            headerLeft: () => <SitePicker />,
+            headerTitle: () => null,
+            headerLeft: () => <Brand />,
             headerRight: () => <HeadButtons navigation={navigation} />
           }, opts)} />
       </TabStack.Navigator>
@@ -122,7 +136,7 @@ const HomeStack = tabStack('Home', AnalyticsScreen, 'Home');
 const ChatStack = tabStack('Chat', InboxScreen, 'Chat');
 const MessagesStack = tabStack('Messages', MessagesScreen, 'Messages');
 const SupportStack = tabStack('Support', SupportScreen, 'Support');
-const DashboardStack = tabStack('Dashboard', DashboardScreen, 'Dashboard', { headerLargeTitle: false, title: '' });
+const DashboardStack = tabStack('Dashboard', DashboardScreen, 'Dashboard');
 
 const TAB_ICON = { Build: 'build', Analytics: 'chart', Home: 'home', Chat: 'chat', Contacts: 'contacts', Messages: 'mail', Support: 'support', Dashboard: 'grid' };
 
@@ -253,8 +267,11 @@ const s = StyleSheet.create({
   headBtns: { flexDirection: 'row', alignItems: 'center' },
   headBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', marginLeft: 4 },
   bellDot: { position: 'absolute', top: 7, right: 8, width: 9, height: 9, borderRadius: 5, backgroundColor: C.or2, borderWidth: 1.5, borderColor: '#fff' },
-  site: { flexDirection: 'row', alignItems: 'center', maxWidth: 200, paddingVertical: 6 },
-  siteText: { fontSize: 15, fontWeight: '600', color: C.ink2, marginRight: 4 },
+  brand: { flexDirection: 'row', alignItems: 'center', maxWidth: 260, paddingVertical: 4 },
+  logo: { width: 32, height: 32, borderRadius: 9, marginRight: 10, backgroundColor: C.grey },
+  logoNone: { backgroundColor: C.ink, alignItems: 'center', justifyContent: 'center' },
+  logoText: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  brandName: { fontSize: 18, fontWeight: '700', letterSpacing: -0.3, color: C.ink, marginRight: 4, flexShrink: 1 },
   tabBar: { flexDirection: 'row', backgroundColor: '#fff', borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line, paddingTop: 8 },
   tab: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   tabLabel: { marginTop: 3, fontSize: 11, fontWeight: '500', color: C.ink3 },

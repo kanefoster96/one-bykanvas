@@ -77,9 +77,9 @@ export function Segmented({ options, value, onChange, style, stretch }) {
         const on = o.value === value;
         return (
           <Press key={o.value} feel={null} scale={0.95} onPress={() => { if (!on) { haptic.select(); onChange(o.value); } }}
-            style={[s.segItem, stretch && { flex: 1 }]} accessibilityRole="tab">
-            <View onLayout={(e) => { const l = e.nativeEvent.layout; setBoxes((b) => ({ ...b, [o.value]: { x: l.x, width: l.width } })); }}
-              style={[s.segPad, stretch && { alignItems: 'center' }]}>
+            style={[s.segItem, stretch && { flex: 1 }]} accessibilityRole="tab"
+            onLayout={(e) => { const l = e.nativeEvent.layout; setBoxes((b) => ({ ...b, [o.value]: { x: l.x, width: l.width } })); }}>
+            <View style={[s.segPad, stretch && { alignItems: 'center' }]}>
               <Text style={[s.segText, on && { color: '#fff' }]} numberOfLines={1}>{o.label}</Text>
               {o.dot ? <View style={s.segDot} /> : null}
             </View>
