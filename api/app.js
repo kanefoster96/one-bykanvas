@@ -385,7 +385,7 @@ async function me(db, caller) {
     return Object.assign({}, s, { dashboard_url: c.dashboard_url || null, modules: c.modules || [], labels: c.labels || {}, deep_links: c.deep_links || {}, phone_number: c.phone_number || null });
   });
 
-  const { data: prof } = await db.from('profiles').select('notifications_seen_at, active_plan, business_name').eq('id', caller.user_id).maybeSingle();
+  const { data: prof } = await db.from('profiles').select('notifications_seen_at, active_plan, business_name, avatar_path').eq('id', caller.user_id).maybeSingle();
   const seenAt = prof && prof.notifications_seen_at ? new Date(prof.notifications_seen_at) : new Date(0);
   let nq = db.from('notifications').select('id, created_at').gt('created_at', seenAt.toISOString()).limit(100);
   nq = caller.is_admin ? nq.eq('for_admin', true) : nq.eq('user_id', caller.user_id);
@@ -409,7 +409,7 @@ async function me(db, caller) {
   }
 
   return {
-    user: { id: caller.user_id, email: caller.email, is_admin: caller.is_admin, plan: (prof && prof.active_plan) || null },
+    user: { id: caller.user_id, email: caller.email, is_admin: caller.is_admin, plan: (prof && prof.active_plan) || null, business_name: (prof && prof.business_name) || null, logo_path: (prof && prof.avatar_path) || null, notifications_seen_at: (prof && prof.notifications_seen_at) || null },
     sites: full,
     unread: { notifications: (fresh || []).length, requests: requestsUnread, support: caller.is_admin ? 0 : await supportUnread(db, caller) }
   };

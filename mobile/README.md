@@ -1,34 +1,49 @@
 # Kanvas One, the phone app
 
-An Expo (React Native) shell around the web app at `https://kanvas.one/app/`.
-The shell is a full-screen WebView plus push notifications; every screen the
-customer or the admin sees is the web app itself, served from kanvas.one, so
-a fix on the site is a fix in the app the next time it opens. No Mac is
-needed: EAS builds the iOS app in the cloud and EAS Submit uploads it to
-TestFlight.
+An Expo (React Native) app. From version 1.1 every screen a business uses
+is native: Build and requests (Kane), Analytics, Chat and contacts,
+Messages (Starter), Support and the chat with Kane, Activity and Account.
+Lists push full-screen conversations that swipe back from the left edge,
+every tap has a little give and a tap of vibration, and changes animate.
+The one web page left is the **Dashboard** tab, because it is the
+customer's own site's dashboard (for Kane, the admin page): it opens
+signed in through a one-time handoff link. No Mac is needed: EAS builds
+the iOS app in the cloud and EAS Submit uploads it to TestFlight.
+
+Version 1.0 (the WebView shell around `kanvas.one/app`) keeps working for
+anyone who has not updated; kanvas.one/app is unchanged and is still what
+a browser shows.
 
 - App name **Kanvas One**, bundle id `one.kanvas.app` (iOS and Android).
 - Icon and splash: the "one." wordmark, black on white (`assets/`).
-- `App.js` is the whole app. `app.json` is the app config, `eas.json` the
-  build profiles.
+- `App.js`: login, loading the account, push notifications and where a
+  tapped one opens. `src/navigation.js`: the tabs for each plan and the
+  screens pushed over them. `src/screens/`: the screens.
+  `src/components/`: buttons, the segmented pills, bubbles and the reply
+  box with photos (`chat.js`), the press feel (`Press.js`).
+- The screens call the same API as the web app (`/api/app`, `/api/admin`,
+  `/api/requests`) with the person's Supabase login, kept on the phone.
+- The build checklists and the feature catalogue are copied from the
+  website's `build-steps.js` and `request-catalogue.js` by
+  `npm run sync` (into `src/lib/shared.generated.js`). Run it after
+  changing either file.
 
-## How it talks to the web app
+## Trying it in a browser
 
-`app/app.js` on the site detects `window.ReactNativeWebView` and switches
-into shell mode. The web app posts `{type:'ready'}` when it has booted,
-`{type:'push:register'}` when it wants a push token, and `{type:'open', url}`
-for links that should leave the app. The shell calls back into the page
-through `window.ONE_NATIVE`: `onPushToken(token)`, `onPushDenied(reason)`,
-`openLink(data)` when a notification is tapped, and `refresh()` when one
-arrives or the app comes back to the foreground.
+`npm run web` serves the app at localhost:8081 (react-native-web). Good
+enough to check layouts and logic; haptics, push, the camera and the
+Dashboard's web view only work on a phone.
 
-Push goes through Expo's push service. The web app registers the
-`ExponentPushToken[...]` with `/api/app` (`device`), and `api/_push.js`
-sends to any token of that shape through `exp.host`. The APNs key lives in
-the EAS project (set up once, below), so nothing about push needs
-configuring in Vercel.
+## How the Dashboard talks to the phone
 
-## What the phone adds (build 7 onwards)
+Dashboards include `kanvas-handoff.js`. In the 1.1 app it sees
+`window.ONE_NATIVE_EMBED` and talks to the app through
+`window.ReactNativeWebView` (scan a QR code, add to the calendar, share,
+vibrate); answers come back through `window.KanvasAppResult`. In the 1.0
+app it was framed inside kanvas.one/app and talked to the parent window;
+both still work.
+
+## What the phone adds (1.0, build 7 onwards)
 
 Announced to the page before it loads as `window.ONE_NATIVE_FEATURES`; the
 web app (and any dashboard framed in it, through `KanvasApp` in

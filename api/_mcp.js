@@ -171,12 +171,12 @@ async function sitesFor(ctx, caller) {
   const owners = Array.from(new Set(sites.map((s) => s.owner_id)));
   const plans = {};
   if (owners.length) {
-    const { data: profs } = await ctx.db.from('profiles').select('id, business_name, active_plan, subscription_status').in('id', owners);
+    const { data: profs } = await ctx.db.from('profiles').select('id, business_name, active_plan, subscription_status, avatar_path').in('id', owners);
     (profs || []).forEach((p) => { plans[p.id] = p; });
   }
   return sites.map((s) => {
     const p = plans[s.owner_id] || {};
-    return { site_id: s.id, name: s.name || p.business_name || '', url: s.url, status: s.status, plan: PLAN_NAME[p.active_plan] || null, subscription: p.subscription_status || 'none', role: caller.is_admin && s.owner_id !== caller.user_id ? 'admin' : 'owner', owner_id: s.owner_id };
+    return { site_id: s.id, name: s.name || p.business_name || '', url: s.url, status: s.status, plan: PLAN_NAME[p.active_plan] || null, subscription: p.subscription_status || 'none', role: caller.is_admin && s.owner_id !== caller.user_id ? 'admin' : 'owner', owner_id: s.owner_id, logo_path: p.avatar_path || null };
   });
 }
 

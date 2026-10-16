@@ -1,0 +1,18 @@
+# Publishes the app's JavaScript as an over-the-air update to the
+# production channel. Phones on the same app version (runtimeVersion
+# follows "version" in app.json) fetch it quietly and use it from their
+# next launch. Run it from expo.dev (Workflows) or the Expo tools.
+# Anything that adds a native module, a permission or a plugin still
+# needs a new store build instead.
+name: Publish update
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  update:
+    name: Publish to production
+    type: update
+    params:
+      channel: production
+      message: Over-the-air update
