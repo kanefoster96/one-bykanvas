@@ -70,7 +70,7 @@ ${rows.map(([k, a, b]) => `        <tr><th scope="row">${k}</th><td>${a}</td><td
 }
 
 function areas(title, intro, towns, other) {
-  return `<section class="section grey">
+  return `<section class="section">
   <div class="wrap center">
     <h2 class="reveal">${title}</h2>
     <p class="lede reveal">${intro}</p>
