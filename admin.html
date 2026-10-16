@@ -63,6 +63,14 @@ button.k1-card:hover{border-color:var(--line)}
 .k1-card-small{flex-direction:column;align-items:flex-start;gap:2px;min-height:118px}
 .k1-card-n{font-size:30px;font-weight:600;letter-spacing:-.03em;line-height:1.1;margin-bottom:4px}
 .k1-card-small.is-hot .k1-card-n,.k1-card-small.is-hot .k1-card-sub{color:#b3261e}
+/* The four job counts on black, as on the app's Build tab; a busy one in orange. */
+.k1-card-small{background:var(--night);border-color:transparent;color:var(--on-night)}
+button.k1-card-small:hover{border-color:#ff8a4c}
+.k1-card-small .k1-card-sub{color:var(--on-night-2)}
+.k1-card-small.is-hot .k1-card-n{background:var(--or-text);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.k1-card-small.is-hot .k1-card-sub{color:#ff8a4c}
+/* White page, as in the rest of the app. */
+body.auth-body{background:#fff}
 .k1-strip{padding:13px clamp(18px,4vw,24px)}
 .k1-strip-label{flex:0 0 auto;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
 .k1-strip-bits{flex:1;min-width:0;font-size:14px;color:var(--ink-2)}

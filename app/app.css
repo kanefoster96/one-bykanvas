@@ -576,3 +576,9 @@
 .oa-site-card .oa-chip:not(.oa-chip-ghost){background:var(--or-grad);border-color:transparent;color:#fff}
 .oa-body .btn-primary,.oa-body .btn-primary:hover,.oa-chip-dark,.oa-chip-dark:hover{box-shadow:none}
 .oa-status-dot.is-building{background:#a1a1a6;box-shadow:0 0 0 5px rgba(161,161,166,.2)}
+
+/* Nothing in build: the line sits right under its heading. */
+#bList > .req-empty:only-child{margin-top:4px}
+/* Send in a chat is the one action on the screen: orange, like Send request. */
+.oa-send{background:var(--or-grad);box-shadow:none}
+.oa-send:hover{background:var(--or-grad-hover)}
