@@ -31,6 +31,26 @@
     return { code: pick('error_code'), desc: pick('error_description').replace(/\+/g, ' ') };
   })();
 
+  /* Whether the session came from a reset link, and recently. Being logged
+     in is not enough: the account page asks for the current password before
+     changing it, so a phone left logged in must not be able to skip that
+     here. Supabase stamps how a session was made into its token (amr), on
+     its own clock, so the check compares two server times and a phone's
+     wrong clock cannot break it. A signup-style one-time code counts only
+     when the link that made it is in the URL right now. */
+  var ARRIVED_WITH_RECOVERY = /(^|[#&])type=recovery(&|$)/.test(String(location.hash || ''))
+    && /(^|[#&])access_token=/.test(String(location.hash || ''));
+  function fromResetLink(session) {
+    try {
+      var part = session.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      var claims = JSON.parse(atob(part + '==='.slice((part.length + 3) % 4)));
+      return (claims.amr || []).some(function (a) {
+        var ok = a.method === 'recovery' || (a.method === 'otp' && ARRIVED_WITH_RECOVERY);
+        return ok && claims.iat - a.timestamp < 3600;
+      });
+    } catch (e) { return false; }
+  }
+
   function show(which) {
     checking.hidden = which !== 'checking';
     ready.hidden    = which !== 'ready';
@@ -75,6 +95,11 @@
     if (!session) {
       return cannot('This page needs a reset link to work. Ask for one and open it from '
                   + 'your email.');
+    }
+
+    /* Logged in, but not by a reset link: send them to ask for one. */
+    if (!fromResetLink(session)) {
+      return location.replace('/login.html?reset=1');
     }
 
     if (session.user && session.user.email) {

@@ -28,8 +28,10 @@ function afterLogin() {
   return /^\/(?!\/)/.test(next) ? next : '/account.html';
 }
 
-/* If a session already exists, there is nothing to log into. */
-if (ONE.ready) {
+/* If a session already exists, there is nothing to log into - unless they
+   came to ask for a reset link, which someone still logged in on one
+   device may well need. */
+if (ONE.ready && !new URLSearchParams(location.search).get('reset')) {
   ONE.db.auth.getSession().then(function (res) {
     if (res.data.session) location.replace(afterLogin());
   });
