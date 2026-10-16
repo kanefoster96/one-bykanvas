@@ -33,27 +33,42 @@
  */
 (function () {
   'use strict';
+  /* Two ways to be in the app: framed inside the older web-based app
+     (talk to the parent window), or opened straight in the native app's
+     own web view (version 1.1 on; it sets ONE_NATIVE_EMBED before the page
+     loads, and listens on window.ReactNativeWebView). */
   var framed = false;
   try { framed = window.self !== window.top; } catch (e) { framed = true; }
-  var features = [], waiting = {}, n = 0;
+  var rn = !framed && !!window.ONE_NATIVE_EMBED && !!window.ReactNativeWebView;
+  var inApp = framed || rn;
+  var features = rn && Array.isArray(window.ONE_NATIVE_FEATURES) ? window.ONE_NATIVE_FEATURES : [], waiting = {}, n = 0;
+  function tell(m) {
+    if (rn) window.ReactNativeWebView.postMessage(JSON.stringify(m));
+    else window.parent.postMessage(m, '*');
+  }
   function ask(op, extra) {
-    if (!framed) return Promise.reject(new Error('unavailable'));
+    if (!inApp) return Promise.reject(new Error('unavailable'));
     var id = 'k' + Date.now().toString(36) + (n++);
     return new Promise(function (resolve, reject) {
       waiting[id] = { resolve: resolve, reject: reject };
-      try { window.parent.postMessage(Object.assign({ kanvas: 'native', op: op, id: id }, extra || {}), '*'); }
+      try { tell(Object.assign({ kanvas: 'native', op: op, id: id }, extra || {})); }
       catch (e) { delete waiting[id]; reject(new Error('unavailable')); }
     });
   }
-  window.addEventListener('message', function (e) {
-    var m = e.data;
-    if (!m || e.source !== window.parent) return;
-    if (m.kanvas === 'native-features') { features = Array.isArray(m.features) ? m.features : []; return; }
-    if (m.kanvas !== 'native-result' || !waiting[m.id]) return;
+  function answered(m) {
+    if (!m || !waiting[m.id]) return;
     var w = waiting[m.id]; delete waiting[m.id];
     if (m.error) w.reject(new Error(m.error));
     else if ('data' in m) w.resolve(m.data);
     else w.resolve(!!m.saved);
+  }
+  /* The native app answers by calling this. */
+  window.KanvasAppResult = answered;
+  window.addEventListener('message', function (e) {
+    var m = e.data;
+    if (!m || e.source !== window.parent) return;
+    if (m.kanvas === 'native-features') { features = Array.isArray(m.features) ? m.features : []; return; }
+    if (m.kanvas === 'native-result') answered(m);
   });
   if (framed) { try { window.parent.postMessage({ kanvas: 'native', op: 'features' }, '*'); } catch (e) { /* not in the app */ } }
   window.KanvasApp = {
@@ -64,8 +79,8 @@
       var start = new Date(ev.start), end = ev.end ? new Date(ev.end) : null;
       return ask('calendar', { title: ev.title || '', start: isNaN(start) ? '' : start.toISOString(), end: end && !isNaN(end) ? end.toISOString() : '', location: ev.location || '', notes: ev.notes || '' });
     },
-    share: function (o) { o = o || {}; if (framed) try { window.parent.postMessage({ kanvas: 'native', op: 'share', message: o.message || '', url: o.url || '' }, '*'); } catch (e) {} },
-    haptic: function (style) { if (framed) try { window.parent.postMessage({ kanvas: 'native', op: 'haptic', style: style || 'light' }, '*'); } catch (e) {} }
+    share: function (o) { o = o || {}; if (inApp) try { tell({ kanvas: 'native', op: 'share', message: o.message || '', url: o.url || '' }); } catch (e) {} },
+    haptic: function (style) { if (inApp) try { tell({ kanvas: 'native', op: 'haptic', style: style || 'light' }); } catch (e) {} }
   };
 })();
 
@@ -77,16 +92,19 @@
        .kanvas-embedded .site-header, .kanvas-embedded .site-footer { display: none } */
   var embedded = false;
   try { embedded = window.self !== window.top; } catch (e) { /* cross-origin top: framed */ embedded = true; }
-  if (embedded) {
+  /* Opened straight in the native app: embedded too, but the app's own
+     web view does pull to refresh, and hears "ready" directly. */
+  var rn = !embedded && !!window.ONE_NATIVE_EMBED && !!window.ReactNativeWebView;
+  if (embedded || rn) {
     document.documentElement.classList.add('kanvas-embedded');
-    pullToRefresh();
+    if (!rn) pullToRefresh();
     /* The app keeps its own loading screen up until the page says it is
        ready, so the person sees one loading screen, not the app's and
        then the dashboard's. Said once the page has loaded; a dashboard
        that fetches its data after that can call window.kanvasReady()
        itself when the data is on screen. */
     var told = false;
-    window.kanvasReady = function () { if (told) return; told = true; try { window.parent.postMessage({ kanvas: 'ready' }, '*'); } catch (e) { /* nothing to tell */ } };
+    window.kanvasReady = function () { if (told) return; told = true; try { if (rn) window.ReactNativeWebView.postMessage(JSON.stringify({ kanvas: 'ready' })); else window.parent.postMessage({ kanvas: 'ready' }, '*'); } catch (e) { /* nothing to tell */ } };
     /* A page that fetches before it has anything to show says so with
        data-wait on this script tag, and calls window.kanvasReady() itself. */
     var waits = document.currentScript && document.currentScript.hasAttribute('data-wait');

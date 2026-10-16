@@ -2,7 +2,7 @@
   "expo": {
     "name": "Kanvas One",
     "slug": "kanvas-one",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "scheme": "kanvasone",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -82,7 +82,15 @@
           "calendarPermission": "So you can add a booking to your calendar."
         }
       ],
-      "expo-updates"
+      "expo-updates",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "So you can attach photos to a request or a message.",
+          "cameraPermission": "So you can scan QR codes at the door, and take a photo to send with a request or a message.",
+          "microphonePermission": false
+        }
+      ]
     ],
     "extra": {
       "eas": {

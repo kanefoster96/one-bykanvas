@@ -7,11 +7,20 @@
     "preview": {
       "distribution": "internal",
       "channel": "preview",
-      "ios": { "simulator": false }
+      "ios": {
+        "simulator": false
+      }
     },
     "production": {
       "autoIncrement": true,
       "channel": "production"
+    },
+    "simulator": {
+      "distribution": "internal",
+      "channel": "preview",
+      "ios": {
+        "simulator": true
+      }
     }
   },
   "submit": {
