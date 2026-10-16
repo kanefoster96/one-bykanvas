@@ -86,6 +86,26 @@ export async function uploadFiles(userId, files, sub) {
   return paths;
 }
 
+/* One file to an exact path, replacing what is there (the logo, always
+   <user id>/logo.<ext> in the public avatars bucket). */
+export async function uploadOne(bucket, path, f) {
+  const t = await token();
+  const form = new FormData();
+  if (f.file) form.append('', f.file, f.name);
+  else form.append('', { uri: f.uri, name: f.name || 'logo.jpg', type: f.type || 'image/jpeg' });
+  const res = await fetch(SUPABASE_URL + '/storage/v1/object/' + bucket + '/' + path, {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + t, apikey: SUPABASE_KEY, 'x-upsert': 'true' },
+    body: form
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    const msg = body.message || body.error || String(res.status);
+    throw new Error(/size|large/i.test(msg) ? 'That picture is too big. Try a smaller one (under 2 MB).' : 'Could not upload the picture: ' + msg);
+  }
+  return path;
+}
+
 /* Links that open a stored file for an hour. */
 export async function signedUrls(paths) {
   if (!paths || !paths.length) return [];

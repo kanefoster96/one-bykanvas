@@ -2,7 +2,7 @@
    this phone, share the website, log out, the policies, and deleting the
    account (both app stores require it inside the app). */
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Constants from 'expo-constants';
 import { Button, Note } from '../components/ui';
@@ -14,14 +14,17 @@ import { bus } from '../lib/bus';
 import { pushNote, pushToken } from '../lib/push';
 import { openOutside, share } from '../lib/phone';
 import { C, R } from '../theme';
+import { brandFor } from '../lib/brand';
+import { initials } from '../lib/format';
 
-export default function AccountScreen() {
+export default function AccountScreen({ navigation }) {
   const app = useApp();
   const insets = useSafeAreaInsets();
   const [push, setPush] = useState(pushNote());
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState({ text: '' });
   const site = app.site;
+  const brand = brandFor(app);
   useEffect(() => bus.on('push', setPush), []);
 
   const logOut = async () => {
@@ -41,8 +44,17 @@ export default function AccountScreen() {
     <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} contentContainerStyle={[s.body, { paddingBottom: insets.bottom + 28 }]}>
       <Text style={s.title}>Account</Text>
       <View style={s.card}>
+        {!app.isAdmin ? (
+          <Press onPress={() => navigation.navigate('Profile')} style={s.biz} scale={0.98}>
+            {brand.logo ? <Image source={{ uri: brand.logo }} style={s.bizLogo} /> : <View style={[s.bizLogo, s.bizNone]}><Text style={s.bizInit}>{initials(brand.name)}</Text></View>}
+            <View style={{ flex: 1, marginLeft: 12 }}>
+              <Text style={s.bizName} numberOfLines={1}>{brand.name || 'Your business'}</Text>
+              <Text style={s.bizEdit}>Change name or logo</Text>
+            </View>
+          </Press>
+        ) : null}
         <Text style={s.email}>{(app.user && app.user.email) || ''}</Text>
-        {site ? <Text style={s.site}>{site.name}</Text> : null}
+        {site && app.isAdmin ? <Text style={s.site}>{site.name}</Text> : null}
         <Text style={s.push}>{push || 'Checking notifications…'}</Text>
       </View>
       {site && site.url ? <Button title="Share your website" kind="ghost" icon="share" onPress={() => share((site.name ? site.name + ': ' : '') + 'have a look at our website', site.url)} style={{ marginTop: 14 }} /> : null}
@@ -70,6 +82,12 @@ const s = StyleSheet.create({
   body: { padding: 20, paddingTop: 26 },
   title: { fontSize: 26, fontWeight: '700', letterSpacing: -0.6, color: C.ink },
   card: { marginTop: 16, backgroundColor: C.night, borderRadius: R.cardLg, padding: 18 },
+  biz: { flexDirection: 'row', alignItems: 'center', paddingBottom: 14, marginBottom: 14, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.nightLine },
+  bizLogo: { width: 48, height: 48, borderRadius: 24, backgroundColor: C.night2 },
+  bizNone: { backgroundColor: C.or, alignItems: 'center', justifyContent: 'center' },
+  bizInit: { color: '#fff', fontWeight: '700', fontSize: 17 },
+  bizName: { fontSize: 18, fontWeight: '700', color: C.onNight },
+  bizEdit: { marginTop: 2, fontSize: 14, color: C.orLight },
   email: { fontSize: 17, fontWeight: '600', color: C.onNight },
   site: { marginTop: 3, fontSize: 14.5, color: C.onNight2 },
   push: { marginTop: 12, fontSize: 14, lineHeight: 19, color: C.orLight },

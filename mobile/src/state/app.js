@@ -16,6 +16,7 @@ export function AppProvider({ children }) {
   const [siteId, setSiteId] = useState(null);
   const [bootError, setBootError] = useState(null);
   const [counts, setCountsState] = useState({ chat: 0, build: 0, messages: 0 });
+  const [logoVersion, setLogoVersion] = useState(0); // a new logo at the same path: load it afresh
   const meRef = useRef(null);
 
   useEffect(() => {
@@ -76,11 +77,14 @@ export function AppProvider({ children }) {
     const contactsAllowed = !!site && site.plan !== 'Starter';
     return {
       session, me, user, sites, site, isAdmin, isStarter, isOneClient, hasChat, contactsAllowed,
-      bootError, counts, setCounts, loadMe, refreshMe,
+      bootError, counts, setCounts, loadMe, refreshMe, logoVersion,
+      bumpLogo: () => setLogoVersion(Date.now()),
+      /* The profile changed here (name or logo): show it without a reload. */
+      patchUser: (part) => setMe((m) => { if (!m) return m; const n = Object.assign({}, m, { user: Object.assign({}, m.user, part) }); meRef.current = n; return n; }),
       selectSite: (id) => setSiteId(id),
       logOut: async () => { try { await db.auth.signOut({ scope: 'local' }); } catch (e) { /* cleared regardless */ } }
     };
-  }, [session, me, siteId, bootError, counts, setCounts, loadMe, refreshMe]);
+  }, [session, me, siteId, bootError, counts, setCounts, loadMe, refreshMe, logoVersion]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

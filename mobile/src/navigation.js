@@ -18,7 +18,8 @@ import Icon from './components/Icon';
 import Press from './components/Press';
 import { Badge } from './components/ui';
 import { C } from './theme';
-import { SUPABASE_URL } from './config';
+import { brandFor } from './lib/brand';
+import { useNavigation } from '@react-navigation/native';
 import { initials } from './lib/format';
 import { useApp } from './state/app';
 import { haptic } from './lib/phone';
@@ -46,6 +47,7 @@ import DashboardScreen from './screens/DashboardScreen';
 import WebPageScreen from './screens/WebPageScreen';
 import ActivityScreen from './screens/ActivityScreen';
 import AccountScreen from './screens/AccountScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 export { nav } from './navRef';
 
@@ -83,30 +85,33 @@ function HeadButtons({ navigation }) {
   );
 }
 
-/* Top left on every tab: their logo and business name, in bold black.
-   No page title: the tab bar already says which page this is. With more
-   than one site (Kane), tapping it switches site. */
-function logoUrl(site) {
-  return site && site.logo_path ? SUPABASE_URL + '/storage/v1/object/public/avatars/' + site.logo_path.split('/').map(encodeURIComponent).join('/') : null;
-}
+/* Top left on every tab: their logo in a circle and the business name in
+   bold black. No page title: the tab bar already says which page this is.
+   A customer taps it to change their name or logo (Kane gets the change
+   as a request, for the website); Kane taps it to switch site. */
 function Brand() {
-  const { sites, site, selectSite } = useApp();
-  const [broken, setBroken] = useState(false);
-  if (!site) return <Text style={s.brandName}>one<Text style={{ color: C.or }}>.</Text></Text>;
-  const many = sites.length > 1;
-  const url = logoUrl(site);
-  const pick = async () => {
+  const app = useApp();
+  const navigation = useNavigation();
+  const [broken, setBroken] = useState(null);
+  const { sites, isAdmin, selectSite } = app;
+  const brand = brandFor(app);
+  if (!brand.name && !app.site) return <Text style={s.brandName}>one<Text style={{ color: C.or }}>.</Text></Text>;
+  const many = isAdmin && sites.length > 1;
+  const tap = async () => {
+    if (!isAdmin) { navigation.navigate('Profile'); return; }
+    if (!many) return;
     const i = await choose('Which site?', sites.map((x) => x.name || x.url || 'Site'));
     if (i >= 0) { haptic.select(); selectSite(sites[i].site_id); }
   };
   return (
-    <Press onPress={many ? pick : undefined} feel={many ? 'light' : null} scale={many ? 0.97 : 1} style={s.brand} accessibilityLabel={many ? 'Change site' : site.name}>
-      {url && !broken ? (
-        <Image source={{ uri: url }} style={s.logo} onError={() => setBroken(true)} />
+    <Press onPress={tap} feel={!isAdmin || many ? 'light' : null} scale={!isAdmin || many ? 0.96 : 1} style={s.brand}
+      accessibilityLabel={isAdmin ? (many ? 'Change site' : brand.name) : 'Your business name and logo'} testID="brand">
+      {brand.logo && broken !== brand.logo ? (
+        <Image source={{ uri: brand.logo }} style={s.logo} onError={() => setBroken(brand.logo)} />
       ) : (
-        <View style={[s.logo, s.logoNone]}><Text style={s.logoText}>{initials(site.name)}</Text></View>
+        <View style={[s.logo, s.logoNone]}><Text style={s.logoText}>{initials(brand.name)}</Text></View>
       )}
-      <Text style={s.brandName} numberOfLines={1}>{site.name || 'Your site'}</Text>
+      <Text style={s.brandName} numberOfLines={1}>{brand.name || 'Your business'}</Text>
       {many ? <Icon name="down" size={16} color={C.ink} stroke={2.4} /> : null}
     </Press>
   );
@@ -258,6 +263,7 @@ export function MainNavigator() {
         <Root.Screen name="Activity" component={ActivityScreen} options={{ sheetAllowedDetents: [0.6, 1] }} />
         <Root.Screen name="Account" component={AccountScreen} options={{ sheetAllowedDetents: [0.75, 1] }} />
         <Root.Screen name="Online" component={OnlineScreen} options={{ sheetAllowedDetents: [0.55, 1] }} />
+        <Root.Screen name="Profile" component={ProfileScreen} options={{ sheetAllowedDetents: [0.85, 1] }} />
       </Root.Group>
     </Root.Navigator>
   );
@@ -268,7 +274,7 @@ const s = StyleSheet.create({
   headBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', marginLeft: 4 },
   bellDot: { position: 'absolute', top: 7, right: 8, width: 9, height: 9, borderRadius: 5, backgroundColor: C.or2, borderWidth: 1.5, borderColor: '#fff' },
   brand: { flexDirection: 'row', alignItems: 'center', maxWidth: 260, paddingVertical: 4 },
-  logo: { width: 32, height: 32, borderRadius: 9, marginRight: 10, backgroundColor: C.grey },
+  logo: { width: 34, height: 34, borderRadius: 17, marginRight: 10, backgroundColor: C.grey },
   logoNone: { backgroundColor: C.ink, alignItems: 'center', justifyContent: 'center' },
   logoText: { color: '#fff', fontSize: 13, fontWeight: '700' },
   brandName: { fontSize: 18, fontWeight: '700', letterSpacing: -0.3, color: C.ink, marginRight: 4, flexShrink: 1 },
