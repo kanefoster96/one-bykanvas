@@ -126,7 +126,7 @@
   }
 
   /* In the shell, a link out of the app opens outside it; a WebView that
-     wandered off to reset.html would have no way back. */
+     wandered off to the login page would have no way back. */
   $('forgotLink').addEventListener('click', function (e) {
     if (native) { e.preventDefault(); openExternal(this.href); }
   });
