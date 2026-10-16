@@ -831,9 +831,9 @@
     svg.setAttribute('preserveAspectRatio', 'none');
     svg.setAttribute('aria-hidden', 'true');
     var a = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    a.setAttribute('d', area); a.setAttribute('fill', '#1d1d1f'); a.setAttribute('opacity', '0.08');
+    a.setAttribute('d', area); a.setAttribute('fill', '#ef4a10'); a.setAttribute('opacity', '0.1');
     var l = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    l.setAttribute('d', line); l.setAttribute('fill', 'none'); l.setAttribute('stroke', '#1d1d1f'); l.setAttribute('stroke-width', '2'); l.setAttribute('stroke-linejoin', 'round'); l.setAttribute('vector-effect', 'non-scaling-stroke');
+    l.setAttribute('d', line); l.setAttribute('fill', 'none'); l.setAttribute('stroke', '#ef4a10'); l.setAttribute('stroke-width', '2'); l.setAttribute('stroke-linejoin', 'round'); l.setAttribute('vector-effect', 'non-scaling-stroke');
     svg.appendChild(a); svg.appendChild(l);
     box.appendChild(svg);
     var last = series[series.length - 1];
@@ -1000,11 +1000,11 @@
     var vs = d.visits || { list: [], live: [], total: 0, sources: [], clicks: [], from_ads: { yes: 0, likely: 0 }, sent_form: 0 };
     var live = $('anLive');
     live.innerHTML = '';
-    if (!vs.live.length) live.appendChild(el('li', 'oa-list-empty', 'Nobody on the site right now.' + (days === 'today' ? ' This updates on its own.' : '')));
+    if (!vs.live.length) live.appendChild(el('li', 'oa-list-empty', 'Nobody on the site right now.'));
     vs.live.forEach(function (v) { live.appendChild(visitRow(v)); });
 
     var botNote = d.bots_hidden ? ' ' + d.bots_hidden + (d.bots_hidden === 1 ? ' visit' : ' visits') + ' from data centres (bots, not people) left out.' : '';
-    $('anVisitsHint').textContent = 'Tap a visitor to see where they came from, every page they opened and what they pressed.' + botNote;
+    $('anVisitsHint').textContent = 'Tap a visitor to see their visit.' + botNote;
     $('anVisitsTitle').textContent = days === 'today' ? 'Today\u2019s visitors' + (vs.total ? ' (' + vs.total + ')' : '') : 'Visitors, newest first' + (vs.total ? ' (' + vs.total + ')' : '');
     var box = $('anVisits');
     box.innerHTML = '';
@@ -1192,7 +1192,7 @@
     return 'Visitor #' + visitorNo(c.id);
   }
 
-  var AVATAR_COLOURS = ['#f5a623', '#3b6fd6', '#2a9d8f', '#c2417f', '#7b4fd6', '#e07a3a'];
+  var AVATAR_COLOURS = ['#1d1d1f']; // one colour: the app is black, white and orange
   var CHAN_ICON = {
     web: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C7 3 3 6.6 3 11c0 2.4 1.2 4.5 3.1 6L5 21l4.4-2.1c.8.2 1.7.3 2.6.3 5 0 9-3.6 9-8s-4-8-9-8z"/></svg>',
     sms: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>',
@@ -1545,7 +1545,8 @@
   var adminRows = [];
   var adminOpenId = null;
   var STATUS_WORD = { new: 'New', waiting: 'Waiting on them', in_progress: 'In progress', done: 'Done', declined: 'Cancelled' };
-  var STATUS_CLASS = { waiting: 'is-waiting', in_progress: 'is-building', done: 'is-done', declined: 'is-cancelled' };
+  /* Waiting on them is their turn, not mine: plain grey here (orange is for what needs me). */
+  var STATUS_CLASS = { waiting: '', in_progress: 'is-building', done: 'is-done', declined: 'is-cancelled' };
   var KIND_WORD = { edit: 'Change', feature: 'Feature', info: 'Details' };
   function isClosed(r) { return r.status === 'done' || r.status === 'declined'; }
   function needsMe(r) { return r.last_note_by === 'customer' && !isClosed(r); }
