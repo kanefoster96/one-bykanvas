@@ -1,5 +1,6 @@
 /* The bell: payments, bookings, messages and replies from Kane, newest
-   first, what is new since last time picked out. Tap one to open it. */
+   first, what is new since last time picked out. Its own page; tap one to
+   open it on top, and back comes here. */
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,7 +16,7 @@ import { C } from '../theme';
 
 const ICON = { money_in: '£', money_failed: '!', money_refund: '↩', money_cancelled: '✕', work: '⚒', booking: '◷', person: '☺', enquiry: '✉', chat: '…', review: '★', support: '?' };
 
-export default function ActivityScreen({ navigation }) {
+export default function ActivityScreen() {
   const app = useApp();
   const insets = useSafeAreaInsets();
   const [rows, setRows] = useState(null);
@@ -40,7 +41,7 @@ export default function ActivityScreen({ navigation }) {
         const isNew = i < unreadBefore || new Date(n.created_at).getTime() > seenAt;
         return (
           <FadeIn key={i} delay={Math.min(i, 8) * 30}>
-            <Press onPress={() => { navigation.goBack(); setTimeout(() => openLink(nav, app, n), 250); }} scale={0.985} style={s.row}>
+            <Press onPress={() => openLink(nav, app, n)} scale={0.985} style={s.row}>
               <View style={[s.icon, isNew && { backgroundColor: C.or }]}><Text style={[s.iconText, isNew && { color: '#fff' }]}>{ICON[n.kind] || '•'}</Text></View>
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={[s.rowTitle, isNew && { fontWeight: '700' }]} numberOfLines={2}>{n.title}</Text>
@@ -56,7 +57,7 @@ export default function ActivityScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  body: { padding: 20, paddingTop: 26 },
+  body: { padding: 20, paddingTop: 4 },
   title: { fontSize: 26, fontWeight: '700', letterSpacing: -0.6, color: C.ink, marginBottom: 6 },
   row: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line },
   icon: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.grey, alignItems: 'center', justifyContent: 'center' },

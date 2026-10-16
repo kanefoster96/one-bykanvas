@@ -1,4 +1,4 @@
-/* The account sheet: who is signed in, whether notifications are on for
+/* The account page: who is signed in, whether notifications are on for
    this phone, share the website, log out, the policies, and deleting the
    account (both app stores require it inside the app). */
 import { useEffect, useState } from 'react';
@@ -79,7 +79,7 @@ export default function AccountScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  body: { padding: 20, paddingTop: 26 },
+  body: { padding: 20, paddingTop: 4 },
   title: { fontSize: 26, fontWeight: '700', letterSpacing: -0.6, color: C.ink },
   card: { marginTop: 16, backgroundColor: C.night, borderRadius: R.cardLg, padding: 18 },
   biz: { flexDirection: 'row', alignItems: 'center', paddingBottom: 14, marginBottom: 14, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.nightLine },
