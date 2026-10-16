@@ -10,7 +10,8 @@
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { REQUEST_COST } = require('./_plans.js');
-const { cleanBody, cleanAttachments, addNote, siteForUser } = require('./_requests.js');
+const { notifyAdmin } = require('./_notify.js');
+const { cleanBody, cleanAttachments, addNote, siteForUser, editRequest, cancelRequest, deleteRequest } = require('./_requests.js');
 
 
 module.exports = async function handler(req, res) {
@@ -139,6 +140,34 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true, note: out.note, request: out.request });
     }
 
+    /* ---- changing their own request: edit or cancel while it is open,
+     *      delete once it is closed (done or cancelled). ---------------- */
+    if (body.action === 'edit' || body.action === 'cancel' || body.action === 'delete') {
+      const requestId = String(body.requestId || '');
+      if (!requestId) return res.status(400).json({ error: 'Which request?' });
+      const { data: reqRow, error: reqErr } = await db.from('requests')
+        .select('*').eq('id', requestId).maybeSingle();
+      if (reqErr) throw new Error(reqErr.message);
+      if (!reqRow || reqRow.user_id !== user.id) return res.status(404).json({ error: 'Request not found.' });
+      const closed = reqRow.status === 'done' || reqRow.status === 'declined';
+
+      if (body.action === 'delete') {
+        if (!closed) return res.status(400).json({ error: 'Cancel it first, then you can delete it.' });
+        await deleteRequest(db, reqRow);
+        return res.status(200).json({ ok: true });
+      }
+      if (closed) return res.status(400).json({ error: 'This request is closed. Reply to reopen it.' });
+      if (body.action === 'cancel') {
+        return res.status(200).json({ ok: true, request: await cancelRequest(db, reqRow) });
+      }
+      const cleaned = cleanBody(body.body);
+      if (cleaned.error) return res.status(400).json({ error: cleaned.error });
+      const updated = await editRequest(db, reqRow, { body: cleaned.body });
+      await notifyAdmin(db, 'Edited: ' + (updated.title || 'a request'), cleaned.body.slice(0, 200), '/admin.html#r/' + reqRow.id,
+        { siteId: reqRow.site_id || null, kind: 'support', deepLink: { kind: 'support', id: reqRow.id } });
+      return res.status(200).json({ ok: true, request: updated });
+    }
+
     /* ---- a new request: the header row, then its first note ------------ */
     const kind = String(body.kind || '').toLowerCase();
     if (!Object.prototype.hasOwnProperty.call(REQUEST_COST, kind) || kind === 'info') {
@@ -181,6 +210,7 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({ request: out.request, count: 1 });
   } catch (err) {
+    if (err && err.shown) return res.status(400).json({ error: err.message });
     console.error('requests:', err && err.message);
     return res.status(500).json({ error: 'Something went wrong. Try again.' });
   }

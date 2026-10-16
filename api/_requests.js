@@ -27,7 +27,7 @@ const CUSTOMER_LABEL = {
   waiting: 'We’ve got a question for you',
   in_progress: 'Being built',
   done: 'Done',
-  declined: 'Done'
+  declined: 'Cancelled'
 };
 
 /* files: how many attachments go with it. Photos can be sent on their own
@@ -100,6 +100,62 @@ async function addNote(db, request, { author, body, attachmentPaths, status, isP
   }
 
   return { note, request: updated };
+}
+
+/* ---- changing a request after it was sent ----------------------------
+ *
+ * The first customer note is the request as they wrote it, and the row
+ * holds the same words as detail (plus a title made from them). An edit
+ * changes all three together, so the lists, the thread and the emails
+ * agree. A title someone chose (a catalogue pick, or one we set) is kept
+ * unless a new one is given.
+ */
+async function editRequest(db, row, { body, title }) {
+  const madeTitle = String(row.detail || '').split('\n')[0].trim().slice(0, 80);
+  const patch = { detail: body };
+  if (title) patch.title = title;
+  else if (!row.title || row.title === madeTitle) patch.title = body.split('\n')[0].trim().slice(0, 80);
+  const { data: updated, error } = await db.from('requests').update(patch).eq('id', row.id).select().single();
+  if (error) throw new Error(error.message);
+  const { data: first } = await db.from('request_notes').select('id')
+    .eq('request_id', row.id).eq('author', 'customer').order('created_at', { ascending: true }).limit(1);
+  if (first && first.length) {
+    const { error: nErr } = await db.from('request_notes').update({ body }).eq('id', first[0].id);
+    if (nErr) throw new Error(nErr.message);
+  }
+  return updated;
+}
+
+/* The customer calls it off. Stored as declined (the status the table
+   already allows), shown to both sides as Cancelled; a note says so in
+   the thread, and a reply reopens it like any closed request. */
+async function cancelRequest(db, row) {
+  const now = new Date().toISOString();
+  const { error: noteErr } = await db.from('request_notes').insert({
+    request_id: row.id, author: 'customer', body: 'I\u2019ve cancelled this request.', private: false
+  });
+  if (noteErr) throw new Error(noteErr.message);
+  const { data: updated, error } = await db.from('requests')
+    .update({ status: 'declined', done_at: null, last_note_at: now, last_note_by: 'customer', customer_seen_at: now })
+    .eq('id', row.id).select().single();
+  if (error) throw new Error(error.message);
+  await notifyAdmin(db, 'Cancelled: ' + (row.title || 'a request'), 'They cancelled it.', '/admin.html#r/' + row.id,
+    { siteId: row.site_id || null, kind: 'support', deepLink: { kind: 'support', id: row.id } });
+  return updated;
+}
+
+/* Gone for good: the row, its notes (the foreign key cascades) and every
+   file attached to either. Never a request that was ever charged for. */
+async function deleteRequest(db, row) {
+  if (row.billed_at) { const e = new Error('This one was paid for, so it stays on record.'); e.shown = true; throw e; }
+  const { data: notes } = await db.from('request_notes').select('attachment_paths').eq('request_id', row.id);
+  const paths = Array.from(new Set([].concat(row.attachment_paths || [], ...(notes || []).map((n) => n.attachment_paths || []))));
+  if (paths.length) {
+    const { error: rmErr } = await db.storage.from('request-attachments').remove(paths);
+    if (rmErr) console.error('requests: could not remove files for %s: %s', row.id, rmErr.message);
+  }
+  const { error } = await db.from('requests').delete().eq('id', row.id);
+  if (error) throw new Error(error.message);
 }
 
 /* Every request with the newest public note under it: the admin inbox and
@@ -247,5 +303,6 @@ async function listJobs(db) {
 
 module.exports = {
   STATUSES, CUSTOMER_LABEL, MAX_ATTACHMENTS, BODY_MIN, BODY_MAX,
-  cleanBody, cleanAttachments, addNote, listInbox, listJobs, getThread, siteForUser
+  cleanBody, cleanAttachments, addNote, listInbox, listJobs, getThread, siteForUser,
+  editRequest, cancelRequest, deleteRequest
 };

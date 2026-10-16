@@ -17,7 +17,7 @@ var note    = document.getElementById('adminNote');
 
 var PLAN_NAME   = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'One' };
 var PLAN_PRICE  = { starter: 999, business: 5000, pro: 12000, max: 25000 }; // pence/month — must match api/_plans.js PLANS
-var STATUS_NAME = { new: 'Open', accepted: 'Open', waiting: 'Waiting on customer', in_progress: 'In progress', done: 'Done', declined: 'Done' };
+var STATUS_NAME = { new: 'Open', accepted: 'Open', waiting: 'Waiting on customer', in_progress: 'In progress', done: 'Done', declined: 'Cancelled' };
 /* info is a business-details change the customer made themselves - free, and
    raised by api/business-updated.js rather than asked for. */
 var KIND_NAME = { edit: 'Edit', feature: 'Feature', info: 'Business info' };

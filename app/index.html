@@ -13,8 +13,8 @@
 <link rel="icon" href="../assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
 <link rel="icon" href="../assets/favicon-192.png?v=ed9a2381" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="../assets/favicon-180.png?v=0ecf9df9">
-<link rel="stylesheet" href="../styles.css?v=c0df2c26">
-<link rel="stylesheet" href="app.css?v=19c1c38d">
+<link rel="stylesheet" href="../styles.css?v=75274e15">
+<link rel="stylesheet" href="app.css?v=6bab8b98">
 </head>
 <body class="oa-body">
 
@@ -406,17 +406,17 @@
       <div class="oa-blist" id="bList"></div>
       <h3 class="req-list-title oa-jobs-title" id="adminDesignsTitle" hidden>Free designs to make</h3>
       <div class="req-cards" id="adminDesigns"></div>
-      <h3 class="req-list-title oa-jobs-title" id="adminOpenTitle">Requests and changes</h3>
+      <h3 class="req-list-title oa-jobs-title" id="adminOpenTitle">Requests</h3>
       <div class="oa-pills oa-bkinds" id="bKinds">
         <button class="oa-pill is-on" type="button" data-kind="all">All</button>
         <button class="oa-pill" type="button" data-kind="edit">Changes</button>
         <button class="oa-pill" type="button" data-kind="feature">Features</button>
       </div>
-      <div class="req-cards" id="adminOpen"></div>
-      <p class="req-empty" id="adminEmpty" hidden>Nothing open. Enjoy it.</p>
+      <div id="adminOpen"></div>
+      <p class="req-empty" id="adminEmpty" hidden>Nothing open.</p>
       <details class="req-done-wrap" id="adminDoneWrap" hidden>
-        <summary>Done <span class="req-done-count" id="adminDoneCount"></span></summary>
-        <div class="req-cards" id="adminDone"></div>
+        <summary>Closed <span class="req-done-count" id="adminDoneCount"></span></summary>
+        <div class="rq-list" id="adminDone"></div>
       </details>
     </section>
     <!-- One build: who, what they asked for, and the checklist for their
@@ -441,19 +441,17 @@
         <button class="oa-icon-btn oa-back" id="adminBack" type="button" aria-label="All requests">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
         </button>
-        <div class="oa-conv-who">
+        <div class="oa-conv-who oa-req-who">
           <h2 id="aTitle"></h2>
-          <p class="hint" id="aWho"></p>
+          <span class="req-state" id="aStatus"></span>
+          <p class="hint" id="aWho" hidden></p>
         </div>
-        <span class="req-state" id="aStatus"></span>
       </div>
       <div class="thread oa-thread" id="aThread"></div>
       <div class="oa-reply-wrap">
         <div class="oa-via-row">
           <div class="oa-via oa-via-scroll" id="aModes" role="radiogroup" aria-label="Send as">
             <button type="button" class="oa-via-btn" data-mode="waiting" role="radio" aria-checked="true">Reply</button>
-            <button type="button" class="oa-via-btn" data-mode="in_progress" role="radio" aria-checked="false">Being built</button>
-            <button type="button" class="oa-via-btn" data-mode="done" role="radio" aria-checked="false">Done</button>
             <button type="button" class="oa-via-btn" data-mode="private" role="radio" aria-checked="false">Private note</button>
           </div>
         </div>
@@ -472,13 +470,12 @@
         <h1 class="req-h1">Support</h1>
         <a class="btn btn-primary req-new-btn" href="#new">New request</a>
       </div>
-      <p class="hint req-lede">Anything you want changed or added on your site, or a hand with the app. Kane replies here.</p>
       <p class="starter-left" id="starterLeft" hidden></p>
-      <div class="req-cards" id="openCards"></div>
-      <p class="req-empty" id="reqEmpty" hidden>Nothing here yet. Want something changed or added? Tap <a href="#new">New request</a>.</p>
+      <div class="rq-list" id="openCards"></div>
+      <p class="req-empty" id="reqEmpty" hidden>No requests yet.</p>
       <details class="req-done-wrap" id="doneWrap" hidden>
-        <summary>Done <span class="req-done-count" id="doneCount"></span></summary>
-        <div class="req-cards" id="doneCards"></div>
+        <summary>Closed <span class="req-done-count" id="doneCount"></span></summary>
+        <div class="rq-list" id="doneCards"></div>
       </details>
     </section>
 
@@ -489,7 +486,7 @@
         <button class="req-mode" id="modeFeature" type="button" role="tab" data-mode="feature">Add a feature</button>
         <button class="req-mode" id="modeEdit" type="button" role="tab" data-mode="edit">Change something</button>
       </div>
-      <p class="starter-note" id="starterEditNote" hidden>On Starter you can ask for <strong>edits whenever you need them</strong>, as many as you like, to what&rsquo;s already on your site: photos, wording, phone numbers, email addresses, opening hours, prices and links. We work through them in the order they arrive, as quickly as we can. Not sure if yours counts? Send it anyway and we&rsquo;ll let you know.</p>
+      <p class="starter-note" id="starterEditNote" hidden>Starter includes unlimited edits to what&rsquo;s already on your site: photos, words, prices, opening hours and links.</p>
       <p class="starter-note" id="starterFeatureNote" hidden>These are part of Business. Pick one and we&rsquo;ll tell you what it would look like on your site. No pressure.</p>
       <div class="cat-list" id="catalogue" hidden></div>
       <form class="panel req-compose" id="newForm" novalidate hidden>
@@ -513,7 +510,6 @@
           <button class="btn btn-primary" id="newBtn" type="submit">Send request</button>
           <p class="note" id="newNote" role="status" aria-live="polite"></p>
         </div>
-        <p class="hint">A sentence is plenty. We&rsquo;ll message you here if we need anything.</p>
       </form>
     </section>
 
@@ -522,15 +518,14 @@
         <a class="oa-icon-btn oa-back" href="#" aria-label="All requests">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
         </a>
-        <div class="oa-conv-who">
+        <div class="oa-conv-who oa-req-who">
           <h2 id="dTitle"></h2>
-          <p class="hint">Kane replies here</p>
+          <span class="req-state" id="dStatus"></span>
         </div>
-        <span class="req-state" id="dStatus"></span>
       </div>
       <div class="thread oa-thread" id="thread"></div>
       <div class="oa-reply-wrap">
-        <p class="hint oa-no-reply" id="doneLine" hidden>Not quite right? Reply here and we&rsquo;ll sort it.</p>
+        <p class="hint oa-no-reply" id="doneLine" hidden></p>
         <form class="oa-reply" id="replyForm" novalidate>
           <label class="attach-btn attach-icon" for="replyFiles" aria-label="Add photos">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.5l-8.5 8.5a5.5 5.5 0 0 1-7.8-7.8l9-9a3.5 3.5 0 0 1 5 5l-9 9a1.5 1.5 0 0 1-2.1-2.1l8.3-8.3"/></svg>
@@ -612,7 +607,8 @@
 <script src="../session.js?v=59739977"></script>
 <script src="../request-catalogue.js?v=c744a48d"></script>
 <script src="../build-steps.js?v=469cf75a"></script>
+<script src="../confirm-sheet.js?v=a86ee489"></script>
 <script src="../attach-tray.js?v=886e2b14"></script>
-<script src="app.js?v=5b35669f"></script>
+<script src="app.js?v=739557c9"></script>
 </body>
 </html>

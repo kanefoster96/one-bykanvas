@@ -10,7 +10,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
 <link rel="icon" href="assets/favicon-192.png?v=ed9a2381" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=0ecf9df9">
-<link rel="stylesheet" href="styles.css?v=c0df2c26">
+<link rel="stylesheet" href="styles.css?v=75274e15">
 </head>
 <body class="auth-body">
 
@@ -32,16 +32,15 @@
       <h1 class="req-h1">Requests</h1>
       <a class="btn btn-primary req-new-btn" href="#new">New request</a>
     </div>
-    <p class="hint req-lede">Anything you want changed or added on your site. We reply here.</p>
 
     <p class="starter-left" id="starterLeft" hidden></p>
 
-    <div class="req-cards" id="openCards"></div>
-    <p class="req-empty" id="reqEmpty" hidden>Nothing here yet. Want something changed or added? Tap <a href="#new">New request</a>.</p>
+    <div class="rq-list" id="openCards"></div>
+    <p class="req-empty" id="reqEmpty" hidden>No requests yet.</p>
 
     <details class="req-done-wrap" id="doneWrap" hidden>
-      <summary>Done <span class="req-done-count" id="doneCount"></span></summary>
-      <div class="req-cards" id="doneCards"></div>
+      <summary>Closed <span class="req-done-count" id="doneCount"></span></summary>
+        <div class="rq-list" id="doneCards"></div>
     </details>
 
     <p class="acct-back"><a class="linkish" href="/account.html">&larr; Back to your account</a></p>
@@ -60,7 +59,7 @@
     <!-- Starter: what an edit covers, said warmly, with the
          way out for anyone unsure. Features get their own line above the
          catalogue. -->
-    <p class="starter-note" id="starterEditNote" hidden>On Starter you can ask for <strong>edits whenever you need them</strong>, as many as you like, to what&rsquo;s already on your site: photos, wording, phone numbers, email addresses, opening hours, prices and links. We work through them in the order they arrive, as quickly as we can. Not sure if yours counts? Send it anyway and we&rsquo;ll let you know.</p>
+    <p class="starter-note" id="starterEditNote" hidden>Starter includes unlimited edits to what&rsquo;s already on your site: photos, words, prices, opening hours and links.</p>
     <p class="starter-note" id="starterFeatureNote" hidden>These are part of Business, &pound;50 a month, and your site comes with you. Pick one and we&rsquo;ll tell you what it would look like on your site. No pressure.</p>
     <div class="cat-list" id="catalogue" hidden></div>
 
@@ -85,7 +84,6 @@
         <button class="btn btn-primary" id="newBtn" type="submit">Send request</button>
         <p class="note" id="newNote" role="status" aria-live="polite"></p>
       </div>
-      <p class="hint">A sentence is plenty. We&rsquo;ll start building from what&rsquo;s already on your site and message you here if we need anything.</p>
     </form>
   </section>
 
@@ -98,7 +96,7 @@
     </div>
 
     <div class="thread" id="thread"></div>
-    <p class="req-done-line" id="doneLine" hidden>Not quite right? Reply here and we&rsquo;ll sort it.</p>
+    <p class="req-done-line" id="doneLine" hidden></p>
 
     <form class="reply-bar" id="replyForm" novalidate>
       <label class="attach-btn attach-icon" for="replyFiles" aria-label="Add photos">
@@ -122,8 +120,9 @@
 <script src="session.js?v=59739977"></script>
 <script src="request-catalogue.js?v=c744a48d"></script>
 <script src="requests-badge.js?v=3bab7b4d"></script>
+<script src="confirm-sheet.js?v=a86ee489"></script>
 <script src="attach-tray.js?v=886e2b14"></script>
-<script src="requests.js?v=5bfd8922"></script>
+<script src="requests.js?v=655b233c"></script>
 <script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=06da798b"></script>
 </body>

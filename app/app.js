@@ -1544,27 +1544,43 @@
   var pendingRequest = null; // an admin thread waiting for the tab
   var adminRows = [];
   var adminOpenId = null;
-  var STATUS_WORD = { new: 'Open', waiting: 'Waiting on them', in_progress: 'Being built', done: 'Done', declined: 'Declined' };
-  var STATUS_CLASS = { waiting: 'is-waiting', in_progress: 'is-building', done: 'is-done', declined: 'is-done' };
+  var STATUS_WORD = { new: 'New', waiting: 'Waiting on them', in_progress: 'In progress', done: 'Done', declined: 'Cancelled' };
+  var STATUS_CLASS = { waiting: 'is-waiting', in_progress: 'is-building', done: 'is-done', declined: 'is-cancelled' };
+  var KIND_WORD = { edit: 'Change', feature: 'Feature', info: 'Details' };
+  function isClosed(r) { return r.status === 'done' || r.status === 'declined'; }
+  function needsMe(r) { return r.last_note_by === 'customer' && !isClosed(r); }
+  /* A list row's time, mail-app style: 14:05, Yesterday, Mon, 14 Oct. */
+  function shortWhen(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var days = Math.floor((today - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 864e5);
+    if (days <= 0) return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    if (days === 1) return 'Yesterday';
+    if (days < 7) return d.toLocaleDateString('en-GB', { weekday: 'short' });
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+  function sentLine(r) {
+    var d = new Date(r.created_at);
+    return (KIND_WORD[r.kind] || 'Request') + ' \u00b7 Sent ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+      + ' at ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
 
+  /* One row: the title and when it was sent, then status, who and kind.
+     Waiting on me: a dot, and the first line of what they said. */
   function adminCard(r) {
-    var waiting = r.last_note_by === 'customer' && r.status !== 'done' && r.status !== 'declined';
-    var a = el('a', 'req-card' + (waiting ? ' is-unread' : ''));
-    a.href = '#';
-    a.addEventListener('click', function (e) { e.preventDefault(); openAdminThread(r.id); });
-    var top = el('div', 'req-card-top');
-    var t = el('div');
-    t.appendChild(el('span', 'oa-req-biz', r.business_name || r.contact_name || 'Customer'));
-    t.appendChild(el('h3', 'req-card-title', r.title));
-    top.appendChild(t);
-    top.appendChild(el('span', 'req-state ' + (STATUS_CLASS[r.status] || ''), STATUS_WORD[r.status] || 'Open'));
+    var a = el('button', 'rq-row' + (needsMe(r) ? ' is-unread' : ''));
+    a.type = 'button';
+    a.addEventListener('click', function () { openAdminThread(r.id); });
+    var top = el('span', 'rq-row-top');
+    top.appendChild(el('span', 'rq-row-title', r.title));
+    top.appendChild(el('span', 'rq-row-when', shortWhen(r.created_at)));
     a.appendChild(top);
-    var line = el('p', 'req-card-line');
-    if (r.latest) {
-      line.appendChild(el('span', 'req-card-snippet', r.latest.body));
-      line.appendChild(el('span', 'req-card-meta' + (waiting ? ' oa-req-wait' : ''), (r.latest.author === 'admin' ? 'You' : 'Them') + ', ' + ago(r.latest.created_at) + (waiting ? ' · waiting on you' : '')));
-    }
-    a.appendChild(line);
+    var sub = el('span', 'rq-row-sub');
+    sub.appendChild(el('span', 'req-state ' + (needsMe(r) ? 'is-reply' : (STATUS_CLASS[r.status] || '')), needsMe(r) ? 'Needs reply' : (STATUS_WORD[r.status] || 'New')));
+    sub.appendChild(el('span', 'rq-row-who', [r.business_name || r.contact_name || 'Customer', KIND_WORD[r.kind] || 'Request'].join(' \u00b7 ')));
+    a.appendChild(sub);
+    if (needsMe(r) && r.latest && r.latest.author !== 'admin') a.appendChild(el('span', 'rq-row-snip', r.latest.body));
     return a;
   }
 
@@ -1834,23 +1850,27 @@
   }
   $('bKinds').addEventListener('click', function (e) { var p = e.target.closest('.oa-pill'); if (p) { haptic('light'); setKind(p.dataset.kind); } });
 
+  /* Needs your reply first, then the rest that are open, then closed;
+     newest first in each, so the order is the order they came in. */
   function paintRequests() {
-    var rows = adminRows.filter(function (r) { return bKind === 'all' || (r.kind || 'edit') === bKind; });
-    var open = rows.filter(function (r) { return r.status !== 'done' && r.status !== 'declined'; });
-    var done = rows.filter(function (r) { return r.status === 'done' || r.status === 'declined'; });
-    /* Waiting on Kane first, then the rest by when they last moved. */
-    open.sort(function (a, b) {
-      var wa = a.last_note_by === 'customer' ? 0 : 1, wb = b.last_note_by === 'customer' ? 0 : 1;
-      return wa - wb || new Date(b.last_note_at) - new Date(a.last_note_at);
+    var rows = adminRows.filter(function (r) { return bKind === 'all' || (r.kind || 'edit') === bKind; })
+      .slice().sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+    var mine = rows.filter(needsMe);
+    var open = rows.filter(function (r) { return !isClosed(r) && !needsMe(r); });
+    var done = rows.filter(isClosed);
+    var box = $('adminOpen'); box.innerHTML = '';
+    [['Needs your reply', mine], ['Open', open]].forEach(function (g) {
+      if (!g[1].length) return;
+      box.appendChild(el('h4', 'rq-group', g[0] + ' (' + g[1].length + ')'));
+      var list = el('div', 'rq-list');
+      g[1].forEach(function (r) { list.appendChild(adminCard(r)); });
+      box.appendChild(list);
     });
-    var openBox = $('adminOpen'); openBox.innerHTML = '';
-    open.forEach(function (r) { openBox.appendChild(adminCard(r)); });
-    $('adminEmpty').textContent = bKind === 'all' ? 'No requests open. Enjoy it.' : 'None open.';
-    $('adminEmpty').hidden = open.length > 0;
+    $('adminEmpty').hidden = mine.length + open.length > 0;
     var doneBox = $('adminDone'); doneBox.innerHTML = '';
     done.forEach(function (r) { doneBox.appendChild(adminCard(r)); });
     $('adminDoneWrap').hidden = done.length === 0;
-    $('adminDoneCount').textContent = String(done.length);
+    $('adminDoneCount').textContent = '(' + done.length + ')';
   }
 
   /* One build's checklist, full screen inside the tab. */
@@ -1938,7 +1958,7 @@
     more.addEventListener('click', function () { openSetup('/admin.html?c=' + p.id); });
     acts.appendChild(more);
     body.appendChild(acts);
-    if (lateOf(p)) body.appendChild(el('p', 'oa-brow-late', 'Past the ' + promiseOf(p)));
+    if (lateOf(p)) body.appendChild(el('p', 'oa-build-late', 'Late: joined ' + since(p.created_at) + ', promised within ' + promiseOf(p)));
     if (p.active_plan === 'max') body.appendChild(stripeRow(p));
 
     var asked = el('details', 'oa-asked');
@@ -1960,6 +1980,7 @@
     var jobs = window.BUILD_STEPS ? BUILD_STEPS.jobsFor(p.active_plan) : [];
     var cur = jobs.filter(function (j) { return j.job === buildOpen.job; })[0] || jobs[0];
     if (!cur) return;
+    body.appendChild(el('h3', 'rq-group', 'Checklist'));
     if (jobs.length > 1) {
       var pills = el('div', 'oa-pills oa-build-jobs');
       jobs.forEach(function (j) {
@@ -2029,7 +2050,7 @@
 
     if (cur.job === 'site' && p.site_status === 'building') {
       var finish = el('form', 'oa-job-finish');
-      finish.appendChild(el('h3', 'req-list-title', 'Mark it live'));
+      finish.appendChild(el('h3', 'rq-group', 'Go live'));
       var url = el('input'); url.type = 'url'; url.inputMode = 'url'; url.autocapitalize = 'none';
       url.placeholder = 'https://their-site.com';
       url.setAttribute('aria-label', 'Their site address');
@@ -2067,6 +2088,88 @@
     return wrap;
   }
 
+  /* The request at the top of its thread: what they asked, who and when,
+     a switch for where it is up to, and Edit / Delete. All ask first. */
+  function adminSummary(t, first) {
+    var r = t.request, c = t.customer || {};
+    var box = el('div', 'rq-summary');
+    box.appendChild(el('p', 'rq-summary-meta', sentLine(r)));
+    var who = el('p', 'rq-summary-who');
+    who.appendChild(document.createTextNode([c.business_name, c.contact_name].filter(Boolean).join(' \u00b7 ') || 'Customer'));
+    if (c.email) {
+      who.appendChild(document.createTextNode(' \u00b7 '));
+      var mail = el('a', null, c.email); mail.href = 'mailto:' + c.email;
+      who.appendChild(mail);
+    }
+    box.appendChild(who);
+    var words = first ? first.body : (r.detail || r.title);
+    var text = bodyEl(words);
+    text.className = 'rq-summary-text';
+    box.appendChild(text);
+    if (first && first.attachments && first.attachments.length) {
+      var files = el('div', 'msg-files');
+      first.attachments.forEach(function (f, i) {
+        var a = el('a', 'msg-file'); a.href = f.url; a.target = '_blank'; a.rel = 'noopener';
+        if (/\.pdf$/i.test(f.path || '')) a.textContent = 'PDF ' + (i + 1);
+        else { var img = el('img'); img.src = f.url; img.alt = 'Photo ' + (i + 1); img.loading = 'lazy'; a.appendChild(img); }
+        files.appendChild(a);
+      });
+      box.appendChild(files);
+    }
+
+    var note = el('p', 'note'); note.setAttribute('role', 'status');
+    async function run(payload, busy, after) {
+      say(note, busy);
+      try { var res = await apiTo('/api/admin', payload); haptic('success'); say(note, ''); await after(res); }
+      catch (err) { say(note, err.message, 'bad'); }
+    }
+
+    /* Where it is up to. New and Waiting on them both read as Open. */
+    var sw = el('div', 'rq-switch'); sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', 'Status');
+    var at = r.status === 'in_progress' ? 'in_progress' : r.status === 'done' ? 'done' : r.status === 'declined' ? '' : 'new';
+    var name = c.contact_name || c.business_name || 'They';
+    [['new', 'Open', 'Move it back to open?', 'They aren\u2019t told.', 'Move to open'],
+     ['in_progress', 'In progress', 'Mark it in progress?', name + ' gets a notification.', 'Mark in progress'],
+     ['done', 'Done', 'Mark it done?', name + ' gets a message to say it\u2019s done.', 'Mark done']
+    ].forEach(function (o) {
+      var b = el('button', null, o[1]); b.type = 'button';
+      b.setAttribute('aria-pressed', String(o[0] === at));
+      b.addEventListener('click', async function () {
+        if (o[0] === at) return;
+        if (!(await ONE.confirm({ title: o[2], body: o[3], ok: o[4], cancel: 'Not yet' }))) return;
+        run({ action: 'setRequestState', requestId: r.id, status: o[0] }, 'Saving\u2026', function () { return openAdminThread(r.id); });
+      });
+      sw.appendChild(b);
+    });
+    box.appendChild(sw);
+
+    var acts = el('div', 'rq-acts');
+    function button(label, cls, fn) { var b = el('button', 'rq-act' + (cls ? ' ' + cls : ''), label); b.type = 'button'; b.addEventListener('click', fn); acts.appendChild(b); }
+    function paintActs() {
+      acts.textContent = '';
+      button('Edit', '', function () {
+        var title = el('input', 'rq-field'); title.value = r.title || ''; title.maxLength = 120; title.setAttribute('aria-label', 'Title'); title.placeholder = 'Title';
+        var field = el('textarea', 'rq-field'); field.value = words; field.maxLength = 4000; field.setAttribute('aria-label', 'What they asked for');
+        text.replaceWith(field); field.before(title);
+        acts.textContent = '';
+        button('Save', 'is-primary', async function () {
+          if (field.value.trim().length < 10) { say(note, 'That needs a few more words.', 'bad'); field.focus(); return; }
+          if (!(await ONE.confirm({ title: 'Save your changes?', body: 'They aren\u2019t told.', ok: 'Save changes', cancel: 'Keep editing' }))) return;
+          run({ action: 'editRequest', requestId: r.id, title: title.value.trim(), body: field.value.trim() }, 'Saving\u2026', function () { return openAdminThread(r.id); });
+        });
+        button('Discard', '', function () { title.remove(); field.replaceWith(text); say(note, ''); paintActs(); });
+      });
+      button('Delete', 'is-danger', async function () {
+        if (!(await ONE.confirm({ title: 'Delete this request?', body: 'It and all its messages are removed for good. They aren\u2019t told.', ok: 'Delete', cancel: 'Keep it', danger: true }))) return;
+        run({ action: 'deleteRequest', requestId: r.id }, 'Deleting\u2026', function () { return loadAdminInbox(); });
+      });
+    }
+    paintActs();
+    box.appendChild(acts);
+    box.appendChild(note);
+    return box;
+  }
+
   async function openAdminThread(id) {
     $('adminInbox').hidden = true;
     $('adminThread').hidden = false;
@@ -2078,13 +2181,16 @@
     try {
       var t = await apiTo('/api/admin', { action: 'requestThread', requestId: id });
       $('aTitle').textContent = t.request.title || 'Request';
-      $('aStatus').textContent = STATUS_WORD[t.request.status] || 'Open';
+      $('aStatus').textContent = STATUS_WORD[t.request.status] || 'New';
       $('aStatus').className = 'req-state ' + (STATUS_CLASS[t.request.status] || '');
-      var c = t.customer || {};
-      $('aWho').textContent = [c.business_name, c.contact_name, c.email].filter(Boolean).join(' · ');
+      var notes = t.notes || [];
+      var first = notes.length && notes[0].author === 'customer' ? notes[0] : null;
+      var rest = first ? notes.slice(1) : notes;
       var box = $('aThread');
-      (t.notes || []).forEach(function (n) { box.appendChild(noteBubble(n)); });
-      box.scrollTop = box.scrollHeight;
+      box.appendChild(adminSummary(t, first));
+      rest.forEach(function (n) { box.appendChild(noteBubble(n)); });
+      if (!rest.length) box.appendChild(el('p', 'rq-convo-empty', 'No replies yet'));
+      box.scrollTop = rest.length > 2 ? box.scrollHeight : 0;
     } catch (err) { say($('aNote'), err.message, 'bad'); }
   }
   $('adminBack').addEventListener('click', loadAdminInbox);
@@ -2095,7 +2201,7 @@
   function setAdminMode(m) {
     adminMode = m;
     $('aModes').querySelectorAll('.oa-via-btn').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.mode === m)); });
-    $('aBody').placeholder = m === 'private' ? 'A note just for you' : m === 'done' ? 'Tell them it is live' : 'Write a reply';
+    $('aBody').placeholder = m === 'private' ? 'A note only you see' : 'Write a reply';
   }
   $('aModes').addEventListener('click', function (e) {
     var b = e.target.closest('.oa-via-btn');
@@ -2117,7 +2223,7 @@
       ta.value = ''; ta.style.height = 'auto';
       $('aThread').appendChild(noteBubble(Object.assign({ author: 'admin', private: mode === 'private' }, r.note)));
       if (r.request) { $('aStatus').textContent = STATUS_WORD[r.request.status] || 'Open'; $('aStatus').className = 'req-state ' + (STATUS_CLASS[r.request.status] || ''); }
-      say($('aNote'), mode === 'private' ? 'Noted, just for you.' : 'Sent. They get it on their phone and by email.', 'ok');
+      say($('aNote'), mode === 'private' ? 'Saved, only you see it.' : 'Sent.', 'ok');
       $('aThread').scrollTop = $('aThread').scrollHeight;
       if (mode !== 'waiting') setAdminMode('waiting');
     } catch (err) { say($('aNote'), err.message, 'bad'); }
@@ -2138,7 +2244,7 @@
     /* Not requests-badge.js: it repaints the same badge with requests only,
        dropping the support chat's unread. The app's own count covers both. */
     ONE.refreshRequestBadge = function () { refreshMe().catch(function () {}); };
-    [base + 'requests.js?v=5bfd8922'].forEach(function (src) {
+    [base + 'requests.js?v=655b233c'].forEach(function (src) {
       var s = document.createElement('script');
       s.src = src;
       document.body.appendChild(s);

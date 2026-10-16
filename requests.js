@@ -24,12 +24,13 @@
   var MAX_FILES = 5;
   var MIN_BODY = 10;
 
-  /* What each status is called here. Same words as the email subjects. */
+  /* What each status is called here. */
   var LABEL = {
-    new: 'Open', accepted: 'Open', waiting: 'We’ve got a question for you',
-    in_progress: 'Being built', done: 'Done', declined: 'Done'
+    new: 'Sent', accepted: 'Sent', waiting: 'Needs your reply',
+    in_progress: 'In progress', done: 'Done', declined: 'Cancelled'
   };
-  var STATE_CLASS = { waiting: 'is-waiting', in_progress: 'is-building', done: 'is-done', declined: 'is-done' };
+  var STATE_CLASS = { waiting: 'is-waiting', in_progress: 'is-building', done: 'is-done', declined: 'is-cancelled' };
+  var KIND = { edit: 'Change', feature: 'Feature', info: 'Details' };
 
   var user = null;
   var requests = [];        // the list, newest activity first
@@ -67,6 +68,23 @@
     if (days === 1) return 'yesterday';
     if (days < 7) return days + ' days ago';
     return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: days > 330 ? 'numeric' : undefined });
+  }
+  /* The time on a list row, the way a mail app shows it: 14:05 today,
+     Yesterday, a weekday this week, else the date. */
+  function shortWhen(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var days = Math.floor((today - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 864e5);
+    if (days <= 0) return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    if (days === 1) return 'Yesterday';
+    if (days < 7) return d.toLocaleDateString('en-GB', { weekday: 'short' });
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: days > 330 ? 'numeric' : undefined });
+  }
+  function sentLine(r) {
+    var d = new Date(r.created_at);
+    return (KIND[r.kind] || 'Request') + ' \u00b7 Sent ' + (isNaN(d) ? '' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+      + ' at ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }));
   }
   function fullDate(iso) {
     var d = new Date(iso);
@@ -154,33 +172,29 @@
 
   /* ---------------- the list ---------------- */
 
+  /* One row: the title and when it was sent, then its status. A reply
+     from us they have not read gets a dot and its first line. */
   function card(r) {
-    var a = el('a', 'req-card' + (unread(r) ? ' is-unread' : ''));
+    var a = el('a', 'rq-row' + (unread(r) ? ' is-unread' : ''));
     a.href = '#r/' + r.id;
-
-    var top = el('div', 'req-card-top');
-    top.appendChild(el('h3', 'req-card-title', r.title));
-    top.appendChild(el('span', 'req-state ' + (STATE_CLASS[r.status] || ''), LABEL[r.status] || 'Open'));
+    var top = el('span', 'rq-row-top');
+    top.appendChild(el('span', 'rq-row-title', r.title));
+    top.appendChild(el('span', 'rq-row-when', shortWhen(r.created_at)));
     a.appendChild(top);
-
+    var sub = el('span', 'rq-row-sub');
+    sub.appendChild(el('span', 'req-state ' + (r.status === 'waiting' ? 'is-reply' : (STATE_CLASS[r.status] || '')), LABEL[r.status] || 'Sent'));
+    sub.appendChild(el('span', 'rq-row-who', KIND[r.kind] || 'Request'));
+    a.appendChild(sub);
     var latest = latestByRequest[r.id];
-    var line = el('p', 'req-card-line');
-    if (latest) {
-      line.appendChild(el('span', 'req-card-snippet', String(latest.body).split('\n')[0]));
-      var meta = el('span', 'req-card-meta');
-      meta.appendChild(document.createTextNode(who(latest.author) + ', '));
-      meta.appendChild(timeEl(latest.created_at));
-      line.appendChild(meta);
-    } else {
-      line.appendChild(el('span', 'req-card-snippet', r.detail || ''));
-    }
-    a.appendChild(line);
+    if (unread(r) && latest) a.appendChild(el('span', 'rq-row-snip', 'Kanvas One: ' + String(latest.body).split('\n')[0]));
     return a;
   }
 
   function renderList() {
-    var open = requests.filter(function (r) { return !isDone(r); });
-    var done = requests.filter(isDone);
+    /* Newest first, so the order is the order they were sent. */
+    var byNew = requests.slice().sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+    var open = byNew.filter(function (r) { return !isDone(r); });
+    var done = byNew.filter(isDone);
 
     /* Edits are unlimited on every plan, so there is no allowance to show. */
     document.getElementById('starterLeft').hidden = true;
@@ -196,7 +210,7 @@
     done.forEach(function (r) { doneCards.appendChild(card(r)); });
     document.getElementById('doneCount').textContent = done.length ? '(' + done.length + ')' : '';
     doneWrap.hidden = !done.length;
-    // Nothing open: the done list is all there is, so leave it open.
+    // Nothing open: the closed list is all there is, so leave it open.
     if (done.length && !open.length) doneWrap.open = true;
   }
 
@@ -369,6 +383,93 @@
     return box;
   }
 
+  /* The request itself, at the top of its thread: what they asked and
+     when, with Edit and Cancel while it is open and Delete once it is
+     closed. Every one of those asks first. */
+  function summary(r, first) {
+    var box = el('div', 'rq-summary');
+    box.appendChild(el('p', 'rq-summary-meta', sentLine(r)));
+    var text = el('div', 'rq-summary-text');
+    function paintText(words) {
+      text.textContent = '';
+      String(words || '').split(/\n{2,}/).forEach(function (para) {
+        var p = el('p');
+        para.split('\n').forEach(function (line, i) { if (i) p.appendChild(el('br')); p.appendChild(document.createTextNode(line)); });
+        text.appendChild(p);
+      });
+    }
+    paintText(first ? first.body : r.detail);
+    box.appendChild(text);
+    if (first && first.attachment_paths && first.attachment_paths.length) box.appendChild(attachmentList(first.attachment_paths));
+    var note = el('p', 'note'); note.setAttribute('role', 'status');
+    var acts = el('div', 'rq-acts');
+    box.appendChild(acts);
+    box.appendChild(note);
+
+    function button(label, cls, fn) {
+      var b = el('button', 'rq-act' + (cls ? ' ' + cls : ''), label);
+      b.type = 'button';
+      b.addEventListener('click', fn);
+      acts.appendChild(b);
+      return b;
+    }
+    async function act(payload, busy) {
+      say(note, busy);
+      acts.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
+      try { return await post(payload); }
+      catch (err) { say(note, ONE.friendlyError(err), 'bad'); acts.querySelectorAll('button').forEach(function (b) { b.disabled = false; }); return null; }
+    }
+
+    function paintActs() {
+      acts.textContent = '';
+      if (isDone(r)) {
+        button('Delete', 'is-danger', async function () {
+          var yes = await ONE.confirm({ title: 'Delete this request?', body: 'It and its messages are removed for good.', ok: 'Delete', cancel: 'Keep it', danger: true });
+          if (!yes) return;
+          if (await act({ action: 'delete', requestId: r.id }, 'Deleting…')) {
+            await loadList();
+            location.hash = '';
+          }
+        });
+        return;
+      }
+      button('Edit', '', editMode);
+      button('Cancel request', 'is-danger', async function () {
+        var yes = await ONE.confirm({ title: 'Cancel this request?', body: 'We’ll stop work on it. You can reply later to reopen it.', ok: 'Yes, cancel it', cancel: 'Keep it', danger: true });
+        if (!yes) return;
+        if (await act({ action: 'cancel', requestId: r.id }, 'Cancelling…')) {
+          await loadList();
+          await openThread(r.id);
+        }
+      });
+    }
+
+    function editMode() {
+      var field = el('textarea', 'rq-field');
+      field.value = first ? first.body : r.detail;
+      field.maxLength = 4000;
+      field.setAttribute('aria-label', 'Your request');
+      text.replaceWith(field);
+      field.focus();
+      acts.textContent = '';
+      say(note, '');
+      button('Save', 'is-primary', async function () {
+        var words = field.value.trim();
+        if (words.length < MIN_BODY) { say(note, 'Add a little more so we know what you need.', 'bad'); field.focus(); return; }
+        var yes = await ONE.confirm({ title: 'Save your changes?', body: 'We’ll see the new version straight away.', ok: 'Save changes', cancel: 'Keep editing' });
+        if (!yes) return;
+        if (await act({ action: 'edit', requestId: r.id, body: words }, 'Saving…')) {
+          await loadList();
+          await openThread(r.id);
+        }
+      });
+      button('Discard', '', function () { field.replaceWith(text); say(note, ''); paintActs(); });
+    }
+
+    paintActs();
+    return box;
+  }
+
   async function openThread(id) {
     current = requests.filter(function (r) { return r.id === id; })[0] || null;
     if (!current) {
@@ -379,23 +480,28 @@
 
     document.getElementById('dTitle').textContent = current.title || String(current.detail || '').split('\n')[0];
     var st = document.getElementById('dStatus');
-    st.textContent = LABEL[current.status] || 'Open';
+    st.textContent = LABEL[current.status] || 'Sent';
     st.className = 'req-state ' + (STATE_CLASS[current.status] || '');
 
     var q = await ONE.db.from('request_notes')
       .select('id, author, body, attachment_paths, created_at')
       .eq('request_id', id).order('created_at', { ascending: true }).limit(500);
     var notes = (!q.error && q.data) || [];
+    /* Their first note is the request; it sits in the card, not as a bubble. */
+    var first = notes.length && notes[0].author === 'customer' ? notes[0] : null;
+    var rest = first ? notes.slice(1) : notes;
 
     var thread = document.getElementById('thread');
     thread.textContent = '';
+    thread.appendChild(summary(current, first));
     var lastAdmin = null;
-    notes.forEach(function (n) { if (n.author === 'admin') lastAdmin = n; });
-    notes.forEach(function (n) {
-      thread.appendChild(bubble(n, isDone(current) && n === lastAdmin));
+    rest.forEach(function (n) { if (n.author === 'admin') lastAdmin = n; });
+    rest.forEach(function (n) {
+      thread.appendChild(bubble(n, current.status === 'done' && n === lastAdmin));
     });
-    document.getElementById('doneLine').hidden = !isDone(current);
-    document.getElementById('replyBody').placeholder = isDone(current) ? 'Reply to reopen this' : 'Write a reply';
+    if (!rest.length) thread.appendChild(el('p', 'rq-convo-empty', 'No replies yet'));
+    document.getElementById('doneLine').hidden = true;
+    document.getElementById('replyBody').placeholder = isDone(current) ? 'Reply to reopen' : 'Write a reply';
 
     // Seen: everything we wrote on it is read now, and the badge can drop.
     if (unread(current)) {
@@ -408,7 +514,7 @@
     // The newest message is what they came for.
     requestAnimationFrame(function () {
       var last = thread.lastElementChild;
-      if (last && notes.length > 2) last.scrollIntoView({ block: 'end' });
+      if (last && rest.length > 2) last.scrollIntoView({ block: 'end' });
     });
   }
 

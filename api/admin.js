@@ -25,7 +25,7 @@ const { notify } = require('./_notify.js');
 const { notifySiteLive } = require('./_site_live.js');
 const { sendLeadPreview } = require('./_previews.js');
 const connect = require('./_connect.js');
-const { STATUSES: REQUEST_STATUSES, cleanAttachments, addNote, listInbox, listJobs, getThread } = require('./_requests.js');
+const { STATUSES: REQUEST_STATUSES, cleanAttachments, cleanBody, addNote, listInbox, listJobs, getThread, editRequest, deleteRequest } = require('./_requests.js');
 
 const DEFAULT_ADMINS = ['kane@kanvas.one'];
 
@@ -491,18 +491,28 @@ module.exports = async function handler(req, res) {
         attachmentPaths: cleanAttachments(body.attachmentPaths, reqRow.user_id, true)
       });
 
-      if (!isPrivate && out.request.status === 'done' && reqRow.status !== 'done' && reqRow.kind === 'feature') {
-        const featName = String(out.request.title || reqRow.detail).split('\n')[0].trim().slice(0, 200);
-        const { data: existing } = await db.from('site_features')
-          .select('id').eq('user_id', reqRow.user_id).ilike('name', featName).limit(1);
-        if (existing && existing.length) {
-          await db.from('site_features').update({ updated_at: new Date().toISOString() }).eq('id', existing[0].id);
-        } else {
-          await db.from('site_features').insert({ user_id: reqRow.user_id, name: featName });
-        }
-      }
+      if (!isPrivate) await featureOnSite(db, reqRow, out.request);
 
       return res.status(200).json({ ok: true, note: out.note, request: out.request });
+    }
+
+    /* Fix a request's wording or title (a typo, a clearer title), or remove
+       it for good (a test, a duplicate). Neither tells the customer. */
+    if (action === 'editRequest' || action === 'deleteRequest') {
+      const id = String(body.requestId || '');
+      if (!id) return res.status(400).json({ error: 'Which request?' });
+      const { data: reqRow, error: rErr } = await db.from('requests').select('*').eq('id', id).maybeSingle();
+      if (rErr) throw new Error(rErr.message);
+      if (!reqRow) return res.status(404).json({ error: 'Request not found.' });
+      if (action === 'deleteRequest') {
+        await deleteRequest(db, reqRow);
+        return res.status(200).json({ ok: true });
+      }
+      const cleaned = cleanBody(body.body);
+      if (cleaned.error) return res.status(400).json({ error: cleaned.error });
+      const title = String(body.title || '').replace(/\s+/g, ' ').trim().slice(0, 120);
+      const updated = await editRequest(db, reqRow, { body: cleaned.body, title: title || null });
+      return res.status(200).json({ ok: true, request: updated });
     }
 
     /* A status change on its own: Open or Being built. Waiting on customer
@@ -512,12 +522,23 @@ module.exports = async function handler(req, res) {
       const id = String(body.requestId || '');
       const status = String(body.status || '');
       if (!id) return res.status(400).json({ error: 'Which request?' });
-      if (status !== 'new' && status !== 'in_progress') {
+      if (status !== 'new' && status !== 'in_progress' && status !== 'done') {
         return res.status(400).json({ error: 'Add a note for that one, so they know what is happening.' });
       }
-      const { data: reqRow, error: rErr } = await db.from('requests').select('id, user_id, title, status').eq('id', id).maybeSingle();
+      const { data: reqRow, error: rErr } = await db.from('requests').select('*').eq('id', id).maybeSingle();
       if (rErr) throw new Error(rErr.message);
       if (!reqRow) return res.status(404).json({ error: 'Request not found.' });
+
+      /* Done on its own (the app's status switch): it still goes out with
+         words, a standard closing note, so they hear it is finished. */
+      if (status === 'done') {
+        const out = await addNote(db, reqRow, {
+          author: 'admin', status: 'done',
+          body: 'This is done. Take a look, and reply here if anything needs changing.'
+        });
+        await featureOnSite(db, reqRow, out.request);
+        return res.status(200).json({ ok: true, note: out.note, request: out.request });
+      }
 
       const { data: updated, error: uErr } = await db.from('requests')
         .update({ status, done_at: null }).eq('id', id).select().single();
@@ -1720,7 +1741,21 @@ module.exports = async function handler(req, res) {
 
     return res.status(400).json({ error: 'Unknown action.' });
   } catch (err) {
+    if (err && err.shown) return res.status(400).json({ error: err.message });
     console.error('admin:', err && err.message);
     return res.status(500).json({ error: 'Something went wrong. Try again.' });
   }
 };
+
+/* A finished feature joins the customer's "features on your site" list. */
+async function featureOnSite(db, before, after) {
+  if (!(after && after.status === 'done' && before.status !== 'done' && before.kind === 'feature')) return;
+  const featName = String(after.title || before.detail).split('\n')[0].trim().slice(0, 200);
+  const { data: existing } = await db.from('site_features')
+    .select('id').eq('user_id', before.user_id).ilike('name', featName).limit(1);
+  if (existing && existing.length) {
+    await db.from('site_features').update({ updated_at: new Date().toISOString() }).eq('id', existing[0].id);
+  } else {
+    await db.from('site_features').insert({ user_id: before.user_id, name: featName });
+  }
+}
