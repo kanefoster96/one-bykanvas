@@ -3295,3 +3295,59 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 h1,h2,h3,h4,.lede,.sub{text-wrap:balance}
 p,li,dd,figcaption,summary{text-wrap:pretty}
 .btn{text-align:center;height:auto;min-height:46px;padding-top:10px;padding-bottom:10px;line-height:1.25}
+
+/* ---- Requests: list rows, the request at the top of a thread, the status
+   switch, and the confirm sheet (confirm-sheet.js). Shared by the app and
+   requests.html. ---- */
+.rq-list{display:flex;flex-direction:column;margin-top:10px;border-top:1px solid var(--line-soft)}
+.rq-list:empty{display:none}
+.rq-group{margin:28px 0 0;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.rq-group:first-child{margin-top:20px}
+.rq-row{display:block;width:100%;padding:15px 2px;border:0;border-bottom:1px solid var(--line-soft);background:transparent;color:var(--ink);text-align:left;text-decoration:none;font:inherit;cursor:pointer}
+.rq-row:active{background:var(--bg-grey)}
+.rq-row-top{display:flex;align-items:baseline;gap:12px}
+.rq-row-title{flex:1;min-width:0;font-size:16px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rq-row.is-unread .rq-row-title::before{content:"";display:inline-block;width:8px;height:8px;margin:0 8px 2px 0;border-radius:50%;background:#e0480b;vertical-align:middle}
+.rq-row-when{flex:0 0 auto;font-size:13px;color:var(--ink-3)}
+.rq-row-sub{display:flex;align-items:center;gap:8px;min-width:0;margin-top:7px;font-size:13.5px;color:var(--ink-2)}
+.rq-row-sub .req-state{flex:0 0 auto;padding:3px 9px;font-size:12px;letter-spacing:0;text-transform:none}
+.rq-row-who{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rq-row-snip{display:block;margin-top:7px;font-size:14px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.rq-summary{align-self:stretch;max-width:none;padding:16px;border:1px solid var(--line-soft);border-radius:18px;background:#fff}
+.rq-summary-meta{margin:0;font-size:13px;color:var(--ink-3)}
+.rq-summary-who{margin:4px 0 0;font-size:14px;color:var(--ink-2);overflow-wrap:anywhere}
+.rq-summary-who a{color:inherit}
+.rq-summary-text{margin-top:12px;font-size:16px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.rq-summary-text p{margin:0 0 8px}
+.rq-summary-text p:last-child{margin-bottom:0}
+.rq-summary .msg-files{margin-top:12px}
+.rq-field{display:block;width:100%;margin-top:12px;padding:11px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font:inherit;font-size:16px;line-height:1.45}
+textarea.rq-field{min-height:130px;resize:vertical}
+.rq-field:focus{outline:none;border-color:var(--ink)}
+.rq-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.rq-act{height:40px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.rq-act.is-primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.rq-act.is-danger{border-color:#f1c4c0;color:#b42318}
+.rq-act:disabled{opacity:.5;cursor:default}
+.rq-switch{display:flex;gap:3px;margin-top:16px;padding:3px;border-radius:999px;background:var(--bg-grey)}
+.rq-switch button{flex:1;min-width:0;height:38px;border:0;border-radius:999px;background:transparent;color:var(--ink-2);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+.rq-switch button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.rq-summary .note{margin:10px 0 0}
+.rq-summary .note:empty{display:none}
+.rq-convo-empty{align-self:center;margin:4px 0 0;font-size:13.5px;color:var(--ink-3)}
+
+.cf-back{position:fixed;inset:0;z-index:1000;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0);transition:background .18s ease}
+.cf-back.is-in{background:rgba(0,0,0,.4)}
+.cf-box{width:100%;max-width:480px;padding:24px 18px calc(18px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:#fff;transform:translateY(100%);transition:transform .2s ease}
+.cf-back.is-in .cf-box{transform:none}
+.cf-title{margin:0;font-size:18px;font-weight:700;letter-spacing:-.01em;text-align:center}
+.cf-body{margin:8px 0 0;font-size:15px;line-height:1.45;color:var(--ink-2);text-align:center}
+.cf-btn{display:block;width:100%;height:50px;margin-top:10px;border:0;border-radius:14px;font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+.cf-yes{margin-top:22px;background:var(--ink);color:#fff}
+.cf-yes.is-danger{background:#d92d20}
+.cf-no{background:var(--bg-grey);color:var(--ink)}
+@media (min-width:600px){.cf-back{align-items:center}.cf-box{padding-bottom:18px;border-radius:22px}}
+@media (prefers-reduced-motion:reduce){.cf-back,.cf-box{transition:none}}
+.req-state.is-cancelled{background:var(--bg-grey);color:var(--ink-3)}
+.rq-row-sub .req-state.is-reply{background:#fff1ea;color:#c2410c}

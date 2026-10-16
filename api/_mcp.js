@@ -44,8 +44,8 @@ const PENDING_MINUTES = 10;
 const HOURLY_LIMIT = 20;
 const TOKEN_PREFIX = 'k1_';
 const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'One' };
-const STATUS_WORD = { new: 'Open', waiting: 'Waiting on customer', in_progress: 'In progress', done: 'Done', declined: 'Done' };
-const CUSTOMER_STATUS = { new: 'Open', waiting: 'We have a question for you', in_progress: 'Being built', done: 'Done', declined: 'Done' };
+const STATUS_WORD = { new: 'Open', waiting: 'Waiting on customer', in_progress: 'In progress', done: 'Done', declined: 'Cancelled' };
+const CUSTOMER_STATUS = { new: 'Open', waiting: 'We have a question for you', in_progress: 'Being built', done: 'Done', declined: 'Cancelled' };
 
 /* ------------------------------------------------------------- errors -- */
 
