@@ -3238,7 +3238,7 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 /* From an ad: their trade's example site in the phone, and a button to it. */
 .sb-screen img.sb-example-shot{object-fit:cover;object-position:top;padding-top:11%}
 .sb-screen.is-single img{opacity:1;animation:none}
-.sb-example .sb-preview{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:999px;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);color:#fff;font-size:16px;font-weight:600;text-decoration:none;box-shadow:0 10px 24px -12px rgba(255,79,18,.6)}
+.sb-example .sb-preview{display:inline-flex;align-items:center;justify-content:center;min-height:var(--btn-h-xl,56px);padding:0 26px;border-radius:999px;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);color:#fff;font-size:16px;font-weight:600;text-decoration:none;box-shadow:0 10px 24px -12px rgba(255,79,18,.6)}
 .sb-example .sb-preview:hover{text-decoration:none;color:#fff;transform:translateY(-1px)}
 .sb-note{margin:14px auto 0;max-width:34ch;font-size:14px;line-height:1.5;color:var(--ink-3)}
 .sb-example a{color:var(--good);text-decoration:none}
@@ -3254,7 +3254,7 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .offer-alt{margin:10px 0 0;text-align:center}
 .offer-alt .linkish{font-size:14.5px;font-weight:600;color:var(--good);text-decoration:underline;text-underline-offset:3px;background:none;border:0;padding:6px 4px;cursor:pointer}
 .offer-alt[hidden]{display:none}
-.today-go{display:flex;align-items:center;justify-content:center;margin:16px 0 0;min-height:50px;border-radius:999px;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);color:#fff;font-size:16px;font-weight:600;text-decoration:none}
+.today-go{display:flex;align-items:center;justify-content:center;margin:16px 0 0;min-height:var(--btn-h-xl,56px);border-radius:999px;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);color:#fff;font-size:16px;font-weight:600;text-decoration:none}
 .today-go:hover{color:#fff;text-decoration:none;box-shadow:0 10px 24px -12px rgba(255,79,18,.6)}
 /* Not sure? The free design, offered once before they go. */
 .notsure{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:16px;background:rgba(10,10,12,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:ns-fade .2s ease-out}
@@ -3269,7 +3269,7 @@ dialog.one-modal p{margin:0 0 14px;font-size:15.5px;line-height:1.55;color:var(-
 .notsure-face .dot-eyes i{width:10px;height:16px}
 .notsure-card h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-.03em}
 .notsure-card p{margin:10px 0 0;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
-.notsure-go{display:flex;width:100%;align-items:center;justify-content:center;margin:20px 0 0;min-height:52px;border:0;border-radius:999px;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);color:#fff;font:600 16px var(--font);cursor:pointer}
+.notsure-go{display:flex;width:100%;align-items:center;justify-content:center;margin:20px 0 0;min-height:var(--btn-h-xl,56px);border:0;border-radius:999px;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 60%,#ff7a3d 100%);color:#fff;font:600 16px var(--font);cursor:pointer}
 .notsure-keep{margin-top:6px;min-height:44px;padding:0 16px;border:0;background:none;color:var(--ink-3);font:500 14.5px var(--font);cursor:pointer}
 @media (prefers-reduced-motion:reduce){.notsure,.notsure-card{animation:none}}
 
@@ -3351,3 +3351,88 @@ textarea.rq-field{min-height:130px;resize:vertical}
 @media (prefers-reduced-motion:reduce){.cf-back,.cf-box{transition:none}}
 .req-state.is-cancelled{background:var(--bg-grey);color:var(--ink-3)}
 .rq-row-sub .req-state.is-reply{background:#fff1ea;color:#c2410c}
+
+/* ================= Design scale =================
+   One set of sizes for every page and the app, so things that sit
+   together are the same height:
+     buttons  48 main · 56 hero · 40 small (in cards and headers)
+     pill switches 36 · form fields 48
+   The main action is the orange gradient everywhere (it was only on the
+   homepage and in the app). Black cards (.card-night) are for the one
+   thing on a page that matters most; everything else stays light. */
+:root{
+  --btn-h:48px;--btn-h-xl:56px;--btn-h-sm:40px;--seg-h:36px;--field-h:48px;
+  --or-grad:linear-gradient(135deg,#c93e09 0%,#ef4a10 100%);
+  --or-grad-hover:linear-gradient(135deg,#b63807 0%,#de440e 100%);
+  --or-text:linear-gradient(100deg,#ff8a4c 0%,#ff5a1f 55%,#ef4a10 100%);
+  --night:#0b0b0d;--night-2:#18181b;--night-line:rgba(255,255,255,.1);
+  --on-night:#f5f5f2;--on-night-2:rgba(245,245,242,.68)
+}
+.btn{min-height:var(--btn-h);font-weight:600}
+.btn-primary{background:var(--or-grad);color:#fff;box-shadow:0 6px 18px rgba(255,79,18,.22)}
+.btn-primary:hover{background:var(--or-grad-hover);color:#fff}
+.btn-primary:focus-visible{outline:3px solid rgba(255,79,18,.45);outline-offset:3px}
+.btn-ghost:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn-sm{min-height:var(--btn-h-sm);padding:6px 18px;font-size:14.5px}
+.btn-xl{min-height:var(--btn-h-xl);font-size:17px}
+.field input:not([type=checkbox]):not([type=radio]):not([type=range]),.field select{min-height:var(--field-h)}
+
+/* Header actions (New request) are small; the form's two buttons match. */
+.req-top .req-new-btn{min-height:var(--btn-h-sm);padding:6px 18px;font-size:14.5px;box-shadow:0 4px 12px rgba(255,79,18,.2)}
+.attach-btn:not(.attach-icon){min-height:var(--btn-h);padding:0 20px;font-size:15px;border-color:var(--line)}
+.attach-icon{width:44px;height:44px;flex:0 0 44px}
+.req-send{gap:10px;flex-wrap:nowrap}
+.req-send .btn{flex:1;min-width:0}
+.req-send .attach-btn{flex:0 0 auto;align-self:stretch}
+.req-mode{min-height:var(--btn-h);padding:0 14px}
+.seg-btn{min-height:var(--seg-h);padding:0 12px}
+.rq-switch button{height:var(--seg-h)}
+.rq-act{height:var(--btn-h-sm)}
+.cf-btn{height:var(--btn-h)}
+
+/* Gradient text for a title or number that should glow. */
+.g-or{
+  padding-right:.06em;margin-right:-.06em;
+  background:var(--or-text);-webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){.g-or{background:none;color:#ff5a1f;-webkit-text-fill-color:currentColor}}
+@media (forced-colors:active){.g-or{background:none;color:CanvasText;-webkit-text-fill-color:CanvasText}}
+
+/* ---- Black cards ---- */
+.card-night{background:var(--night);color:var(--on-night);border-color:transparent;box-shadow:0 16px 40px rgba(0,0,0,.14)}
+.card-night h2,.card-night h3,.card-night strong,.card-night b{color:var(--on-night)}
+.card-night p,.card-night li,.card-night .hint,.card-night .per{color:var(--on-night-2)}
+.card-night a:not(.btn){color:#ff8a4c}
+.card-night .btn-ghost{background:transparent;border-color:rgba(255,255,255,.5);color:#fff}
+.card-night .btn-ghost:hover{background:#fff;border-color:#fff;color:var(--ink)}
+.card-night .panel-title,.card-night .plan-tag{color:#ff8a4c}
+
+/* Account: the site's status. */
+.site-panel.card-night .site-url{color:#fff}
+.site-panel.card-night .site-none{color:var(--on-night-2)}
+.site-panel.card-night .site-pill.is-building{background:rgba(255,255,255,.1);color:var(--on-night)}
+/* Plans: One. */
+.plan.card-night .badge{background:var(--or-grad)}
+.plan.card-night .price{background:var(--or-text);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.plan.card-night .price .per{-webkit-text-fill-color:var(--on-night-2)}
+.plan.card-night:hover{box-shadow:0 22px 50px rgba(0,0,0,.22)}
+/* Requests: the request itself at the top of its thread. */
+.rq-summary{background:var(--night);border-color:transparent;color:var(--on-night)}
+.rq-summary-meta{color:rgba(245,245,242,.55)}
+.rq-summary-who{color:var(--on-night-2)}
+.rq-summary-text,.rq-summary-text p{color:var(--on-night)}
+.rq-summary .rq-field{border-color:transparent}
+.rq-summary .rq-act{background:transparent;border-color:rgba(255,255,255,.28);color:#fff}
+.rq-summary .rq-act.is-primary{background:var(--or-grad);border-color:transparent}
+.rq-summary .rq-act.is-danger{border-color:rgba(255,120,100,.45);color:#ff9585}
+.rq-summary .rq-switch{background:rgba(255,255,255,.09)}
+.rq-summary .rq-switch button{color:var(--on-night-2)}
+.rq-summary .rq-switch button[aria-pressed="true"]{background:#fff;color:var(--ink)}
+.rq-summary .note{color:var(--on-night-2)}
+.rq-summary .note.bad{color:#ff9585}
+.card-night .ticks li.tick-hero{color:#ff8a4c}
+.card-night .ticks li.tick-hero::before{border-color:#ff8a4c}
+.card-night .ticks li strong{color:var(--on-night)}
+.req-compose .req-send{margin-top:14px}
+.req-send .btn,.req-send .attach-btn{white-space:nowrap;padding-left:18px;padding-right:18px}
