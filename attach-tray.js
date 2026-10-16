@@ -19,7 +19,30 @@
   var ACCEPT = { 'image/png': 1, 'image/jpeg': 1, 'image/webp': 1, 'application/pdf': 1 };
   var MAX_BYTES = 10 * 1024 * 1024;
   var X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  var PHOTO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>';
   var DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
+
+  /* A small preview, made once the moment a photo is picked, straight from
+     the file on the phone (nothing is uploaded or fetched for it). A full
+     12-megapixel photo decoded into a 72px tile can lag, and redrawing it
+     every time the tray changes made tiles blank out and fill in again. */
+  var THUMB = 160;
+  function makeThumb(h, done) {
+    var img = new Image();
+    img.decoding = 'async';
+    img.onload = function () {
+      try {
+        var side = Math.min(img.naturalWidth, img.naturalHeight);
+        var c = document.createElement('canvas');
+        c.width = c.height = THUMB;
+        c.getContext('2d').drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, THUMB, THUMB);
+        h.thumb = c.toDataURL('image/jpeg', 0.82);
+      } catch (e) { h.thumb = h.url; }
+      done();
+    };
+    img.onerror = function () { h.failed = true; done(); }; // e.g. a HEIC photo on a browser that can't show one
+    img.src = h.url;
+  }
 
   ONE.attachTray = function (opts) {
     var input = opts.input;
@@ -48,17 +71,19 @@
       tray.innerHTML = '';
       held.forEach(function (h, i) {
         var tile = document.createElement('div');
-        tile.className = 'att-tile' + (h.url ? '' : ' is-doc');
+        var photo = h.url && !h.failed;
+        tile.className = 'att-tile' + (photo ? (h.thumb ? '' : ' is-loading') : ' is-doc');
         tile.setAttribute('role', 'listitem');
-        if (h.url) {
+        if (photo) {
           var img = document.createElement('img');
-          img.src = h.url;
           img.alt = h.file.name;
+          if (h.thumb) img.src = h.thumb;
+          h.tile = tile; h.img = img;
           tile.appendChild(img);
         } else {
           var doc = document.createElement('div');
           doc.className = 'att-doc';
-          doc.innerHTML = DOC + '<span></span>';
+          doc.innerHTML = (h.url ? PHOTO : DOC) + '<span></span>';
           doc.lastChild.textContent = h.file.name;
           tile.appendChild(doc);
         }
@@ -85,7 +110,15 @@
         if (!ACCEPT[f.type]) { problem = f.name + ' is not a photo or PDF.'; return; }
         if (f.size > MAX_BYTES) { problem = f.name + ' is over 10 MB. Try a smaller one.'; return; }
         if (held.length >= max) { problem = 'Up to ' + max + ' files at a time.'; return; }
-        held.push({ file: f, url: f.type.indexOf('image/') === 0 ? URL.createObjectURL(f) : null });
+        var h = { file: f, url: f.type.indexOf('image/') === 0 ? URL.createObjectURL(f) : null };
+        held.push(h);
+        if (h.url) makeThumb(h, function () {
+          // Fill in just this tile; a failure redraws it as a photo icon.
+          if (held.indexOf(h) === -1) return;
+          if (h.failed || !h.img) { render(); return; }
+          h.img.src = h.thumb;
+          h.tile.classList.remove('is-loading');
+        });
       });
       say(problem, problem ? 'bad' : '');
       render();
