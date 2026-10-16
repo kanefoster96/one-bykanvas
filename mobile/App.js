@@ -10,10 +10,11 @@
  * a tapped one opens), and the app coming back to the front. The layout is
  * in src/navigation.js, the screens in src/screens.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { ActivityIndicator, AppState, Platform, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Notifications from 'expo-notifications';
@@ -51,30 +52,40 @@ function Logo() {
 function Signed() {
   const app = useApp();
   const pending = useRef(null);
-  const [ready, setReady] = useState(false);
+  const ready = useRef(false);
+  const handled = useRef(new Set());
   const appRef = useRef(app);
   appRef.current = app;
 
+  /* Open what a notification is about, or hold it until the navigation is
+     ready (a cold start). Stable, so the listeners below are set up once. */
   const open = useCallback((data) => {
-    if (!ready || !nav.isReady()) { pending.current = data; return; }
+    if (!ready.current || !nav.isReady()) { pending.current = data; return; }
     openLink(nav, appRef.current, data);
-  }, [ready]);
+  }, []);
 
   /* Notifications: a tap opens what it is about; one arriving refreshes
-     what is on screen. A button pressed on the notification the app was
-     launched with more than two minutes ago is history, never redone. */
+     what is on screen. Each response is handled once (the phone keeps
+     handing back the one the app was launched with), and a button pressed
+     on it more than two minutes ago is history, never redone. */
   useEffect(() => {
     if (web) return undefined;
     const respond = (r, fromLaunch) => {
-      const content = r && r.notification && r.notification.request && r.notification.request.content;
+      const req = r && r.notification && r.notification.request;
+      const key = ((req && req.identifier) || '') + ':' + ((r && r.actionIdentifier) || '');
+      if (handled.current.has(key)) return;
+      handled.current.add(key);
+      const content = req && req.content;
       const data = Object.assign({}, content && content.data);
-      const at = r && r.notification && r.notification.date;
+      const raw = r && r.notification && r.notification.date;
+      const at = raw && raw < 1e12 ? raw * 1000 : raw; // iOS gives seconds
       const stale = fromLaunch && (!at || Date.now() - at > 120000);
       const action = !stale && r && r.actionIdentifier && r.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER ? r.actionIdentifier : null;
       if (action) { data.action = action; if (r.userText) data.text = String(r.userText); }
       if (action === 'call' && data.phone) openOutside('tel:' + String(data.phone).replace(/[^\d+]/g, ''));
       if (action === 'email' && data.email) openOutside('mailto:' + data.email);
-      if (fromLaunch && stale) return; // opened the app long ago; do not re-route every launch
+      if (fromLaunch) { try { Notifications.clearLastNotificationResponse(); } catch (e) { /* older phones */ } }
+      if (fromLaunch && stale) return; // opened long ago; do not re-route every launch
       open(readLink(data));
     };
     const tapped = Notifications.addNotificationResponseReceivedListener((r) => respond(r, false));
@@ -82,6 +93,9 @@ function Signed() {
     Notifications.getLastNotificationResponseAsync().then((r) => { if (r && r.notification) respond(r, true); }).catch(() => {});
     return () => { tapped.remove(); arrived.remove(); };
   }, [open]);
+
+  /* Offline at launch: the splash goes, so "Try again" can be seen. */
+  useEffect(() => { if (app.bootError) hideSplash(); }, [app.bootError]);
 
   useEffect(() => {
     const st = AppState.addEventListener('change', (v) => {
@@ -116,7 +130,7 @@ function Signed() {
   return (
     <NavigationContainer ref={nav} theme={theme} onReady={() => {
       hideSplash();
-      setReady(true);
+      ready.current = true;
       if (pending.current) { const d = pending.current; pending.current = null; setTimeout(() => openLink(nav, appRef.current, d), 300); }
     }}>
       <MainNavigator key={app.user.id} />
@@ -134,12 +148,14 @@ function Root() {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <StatusBar style="dark" />
-      <AppProvider>
-        <Root />
-      </AppProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <StatusBar style="dark" />
+        <AppProvider>
+          <Root />
+        </AppProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 

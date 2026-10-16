@@ -84,17 +84,20 @@ function useContacts(navigation, siteId, enabled) {
 }
 
 export default function InboxScreen({ navigation }) {
-  const { site, hasChat, contactsAllowed, setCounts } = useApp();
+  const { site, hasChat, contactsAllowed } = useApp();
   const both = hasChat && contactsAllowed;
-  const [mode, setMode] = useState(hasChat ? 'inbox' : 'contacts');
-  const chats = useChats();
+  const [chosen, setMode] = useState('inbox');
+  // A site without live chat has only Contacts, whatever was chosen before.
+  const mode = hasChat ? (contactsAllowed ? chosen : 'inbox') : 'contacts';
+  const store = useChats();
   const [q, setQ] = useState('');
   const siteId = site && site.site_id;
+  // Only this site's conversations (the shared list may still hold the last site's).
+  const chats = store.siteId === siteId ? store : { convs: [], visitorsNow: [], loaded: false, error: '' };
 
   useEffect(() => { navigation.setOptions({ title: mode === 'inbox' ? 'Inbox' : 'Contacts' }); }, [navigation, mode]);
   const inbox = useLoad(() => (hasChat ? loadChats(siteId) : null), [siteId, hasChat]);
   useEvery(10000, () => loadChats(siteId), hasChat && mode === 'inbox');
-  useEffect(() => { setCounts({ chat: chats.convs.filter((c) => c.unread).length }); }, [chats.convs, setCounts]);
   const contacts = useContacts(navigation, siteId, contactsAllowed && mode === 'contacts');
 
   const rows = useMemo(() => {

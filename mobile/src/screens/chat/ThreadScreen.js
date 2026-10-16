@@ -39,7 +39,10 @@ function viaHint(c, via) {
 
 export default function ThreadScreen({ route, navigation }) {
   const { id } = route.params;
-  const { site } = useApp();
+  const app = useApp();
+  /* The conversation's own site (from a notification), else the one on show. */
+  const siteId = route.params.siteId || (app.site && app.site.site_id);
+  const site = app.site && app.site.site_id === siteId ? app.site : (app.sites.filter((x) => x.site_id === siteId)[0] || app.site);
   const [conv, setConv] = useState(null);
   const [msgs, setMsgs] = useState(null);
   const [error, setError] = useState('');
@@ -48,16 +51,16 @@ export default function ThreadScreen({ route, navigation }) {
   const picked = useRef(false);
 
   const load = useCallback(async () => {
-    if (!site) return;
+    if (!siteId) return;
     try {
-      const r = await api({ action: 'chat_get', site_id: site.site_id, conversation_id: id });
+      const r = await api({ action: 'chat_get', site_id: siteId, conversation_id: id });
       setConv(r.conversation);
       setMsgs((cur) => { if (cur && cur.length !== r.messages.length) animateNext(); return r.messages; });
       if (!picked.current) { picked.current = true; setVia(r.conversation.online || !r.conversation.email ? 'chat' : 'email'); }
       markRead(id);
       setError('');
     } catch (e) { setError(e.message); }
-  }, [site, id]);
+  }, [siteId, id]);
 
   useEffect(() => { load(); }, [load]);
   useEvery(6000, load);
@@ -66,7 +69,7 @@ export default function ThreadScreen({ route, navigation }) {
     setMsgs((cur) => (cur && !cur.some((x) => x.id === m.id) ? (animateNext(), cur.concat({ id: m.id, author: m.author, body: m.body, at: m.created_at })) : cur));
     if (m.author === 'visitor') { haptic.light(); load(); }
   }), [id, load]);
-  useEffect(() => () => { if (site) loadChats(site.site_id); }, [site]);
+  useEffect(() => () => { if (siteId) loadChats(siteId); }, [siteId]);
 
   const more = useCallback(async () => {
     if (!conv) return;
@@ -99,18 +102,18 @@ export default function ThreadScreen({ route, navigation }) {
   }, [navigation, conv, more]);
 
   const setStatus = async (body) => {
-    try { const r = await api(Object.assign({ action: 'chat_set', site_id: site.site_id, conversation_id: id }, body)); setConv(r.conversation); haptic.success(); }
+    try { const r = await api(Object.assign({ action: 'chat_set', site_id: siteId, conversation_id: id }, body)); setConv(r.conversation); haptic.success(); }
     catch (e) { setNote(e.message); haptic.error(); }
   };
   const callBiz = async () => {
     setNote('Ringing your phone first, then connecting them…');
-    try { await api({ action: 'call_back', site_id: site.site_id, conversation_id: id }); setNote('Answer your phone and you’ll be connected. They see your business number.'); }
+    try { await api({ action: 'call_back', site_id: siteId, conversation_id: id }); setNote('Answer your phone and you’ll be connected. They see your business number.'); }
     catch (e) { setNote(e.message); }
   };
 
   const send = async (text) => {
     if (!text) return false;
-    const r = await api({ action: 'chat_reply', site_id: site.site_id, conversation_id: id, body: text, via });
+    const r = await api({ action: 'chat_reply', site_id: siteId, conversation_id: id, body: text, via });
     animateNext();
     setMsgs((cur) => (cur || []).concat(r.message));
     setConv(r.conversation);

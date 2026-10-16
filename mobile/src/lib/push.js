@@ -75,7 +75,7 @@ export function readLink(d) {
   d = d && typeof d === 'object' ? d : {};
   let link = d.deep_link;
   if (typeof link === 'string') { try { link = JSON.parse(link); } catch (e) { link = null; } }
-  return { kind: d.kind, href: d.href, deep_link: link || null, action: d.action || null, text: d.text || null, phone: d.phone, email: d.email };
+  return { kind: d.kind, href: d.href, deep_link: link || null, action: d.action || null, text: d.text || null, phone: d.phone, email: d.email, site_id: d.site_id || null };
 }
 
 /* Where a tapped notification (or an Activity row) goes. `app` is the
@@ -89,13 +89,17 @@ export function openLink(nav, app, n) {
 
   if (link && link.kind === 'support_chat') return go('SupportChat');
   if (link && link.kind === 'max_setup') return go('WebPage', { title: 'One setup', path: link.user ? '/onboarding.html?user=' + encodeURIComponent(link.user) : '/onboarding.html' });
-  if (link && link.kind === 'chat' && n.action === 'reply' && n.text && link.id && app.site) {
-    api({ action: 'chat_reply', site_id: app.site.site_id, conversation_id: link.id, body: String(n.text).slice(0, 4000), via: 'chat' })
-      .then(() => haptic.success()).catch(() => {});
-    return go('Thread', { id: link.id });
+  /* A chat is about one site: switch to it (Kane, or anyone with more than
+     one) and send a typed reply to that site's conversation. */
+  const chatSite = n.site_id || (app.site && app.site.site_id);
+  if (link && link.kind === 'chat' && n.site_id && app.site && n.site_id !== app.site.site_id && app.sites.some((x) => x.site_id === n.site_id)) app.selectSite(n.site_id);
+  if (link && link.kind === 'chat' && n.action === 'reply' && n.text && link.id && chatSite) {
+    api({ action: 'chat_reply', site_id: chatSite, conversation_id: link.id, body: String(n.text).slice(0, 4000), via: 'chat' })
+      .then(() => haptic.success()).catch(() => haptic.error());
+    return go('Thread', { id: link.id, siteId: chatSite });
   }
-  if (link && link.kind === 'chat') return go('Thread', { id: link.id });
-  if (link && link.kind === 'support' && link.id) return go('Request', { id: link.id });
+  if (link && link.kind === 'chat') return go('Thread', { id: link.id, siteId: chatSite });
+  if (link && link.kind === 'support' && link.id) return go(app.isAdmin ? 'AdminRequest' : 'Request', { id: link.id });
   let m = n.href && /^\/requests\.html#r\/(.+)$/.exec(n.href);
   if (m) return go('Request', { id: m[1] });
   m = n.href && /^\/admin\.html#r\/(.+)$/.exec(n.href);

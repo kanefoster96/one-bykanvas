@@ -102,7 +102,7 @@ export function Attachments({ items }) {
   );
 }
 
-const ACCEPT_IMG = ['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif'];
+const ACCEPT_IMG = ['image/png', 'image/jpeg', 'image/webp'];
 
 /* Photos and files waiting to go: picked from the library, taken with
    the camera, or chosen from Files. The preview is the photo itself,
@@ -129,11 +129,14 @@ export function useAttach(maxFiles = 5) {
         const perm = await ImagePicker.requestCameraPermissionsAsync();
         if (!perm.granted) { setProblem('Camera access is off. Turn it on in Settings to take a photo.'); return; }
       }
-      const opts = { mediaTypes: ['images'], quality: 0.8, allowsMultipleSelection: !camera, selectionLimit: Math.max(1, maxFiles - files.length), exif: false };
+      /* Compatible: iPhone photos come back as real JPEGs, not HEIC, so
+         they open everywhere (the admin page, email, any browser). */
+      const opts = { mediaTypes: ['images'], quality: 0.8, allowsMultipleSelection: !camera, selectionLimit: Math.max(1, maxFiles - files.length), exif: false,
+        preferredAssetRepresentationMode: ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible };
       const res = camera ? await ImagePicker.launchCameraAsync(opts) : await ImagePicker.launchImageLibraryAsync(opts);
       if (res.canceled) return;
       add((res.assets || []).map((a, i) => ({
-        uri: a.uri, file: a.file, type: ACCEPT_IMG.indexOf(a.mimeType) >= 0 ? (a.mimeType === 'image/heic' || a.mimeType === 'image/heif' ? 'image/jpeg' : a.mimeType) : 'image/jpeg',
+        uri: a.uri, file: a.file, type: ACCEPT_IMG.indexOf(a.mimeType) >= 0 ? a.mimeType : 'image/jpeg',
         name: a.fileName || ('photo-' + Date.now() + '-' + i + '.jpg'), size: a.fileSize, image: true
       })));
     } catch (e) { setProblem('Could not open your photos: ' + (e && e.message)); }

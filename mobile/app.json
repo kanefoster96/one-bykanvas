@@ -90,7 +90,10 @@
           "cameraPermission": "So you can scan QR codes at the door, and take a photo to send with a request or a message.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "expo-image",
+      "expo-sharing",
+      "expo-localization"
     ],
     "extra": {
       "eas": {

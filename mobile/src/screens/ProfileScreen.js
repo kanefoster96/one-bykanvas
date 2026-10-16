@@ -29,7 +29,7 @@ export default function ProfileScreen({ navigation }) {
   const choose = async () => {
     setNote({ text: '' });
     try {
-      const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.6, exif: false });
+      const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.6, exif: false, preferredAssetRepresentationMode: ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible });
       if (res.canceled || !res.assets || !res.assets[0]) return;
       const a = res.assets[0];
       haptic.light();

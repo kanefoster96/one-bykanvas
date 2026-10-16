@@ -17,7 +17,10 @@ export default function DashboardScreen({ navigation, route }) {
   const [key, setKey] = useState(0);
   useLayoutEffect(() => { navigation.setOptions({ title: '' }); }, [navigation, site]);
   useEffect(() => { if (at) setKey((k) => k + 1); }, [at]);
-  const getUrl = useCallback(async () => (await api({ action: 'dashboard', site_id: site.site_id, path })).url, [site, path]);
+  const siteId = site && site.site_id;
+  const dash = site && site.dashboard_url;
+  // Keyed on the site's id, not the object: refreshing the account must not reload the page.
+  const getUrl = useCallback(async () => (await api({ action: 'dashboard', site_id: siteId, path })).url, [siteId, dash, path]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!site || !site.dashboard_url) {
     return (

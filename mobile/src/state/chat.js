@@ -58,7 +58,7 @@ export function startLive(siteId) {
   if (!siteId) return;
   const refresh = () => { clearTimeout(liveTimer); liveTimer = setTimeout(() => loadChats(siteId), 1200); };
   try {
-    channel = db.channel('site-live-' + siteId)
+    channel = db.channel('site-live-' + siteId + '-' + Date.now()) // a fresh topic: an old one may still be closing
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: 'site_id=eq.' + siteId }, (payload) => {
         if (payload && payload.new) bus.emit('chat:message', payload.new);
         refresh();

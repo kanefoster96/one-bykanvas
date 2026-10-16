@@ -181,15 +181,18 @@ export default function AnalyticsScreen() {
   const [shown, setShown] = useState(30);
   const cache = useRef({});
 
+  const latest = useRef('');
   const load = useCallback(async (fresh, which) => {
     const period = which || days;
     if (!site) return;
     const key = site.site_id + ':' + period;
+    latest.current = key;
     let data = !fresh && cache.current[key];
     try {
       if (!data) { data = await api({ action: 'analytics', site_id: site.site_id, days: period }); cache.current[key] = Object.assign({ at: Date.now() }, data); }
+      if (latest.current !== key) return; // they moved on to another period or site
       setD(data); setError('');
-    } catch (e) { if (!fresh || !d) setError(e.message); }
+    } catch (e) { if (latest.current === key && (!fresh || !d)) setError(e.message); }
   }, [site, days, d]);
   const { refreshing, onRefresh } = useLoad((q) => load(q), [site && site.site_id, days]);
   useEvery(15000, () => load(true), days === 'today');

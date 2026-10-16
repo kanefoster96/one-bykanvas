@@ -409,7 +409,7 @@ async function me(db, caller) {
   }
 
   return {
-    user: { id: caller.user_id, email: caller.email, is_admin: caller.is_admin, plan: (prof && prof.active_plan) || null, business_name: (prof && prof.business_name) || null, logo_path: (prof && prof.avatar_path) || null },
+    user: { id: caller.user_id, email: caller.email, is_admin: caller.is_admin, plan: (prof && prof.active_plan) || null, business_name: (prof && prof.business_name) || null, logo_path: (prof && prof.avatar_path) || null, notifications_seen_at: (prof && prof.notifications_seen_at) || null },
     sites: full,
     unread: { notifications: (fresh || []).length, requests: requestsUnread, support: caller.is_admin ? 0 : await supportUnread(db, caller) }
   };

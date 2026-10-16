@@ -21,6 +21,8 @@ export default function ActivityScreen({ navigation }) {
   const [rows, setRows] = useState(null);
   const [seenAt] = useState(() => (app.me && app.me.user && app.me.user.notifications_seen_at ? new Date(app.me.user.notifications_seen_at).getTime() : Date.now() - 864e5));
   const [error, setError] = useState('');
+  // How many were new when the sheet opened, before opening it marks them seen.
+  const [unreadBefore] = useState(() => (app.me && app.me.unread && app.me.unread.notifications) || 0);
   useLoad(async () => {
     try {
       const res = await api({ action: 'events' });
@@ -29,7 +31,6 @@ export default function ActivityScreen({ navigation }) {
       app.refreshMe();
     } catch (e) { setError(e.message); }
   });
-  const unreadBefore = (app.me && app.me.unread && app.me.unread.notifications) || 0;
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} contentContainerStyle={[s.body, { paddingBottom: insets.bottom + 24 }]}>
       <Text style={s.title}>Activity</Text>
