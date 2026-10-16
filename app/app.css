@@ -398,7 +398,7 @@
 .oa-login h1{font-size:32px;font-weight:700;letter-spacing:-.035em}
 .oa-card{border-radius:22px}
 .oa-card-title{font-size:12px;font-weight:700;letter-spacing:.07em;color:var(--or)}
-.oa-body .btn-primary,.oa-chip-dark{background:var(--or-grad);border-color:transparent;color:#fff;box-shadow:0 8px 22px rgba(255,79,18,.28)}
+.oa-body .btn-primary,.oa-chip-dark{background:var(--or-grad);border-color:transparent;color:#fff}
 .oa-body .btn-primary:hover,.oa-chip-dark:hover{background:linear-gradient(135deg,#b63807 0%,#de440e 100%)}
 .oa-body .btn-primary:focus-visible,.oa-chip-dark:focus-visible{outline:3px solid rgba(255,79,18,.45);outline-offset:3px}
 .oa-body .btn-primary:disabled{opacity:.6;box-shadow:none}
@@ -555,3 +555,24 @@
 .oa-build .oa-job-finish input{width:100%;min-height:var(--field-h,48px);padding:0 14px;border:0;border-radius:12px;font:inherit;font-size:16px}
 .oa-build .oa-job-finish .btn{width:100%;margin-top:10px}
 .oa-build .oa-job-finish .note{color:var(--on-night-2)}
+
+/* ---- App pass: black, white and orange only, no glow under buttons ---- */
+/* Names at the top of a conversation, contact or chat: a heading, not a poster. */
+.oa-tab .oa-conv-who h2{font-size:18px;font-weight:700;letter-spacing:-.015em;line-height:1.25}
+/* Avatars: black with white initials; anonymous visitors in grey. */
+.oa-avatar.is-anon{background:var(--bg-grey);color:var(--ink-2)}
+.oa-avatar .oa-chan-dot{background:var(--ink)}
+.oa-avatar .oa-chan-dot.is-sms{background:var(--ink)}
+.oa-convs li.is-unread .oa-conv-preview::before,.oa-seg-dot,.oa-activity li.is-new .oa-act-title::before{background:#ef4a10}
+/* Someone on the site now: a black bar with an orange count. */
+.oa-online-bar{background:var(--night)}
+.oa-online-n{background:var(--or-grad);color:#fff}
+/* Chips and bars that were blue or green. */
+.oa-chip.is-ad,.oa-chip.is-good{background:#fff1ea;border-color:#ffd9c7;color:#c2410c}
+.oa-funnel-row:nth-child(3) .oa-funnel-bar,.oa-ad .oa-funnel-row.is-paid .oa-funnel-bar{background:var(--or-grad)}
+.oa-ad-line b{color:#c2410c}
+/* The site card on Home: orange for live, and its button in the gradient. */
+.oa-site-card .oa-status-dot.is-on{background:#ff5a1f;box-shadow:0 0 0 5px rgba(255,90,31,.22)}
+.oa-site-card .oa-chip:not(.oa-chip-ghost){background:var(--or-grad);border-color:transparent;color:#fff}
+.oa-body .btn-primary,.oa-body .btn-primary:hover,.oa-chip-dark,.oa-chip-dark:hover{box-shadow:none}
+.oa-status-dot.is-building{background:#a1a1a6;box-shadow:0 0 0 5px rgba(161,161,166,.2)}
