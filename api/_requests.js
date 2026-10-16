@@ -30,8 +30,11 @@ const CUSTOMER_LABEL = {
   declined: 'Done'
 };
 
-function cleanBody(raw) {
+/* files: how many attachments go with it. Photos can be sent on their own
+   (or with a word or two), so the minimum only applies to words alone. */
+function cleanBody(raw, files) {
   const body = String(raw == null ? '' : raw).replace(/\r\n/g, '\n').trim();
+  if (files > 0 && body.length < BODY_MIN) return { body: body || (files === 1 ? 'Sent a file.' : 'Sent ' + files + ' files.') };
   if (body.length < BODY_MIN) return { error: 'A sentence is plenty, but tell us a little more than that.' };
   if (body.length > BODY_MAX) return { error: 'Keep it under 4,000 characters.' };
   return { body };

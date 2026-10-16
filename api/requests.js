@@ -129,12 +129,12 @@ module.exports = async function handler(req, res) {
       if (!reqRow || reqRow.user_id !== user.id) {
         return res.status(404).json({ error: 'Request not found.' });
       }
-      const cleaned = cleanBody(body.body);
+      const attachmentPaths = cleanAttachments(body.attachmentPaths, user.id, false);
+      const cleaned = cleanBody(body.body, attachmentPaths.length);
       if (cleaned.error) return res.status(400).json({ error: cleaned.error });
 
       const out = await addNote(db, reqRow, {
-        author: 'customer', body: cleaned.body,
-        attachmentPaths: cleanAttachments(body.attachmentPaths, user.id, false)
+        author: 'customer', body: cleaned.body, attachmentPaths
       });
       return res.status(200).json({ ok: true, note: out.note, request: out.request });
     }

@@ -22,8 +22,6 @@
   }
 
   var MAX_FILES = 5;
-  var MAX_FILE_BYTES = 10 * 1024 * 1024;
-  var ACCEPT = { 'image/png': 1, 'image/jpeg': 1, 'image/webp': 1, 'application/pdf': 1 };
   var MIN_BODY = 10;
 
   /* What each status is called here. Same words as the email subjects. */
@@ -105,18 +103,6 @@
   }
 
   /* ---------------- files ---------------- */
-
-  function checkFiles(files, note) {
-    if (files.length > MAX_FILES) {
-      say(note, 'Up to ' + MAX_FILES + ' files at a time. Pick fewer and try again.', 'bad');
-      return false;
-    }
-    for (var i = 0; i < files.length; i++) {
-      if (!ACCEPT[files[i].type]) { say(note, files[i].name + ' is not a photo or PDF.', 'bad'); return false; }
-      if (files[i].size > MAX_FILE_BYTES) { say(note, files[i].name + ' is over 10 MB. Try a smaller one.', 'bad'); return false; }
-    }
-    return true;
-  }
 
   async function upload(files) {
     var batch = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
@@ -280,11 +266,12 @@
   document.getElementById('modeEdit').addEventListener('click', function () { setMode('edit'); });
   document.getElementById('pickedChange').addEventListener('click', function () { setMode('feature'); });
 
-  document.getElementById('newFiles').addEventListener('change', function (e) {
-    var note = document.getElementById('newFilesNote');
-    var files = Array.prototype.slice.call(e.target.files || []);
-    if (!checkFiles(files, note)) { e.target.value = ''; return; }
-    say(note, files.length ? files.length + (files.length === 1 ? ' file added.' : ' files added.') : '');
+  /* Picked photos wait as thumbnails, removable, until the request is sent. */
+  var newTray = ONE.attachTray({
+    input: document.getElementById('newFiles'),
+    before: document.getElementById('newFilesNote'),
+    max: MAX_FILES,
+    say: function (m, kind) { say(document.getElementById('newFilesNote'), m, kind); }
   });
 
   document.getElementById('newForm').addEventListener('submit', async function (e) {
@@ -300,9 +287,9 @@
     btn.disabled = true;
     say(note, 'Sending…');
     try {
-      var input = document.getElementById('newFiles');
-      var files = Array.prototype.slice.call(input.files || []);
+      var files = newTray.files();
       var paths = [];
+      newTray.busy(true);
       if (files.length) { say(note, 'Uploading photos…'); paths = await upload(files); say(note, 'Sending…'); }
 
       var data = await post({
@@ -313,7 +300,7 @@
         attachmentPaths: paths
       });
       document.getElementById('newBody').value = '';
-      input.value = '';
+      newTray.clear();
       say(document.getElementById('newFilesNote'), '');
       say(note, '');
       await loadList();
@@ -322,6 +309,7 @@
       say(note, ONE.friendlyError(err), 'bad');
     } finally {
       btn.disabled = false;
+      newTray.busy(false);
     }
   });
 
@@ -424,13 +412,11 @@
     });
   }
 
-  document.getElementById('replyFiles').addEventListener('change', function (e) {
-    var files = Array.prototype.slice.call(e.target.files || []);
-    var count = document.getElementById('replyFilesCount');
-    if (!checkFiles(files, document.getElementById('replyNote'))) { e.target.value = ''; count.hidden = true; return; }
-    say(document.getElementById('replyNote'), '');
-    count.textContent = String(files.length);
-    count.hidden = !files.length;
+  var replyTray = ONE.attachTray({
+    input: document.getElementById('replyFiles'),
+    into: document.getElementById('replyForm'),
+    max: MAX_FILES,
+    say: function (m, kind) { say(document.getElementById('replyNote'), m, kind); }
   });
 
   var replyBody = document.getElementById('replyBody');
@@ -446,18 +432,18 @@
     var note = document.getElementById('replyNote');
     var btn = document.getElementById('replyBtn');
     var body = replyBody.value.trim();
-    if (body.length < MIN_BODY) { say(note, 'A little more than that, so we can help.', 'bad'); replyBody.focus(); return; }
+    var files = replyTray.files();
+    /* Photos can go on their own; words alone need a little more than "ok". */
+    if (!files.length && body.length < MIN_BODY) { say(note, 'A little more than that, so we can help.', 'bad'); replyBody.focus(); return; }
     btn.disabled = true;
-    say(note, 'Sending…');
+    replyTray.busy(true);
+    say(note, files.length ? 'Uploading ' + (files.length === 1 ? 'your file' : files.length + ' files') + '…' : 'Sending…');
     try {
-      var input = document.getElementById('replyFiles');
-      var files = Array.prototype.slice.call(input.files || []);
       var paths = files.length ? await upload(files) : [];
       var data = await post({ action: 'reply', requestId: current.id, body: body, attachmentPaths: paths });
       replyBody.value = '';
       growReply();
-      input.value = '';
-      document.getElementById('replyFilesCount').hidden = true;
+      replyTray.clear();
       say(note, '');
       // Keep the list in step so going back shows the new order.
       await loadList();
@@ -467,6 +453,7 @@
       say(note, ONE.friendlyError(err), 'bad');
     } finally {
       btn.disabled = false;
+      replyTray.busy(false);
     }
   });
 
