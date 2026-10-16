@@ -25,6 +25,21 @@ python3 -m http.server 8000    # then open http://localhost:8000
 Any static host. On Vercel: import the repo, framework preset **Other**, no
 build command, output directory `.`.
 
+## Before every commit
+
+- **Versions:** run `npm run stamp`. Every `?v=` on a script, stylesheet or
+  image is set to that file's content hash and the industry pages are
+  regenerated. Never bump a `?v=` by hand. `npm run check:versions` fails if
+  anything is stale.
+- **Monitoring:** `/api/health` runs every morning (07:45 UTC) and emails and
+  pushes Kane only if something is wrong: a missing Vercel setting, a
+  scheduled job gone quiet, request emails stuck, or Stripe unable to reach
+  the webhook. Payment, checkout, join and plan-change failures alert straight
+  away (at most once an hour each). Jobs check in through `beat()` in
+  `api/_health.js`; add one to any new scheduled job.
+- **Rate limits:** forms and endpoints anyone can use go through `limitIp()` in
+  `api/_rate.js` (counted in Postgres, `hit_rate`). Add it to any new one.
+
 ## Before launch
 
 - **Reviews** (`reviews.js`, `FALLBACK` array) are still placeholder quotes

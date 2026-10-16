@@ -8,5 +8,9 @@
   },
   "devDependencies": {
     "playwright": "1.49"
+  },
+  "scripts": {
+    "stamp": "node scripts/stamp-versions.mjs && node industry-pages/build.js && node scripts/stamp-versions.mjs --check",
+    "check:versions": "node scripts/stamp-versions.mjs --check"
   }
 }

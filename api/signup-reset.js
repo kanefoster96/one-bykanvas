@@ -12,6 +12,7 @@
  * in progress), and never subscribed. Anything else is left alone.
  */
 const { createClient } = require('@supabase/supabase-js');
+const { limitIp, tooMany } = require('./_rate.js');
 const { missingEnv } = require('./_env.js');
 
 /* The same day checkout gives an unconfirmed signup to pay (checkout.js),
@@ -40,6 +41,7 @@ module.exports = async function handler(req, res) {
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false }
     });
+    if (await limitIp(admin, req, 'signup-reset', 10, 3600)) return tooMany(res);
 
     /* No lookup-by-email in the admin API; the list is small enough to scan. */
     let found = null;

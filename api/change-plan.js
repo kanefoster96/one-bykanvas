@@ -20,6 +20,7 @@
  */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
+const { alertNow } = require('./_health.js');
 const { missingEnv } = require('./_env.js');
 const { PLANS } = require('./_plans.js');
 const { changePlan } = require('./_change_plan.js');
@@ -100,6 +101,7 @@ module.exports = async function handler(req, res) {
       });
     }
     console.error('change-plan failed:', err && err.message);
+    await alertNow('change-plan', 'A plan change failed', 'A customer could not change plan: ' + (err && err.message));
     return res.status(500).json({ error: 'Could not change your plan. Please try again.' });
   }
 };

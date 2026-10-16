@@ -15,6 +15,7 @@
  */
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const { limitIp, tooMany } = require('./_rate.js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
@@ -191,6 +192,7 @@ module.exports = async function handler(req, res) {
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false }
     });
+    if (await limitIp(db, req, 'plan', 10, 3600)) return tooMany(res);
     const { data: row, error } = await db.from('leads').insert({
       name, business, email, about,
       plan_interest: p.recommend, source: 'growth-plan',

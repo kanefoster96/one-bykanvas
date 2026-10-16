@@ -17,8 +17,11 @@ const OUT = path.join(__dirname, '..');
 /* Versions of the shared assets, matching every other page. When those bump
    site-wide, the sed that bumps them will catch the generated pages too —
    these values only matter for a fresh generation. */
-const CSS_V = '145';
-const SCRIPT_V = 42;
+/* Versions are the file's content hash, the same value
+   scripts/stamp-versions.mjs writes into every page (npm run stamp). */
+const vOf = (f) => require('crypto').createHash('sha256').update(fs.readFileSync(path.join(OUT, f))).digest('hex').slice(0, 8);
+const CSS_V = vOf('styles.css');
+const SCRIPT_V = vOf('script.js');
 
 /* The same visual language as the homepage cards: a solid colour square with
    a simple white line icon. Keys are referenced per-feature by each industry's
@@ -165,15 +168,15 @@ const FOOT = `<footer class="foot">
   </div>
 </footer>
 
-<script src="consent.js?v=12"></script>
-<script src="supabase-config.js?v=1"></script>
-<script src="session.js?v=3"></script>
+<script src="consent.js?v=2c4fee5d"></script>
+<script src="supabase-config.js?v=90fd89dc"></script>
+<script src="session.js?v=59739977"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>
-<script src="/onemark.js?v=2" defer></script>
-<script src="reviews.js?v=5"></script>
-<script src="chat.js?v=14" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
-<script src="beacon.js?v=6" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
-<script src="admin-pill.js?v=8"></script>
+<script src="/onemark.js?v=069396d3" defer></script>
+<script src="reviews.js?v=4d29b5d9"></script>
+<script src="chat.js?v=14941a02" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
+<script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
+<script src="admin-pill.js?v=06da798b"></script>
 </body>
 </html>
 `;
@@ -230,10 +233,10 @@ ${JSON.stringify({
   mainEntity: faqFor(b).map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
-` : ''}<link rel="icon" href="assets/favicon.svg?v=5" type="image/svg+xml">
-<link rel="icon" href="assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
-<link rel="icon" href="assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
-<link rel="apple-touch-icon" href="assets/favicon-180.png?v=5">
+` : ''}<link rel="icon" href="assets/favicon.svg?v=fa41229e" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=ed9a2381" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="styles.css?v=${CSS_V}">
 </head>
 <body>
@@ -504,10 +507,10 @@ ${JSON.stringify({
   mainEntity: f.faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
-<link rel="icon" href="assets/favicon.svg?v=5" type="image/svg+xml">
-<link rel="icon" href="assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
-<link rel="icon" href="assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
-<link rel="apple-touch-icon" href="assets/favicon-180.png?v=5">
+<link rel="icon" href="assets/favicon.svg?v=fa41229e" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=ed9a2381" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="styles.css?v=${CSS_V}">
 </head>
 <body>
@@ -677,10 +680,10 @@ ${JSON.stringify({
   mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: plain(q), acceptedAnswer: { '@type': 'Answer', text: plain(a) } }))
 })}
 </script>
-<link rel="icon" href="/assets/favicon.svg?v=5" type="image/svg+xml">
-<link rel="icon" href="/assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
-<link rel="icon" href="/assets/favicon-192.png?v=5" sizes="192x192" type="image/png">
-<link rel="apple-touch-icon" href="/assets/favicon-180.png?v=5">
+<link rel="icon" href="/assets/favicon.svg?v=fa41229e" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
+<link rel="icon" href="/assets/favicon-192.png?v=ed9a2381" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="/styles.css?v=${CSS_V}">
 </head>
 <body>
@@ -854,4 +857,4 @@ for (const m of MAX) {
 
 /* ------------------------------------------------------------- examples */
 /* /examples and one made-up business per trade: examples.js. */
-require('./examples.js').build(OUT, { cssV: CSS_V, scriptV: 42 });
+require('./examples.js').build(OUT, { cssV: CSS_V, scriptV: SCRIPT_V });
