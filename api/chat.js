@@ -14,6 +14,7 @@
  */
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const { limitIp, tooMany } = require('./_rate.js');
 const { missingEnv } = require('./_env.js');
 const { sha, cleanBody, cleanName, cleanEmail, cleanPhone, addMessage, overLimit, tellOwner } = require('./_chat.js');
 
@@ -60,6 +61,10 @@ module.exports = async function handler(req, res) {
     if (!body) return res.status(400).json({ error: 'Bad request.' });
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
     const action = String(body.action || '');
+    // A new chat pushes the owner, a message may too: room for a real
+    // conversation, not for a script.
+    if (action === 'start' && await limitIp(db, req, 'chat-start', 10, 3600)) return tooMany(res);
+    if (action === 'send' && await limitIp(db, req, 'chat-send', 120, 3600)) return tooMany(res);
 
     if (action === 'start') {
       const siteId = String(body.site || '').toLowerCase();

@@ -313,7 +313,7 @@
       /* Inside the One app, this tells the app to take its loading screen down. */
       if (window.kanvasReady) window.kanvasReady();
     } catch (err) {
-      loading.innerHTML = '<p>' + (err.message || 'Could not load the form.') + '</p>';
+      loading.innerHTML = '<p></p>'; loading.firstChild.textContent = err.message || 'Could not load the form.';
       if (window.kanvasReady) window.kanvasReady();
     }
   }

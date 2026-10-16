@@ -23,6 +23,7 @@ const { PREVIEW_OFFER } = require('./_plans.js');
 const { sendEmail } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { notifyAdmin } = require('./_notify.js');
+const { beat, alertAdmin } = require('./_health.js');
 const { startHref } = require('./plan.js');
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -357,8 +358,9 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Who is this?' });
   }
 
+  let db = null;
   try {
-    const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+    db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false }
     });
     const site = ourSiteUrl();
@@ -579,9 +581,11 @@ module.exports = async function handler(req, res) {
     const chats = await db.from('conversations').delete().lt('last_message_at', new Date(now - 24 * 30 * DAY).toISOString());
     if (chats.error) console.error('followups: conversations sweep failed:', chats.error.message);
 
+    await beat(db, 'followups', `sent ${sentF1 + sentF2 + sentG1 + sentG2 + sentWb}`);
     return res.status(200).json({ ok: true, followup1: sentF1, followup2: sentF2, growth1: sentG1, growth2: sentG2, winback: sentWb });
   } catch (err) {
     console.error('followups:', err && err.message);
+    if (db) await alertAdmin(db, 'followups', 'The follow-up emails failed', 'The daily follow-up job stopped with: ' + (err && err.message));
     return res.status(500).json({ error: 'Something went wrong.' });
   }
 };

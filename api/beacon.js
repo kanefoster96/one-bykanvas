@@ -13,6 +13,7 @@
  * quietly: a beacon never gets an error a visitor could see.
  */
 const { createClient } = require('@supabase/supabase-js');
+const { limitIp, tooMany } = require('./_rate.js');
 const { missingEnv } = require('./_env.js');
 
 const BOT = /bot|crawl|spider|slurp|preview|headless|lighthouse|pingdom|facebookexternalhit|whatsapp|telegram|curl|wget|python-requests|go-http-client|java\//i;
@@ -156,6 +157,8 @@ module.exports = async function handler(req, res) {
     const input = parse(req.body);
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
     if (input && input.type === 'payment') {
+      // Payments become contacts and revenue in the app; page views are not limited.
+      if (await limitIp(db, req, 'beacon-pay', 30, 3600)) return res.status(204).end();
       const pay = cleanPayment(input, req.headers || {});
       if (!pay) return res.status(204).end();
       // Stored for Analytics only. The beacon is public (the site id is in

@@ -7,6 +7,7 @@
  */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
+const { alertNow } = require('./_health.js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { PLANS } = require('./_plans.js');
 const { openCheckout, CheckoutError } = require('./_checkout_session.js');
@@ -149,6 +150,7 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     if (err instanceof CheckoutError) return res.status(err.status).json({ error: err.message });
     console.error('checkout failed:', err && err.message);
+    await alertNow('checkout', 'Checkout failed', 'Someone could not get to the payment page: ' + (err && err.message));
     return res.status(500).json({ error: 'Could not start checkout. Please try again.' });
   }
 };

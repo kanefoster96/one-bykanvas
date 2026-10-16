@@ -16,10 +16,13 @@ const fs = require('fs');
 const path = require('path');
 const EXAMPLES = require('./examples-data.js');
 
-const EX_CSS_V = 11;
-const EX_JS_V = 9;
+
+
 const SITE_ID = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 const ROOT = path.join(__dirname, '..');
+/* Content hash, as scripts/stamp-versions.mjs stamps it. */
+const EX_CSS_V = require('crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT, 'examples', 'ex.css'))).digest('hex').slice(0, 8);
+const EX_JS_V = require('crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT, 'examples', 'ex.js'))).digest('hex').slice(0, 8);
 
 const join = (e) => '/join?trade=' + e.key;
 const P = '#preview';   // every link on an example opens the pop-up
@@ -829,7 +832,7 @@ ${abSplit(e)}
 <!-- A made-up business, so it is never offered to someone searching for it. -->
 <meta name="robots" content="noindex, follow">
 <meta name="theme-color" content="${dark ? '#111111' : e.theme.bg}">
-<link rel="icon" href="/assets/favicon.svg?v=5" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon.svg?v=fa41229e" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${e.fonts}&display=swap">
@@ -851,9 +854,9 @@ ${e.layout.order.map((k) => SECTIONS[k](e)).join('\n')}
 ${footer(e)}
 ${modal(e)}
 ${pill(e)}
-<script src="/consent.js?v=12"></script>
+<script src="/consent.js?v=2c4fee5d"></script>
 <script src="/examples/ex.js?v=${EX_JS_V}"></script>
-<script src="/beacon.js?v=6" data-site="${SITE_ID}" defer></script>
+<script src="/beacon.js?v=77a73cd5" data-site="${SITE_ID}" defer></script>
 </body>
 </html>
 `;
@@ -880,9 +883,9 @@ function shell(o) {
 <meta property="og:image" content="https://kanvas.one/assets/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="${o.canonical}">
-<link rel="icon" href="/assets/favicon.svg?v=5" type="image/svg+xml">
-<link rel="icon" href="/assets/favicon-32.png?v=5" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="/assets/favicon-180.png?v=5">
+<link rel="icon" href="/assets/favicon.svg?v=fa41229e" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="/styles.css?v=${o.cssV}">
 </head>
 <body>
@@ -922,13 +925,13 @@ ${o.body}
   </div>
 </footer>
 
-<script src="/consent.js?v=12"></script>
-<script src="/supabase-config.js?v=1"></script>
-<script src="/session.js?v=3"></script>
+<script src="/consent.js?v=2c4fee5d"></script>
+<script src="/supabase-config.js?v=90fd89dc"></script>
+<script src="/session.js?v=59739977"></script>
 <script src="/script.js?v=${o.scriptV}"></script>
-<script src="/chat.js?v=14" data-site="${SITE_ID}" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
-<script src="/beacon.js?v=6" data-site="${SITE_ID}" defer></script>
-<script src="/admin-pill.js?v=8"></script>
+<script src="/chat.js?v=14941a02" data-site="${SITE_ID}" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
+<script src="/beacon.js?v=77a73cd5" data-site="${SITE_ID}" defer></script>
+<script src="/admin-pill.js?v=06da798b"></script>
 </body>
 </html>
 `;

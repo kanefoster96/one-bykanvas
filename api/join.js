@@ -34,6 +34,8 @@
  */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
+const { limitIp, tooMany } = require('./_rate.js');
+const { alertNow } = require('./_health.js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { openCheckout, CheckoutError } = require('./_checkout_session.js');
 const { isValidDomain, lookup } = require('./domains.js');
@@ -102,6 +104,11 @@ module.exports = async function handler(req, res) {
   }
   const action = String(body.action || '');
 
+  /* Each of these writes, uploads or makes an account and a Stripe
+     customer: per address, far above what one person joining needs. */
+  const LIMITS = { lead: [10, 3600], upload: [60, 3600], start: [8, 3600] };
+  if (LIMITS[action] && await limitIp(admin, req, 'join-' + action, LIMITS[action][0], LIMITS[action][1])) return tooMany(res);
+
   try {
     if (action === 'lead') return await lead();
     if (action === 'upload') return await upload();
@@ -111,6 +118,7 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     if (err instanceof CheckoutError) return res.status(err.status).json({ error: err.message });
     console.error('join %s failed:', action, err && err.message);
+    if (action !== 'upload') await alertNow('join-' + action, 'Join (/join) failed', `The "${action}" step failed for someone joining: ` + (err && err.message));
     return res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 

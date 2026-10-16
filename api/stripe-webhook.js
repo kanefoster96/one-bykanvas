@@ -6,6 +6,7 @@
  */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
+const { alertNow } = require('./_health.js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
@@ -873,6 +874,8 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     // 500 makes Stripe retry, which is what we want for a transient failure.
     console.error('webhook handling failed:', err && err.message);
+    await alertNow('stripe-webhook', 'A Stripe payment event failed',
+      `Handling ${event && event.type} (${event && event.id}) failed: ${err && err.message}. Stripe will retry it; if this keeps happening a customer's plan may not go live.`);
     return res.status(500).end('Handler error');
   }
 

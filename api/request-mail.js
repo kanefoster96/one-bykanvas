@@ -24,6 +24,7 @@ const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 
 const { notifyAdmin } = require('./_notify.js');
+const { beat, alertAdmin } = require('./_health.js');
 
 const QUIET_MINUTES = 10;
 const GIVE_UP_DAYS = 2;
@@ -97,6 +98,17 @@ function plainText(notes, tail) {
     .join('\n\n') + '\n\n' + tail + '\n';
 }
 
+/* The morning check (api/health.js) records itself too; if a day and a
+   half goes by without it, say so. Throttled like every alert. */
+async function watchHealth(db) {
+  try {
+    const { data } = await db.from('health_beats').select('ok_at').eq('job', 'health').maybeSingle();
+    if (data && Date.now() - new Date(data.ok_at).getTime() > 36 * 3600 * 1000) {
+      await alertAdmin(db, 'health-quiet', 'The morning health check has stopped', 'api/health.js has not finished since ' + data.ok_at + '. Check the cron in Vercel.');
+    }
+  } catch (e) { /* best effort */ }
+}
+
 module.exports = async function handler(req, res) {
   const { CRON_SECRET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
   if (!CRON_SECRET || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
@@ -108,8 +120,9 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Who is this?' });
   }
 
+  let db = null;
   try {
-    const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+    db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false }
     });
     const site = ourSiteUrl();
@@ -120,6 +133,11 @@ module.exports = async function handler(req, res) {
     let chased = 0;
     try { chased = await chaseExamples(db); }
     catch (e) { console.error('request-mail: chase failed:', e && e.message); }
+
+    /* Checking in, and keeping an eye on the morning health check: if that
+       has stopped, nothing else would say so. */
+    await beat(db, 'request-mail');
+    await watchHealth(db);
 
     const { data: notes, error } = await db.from('request_notes')
       .select('id, request_id, author, body, attachment_paths, created_at')
@@ -235,6 +253,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ sent, failed, dropped, chased });
   } catch (err) {
     console.error('request-mail:', err && err.message);
+    if (db) await alertAdmin(db, 'request-mail', 'Request emails failed', 'The job that emails customers about their requests stopped with: ' + (err && err.message));
     return res.status(500).json({ error: 'Something went wrong.' });
   }
 };

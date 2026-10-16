@@ -10,6 +10,7 @@
  * catches the bots that fill in everything.
  */
 const { createClient } = require('@supabase/supabase-js');
+const { limitIp, tooMany } = require('./_rate.js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { event } = require('./_notify.js');
 const { sendEmail } = require('./_email.js');
@@ -56,6 +57,8 @@ module.exports = async function handler(req, res) {
     if (!email && !phone) return res.status(400).json({ error: 'Leave an email or a number so we can get back to you.' });
 
     const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+    // Each one emails and pushes the site owner: 8 an hour from one address is plenty for a person.
+    if (await limitIp(db, req, 'enquiry', 8, 3600)) return tooMany(res);
     const { data: site } = await db.from('sites').select('id, owner_id, name, url').eq('id', siteId).maybeSingle();
     if (!site) return res.status(404).json({ error: 'This form is not set up yet.' });
     const owner = await db.auth.admin.getUserById(site.owner_id).then((r) => (r.data && r.data.user && r.data.user.email) || null).catch(() => null);
