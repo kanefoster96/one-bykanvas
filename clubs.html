@@ -49,14 +49,14 @@ h1,h2,h3,p{margin:0}
 .nav-links{display:none;gap:22px;margin-left:auto;font-size:14px}
 .nav-links a{text-decoration:none;color:var(--ink-2)}
 .nav-links a:hover{color:var(--ink)}
-.nav .btn{margin-left:auto;min-height:38px;padding:0 16px;font-size:14px}
+.nav .btn{margin-left:auto;min-height:40px;padding:0 16px;font-size:14px}
 @media (min-width:860px){.nav-links{display:flex}.nav .btn{margin-left:8px}}
 
 /* ---- buttons ---- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 24px;border-radius:999px;border:0;font:inherit;font-size:16px;font-weight:600;text-decoration:none;cursor:pointer;transition:transform .15s var(--ease),background .2s var(--ease)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:0;font:inherit;font-size:16px;font-weight:600;text-decoration:none;cursor:pointer;transition:transform .15s var(--ease),background .2s var(--ease)}
 .btn:active{transform:scale(.98)}
-.btn-dark{background:var(--ink);color:#fff}
-.btn-dark:hover{background:#000}
+.btn-dark{background:linear-gradient(135deg,#c93e09 0%,#ef4a10 100%);color:#fff;box-shadow:0 6px 18px rgba(255,79,18,.22)}
+.btn-dark:hover{background:linear-gradient(135deg,#b63807 0%,#de440e 100%)}
 .btn-light{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
 .btn-light:hover{background:var(--soft)}
 .btn:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #5b9dff;outline-offset:2px}

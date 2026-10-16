@@ -13,8 +13,8 @@
 <link rel="icon" href="../assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
 <link rel="icon" href="../assets/favicon-192.png?v=ed9a2381" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="../assets/favicon-180.png?v=0ecf9df9">
-<link rel="stylesheet" href="../styles.css?v=75274e15">
-<link rel="stylesheet" href="app.css?v=6bab8b98">
+<link rel="stylesheet" href="../styles.css?v=d01cb50c">
+<link rel="stylesheet" href="app.css?v=4b95c4eb">
 </head>
 <body class="oa-body">
 
@@ -498,18 +498,14 @@
           <label for="newBody" id="newLabel">What would you like?</label>
           <textarea id="newBody" rows="4" maxlength="4000" placeholder="Swap the photo on the homepage for the new shopfront one."></textarea>
         </div>
-        <div class="field full">
-          <label class="attach-btn" for="newFiles">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.5l-8.5 8.5a5.5 5.5 0 0 1-7.8-7.8l9-9a3.5 3.5 0 0 1 5 5l-9 9a1.5 1.5 0 0 1-2.1-2.1l8.3-8.3"/></svg>
-            Add photos
-          </label>
-          <input id="newFiles" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" multiple hidden>
-          <p class="note" id="newFilesNote" role="status" aria-live="polite"></p>
-        </div>
+        <p class="note" id="newFilesNote" role="status" aria-live="polite"></p>
         <div class="req-send">
+          <label class="attach-btn" for="newFiles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.5l-8.5 8.5a5.5 5.5 0 0 1-7.8-7.8l9-9a3.5 3.5 0 0 1 5 5l-9 9a1.5 1.5 0 0 1-2.1-2.1l8.3-8.3"/></svg>
+            Add photos</label>
+          <input id="newFiles" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" multiple hidden>
           <button class="btn btn-primary" id="newBtn" type="submit">Send request</button>
-          <p class="note" id="newNote" role="status" aria-live="polite"></p>
         </div>
+        <p class="note" id="newNote" role="status" aria-live="polite"></p>
       </form>
     </section>
 

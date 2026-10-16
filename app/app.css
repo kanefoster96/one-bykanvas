@@ -528,3 +528,30 @@
 .oa-build .oa-build-jobs{margin:0 0 10px}
 .oa-build .oa-job-finish{margin-top:8px}
 .oa-tab .oa-req-who h2{font-size:18px;font-weight:700;letter-spacing:-.015em}
+
+/* ---- Design scale (styles.css has the tokens): small buttons 40, pill
+   switches 36, black cards for the counts and the step that matters. ---- */
+.oa-chip{height:var(--btn-h-sm,40px);padding:0 16px;font-size:14px}
+.oa-search{height:var(--btn-h-sm,40px)}
+.oa-pill{min-height:var(--seg-h,36px);padding:0 14px;font-size:13.5px}
+.oa-seg .oa-pill{padding:0 12px;font-size:14px}
+.oa-via-btn,.oa-via-scroll .oa-via-btn{min-height:var(--seg-h,36px);padding:0 14px;font-size:13.5px}
+.oa-reply textarea{min-height:var(--btn-h-sm,40px)}
+
+/* Build tab: the four counts on black, a busy one in orange. */
+.oa-btile{background:var(--night);border-color:transparent;color:var(--on-night)}
+.oa-btile-label{color:var(--on-night)}
+.oa-btile-sub{color:rgba(245,245,242,.6)}
+.oa-btile.is-hot .oa-btile-n{background:var(--or-text);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.oa-btile.is-hot .oa-btile-sub{color:#ff8a4c}
+.oa-btile.is-on{background:var(--night);border-color:#ff8a4c}
+/* Build page: progress and Go live on black. */
+.oa-build-progress{margin:0 0 12px;padding:14px 16px;border-radius:16px;background:var(--night)}
+.oa-build-progress .oa-bar{background:rgba(255,255,255,.14)}
+.oa-build-progress .oa-bar-fill{background:var(--or-grad)}
+.oa-build-progress .oa-brow-count{color:var(--on-night);font-weight:600}
+.oa-build .oa-job-finish{margin-top:22px;padding:18px 16px 16px;border-radius:18px;background:var(--night);color:var(--on-night)}
+.oa-build .oa-job-finish .rq-group{margin:0 0 12px;color:#ff8a4c}
+.oa-build .oa-job-finish input{width:100%;min-height:var(--field-h,48px);padding:0 14px;border:0;border-radius:12px;font:inherit;font-size:16px}
+.oa-build .oa-job-finish .btn{width:100%;margin-top:10px}
+.oa-build .oa-job-finish .note{color:var(--on-night-2)}
