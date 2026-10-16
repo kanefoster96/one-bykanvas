@@ -5,10 +5,12 @@
  *   Business       Dashboard (when connected) · Analytics · Chat · Support
  *   Starter        Home · Messages · Support
  *   One client     Support only, no tab bar
- * Each tab has its own large iOS title. Anything opened from a list (a
- * request, a chat, a build, a contact) is pushed over the tabs, full
- * screen, and swipes back from the left edge like any iPhone app. The
- * bell and the account open as sheets that swipe down.
+ * Each tab's top bar is the business (logo and name) on the left and the
+ * bell and account on the right, drawn here rather than by iOS so there is
+ * no page title and the two buttons stand apart. Anything opened from a
+ * list (a request, a chat, a build, a contact), the bell and the account
+ * included, is pushed over the tabs, full screen, and swipes back from the
+ * left edge like any iPhone app.
  */
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -68,19 +70,30 @@ export const stackLook = {
   headerLargeTitleStyle: { color: C.ink, fontWeight: '700' }
 };
 
-/* The bell and the account, top right on every tab. */
+/* The bell and the account, top right on every tab, each its own button. */
 function HeadButtons({ navigation }) {
   const { me } = useApp();
   const unread = (me && me.unread && me.unread.notifications) || 0;
   return (
     <View style={s.headBtns}>
-      <Press onPress={() => navigation.navigate('Activity')} style={s.headBtn} accessibilityLabel="Activity" hitSlop={6}>
-        <Icon name="bell" size={24} color={C.ink} />
+      <Press onPress={() => navigation.navigate('Activity')} style={s.headBtn} feel="light" accessibilityLabel="Activity" hitSlop={4} testID="bell">
+        <Icon name="bell" size={22} color={C.ink} />
         {unread ? <View style={s.bellDot} /> : null}
       </Press>
-      <Press onPress={() => navigation.navigate('Account')} style={s.headBtn} accessibilityLabel="Account" hitSlop={6}>
-        <Icon name="user" size={24} color={C.ink} />
+      <Press onPress={() => navigation.navigate('Account')} style={[s.headBtn, { marginLeft: 10 }]} feel="light" accessibilityLabel="Account" hitSlop={4} testID="account">
+        <Icon name="user" size={22} color={C.ink} />
       </Press>
+    </View>
+  );
+}
+
+/* The whole top bar of a tab. */
+function TabHeader({ navigation }) {
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={[s.tabHead, { paddingTop: insets.top + 6 }]}>
+      <View style={{ flex: 1, marginRight: 12 }}><Brand /></View>
+      <HeadButtons navigation={navigation} />
     </View>
   );
 }
@@ -124,9 +137,7 @@ function tabStack(name, Component, title, opts) {
         <TabStack.Screen name={name + 'Home'} component={Component}
           options={({ navigation }) => Object.assign({
             title,
-            headerTitle: () => null,
-            headerLeft: () => <Brand />,
-            headerRight: () => <HeadButtons navigation={navigation} />
+            header: () => <TabHeader navigation={navigation} />
           }, opts)} />
       </TabStack.Navigator>
     );
@@ -259,9 +270,9 @@ export function MainNavigator() {
       <Root.Screen name="NewRequest" component={NewRequestScreen} options={{ title: 'New request' }} />
       <Root.Screen name="SupportChat" component={SupportChatScreen} options={{ title: 'Chat with Kane' }} />
       <Root.Screen name="WebPage" component={WebPageScreen} options={{ title: '' }} />
+      <Root.Screen name="Activity" component={ActivityScreen} options={{ title: '' }} />
+      <Root.Screen name="Account" component={AccountScreen} options={{ title: '' }} />
       <Root.Group screenOptions={{ presentation: Platform.OS === 'ios' ? 'formSheet' : 'modal', headerShown: false, sheetGrabberVisible: true, sheetCornerRadius: 24 }}>
-        <Root.Screen name="Activity" component={ActivityScreen} options={{ sheetAllowedDetents: [0.6, 1] }} />
-        <Root.Screen name="Account" component={AccountScreen} options={{ sheetAllowedDetents: [0.75, 1] }} />
         <Root.Screen name="Online" component={OnlineScreen} options={{ sheetAllowedDetents: [0.55, 1] }} />
         <Root.Screen name="Profile" component={ProfileScreen} options={{ sheetAllowedDetents: [0.85, 1] }} />
       </Root.Group>
@@ -270,9 +281,10 @@ export function MainNavigator() {
 }
 
 const s = StyleSheet.create({
+  tabHead: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', paddingHorizontal: 16, paddingBottom: 8 },
   headBtns: { flexDirection: 'row', alignItems: 'center' },
-  headBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', marginLeft: 4 },
-  bellDot: { position: 'absolute', top: 7, right: 8, width: 9, height: 9, borderRadius: 5, backgroundColor: C.or2, borderWidth: 1.5, borderColor: '#fff' },
+  headBtn: { width: 42, height: 42, borderRadius: 21, backgroundColor: C.grey, alignItems: 'center', justifyContent: 'center' },
+  bellDot: { position: 'absolute', top: 9, right: 10, width: 9, height: 9, borderRadius: 5, backgroundColor: C.or2, borderWidth: 1.5, borderColor: '#fff' },
   brand: { flexDirection: 'row', alignItems: 'center', maxWidth: 260, paddingVertical: 4 },
   logo: { width: 34, height: 34, borderRadius: 17, marginRight: 10, backgroundColor: C.grey },
   logoNone: { backgroundColor: C.ink, alignItems: 'center', justifyContent: 'center' },
