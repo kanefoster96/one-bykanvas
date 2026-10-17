@@ -4,10 +4,13 @@
  * the form is sent, and by api/plan.js (require) to write the same plan into
  * the email. One copy, so the screen and the inbox can never disagree.
  *
- * The averages are our own academy's first three weeks of ads (21 September
- * to 10 October 2026): £103 spent, 21 trial bookings, 4 new members. Kept
- * cautious on purpose, and always shown as "what happened in our academy",
- * never as a forecast. When more clubs are running, their numbers go here.
+ * The averages come from our own academy's first four weeks of ads
+ * (21 September to 17 October 2026): £145 spent, 24 trial bookings, 8 new
+ * members (£18 each). The member cost stays at the cautious £26 from the
+ * first three weeks, counting only members who came through a trial, so
+ * the plan never promises more than we saw. Always shown as "what happened
+ * in our academy", never as a forecast. When more clubs are running, their
+ * numbers go here.
  */
 (function (root, factory) {
   var model = factory();
@@ -16,8 +19,8 @@
 })(this, function () {
   var AVG = {
     adBudget: 100,   // £ a month of ads, the first 3 months on us (they start once the site and app are live), and what we fund after
-    trialCost: 5,    // £103 / 21 trials
-    memberCost: 26   // £103 / 4 members
+    trialCost: 6,    // £145 / 24 trials
+    memberCost: 26   // £103 / 4 trial members, kept cautious (all members: £145 / 8 = £18)
   };
   var PRICE = { max: 250, business: 50 };
 
