@@ -1034,10 +1034,13 @@ body.home .band-dark .claim-link{color:#ff7a3d}
 .mh-visual{display:flex;flex-direction:column;align-items:center;margin-top:56px}
 /* Under the phone: the three promises and the academy's numbers. */
 .mh-after{width:100%;max-width:440px;margin-top:28px;text-align:center}
-.mh .mh-after .mh-risk{display:flex;flex-direction:column;align-items:stretch;gap:0;width:100%;margin:0;padding:4px 18px;border-radius:20px;background:#f5f5f7;text-align:left}
-.mh .mh-after .mh-risk li{display:flex;align-items:center;gap:10px;padding:13px 0;font-size:15.5px}
-.mh .mh-after .mh-risk li + li{border-top:1px solid #e8e8ed}
-.mh .mh-after .mh-risk .mh-info{margin-left:auto;flex:0 0 22px;width:22px;height:22px;vertical-align:0}
+.mh .mh-after .mh-risk{display:flex;flex-direction:column;align-items:stretch;gap:0;width:100%;margin:0;padding:4px 20px;border-radius:22px;
+  background:linear-gradient(135deg,#e8400c 0%,#ff5a1f 100%);box-shadow:0 18px 40px -18px rgba(232,64,12,.55);text-align:left}
+.mh .mh-after .mh-risk li{display:flex;align-items:center;gap:10px;padding:14px 0;font-size:15.5px;color:#fff}
+.mh .mh-after .mh-risk li + li{border-top:1px solid rgba(255,255,255,.22)}
+body.home .mh .mh-after .mh-risk svg{color:#fff}
+.mh .mh-after .mh-risk .mh-info{margin-left:auto;flex:0 0 22px;width:22px;height:22px;vertical-align:0;background:rgba(255,255,255,.22);color:#fff}
+.mh .mh-after .mh-risk .mh-info:hover,.mh .mh-after .mh-risk .mh-info[aria-expanded="true"]{background:#fff;color:#e8400c}
 .mh .mh-after .mh-info-note{margin-left:auto;margin-right:auto}
 .mh-after .mh-proofline{margin-top:22px}
 .mh-phone{width:min(300px,74vw)}
