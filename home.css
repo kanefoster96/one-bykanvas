@@ -1031,7 +1031,12 @@ body.home{--grad-text:linear-gradient(90deg,#b8320a 0%,#f0450f 48%,#ff6a1f 100%)
 .mh-cta .claim-link{display:flex;justify-content:center}
 .sec-cta .claim-link,.ev-cta + .claim-link{display:block;margin-top:14px}
 body.home .band-dark .claim-link{color:#ff7a3d}
-.mh-visual{display:flex;justify-content:center;margin-top:56px}
+.mh-visual{display:flex;flex-direction:column;align-items:center;margin-top:56px}
+/* Under the phone: the three promises and the academy's numbers. */
+.mh-after{width:100%;max-width:440px;margin-top:28px;text-align:center}
+.mh .mh-after .mh-risk{flex-direction:column;align-items:flex-start;gap:10px;width:fit-content;margin:0 auto}
+.mh .mh-after .mh-info-note{margin-left:auto;margin-right:auto}
+.mh-after .mh-proofline{margin-top:22px}
 .mh-phone{width:min(300px,74vw)}
 @media (min-width:1024px){
   .mh-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:64px;text-align:left}
@@ -1043,6 +1048,10 @@ body.home .band-dark .claim-link{color:#ff7a3d}
   .mh-info-note{margin-left:0}
   .mh-visual{margin-top:0}
   .mh-phone{width:340px}
+  /* The phone column is taller with the promises under it, so both columns
+     start at the top rather than the copy floating down to its middle. */
+  .mh-grid{align-items:start}
+  .mh-copy{padding-top:48px}
 }
 
 /* The ads offer, where "Claim £150 a month for ads" lands */
