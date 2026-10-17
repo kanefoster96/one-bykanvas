@@ -39,6 +39,9 @@
     while ((m = WORD.exec(text))) {
       var before = text.slice(0, m.index), after = text.slice(m.index + 3);
       if (/Kanvas\s$/.test(before) || PLAIN.test(after)) continue;
+      // A comma, colon or question mark straight after would sit beside the
+      // orange dot ("One.,"), so there the word stays plain.
+      if (/^[,;:?!]/.test(after)) continue;
       hit = true;
       parts.push(document.createTextNode(text.slice(last, m.index)));
       var span = document.createElement('span'); span.className = 'one-n';
