@@ -93,6 +93,7 @@
     + '.k1s .k1c-msgs{padding:16px 14px 8px;gap:4px;background:#fff}'
     + '.k1s-row{display:flex;align-items:flex-end;gap:8px}.k1s-row.k1s-me{justify-content:flex-end}.k1s-slot{flex:0 0 28px;width:28px;height:28px}.k1s-col{display:flex;flex-direction:column;gap:3px;max-width:80%}.k1s-name{padding:0 4px;font-size:12px;font-weight:600;color:#6e6e73}'
     + '.k1s .k1c-m{max-width:none;border-radius:22px;padding:10px 15px;font-size:15px}.k1s .k1c-m.k1c-o{background:#f5f5f7;border:1px solid #e5e5ea;border-bottom-left-radius:22px}.k1s .k1c-m.k1c-v{border-bottom-right-radius:22px}.k1s-row+.k1s-row.k1s-new{margin-top:8px}'
+    + '.k1s-ask{display:flex;justify-content:flex-end;margin:10px 0 4px}.k1s-ask button{border:0;background:' + color + ';color:#fff;border-radius:980px;padding:10px 16px;font:inherit;font-size:14.5px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.14);text-align:left}.k1s-ask button:hover{filter:brightness(1.06)}'
     + '.k1s-quick{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px 36px}.k1s-quick button{border:1px solid #d2d2d7;background:#fff;color:#1d1d1f;border-radius:980px;padding:7px 12px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}.k1s-quick button:hover{border-color:' + color + ';color:' + color + '}'
     + '.k1s .k1c-form{align-items:flex-end;border-top:1px solid #e5e5ea;padding:10px 12px 6px}.k1s .k1c-form textarea{border-radius:20px;padding:10px 15px;border-color:#e5e5ea;background:#fff}.k1s .k1c-send{flex:0 0 42px;width:42px;height:42px;padding:0;border-radius:50%;display:grid;place-items:center}.k1s .k1c-send svg{width:18px;height:18px}.k1s .k1c-send:disabled{opacity:.5}'
     + '.k1s-foot{margin:0;padding:0 14px 10px;text-align:center;font-size:11.5px;color:#86868b}'
@@ -279,11 +280,30 @@
   if (vv) { vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); }
   input.addEventListener('focus', function () { setTimeout(fit, 60); setTimeout(fit, 350); });
   btn.addEventListener('click', function () { setOpen(!open); });
-  /* Any link on the page can open it: <a href="#" data-chat-open>. */
+  /* One message ready to send, as a single tap: what a page button asked
+     for (data-chat-open="Hi Kane, …"). It takes the place of the general
+     quick replies, and sends like them. */
+  var askEl = null;
+  function ask(text) {
+    if (askEl) askEl.remove();
+    if (quickEl) { quickEl.remove(); quickEl = null; }
+    askEl = document.createElement('div'); askEl.className = 'k1s-ask';
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = text + ' \u2192';
+    b.addEventListener('click', function () {
+      input.value = text; askEl.remove(); askEl = null;
+      form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true }));
+    });
+    askEl.appendChild(b); msgs.appendChild(askEl);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  /* Any link on the page can open it: <a href="#" data-chat-open>. With a
+     value, that message waits as a one-tap send. */
   document.addEventListener('click', function (e) {
     var t = e.target.closest && e.target.closest('[data-chat-open]');
     if (!t) return;
     e.preventDefault(); if (tz) tz.remove(); setOpen(true);
+    var text = t.getAttribute('data-chat-open');
+    if (text) ask(text);
   });
   /* The teaser: once a visit, a few seconds in, never over an open chat or
      for someone already talking to us. */
