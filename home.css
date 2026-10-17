@@ -1138,4 +1138,5 @@ body.home .ap-fig figcaption{margin-top:18px}
 /* "Made for your club" under the app screens, and the preview ask's link. */
 .ap-fit{margin-top:clamp(56px,8vw,88px)}
 .ap-fit .lede{margin:14px auto 0;max-width:46ch}
-.ap-micro a{color:#ff7a3d;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.ap-try{margin-top:clamp(28px,4vw,40px)}
+.ap-try p{margin:12px auto 0;max-width:40ch;font-size:15px;line-height:1.45;color:rgba(245,245,242,.72)}

@@ -929,7 +929,7 @@ ${o.body}
 <script src="/supabase-config.js?v=90fd89dc"></script>
 <script src="/session.js?v=59739977"></script>
 <script src="/script.js?v=${o.scriptV}"></script>
-<script src="/chat.js?v=14941a02" data-site="${SITE_ID}" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
+<script src="/chat.js?v=e0fc2af5" data-site="${SITE_ID}" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="/beacon.js?v=77a73cd5" data-site="${SITE_ID}" defer></script>
 <script src="/admin-pill.js?v=06da798b"></script>
 </body>
