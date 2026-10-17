@@ -231,21 +231,21 @@ function growthOne(lead, site) {
       to: lead.email,
       subject: `What happened in our own club, ${biz}`,
       html: emailHtml({
-        preheader: '£103 of ads, 21 trial bookings and £2,400 a year in new fees, in three weeks.',
+        preheader: '£145 of ads, 24 trial bookings and 8 new members, in four weeks.',
         heading: 'What happened in our own club',
         lines: [
           `When we put together the plan for <strong>${esc(lead.business)}</strong>, the numbers came from somewhere real: our own dance and cheer academy, running on this system since 2017.`,
-          'The first three weeks of ads, 21 September to 10 October:'
+          'The first four weeks of ads, 21 September to 17 October:'
         ],
         details: [
-          { label: 'Spent on ads', value: '£103' },
-          { label: 'Trial bookings', value: '21' },
-          { label: 'New members', value: '4' },
-          { label: 'New fees', value: '£2,400 a year' }
+          { label: 'Spent on ads', value: '£145' },
+          { label: 'Trial bookings', value: '24' },
+          { label: 'New members', value: '8' },
+          { label: 'Ads per new member', value: '£18' }
         ],
         perks: [
           '<strong>Nobody chased anyone.</strong> Trials booked themselves, reminders went out, and the follow-up with the link to join did the rest.',
-          '<strong>Those 4 members pay £50 every month</strong>: £2,400 a year from £103 of ads, still paying back long after the ads stopped.',
+          '<strong>Those 8 members pay every month</strong>, about £18 of ads each, and keep paying long after the ads stopped. Some joined after a trial, some straight from the ad.',
           '<strong>Your first 3 months of ads are on us</strong>, so the first trials cost you nothing. We build it all first.'
         ],
         ctaText: 'Start One — £250 a month',
@@ -255,7 +255,7 @@ function growthOne(lead, site) {
         footerLinks: standardFooter(site)
       }),
       text: `When we put together the plan for ${lead.business}, the numbers came from our own dance and cheer academy.\n\n`
-        + 'First three weeks of ads: £103 spent, 21 trial bookings, 4 new members, £2,400 a year in new fees.\n\n'
+        + 'First four weeks of ads: £145 spent, 24 trial bookings, 8 new members, about £18 of ads per new member.\n\n'
         + 'Your first 3 months of ads are on us.\n\n'
         + 'These are our own academy’s numbers, not a promise: what ads bring depends on your type of club and your local area.\n\n'
         + `Start One: ${start}\n\nRather talk first? Just reply.\n`
