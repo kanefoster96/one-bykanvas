@@ -1040,8 +1040,13 @@ body.home .band-dark .claim-link{color:#ff7a3d}
 .mh .mh-after .mh-risk li + li{border-top:1px solid rgba(255,255,255,.22)}
 body.home .mh .mh-after .mh-risk svg{color:#fff}
 .mh .mh-after .mh-risk .mh-info{margin-left:auto;flex:0 0 22px;width:22px;height:22px;vertical-align:0;background:rgba(255,255,255,.22);color:#fff}
-.mh .mh-after .mh-risk .mh-info:hover,.mh .mh-after .mh-risk .mh-info[aria-expanded="true"]{background:#fff;color:#e8400c}
-.mh .mh-after .mh-info-note{margin-left:auto;margin-right:auto}
+/* Only a real mouse gets the hover look: on a phone it would stick after a tap. */
+.mh .mh-after .mh-risk .mh-info:hover{background:rgba(255,255,255,.22);color:#fff}
+@media (hover:hover){.mh .mh-after .mh-risk .mh-info:hover{background:#fff;color:#e8400c}}
+.mh .mh-after .mh-risk .mh-info[aria-expanded="true"]{background:#fff;color:#e8400c}
+body.home .mh .mh-after .mh-info-note{margin:14px auto 0;padding:18px 22px;border:1.5px solid rgba(232,64,12,.45);border-radius:22px;
+  background:rgba(255,79,18,.06);box-shadow:none;font-size:15px;line-height:1.5;color:#55555a}
+.mh .mh-after .mh-info-note b{display:block;margin-bottom:4px;font-size:17px;font-weight:700;letter-spacing:-.01em;color:#e8400c}
 .mh-after .mh-proofline{margin-top:22px}
 .mh-phone{width:min(300px,74vw)}
 @media (min-width:1024px){
