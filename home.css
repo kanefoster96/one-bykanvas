@@ -1134,3 +1134,8 @@ body.home .ap-fig figcaption{margin-top:18px}
 .ev-more[open] summary::after{transform:translateY(2px) rotate(-135deg)}
 @media (hover:hover){.ev-more summary:hover{border-color:rgba(245,245,242,.6);background:rgba(245,245,242,.06)}}
 .ev-more .ev-grid{margin-top:clamp(24px,4vw,32px)}
+
+/* "Made for your club" under the app screens, and the preview ask's link. */
+.ap-fit{margin-top:clamp(56px,8vw,88px)}
+.ap-fit .lede{margin:14px auto 0;max-width:46ch}
+.ap-micro a{color:#ff7a3d;font-weight:600;text-decoration:underline;text-underline-offset:3px}
