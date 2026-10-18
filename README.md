@@ -57,7 +57,7 @@ build command, output directory `.`.
 |----------|---------|----------|
 | Starter  | £9.99/mo | A live site built for you, contact details, hours, socials, photos, meet the team, found on Google. Unlimited edits through the dashboard, worked through in turn. |
 | Business | £50/mo  | Everything above plus changes within 48 hours, payments online, bookings or orders, customer logins and records, reviews asked for automatically, live chat and forms. |
-| One (`max`) | £250/mo | Everything in Business plus a member app, trial bookings, memberships, monthly SEO, business email, first in the queue, and Facebook and Instagram ads run for them. Ads start once the website and app are both live; we pay the first 3 months, up to £100 a month. |
+| One (`max`) | £250/mo | Everything in Business plus a member app, trial bookings, memberships, monthly SEO, business email, first in the queue, and Facebook and Instagram ads run for them. Ads start once the website and app are both live; we pay the first 3 months, up to £100 a month, as a free test. After that ads are optional: the business pays Meta for any it keeps and we keep running them. We never take a cut of their customers. |
 
 Annual is ten months' money for twelve. Prices live in `api/_plans.js` and
 nowhere else. Pro is legacy and no longer sold.

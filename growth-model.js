@@ -18,7 +18,7 @@
   else root.GrowthModel = model;
 })(this, function () {
   var AVG = {
-    adBudget: 100,   // £ a month of ads, the first 3 months on us (they start once the site and app are live), and what we fund after
+    adBudget: 100,   // £ a month of ads, the first 3 months on us (they start once the site and app are live); after that the club pays Meta for any it keeps
     trialCost: 6,    // £145 / 24 trials
     memberCost: 26   // £103 / 4 trial members, kept cautious (all members: £145 / 8 = £18)
   };
