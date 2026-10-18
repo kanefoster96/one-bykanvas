@@ -8,6 +8,9 @@
  * needed to know. One card is open at a time; tapping outside, tapping the
  * word again or pressing Escape closes it.
  *
+ * A word with limit: n is underlined at most n times on the whole page, for
+ * everyday words that come up in nearly every section.
+ *
  * A word can also be marked by hand, and a word that is only marked by hand
  * (auto: false) never gets an underline on its own:
  *   <button type="button" class="gl" data-gl="seo">SEO</button>
@@ -20,6 +23,32 @@
   // match: the words in the text this explains (case-sensitive unless the
   // pattern says otherwise).
   var WORDS = {
+    // How One works for a club. The promise comes before "trial" so it wins
+    // where both would match.
+    promise: { match: /\b(?:The )?10-Trial Promise\b|\b10 trials in 3 months\b/, title: 'The 10-Trial Promise',
+      text: 'If your first 3 months of ads bring fewer than 10 trial bookings, your next 3 months of One are free. It’s applied automatically; there’s nothing to claim.' },
+    trial: { limit: 2, match: /\b(?:free )?trials?(?: bookings?| class(?:es)?)?\b/i, title: 'Free trials',
+      text: 'A free first class for a new child. Parents book it online in a minute, get reminders so they turn up, you check them in at the door, and afterwards they’re sent the link to join. Every step happens by itself.' },
+    emptyspaces: { limit: 2, match: /\bempty spaces\b/i, title: 'Empty spaces',
+      text: 'Places in your classes nobody’s paying for. If a class takes 20 and 14 are booked, that’s 6 empty spaces, and at £50 a month that’s £3,600 a year not coming in.' },
+    profitplan: { limit: 2, match: /\b(?:free )?profit plan\b/i, title: 'Free profit plan',
+      text: 'A free 2-minute calculator. Tell it your classes and how full they are, and it shows what your empty spaces cost you a year and how One would fill them. No card, no call.' },
+    switchover: { match: /\bswitch-over\b/i, title: 'Free switch-over',
+      text: 'We move your members, classes and payments across from your old system for you, so families don’t have to sign up again.' },
+    membership: { limit: 2, match: /\bmemberships?\b/i, title: 'Memberships',
+      text: 'A monthly payment for classes, taken by card automatically. Parents can pause, change or cancel in a tap, and failed payments are chased for you.' },
+    followups: { match: /\bfollow-ups?\b/i, title: 'Follow-ups',
+      text: 'Texts and emails sent automatically after a trial, at the right moment, with the link to join, so no family slips through the cracks.' },
+    registers: { match: /\bregisters\b/i, title: 'Registers',
+      text: 'Your class lists in the app. Mark who’s here with a tap or by scanning their QR code, see who’s missed classes, and new members appear the moment they join.' },
+    checkin: { match: /\bcheck-in\b/i, title: 'Check-in',
+      text: 'Marking a child in when they arrive, by scanning the QR code on their parent’s phone or with a tap on the register. Attendance is kept for you.' },
+    bringafriend: { match: /\bbring-a-friend\b/i, title: 'Bring-a-friend',
+      text: 'Members can send a friend a free pass to try a class. The system keeps track of who invited who, so you can thank them.' },
+    memberapp: { match: /\b(?:your own|member|branded) app\b/i, title: 'Your own app',
+      text: 'An app with your club’s name and logo in the App Store and Google Play. Parents see the timetable, pay, message you and show their child’s pass at the door.' },
+    fullclasses: { match: /\bFull Classes System\b/i, title: 'The Full Classes System',
+      text: 'Our name for everything in One working together: website, app, trial bookings, memberships, payments, ads and search, all aimed at filling your empty spaces.' },
     seo: { match: /\bSEO\b/, title: 'SEO',
       text: 'Short for search engine optimisation: setting up your website so Google shows it when local parents search for things like “dance classes near me”. We do it for you and keep it up to date.' },
     aeo: { match: /\bAEO\b/, title: 'AEO',
@@ -76,7 +105,7 @@
   // headings and menus stay clean; the phone mock-ups and chat are pictures
   // of other things).
   var SKIP = 'a,button,summary,label,input,textarea,select,option,h1,h2,h3,h4,nav,header,footer,script,style,noscript,svg,code,pre,'
-    + '[aria-hidden="true"],[data-no-gl],[contenteditable],.gl,.gl-card,.pr-tag,.price,[class*="consent"],[id*="consent"],[class*="k1c"],[class*="k1s"],.mh-phone,.ap-hp';
+    + '[aria-hidden="true"],[data-no-gl],[contenteditable],.gl,.gl-card,.pr-tag,.price,[class*="consent"],[id*="consent"],[class*="k1c"],[class*="k1s"],.mh-phone,.ap-hp,.mh-risk,.mh-info-note';
 
   var css = ''
     + '.gl{all:unset;display:inline;cursor:pointer;color:inherit;font:inherit;line-height:inherit;'
@@ -107,6 +136,7 @@
   function markText() {
     var auto = Object.keys(WORDS).filter(function (k) { return WORDS[k].match && WORDS[k].auto !== false; });
     var seen = new Map(); // section -> {key: true}
+    var count = {};       // key -> times marked on the page
     function done(section) { if (!seen.has(section)) seen.set(section, {}); return seen.get(section); }
     // Words already marked by hand count as shown in their section.
     document.querySelectorAll('.gl[data-gl]').forEach(function (b) { done(sectionOf(b))[b.getAttribute('data-gl')] = true; });
@@ -126,10 +156,12 @@
       var text = node.nodeValue, hits = [];
       auto.forEach(function (k) {
         if (marks[k]) return;
+        if (WORDS[k].limit && (count[k] || 0) >= WORDS[k].limit) return;
         var m = WORDS[k].match.exec(text);
         if (m && !hits.some(function (h) { return m.index < h.end && m.index + m[0].length > h.start; })) {
           hits.push({ key: k, start: m.index, end: m.index + m[0].length, word: m[0] });
           marks[k] = true;
+          count[k] = (count[k] || 0) + 1;
         }
       });
       if (!hits.length) return;
@@ -143,7 +175,11 @@
         at = h.end;
       });
       if (at < text.length) frag.appendChild(document.createTextNode(text.slice(at)));
-      node.parentNode.replaceChild(frag, node);
+      // In a flex or grid box every piece would become its own item and the
+      // line would break apart, so keep the sentence together in one span.
+      var parent = node.parentNode, shown = getComputedStyle(parent).display;
+      if (/flex|grid/.test(shown)) { var span = document.createElement('span'); span.appendChild(frag); frag = span; }
+      parent.replaceChild(frag, node);
     });
   }
 
