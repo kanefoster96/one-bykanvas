@@ -110,7 +110,7 @@ module.exports = [
     plan: 'max',
     planLine: 'Ads are part of One: &pound;250 a month with the website, the ranking work and the follow-up emails in it. No setup fee, and your price is locked for as long as you stay.',
     faq: [
-      ['Who pays for the ads?', 'For your first 3 months of ads, we do, up to &pound;100 a month. After that you choose, and can switch any time: we keep paying, up to &pound;100 a month, and each new customer pays us their first subscription payment if they&rsquo;re on a membership or repeat subscription (monthly, every three months, any interval), or 20% of their first payment if you invoice them or they pay for a one-off service. Only their first payment counts, then everything they pay is yours. Or you pay Meta directly on your own ad account. Want to switch? Tell us and we swap straight away, and every new customer from then on is fully yours.'],
+      ['Who pays for the ads?', 'For your first 3 months of ads, we do, up to &pound;100 a month: a free test of what ads can do for you. After that it&rsquo;s your choice. Keep them going on your own budget, paid straight to Meta from your own ad account, and we keep running them as part of One. Or turn them off and keep everything else. We never take a cut of what your customers pay.'],
       ['Will it definitely bring customers?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, and a note every month showing what it brought in, so you can decide with numbers.'],
       ['What do you need from me?', 'A photo or a line about the job you want more of, and admin access to your Facebook page. We do the rest.']
     ]

@@ -1,11 +1,9 @@
 /* The One models: one per business type, each an end-to-end system that is
  * built, tested and repeated for that type. Built by build.js into
  * /max/<slug>.html. Same price whatever the type. We build first, then the
- * first 3 months of ads are on us. After that a membership business (clubs)
- * pays us each new member's first month if we fund the ads; a business whose
- * customers buy one-off jobs or visits (trades, salons) pays a share of each
- * new customer's first online payment instead, since a first payment could
- * be a whole boiler. Or they fund their own ads. They can switch any time.
+ * first 3 months of ads are on us, as a free test. After that, ads are
+ * optional: the business pays Meta directly for any it keeps, and we keep
+ * running them as part of One. We never take a cut of their customers.
  *
  * Trades is the first and the fullest. Clubs and Salon carry the same
  * structure; each carries its own examples.
@@ -22,25 +20,16 @@
  *   why                  four [bold lead, sentence] pairs
  *   faq                  [question, answer] pairs; also structured data
  */
-/* The ads deal, said the same way on every model. unit: what one new
-   customer is called for that business. After those 3 months, if we fund the ads,
-   each new customer on a monthly membership pays us their first month (it
-   is ongoing revenue); anything else, a term, a course, a one-off job,
-   pays SHARE per cent of the first payment. Only payments
-   taken online through their site count: the site records every one, so
-   nothing rests on trust, and repeat customers (an email seen before) never
-   count. Cash or card in person? Then they fund their own ads. */
-const SHARE = 20;
-const RULE = `each new customer pays us their first subscription payment if they&rsquo;re on a membership or repeat subscription, or ${SHARE}% of their first payment if you invoice them or they pay for a one-off service. Only their first payment counts`;
+/* The ads deal, said the same way on every model: 3 months of ads on us as
+   a free test, then their own budget, paid to Meta, with us still running
+   them, or no ads. unit: what one new customer is called for that business. */
 function adDeal(m) {
-  return `We build it first. Then your first 3 months of ads are on us, up to &pound;100 a month. After that, we keep funding them, up to &pound;100 a month, and ${RULE}. Or you pay Meta yourself, pause whenever you like, and keep every penny. Switch any time: tell us and we swap straight away.`;
+  return `We build it first. Then your first 3 months of ads are on us, up to &pound;100 a month, as a free test of what ads can do for you. After that, keep them going on your own budget, paid straight to Meta, and we keep running them as part of One. Or stop them and keep everything else. We never take a cut of what your customers pay.`;
 }
 function adFaq(m) {
-  const out = [
-    ['Who pays for the ads?', `For your first 3 months of ads, we do, up to &pound;100 a month. They start once your website and app are both live, so the ads land on something that works. After that you choose: we keep paying, up to &pound;100 a month, and ${RULE}, then everything they pay is yours. Or you pay Meta directly on your own ad account, and pause it whenever you like. Want to switch? Tell us and we swap straight away, and every new customer from then on is fully yours. If nothing new comes in from the ads we pay for, you pay nothing for them.`]
+  return [
+    ['Who pays for the ads?', `For your first 3 months of ads, we do, up to &pound;100 a month: a free test of what ads can do for you. They start once your website and app are both live, so the ads land on something that works. After that, it&rsquo;s your choice. Keep them going on your own budget, paid straight to Meta from your own ad account, and we keep running them for you: pausing the ones that tire, refreshing them and testing new ones every month. Or turn them off and keep everything else for the same &pound;250. Every ${m.unit} they bring in is fully yours.`]
   ];
-  if (m.unit !== 'member') out.push([`Why ${SHARE}% of the first payment, and not the whole first payment like a membership?`, `A membership keeps paying you every month, so its first payment comes to us. A ${m.unit} paid for once is different, and some are big, so ${SHARE}% of the first payment is fairer: a &pound;100 ${m.unit} is &pound;20 to us, a &pound;300 one is &pound;60. Only new customers who pay online through your site count, so it&rsquo;s tracked for you, and repeat customers are always yours. We&rsquo;re the ones putting &pound;100 a month into your ads, at our risk. Take cash or card in person, or busy enough that our share adds up? Pay for your own ads instead and keep the difference. If our share ever comes to more than the &pound;100 we spend, we email you to say so.`]);
-  return out;
 }
 
 module.exports = [
@@ -253,5 +242,3 @@ module.exports = [
 
 module.exports.adDeal = adDeal;
 module.exports.adFaq = adFaq;
-module.exports.SHARE = SHARE;
-module.exports.RULE = RULE;

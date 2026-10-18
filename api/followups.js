@@ -298,7 +298,7 @@ function growthTwo(lead, site) {
         preheader: 'What it really costs, and what happens if it doesn’t work.',
         heading: 'The two questions everyone asks',
         lines: [
-          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;250 a month for everything: website, member app, trial bookings, memberships, payments and the ads run for you. We build it first, then your first 3 months of ads are on us. After that, we keep paying for your ads, up to &pound;100 a month, and a new member on a membership or subscription pays their first subscription payment to us (invoices and one-off fees: 20% of the first payment), or you fund your own ads. Switch any time, straight away.',
+          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;250 a month for everything: website, member app, trial bookings, memberships, payments, getting found on Google and AI search, and the ads run for you. We build it first, then your first 3 months of ads are on us, as a free test. After that, keep them going on your own budget, paid straight to Meta, and we keep running them for you. Or stop them and keep everything else. We never take a cut of what your members pay.',
           '<strong>&ldquo;What if it doesn&rsquo;t work?&rdquo;</strong> There&rsquo;s no contract and no minimum. Cancel any time from your account.',
           'And when your classes are full, we pause the ads. You just pay the &pound;250.',
           'This is the last email about your plan. If now isn&rsquo;t the time, no hard feelings.'
@@ -309,7 +309,7 @@ function growthTwo(lead, site) {
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
         footerLinks: standardFooter(site)
       }),
-      text: '"What does it really cost?" £250 a month for everything. We build it first, then your first 3 months of ads are on us. After that: we keep paying for your ads, up to £100 a month, and a new member on a membership or subscription pays their first subscription payment to us (invoices and one-off fees: 20% of the first payment), or you fund your own. Switch any time, straight away.\n\n'
+      text: '"What does it really cost?" £250 a month for everything, including getting found on Google and AI search. We build it first, then your first 3 months of ads are on us, as a free test. After that, keep them going on your own budget, paid straight to Meta, and we keep running them for you. Or stop them and keep everything else. We never take a cut of what your members pay.\n\n'
         + '"What if it doesn’t work?" No contract, no minimum. Cancel any time.\n\n'
         + 'When you’re full, we pause the ads.\n\n'
         + `Start One: ${start}\n\nThis is the last email about your plan.\n`
