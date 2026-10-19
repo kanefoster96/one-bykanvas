@@ -150,9 +150,11 @@ const GUIDES = [
 <p>A free trial takes away the risk. The child gets to see the room and meet the coach, and the parent gets to see their child enjoying it. That&rsquo;s what sells the membership, not anything you could write on a poster.</p>
 <p>Then make sure the trial actually happens. We wrote a whole guide on <a href="/learn/get-more-trials-to-show-up">getting more trials to turn up</a>.</p>
 
-<h2>2. Let every member bring a friend, free for a month</h2>
+<h2>2. Give every new member a free month for a friend</h2>
 <p>This sounds generous, and it is. It&rsquo;s also one of the cheapest ways there is to grow.</p>
-<p>At our club, every member can bring a friend for a whole month, free. Children want to go to a class their friend goes to, and the friend arrives already knowing someone, so the nerves are gone before they start.</p>
+<p>At our club, every new paying member can invite one friend in their first 30 days. The friend comes to class with them for 30 days, free. At the end, the friend either joins or simply stops coming. There&rsquo;s nothing to cancel and no awkward conversation.</p>
+<p>The timing is what makes it work. A new child is at their most nervous in their first few weeks, and bringing a friend they already know makes those weeks easier. By the end of the month they&rsquo;ve made other friends in the class too, so they&rsquo;re far more likely to stay, whether or not their friend does.</p>
+<p>And the friend arrives already knowing someone, so they skip the nerves most trials start with.</p>
 <p>Here&rsquo;s what it actually costs you. The friend takes a space in a class that would have been empty anyway. You were already paying for the hall and the coach. If they join at the end of the month, you&rsquo;ve gained a member for the price of a space you couldn&rsquo;t sell.</p>
 <div class="lc-stats">
   <div class="lc-stat"><b>&pound;0</b><span>extra cost: the space was empty anyway</span></div>
@@ -190,11 +192,11 @@ const GUIDES = [
 
 <h2>Put together</h2>
 <p>None of these are complicated. The hard part is doing all of them, every week, while also running classes. A club that does all seven usually fills up.</p>`,
-    one: ['Free trial booking on your own website, with consent and medical forms.', 'Bring-a-friend passes your members can share from the app.', 'Local Facebook and Instagram ads, run for you, with the first 3 months on us.', 'Your website built so Google and AI search understand your classes.', 'Joining in a tap, and the follow-up sent for you after every trial.', 'An app for parents with news, photos, payments and pause instead of cancel.'],
+    one: ['Free trial booking on your own website, with consent and medical forms.', 'A free month for a friend, sent by each new member from the app in their first 30 days.', 'Local Facebook and Instagram ads, run for you, with the first 3 months on us.', 'Your website built so Google and AI search understand your classes.', 'Joining in a tap, and the follow-up sent for you after every trial.', 'An app for parents with news, photos, payments and pause instead of cancel.'],
     oneLead: 'All seven, in one system. <span>Run for you.</span>',
     faq: [
       ['How do I get more children to join my club?', 'Make the first step a free trial, reach local parents who don&rsquo;t know you exist with a few pounds of ads, and make joining take one tap. Then follow up within a day of every trial and let your members bring a friend free.'],
-      ['Is a free month for friends too generous?', 'It costs you a space in a class that would otherwise be empty. If one friend joins at &pound;50 a month, that&rsquo;s &pound;600 a year from a space you couldn&rsquo;t sell.'],
+      ['Is a free month for a friend too generous?', 'It costs you a space in a class that would otherwise be empty, and it helps your new member settle in, so they are more likely to stay. If one friend joins at &pound;50 a month, that&rsquo;s &pound;600 a year from a space you couldn&rsquo;t sell.'],
       ['How do I get my club found on Google?', 'Have a website with a page for each class that spells out the ages, days, times and area, set up your Google Business Profile, and ask happy families for Google reviews.']
     ],
     related: ['get-more-trials-to-show-up', 'are-facebook-ads-worth-it-for-kids-clubs']
@@ -501,7 +503,7 @@ const SCRIPTS = `<script src="/consent.js?v=2c4fee5d"></script>
 <script src="/chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One. Ask me anything about running or growing your club. I&rsquo;ll give you a straight answer." data-quick="How do I get more trials to turn up?|Can I see your site and app?|Is it right for my club?" defer></script>
 <script src="/beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/admin-pill.js?v=06da798b"></script>
-<script src="/glossary.js?v=e4701aca" defer></script>
+<script src="/glossary.js?v=329fcfec" defer></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
 <script src="/learn/learn.js?v=197ceef8" defer></script>
 </body>
