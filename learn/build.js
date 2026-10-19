@@ -1127,12 +1127,358 @@ ${term('goodfriction')}
   },
 
   {
+    slug: 'free-trial-or-paid-trial',
+    topic: 'trials',
+    title: 'Free trial or paid trial: which is better for a kids’ club?',
+    short: 'Free or paid trials?',
+    docTitle: 'Free Trial or Paid Trial: Which Is Better for a Kids’ Club? | Kanvas One',
+    desc: 'Every decision a parent makes comes down to how risky it feels. Why we use free trials, and when a paid trial can work instead.',
+    card: 'Every decision a parent makes comes down to how risky it feels. Why we use free trials, and when paid ones work.',
+    read: 4,
+    body: `
+<p>It&rsquo;s one of the first decisions every club makes. Do you let children try a class for free, or charge for the first one?</p>
+<p>Both can work. Which is right for you comes down to one thing: how much risk the parent feels.</p>
+
+<h2>Every decision comes down to risk</h2>
+<p>Whenever a parent is deciding whether to try your club, they&rsquo;re quietly asking themselves how much is at stake. What if my child hates it? What if it&rsquo;s not as good as it looks? What if I&rsquo;ve paid and we never go back?</p>
+<p>The bigger that feels, the fewer parents take the first step. It&rsquo;s called perceived risk, and it decides more bookings than your price, your photos or your timetable.</p>
+${term('perceivedrisk')}
+
+<h2>Why we choose free trials</h2>
+<p>A free trial takes the risk away. The parent has paid nothing. If their child doesn&rsquo;t like it, they don&rsquo;t have to join, and nobody has lost anything. That makes it an easy yes.</p>
+<p>And once a child has been in the room, met the coach and had a great time, the class does the selling for you.</p>
+
+<h2>When a paid trial can work</h2>
+<p>Paid trials aren&rsquo;t wrong. They can work well for a club with a very strong reputation and a waiting list, where parents have already decided they want to join. For them, paying for the first class is just a formality.</p>
+<p>The problem is everyone else. A parent who isn&rsquo;t set on your club yet is comparing options. If the club down the road offers a free trial and you charge, they&rsquo;ll often try the free one first, because paying for something their child might not like is a risk they don&rsquo;t have to take.</p>
+<div class="lc-callout"><p>Take away the risk, and more families say yes. Then let the class do the selling.</p></div>
+
+<h2>Free doesn&rsquo;t have to mean careless</h2>
+<p>The worry with free trials is people booking with no intention of coming. You can keep the risk low for parents and still get serious bookings:</p>
+<ul>
+  <li><strong>Ask a question when they book.</strong> We ask what they want their child to get out of classes. It takes seconds, and it filters out casual bookings. That&rsquo;s <a href="/learn/what-should-a-kids-club-website-have">good friction</a>.</li>
+  <li><strong>Have them pick a date</strong>, rather than &ldquo;come along some time&rdquo;.</li>
+  <li><strong>Remind them before the class.</strong> We send <a href="/learn/get-more-trials-to-show-up">four messages before every trial</a>, and 15 of our last 22 turned up.</li>
+</ul>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Think about how risky the first step feels to a parent.</li>
+  <li>Use free trials unless parents are already queuing to join.</li>
+  <li>Ask a question at booking so the trials you get are serious.</li>
+  <li>Remind every family before their trial.</li>
+</ol>`,
+    one: ['Free trial booking on your website, in a couple of taps.', 'The question you want asked at booking, like what they want their child to get out of it.', 'Four messages before every trial, sent for you.', 'A follow-up after every trial with the link to join.', 'Prefer paid trials? We can set those up instead.'],
+    oneLead: 'Low-risk trials that turn up. <span>Automatically.</span>',
+    faq: [
+      ['Should my club offer a free trial or a paid trial?', 'For most clubs, a free trial. It takes the risk away for parents, so more of them take the first step. Paid trials can work for clubs with a strong reputation and a waiting list, where parents have already decided to join.'],
+      ['Won’t people book a free trial and not turn up?', 'Some will. Asking a question at booking, having them pick a date and sending reminders all help. 15 of our last 22 free trial bookings turned up.']
+    ],
+    related: ['how-to-turn-trials-into-members', 'get-more-trials-to-show-up']
+  },
+
+  {
+    slug: 'how-to-turn-trials-into-members',
+    topic: 'trials',
+    title: 'How to turn free trials into members',
+    short: 'Turning trials into members',
+    docTitle: 'How to Turn Free Trials Into Members at Your Kids’ Club | Kanvas One',
+    desc: 'The best moment to sign a family up is straight after a trial their child loved. What to ask, what to say, and why you shouldn’t feel guilty asking.',
+    card: 'The best moment to sign a family up is straight after a trial their child loved. What to ask and what to say.',
+    read: 5,
+    body: `
+<p>The trial has finished. The child is grinning, the parent is smiling, and you say &ldquo;hope to see you next week!&rdquo; as they head out of the door. Then you never hear from them again.</p>
+<p>It happens at every club. Not because the family didn&rsquo;t enjoy it, but because nobody asked them to join while they were still feeling it.</p>
+
+<h2>Know why they came</h2>
+<p>When families book a trial with us, we ask what they want their child to get out of classes: more confidence, new skills, new friends. That answer is their dream outcome, and it&rsquo;s what they&rsquo;re really there for.</p>
+${term('dreamoutcome')}
+<p>Make it clear to the parent and the child that your classes will get them there. Then, during the trial, let them feel a little of it straight away: a shy child who joins in, a first move they nail, a new friend by the end.</p>
+<p>Before they leave, make a note of what they want, so whoever teaches them next time knows too.</p>
+
+<h2>Ask how it went</h2>
+<p>At the end, ask the child if they had fun, and ask the parent how they felt it went. Listen to the answers. Then build on every good thing you can: the friend they made, the thing they got right, how well they joined in.</p>
+<p>The more good feelings a family connects with your club, the easier the next step becomes.</p>
+
+<h2>Ask them to come back, then set it up</h2>
+<p>This is the bit most clubs skip. Ask a simple question while they&rsquo;re still buzzing:</p>
+<div class="lc-msg"><small>At the door</small>You: &ldquo;Would she like to come back next week?&rdquo;<br>Parent: &ldquo;Yes!&rdquo;<br>You: &ldquo;Great, shall we set it up now?&rdquo;</div>
+<p>After a good experience, very few people say no. It takes a minute on their phone, and they leave as members instead of maybes.</p>
+
+<h2>Don&rsquo;t feel guilty asking</h2>
+<p>Lots of club owners hate this part because it feels like selling. But if you know your class will help their child, signing them up on the spot is helping them. You&rsquo;re not pushing anything. You&rsquo;re making the thing they already want easy.</p>
+<div class="lc-callout"><p>If you believe your class will help their child, asking them to join is part of the job.</p></div>
+
+<h2>Follow up with every trial</h2>
+<p>Some families will want to think about it, and some will simply forget. Send a message the same evening or the next morning: how did they find it, and here&rsquo;s the link to keep their place.</p>
+<p>How many trials go on to join is your conversion rate. Asking at the door and following up quickly are the two easiest ways to raise it.</p>
+${term('conversion')}
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Ask what they want their child to get out of it when they book.</li>
+  <li>Show them, in the trial, that you&rsquo;ll get them there.</li>
+  <li>Ask the child and the parent how it went, and build on the good bits.</li>
+  <li>Ask if they&rsquo;d like to come back, then set it up there and then.</li>
+  <li>Follow up with every family who doesn&rsquo;t join on the day.</li>
+</ol>`,
+    one: ['What each family wants from classes, asked when they book.', 'Joining in a tap, by card or Apple Pay, before they leave the hall.', 'A follow-up after every trial with the link to join, sent for you.', 'No-shows rebooked, and quiet ones asked what got in the way.', 'See how many of your trials join, every month.'],
+    oneLead: 'From trial to member. <span>Before they leave the hall.</span>',
+    faq: [
+      ['How do I get more trials to join?', 'Know why they came, show them in the trial that you’ll get them there, then ask if they’d like to come back and set it up there and then. Follow up the same day with everyone who doesn’t join on the spot.'],
+      ['What should I say at the end of a trial?', 'Ask the child if they had fun and the parent how they felt it went. Then ask if they’d like to come back next week, and when they say yes, offer to set it up now.']
+    ],
+    related: ['free-trial-or-paid-trial', 'get-more-trials-to-show-up']
+  },
+
+  {
+    slug: 'should-kids-clubs-offer-discounts',
+    topic: 'money',
+    title: 'Should your kids’ club offer discounts?',
+    short: 'Should you offer discounts?',
+    docTitle: 'Should Your Kids’ Club Offer Discounts? Siblings, Friends and the Rules | Kanvas One',
+    desc: 'Discounts can help families or quietly eat your profit. The only two we give, why they make sense, and the rules that keep it fair.',
+    card: 'The only two discounts we give, why they make sense, and the rules that keep it fair.',
+    read: 4,
+    body: `
+<p>Parents ask for discounts, and it&rsquo;s tempting to say yes. A little off here, a deal there. But every discount comes straight out of what you take home, and once you start, it&rsquo;s hard to stop.</p>
+
+<h2>We don&rsquo;t discount regular members</h2>
+<p>Our regular membership is our regular price, for everyone. We give just two discounts, and both are there for a reason.</p>
+
+<h2>1. Siblings</h2>
+<p>Some families want two or three children in a hobby, and the full price for all of them can be too much. A sibling discount helps those families do it.</p>
+<p>It also makes good business sense. It costs money and effort to win a new member: ads, trials, your time. That&rsquo;s your customer acquisition cost, or CAC. A brother or sister is already through the door, so they cost you almost nothing to win. Think of it as two dancers for the cost of finding one.</p>
+${term('cac')}
+
+<h2>2. A friend&rsquo;s first month</h2>
+<p>Every new member can bring a friend free for their first month. The friend arrives already knowing someone, and the new member settles in faster. We&rsquo;ve written up <a href="/learn/get-more-members-kids-club">how our friend&rsquo;s free month works</a>.</p>
+
+<h2>Never discount because it&rsquo;s &ldquo;too expensive&rdquo;</h2>
+<p>When a parent says your price is too much, the easy answer is a discount. Don&rsquo;t. Word gets around, it isn&rsquo;t fair on families paying full price, and it tells everyone your price is up for negotiation.</p>
+<p>Instead, talk about what they get for it. We&rsquo;ve written about <a href="/learn/how-to-compete-with-a-cheaper-club">competing on value, not price</a>.</p>
+
+<h2>Have rules, and stick to them</h2>
+<ul>
+  <li>Decide who gets a discount, how much, and when.</li>
+  <li>Write it down, and make it the same for everyone.</li>
+  <li>Keep it to one or two. Lots of overlapping discounts are hard to track and easy to argue about.</li>
+</ul>
+<div class="lc-callout"><p>A discount should have a reason and a rule. If it has neither, it&rsquo;s just a lower price.</p></div>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Keep one price for regular members.</li>
+  <li>Use discounts that cost you little, like siblings and a friend&rsquo;s first month.</li>
+  <li>Never discount because someone says it&rsquo;s too expensive.</li>
+  <li>Write your rules down and apply them to everyone.</li>
+</ol>`,
+    one: ['Sibling discounts worked out and applied automatically.', 'A friend&rsquo;s free month, sent by each new member from the app.', 'Your rules set once, and applied the same for every family.', 'Your own scheme instead? Tell me and we build it in.'],
+    oneLead: 'Fair discounts. <span>Applied for you.</span>',
+    faq: [
+      ['Should I offer a sibling discount?', 'It’s one of the few discounts that makes sense. It helps families who want more than one child in a hobby, and a sibling costs you almost nothing to win as a new member.'],
+      ['What should I do when a parent says my club is too expensive?', 'Don’t discount. Talk about the value they get for the price: the classes, the coaches, the shows and what their child will achieve. Discounting for one family isn’t fair on the others.']
+    ],
+    related: ['how-to-compete-with-a-cheaper-club', 'how-much-to-charge-for-kids-classes']
+  },
+
+  {
+    slug: 'how-to-compete-with-a-cheaper-club',
+    topic: 'money',
+    title: 'How to compete with a cheaper club down the road',
+    short: 'Competing with a cheaper club',
+    docTitle: 'How to Compete With a Cheaper Kids’ Club: Value, Not Price | Kanvas One',
+    desc: 'There’s always someone cheaper. Why you shouldn’t compete on price, and how to compete on value so you attract the parents who want the best.',
+    card: 'There’s always someone cheaper. Why you shouldn’t compete on price, and how to compete on value instead.',
+    read: 4,
+    body: `
+<p>Sooner or later a parent mentions the club down the road that&rsquo;s cheaper. It&rsquo;s tempting to drop your price to match. Please don&rsquo;t.</p>
+
+<h2>Don&rsquo;t compare yourself on price</h2>
+<p>Your price should come from what you need to cover your bills and pay yourself, not from what someone else charges. We&rsquo;ve written up <a href="/learn/how-much-to-charge-for-kids-classes">how to work that out</a>. Drop below it to match a cheaper club, and you&rsquo;re running your club at a loss to win a race to the bottom.</p>
+
+<h2>Compare the value instead</h2>
+<p>Look at what families actually get from you compared with the cheaper club. Very often, cheaper means less:</p>
+<ul>
+  <li>fewer classes, or shorter ones</li>
+  <li>less experienced coaches</li>
+  <li>fewer shows and chances to perform</li>
+  <li>no competitions or workshops</li>
+  <li>fewer chances for children to really excel</li>
+</ul>
+<p>If you offer more, the price difference starts to look small.</p>
+
+<h2>Think about it the way parents do</h2>
+<p>A useful way to think about value is the value equation. Parents value your club more when the dream outcome is bigger and they&rsquo;re more confident their child will get there, and less when it takes longer or feels like more effort or risk.</p>
+${term('valueequation')}
+<p>So show them the outcome: the confident performer on stage, the medal, the friendships. Show them why they can trust you to get there: your coaches, your results, your reviews. And make it easy: simple booking, easy payments, everything in one app.</p>
+
+<h2>Show it, don&rsquo;t just have it</h2>
+<p>None of this helps if parents can&rsquo;t see it. Put your shows, competitions, results and coaches on your website and social media. Talk about them at every trial. Make the value obvious before anyone mentions price.</p>
+<div class="lc-callout"><p>Don&rsquo;t compete on price. Compete on value, and you get the parents who don&rsquo;t want the cheapest. They want the best.</p></div>
+
+<h2>Our own story</h2>
+<p>When we charged &pound;16 a month, we were very quiet. At &pound;50 a month, we were close to fully booked. The parents who join us aren&rsquo;t looking for the cheapest class. They&rsquo;re looking for the best one for their child.</p>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Set your price from your own numbers, not someone else&rsquo;s.</li>
+  <li>List everything families get from you that they wouldn&rsquo;t get elsewhere.</li>
+  <li>Show the outcome, the proof and how easy it is.</li>
+  <li>Make your value obvious on your website and at every trial.</li>
+</ol>`,
+    one: ['A website that shows everything you offer: classes, coaches, shows, results.', 'Shows, competitions and workshops booked and paid in your app.', 'Reviews asked for after every trial, so parents can see the proof.', 'Your own app with your name on it, so you look like the established choice.'],
+    oneLead: 'Show parents your value. <span>Before they ask the price.</span>',
+    faq: [
+      ['How do I compete with a cheaper dance school?', 'Don’t lower your price to match. Compare the value you give instead: more classes, experienced coaches, shows, competitions and workshops. Make that value obvious, and you attract parents who want the best, not the cheapest.'],
+      ['Should I lower my prices to get more members?', 'Usually not. Your price should cover your costs and pay you. We were very quiet at £16 a month and close to fully booked at £50.']
+    ],
+    related: ['how-much-to-charge-for-kids-classes', 'should-kids-clubs-offer-discounts']
+  },
+
+  {
+    slug: 'how-to-get-more-google-reviews',
+    topic: 'members',
+    title: 'How to get more Google reviews for your club',
+    short: 'Getting more Google reviews',
+    docTitle: 'How to Get More Google Reviews for Your Kids’ Club | Kanvas One',
+    desc: 'Getting more reviews is simple: ask. The trick is asking at the right moment. When we ask, and more ways to ask that work.',
+    card: 'Getting more reviews is simple: ask, at the right moment. When we ask, and more ways that work.',
+    read: 5,
+    body: `
+<p>Google reviews help parents trust you, and they help you show up when parents search. Most clubs have far fewer than they should, and the reason is simple: they don&rsquo;t ask.</p>
+<p>Most happy parents would gladly leave one. They just don&rsquo;t think of it unless you ask.</p>
+
+<h2>Ask right after a good experience</h2>
+<p>Timing is everything. Ask when a family has just had a great experience, while they&rsquo;re still feeling it.</p>
+<p>Our favourite moment is straight after a dancer&rsquo;s first competition. The parent has just watched their child perform for the very first time. They have a story to tell, and they want to share it. Ask then, and the review almost writes itself.</p>
+
+<h2>Other great moments to ask</h2>
+<ul>
+  <li>Straight after a trial their child loved.</li>
+  <li>After a show or performance.</li>
+  <li>When a child moves up a level, earns a badge or passes a grading.</li>
+  <li>When a parent thanks you, or sends a lovely message.</li>
+  <li>At the end of a term, looking back at how far their child has come.</li>
+</ul>
+
+<h2>Ways to ask</h2>
+<ul>
+  <li><strong>Send a direct link.</strong> A message with a link that opens straight onto your Google review box. One tap, no searching.</li>
+  <li><strong>Ask in person, then send the link.</strong> &ldquo;Would you mind leaving us a review? I&rsquo;ll send you the link now.&rdquo;</li>
+  <li><strong>Put a QR code up</strong> at your door or reception that opens your review page.</li>
+  <li><strong>Add it to your messages</strong>: an end-of-term note, a show recap, or the bottom of your emails.</li>
+  <li><strong>Ask your coaches to mention it</strong> whenever a parent tells them how much their child loves the class.</li>
+  <li><strong>Reply to every review</strong>, so parents can see you read them and care.</li>
+</ul>
+<p>Keep it honest. Ask for an honest review, not a five-star one, and don&rsquo;t offer anything in return. Google&rsquo;s own rules don&rsquo;t allow rewards for reviews.</p>
+<div class="lc-callout"><p>The best time to ask for a review is the moment a family is proudest of their child.</p></div>
+
+<h2>The same goes for referrals</h2>
+<p>Asking families to recommend you works exactly the same way. Ask after a good experience: when their child has just got top marks, or performed in front of a huge crowd. That&rsquo;s when they&rsquo;re most likely to think of a friend who&rsquo;d love it too.</p>
+${term('referral')}
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Ask every happy family, not just now and then.</li>
+  <li>Ask right after a good experience, like a first competition or show.</li>
+  <li>Send a direct link so it takes one tap.</li>
+  <li>Reply to every review.</li>
+  <li>Ask for referrals at the same moments.</li>
+</ol>`,
+    one: ['A Google review asked for automatically after every trial.', 'Another asked for after a dancer&rsquo;s first competition.', 'A direct link straight to your Google review box.', 'A friend&rsquo;s free month each new member can send from the app.'],
+    oneLead: 'Reviews asked for at the right moment. <span>Every time.</span>',
+    faq: [
+      ['How do I get more Google reviews for my club?', 'Ask every happy family, right after a good experience, with a direct link that opens your review box. Great moments are after a trial their child loved, a first competition or a show.'],
+      ['Can I offer a reward for a Google review?', 'No. Google’s rules don’t allow rewards for reviews. Ask for an honest review at the right moment instead.']
+    ],
+    related: ['get-your-club-found-on-google-and-chatgpt', 'how-to-turn-trials-into-members']
+  },
+
+  {
+    slug: 'get-members-to-take-a-second-class',
+    topic: 'money',
+    title: 'How to get members to take a second class',
+    short: 'Getting a second class',
+    docTitle: 'How to Get Members to Take a Second Class at Your Club | Kanvas One',
+    desc: 'A member taking two classes gets twice the experience every week, and you grow without finding a new family. How to make it easy.',
+    card: 'Twice the experience for them, more income for you, without finding a new family. How to make it easy.',
+    read: 3,
+    body: `
+<p>Every member who takes a second class gets twice as much experience every week, and you grow your income without having to find a new family. In business, offering an existing customer more like this is called an upsell.</p>
+${term('upsell')}
+
+<h2>Make other classes easy to find and join</h2>
+<p>Most of the time, the biggest thing is simply making your other classes visible and easy to join. Families can&rsquo;t sign up for a class they don&rsquo;t know about, or one that takes a form and an email to join. Show the full timetable where parents already look, and let them add a class in a tap.</p>
+
+<h2>Let members try another class free</h2>
+<p>Now and then, open free trials of other classes to your existing members. They can see if it&rsquo;s a good fit, with no risk. If they love it, offer them the chance to carry on there and then, and get twice as much every week.</p>
+<div class="lc-callout"><p>A free try of another class is the easiest second class you&rsquo;ll ever sell.</p></div>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Show your whole timetable where parents already look.</li>
+  <li>Let members add a class in a tap.</li>
+  <li>Open free trials of other classes to members now and then.</li>
+  <li>After a member&rsquo;s free try, offer to sign them up there and then.</li>
+</ol>`,
+    one: ['Your full timetable in the app, where parents already look.', 'A second class added in a tap.', 'Sibling and family discounts applied automatically.', 'Want members to try another class free? Tell me and we set it up.'],
+    oneLead: 'More from every member. <span>In a tap.</span>',
+    faq: [
+      ['How do I get members to do more than one class?', 'Make your other classes easy to see and join, and now and then let members try another class free. If they love it, offer to sign them up straight away.']
+    ],
+    related: ['make-more-money-from-your-kids-club', 'how-to-turn-trials-into-members']
+  },
+
+  {
+    slug: 'cancel-any-time-or-minimum-contract',
+    topic: 'money',
+    title: 'Cancel any time or a minimum contract: which is better?',
+    short: 'Cancel any time or a contract?',
+    docTitle: 'Should Kids’ Club Members Cancel Any Time or Sign a Contract? | Kanvas One',
+    desc: 'Should members sign up for a term, or be free to cancel any time? Why we let families cancel any time, and how it gets more people to join.',
+    card: 'Should members sign up for a term, or cancel any time? Why we let families cancel any time.',
+    read: 3,
+    body: `
+<p>Lots of clubs ask families to sign up for a term, or give a month&rsquo;s notice to leave. It feels safer: the money is guaranteed. But it can cost you more members than it keeps.</p>
+
+<h2>It comes back to risk</h2>
+<p>When a parent is deciding whether to join, a contract is one more thing to worry about. What if she hates it after three weeks? What if we move? What if money gets tight? The more a decision feels like a commitment, the more people put it off.</p>
+${term('perceivedrisk')}
+
+<h2>Why we let families cancel any time</h2>
+<p>We let members cancel any time. It takes the risk away, and that means more families are willing to try joining in the first place.</p>
+<p>It fits the value equation too. The less effort and risk involved, the more your club is worth to a parent.</p>
+${term('valueequation')}
+
+<h2>What keeps members isn&rsquo;t a contract</h2>
+<p>A family who wants to leave will find a way, contract or not, and a parent who feels trapped isn&rsquo;t going to recommend you. What keeps members is the value they get every week: progress, friends, something to work towards. We&rsquo;ve written about <a href="/learn/stop-children-dropping-out-of-your-club">how we keep members past month five</a>.</p>
+<p>And give them a pause button. A busy month or an injury doesn&rsquo;t have to mean goodbye.</p>
+<div class="lc-callout"><p>Make joining feel safe, and earn the right to keep them every month.</p></div>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Think about how risky joining feels to a parent.</li>
+  <li>Let members cancel any time, so more families try.</li>
+  <li>Keep members with value, not contracts.</li>
+  <li>Offer pause instead of cancel.</li>
+</ol>`,
+    one: ['Monthly memberships families can pause or cancel in a tap.', 'A kind &ldquo;we haven&rsquo;t seen you&rdquo; message when a child hasn&rsquo;t been in for four weeks.', 'Your terms accepted when they join, so everyone knows where they stand.', 'We practise it too: One has no contract.'],
+    oneLead: 'Easy to join. <span>A reason to stay.</span>',
+    faq: [
+      ['Should members have to sign a contract at my club?', 'We don’t think so. Letting families cancel any time makes joining feel safe, so more of them try. What keeps members is the value they get every week, not a contract.'],
+      ['Won’t more people leave if they can cancel any time?', 'Families who want to leave usually find a way regardless. Keep them with progress, friends and goals, and offer pause instead of cancel for busy months.']
+    ],
+    related: ['stop-children-dropping-out-of-your-club', 'free-trial-or-paid-trial']
+  },
+
+  {
     slug: 'club-business-words',
     topic: 'running',
     title: 'Club business words, explained',
     short: 'Business words',
     docTitle: 'Club Business Words Explained: Churn, Friction, Conversion and More | Kanvas One',
-    desc: 'Churn, retention, friction, conversion rate, lifetime value. The business words behind running a club, in plain English, with examples from a real kids’ club.',
+    desc: 'Churn, CAC, friction, conversion rate, the value equation. The business words behind running a club, in plain English, with examples from a real kids’ club.',
     card: 'Churn, friction, conversion rate, lifetime value. The business words behind running a club, in plain English.',
     read: 4,
     body: `
@@ -1211,7 +1557,7 @@ const SCRIPTS = `<script src="/consent.js?v=2c4fee5d"></script>
 <script src="/chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One. Ask me anything about running or growing your club. I&rsquo;ll give you a straight answer." data-quick="How do I get more trials to turn up?|Can I see your site and app?|Is it right for my club?" defer></script>
 <script src="/beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/admin-pill.js?v=06da798b"></script>
-<script src="/learn/terms.js?v=08ed9258" defer></script>
+<script src="/learn/terms.js?v=a9920293" defer></script>
 <script src="/glossary.js?v=d3003e23" defer></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
 <script src="/learn/learn.js?v=197ceef8" defer></script>
