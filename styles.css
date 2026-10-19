@@ -3542,3 +3542,11 @@ body.home .band-dark :is(.oc-card,.ab-card,.up-card) .lede{color:#6e6e73}
 .att-tile.is-loading img{visibility:hidden}
 @keyframes att-shimmer{to{background-position:-200% 0}}
 @media (prefers-reduced-motion:reduce){.att-tile.is-loading{animation:none}}
+
+/* Shadows by section: light black on white, an orange glow on the black bands. */
+.band-dark .feat.is-on{box-shadow:0 1px 3px rgba(255,79,18,.12),inset 0 0 0 1.5px var(--good)}
+.band-dark .join .join-face{box-shadow:0 8px 20px rgba(255,79,18,.22)}
+.band-dark .plan-mini:hover{box-shadow:0 8px 24px rgba(255,79,18,.12)}
+.band-dark .max-app-pill{box-shadow:0 4px 12px rgba(255,79,18,.35)}
+.band-dark .dot-face{box-shadow:0 12px 32px rgba(255,79,18,.22)}
+.band-dark .sb-example .sb-preview{box-shadow:0 10px 24px -12px rgba(255,79,18,.6)}
