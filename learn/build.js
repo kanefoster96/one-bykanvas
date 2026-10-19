@@ -30,6 +30,121 @@ function term(key, onList) {
 }
 const WORD_LIST = Object.keys(TERMS).sort((a, b) => TERMS[a].title.localeCompare(TERMS[b].title)).map((k) => term(k, true)).join('\n');
 
+/* ---------- Figures ----------
+   Small pictures that explain a point, built here so every guide draws them
+   the same way. learn.css styles them; learn.js animates each one once as it
+   comes into view (data-lc-in). Numbers in them must be real, like the text. */
+
+const ICONS = {
+  search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM21 21l-4.3-4.3',
+  phone: 'M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM11 18h2',
+  clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2',
+  tag: 'M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8zM7 7h.01',
+  ticket: 'M3 9a3 3 0 0 0 0 6v3h18v-3a3 3 0 0 1 0-6V6H3zM14 6v12',
+  star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
+  shirt: 'M8 3l4 2 4-2 5 3-2 4-2-1v12H7V9L5 10 3 6z',
+  gift: 'M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z',
+  chart: 'M3 17l6-6 4 4 8-8M14 7h7v7',
+  message: 'M21 12a8 8 0 0 1-11.8 7L4 20l1-5.2A8 8 0 1 1 21 12z',
+  trophy: 'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4'
+};
+const icon = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ICONS[k]}"/></svg>`;
+
+/* Rows of [label, value, shown, hot]: bars scaled to the biggest value. */
+function bars(title, rows, note) {
+  const max = Math.max(...rows.map((r) => r[1]));
+  return `<figure class="lc-bars" data-lc-in data-no-gl aria-label="${ESC(plain(title))}">
+  <p class="lc-fig-h">${title}</p>
+  ${rows.map(([l, v, shown, hot], i) => `<div class="lc-bar${hot ? ' hot' : ''}" style="--i:${i}"><span class="l">${l}</span><b>${shown == null ? v : shown}</b><span class="t"><i style="--w:${(v / max * 100).toFixed(1)}%"></i></span></div>`).join('\n  ')}
+  ${note ? `<p class="lc-fig-note">${note}</p>` : ''}
+</figure>`;
+}
+
+/* Steps of [big, small, hot], each leading to the next. */
+function chain(title, steps) {
+  return `<figure class="lc-chain" data-lc-in data-no-gl aria-label="${ESC(plain(title))}">
+  <p class="lc-fig-h">${title}</p>
+  <ol>${steps.map(([b, s, hot], i) => `<li${hot ? ' class="hot"' : ''} style="--i:${i}"><b>${b}</b><span>${s}</span></li>`).join('')}</ol>
+</figure>`;
+}
+
+/* Two sides of a choice. kind 'fix': a is the problem (crosses), b the fix
+   (ticks). kind 'plain': two options side by side. */
+function compare(kind, a, b) {
+  const side = (x, k) => `<div class="lc-side ${k}"><p class="h">${x.h}</p>${x.sub ? `<p class="s">${x.sub}</p>` : ''}<ul>${x.items.map((t) => `<li>${t}</li>`).join('')}</ul></div>`;
+  return `<div class="lc-compare ${kind}" data-lc-in data-no-gl>${side(a, 'a')}${side(b, 'b')}</div>`;
+}
+
+/* Cards of [icon, title, text]. */
+function grid(items) {
+  return `<div class="lc-grid" data-lc-in data-no-gl>${items.map(([ic, t, d], i) => `<div class="lc-gi" style="--i:${i}"><span class="ic">${icon(ic)}</span><b>${t}</b>${d ? `<span>${d}</span>` : ''}</div>`).join('')}</div>`;
+}
+
+function valueEquation() {
+  return `<figure class="lc-eq" data-lc-in data-no-gl aria-label="The value equation: value equals dream outcome times how sure they are they'll get there, divided by how long it takes times effort and risk">
+  <p class="lc-fig-h">The value equation</p>
+  <div class="lc-eq-row"><span class="lc-eq-v">Value =</span><div class="lc-eq-frac">
+    <div class="top"><span><i>&uarr;</i>Dream outcome</span><em>&times;</em><span><i>&uarr;</i>How sure they are they&rsquo;ll get there</span></div>
+    <div class="bar"></div>
+    <div class="bot"><span><i>&darr;</i>How long it takes</span><em>&times;</em><span><i>&darr;</i>Effort and risk</span></div>
+  </div></div>
+  <p class="cap">Make the top bigger and the bottom smaller, and your club is worth more to a parent, whatever the price.</p>
+</figure>`;
+}
+
+/* A member's first year, with the milestone just before the usual dip. */
+function firstYear() {
+  return `<figure class="lc-months" data-lc-in data-no-gl aria-label="A new member's first year, with a Level 2 milestone at month five">
+  <p class="lc-fig-h">A new member&rsquo;s first year</p>
+  <ol>${Array.from({ length: 12 }, (_, i) => `<li${i === 4 ? ' class="mile"' : ''} style="--i:${i}">${i + 1}</li>`).join('')}</ol>
+  <div class="lc-months-key">
+    <p><b>Months 1 to 4:</b> everything&rsquo;s new, and progress is easy to see.</p>
+    <p class="hot"><b>Month 5:</b> when families usually drift, so it&rsquo;s when they become a Level 2 dancer.</p>
+    <p><b>After that:</b> the next goal is already in sight, like a show, a competition or Level 3.</p>
+  </div>
+</figure>`;
+}
+
+/* A made-up but QR-looking square: three corner markers and a fixed scatter
+   of dots, the same on every build. */
+function qrSvg() {
+  const n = 21, cells = [];
+  let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const finder = (x, y) => (x < 7 && y < 7) || (x >= n - 7 && y < 7) || (x < 7 && y >= n - 7);
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    let on;
+    if (finder(x, y)) {
+      const fx = x < 7 ? x : x - (n - 7), fy = y < 7 ? y : y - (n - 7);
+      on = fx === 0 || fx === 6 || fy === 0 || fy === 6 || (fx >= 2 && fx <= 4 && fy >= 2 && fy <= 4);
+    } else on = rnd() > 0.52;
+    if (on) cells.push(`<rect x="${x}" y="${y}" width="1" height="1"/>`);
+  }
+  return `<svg viewBox="0 0 ${n} ${n}" fill="#1d1d1f" shape-rendering="crispEdges" aria-hidden="true">${cells.join('')}</svg>`;
+}
+
+/* The member's pass when a payment has been missed. */
+function missedPaymentPass() {
+  return `<figure class="lc-phones" data-lc-in data-no-gl>
+  <div class="lc-phone" role="img" aria-label="A member's QR pass with a red box: payment missed, with a Pay now button"><div class="scr"><div class="lc-pass">
+    <div class="lc-pass-club">Your club</div>
+    <div class="lc-pass-who">Ava&rsquo;s pass</div>
+    <div class="qr">${qrSvg()}</div>
+    <div class="due"><b>Payment missed</b><small>October&rsquo;s payment didn&rsquo;t go through. Please pay before class.</small><span>Pay now</span></div>
+  </div></div></div>
+  <figcaption>What the parent sees while they wait in the queue. The coach&rsquo;s phone shows an alert too, when they scan.</figcaption>
+</figure>`;
+}
+
+/* One post, landing on three families' lock screens. */
+function postOnce(title, body) {
+  const phone = (i, time) => `<div class="lc-phone sm"><div class="scr"><div class="lc-lock"><div class="tm">${time}</div><div class="dt">Tuesday</div><div class="lc-note-card" style="--i:${i}"><div class="lc-nc-app"><i></i><span>Your club</span></div><b>${title}</b><small>${body}</small></div></div></div></div>`;
+  return `<figure class="lc-phones" data-lc-in data-no-gl aria-label="The same notification arriving on three parents' phones">
+  ${phone(0, '15:42')}${phone(1, '15:42')}${phone(2, '15:42')}
+  <figcaption>Post it once. It lands on every family&rsquo;s lock screen.</figcaption>
+</figure>`;
+}
+
 /* The topics the front page filters by. */
 const TOPICS = { trials: 'Getting trials', members: 'Getting members', keeping: 'Keeping members', money: 'Pricing and payments', ads: 'Ads', software: 'Choosing software', running: 'Running your club', start: 'Starting a club' };
 
@@ -151,11 +266,7 @@ ${term('showup')}
     body: `
 <p>If your classes aren&rsquo;t full, it&rsquo;s very rarely because nobody wants what you do. Every street near you has families with children they want to grow in confidence, make friends and be good at something.</p>
 <p>When a club stays small, it&rsquo;s nearly always one of three things:</p>
-<ul>
-  <li><strong>They don&rsquo;t know you exist.</strong></li>
-  <li><strong>They don&rsquo;t know how to join.</strong> Or it looks like hard work to find out.</li>
-  <li><strong>There&rsquo;s no reason to start now.</strong> Nothing nudges them into taking the first step.</li>
-</ul>
+${grid([['search', 'They don&rsquo;t know you exist', 'Word of mouth only reaches people who already know someone.'], ['phone', 'They don&rsquo;t know how to join', 'Or it looks like hard work to find out.'], ['clock', 'There&rsquo;s no reason to start now', 'Nothing nudges them into taking the first step.']])}
 <p>Everything below fixes one of those three.</p>
 
 <h2>1. Make the first step free</h2>
@@ -232,14 +343,10 @@ ${term('conversion')}
 <p>Here&rsquo;s what happened when we ran proper ads for our own club for four weeks.</p>
 
 <h2>What we spent and what it made</h2>
-<div class="lc-stats">
-  <div class="lc-stat"><b>&pound;145</b><span>spent on ads</span></div>
-  <div class="lc-stat"><b>24</b><span>free trial bookings</span></div>
-  <div class="lc-stat"><b>8</b><span>new paying members</span></div>
-  <div class="lc-stat hot"><b>&pound;4,620</b><span>a year in new fees</span></div>
-</div>
+${chain('Four weeks of ads at our club', [['&pound;145', 'spent on ads'], ['24', 'free trial bookings'], ['8', 'new paying members'], ['&pound;4,620', 'a year in new fees', true]])}
 <p class="lc-note">Our own academy, 21 September to 17 October 2026. Seven members at &pound;50 a month and a sibling at our 30% family rate. These are our numbers, not a promise of yours.</p>
-<p>That works out at about &pound;6 for each trial booking and about &pound;18 for each new member.</p>
+<p>That works out at about &pound;6 for each trial booking and about &pound;18 for each new member. That first number is your cost per trial, and it&rsquo;s the one to watch.</p>
+${term('costper')}
 
 <div class="lc-callout"><p>If you could spend &pound;145 and get &pound;4,620 a year back, how many times would you spend it?</p></div>
 
@@ -365,6 +472,7 @@ ${term('conversion')}
     body: `
 <p>I&rsquo;ve run a dance school in Newcastle since 2017. Kanvas One started as the system I built for us, because nothing else did what a dance school actually needs without five different logins.</p>
 <p>Here&rsquo;s what to look for, whichever software you choose.</p>
+${grid([['tag', 'Fees your way', 'Monthly, termly or a mix, by card.'], ['ticket', 'Shows and tickets', 'Tickets and costumes paid in one place.'], ['star', 'Trials that turn up', 'Confirmed and reminded.'], ['chart', 'Registers on your phone', 'QR check-in and medical notes.'], ['message', 'Parents in the loop', 'Every family gets every update.'], ['phone', 'Your own name on it', 'Your app and website, with your club&rsquo;s name.']])}
 
 <h2>Fees the way you already charge</h2>
 <p>Some schools charge monthly, some by the term, some a mix. Your software should fit how you charge, not make you change. Look for monthly memberships taken by card, termly invoices on the first day of term, sibling discounts that apply themselves, and failed payments chased for you.</p>
@@ -419,6 +527,7 @@ ${term('conversion')}
     read: 5,
     body: `
 <p>A martial arts club has its own rhythm: regular sessions, families training together, gradings every few months, and kit to sort out for every new starter. The right software makes all of that quieter, so you can spend your time on the mat.</p>
+${grid([['tag', 'Family memberships', 'Sibling discounts and pause, taken by card.'], ['chart', 'Attendance for gradings', 'Every session counted by QR check-in.'], ['trophy', 'Gradings and events', 'Booked and paid with the fees.'], ['shirt', 'Kit and licences', 'Ordered before they arrive.'], ['phone', 'Medical notes', 'On every instructor&rsquo;s phone.'], ['star', 'Trials that turn up', 'Confirmed and reminded.']])}
 
 <h2>Family memberships that work themselves out</h2>
 <p>Martial arts is often a family thing: brothers and sisters, sometimes a parent too. Look for memberships taken by card every month, family and sibling discounts applied automatically, and the option to pause instead of cancel during exams or injury.</p>
@@ -579,6 +688,7 @@ ${term('involuntary')}
   <li><strong>The member&rsquo;s own pass turns bright red</strong>, with a <em>Pay now</em> button. It stays there until it&rsquo;s paid.</li>
   <li><strong>The coach&rsquo;s phone shows an alert</strong> when they scan, with an important note to show the parent.</li>
 </ul>
+${missedPaymentPass()}
 <p>Parents open their pass while they wait in the queue. When they see red, their first thought is to tap <em>Pay now</em> before they reach the coach. Most of the time it&rsquo;s sorted before anyone has to have the conversation.</p>
 <div class="lc-callout"><p>The best reminder is the one a parent sees at the exact moment they can fix it.</p></div>
 
@@ -639,6 +749,7 @@ ${term('lifetimevalue')}
 <h2>2. Put a milestone just before the dip</h2>
 <p>If most people drift at month five, give them something to earn at the end of month five. For example, every dancer who reaches five months becomes a <strong>Level 2 dancer</strong>, with a badge to go with it.</p>
 <p>Tell them it&rsquo;s coming. A child who knows they&rsquo;ll be Level 2 at the end of this month talks about it at home, and a parent thinking about stopping usually waits until they&rsquo;ve got it. By then the next goal is already in sight.</p>
+${firstYear()}
 <div class="lc-callout"><p>Give them something to stay for, just before the point they&rsquo;d usually leave.</p></div>
 
 <h2>3. Make them feel part of something</h2>
@@ -692,6 +803,7 @@ ${term('lifetimevalue')}
 </div>
 <p class="lc-note">Our own club, 21 September to 18 October 2026, from where each booking came from.</p>
 <p>Nearly one in four of our trial bookings came from search, with no ad behind it. Two came from families who asked ChatGPT.</p>
+${bars('Where our 29 trial bookings came from', [['Facebook and Instagram ads', 8], ['Google search', 5, null, true], ['Came straight to our website', 5], ['ChatGPT', 2, null, true], ['Facebook and Instagram posts', 2], ['Our app', 2], ['Not recorded', 5]], 'Our own club, 21 September to 18 October 2026. Search is highlighted.')}
 
 <h2>How Google and AI search decide</h2>
 <p>Google and AI tools like ChatGPT are trying to answer one question: which club is the best answer for this parent? They work it out from what they can read about you online. If they can&rsquo;t find clear answers, they recommend someone else.</p>
@@ -758,6 +870,7 @@ ${term('lifetimevalue')}
 <h2>1. Messages parents actually see</h2>
 <p>Emails get buried. Texts cost money. WhatsApp groups mean sharing your personal number, messages at 11pm and a hundred &ldquo;thank you&rdquo;s every time you post.</p>
 <p>A notification from your app lands on the parent&rsquo;s lock screen, costs nothing to send and goes to exactly the right families: one class, one age group, or everyone. Class cancelled because of snow? Everyone knows in seconds.</p>
+${postOnce('Classes off tonight', 'The snow&rsquo;s too heavy, so tonight&rsquo;s classes are off. Stay safe, see you next week!')}
 
 <h2>2. Less admin for you</h2>
 <p>Registers on your phone, with QR check-in at the door. Medical notes and emergency contacts in your pocket during every class. Payments taken and chased for you. No paper, no spreadsheets, no cash tin.</p>
@@ -819,6 +932,8 @@ ${term('lifetimevalue')}
 <p>Extras raise your revenue. Because the hall, the coaches and the families are already there, most of what they bring in is profit.</p>
 ${term('revenue')}
 
+${grid([['tag', 'Review your price', 'A waiting list means you&rsquo;re charging too little.'], ['ticket', 'Extra showcases', 'Tickets for families, a goal for every child.'], ['star', 'Guest workshops', 'A one-off fee, open to non-members too.'], ['shirt', 'Uniform each term', 'Pre-ordered, so you only buy what&rsquo;s sold.'], ['gift', 'Parties', 'Every guest is a local child of the right age.']])}
+
 <h2>1. If you&rsquo;re full, look at your price</h2>
 <p>A waiting list is the clearest sign you&rsquo;re charging too little. When demand is bigger than your spaces, a fair rise won&rsquo;t empty your classes. It just means each space earns what it&rsquo;s worth. We went from &pound;16 to &pound;50 a month over the years and filled up as we went. Here&rsquo;s <a href="/learn/how-much-to-charge-for-kids-classes">how to work out your price</a>.</p>
 
@@ -868,6 +983,8 @@ ${term('revenue')}
     read: 7,
     body: `
 <p>I started Kanvas Academy in 2017. If you&rsquo;re thinking about starting a club of your own, this is what I&rsquo;d want someone to tell me: what to sort out first, how to make sure the rent and coaches are covered, and how to get your first families through the door.</p>
+
+${chain('From idea to first members', [['1', 'One class, one age group'], ['2', 'Check what you need'], ['3', 'Find a hall'], ['4', 'Set your price'], ['5', 'Free trials', true]])}
 
 <h2>1. Decide what and who</h2>
 <p>Start narrow. One style, one age group, one evening. &ldquo;Street dance for 5 to 8 year olds, Tuesdays&rdquo; is far easier to fill and to explain than &ldquo;dance for everyone&rdquo;. You can add classes once the first one is full.</p>
@@ -931,6 +1048,7 @@ ${term('breakeven')}
 ${term('revenue')}
 
 <h2>Two ways to do it</h2>
+${compare('plain', { h: '1. Keep charging', sub: 'to hold their space', items: ['The same fee every month, open or closed', 'A steady income all year', 'Families who stop free up their space'] }, { h: '2. Only charge while open', sub: 'and price for it', items: ['Divide your yearly figure by the months you&rsquo;re open', 'A higher monthly price', 'Nothing to pay while you&rsquo;re closed'] })}
 <h3>1. Keep charging, to hold their space</h3>
 <p>Charge the same every month, open or closed. The monthly fee pays for their child&rsquo;s place in the class across the whole year, holidays included. A family who stops paying over the summer frees up their space for someone else.</p>
 <p>It keeps your income steady, and it makes the space feel valuable. A place in a popular class is worth keeping.</p>
@@ -998,6 +1116,7 @@ ${term('churn')}
   <li><strong>They build the relationships</strong> with the children and their families.</li>
 </ul>
 <p>When it&rsquo;s their class, they don&rsquo;t feel like an employee clocking in. They care whether it&rsquo;s full, whether the children are improving and whether families stay, because it&rsquo;s theirs.</p>
+${compare('fix', { h: 'Covering a class', items: ['Teaches someone else&rsquo;s plan', 'The students feel like the club&rsquo;s, not theirs', 'Nothing to build, so nothing to stay for'] }, { h: 'Owning a class', items: ['Plans the classes and choreographs the routines', 'Takes their students to competitions', 'Cares whether it&rsquo;s full and families stay'] })}
 <div class="lc-callout"><p>People look after what they feel is theirs. Give your coaches a class to own, not just a class to cover.</p></div>
 
 <h2>Reward what you want more of</h2>
@@ -1081,26 +1200,15 @@ ${term('churn')}
 ${term('friction')}
 <p>Not all friction is bad. The trick is knowing the difference.</p>
 
+${compare('fix', { h: 'Bad friction', sub: 'Turns families away', items: ['Emailing to ask for a trial, then waiting for a reply', 'No prices, so they have to ask', 'Making an account before they can see the times', 'A long form asking for things you don&rsquo;t need yet', 'A booking page that&rsquo;s hard to use on a phone'] }, { h: 'Good friction', sub: 'Makes bookings serious', items: ['Asking what they want their child to get out of it', 'Choosing a specific date', 'A mobile number for reminders', 'The details you need to look after their child'] })}
+
 <h3>Bad friction</h3>
 ${term('badfriction')}
-<ul>
-  <li>Having to email or message to ask for a trial, then waiting for a reply.</li>
-  <li>No prices, so they have to ask.</li>
-  <li>Having to create an account before they can see the times.</li>
-  <li>A long form asking for things you don&rsquo;t need yet.</li>
-  <li>A booking page that&rsquo;s hard to use on a phone.</li>
-</ul>
-<p>Every one of these loses you families who were ready to come. Most never tell you. They just leave.</p>
+<p>Every one of those steps loses you families who were ready to come. Most never tell you. They just leave.</p>
 
 <h3>Good friction</h3>
 ${term('goodfriction')}
 <p>Some steps are worth adding on purpose. When families book a trial at our club, we ask what they want their child to get out of classes with us: more confidence, new skills, new friends. It takes a few seconds, and it means the people who book are serious about coming.</p>
-<ul>
-  <li>Asking what they want their child to get out of it, like confidence, new skills or friends.</li>
-  <li>Choosing a specific date, rather than &ldquo;pop along some time&rdquo;.</li>
-  <li>A mobile number, so you can remind them before the trial.</li>
-  <li>The details you need to look after their child in class.</li>
-</ul>
 <p>Good friction makes a booking feel like a commitment, so more families turn up. It also tells you something useful about every family before they walk in.</p>
 <div class="lc-callout"><p>Remove every step that doesn&rsquo;t help. Keep the ones that make a booking serious.</p></div>
 
@@ -1151,6 +1259,7 @@ ${term('perceivedrisk')}
 <h2>When a paid trial can work</h2>
 <p>Paid trials aren&rsquo;t wrong. They can work well for a club with a very strong reputation and a waiting list, where parents have already decided they want to join. For them, paying for the first class is just a formality.</p>
 <p>The problem is everyone else. A parent who isn&rsquo;t set on your club yet is comparing options. If the club down the road offers a free trial and you charge, they&rsquo;ll often try the free one first, because paying for something their child might not like is a risk they don&rsquo;t have to take.</p>
+${compare('plain', { h: 'Free trial', sub: 'The parent risks nothing', items: ['An easy yes, even for parents still comparing clubs', 'The class does the selling', 'Right for most clubs'] }, { h: 'Paid trial', sub: 'The parent risks money', items: ['Puts off parents who aren&rsquo;t sure yet', 'Fine when parents have already decided', 'Suits clubs with a waiting list'] })}
 <div class="lc-callout"><p>Take away the risk, and more families say yes. Then let the class do the selling.</p></div>
 
 <h2>Free doesn&rsquo;t have to mean careless</h2>
@@ -1189,6 +1298,18 @@ ${term('perceivedrisk')}
     body: `
 <p>The trial has finished. The child is grinning, the parent is smiling, and you say &ldquo;hope to see you next week!&rdquo; as they head out of the door. Then you never hear from them again.</p>
 <p>It happens at every club. Not because the family didn&rsquo;t enjoy it, but because nobody asked them to join while they were still feeling it.</p>
+
+<figure class="lc-flow" aria-label="From booking a trial to joining">
+  <p class="lc-flow-h">From booking to joining</p>
+  <ol data-lc-flow>
+    <li><span class="dot">1</span><span><span class="when">When they book</span><span class="bub">Ask what they want their child to get out of classes.</span><span class="chan">Booking form</span></span></li>
+    <li><span class="dot">2</span><span><span class="when">During the trial</span><span class="bub">Give them a small win: joining in, a first move nailed, a new friend.</span><span class="chan">In class</span></span></li>
+    <li><span class="dot">3</span><span><span class="when">At the end</span><span class="bub">Ask the child if they had fun, and the parent how it went.</span><span class="chan">In person</span></span></li>
+    <li><span class="dot">4</span><span><span class="when">At the door</span><span class="bub">&ldquo;Would she like to come back?&rdquo; &ldquo;Yes!&rdquo; &ldquo;Shall we set it up now?&rdquo;</span><span class="chan">In person</span></span></li>
+    <li><span class="dot">5</span><span><span class="when">The same day</span><span class="bub">Anyone who didn&rsquo;t join gets a follow-up with the link.</span><span class="chan">Text or email</span></span></li>
+    <li class="end"><span class="dot">&#10003;</span><span><span class="when">Next week</span><span class="bub">A new member, back for their first class</span></span></li>
+  </ol>
+</figure>
 
 <h2>Know why they came</h2>
 <p>When families book a trial with us, we ask what they want their child to get out of classes: more confidence, new skills, new friends. That answer is their dream outcome, and it&rsquo;s what they&rsquo;re really there for.</p>
@@ -1250,6 +1371,7 @@ ${term('conversion')}
 <p>Some families want two or three children in a hobby, and the full price for all of them can be too much. A sibling discount helps those families do it.</p>
 <p>It also makes good business sense. It costs money and effort to win a new member: ads, trials, your time. That&rsquo;s your customer acquisition cost, or CAC. A brother or sister is already through the door, so they cost you almost nothing to win. Think of it as two dancers for the cost of finding one.</p>
 ${term('cac')}
+${compare('plain', { h: 'A brand new member', sub: 'What it takes to win them', items: ['Ads to reach them', 'A free trial and reminders', 'Your time following up'] }, { h: 'A brother or sister', sub: 'What it takes to win them', items: ['Already through the door', 'Already knows the club', 'Close to nothing'] })}
 
 <h2>2. A friend&rsquo;s first month</h2>
 <p>Every new member can bring a friend free for their first month. The friend arrives already knowing someone, and the new member settles in faster. We&rsquo;ve written up <a href="/learn/get-more-members-kids-club">how our friend&rsquo;s free month works</a>.</p>
@@ -1312,6 +1434,7 @@ ${term('cac')}
 <p>A useful way to think about value is the value equation. Parents value your club more when the dream outcome is bigger and they&rsquo;re more confident their child will get there, and less when it takes longer or feels like more effort or risk.</p>
 ${term('valueequation')}
 <p>So show them the outcome: the confident performer on stage, the medal, the friendships. Show them why they can trust you to get there: your coaches, your results, your reviews. And make it easy: simple booking, easy payments, everything in one app.</p>
+${valueEquation()}
 
 <h2>Show it, don&rsquo;t just have it</h2>
 <p>None of this helps if parents can&rsquo;t see it. Put your shows, competitions, results and coaches on your website and social media. Talk about them at every trial. Make the value obvious before anyone mentions price.</p>
@@ -1354,13 +1477,7 @@ ${term('valueequation')}
 <p>Our favourite moment is straight after a dancer&rsquo;s first competition. The parent has just watched their child perform for the very first time. They have a story to tell, and they want to share it. Ask then, and the review almost writes itself.</p>
 
 <h2>Other great moments to ask</h2>
-<ul>
-  <li>Straight after a trial their child loved.</li>
-  <li>After a show or performance.</li>
-  <li>When a child moves up a level, earns a badge or passes a grading.</li>
-  <li>When a parent thanks you, or sends a lovely message.</li>
-  <li>At the end of a term, looking back at how far their child has come.</li>
-</ul>
+${grid([['trophy', 'A first competition', 'Our favourite. They&rsquo;ve just watched their child perform.'], ['star', 'After a trial they loved', 'Their child came out grinning.'], ['ticket', 'After a show', 'The whole family is buzzing.'], ['chart', 'A new level or badge', 'Progress they can be proud of.'], ['message', 'When a parent thanks you', 'They&rsquo;ve already said it. Ask them to share it.'], ['clock', 'The end of a term', 'Looking back at how far their child has come.']])}
 
 <h2>Ways to ask</h2>
 <ul>
@@ -1413,6 +1530,7 @@ ${term('upsell')}
 
 <h2>Let members try another class free</h2>
 <p>Now and then, open free trials of other classes to your existing members. They can see if it&rsquo;s a good fit, with no risk. If they love it, offer them the chance to carry on there and then, and get twice as much every week.</p>
+${chain('A second class, without the hard sell', [['1', 'One class a week'], ['2', 'A free try of another'], ['3', 'They love it'], ['2&times;', 'the experience every week', true]])}
 <div class="lc-callout"><p>A free try of another class is the easiest second class you&rsquo;ll ever sell.</p></div>
 
 <h2>A quick checklist</h2>
@@ -1448,6 +1566,7 @@ ${term('perceivedrisk')}
 
 <h2>Why we let families cancel any time</h2>
 <p>We let members cancel any time. It takes the risk away, and that means more families are willing to try joining in the first place.</p>
+${compare('fix', { h: 'A minimum contract', sub: 'What the parent thinks', items: ['&ldquo;What if she hates it after three weeks?&rdquo;', '&ldquo;What if money gets tight?&rdquo;', '&ldquo;Let&rsquo;s think about it.&rdquo;'] }, { h: 'Cancel any time', sub: 'What the parent thinks', items: ['&ldquo;We can try it and stop if it&rsquo;s not for her.&rdquo;', '&ldquo;There&rsquo;s nothing to lose.&rdquo;', '&ldquo;Let&rsquo;s sign up.&rdquo;'] })}
 <p>It fits the value equation too. The less effort and risk involved, the more your club is worth to a parent.</p>
 ${term('valueequation')}
 
@@ -1510,6 +1629,7 @@ ${term('automation')}
 <h2>6. Telling everyone everything</h2>
 <p>A class is cancelled. You post it on Instagram, then Facebook, then the WhatsApp group, then send an email, then text the families you think might have missed it. Someone still turns up.</p>
 <p>With your own app, you post it once and it lands on every family&rsquo;s lock screen as a notification. You can be certain every member got the message. Parents message the club through the app too, instead of your personal number, so you can answer in your own time.</p>
+${postOnce('Photo day on Saturday', 'Full club kit and hair tied back please. Photos start at 9am in the main hall.')}
 
 <figure class="lc-flow" aria-label="How a new family joins without you lifting a finger">
   <p class="lc-flow-h">A new family, without you lifting a finger</p>
@@ -1632,7 +1752,7 @@ const SCRIPTS = `<script src="/consent.js?v=2c4fee5d"></script>
 <script src="/learn/terms.js?v=6fe515e0" defer></script>
 <script src="/glossary.js?v=d3003e23" defer></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
-<script src="/learn/learn.js?v=197ceef8" defer></script>
+<script src="/learn/learn.js?v=3a84b052" defer></script>
 </body>
 </html>
 `;
@@ -1659,7 +1779,7 @@ ${ld.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script
 <link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="/styles.css?v=aff04046">
 <link rel="stylesheet" href="/home.css?v=5473fb1f">
-<link rel="stylesheet" href="/learn/learn.css?v=153e69ff">
+<link rel="stylesheet" href="/learn/learn.css?v=005b2310">
 </head>
 <body class="home learn">
 
