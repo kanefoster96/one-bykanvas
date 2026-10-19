@@ -1,0 +1,137 @@
+/* The Learning Centre: guides for club owners. One reading column, set for
+   long text; callouts for the real numbers; a dark band at the end that says
+   how One does the same thing for you. Loaded after styles.css and home.css. */
+
+.lc-hero{padding:clamp(36px,6vw,64px) 0 clamp(20px,3vw,28px)}
+.lc-col{max-width:720px;margin:0 auto}
+.lc-crumb{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px;font-size:14px;font-weight:600;color:var(--ink-3)}
+.lc-crumb a{color:var(--good);text-decoration:none}
+.lc-crumb a:hover{text-decoration:underline}
+.lc-kicker{margin:0 0 12px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--good)}
+.lc-hero h1{font-size:clamp(34px,5.6vw,54px);line-height:1.06;letter-spacing:-.035em;font-weight:700;margin:0;text-wrap:balance}
+.lc-stand{margin:18px 0 0;font-size:clamp(18px,2.2vw,21px);line-height:1.5;color:var(--ink-2);text-wrap:pretty}
+.lc-by{display:flex;align-items:center;gap:12px;margin:24px 0 0;font-size:14.5px;color:var(--ink-2)}
+.lc-by img{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:0 0 44px}
+.lc-by b{color:var(--ink);font-weight:600}
+
+.lc-body{padding:0 0 clamp(40px,6vw,64px)}
+.lc-body p,.lc-body li{font-size:18px;line-height:1.7;color:var(--ink);text-wrap:pretty}
+.lc-body p{margin:0 0 20px}
+.lc-body h2{font-size:clamp(25px,3.4vw,32px);line-height:1.15;letter-spacing:-.025em;font-weight:700;margin:44px 0 16px;text-wrap:balance}
+.lc-body h3{font-size:20px;line-height:1.3;letter-spacing:-.01em;font-weight:700;margin:28px 0 10px}
+.lc-body ul,.lc-body ol{margin:0 0 22px;padding-left:22px}
+.lc-body li{margin:0 0 10px}
+.lc-body li::marker{color:var(--good);font-weight:700}
+.lc-body a{color:var(--good);text-underline-offset:3px}
+.lc-body strong{font-weight:700}
+
+/* A real number, set large. */
+.lc-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:8px 0 28px}
+.lc-stat{padding:18px 18px 16px;border-radius:18px;background:var(--glass,#f5f5f7)}
+.lc-stat b{display:block;font-size:clamp(28px,4vw,36px);line-height:1;letter-spacing:-.03em;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+.lc-stat span{display:block;margin-top:8px;font-size:14.5px;line-height:1.4;color:var(--ink-2)}
+.lc-stat.hot{background:#c93e09}
+.lc-stat.hot b,.lc-stat.hot span{color:#fff}
+.lc-note{margin:-14px 0 28px!important;font-size:14px!important;line-height:1.5!important;color:var(--ink-3)!important}
+
+/* A pull-out: the one idea to take away. */
+.lc-callout{margin:8px 0 28px;padding:20px 22px;border-left:4px solid #c93e09;border-radius:0 16px 16px 0;background:#fff4ee}
+.lc-callout p{margin:0!important;font-size:18px;font-weight:500}
+
+/* A message as the parent receives it. */
+.lc-msg{margin:6px 0 22px;max-width:440px;padding:14px 16px;border-radius:20px 20px 20px 6px;background:#e9e9eb;font-size:16px;line-height:1.45;color:#1d1d1f}
+.lc-msg small{display:block;margin-bottom:4px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#6e6e73}
+
+/* Tables (the comparison). */
+.lc-table{overflow-x:auto;margin:6px 0 28px;border-radius:16px;border:1px solid var(--line-soft)}
+.lc-table table{width:100%;border-collapse:collapse;min-width:520px;font-size:15.5px;line-height:1.45}
+.lc-table th,.lc-table td{padding:13px 16px;text-align:left;vertical-align:top;border-top:1px solid var(--line-soft)}
+.lc-table thead th{border-top:0;background:var(--glass,#f5f5f7);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.lc-table td:first-child{font-weight:600}
+.lc-table td:last-child{font-weight:600}
+
+/* The four messages, animated: a day running down the page. */
+.lc-flow{margin:10px 0 30px;padding:clamp(20px,4vw,30px);border-radius:24px;background:#0b0b0d;color:#f5f5f2}
+.lc-flow-h{margin:0 0 18px!important;font-size:13px!important;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ff7a3d!important}
+.lc-flow ol{list-style:none;margin:0!important;padding:0!important;position:relative}
+.lc-flow ol::before{content:"";position:absolute;left:15px;top:6px;bottom:6px;width:2px;background:rgba(255,255,255,.14)}
+.lc-flow li{position:relative;display:grid;grid-template-columns:32px 1fr;gap:14px;margin:0 0 18px!important;color:#f5f5f2!important;opacity:.25;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.lc-flow li.on{opacity:1;transform:none}
+.lc-flow li:last-child{margin-bottom:0!important}
+.lc-flow .dot{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#1d1d20;border:2px solid rgba(255,255,255,.2);font-size:14px;font-weight:700;color:#f5f5f2;z-index:1}
+.lc-flow li.on .dot{background:#c93e09;border-color:#c93e09;box-shadow:0 0 0 6px rgba(255,79,18,.18)}
+.lc-flow .when{display:block;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(245,245,242,.6)}
+.lc-flow .bub{display:block;margin-top:6px;padding:12px 14px;border-radius:18px 18px 18px 6px;background:#26262a;font-size:15.5px;line-height:1.45;color:#f5f5f2}
+.lc-flow .chan{display:inline-block;margin-top:6px;font-size:12.5px;color:rgba(245,245,242,.55)}
+.lc-flow .end .dot{background:#22c55e;border-color:#22c55e;box-shadow:none}
+.lc-flow .end .bub{background:rgba(34,197,94,.14);color:#86efac;font-weight:600}
+@media (prefers-reduced-motion:reduce){.lc-flow li{opacity:1;transform:none;transition:none}}
+
+/* The end of every guide: how One does it, on the dark band. */
+.lc-one{padding:clamp(44px,7vw,72px) 0}
+.lc-one h2{margin:0 0 14px;font-size:clamp(28px,4.4vw,40px);line-height:1.08;letter-spacing:-.03em;font-weight:700;color:#f5f5f2;text-wrap:balance}
+.lc-one h2 span{color:#ff7a3d}
+.lc-one p{margin:0 0 18px;font-size:18px;line-height:1.6;color:rgba(245,245,242,.78)}
+.lc-one ul{list-style:none;margin:0 0 26px;padding:0;display:grid;gap:10px}
+.lc-one li{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:17px;line-height:1.5;color:#f5f5f2}
+.lc-one li::before{content:"";width:20px;height:20px;margin-top:3px;border-radius:50%;background:#c93e09 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
+.lc-ctas{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+.lc-ctas .lnk{color:#ff7a3d;font-weight:600;text-decoration:none}
+.lc-ctas .lnk:hover{text-decoration:underline}
+
+/* Questions at the end of a guide. */
+.lc-faq{margin:6px 0 10px}
+.lc-faq details{border-top:1px solid var(--line-soft);padding:4px 0}
+.lc-faq details:last-child{border-bottom:1px solid var(--line-soft)}
+.lc-faq summary{cursor:pointer;list-style:none;padding:14px 32px 14px 0;position:relative;font-size:18px;font-weight:600}
+.lc-faq summary::-webkit-details-marker{display:none}
+.lc-faq summary::after{content:"+";position:absolute;right:4px;top:10px;font-size:24px;font-weight:400;color:var(--good)}
+.lc-faq details[open] summary::after{content:"\2212"}
+.lc-faq details p{margin:0 0 16px!important;font-size:17px!important;color:var(--ink-2)!important}
+
+/* More guides, and the Learning Centre's own list. */
+.lc-more{padding:clamp(36px,5vw,56px) 0 clamp(48px,7vw,80px)}
+.lc-more h2{margin:0 0 18px;font-size:clamp(24px,3vw,30px);letter-spacing:-.025em;font-weight:700}
+.lc-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.lc-card{display:flex;flex-direction:column;gap:8px;padding:20px 20px 18px;border-radius:20px;background:#fff;border:1px solid var(--line-soft);text-decoration:none;color:var(--ink);transition:transform .2s,box-shadow .2s}
+.lc-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.08)}
+.lc-card .tag{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--good)}
+.lc-card b{font-size:19px;line-height:1.25;letter-spacing:-.015em}
+.lc-card span.d{font-size:15px;line-height:1.5;color:var(--ink-2)}
+.lc-card .go{margin-top:auto;padding-top:6px;font-size:14.5px;font-weight:600;color:var(--good)}
+@media (prefers-reduced-motion:reduce){.lc-card{transition:none}.lc-card:hover{transform:none}}
+
+/* The Learning Centre front page. */
+.lc-search{display:flex;align-items:center;gap:10px;max-width:560px;margin:26px 0 0;padding:6px 6px 6px 18px;border-radius:999px;background:#fff;border:1px solid var(--line-soft);box-shadow:0 8px 24px rgba(0,0,0,.06)}
+.lc-search svg{width:20px;height:20px;flex:0 0 20px;color:var(--ink-3)}
+.lc-search input{flex:1;min-width:0;height:44px;border:0;outline:0;background:transparent;font:inherit;font-size:17px;color:var(--ink)}
+.lc-topics{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.lc-topics button{min-height:38px;padding:0 15px;border-radius:999px;border:1px solid var(--line-soft);background:#fff;font:inherit;font-size:14.5px;font-weight:600;color:var(--ink);cursor:pointer}
+.lc-topics button[aria-pressed="true"]{background:#1d1d1f;border-color:#1d1d1f;color:#fff}
+.lc-none{margin:18px 0 0;font-size:16px;color:var(--ink-2)}
+.lc-search:focus-within,.lc-topics button:focus-visible,.lc-card:focus-visible{outline:3px solid #ff4f12;outline-offset:2px}
+
+/* The footer's way in: big, so it reads as a place, not a link. */
+.ft-learn{display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px 18px;margin:28px 0 0;padding:22px 24px;border-radius:22px;background:#0b0b0d;color:#f5f5f2;text-decoration:none;max-width:640px;transition:transform .2s}
+.ft-learn:hover{transform:translateY(-2px);text-decoration:none}
+.ft-learn .k{grid-column:1;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ff7a3d}
+.ft-learn b{grid-column:1;font-size:clamp(21px,2.6vw,26px);line-height:1.15;letter-spacing:-.025em;font-weight:700}
+.ft-learn .d{grid-column:1;font-size:15px;line-height:1.45;color:rgba(245,245,242,.72)}
+.ft-learn .arr{grid-column:2;grid-row:1/4;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#c93e09;font-size:22px;font-weight:700}
+.ft-cols.ft-cols3{grid-template-columns:repeat(3,1fr)}
+@media (max-width:640px){.ft-cols.ft-cols3{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){.ft-learn{transition:none}.ft-learn:hover{transform:none}}
+.lc-card,.lc-card:hover,.lc-card *{text-decoration:none}
+/* On a phone the comparison stacks: each row's label, then each side named,
+   so the last column is never hidden off the right edge. */
+@media (max-width:640px){
+  .lc-table{overflow:visible;border:0;border-radius:0}
+  .lc-table table{min-width:0}
+  .lc-table thead{display:none}
+  .lc-table tr{display:block;padding:14px 16px;margin:0 0 10px;border:1px solid var(--line-soft);border-radius:16px}
+  .lc-table td{display:block;padding:4px 0;border:0}
+  .lc-table td:first-child{font-size:16px;margin-bottom:4px}
+  .lc-table td:nth-child(2)::before{content:"ClassForKids: ";font-weight:700;color:var(--ink)}
+  .lc-table td:nth-child(2){font-weight:400;color:var(--ink-2)}
+  .lc-table td:nth-child(3)::before{content:"Kanvas One: ";font-weight:700;color:#c93e09}
+}

@@ -153,6 +153,7 @@
     { label: 'Pricing',         href: '/#everything' },
     { label: 'Questions',       href: '/#faq' },
     { label: 'Kids\u2019 clubs', href: '/clubs' },
+    { label: 'Learning Centre', href: '/learn' },
     { label: 'Contact',         href: '/contact.html' }
   ];
 
