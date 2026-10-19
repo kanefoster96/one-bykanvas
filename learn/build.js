@@ -16,11 +16,22 @@ const SITE = 'https://kanvas.one';
 const UPDATED = '2026-10-19';
 const UPDATED_TEXT = '19 October 2026';
 
+const TERMS = require('./terms.js');
 const ESC = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const plain = (html) => String(html).replace(/<[^>]+>/g, '').replace(/&rsquo;/g, '’').replace(/&lsquo;/g, '‘').replace(/&pound;/g, '£').replace(/&amp;/g, '&').replace(/&ndash;/g, '–').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
 
+/* A "Business word" box: the word as a heading, what it means underneath,
+   from learn/terms.js (the same words glossary.js underlines). On the word
+   list itself each box is an anchor instead of a link to it. */
+function term(key, onList) {
+  const t = TERMS[key];
+  if (!t) throw new Error('learn: no business word "' + key + '" in terms.js');
+  return `<div class="lc-term"${onList ? ` id="${key}"` : ''} data-no-gl data-gl-shown="${key}"><span class="k">Business word</span><b>${t.title}</b><p>${ESC(t.text)}</p>${onList ? '' : `<a href="/learn/club-business-words#${key}">All the business words &rsaquo;</a>`}</div>`;
+}
+const WORD_LIST = Object.keys(TERMS).sort((a, b) => TERMS[a].title.localeCompare(TERMS[b].title)).map((k) => term(k, true)).join('\n');
+
 /* The topics the front page filters by. */
-const TOPICS = { trials: 'Getting trials', members: 'Getting members', keeping: 'Keeping members', money: 'Pricing and payments', ads: 'Ads', software: 'Choosing software', start: 'Starting a club' };
+const TOPICS = { trials: 'Getting trials', members: 'Getting members', keeping: 'Keeping members', money: 'Pricing and payments', ads: 'Ads', software: 'Choosing software', running: 'Running your club', start: 'Starting a club' };
 
 /* Every guide ends here. `lead` says which part of One the guide was about. */
 function oneBand(lead, points) {
@@ -97,6 +108,8 @@ const GUIDES = [
   <div class="lc-stat hot"><b>15</b><span>of them turned up: 68%</span></div>
 </div>
 <p class="lc-note">Our own club, 1 September to 19 October 2026. Counted from check-ins on the register, not from bookings.</p>
+<p>That number has a name in business: your show-up rate. It&rsquo;s worth knowing yours.</p>
+${term('showup')}
 <p>Two in every three families who book a free trial with us walk through the door. If you&rsquo;re seeing far fewer than that, the gap is usually in the days between booking and the class, not in the class itself.</p>
 
 <h2>What to do when someone still doesn&rsquo;t come</h2>
@@ -182,6 +195,8 @@ const GUIDES = [
 
 <h2>6. Follow up within a day</h2>
 <p>After a trial, send a message the same evening or the next morning: how did they find it, and here&rsquo;s the link to keep their place. Most families who don&rsquo;t join aren&rsquo;t saying no. They just haven&rsquo;t been asked at the right time.</p>
+<p>How many trials go on to join is your conversion rate, and following up quickly is one of the easiest ways to raise it.</p>
+${term('conversion')}
 
 <h2>7. Keep the members you already have</h2>
 <p>Growing is much easier when you aren&rsquo;t losing people out of the back door.</p>
@@ -497,6 +512,7 @@ const GUIDES = [
 
 <h3>Why 80%?</h3>
 <p>You&rsquo;ll rarely be 100% full. Children start and leave, siblings come and go, and a class running at about 80% still feels busy and lively. If your price only works when every space is full, it doesn&rsquo;t work.</p>
+${term('capacity')}
 
 <h3>Why 10 months, not 12?</h3>
 <p>Ten months is easier to track, and it gives you room for the summer dip, holidays and the odd quiet month. If you hit your number in 10 months, the other two are a bonus. In the example above, those two months are worth about &pound;7,500.</p>
@@ -553,6 +569,8 @@ const GUIDES = [
 <p>When a payment fails, send a reminder straight away, with a link to pay or update the card. Keep it friendly and assume it&rsquo;s a mistake, because it nearly always is.</p>
 <div class="lc-msg"><small>A message you can copy</small>Hi Sarah, Ava&rsquo;s payment for October didn&rsquo;t go through. It&rsquo;s usually an old card. You can pay or update it here, it only takes a minute: [link]. Thanks!</div>
 <p>No &ldquo;overdue&rdquo;, no &ldquo;final notice&rdquo;, no guilt. Just what happened and the quickest way to fix it.</p>
+<p>Members lost to payments that never got sorted have a name: involuntary churn. They didn&rsquo;t want to leave. Nobody chased the card.</p>
+${term('involuntary')}
 
 <h2>3. Show it at the door, without saying a word</h2>
 <p>This is the one that has helped us most. Every member at our club has a QR pass in the app that they scan when they arrive.</p>
@@ -603,6 +621,9 @@ const GUIDES = [
 
 <h2>Watch for month five</h2>
 <p>At our club, month five is when families are most likely to drift away. The excitement of starting has worn off, and the next big thing feels a long way off.</p>
+<p>Members leaving is called churn. Every child who stays a few months longer adds to their lifetime value, which is why keeping members is worth so much effort.</p>
+${term('churn')}
+${term('lifetimevalue')}
 <p>Whenever it is at your club, the fix is the same: make sure there&rsquo;s always something coming up, and put something worth staying for just before the point people usually leave.</p>
 
 <h2>1. Always be working towards something</h2>
@@ -795,6 +816,8 @@ const GUIDES = [
     read: 5,
     body: `
 <p>At some point you run out of room. The classes are full, the hall is booked and there are no more evenings to give. That&rsquo;s a great problem to have, and it doesn&rsquo;t mean your income has to stop growing.</p>
+<p>Extras raise your revenue. Because the hall, the coaches and the families are already there, most of what they bring in is profit.</p>
+${term('revenue')}
 
 <h2>1. If you&rsquo;re full, look at your price</h2>
 <p>A waiting list is the clearest sign you&rsquo;re charging too little. When demand is bigger than your spaces, a fair rise won&rsquo;t empty your classes. It just means each space earns what it&rsquo;s worth. We went from &pound;16 to &pound;50 a month over the years and filled up as we went. Here&rsquo;s <a href="/learn/how-much-to-charge-for-kids-classes">how to work out your price</a>.</p>
@@ -849,17 +872,8 @@ const GUIDES = [
 <h2>1. Decide what and who</h2>
 <p>Start narrow. One style, one age group, one evening. &ldquo;Street dance for 5 to 8 year olds, Tuesdays&rdquo; is far easier to fill and to explain than &ldquo;dance for everyone&rdquo;. You can add classes once the first one is full.</p>
 
-<h2>2. Put the basics in place</h2>
-<p>Working with children means getting a few things right before your first class. In the UK, that usually means:</p>
-<ul>
-  <li><strong>Public liability insurance</strong>, and cover for the activity you teach.</li>
-  <li><strong>DBS checks</strong> for you and anyone who coaches with you.</li>
-  <li><strong>A safeguarding policy</strong>, with a named person responsible.</li>
-  <li><strong>First aid</strong>: a trained first aider and a kit at every session.</li>
-  <li><strong>Consent, medical details and emergency contacts</strong> for every child, with you in every class.</li>
-  <li><strong>A music licence</strong> if you play recorded music in classes.</li>
-</ul>
-<p>Your sport&rsquo;s governing body is a good place to start. Many offer insurance, coaching qualifications and template policies.</p>
+<h2>2. Check what you need to work with children</h2>
+<p>Insurance, background checks and policies for working with children all need sorting before your first class. I&rsquo;m not the expert on the rules, so ask your sport&rsquo;s governing body what applies to you.</p>
 
 <h2>3. Find a hall</h2>
 <p>School halls, community centres, church halls and leisure centres are all worth asking. Most charge by the hour. Start with one or two evenings, and ask about holidays and whether you can store kit.</p>
@@ -883,18 +897,256 @@ const GUIDES = [
 
 <h2>If you&rsquo;re about to start, talk to me</h2>
 <p>This is the bit I enjoy most. If you&rsquo;re planning a club, message me and I&rsquo;ll help you work out your price, what you can afford for rent and coaches, and how many members you need to break even.</p>
+${term('breakeven')}
 <p>If you&rsquo;d like, we can then set everything up for you on Kanvas One: your website, your own app, trial bookings and payments, run for you. Your first 3 months of ads are on us, up to &pound;100 a month, so free trials come in while you get going. If those ads bring fewer than 10 trial bookings, your next 3 months of One are free.</p>
 <p>It&rsquo;s &pound;250 a month, with no contract. At &pound;50 a month, five members cover it. Your ads start once your website and app are live, which is usually 4 to 8 weeks after you join, so it&rsquo;s worth starting before your first class.</p>`,
     one: ['Help working out your price, rent and coach costs before you open.', 'Your website and your own app, set up for you.', 'Free trial bookings, consent and medical forms from day one.', 'Your first 3 months of ads on us, up to &pound;100 a month.', '10 trial bookings in those 3 months, or your next 3 months free.'],
     oneLead: 'Starting a club? <span>Let&rsquo;s get you going.</span>',
     faq: [
-      ['What do I need to start a kids’ club in the UK?', 'Usually public liability insurance, DBS checks for everyone who coaches, a safeguarding policy, a first aider and kit, consent and medical details for every child, and a music licence if you play recorded music. Your sport’s governing body can help with most of these.'],
+      ['What do I need to start a kids’ club?', 'Decide what you’ll teach and to which ages, check with your sport’s governing body what you need for working with children, find a hall, and work out your price before your first class. Then offer free trials to get your first members.'],
       ['How much should I charge when I start?', 'Work it out from your costs. Add up rent, coaches, insurance and what you want to take home for the year, divide by 10 months, then divide by 80% of your spaces. Don’t start too low: we were very quiet at £16 a month and close to full at £50.'],
       ['How do I get my first members?', 'Offer a free trial, set up a simple website and Google Business Profile, reach local parents with a small budget of local ads, and confirm and remind every trial booking so they turn up.']
     ],
     related: ['how-much-to-charge-for-kids-classes', 'get-more-members-kids-club']
-  }
+  },
+  {
+    slug: 'should-kids-clubs-charge-in-the-holidays',
+    topic: 'money',
+    title: 'Should your club charge during the school holidays?',
+    short: 'Charging in the holidays',
+    docTitle: 'Should Your Kids’ Club Charge During the School Holidays? | Kanvas One',
+    desc: 'Closed for the holidays, but the bills aren’t. How to decide whether to charge over the school holidays, and how to price it so you still earn what you need over the year.',
+    card: 'Closed for the holidays, but the bills aren’t. How to decide, and how to price it so you still earn what you need.',
+    read: 5,
+    body: `
+<p>It&rsquo;s one of the questions club owners ask most, and one of the most argued about. Should you charge families during the school holidays?</p>
 
+<h2>What we do</h2>
+<p>We run our classes through the school holidays, so we charge every month, the same as always. Families get their classes, and the club has a steady income all year round.</p>
+<p>Not every club can do that, or wants to. If you close for the holidays, the answer is still simple. It just has to be decided before you set your price, not after.</p>
+
+<h2>Your bills don&rsquo;t take a holiday</h2>
+<p>The holidays might be a week off for the children, but your rent, your coaches, your insurance and your own bills keep coming. This is your income. You can&rsquo;t just stop getting paid for a week, or for six.</p>
+<p>So the real question isn&rsquo;t &ldquo;should I charge in the holidays?&rdquo;. It&rsquo;s &ldquo;how do I make sure the club brings in what I need over the whole year?&rdquo;. That yearly total is your revenue, and it&rsquo;s the number to plan around.</p>
+${term('revenue')}
+
+<h2>Two ways to do it</h2>
+<h3>1. Keep charging, to hold their space</h3>
+<p>Charge the same every month, open or closed. The monthly fee pays for their child&rsquo;s place in the class across the whole year, holidays included. A family who stops paying over the summer frees up their space for someone else.</p>
+<p>It keeps your income steady, and it makes the space feel valuable. A place in a popular class is worth keeping.</p>
+
+<h3>2. Only charge while you&rsquo;re open, and price for it</h3>
+<p>If you&rsquo;d rather not charge while you&rsquo;re closed, that&rsquo;s fine, as long as your price takes it into account. Work out what you need for the year, then divide it by the months you&rsquo;re actually open, not by 12.</p>
+<p>That&rsquo;s why our <a href="/learn/how-much-to-charge-for-kids-classes">pricing guide</a> works out your price over 10 months. Close for part of the year and take 10 payments, and you still make what you need. Stay open all year, or charge all 12 months to hold the space, and the other two months are a bonus.</p>
+<div class="lc-stats">
+  <div class="lc-stat"><b>&pound;37,600</b><span>what the club in our pricing example needs a year</span></div>
+  <div class="lc-stat"><b>10</b><span>payments of &pound;52 while it&rsquo;s open covers it</span></div>
+  <div class="lc-stat hot"><b>12</b><span>payments of &pound;52 leaves about &pound;7,500 spare</span></div>
+</div>
+
+<h2>Why some parents push back</h2>
+<p>Some parents feel it&rsquo;s unfair to pay for weeks when the club is closed, and a few will cancel for a month and rejoin afterwards. Depending on how your club works, that can cost you a lot over a summer.</p>
+<p>Most of it goes away when it&rsquo;s clear from the start. If families know when they join that the fee covers the year and holds their place, holidays included, there&rsquo;s nothing to argue about later. If you only charge while you&rsquo;re open, they know that too, and your price already covers it.</p>
+<p>Losing families every summer and winning them back in September is churn, and it&rsquo;s expensive. Some never come back.</p>
+${term('churn')}
+
+<div class="lc-callout"><p>Decide whether you&rsquo;re open or closed in the holidays first. Then set a price that still pays you what you need over the whole year.</p></div>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Decide whether you&rsquo;ll run classes in the holidays.</li>
+  <li>If you close, either keep charging to hold the space, or divide your yearly figure by the months you&rsquo;re open.</li>
+  <li>Tell families how holidays work when they join, not when the holidays arrive.</li>
+  <li>Put your holiday dates where parents can see them, early.</li>
+</ol>`,
+    one: ['Monthly, termly or a mix, set up the way your club charges.', 'Holiday closures added once, and shown in the app and on your website.', 'Families told automatically when a class is off.', 'Your terms accepted when they join, so everyone knows how holidays work.', 'Pause instead of cancel, so a summer away isn&rsquo;t goodbye.'],
+    oneLead: 'Paid all year. <span>Without the awkward conversations.</span>',
+    faq: [
+      ['Should a kids’ club charge during the school holidays?', 'If you run classes through the holidays, yes, as normal. If you close, either keep charging to hold each child’s space, or only charge while you’re open and set your price so the open months cover the whole year.'],
+      ['Is it fair to charge when the club is closed?', 'It is if families know from the start. Your rent, coaches and bills don’t stop in the holidays, and a monthly fee that holds a child’s place all year is a fair and common way to cover them.'],
+      ['How do I stop parents cancelling over the summer?', 'Make it clear when they join how holidays work, and offer pause instead of cancel. If the fee holds their place, families who cancel free up the space for someone else.']
+    ],
+    related: ['how-much-to-charge-for-kids-classes', 'stop-children-dropping-out-of-your-club']
+  },
+
+  {
+    slug: 'how-to-find-and-keep-good-coaches',
+    topic: 'running',
+    title: 'How to find and keep good coaches for your club',
+    short: 'Finding and keeping coaches',
+    docTitle: 'How to Find and Keep Good Coaches for Your Kids’ Club | Kanvas One',
+    desc: 'Good coaches are hard to find and harder to keep. Where I found mine, and why giving them their own class to run matters more than anything.',
+    card: 'Where I found mine, and why giving coaches their own class to run matters more than anything.',
+    read: 5,
+    body: `
+<p>Your coaches are your club. Parents choose you because of the coach their child loves, and when a good coach leaves, families often follow.</p>
+
+<h2>Finding them</h2>
+<p>I found all of ours online. Good dancers are easy to spot on social media. You can see how they move, how they teach and how they come across before you ever speak to them.</p>
+<ul>
+  <li>Look where people in your world share their work, like Instagram, TikTok and local groups.</li>
+  <li>Look for someone who is great at what they do <em>and</em> great with children. You need both.</li>
+  <li>Watch them take a class before you agree anything. How the children respond tells you more than a CV.</li>
+</ul>
+
+<h2>Keeping them: make it their class</h2>
+<p>The biggest thing I&rsquo;ve learned is to give coaches real ownership. Not just turning up to teach, but their class, with their students.</p>
+<ul>
+  <li><strong>They plan their classes.</strong></li>
+  <li><strong>They choreograph the routines.</strong></li>
+  <li><strong>They take their students to competitions.</strong></li>
+  <li><strong>They build the relationships</strong> with the children and their families.</li>
+</ul>
+<p>When it&rsquo;s their class, they don&rsquo;t feel like an employee clocking in. They care whether it&rsquo;s full, whether the children are improving and whether families stay, because it&rsquo;s theirs.</p>
+<div class="lc-callout"><p>People look after what they feel is theirs. Give your coaches a class to own, not just a class to cover.</p></div>
+
+<h2>Reward what you want more of</h2>
+<p>We give coaches incentives for growing their classes. When a new student joins their class, they get a bonus. It costs us a little, and it gives them a real reason to make every trial brilliant.</p>
+<p>And when the club does better than expected, a surprise bonus here and there goes a long way. It doesn&rsquo;t have to be big. It shows them you noticed.</p>
+
+<h2>Make them feel part of something</h2>
+<p>More than any bonus, coaches stay when they feel like an important part of the club. You want them to care about the business and the students, and to feel looked after in return.</p>
+<ul>
+  <li>Thank them for the work nobody sees: the planning, the late nights on routines, the messages to parents.</li>
+  <li>Ask for their ideas, and use them.</li>
+  <li>Tell them how the club is doing.</li>
+  <li>Keep their admin as light as possible, so their time goes on teaching.</li>
+</ul>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Look for coaches online, where their work is easy to see.</li>
+  <li>Watch them teach before you agree anything.</li>
+  <li>Give them a class of their own to plan, choreograph and grow.</li>
+  <li>Reward new students joining their class, and surprise them now and then.</li>
+  <li>Make them feel looked after, appreciated and part of the club.</li>
+</ol>`,
+    one: ['Each coach sees their own classes, registers and students in the app.', 'Messages and notifications to their class&rsquo;s families, from their phone.', 'Medical notes and emergency contacts on every coach&rsquo;s phone.', 'Registers and QR check-in that take seconds, so their time goes on teaching.', 'Reward your coaches your way? Tell me and we build it in.'],
+    oneLead: 'Less admin for your coaches. <span>More time with their students.</span>',
+    faq: [
+      ['Where can I find coaches for my club?', 'Online is a great place to start. Coaches share their work on Instagram, TikTok and local groups, so you can see how they move, teach and come across before you speak to them. Watch them take a class before agreeing anything.'],
+      ['How do I keep good coaches?', 'Give them real ownership: their own class to plan, choreograph, take to competitions and grow. Reward new students joining their class, give a surprise bonus now and then, and make them feel an important part of the club.'],
+      ['Should coaches get a bonus for new students?', 'It works well for us. A small bonus when a new student joins their class gives coaches a real reason to make every trial brilliant, and it costs far less than the new member brings in.']
+    ],
+    related: ['stop-children-dropping-out-of-your-club', 'how-to-start-a-kids-club']
+  },
+
+  {
+    slug: 'what-should-a-kids-club-website-have',
+    topic: 'members',
+    title: 'What should a kids’ club website have on it?',
+    short: 'What your website needs',
+    docTitle: 'What Should a Kids’ Club Website Have on It? | Kanvas One',
+    desc: 'Your website has one job: answer every question a parent has before they book a free trial. What to put on it, and the difference between good and bad friction.',
+    card: 'One job: answer every question before they book a trial. What to put on it, and good and bad friction.',
+    read: 6,
+    body: `
+<p>A parent lands on your website from Google, an ad or a friend&rsquo;s recommendation. They&rsquo;re interested, but they have questions. If your website answers them, they book a trial. If it doesn&rsquo;t, most won&rsquo;t ask. They go back and try the next club.</p>
+
+<h2>The one job your website has</h2>
+<p>Answer every question a parent might have before they book a free trial, so nothing stands in the way. That&rsquo;s it. Everything on the site should either answer a question or make booking easier.</p>
+<p>We built our own academy&rsquo;s website this way, and it&rsquo;s the model we use for every club.</p>
+
+<h2>The questions parents ask</h2>
+<ul>
+  <li>What ages is it for?</li>
+  <li>What day, what time, and how long is it?</li>
+  <li>Where is it, and is there parking?</li>
+  <li>How much is it after the free trial?</li>
+  <li>What should they wear and bring?</li>
+  <li>Who are the coaches?</li>
+  <li>Can I stay and watch?</li>
+  <li>What if my child is shy, or has never done it before?</li>
+  <li>Do they have to do shows or competitions?</li>
+  <li>How do we join after the trial?</li>
+</ul>
+<p>Answer them where parents look: on each class page, and in a short list of questions and answers.</p>
+
+<h2>What to put on it</h2>
+<h3>A page for each class</h3>
+<p>Ages, day, time, place and price, with a button to book. It answers the big questions at a glance, and it helps you get <a href="/learn/get-your-club-found-on-google-and-chatgpt">found on Google and ChatGPT</a>.</p>
+<h3>Your prices</h3>
+<p>Show them. A parent who has to ask the price often doesn&rsquo;t bother. And families who book already know what it costs, so there are no surprises after the trial.</p>
+<h3>Real photos</h3>
+<p>Your classes, your coaches, your children enjoying it. Stock photos tell a parent nothing. Real ones show them exactly what their child would be walking into.</p>
+<h3>Your coaches</h3>
+<p>Names, photos and a line about each. Parents are trusting you with their child, and they want to know who will be in the room.</p>
+<h3>Reviews</h3>
+<p>Real Google reviews from real parents say more than anything you could write about yourself.</p>
+<h3>One clear button</h3>
+<p>&ldquo;Book a free trial&rdquo;, on every page, easy to find with a thumb.</p>
+
+<h2>Friction: what stands between a parent and a booking</h2>
+<p>In business, anything that stands between a customer and the next step is called friction. On a club website, it&rsquo;s every step, form, wait and unanswered question between a parent landing on your page and booking a trial.</p>
+${term('friction')}
+<p>Not all friction is bad. The trick is knowing the difference.</p>
+
+<h3>Bad friction</h3>
+${term('badfriction')}
+<ul>
+  <li>Having to email or message to ask for a trial, then waiting for a reply.</li>
+  <li>No prices, so they have to ask.</li>
+  <li>Having to create an account before they can see the times.</li>
+  <li>A long form asking for things you don&rsquo;t need yet.</li>
+  <li>A booking page that&rsquo;s hard to use on a phone.</li>
+</ul>
+<p>Every one of these loses you families who were ready to come. Most never tell you. They just leave.</p>
+
+<h3>Good friction</h3>
+${term('goodfriction')}
+<p>Some steps are worth adding on purpose. At our club, we ask families why they want to join when they book. It takes a few seconds, and it means the people who book are serious about coming.</p>
+<ul>
+  <li>Asking why they want to join, or what they hope their child gets from it.</li>
+  <li>Choosing a specific date, rather than &ldquo;pop along some time&rdquo;.</li>
+  <li>A mobile number, so you can remind them before the trial.</li>
+  <li>The details you need to look after their child in class.</li>
+</ul>
+<p>Good friction makes a booking feel like a commitment, so more families turn up. It also tells you something useful about every family before they walk in.</p>
+<div class="lc-callout"><p>Remove every step that doesn&rsquo;t help. Keep the ones that make a booking serious.</p></div>
+
+<h2>Fast, and made for phones</h2>
+<p>Most parents will see your website on their phone, often in a spare minute. It needs to load quickly and work with one thumb. If it doesn&rsquo;t, they won&rsquo;t wait.</p>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Answer every question a parent asks before they book.</li>
+  <li>A page for each class, with ages, times, place and price.</li>
+  <li>Real photos, your coaches and real reviews.</li>
+  <li>A free trial button on every page.</li>
+  <li>Remove bad friction, and keep the good friction that makes bookings serious.</li>
+  <li>Fast on a phone.</li>
+</ol>`,
+    one: ['A website built around the questions your parents ask.', 'A page for each class, with ages, times, place and price.', 'Free trial booking in a couple of taps, asking the questions you want asked.', 'Live chat and missed-call text back, so questions get answered.', 'Fast on every phone, and built so Google and AI search understand it.'],
+    oneLead: 'A website that answers every question. <span>And books the trial.</span>',
+    faq: [
+      ['What should a kids’ club website include?', 'Everything a parent wants to know before booking a trial: ages, days, times, place, price, what to wear, who the coaches are and how joining works. A page for each class, real photos, reviews and a free trial button on every page.'],
+      ['Should I put my prices on my club website?', 'Yes. Many parents won’t ask, they’ll just move on. Showing your price also means the families who book already know the cost, so there are no surprises after the trial.'],
+      ['What is good friction and bad friction?', 'Bad friction is a step that turns families away for no reason, like emailing to ask or a long form. Good friction is a step you add on purpose, like asking why they want to join, so the families who book are serious and more of them turn up.']
+    ],
+    related: ['get-your-club-found-on-google-and-chatgpt', 'get-more-trials-to-show-up']
+  },
+
+  {
+    slug: 'club-business-words',
+    topic: 'running',
+    title: 'Club business words, explained',
+    short: 'Business words',
+    docTitle: 'Club Business Words Explained: Churn, Friction, Conversion and More | Kanvas One',
+    desc: 'Churn, retention, friction, conversion rate, lifetime value. The business words behind running a club, in plain English, with examples from a real kids’ club.',
+    card: 'Churn, friction, conversion rate, lifetime value. The business words behind running a club, in plain English.',
+    read: 4,
+    body: `
+<p>Running a club is running a business, and business comes with its own words. You don&rsquo;t need them to run a great club. But knowing them makes it much easier to spot what&rsquo;s working, what isn&rsquo;t, and what to fix.</p>
+<p>Here they are in plain English, with examples from a real club. Wherever you see a word with a dotted line in our guides, tap it for the same explanation.</p>
+${WORD_LIST}`,
+    one: ['Trials, show-ups and new members counted for you.', 'See who&rsquo;s joined, who&rsquo;s paused and who&rsquo;s left.', 'Failed payments chased, so involuntary churn stays low.', 'Your website and booking built with as little bad friction as possible.', 'A flat &pound;250 a month. We take 0% of your payments.'],
+    oneLead: 'The numbers that matter. <span>Kept for you.</span>',
+    faq: [
+      ['What is churn?', 'Churn is how many members leave over a period, usually counted each month. If 3 of your 60 members leave in a month, your churn is 5%.'],
+      ['What is lifetime value?', 'What one member is worth over the whole time they stay. At £50 a month, a child who stays two years is worth £1,200.']
+    ],
+    related: ['stop-children-dropping-out-of-your-club', 'what-should-a-kids-club-website-have']
+  }
 ];
 
 const bySlug = Object.fromEntries(GUIDES.map((g) => [g.slug, g]));
@@ -959,7 +1211,8 @@ const SCRIPTS = `<script src="/consent.js?v=2c4fee5d"></script>
 <script src="/chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One. Ask me anything about running or growing your club. I&rsquo;ll give you a straight answer." data-quick="How do I get more trials to turn up?|Can I see your site and app?|Is it right for my club?" defer></script>
 <script src="/beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/admin-pill.js?v=06da798b"></script>
-<script src="/glossary.js?v=329fcfec" defer></script>
+<script src="/learn/terms.js?v=08ed9258" defer></script>
+<script src="/glossary.js?v=d3003e23" defer></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
 <script src="/learn/learn.js?v=197ceef8" defer></script>
 </body>
@@ -988,7 +1241,7 @@ ${ld.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script
 <link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="/styles.css?v=aff04046">
 <link rel="stylesheet" href="/home.css?v=5473fb1f">
-<link rel="stylesheet" href="/learn/learn.css?v=fdf511bb">
+<link rel="stylesheet" href="/learn/learn.css?v=153e69ff">
 </head>
 <body class="home learn">
 
@@ -1072,6 +1325,7 @@ function indexPage() {
     <div class="lc-topics" role="group" aria-label="Topics">
       <button type="button" data-topic="" aria-pressed="true">All</button>${topics.map((t) => `<button type="button" data-topic="${t}" aria-pressed="false">${TOPICS[t]}</button>`).join('')}
     </div>
+    <p class="lc-words"><a href="/learn/club-business-words">New to the jargon? Club business words, explained &rsaquo;</a></p>
   </div></div>
 </header>
 <section class="lc-more" style="padding-top:8px" data-tone="white">
