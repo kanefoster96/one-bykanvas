@@ -135,3 +135,13 @@
   .lc-table td:nth-child(2){font-weight:400;color:var(--ink-2)}
   .lc-table td:nth-child(3)::before{content:"Kanvas One: ";font-weight:700;color:#c93e09}
 }
+
+/* A worked sum: label on the left, figure on the right. */
+.lc-sum{margin:6px 0 22px;border:1px solid var(--line-soft);border-radius:16px;overflow:hidden}
+.lc-sum table{width:100%;border-collapse:collapse;font-size:15.5px;line-height:1.4}
+.lc-sum td{padding:11px 16px;border-top:1px solid var(--line-soft);vertical-align:top}
+.lc-sum tr:first-child td{border-top:0}
+.lc-sum td:last-child{text-align:right;white-space:nowrap;font-weight:600}
+.lc-sum tr.tot td{background:var(--glass,#f5f5f7)}
+.lc-sum tr.hot td{background:#fff3ec;color:#c93e09}
+@media (max-width:560px){.lc-sum table{font-size:14.5px}.lc-sum td{padding:10px 12px}}
