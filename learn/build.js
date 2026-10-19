@@ -155,6 +155,7 @@ const GUIDES = [
 <p>At our club, every new paying member can invite one friend in their first 30 days. The friend comes to class with them for 30 days, free. At the end, the friend either joins or simply stops coming. There&rsquo;s nothing to cancel and no awkward conversation.</p>
 <p>The timing is what makes it work. A new child is at their most nervous in their first few weeks, and bringing a friend they already know makes those weeks easier. By the end of the month they&rsquo;ve made other friends in the class too, so they&rsquo;re far more likely to stay, whether or not their friend does.</p>
 <p>And the friend arrives already knowing someone, so they skip the nerves most trials start with.</p>
+<p>That&rsquo;s how we run it, and it&rsquo;s only one way. Some clubs prefer a sibling offer, a discount for the member who brings someone, or nothing at all. Whatever suits your club is the right scheme.</p>
 <p>Here&rsquo;s what it actually costs you. The friend takes a space in a class that would have been empty anyway. You were already paying for the hall and the coach. If they join at the end of the month, you&rsquo;ve gained a member for the price of a space you couldn&rsquo;t sell.</p>
 <div class="lc-stats">
   <div class="lc-stat"><b>&pound;0</b><span>extra cost: the space was empty anyway</span></div>
@@ -192,7 +193,7 @@ const GUIDES = [
 
 <h2>Put together</h2>
 <p>None of these are complicated. The hard part is doing all of them, every week, while also running classes. A club that does all seven usually fills up.</p>`,
-    one: ['Free trial booking on your own website, with consent and medical forms.', 'A free month for a friend, sent by each new member from the app in their first 30 days.', 'Local Facebook and Instagram ads, run for you, with the first 3 months on us.', 'Your website built so Google and AI search understand your classes.', 'Joining in a tap, and the follow-up sent for you after every trial.', 'An app for parents with news, photos, payments and pause instead of cancel.'],
+    one: ['Free trial booking on your own website, with consent and medical forms.', 'A free month for a friend, sent by each new member from the app, or your own scheme built in instead.', 'Local Facebook and Instagram ads, run for you, with the first 3 months on us.', 'Your website built so Google and AI search understand your classes.', 'Joining in a tap, and the follow-up sent for you after every trial.', 'An app for parents with news, photos, payments and pause instead of cancel.'],
     oneLead: 'All seven, in one system. <span>Run for you.</span>',
     faq: [
       ['How do I get more children to join my club?', 'Make the first step a free trial, reach local parents who don&rsquo;t know you exist with a few pounds of ads, and make joining take one tap. Then follow up within a day of every trial and let your members bring a friend free.'],
