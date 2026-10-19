@@ -20,7 +20,7 @@ const ESC = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const plain = (html) => String(html).replace(/<[^>]+>/g, '').replace(/&rsquo;/g, '’').replace(/&lsquo;/g, '‘').replace(/&pound;/g, '£').replace(/&amp;/g, '&').replace(/&ndash;/g, '–').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
 
 /* The topics the front page filters by. */
-const TOPICS = { trials: 'Getting trials', members: 'Getting members', ads: 'Ads', software: 'Choosing software' };
+const TOPICS = { trials: 'Getting trials', members: 'Getting members', keeping: 'Keeping members', money: 'Pricing and payments', ads: 'Ads', software: 'Choosing software', start: 'Starting a club' };
 
 /* Every guide ends here. `lead` says which part of One the guide was about. */
 function oneBand(lead, points) {
@@ -439,7 +439,462 @@ const GUIDES = [
       ['Can I track attendance for gradings?', 'Yes. With registers and QR check-in on your phone, every session a student attends is counted automatically, so you can see who is ready to grade.']
     ],
     related: ['easiest-software-for-dance-schools', 'classforkids-alternative']
+  },
+  {
+    slug: 'how-much-to-charge-for-kids-classes',
+    topic: 'money',
+    title: 'How much should you charge for kids’ classes?',
+    short: 'How much to charge',
+    docTitle: 'How Much to Charge for Kids’ Classes: Pricing Your Club | Kanvas One',
+    desc: 'Most kids’ clubs undercharge. How we went from £16 a month to £50 and filled our classes, and a simple sum to find your own price.',
+    card: 'Most clubs undercharge. How we went from £16 a month to £50 and filled our classes, and the sum to find your price.',
+    read: 6,
+    body: `
+<p>Most club owners set their price the same way. They look at what the club down the road charges, and go a little lower. I did exactly that.</p>
+<p>It feels safe, but it nearly always means undercharging. And undercharging doesn’t just cost you money. It can cost you members too.</p>
+
+<h2>What happened when I raised my prices</h2>
+<p>When I started, I charged &pound;16 a month. It was very quiet. When I went up to &pound;30 a month, more families joined, not fewer. When I raised it to &pound;50 a month, we became close to fully booked.</p>
+<div class="lc-stats">
+  <div class="lc-stat"><b>&pound;16</b><span>a month: very quiet</span></div>
+  <div class="lc-stat"><b>&pound;30</b><span>a month: more members</span></div>
+  <div class="lc-stat hot"><b>&pound;50</b><span>a month: close to fully booked</span></div>
+</div>
+<p class="lc-note">Our own club. Plenty else changed over those years too, so I won&rsquo;t pretend price was the only thing. But raising it never emptied a class.</p>
+<p>It sounds backwards, but it makes sense when you think about it from a parent&rsquo;s side.</p>
+<ul>
+  <li><strong>Price tells parents what to expect.</strong> A very cheap class can look like something to fill an hour. A properly priced one looks like something taken seriously.</li>
+  <li><strong>People value what they pay for.</strong> Families who pay a fair price tend to turn up, every week.</li>
+  <li><strong>Limited spaces are worth more.</strong> If your classes have a set number of places, a fuller class with a waiting list is a reason to join now.</li>
+  <li><strong>More money makes a better club.</strong> Better coaches, smaller groups, costumes, shows. Parents notice all of it.</li>
+</ul>
+<p>One honest warning: this only works if the class is genuinely good. A higher price makes a great class look great. It won&rsquo;t rescue a poor one.</p>
+
+<h2>A simple sum to find your price</h2>
+<p>Instead of starting with what others charge, start with what you need. Work it out for <strong>80% full, over 10 months</strong>.</p>
+<ol>
+  <li><strong>Add up what you want for a year.</strong> What you want to take home, plus every cost: hall hire, coaches, insurance, licences, kit, software.</li>
+  <li><strong>Divide it by 10.</strong> That&rsquo;s what you need each month.</li>
+  <li><strong>Count your spaces and take 80%.</strong> Every class, every space, then 80% of that.</li>
+  <li><strong>Divide the monthly figure by those spaces.</strong> That&rsquo;s your price per child, per month.</li>
+</ol>
+
+<h3>An example</h3>
+<div class="lc-sum"><table>
+  <tbody>
+    <tr><td>What you want to take home</td><td>&pound;24,000 a year</td></tr>
+    <tr><td>Hall hire</td><td>&pound;4,000</td></tr>
+    <tr><td>A coach</td><td>&pound;6,000</td></tr>
+    <tr><td>Insurance and licences</td><td>&pound;600</td></tr>
+    <tr><td>Software, website and app</td><td>&pound;3,000</td></tr>
+    <tr class="tot"><td><strong>Total for the year</strong></td><td><strong>&pound;37,600</strong></td></tr>
+    <tr><td>Divided by 10 months</td><td>&pound;3,760 a month</td></tr>
+    <tr><td>6 classes of 15 spaces, 80% full</td><td>72 children</td></tr>
+    <tr class="hot"><td><strong>Your price</strong></td><td><strong>about &pound;52 a month</strong></td></tr>
+  </tbody>
+</table></div>
+<p>If a lot of your children come to more than one class, do the same sum per class space instead of per child.</p>
+
+<h3>Why 80%?</h3>
+<p>You&rsquo;ll rarely be 100% full. Children start and leave, siblings come and go, and a class running at about 80% still feels busy and lively. If your price only works when every space is full, it doesn&rsquo;t work.</p>
+
+<h3>Why 10 months, not 12?</h3>
+<p>Ten months is easier to track, and it gives you room for the summer dip, holidays and the odd quiet month. If you hit your number in 10 months, the other two are a bonus. In the example above, those two months are worth about &pound;7,500.</p>
+
+<div class="lc-callout"><p>Price for 80% full over 10 months. Anything above that is a bonus, not a bill you were counting on.</p></div>
+
+<h2>Termly or monthly?</h2>
+<p>It matters far less than the number itself. Charge the way the families near you are used to paying. If you charge by the term, it&rsquo;s the same sum: work out the year, then divide by your terms instead of by 10.</p>
+
+<h2>When to put your price up</h2>
+<ul>
+  <li><strong>When your classes are full</strong>, or you have a waiting list.</li>
+  <li><strong>When your costs go up</strong>, such as a new hall or another coach.</li>
+  <li><strong>When you&rsquo;ve added something</strong>, like a show, new kit or extra sessions.</li>
+</ul>
+<p>Give families at least a month&rsquo;s notice, and say plainly what the money goes on. Most parents are fine with a fair rise from a club their child loves.</p>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Stop pricing from the club down the road.</li>
+  <li>Add up what you want for a year, costs included.</li>
+  <li>Divide by 10 months, then by 80% of your spaces.</li>
+  <li>Charge termly or monthly, whichever your families expect.</li>
+  <li>Review your price whenever classes fill up.</li>
+</ol>`,
+    one: ['Your free profit plan works out your price and your break-even before you start.', 'Monthly, termly or a mix, paid by card in your own app.', 'Sibling and family discounts worked out automatically.', 'Payments go straight to your own Stripe account. We take 0%.', 'A flat &pound;250 a month, however many members you have.'],
+    oneLead: 'Work out your price. <span>Then get paid it, automatically.</span>',
+    faq: [
+      ['How much should I charge for a kids’ class?', 'Work it out from what you need, not from what others charge. Add up what you want to take home plus every cost for the year, divide by 10 months, then divide by 80% of your class spaces. That gives you a price per child per month. Our own club charges £50 a month.'],
+      ['Will I lose members if I put my prices up?', 'Not usually, if the class is good and you give notice. When we went from £16 to £30 a month, and later to £50, more families joined, not fewer.'],
+      ['Should I charge termly or monthly?', 'Either works. The price matters far more than how it is collected. Charge the way families near you are used to paying.']
+    ],
+    related: ['stop-chasing-late-payments', 'make-more-money-from-your-kids-club']
+  },
+
+  {
+    slug: 'stop-chasing-late-payments',
+    topic: 'money',
+    title: 'How to stop chasing late payments at your kids’ club',
+    short: 'Stop chasing payments',
+    docTitle: 'How to Stop Chasing Late Payments at Your Kids’ Club | Kanvas One',
+    desc: 'Cash, bank transfers and awkward chats at the door. How we stopped chasing parents for money, and the polite message to send when a payment fails.',
+    card: 'Cash, bank transfers and awkward chats at the door. How we stopped chasing parents for money.',
+    read: 5,
+    body: `
+<p>Chasing money is the part of running a club nobody enjoys. Working out who has paid, sending reminders, then having an awkward word at the door, sometimes in front of the child.</p>
+<p>Most late payments aren&rsquo;t anyone being difficult. A card expired, there wasn&rsquo;t quite enough in the account that day, or a standing order was never set up. Fix the system and most of the chasing goes away.</p>
+
+<h2>1. Take payments automatically</h2>
+<p>Cash, bank transfers and standing orders all rely on the parent remembering, and on you checking. Card payments taken automatically on the same date every month don&rsquo;t.</p>
+<p>The parent adds their card once when they join, by card or Apple Pay. From then on it just happens, and you can see at a glance who has paid.</p>
+
+<h2>2. Let the reminders do the chasing</h2>
+<p>When a payment fails, send a reminder straight away, with a link to pay or update the card. Keep it friendly and assume it&rsquo;s a mistake, because it nearly always is.</p>
+<div class="lc-msg"><small>A message you can copy</small>Hi Sarah, Ava&rsquo;s payment for October didn&rsquo;t go through. It&rsquo;s usually an old card. You can pay or update it here, it only takes a minute: [link]. Thanks!</div>
+<p>No &ldquo;overdue&rdquo;, no &ldquo;final notice&rdquo;, no guilt. Just what happened and the quickest way to fix it.</p>
+
+<h2>3. Show it at the door, without saying a word</h2>
+<p>This is the one that has helped us most. Every member at our club has a QR pass in the app that they scan when they arrive.</p>
+<p>If a payment has been missed, two things happen:</p>
+<ul>
+  <li><strong>The member&rsquo;s own pass turns bright red</strong>, with a <em>Pay now</em> button. It stays there until it&rsquo;s paid.</li>
+  <li><strong>The coach&rsquo;s phone shows an alert</strong> when they scan, with an important note to show the parent.</li>
+</ul>
+<p>Parents open their pass while they wait in the queue. When they see red, their first thought is to tap <em>Pay now</em> before they reach the coach. Most of the time it&rsquo;s sorted before anyone has to have the conversation.</p>
+<div class="lc-callout"><p>The best reminder is the one a parent sees at the exact moment they can fix it.</p></div>
+
+<h2>4. Let people pause instead of cancel</h2>
+<p>Some missed payments are really people who meant to stop for a while: exams, an injury, a long holiday. Give them an easy way to pause, and they won&rsquo;t simply let a payment fail. Most come back when the pause ends.</p>
+
+<h2>5. Agree it all when they join</h2>
+<p>Put it in your terms, and have families accept them when they sign up: when payments are taken, what happens if one fails, and how to pause or cancel. It saves arguments later, and it means you never have to make up a rule on the spot.</p>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Move every family to automatic card payments.</li>
+  <li>Send a friendly reminder the moment a payment fails, with a link to fix it.</li>
+  <li>Make a missed payment visible on their pass, at the door.</li>
+  <li>Offer pause instead of cancel.</li>
+  <li>Have families accept your payment terms when they join.</li>
+</ol>`,
+    one: ['Card and Apple Pay payments taken automatically, monthly or by the term.', 'Failed payments chased for you with friendly reminders and a link to pay.', 'A bright red pass with a Pay now button until it&rsquo;s paid.', 'An alert on the coach&rsquo;s phone when that member scans in.', 'Pause instead of cancel, and your terms accepted at sign-up.'],
+    oneLead: 'No more chasing. <span>It sorts itself out at the door.</span>',
+    faq: [
+      ['How do I get parents to pay on time?', 'Take payments automatically by card on the same date each month, so nobody has to remember. When one fails, send a friendly reminder straight away with a link to pay, and show it on their pass when they arrive.'],
+      ['What should I say when a payment is late?', 'Keep it short and kind, and assume it is a mistake: tell them the payment didn’t go through, that it’s usually an old card, and give them a link to fix it in a minute.'],
+      ['Should a child still train if a payment is missed?', 'That is your call. What helps most is making the missed payment visible before you get to that point. At our club the member’s pass turns red with a Pay now button, so most parents pay in the queue.']
+    ],
+    related: ['how-much-to-charge-for-kids-classes', 'stop-children-dropping-out-of-your-club']
+  },
+
+  {
+    slug: 'stop-children-dropping-out-of-your-club',
+    topic: 'keeping',
+    title: 'How to stop children dropping out of your club',
+    short: 'Stop children dropping out',
+    docTitle: 'How to Stop Children Dropping Out of Your Club | Kanvas One',
+    desc: 'Children rarely leave because they dislike the class. They leave when they stop feeling like they’re getting somewhere. How we keep members past the month-five dip.',
+    card: 'Children leave when they stop feeling they’re getting somewhere. How we keep members past the month-five dip.',
+    read: 6,
+    body: `
+<p>&ldquo;She&rsquo;s lost interest.&rdquo; Every club owner has heard it. It rarely means the child stopped liking the class. Usually it means they stopped noticing that they were getting better.</p>
+<p>In the first few weeks everything is new: new friends, new skills, a new kit. Then the progress gets slower and harder to see, the novelty wears off, and something else starts competing for that evening.</p>
+
+<h2>Watch for month five</h2>
+<p>At our club, month five is when families are most likely to drift away. The excitement of starting has worn off, and the next big thing feels a long way off.</p>
+<p>Whenever it is at your club, the fix is the same: make sure there&rsquo;s always something coming up, and put something worth staying for just before the point people usually leave.</p>
+
+<h2>1. Always be working towards something</h2>
+<p>A class is about learning, but it&rsquo;s also their hobby and something they should look forward to. Children stay when there&rsquo;s a goal they can see:</p>
+<ul>
+  <li>a team routine they&rsquo;re close to finishing</li>
+  <li>a show or a competition coming up</li>
+  <li>a grading, badge or new level</li>
+  <li>a new skill the whole group is working on</li>
+</ul>
+<p>If a child is three weeks from finishing a routine with their friends, they don&rsquo;t want to miss it.</p>
+
+<h2>2. Put a milestone just before the dip</h2>
+<p>If most people drift at month five, give them something to earn at the end of month five. For example, every dancer who reaches five months becomes a <strong>Level 2 dancer</strong>, with a badge to go with it.</p>
+<p>Tell them it&rsquo;s coming. A child who knows they&rsquo;ll be Level 2 at the end of this month talks about it at home, and a parent thinking about stopping usually waits until they&rsquo;ve got it. By then the next goal is already in sight.</p>
+<div class="lc-callout"><p>Give them something to stay for, just before the point they&rsquo;d usually leave.</p></div>
+
+<h2>3. Make them feel part of something</h2>
+<p>Children stay for their friends and for the feeling of belonging to something important. Team names, club kit, shows, photos of the group and celebrating each other&rsquo;s wins all help. So does a coach who knows every child&rsquo;s name and what they&rsquo;re working on.</p>
+
+<h2>4. Show parents the progress too</h2>
+<p>Parents pay, so parents need to see it working. They aren&rsquo;t in the room every week. Send photos, news, milestones and show dates, so they can see their child growing in confidence and getting better.</p>
+
+<h2>5. Notice the quiet ones early</h2>
+<p>Most children don&rsquo;t leave in one go. They miss a week, then two, then the parent cancels. Keep an eye on your registers, and when a child has missed a couple of sessions, send a short, kind message. No guilt, just &ldquo;we&rsquo;ve missed her, hope all is well.&rdquo;</p>
+
+<h2>6. Offer pause instead of cancel</h2>
+<p>Exams, injuries and busy months happen. A pause keeps their place and their progress, and makes coming back easy. A cancellation usually means they&rsquo;re gone for good.</p>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Find the month your members usually leave.</li>
+  <li>Put a milestone, badge or level just before it.</li>
+  <li>Always have the next routine, show or goal in sight.</li>
+  <li>Make children feel part of a team, and show parents the progress.</li>
+  <li>Message children who go quiet, and offer pause instead of cancel.</li>
+</ol>`,
+    one: ['Rewards and milestones built around your club&rsquo;s own levels and badges.', 'A community feed for photos, news and celebrating wins.', 'Shows and events with tickets booked in the app.', 'A kind &ldquo;we haven&rsquo;t seen you&rdquo; message when a child hasn&rsquo;t been in for four weeks.', 'Pause instead of cancel, so a busy month isn&rsquo;t goodbye.'],
+    oneLead: 'Keep the members you&rsquo;ve worked to get. <span>Automatically.</span>',
+    faq: [
+      ['Why do children quit clubs?', 'Usually not because they dislike the class. They stop noticing their own progress, the novelty wears off, and something else competes for that evening. A clear next goal and a sense of belonging keep most children coming.'],
+      ['When are members most likely to leave?', 'At our club it is month five, when the excitement of starting has worn off. Look at your own records to find yours, then put a milestone just before it.'],
+      ['How do I keep members for longer?', 'Always have something to work towards, like a routine, show, grading or new level. Put a milestone just before the point people usually leave, show parents the progress, and offer pause instead of cancel.']
+    ],
+    related: ['get-more-members-kids-club', 'stop-chasing-late-payments']
+  },
+
+  {
+    slug: 'get-your-club-found-on-google-and-chatgpt',
+    topic: 'members',
+    title: 'How to get your kids’ club found on Google and ChatGPT',
+    short: 'Found on Google and ChatGPT',
+    docTitle: 'How to Get Your Kids’ Club Found on Google and ChatGPT | Kanvas One',
+    desc: 'More parents now ask Google or ChatGPT for a club near them. What decides who gets recommended, and why 7 of our last 29 trial bookings came from search.',
+    card: 'Parents now ask Google or ChatGPT for a club near them. What decides who gets recommended.',
+    read: 6,
+    body: `
+<p>A parent wants a dance class for their five year old. A few years ago they&rsquo;d have asked other parents at the school gate. Now plenty of them type &ldquo;dance classes for 5 year olds near me&rdquo; into Google, or ask ChatGPT to recommend one.</p>
+<p>Whoever shows up in that answer gets the booking. And unlike ads, it costs nothing each time.</p>
+
+<h2>Our numbers</h2>
+<div class="lc-stats">
+  <div class="lc-stat"><b>29</b><span>trial bookings in four weeks</span></div>
+  <div class="lc-stat"><b>5</b><span>came from Google</span></div>
+  <div class="lc-stat hot"><b>2</b><span>came from ChatGPT</span></div>
+</div>
+<p class="lc-note">Our own club, 21 September to 18 October 2026, from where each booking came from.</p>
+<p>Nearly one in four of our trial bookings came from search, with no ad behind it. Two came from families who asked ChatGPT.</p>
+
+<h2>How Google and AI search decide</h2>
+<p>Google and AI tools like ChatGPT are trying to answer one question: which club is the best answer for this parent? They work it out from what they can read about you online. If they can&rsquo;t find clear answers, they recommend someone else.</p>
+<p>That means everything below is about making it easy for them to understand who you are, what you run, for which ages, where and when.</p>
+
+<h2>1. A page for every class</h2>
+<p>One page that says &ldquo;we run classes for all ages&rdquo; doesn&rsquo;t answer anyone&rsquo;s question. A page for each class does: <em>Street Dance for ages 5 to 7, Tuesdays 5:30pm, in Gosforth</em>.</p>
+<p>Write out the ages, days, times, price and area in plain words, as text rather than inside an image, so search engines can read it.</p>
+
+<h2>2. Set up your Google Business Profile</h2>
+<p>It&rsquo;s free, and it&rsquo;s what puts you on the map when someone searches near you. Add your classes, opening hours, photos and a link to book a trial. Keep it up to date, especially over holidays.</p>
+
+<h2>3. Ask for Google reviews at the right moment</h2>
+<p>Reviews are one of the strongest signals for local search, and AI answers read them too. The best moment to ask is just after a great trial or a show, when the family is happiest. Ask every time, not now and then.</p>
+
+<h2>4. Answer the questions parents ask</h2>
+<p>Parents ask the same things: what should my child wear, is there parking, can I watch, what if they&rsquo;re shy, how much is it? Put the answers on your website in plain language. AI search loves a clear answer to a real question.</p>
+
+<h2>5. Use the same details everywhere</h2>
+<p>Your club name, address and phone number should match exactly on your website, Google profile, Facebook page and any local listings. Mismatches make it harder for search engines to be sure you&rsquo;re the same club.</p>
+
+<h2>6. Get mentioned locally</h2>
+<p>Local news, school newsletters, community pages and &ldquo;things to do with kids&rdquo; lists all help. Every mention is another place that says you exist and where you are.</p>
+
+<h2>7. Make it fast and easy to book</h2>
+<p>Being found is only half of it. If the page is slow on a phone, or the parent can&rsquo;t see how to book a trial, they go back and try the next club. A clear &ldquo;book a free trial&rdquo; button on every class page turns searches into bookings.</p>
+
+<div class="lc-callout"><p>Nobody honest can promise you a ranking. But a club that answers parents&rsquo; questions clearly gives Google and AI search every reason to recommend it.</p></div>
+
+<h2>Check how you look</h2>
+<p>Try it yourself. Search Google for your type of class near you, and ask ChatGPT &ldquo;what&rsquo;s a good kids&rsquo; dance class in [your area]?&rdquo;. If you don&rsquo;t appear, or the details are wrong, work through the list above.</p>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>A page for each class with ages, days, times, price and area.</li>
+  <li>A Google Business Profile, kept up to date.</li>
+  <li>A review asked for after every great trial.</li>
+  <li>Plain answers to the questions parents ask.</li>
+  <li>The same name, address and phone number everywhere.</li>
+  <li>A free trial button on every class page.</li>
+</ol>`,
+    one: ['Your website built with a page for each class, written so Google and AI search understand it.', 'The details search engines read, added behind the scenes on every page.', 'Your Google Business Profile set up and kept up to date.', 'A Google review asked for automatically after every trial.', 'Free trial booking on every page, in a couple of taps.'],
+    oneLead: 'Be the club they recommend. <span>Without paying per click.</span>',
+    faq: [
+      ['How do I get my club to show up on Google?', 'Have a page for each class with the ages, days, times and area written out plainly, set up and keep your Google Business Profile up to date, and ask happy families for a Google review after every trial.'],
+      ['How do I get ChatGPT to recommend my club?', 'AI search reads the same things Google does: your website, your Google profile, reviews and local mentions. Clear pages for each class and plain answers to parents’ questions give it something to recommend. 2 of our last 29 trial bookings came from ChatGPT.'],
+      ['Can anyone guarantee a top ranking on Google?', 'No. Be wary of anyone who promises one. You can make it as easy as possible for Google and AI search to understand and trust your club, and that is what works.']
+    ],
+    related: ['get-more-members-kids-club', 'are-facebook-ads-worth-it-for-kids-clubs']
+  },
+
+  {
+    slug: 'does-my-kids-club-need-an-app',
+    topic: 'software',
+    title: 'Does your kids’ club need its own app?',
+    short: 'Does your club need an app?',
+    docTitle: 'Does Your Kids’ Club Need Its Own App? | Kanvas One',
+    desc: 'We think every club should have its own app, and we run one. The honest reasons why: messages parents actually see, less admin, and everything in one place.',
+    card: 'We think every club should have one. The honest reasons why, and what to look for.',
+    read: 5,
+    body: `
+<p>We think every club should have its own app. We would say that, because we build them. So here are the reasons we have one at our own club, and the honest downsides too.</p>
+
+<h2>1. Messages parents actually see</h2>
+<p>Emails get buried. Texts cost money. WhatsApp groups mean sharing your personal number, messages at 11pm and a hundred &ldquo;thank you&rdquo;s every time you post.</p>
+<p>A notification from your app lands on the parent&rsquo;s lock screen, costs nothing to send and goes to exactly the right families: one class, one age group, or everyone. Class cancelled because of snow? Everyone knows in seconds.</p>
+
+<h2>2. Less admin for you</h2>
+<p>Registers on your phone, with QR check-in at the door. Medical notes and emergency contacts in your pocket during every class. Payments taken and chased for you. No paper, no spreadsheets, no cash tin.</p>
+
+<h2>3. Everything in one place for parents</h2>
+<p>Parents juggle a lot. An app gives them one place for everything to do with your club:</p>
+<ul>
+  <li>the timetable and holiday dates</li>
+  <li>their child&rsquo;s pass to scan in</li>
+  <li>payments, receipts and pausing</li>
+  <li>uniform, kit and show tickets</li>
+  <li>photos, news and messages from you</li>
+</ul>
+<p>When everything is easy to find, you get fewer &ldquo;what time is it again?&rdquo; messages.</p>
+
+<h2>4. Your name on their home screen</h2>
+<p>Some booking systems put your club inside a shared app, next to lots of other clubs. Your own app has your name and logo, sits on the parent&rsquo;s home screen, and is about nobody but you. It makes a small club look established.</p>
+
+<h2>5. A community, not just a timetable</h2>
+<p>A feed for photos, news and celebrating wins makes families feel part of something. That sense of belonging is a big part of why children stay.</p>
+
+<h2>The honest downsides</h2>
+<ul>
+  <li><strong>Apple and Google charge for developer accounts.</strong> &pound;79 a year for Apple and a one-off $25 for Google, paid to them.</li>
+  <li><strong>Getting into the stores takes time.</strong> Apple and Google review every app, which usually takes 1 to 4 weeks.</li>
+  <li><strong>Parents have to download it.</strong> The trick is making the app the place where things happen: the pass to scan in, the payments, the photos. Then they open it every week.</li>
+</ul>
+
+<h2>What to look for</h2>
+<ol>
+  <li>Your own name and logo, in the App Store and Google Play.</li>
+  <li>Notifications you can send to one class or everyone.</li>
+  <li>QR check-in and registers for your coaches.</li>
+  <li>Payments, pause and failed-payment chasing built in.</li>
+  <li>A shop for kit and tickets.</li>
+  <li>Everything also working on your website, for parents who don&rsquo;t download it.</li>
+</ol>`,
+    one: ['Your own app with your club&rsquo;s name and logo, in the App Store and Google Play.', 'Free notifications to one class, one age group or everyone.', 'QR passes, registers and medical notes on every coach&rsquo;s phone.', 'Payments, pause, shop, tickets and a community feed in one place.', 'Every feature works on your website too, while the app is in review.'],
+    oneLead: 'Your club, on every parent&rsquo;s phone. <span>With your name on it.</span>',
+    faq: [
+      ['Does a small club need an app?', 'It helps small clubs most, because it takes the admin off your plate and makes you look established. Messages are free and seen, registers and payments run themselves, and parents find everything in one place.'],
+      ['How much does it cost to have your own app?', 'Apple charges £79 a year and Google a one-off $25 for the developer accounts your app is published under. Kanvas One includes the app itself in its £250 a month.'],
+      ['Will parents actually download it?', 'They will if the app is where things happen: the pass to scan in at the door, payments, photos and news. Everything should still work on your website for anyone who doesn’t.']
+    ],
+    related: ['easiest-software-for-dance-schools', 'classforkids-alternative']
+  },
+
+  {
+    slug: 'make-more-money-from-your-kids-club',
+    topic: 'money',
+    title: 'How to make more money from your club without adding classes',
+    short: 'Make more without more classes',
+    docTitle: 'How to Make More Money From Your Kids’ Club Without Adding Classes | Kanvas One',
+    desc: 'Classes full and no more evenings to give? Five ways to earn more from the club you already have: pricing, showcases, workshops, uniform and parties.',
+    card: 'Classes full and no more evenings to give? Five ways to earn more from the club you already have.',
+    read: 5,
+    body: `
+<p>At some point you run out of room. The classes are full, the hall is booked and there are no more evenings to give. That&rsquo;s a great problem to have, and it doesn&rsquo;t mean your income has to stop growing.</p>
+
+<h2>1. If you&rsquo;re full, look at your price</h2>
+<p>A waiting list is the clearest sign you&rsquo;re charging too little. When demand is bigger than your spaces, a fair rise won&rsquo;t empty your classes. It just means each space earns what it&rsquo;s worth. We went from &pound;16 to &pound;50 a month over the years and filled up as we went. Here&rsquo;s <a href="/learn/how-much-to-charge-for-kids-classes">how to work out your price</a>.</p>
+
+<h2>2. Put on extra showcases</h2>
+<p>Families love watching their children perform, and grandparents, aunts and friends will come too. A showcase sells tickets, gives every child something to work towards, and helps keep members for longer. If one show a year sells out, try one a term.</p>
+
+<h2>3. Run pop-up workshops with guest instructors</h2>
+<p>Bring in an outside instructor for a one-off workshop: a new style, a special skill, someone well known in your world. Charge a separate fee, and agree either a set fee or a split with the instructor.</p>
+<p>Open them to non-members too. A workshop is an easy first step for families who aren&rsquo;t ready for a weekly class, and some of them will book a trial afterwards.</p>
+
+<h2>4. Release new uniform each term</h2>
+<p>A new hoodie, T-shirt or bag each term gives families something to look forward to, and children love matching their friends. Take pre-orders before you order the stock, so you only buy what&rsquo;s already sold. Hand it out at class.</p>
+
+<h2>5. Host parties</h2>
+<p>Weekend birthday parties run by your coaches, in your hall, are popular with members. Every guest is a local child of the right age, and their parents get to see what your club is like. A party can be your best trial.</p>
+
+<div class="lc-callout"><p>Every extra you offer should either earn money, bring in new families, or give members a reason to stay. The best ones do all three.</p></div>
+
+<h2>Make buying easy</h2>
+<p>Whatever you add, it only earns if it&rsquo;s easy to pay for. Paper slips and cash in envelopes get lost. Selling tickets, workshops and kit in the same place parents already pay their fees, by card in a couple of taps, makes a big difference.</p>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Got a waiting list? Review your price.</li>
+  <li>Add a showcase, and sell tickets.</li>
+  <li>Bring in a guest instructor for a pop-up workshop.</li>
+  <li>Release new uniform each term, on pre-order.</li>
+  <li>Offer birthday parties at weekends.</li>
+</ol>`,
+    one: ['Show and event tickets sold in your app.', 'Workshops and one-off sessions added to your timetable, booked and paid in a tap.', 'A shop for uniform and kit, collected at class.', 'Everything paid into your own Stripe account. We take 0%.', 'Want to sell something else, like parties? Tell me and we build it in.'],
+    oneLead: 'More from every member. <span>Sold in your own app.</span>',
+    faq: [
+      ['How can a kids’ club make more money?', 'If your classes are full, review your price first. Then add extras: showcases with tickets, pop-up workshops with guest instructors, new uniform each term and weekend birthday parties.'],
+      ['Should workshops be open to non-members?', 'Yes, it often works well. A one-off workshop is an easy first step for a family who isn’t ready for a weekly class, and some will book a free trial afterwards.']
+    ],
+    related: ['how-much-to-charge-for-kids-classes', 'stop-children-dropping-out-of-your-club']
+  },
+
+  {
+    slug: 'how-to-start-a-kids-club',
+    topic: 'start',
+    title: 'How to start a kids’ club: pricing, rent and your first members',
+    short: 'Starting a kids’ club',
+    docTitle: 'How to Start a Kids’ Club in the UK: Pricing, Rent and First Members | Kanvas One',
+    desc: 'Thinking of starting a kids’ club? The basics you need in place, how to price it so the rent and coaches are covered, and how to get your first members.',
+    card: 'The basics to put in place, how to price it so the rent is covered, and how to get your first members.',
+    read: 7,
+    body: `
+<p>I started Kanvas Academy in 2017. If you&rsquo;re thinking about starting a club of your own, this is what I&rsquo;d want someone to tell me: what to sort out first, how to make sure the rent and coaches are covered, and how to get your first families through the door.</p>
+
+<h2>1. Decide what and who</h2>
+<p>Start narrow. One style, one age group, one evening. &ldquo;Street dance for 5 to 8 year olds, Tuesdays&rdquo; is far easier to fill and to explain than &ldquo;dance for everyone&rdquo;. You can add classes once the first one is full.</p>
+
+<h2>2. Put the basics in place</h2>
+<p>Working with children means getting a few things right before your first class. In the UK, that usually means:</p>
+<ul>
+  <li><strong>Public liability insurance</strong>, and cover for the activity you teach.</li>
+  <li><strong>DBS checks</strong> for you and anyone who coaches with you.</li>
+  <li><strong>A safeguarding policy</strong>, with a named person responsible.</li>
+  <li><strong>First aid</strong>: a trained first aider and a kit at every session.</li>
+  <li><strong>Consent, medical details and emergency contacts</strong> for every child, with you in every class.</li>
+  <li><strong>A music licence</strong> if you play recorded music in classes.</li>
+</ul>
+<p>Your sport&rsquo;s governing body is a good place to start. Many offer insurance, coaching qualifications and template policies.</p>
+
+<h2>3. Find a hall</h2>
+<p>School halls, community centres, church halls and leisure centres are all worth asking. Most charge by the hour. Start with one or two evenings, and ask about holidays and whether you can store kit.</p>
+
+<h2>4. Work out your price before day one</h2>
+<p>This is where a lot of new clubs go wrong. They pick a low price to get started, then find the rent and the coach take most of it.</p>
+<p>Work it out the other way round: add up your rent, your coaches, your insurance and what you want to take home for the year. Divide by 10 months, then by 80% of your spaces. That&rsquo;s your price. We&rsquo;ve written up <a href="/learn/how-much-to-charge-for-kids-classes">exactly how to do the sum</a>, with an example.</p>
+<p>And don&rsquo;t be afraid of a proper price. When I charged &pound;16 a month, it was very quiet. At &pound;50 we were close to fully booked.</p>
+
+<h2>5. Get your first members</h2>
+<ul>
+  <li><strong>Offer a free trial.</strong> It&rsquo;s the easiest yes for a parent who has never heard of you.</li>
+  <li><strong>Make it easy to find you.</strong> A simple website with your class, ages, day, time and area, and a Google Business Profile.</li>
+  <li><strong>Reach local parents.</strong> A small budget of local Facebook and Instagram ads goes a long way. Our first four weeks cost &pound;145 and brought in 24 trial bookings.</li>
+  <li><strong>Make sure trials turn up.</strong> Confirm and remind every booking. We send <a href="/learn/get-more-trials-to-show-up">four messages before every trial</a>.</li>
+  <li><strong>Make joining take one tap.</strong> Send the link to join the same day as the trial.</li>
+</ul>
+
+<h2>6. Start the way you mean to go on</h2>
+<p>It&rsquo;s tempting to start with cash, paper forms and a WhatsApp group, and sort it out later. Later never comes, and by then you have fifty families to move. Card payments, online booking and proper registers from day one save you hours every week.</p>
+
+<h2>If you&rsquo;re about to start, talk to me</h2>
+<p>This is the bit I enjoy most. If you&rsquo;re planning a club, message me and I&rsquo;ll help you work out your price, what you can afford for rent and coaches, and how many members you need to break even.</p>
+<p>If you&rsquo;d like, we can then set everything up for you on Kanvas One: your website, your own app, trial bookings and payments, run for you. Your first 3 months of ads are on us, up to &pound;100 a month, so free trials come in while you get going. If those ads bring fewer than 10 trial bookings, your next 3 months of One are free.</p>
+<p>It&rsquo;s &pound;250 a month, with no contract. At &pound;50 a month, five members cover it. Your ads start once your website and app are live, which is usually 4 to 8 weeks after you join, so it&rsquo;s worth starting before your first class.</p>`,
+    one: ['Help working out your price, rent and coach costs before you open.', 'Your website and your own app, set up for you.', 'Free trial bookings, consent and medical forms from day one.', 'Your first 3 months of ads on us, up to &pound;100 a month.', '10 trial bookings in those 3 months, or your next 3 months free.'],
+    oneLead: 'Starting a club? <span>Let&rsquo;s get you going.</span>',
+    faq: [
+      ['What do I need to start a kids’ club in the UK?', 'Usually public liability insurance, DBS checks for everyone who coaches, a safeguarding policy, a first aider and kit, consent and medical details for every child, and a music licence if you play recorded music. Your sport’s governing body can help with most of these.'],
+      ['How much should I charge when I start?', 'Work it out from your costs. Add up rent, coaches, insurance and what you want to take home for the year, divide by 10 months, then divide by 80% of your spaces. Don’t start too low: we were very quiet at £16 a month and close to full at £50.'],
+      ['How do I get my first members?', 'Offer a free trial, set up a simple website and Google Business Profile, reach local parents with a small budget of local ads, and confirm and remind every trial booking so they turn up.']
+    ],
+    related: ['how-much-to-charge-for-kids-classes', 'get-more-members-kids-club']
   }
+
 ];
 
 const bySlug = Object.fromEntries(GUIDES.map((g) => [g.slug, g]));
@@ -533,7 +988,7 @@ ${ld.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script
 <link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="/styles.css?v=aff04046">
 <link rel="stylesheet" href="/home.css?v=5473fb1f">
-<link rel="stylesheet" href="/learn/learn.css?v=ddef6de2">
+<link rel="stylesheet" href="/learn/learn.css?v=fdf511bb">
 </head>
 <body class="home learn">
 
@@ -589,7 +1044,7 @@ ${related.length ? `<section class="lc-more" data-tone="white">
     <h2>Keep reading</h2>
     <div class="lc-cards">
     ${related.map(card).join('\n    ')}
-    <a class="lc-card" href="/learn"><span class="tag">Learning Centre</span><b>Every guide for club owners</b><span class="d">Straight answers on trials, members, ads and software.</span><span class="go">See them all &rsaquo;</span></a>
+    <a class="lc-card" href="/learn"><span class="tag">Learning Centre</span><b>Every guide for club owners</b><span class="d">Straight answers on trials, members, pricing, payments and software.</span><span class="go">See them all &rsaquo;</span></a>
     </div>
   </div>
 </section>` : ''}
@@ -601,7 +1056,7 @@ ${SCRIPTS}`;
 
 function indexPage() {
   const url = `${SITE}/learn`;
-  const desc = 'Free guides for kids’ club owners: how to get more trials to turn up, more members, whether ads are worth it, and choosing club software. Written by a club owner.';
+  const desc = 'Free guides for kids’ club owners: more trials and members, what to charge, late payments, keeping members, ads, apps and choosing software. Written by a club owner.';
   const ld = [
     { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Kanvas One Learning Centre', description: desc, url, publisher: PUBLISHER,
       hasPart: GUIDES.map((g) => ({ '@type': 'Article', headline: plain(g.title), url: `${SITE}/learn/${g.slug}` })) }
@@ -612,7 +1067,7 @@ function indexPage() {
   <div class="wrap"><div class="lc-col" style="max-width:860px">
     <p class="lc-kicker">Free guides for club owners</p>
     <h1>Kanvas One Learning Centre</h1>
-    <p class="lc-stand">Straight answers on getting more trials, more members and more from every class. Written from running our own kids&rsquo; club, with our real numbers.</p>
+    <p class="lc-stand">Straight answers on getting more trials and members, what to charge, and keeping the families you have. Written from running our own kids&rsquo; club, with our real numbers.</p>
     <label class="lc-search" for="lcSearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.3 16.3L21 21"/></svg><input id="lcSearch" type="search" placeholder="Search, e.g. trials, ads, dance" autocomplete="off" aria-label="Search the guides"></label>
     <div class="lc-topics" role="group" aria-label="Topics">
       <button type="button" data-topic="" aria-pressed="true">All</button>${topics.map((t) => `<button type="button" data-topic="${t}" aria-pressed="false">${TOPICS[t]}</button>`).join('')}
