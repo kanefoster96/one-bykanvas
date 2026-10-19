@@ -1473,6 +1473,78 @@ ${term('valueequation')}
   },
 
   {
+    slug: 'stop-your-club-taking-over-your-life',
+    topic: 'running',
+    title: 'How to stop your club taking over your life',
+    short: 'Getting your evenings back',
+    docTitle: 'How to Stop Your Kids’ Club Taking Over Your Life | Kanvas One',
+    desc: 'Teaching is the fun part. It’s the late-night messages, chasing leads and not knowing who’s paid that take over. Where the time goes, and how to get it back.',
+    card: 'Teaching is the fun part. It’s the messages, chasing and paperwork that take over. How to get your evenings back.',
+    read: 6,
+    body: `
+<p>Ask any club owner why they started, and they&rsquo;ll talk about the teaching: the choreography, the classes, watching a shy child come out of their shell. That&rsquo;s the fun part, and nobody wants less of it.</p>
+<p>It&rsquo;s everything around it that takes over. The parent messaging at 10pm to ask what time class starts. Following up the family who enquired last week. Chasing the trial who said they&rsquo;d join. Scrolling your bank app to work out who&rsquo;s paid. Posting the same notice in four places and still hearing &ldquo;I didn&rsquo;t know&rdquo;.</p>
+<p>None of that has to be you. Here&rsquo;s where the time goes, and how to get it back.</p>
+
+<h2>1. Finding new families</h2>
+<p>Posting on social media and hoping takes hours and brings in a trickle. Local Facebook and Instagram ads that advertise a free trial reach parents near you who have never heard of you, and keep running while you teach. We&rsquo;ve shared <a href="/learn/are-facebook-ads-worth-it-for-kids-clubs">exactly what ours cost and what they brought in</a>.</p>
+<p>Send those parents to a page where they can book a trial straight away, so a new family never has to message you to get started.</p>
+
+<h2>2. Answering the same questions</h2>
+<p>Most messages from new parents ask the same things: what time, what age, what to wear, how much, where to park. If your website answers every one of them before they book, they don&rsquo;t need to ask. Fewer questions, fewer late-night messages. Here&rsquo;s <a href="/learn/what-should-a-kids-club-website-have">what a club website needs</a>.</p>
+
+<h2>3. Following up with every lead</h2>
+<p>Every family who shows an interest is a lead, and each one needs something different. The one who booked a trial needs reminding. The one who didn&rsquo;t turn up needs asking what happened and offering another date. The one who loved it needs asking to join. Doing that by hand, for every family, every week, is where evenings disappear.</p>
+${term('lead')}
+<p>It doesn&rsquo;t have to be done by hand. When trials check in with a QR code at the door, or the coach ticks them off on the register, the system knows exactly who came. Families who didn&rsquo;t come are asked what got in the way and offered another date. Families who did are sent the link to join. Nobody has to remember.</p>
+${term('automation')}
+
+<h2>4. Forms and paperwork before the first class</h2>
+<p>Chasing consent forms, medical details and emergency contacts is one of the most tiresome jobs in any club. So don&rsquo;t chase them.</p>
+<p>At our club, new members register themselves before their first class. They accept the terms and conditions, give photo consent, pay, add emergency contacts, and anything else we need. Only then does their class pass unlock.</p>
+<p>That means every child who walks through the door has everything sorted. You can rest easy, and you never chase a form again.</p>
+
+<h2>5. Knowing who&rsquo;s paid</h2>
+<p>Card payments taken automatically mean you can see who has paid at a glance. Missed payments are chased for you, and show up in red on the member&rsquo;s pass at the door. Here&rsquo;s <a href="/learn/stop-chasing-late-payments">how we stopped chasing payments</a>.</p>
+
+<h2>6. Telling everyone everything</h2>
+<p>A class is cancelled. You post it on Instagram, then Facebook, then the WhatsApp group, then send an email, then text the families you think might have missed it. Someone still turns up.</p>
+<p>With your own app, you post it once and it lands on every family&rsquo;s lock screen as a notification. You can be certain every member got the message. Parents message the club through the app too, instead of your personal number, so you can answer in your own time.</p>
+
+<figure class="lc-flow" aria-label="How a new family joins without you lifting a finger">
+  <p class="lc-flow-h">A new family, without you lifting a finger</p>
+  <ol data-lc-flow>
+    <li><span class="dot">1</span><span><span class="when">They see your ad</span><span class="bub">They book a free trial on your website, with every question already answered.</span><span class="chan">Ad and website</span></span></li>
+    <li><span class="dot">2</span><span><span class="when">Before the trial</span><span class="bub">Reminders the evening before, the morning of and an hour before.</span><span class="chan">Texts</span></span></li>
+    <li><span class="dot">3</span><span><span class="when">At the door</span><span class="bub">They check in with a QR code, so you know they came.</span><span class="chan">Coach&rsquo;s phone</span></span></li>
+    <li><span class="dot">4</span><span><span class="when">The same day</span><span class="bub">They join in a tap. If they didn&rsquo;t come, they&rsquo;re offered another date.</span><span class="chan">Text and email</span></span></li>
+    <li><span class="dot">5</span><span><span class="when">Before their first class</span><span class="bub">They register: terms, photo consent, payment, emergency contacts.</span><span class="chan">Their app</span></span></li>
+    <li class="end"><span class="dot">&#10003;</span><span><span class="when">First class</span><span class="bub">Their pass unlocks. Everything&rsquo;s sorted.</span></span></li>
+  </ol>
+</figure>
+
+<div class="lc-callout"><p>Keep the teaching. Hand over everything else.</p></div>
+
+<h2>A quick checklist</h2>
+<ol>
+  <li>Let ads and a booking page find your new families.</li>
+  <li>Answer every common question on your website.</li>
+  <li>Check trials in, so follow-ups go to the right people automatically.</li>
+  <li>Have members register and pay before their first class.</li>
+  <li>Take payments automatically, and let the system chase.</li>
+  <li>Post once in your own app, instead of everywhere.</li>
+</ol>`,
+    one: ['Local ads that find you trials, with the first 3 months on us.', 'Trials that book themselves, reminded and followed up for you.', 'QR check-in that knows who came, and chases up who didn&rsquo;t.', 'Members who register, consent and pay before their first class.', 'One app: post once, every family sees it on their lock screen.', 'Your own website and app, with your club&rsquo;s name on them.'],
+    oneLead: 'All of it, built in. <span>With your own app and website.</span>',
+    faq: [
+      ['How do I stop my club taking over my life?', 'Hand over everything that isn’t teaching: let ads and a booking page find new families, answer common questions on your website, follow up trials automatically, have members register and pay before their first class, and post updates once in your own app.'],
+      ['How can I cut the admin at my dance school?', 'Most admin is following up, chasing forms and payments, and telling everyone everything. Automatic follow-ups, registration before the first class, card payments and one app for all your messages take most of it away.'],
+      ['How do I stop parents messaging me late at night?', 'Answer the common questions on your website so they don’t need to ask, post updates in your own app so everyone sees them, and have parents message the club through the app instead of your personal number.']
+    ],
+    related: ['what-should-a-kids-club-website-have', 'get-more-trials-to-show-up']
+  },
+
+  {
     slug: 'club-business-words',
     topic: 'running',
     title: 'Club business words, explained',
@@ -1557,7 +1629,7 @@ const SCRIPTS = `<script src="/consent.js?v=2c4fee5d"></script>
 <script src="/chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One. Ask me anything about running or growing your club. I&rsquo;ll give you a straight answer." data-quick="How do I get more trials to turn up?|Can I see your site and app?|Is it right for my club?" defer></script>
 <script src="/beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/admin-pill.js?v=06da798b"></script>
-<script src="/learn/terms.js?v=a9920293" defer></script>
+<script src="/learn/terms.js?v=6fe515e0" defer></script>
 <script src="/glossary.js?v=d3003e23" defer></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
 <script src="/learn/learn.js?v=197ceef8" defer></script>
