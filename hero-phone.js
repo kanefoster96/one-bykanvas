@@ -127,7 +127,7 @@
   var css = [
     '.hp-box{position:relative;width:100%;aspect-ratio:720/1476}',
     '.hp-in{position:absolute;left:0;top:0;width:720px;height:1476px;transform-origin:0 0}',
-    '.hp-phone{position:absolute;inset:0;border-radius:96px;padding:16px;background:#1d1d1f;box-shadow:0 60px 120px -50px rgba(255,79,18,.35),0 30px 60px -30px rgba(0,0,0,.45),inset 0 0 0 2px rgba(255,255,255,.08)}',
+    '.hp-phone{position:absolute;inset:0;border-radius:96px;padding:16px;background:#1d1d1f;box-shadow:0 60px 120px -50px rgba(0,0,0,0.17),0 30px 60px -30px rgba(0,0,0,.45),inset 0 0 0 2px rgba(255,255,255,.08)}',
     '.hp-scr{position:relative;height:100%;border-radius:82px;background:#0a0a0c;overflow:hidden;color:#f5f5f2;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:left;-webkit-font-smoothing:antialiased}',
     '.hp-scr p,.hp-scr h3{margin:0}',
     '.hp-sb{position:relative;z-index:3;height:92px;display:flex;align-items:center;justify-content:space-between;padding:10px 64px 0 76px;background:#141417;color:#f5f5f2}',
@@ -230,7 +230,7 @@
     '.hp-sts b{display:block;font:700 30px/1 Inter,sans-serif}.hp-sts span{display:block;margin-top:8px;font:500 18px/1 Inter,sans-serif;color:rgba(245,245,242,.6)}',
     '.hp-qrc{position:relative;height:420px;border-radius:30px;background:#000;border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;overflow:hidden}',
     '.hp-qrc > svg{width:300px;height:300px}',
-    '.hp-scan{position:absolute;left:150px;right:150px;height:6px;border-radius:6px;background:#ff4f12;box-shadow:0 0 26px 6px rgba(255,79,18,.55);opacity:0}',
+    '.hp-scan{position:absolute;left:150px;right:150px;height:6px;border-radius:6px;background:#ff4f12;opacity:0}',
     '.hp-done{position:absolute;inset:0;background:#06140b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0}',
     '.hp-ck{width:120px;height:120px;border-radius:50%;background:#22c55e;display:grid;place-items:center;color:#06140b}.hp-ck svg{width:64px;height:64px}',
     '.hp-done b{font:700 32px/1 Inter,sans-serif}.hp-done span{font:500 21px/1 Inter,sans-serif;color:rgba(245,245,242,.7)}',
