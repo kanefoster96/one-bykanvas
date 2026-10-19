@@ -37,6 +37,18 @@
       text: 'All the money coming in, before any costs come off. Not the same as profit: a club with high revenue and high costs can still struggle.' },
     profit: { limit: 2, match: /\bprofits?\b/i, title: 'Profit',
       text: 'What’s left of your revenue once every cost is paid: the hall, coaches, kit and software. It’s the number that pays you.' },
+    perceivedrisk: { match: /\bperceived risk\b/i, title: 'Perceived risk',
+      text: 'How risky a decision feels to the person making it: the money, the time, an upset child, the awkwardness of leaving. The lower it feels, the more people say yes. A free trial makes it close to nothing.' },
+    dreamoutcome: { match: /\bdream outcome\b/i, title: 'Dream outcome',
+      text: 'What a parent really wants for their child from your classes: more confidence, new friends, a new skill, getting on a stage. It’s what they’re actually buying, so it’s worth knowing for every family.' },
+    valueequation: { match: /\bvalue equation\b/i, title: 'The value equation',
+      text: 'A simple way to think about how much something is worth to a parent, made popular by the business author Alex Hormozi. Value goes up with the dream outcome and how sure they are they’ll get it, and down with how long it takes and how much effort and risk it involves.' },
+    cac: { match: /\bCAC\b|\bcustomer acquisition cost\b/i, title: 'CAC: customer acquisition cost',
+      text: 'What it costs you to win one new member: ads, trials, your time and any offers, added up and divided by the members they brought. A sibling who joins costs you almost nothing to win.' },
+    referral: { match: /\breferrals?\b/i, title: 'Referral',
+      text: 'A new family who came because an existing one recommended you. Referrals tend to join more readily and stay longer, because they arrive already trusting you.' },
+    upsell: { match: /\bupsells?\b/i, title: 'Upsell',
+      text: 'Offering an existing member something more, like a second class, at the moment it would genuinely help them. It grows your income without having to find a new family.' },
     costper: { match: /\bcost per (?:trial|lead|enquiry|booking|member|customer|result)\b/i, title: 'Cost per trial',
       text: 'What you spent on ads divided by the number of bookings they brought. If £100 of ads brings 10 trials, that’s £10 per trial. It’s the number that tells you whether the ads are worth it.' }
   };
