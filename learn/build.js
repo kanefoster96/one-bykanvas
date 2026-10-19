@@ -126,21 +126,23 @@ function qrSvg() {
 /* The member's pass when a payment has been missed. */
 function missedPaymentPass() {
   return `<figure class="lc-phones" data-lc-in data-no-gl>
-  <div class="lc-phone" role="img" aria-label="A member's QR pass with a red box: payment missed, with a Pay now button"><div class="scr"><div class="lc-pass">
+  <div class="lc-phone" role="img" aria-label="A member's QR pass with a red box: payment missed, with a Pay now button"><div class="scr"><div class="isl"></div><div class="lc-pass">
     <div class="lc-pass-club">Your club</div>
     <div class="lc-pass-who">Ava&rsquo;s pass</div>
     <div class="qr">${qrSvg()}</div>
     <div class="due"><b>Payment missed</b><small>October&rsquo;s payment didn&rsquo;t go through. Please pay before class.</small><span>Pay now</span></div>
+    <div class="next"><i></i><span><small>Next class</small><b>Street Dance &middot; Tue 5:30pm</b></span></div>
   </div></div></div>
   <figcaption>What the parent sees while they wait in the queue. The coach&rsquo;s phone shows an alert too, when they scan.</figcaption>
 </figure>`;
 }
 
-/* One post, landing on three families' lock screens. */
+/* One post, landing on three families' lock screens, drawn the way iOS
+   shows it: icon, bold title, "now", and up to four lines. */
 function postOnce(title, body) {
-  const phone = (i, time) => `<div class="lc-phone sm"><div class="scr"><div class="lc-lock"><div class="tm">${time}</div><div class="dt">Tuesday</div><div class="lc-note-card" style="--i:${i}"><div class="lc-nc-app"><i></i><span>Your club</span></div><b>${title}</b><small>${body}</small></div></div></div></div>`;
-  return `<figure class="lc-phones" data-lc-in data-no-gl aria-label="The same notification arriving on three parents' phones">
-  ${phone(0, '15:42')}${phone(1, '15:42')}${phone(2, '15:42')}
+  const phone = (i) => `<div class="lc-phone"${i === 1 ? '' : ' aria-hidden="true"'}><div class="scr lc-lock"><div class="isl"></div><div class="dt">Tuesday 21 October</div><div class="tm">15:42</div><div class="lc-note-card" style="--i:${i}"><span class="ico"></span><div class="tx"><div class="r"><b>${title}</b><span class="now">now</span></div><div class="bd">${body}</div></div></div></div></div>`;
+  return `<figure class="lc-phones fan" data-lc-in data-no-gl aria-label="The same notification arriving on three parents' phones: ${ESC(plain(title))}">
+  ${phone(0)}${phone(1)}${phone(2)}
   <figcaption>Post it once. It lands on every family&rsquo;s lock screen.</figcaption>
 </figure>`;
 }
@@ -1779,7 +1781,7 @@ ${ld.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script
 <link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="/styles.css?v=aff04046">
 <link rel="stylesheet" href="/home.css?v=5473fb1f">
-<link rel="stylesheet" href="/learn/learn.css?v=005b2310">
+<link rel="stylesheet" href="/learn/learn.css?v=1ba0387c">
 </head>
 <body class="home learn">
 

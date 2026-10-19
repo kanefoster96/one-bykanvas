@@ -248,43 +248,58 @@ figure.lc-bars,figure.lc-chain,figure.lc-eq,figure.lc-months,figure.lc-phones{ma
 .lc-months-key b{color:var(--ink)}
 .lc-months-key .hot b{color:#c93e09}
 
-/* Phones: what the parent actually sees. */
-.lc-phones{display:flex;justify-content:center;align-items:flex-start;gap:12px;flex-wrap:wrap}
-.lc-phone{width:230px;aspect-ratio:9/18.5;border-radius:36px;background:#0b0b0d;padding:8px;box-shadow:0 18px 44px rgba(0,0,0,.16)}
-.lc-phone.sm{width:calc((100% - 24px)/3);max-width:170px;border-radius:26px;padding:6px}
-.lc-phone .scr{position:relative;height:100%;border-radius:29px;overflow:hidden;background:#f5f5f7}
-.lc-phone.sm .scr{border-radius:21px}
-.lc-phones figcaption{flex-basis:100%;margin-top:6px;text-align:center;font-size:14px;line-height:1.45;color:var(--ink-3)}
+/* Phones: what the parent actually sees, drawn to a real iPhone's
+   proportions. Everything inside the screen is sized in cqw (a share of the
+   phone's width) from the real point sizes on a 390pt-wide iPhone, so the
+   time, the notification and its text are the size they'd really be. */
+.lc-phones{display:flex;justify-content:center;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.lc-phone{width:250px;aspect-ratio:9/19.5;border-radius:15%/7%;background:#0b0b0d;padding:2.8%;box-shadow:0 18px 44px rgba(0,0,0,.16);container-type:inline-size}
+.lc-phone .scr{position:relative;height:100%;border-radius:12.5%/5.8%;overflow:hidden;background:#f2f2f7}
+.lc-phone .isl{position:absolute;top:3cqw;left:50%;width:32cqw;height:9.4cqw;transform:translateX(-50%);border-radius:99px;background:#000;z-index:2}
+.lc-phones figcaption{flex-basis:100%;margin-top:8px;text-align:center;font-size:14px;line-height:1.45;color:var(--ink-3)}
+
 /* The pass, with a missed payment */
-.lc-pass{padding:34px 16px 16px;text-align:center}
-.lc-pass .lc-pass-club{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
-.lc-pass .lc-pass-who{margin-top:4px;font-size:18px;font-weight:700;color:#1d1d1f}
-.lc-pass .qr{width:62%;margin:12px auto 0;padding:8px;border-radius:14px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.lc-pass{height:100%;padding:19cqw 6cqw 6cqw;text-align:center}
+.lc-pass .lc-pass-club{font-size:3.2cqw;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8e8e93}
+.lc-pass .lc-pass-who{margin-top:1cqw;font-size:6.4cqw;font-weight:700;color:#1d1d1f}
+.lc-pass .qr{width:58%;margin:5cqw auto 0;padding:3.6cqw;border-radius:5cqw;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.06)}
 .lc-pass .qr svg{display:block;width:100%;height:auto}
-.lc-pass .due{margin-top:12px;padding:12px;border-radius:16px;background:#e5241b;color:#fff;text-align:left;opacity:0;transform:translateY(10px);transition:opacity .5s .5s,transform .5s .5s}
-.lc-pass .due b{display:block;font-size:14px}
-.lc-pass .due small{display:block;margin-top:2px;font-size:12px;line-height:1.35;opacity:.9}
-.lc-pass .due span{display:block;margin-top:9px;padding:8px;border-radius:99px;background:#fff;color:#e5241b;font-size:13px;font-weight:700;text-align:center}
+.lc-pass .due{margin-top:5cqw;padding:4.4cqw;border-radius:5.4cqw;background:#e5241b;color:#fff;text-align:left;opacity:0;transform:translateY(3cqw);transition:opacity .5s .5s,transform .5s .5s}
+.lc-pass .due b{display:block;font-size:4.2cqw}
+.lc-pass .due small{display:block;margin-top:.8cqw;font-size:3.7cqw;line-height:1.35;opacity:.92}
+.lc-pass .due span{display:block;margin-top:3.6cqw;padding:2.8cqw;border-radius:99px;background:#fff;color:#e5241b;font-size:3.9cqw;font-weight:700;text-align:center}
+.lc-pass .next{display:flex;align-items:center;gap:3cqw;margin-top:4cqw;padding:3.6cqw 4cqw;border-radius:5cqw;background:#fff;text-align:left;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.lc-pass .next i{flex:0 0 8cqw;height:8cqw;border-radius:2.4cqw;background:#fff3ec;position:relative}
+.lc-pass .next i::after{content:"";position:absolute;inset:2.4cqw;border-radius:50%;border:.6cqw solid #c93e09}
+.lc-pass .next small{display:block;font-size:3cqw;color:#8e8e93}
+.lc-pass .next b{display:block;font-size:3.8cqw;color:#1d1d1f}
 .lc-phones.in .lc-pass .due{opacity:1;transform:none;animation:lc-pulse 1.6s 1.2s 2}
-@keyframes lc-pulse{50%{box-shadow:0 0 0 8px rgba(229,36,27,.18)}}
-/* The lock screen, with a notification arriving */
-.lc-lock{height:100%;padding:24px 8px 0;background:linear-gradient(150deg,#3a2a4a,#1c1a24 55%,#4a2414);color:#fff;text-align:center}
-.lc-lock .tm{font-size:40px;font-weight:600;letter-spacing:-.02em;line-height:1}
-.lc-phone.sm .lc-lock{padding-top:16px}
-.lc-phone.sm .lc-lock .tm{font-size:26px}
-.lc-lock .dt{font-size:11px;opacity:.75;margin-top:3px}
-.lc-note-card{margin-top:16px;padding:9px 10px;border-radius:14px;background:rgba(255,255,255,.2);text-align:left;opacity:0;transform:translateY(-14px) scale(.96);transition:opacity .5s calc(.4s + var(--i,0)*.25s),transform .5s calc(.4s + var(--i,0)*.25s)}
+@keyframes lc-pulse{50%{box-shadow:0 0 0 2.4cqw rgba(229,36,27,.18)}}
+
+/* The lock screen, with a notification arriving at the bottom like iOS */
+.lc-phone .scr.lc-lock{display:flex;flex-direction:column;align-items:center;height:100%;padding-top:15cqw;background:linear-gradient(160deg,#3a2a4a,#1c1a24 55%,#4a2414);color:#fff}
+.lc-lock .dt{font-size:4.4cqw;font-weight:600;opacity:.85}
+.lc-lock .tm{margin-top:-.5cqw;font-size:22cqw;font-weight:600;letter-spacing:-.03em;line-height:1.05}
+.lc-note-card{display:flex;gap:2.6cqw;width:calc(100% - 5.2cqw);margin:auto 0 28cqw;padding:3.3cqw;border-radius:5.4cqw;background:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-align:left;opacity:0;transform:translateY(-4cqw) scale(.97);transition:opacity .5s calc(.4s + var(--i,0)*.3s),transform .5s calc(.4s + var(--i,0)*.3s)}
 .lc-phones.in .lc-note-card{opacity:1;transform:none}
-.lc-note-card .lc-nc-app{display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;font-size:10.5px;font-weight:600;opacity:.85}
-.lc-note-card .lc-nc-app span{overflow:hidden;text-overflow:ellipsis}
-.lc-note-card .lc-nc-app i{width:16px;height:16px;border-radius:5px;background:#c93e09;flex:0 0 16px}
-.lc-note-card b{display:block;margin-top:4px;font-size:12.5px;line-height:1.3}
-.lc-note-card small{display:block;margin-top:2px;font-size:11.5px;line-height:1.35;opacity:.9}
-.lc-phone.sm .lc-note-card{margin-top:12px;padding:7px 8px}
-.lc-phone.sm .lc-note-card b{font-size:11px}
-.lc-phone.sm .lc-nc-app{font-size:9.5px;gap:4px}
-.lc-phone.sm .lc-nc-app i{width:12px;height:12px;flex-basis:12px;border-radius:4px}
-.lc-phone.sm .lc-note-card small{font-size:10px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.lc-note-card .ico{flex:0 0 9.6cqw;height:9.6cqw;border-radius:2.3cqw;background:#c93e09;position:relative}
+.lc-note-card .ico::after{content:"";position:absolute;right:2.3cqw;bottom:2.3cqw;width:1.9cqw;height:1.9cqw;border-radius:50%;background:#fff}
+.lc-note-card .tx{flex:1;min-width:0}
+.lc-note-card .r{display:flex;align-items:baseline;gap:2cqw}
+.lc-note-card b{flex:1;min-width:0;font-size:3.85cqw;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-note-card .now{font-size:3.3cqw;opacity:.6}
+.lc-note-card .bd{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;font-size:3.85cqw;line-height:1.33}
+
+/* Three phones: side by side on wide screens, fanned with one in front on phones */
+.lc-phones.fan .lc-phone{width:calc((100% - 28px)/3);max-width:230px}
+@media (max-width:699px){
+  .lc-phones.fan{display:block;position:relative}
+  .lc-phones.fan .lc-phone{position:relative;z-index:2;width:58%;max-width:none;margin:0 auto}
+  .lc-phones.fan .lc-phone:nth-child(1),.lc-phones.fan .lc-phone:nth-child(3){position:absolute;top:7%;z-index:1;width:46%;filter:brightness(.55)}
+  .lc-phones.fan .lc-phone:nth-child(1){left:0}
+  .lc-phones.fan .lc-phone:nth-child(3){right:0}
+  .lc-phones.fan figcaption{margin-top:14px}
+}
 
 @media (prefers-reduced-motion:reduce){
   .lc-bar .t i,.lc-chain li,.lc-side,.lc-gi,.lc-eq-frac span,.lc-eq-frac .bar,.lc-months li,.lc-months li.mile::after,.lc-pass .due,.lc-note-card{transition:none!important;animation:none!important}
