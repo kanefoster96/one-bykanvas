@@ -157,4 +157,24 @@
       p.addEventListener('mouseenter', function () { if (!typing) light(p); });
     });
   })();
+  /* "How it compares": bought separately, or against booking software.
+     Tabs with arrow keys, the usual way. */
+  (function () {
+    var tabs = [].slice.call(document.querySelectorAll('.ev-tabs [role=tab]'));
+    function pick(t, focus) {
+      tabs.forEach(function (x) {
+        var on = x === t;
+        x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1;
+        document.getElementById(x.getAttribute('aria-controls')).hidden = !on;
+      });
+      if (focus) t.focus();
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { pick(t); });
+      t.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (d) { e.preventDefault(); pick(tabs[(i + d + tabs.length) % tabs.length], true); }
+      });
+    });
+  })();
 })();

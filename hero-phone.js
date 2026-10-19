@@ -1,7 +1,8 @@
 /* The homepage app phones: One's member app, drawn and animated in the page
-   (no screenshots to wait for), cycling through a trial from booking to
-   member: the website form, the trial pass email, the follow-up, the parent
-   feed, a payment, the register and QR check-in. Everything is drawn at
+   (no screenshots to wait for). The hero has two phones behind a switch:
+   for coaches (registers, a notification to a class, medical notes, posts,
+   memberships) and for parents (a trial from booking to member, their next
+   class and QR code, and a chat with the coach). Everything is drawn at
    720px wide and scaled to fit, so it stays sharp at any size. Pauses when
    off screen; with reduced motion it just steps between finished screens. */
 (function () {
@@ -88,8 +89,8 @@
       ban('hp-b-reg', 'Ava is on the Hip Hop register \ud83c\udf89') },
     { id: 'qrs', tab: 4, label: 'Scan in every class for attendance', html:
       '<div class="hp-av">A<em>' + IC.cam + '</em></div><p class="hp-nm">Ava Morgan</p><p class="hp-mp"><span>Monthly membership</span></p>' +
-      '<div class="hp-sts"><div><b id="hp-att">96%</b><span>Attendance</span></div><div><b>2</b><span>Shows</span></div><div><b>3</b><span>Awards</span></div></div>' +
-      '<p class="hp-lab" style="text-align:center">Scan to check in</p><div class="hp-qrc">' + qr(7, '#fff', '#000') + '<i class="hp-scan" id="hp-scan"></i><div class="hp-done" id="hp-done"><span class="hp-ck">' + T + '</span><b>Checked in</b><span>Hip Hop \u00b7 5:30pm</span></div></div>' },
+      '<div class="hp-cd hp-next">' + row('Next class<span class="hp-s">Hip Hop \u00b7 Tuesday 5:30pm \u00b7 Coach Jess</span>', '', '<b class="hp-pill hp-pg">Booked</b>') + '</div>' +
+      '<p class="hp-lab" style="text-align:center;margin-top:24px!important">Scan to check in</p><div class="hp-qrc">' + qr(7, '#fff', '#000') + '<i class="hp-scan" id="hp-scan"></i><div class="hp-done" id="hp-done"><span class="hp-ck">' + T + '</span><b>Checked in</b><span>Hip Hop \u00b7 5:30pm</span></div></div>' },
     { id: 'feed', tab: 2, label: 'Community posts and in-app chat', html:
       '<div class="hp-post" style="margin-top:-6px;border-top:0;padding-top:6px"><div class="hp-ph">' + LOGO + '<div><b>' + CLUB + '</b> <span class="hp-tag hp-w">OFFICIAL</span><span class="hp-d">Today \u00b7 07:15</span></div></div>' +
       '<p class="hp-pt">Half term: we\u2019re open all week</p><p class="hp-pb">Every class runs as normal, same days and times. Just come along!</p>' +
@@ -99,6 +100,12 @@
       '<p class="hp-bm" id="hp-m1">Does Ava need anything for the show?</p>' +
       '<div class="hp-bt2" id="hp-m2">' + LOGO + '<p>Just her usual kit. We\u2019ll go through it in class!</p></div></div>' +
       ban('hp-b-feed', 'Half term: we\u2019re open all week') },
+    { id: 'notify', tab: 0, label: 'Send a notification to one class', html:
+      '<p class="hp-ttl">New notification</p><p class="hp-sub">Straight to parents\u2019 phones</p>' +
+      '<p class="hp-lab">Send to</p><div class="hp-cd">' + row('Hip Hop<span class="hp-s">Tuesday 5:30pm \u00b7 19 families</span>', '', ok('Chosen')) + '</div>' +
+      '<p class="hp-lab">Message</p><div class="hp-cd hp-pad hp-msg"><span id="hp-nt"></span><i class="hp-car" id="hp-car"></i></div>' +
+      '<div class="hp-send" id="hp-send">Send</div>' +
+      '<div class="hp-allok" id="hp-nok">' + T + 'Sent to 19 families</div>' },
     { id: 'mem', tab: 0, label: 'Memberships, easy to manage', html:
       '<p class="hp-ttl">Memberships</p><p class="hp-sub">40 active \u00b7 all paid by card</p>' +
       '<p class="hp-lab">Members</p><div class="hp-cd">' +
@@ -255,6 +262,9 @@
     '.hp-call{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#22c55e;color:#06140b}.hp-call svg{width:28px;height:28px}',
     /* chat */
     '.hp-chat2{display:flex;flex-direction:column;gap:12px}',
+    '.hp-next{margin-top:26px}.hp-msg{min-height:150px;font:500 24px/1.4 Inter,sans-serif;color:#f5f5f2}',
+    '.hp-car{display:inline-block;width:3px;height:28px;margin-left:2px;vertical-align:-5px;background:#f5f5f2}',
+    '.hp-send{margin-top:22px;height:84px;border-radius:999px;background:#f5f5f2;color:#0a0a0c;display:grid;place-items:center;font:700 26px/1 Inter,sans-serif}',
     '.hp-bm{align-self:flex-end;max-width:82%;padding:16px 22px;border-radius:30px;background:#f1f1ee;color:#0a0a0c;font:500 22px/1.35 Inter,sans-serif;opacity:0}',
     '.hp-bt2{display:flex;gap:12px;align-items:flex-end;opacity:0}.hp-bt2 .hp-lg{width:44px;height:44px}.hp-bt2 p{max-width:82%;padding:16px 22px;border-radius:26px;background:#131316;border:1px solid rgba(255,255,255,.12);font:500 22px/1.38 Inter,sans-serif}',
     /* caption under the phone */
@@ -265,13 +275,13 @@
 
   /* One phone per host: the hero cycles through every screen with a caption;
      each card in the app section ([data-hp-screen]) replays its one screen. */
-  function mount(host, list, cap, row) {
-    var scr = SCREENS.filter(function (s) { return list.indexOf(s.id) > -1; });
+  function mount(host, list, cap, row, labels) {
+    var scr = list.map(function (id) { return SCREENS.filter(function (s) { return s.id === id; })[0]; });
     host.innerHTML = '<div class="hp-box"><div class="hp-in"><div class="hp-phone"><div class="hp-scr">' + sbar() +
       '<div class="hp-hd">' + LOGO + '<span>' + IC.bell + '</span></div>' +
       scr.map(function (s) { return '<div class="hp-v' + (s.full ? ' hp-full' : '') + (s.light ? ' hp-light' : '') + (s.id === 'sms' ? ' hp-white' : '') + (s.ov ? ' hp-ov' : '') + '" id="hp-' + s.id + '">' + s.html + '</div>'; }).join('') +
       '<div class="hp-tb"><i>' + IC.home + '</i><i>' + IC.cal + '</i><i>' + IC.chat + '</i><i>' + IC.shop + '</i><i class="hp-qrb">' + IC.qr + '</i></div>' +
-      '</div></div></div></div><p class="hp-cap">' + scr.map(function (s) { return '<span>' + s.label + '</span>'; }).join('') + '</p>';
+      '</div></div></div></div><p class="hp-cap">' + scr.map(function (s) { return '<span>' + ((labels && labels[s.id]) || s.label) + '</span>'; }).join('') + '</p>';
 
     host.innerHTML = host.innerHTML.replace(/ id="(hp-[^"]+)"/g, ' data-k="$1"');
     if (!cap) { var cp = host.querySelector('.hp-cap'); if (cp) cp.remove(); }
@@ -313,7 +323,6 @@
         var sc = $('hp-scan'), a = .5, b = 1.4, k = p(u, a, b - a);
         sc.style.opacity = u > a && u < b + .1 ? 1 : 0; sc.style.top = (60 + 300 * (.5 - .5 * Math.cos(k * Math.PI * 2))) + 'px';
         $('hp-done').style.opacity = eo(p(u, b, .3)); $('hp-done').querySelector('.hp-ck').style.transform = 'scale(' + pop(p(u, b + .05, .45)) + ')';
-        $('hp-att').textContent = u > b + .4 ? '97%' : '96%';
       },
       sms: function (u) {
         $('hp-sty').style.display = u < .8 ? 'inline-flex' : 'none';
@@ -350,6 +359,12 @@
         $('hp-leo').style.transform = 'scale(' + (u > .85 && u < 1.0 ? .92 : 1) + ')';
         var sl = u > 1.8; $('hp-mia').innerHTML = sl ? T + 'Sent' : 'Send link'; $('hp-mia').className = sl ? 'hp-ok' : 'hp-btnw';
         $('hp-mia').style.transform = 'scale(' + (u > 1.65 && u < 1.8 ? .92 : 1) + ')';
+      },
+      notify: function (u) {
+        var msg = 'Photo day on Tuesday! Please come in your full club kit.', n = Math.round(msg.length * cl((u - .25) / 1.2));
+        $('hp-nt').textContent = msg.slice(0, n); $('hp-car').style.opacity = u < 1.6 && (u * 3 % 1) < .6 ? 1 : 0;
+        $('hp-send').style.transform = 'scale(' + (u > 1.65 && u < 1.8 ? .95 : 1) + ')';
+        var k = pop(p(u, 1.85, .45)); show($('hp-nok'), cl(k * 1.4), 'scale(' + (.92 + .08 * k) + ')');
       },
       emg: function (u) {
         var r = (u % 1.1) / 1.1; $('hp-call').style.boxShadow = u > 1.2 ? '0 0 0 ' + (18 * r) + 'px rgba(34,197,94,' + (.45 * (1 - r)) + ')' : 'none';
@@ -398,14 +413,38 @@
        (see centreRow below). */
     var centred = !row;
     function go() { run(visible && centred && !document.hidden); }
+    // The hero's Coaches / Parents switch: start the newly shown phone from its first screen.
+    host._hpReset = function () { fit(); start = paused = performance.now(); seek(0); };
     host._hpCentre = function (on) { if (on !== centred) { centred = on; go(); } };
     seek(reduce ? SEG - .3 : row ? 0 : 2.6); paused = performance.now();
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; go(); }, { threshold: .05 }).observe(host);
     else { visible = true; go(); }
     document.addEventListener('visibilitychange', go);
   }
-  var hero = document.getElementById('heroPhone');
-  if (hero) mount(hero, SCREENS.map(function (s) { return s.id; }), true);
+  /* The hero shows one side of the app at a time: what coaches use, or what
+     parents see. The switch above the phone swaps between the two. */
+  var ROLES = {
+    coaches: { list: ['reg', 'notify', 'emg', 'feed', 'mem'], labels: {
+      reg: 'New members land on your registers', emg: 'Medical notes and contacts, one tap away',
+      feed: 'Post to every parent, reply in one place' } },
+    parents: { list: ['web', 'mail', 'sms', 'follow', 'payset', 'qrs', 'feed'], labels: {
+      payset: 'They join and pay in a tap', qrs: 'Their next class and QR code',
+      feed: 'Club news, and a chat with the coach' } }
+  };
+  var heroes = [].slice.call(document.querySelectorAll('[data-hp-role]'));
+  heroes.forEach(function (h) { var r = ROLES[h.getAttribute('data-hp-role')]; mount(h, r.list, true, null, r.labels); });
+  var roleBtns = [].slice.call(document.querySelectorAll('[data-hp-show]'));
+  roleBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var want = b.getAttribute('data-hp-show');
+      roleBtns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      heroes.forEach(function (h) {
+        var on = h.getAttribute('data-hp-role') === want;
+        if (on === !h.hidden) return;
+        h.hidden = !on; if (on) h._hpReset();
+      });
+    });
+  });
   [].forEach.call(document.querySelectorAll('[data-hp-screen]'), function (el) { mount(el, [el.getAttribute('data-hp-screen')], false, el.closest('.ap-row')); });
 
   /* Exactly one card in each swipe row is "centred": the one whose middle
