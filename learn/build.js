@@ -1094,9 +1094,9 @@ ${term('badfriction')}
 
 <h3>Good friction</h3>
 ${term('goodfriction')}
-<p>Some steps are worth adding on purpose. At our club, we ask families why they want to join when they book. It takes a few seconds, and it means the people who book are serious about coming.</p>
+<p>Some steps are worth adding on purpose. When families book a trial at our club, we ask what they want their child to get out of classes with us: more confidence, new skills, new friends. It takes a few seconds, and it means the people who book are serious about coming.</p>
 <ul>
-  <li>Asking why they want to join, or what they hope their child gets from it.</li>
+  <li>Asking what they want their child to get out of it, like confidence, new skills or friends.</li>
   <li>Choosing a specific date, rather than &ldquo;pop along some time&rdquo;.</li>
   <li>A mobile number, so you can remind them before the trial.</li>
   <li>The details you need to look after their child in class.</li>
