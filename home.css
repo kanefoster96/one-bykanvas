@@ -1052,6 +1052,13 @@ body.home .mh .mh-after .mh-info-note{margin:14px auto 0;padding:18px 22px;borde
 .mh .mh-after .mh-info-note b{display:block;margin-bottom:4px;font-size:17px;font-weight:700;letter-spacing:-.01em;color:#e8400c}
 .mh-after .mh-proofline{margin-top:22px}
 .mh-phone{width:min(300px,74vw)}
+.mh-phone[hidden]{display:none}
+/* Above the hero phone: which side of the app it shows. */
+.mh-role{display:inline-flex;gap:4px;margin-bottom:22px;padding:4px;border-radius:999px;background:var(--bg-2,#f2f2ef);border:1px solid rgba(0,0,0,.08)}
+.mh-role button{min-height:40px;padding:0 18px;border:0;border-radius:999px;background:none;color:var(--ink-2);font:600 15px/1 inherit;font-family:inherit;cursor:pointer}
+.mh-role button[aria-pressed="true"]{background:#111;color:#fff}
+.mh-ask{max-width:340px;margin:20px auto 0;font-size:15px;line-height:1.5;color:var(--ink-2);text-wrap:balance}
+.mh-ask a{color:var(--ink);font-weight:600}
 @media (min-width:1024px){
   .mh-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:64px;text-align:left}
   .mh-proof{align-items:flex-start}
@@ -1141,3 +1148,30 @@ body.home .ap-fig figcaption{margin-top:18px}
 .ap-fit .lede{margin:14px auto 0;max-width:46ch}
 .ap-try{margin-top:clamp(28px,4vw,40px)}
 .ap-try p{margin:12px auto 0;max-width:40ch;font-size:15px;line-height:1.45;color:rgba(245,245,242,.72)}
+
+/* ---------- One against booking software ----------
+   Under the price: the no-cut line, then two ways to compare, as tabs. */
+.ev-fees{max-width:46ch;margin:14px auto 0;font-size:16px;line-height:1.5;color:rgba(245,245,242,.78)}
+.ev-fees b{color:#f5f5f2}
+.ev-tabs{display:inline-flex;gap:4px;margin:22px auto 0;padding:4px;border-radius:999px;background:rgba(255,255,255,.1);max-width:100%}
+.ev-tabs button{min-height:42px;padding:0 18px;border:0;border-radius:999px;background:none;color:rgba(245,245,242,.78);font:600 15px/1.2 inherit;font-family:inherit;cursor:pointer}
+.ev-tabs button[aria-selected="true"]{background:#f5f5f2;color:#111}
+.vs{max-width:860px;margin:clamp(24px,4vw,32px) auto 0;border-radius:var(--radius-lg);overflow:hidden;background:var(--glass,#fff);box-shadow:var(--glass-shadow);text-align:left;color:#1d1d1f;--ink:#1d1d1f;--ink-2:#55555a}
+.vs-head,.vs-row{display:grid;grid-template-columns:1fr 1.3fr 1.3fr;gap:18px;padding:16px 22px;font-size:15.5px;line-height:1.45}
+.vs-head{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.vs-head span:last-child{color:var(--accent,#e8400c)}
+.vs-row{border-top:1px solid rgba(255,79,18,.12)}
+.vs-row b{font-weight:700}
+.vs-row span:nth-child(2){color:var(--ink-2)}
+.vs-row span:last-child{font-weight:600}
+.vs-both{margin:0;padding:14px 22px;border-top:1px solid rgba(255,79,18,.12);background:rgba(255,79,18,.06);font-size:15px;line-height:1.5;color:var(--ink-2)}
+.vs-pay{background:#1d1d1f;color:#fff}
+.vs-pay span:nth-child(2){color:rgba(255,255,255,.7)}
+.vs-pay span:last-child{color:var(--good-dark,#22c55e)}
+@media (max-width:640px){
+  .vs-head{display:none}
+  .vs-row{grid-template-columns:1fr;gap:6px}
+  .vs-row span::before{content:attr(data-vs) ": ";font-weight:700}
+  .vs-row span:nth-child(2)::before{color:#1d1d1f}
+  .vs-pay span:nth-child(2)::before{color:#fff}
+}
