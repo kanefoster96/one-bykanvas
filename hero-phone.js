@@ -127,7 +127,7 @@
   var css = [
     '.hp-box{position:relative;width:100%;aspect-ratio:720/1476}',
     '.hp-in{position:absolute;left:0;top:0;width:720px;height:1476px;transform-origin:0 0}',
-    '.hp-phone{position:absolute;inset:0;border-radius:96px;padding:16px;background:#1d1d1f;box-shadow:0 60px 120px -50px rgba(37,99,235,.45),0 30px 60px -30px rgba(0,0,0,.45),inset 0 0 0 2px rgba(255,255,255,.08)}',
+    '.hp-phone{position:absolute;inset:0;border-radius:96px;padding:16px;background:#1d1d1f;box-shadow:0 60px 120px -50px rgba(255,79,18,.35),0 30px 60px -30px rgba(0,0,0,.45),inset 0 0 0 2px rgba(255,255,255,.08)}',
     '.hp-scr{position:relative;height:100%;border-radius:82px;background:#0a0a0c;overflow:hidden;color:#f5f5f2;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:left;-webkit-font-smoothing:antialiased}',
     '.hp-scr p,.hp-scr h3{margin:0}',
     '.hp-sb{position:relative;z-index:3;height:92px;display:flex;align-items:center;justify-content:space-between;padding:10px 64px 0 76px;background:#141417;color:#f5f5f2}',
@@ -230,7 +230,7 @@
     '.hp-sts b{display:block;font:700 30px/1 Inter,sans-serif}.hp-sts span{display:block;margin-top:8px;font:500 18px/1 Inter,sans-serif;color:rgba(245,245,242,.6)}',
     '.hp-qrc{position:relative;height:420px;border-radius:30px;background:#000;border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;overflow:hidden}',
     '.hp-qrc > svg{width:300px;height:300px}',
-    '.hp-scan{position:absolute;left:150px;right:150px;height:6px;border-radius:6px;background:#60a5fa;box-shadow:0 0 26px 6px rgba(96,165,250,.6);opacity:0}',
+    '.hp-scan{position:absolute;left:150px;right:150px;height:6px;border-radius:6px;background:#ff4f12;box-shadow:0 0 26px 6px rgba(255,79,18,.55);opacity:0}',
     '.hp-done{position:absolute;inset:0;background:#06140b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0}',
     '.hp-ck{width:120px;height:120px;border-radius:50%;background:#22c55e;display:grid;place-items:center;color:#06140b}.hp-ck svg{width:64px;height:64px}',
     '.hp-done b{font:700 32px/1 Inter,sans-serif}.hp-done span{font:500 21px/1 Inter,sans-serif;color:rgba(245,245,242,.7)}',
@@ -433,18 +433,38 @@
   };
   var heroes = [].slice.call(document.querySelectorAll('[data-hp-role]'));
   heroes.forEach(function (h) { var r = ROLES[h.getAttribute('data-hp-role')]; mount(h, r.list, true, null, r.labels); });
+  /* The switch is a slider: its thumb slides to the side that's on, by a
+     tap on either side or a swipe across it. */
   var roleBtns = [].slice.call(document.querySelectorAll('[data-hp-show]'));
+  var roleBar = document.querySelector('.mh-role'), swiped = false;
+  function showRole(want) {
+    roleBtns.forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-hp-show') === want)); });
+    if (roleBar) roleBar.setAttribute('data-on', want);
+    heroes.forEach(function (h) {
+      var on = h.getAttribute('data-hp-role') === want;
+      if (on === !h.hidden) return;
+      h.hidden = !on; if (on) h._hpReset();
+    });
+  }
   roleBtns.forEach(function (b) {
     b.addEventListener('click', function () {
-      var want = b.getAttribute('data-hp-show');
-      roleBtns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
-      heroes.forEach(function (h) {
-        var on = h.getAttribute('data-hp-role') === want;
-        if (on === !h.hidden) return;
-        h.hidden = !on; if (on) h._hpReset();
-      });
+      if (swiped) { swiped = false; return; } // the click that ends a swipe
+      showRole(b.getAttribute('data-hp-show'));
     });
   });
+  if (roleBar && roleBtns.length === 2) {
+    var x0 = null;
+    roleBar.addEventListener('pointerdown', function (e) { x0 = e.clientX; });
+    roleBar.addEventListener('pointerup', function (e) {
+      if (x0 === null) return;
+      var dx = e.clientX - x0; x0 = null;
+      if (Math.abs(dx) > 24) {
+        swiped = true; setTimeout(function () { swiped = false; }, 400);
+        showRole(roleBtns[dx > 0 ? 1 : 0].getAttribute('data-hp-show'));
+      }
+    });
+    roleBar.addEventListener('pointercancel', function () { x0 = null; });
+  }
   [].forEach.call(document.querySelectorAll('[data-hp-screen]'), function (el) { mount(el, [el.getAttribute('data-hp-screen')], false, el.closest('.ap-row')); });
 
   /* Exactly one card in each swipe row is "centred": the one whose middle
