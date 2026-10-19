@@ -49,6 +49,10 @@
       text: 'A new family who came because an existing one recommended you. Referrals tend to join more readily and stay longer, because they arrive already trusting you.' },
     upsell: { match: /\bupsells?\b/i, title: 'Upsell',
       text: 'Offering an existing member something more, like a second class, at the moment it would genuinely help them. It grows your income without having to find a new family.' },
+    lead: { match: /\bleads\b(?! to\b)/i, title: 'Lead',
+      text: 'A family who has shown interest but hasn’t joined yet: an enquiry, a trial booking, a message asking about classes. Following leads up, at the right moment, is how they become members.' },
+    automation: { match: /\bautomation\b/i, title: 'Automation',
+      text: 'A job that happens by itself, every time, without anyone remembering to do it: a reminder text, a follow-up after a trial, a chase when a payment fails. It’s how a small club does the work of a big team.' },
     costper: { match: /\bcost per (?:trial|lead|enquiry|booking|member|customer|result)\b/i, title: 'Cost per trial',
       text: 'What you spent on ads divided by the number of bookings they brought. If £100 of ads brings 10 trials, that’s £10 per trial. It’s the number that tells you whether the ads are worth it.' }
   };
