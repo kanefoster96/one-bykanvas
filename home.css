@@ -1034,7 +1034,7 @@ body.home{--grad-text:linear-gradient(90deg,#b8320a 0%,#f0450f 48%,#ff6a1f 100%)
 .mh-cta .claim-link{display:flex;justify-content:center}
 .sec-cta .claim-link,.ev-cta + .claim-link{display:block;margin-top:14px}
 body.home .band-dark .claim-link{color:#ff7a3d}
-.mh-visual{display:flex;flex-direction:column;align-items:center;margin-top:56px}
+.mh-visual{display:flex;flex-direction:column;align-items:center;margin-top:40px}
 /* Under the phone: the three promises and the academy's numbers. */
 .mh-after{width:100%;max-width:440px;margin-top:28px;text-align:center}
 .mh .mh-after .mh-risk{display:flex;flex-direction:column;align-items:stretch;gap:0;width:100%;margin:0;padding:4px 20px;border-radius:22px;
