@@ -44,7 +44,7 @@
     checkin: { match: /\bcheck-in\b/i, title: 'Check-in',
       text: 'Marking a child in when they arrive, by scanning the QR code on their parent’s phone or with a tap on the register. Attendance is kept for you.' },
     bringafriend: { match: /\bbring-a-friend\b/i, title: 'Bring-a-friend',
-      text: 'Members can send a friend a free pass to try a class. The system keeps track of who invited who, so you can thank them.' },
+      text: 'Each new member can invite a friend in their first 30 days. The friend comes free for 30 days, then joins or simply stops. The system keeps track of who invited who, so you can thank them.' },
     memberapp: { match: /\b(?:your own|member|branded) app\b/i, title: 'Your own app',
       text: 'An app with your club’s name and logo in the App Store and Google Play. Parents see the timetable, pay, message you and show their child’s pass at the door.' },
     fullclasses: { match: /\bFull Classes System\b/i, title: 'The Full Classes System',
