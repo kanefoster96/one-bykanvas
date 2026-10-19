@@ -14,7 +14,8 @@
  * A word can also be marked by hand, and a word that is only marked by hand
  * (auto: false) never gets an underline on its own:
  *   <button type="button" class="gl" data-gl="seo">SEO</button>
- * Leave a part of a page alone with data-no-gl.
+ * Leave a part of a page alone with data-no-gl, and mark a word as already
+ * explained in its section with data-gl-shown="key".
  *
  * Carries its own styles, so it works on every page whatever stylesheet it
  * uses. Loaded on the public pages, not the app, admin or checkout.
@@ -100,6 +101,9 @@
     pwa: { auto: false, title: 'Web app',
       text: 'An app that runs from your website, so it works on any phone straight away, with nothing to download, while the App Store and Google Play versions are being approved.' }
   };
+  // Pages can add their own words: the Learning Centre loads its business
+  // words (learn/terms.js) as window.GL_EXTRA before this runs.
+  if (window.GL_EXTRA) Object.keys(window.GL_EXTRA).forEach(function (k) { WORDS[k] = window.GL_EXTRA[k]; });
 
   // Never underline inside these (links and buttons already do something;
   // headings and menus stay clean; the phone mock-ups and chat are pictures
@@ -138,8 +142,11 @@
     var seen = new Map(); // section -> {key: true}
     var count = {};       // key -> times marked on the page
     function done(section) { if (!seen.has(section)) seen.set(section, {}); return seen.get(section); }
-    // Words already marked by hand count as shown in their section.
+    // Words already marked by hand count as shown in their section, and so do
+    // words already explained there in full (data-gl-shown, like the
+    // Learning Centre's "Business word" boxes).
     document.querySelectorAll('.gl[data-gl]').forEach(function (b) { done(sectionOf(b))[b.getAttribute('data-gl')] = true; });
+    document.querySelectorAll('[data-gl-shown]').forEach(function (b) { done(sectionOf(b))[b.getAttribute('data-gl-shown')] = true; });
 
     var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
       acceptNode: function (n) {
