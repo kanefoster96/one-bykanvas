@@ -11,15 +11,11 @@
  */
 const { createClient } = require('@supabase/supabase-js');
 const { limitIp, tooMany } = require('./_rate.js');
-const { missingEnv, ourSiteUrl } = require('./_env.js');
+const { missingEnv } = require('./_env.js');
 const { event } = require('./_notify.js');
 const { sendEmail } = require('./_email.js');
 const { html: emailHtml, esc } = require('./_email_template.js');
 const { cleanName, cleanEmail, cleanPhone } = require('./_chat.js');
-
-/* Kanvas One's own site: its demo requests (clubs.html) are leads from our
-   ads, so Meta hears of them. Every other site's enquiries are theirs. */
-const OUR_SITE = '9094de37-b610-41b6-98f1-2aaf8f5bd52b';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

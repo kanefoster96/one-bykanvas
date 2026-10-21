@@ -273,7 +273,7 @@ module.exports = async function handler(req, res) {
       /* Announced once per subscription. Signing up sends several Stripe
          events at once, and a card that failed and then paid comes back
          "alive" too; without the claim, either sent the welcome, our email,
-         the referral reward and Meta's Purchase again. */
+         and the referral reward again. */
       if (await claimAnnouncement(id, sub.id)) {
         await rewardReferrer(id, patch);
         await announceNewCustomer(id, patch, sub);
@@ -705,6 +705,9 @@ module.exports = async function handler(req, res) {
      every one of those attempts would be noise, not news. */
   async function announcePaymentFailed(invoice) {
     if (invoice.attempt_count && invoice.attempt_count > 1) return;
+    /* A first payment that fails never started a plan, so there is no grace
+       period to tell them about: Checkout already showed them the decline. */
+    if (invoice.billing_reason === 'subscription_create') return;
 
     const customerId = typeof invoice.customer === 'string' ? invoice.customer : (invoice.customer && invoice.customer.id);
     if (!customerId) return;
@@ -734,7 +737,10 @@ module.exports = async function handler(req, res) {
           minimumFractionDigits: due % 100 === 0 ? 0 : 2
         }).format(due / 100);
     const dayMonth = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', timeZone: 'Europe/London' });
-    const graceEnds = dayMonth(new Date(Date.now() + GRACE_DAYS * 24 * 60 * 60 * 1000));
+    /* Counted from when the renewal invoice was made, not from when this
+       event arrived, so a redelivered event gives the same date. */
+    const failedAt = invoice.created ? invoice.created * 1000 : Date.now();
+    const graceEnds = dayMonth(new Date(failedAt + GRACE_DAYS * 24 * 60 * 60 * 1000));
     const nextTry = invoice.next_payment_attempt ? dayMonth(new Date(invoice.next_payment_attempt * 1000)) : 'Within 3 days';
 
     const result = await sendEmail({

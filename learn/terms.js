@@ -9,10 +9,10 @@
  */
 (function (root) {
   var TERMS = {
-    churn: { match: /\bchurn\b/i, title: 'Churn',
-      text: 'How many members leave over a period, usually counted each month. If 3 of your 60 members leave in a month, your churn is 5%. The lower it is, the less hard you have to work just to stay full.' },
     involuntary: { match: /\binvoluntary churn\b/i, title: 'Involuntary churn',
       text: 'Members you lose because a payment failed, not because they wanted to leave. An expired card that nobody chases quietly becomes a lost member.' },
+    churn: { match: /\bchurn\b/i, title: 'Churn',
+      text: 'How many members leave over a period, usually counted each month. If 3 of your 60 members leave in a month, your churn is 5%. The lower it is, the less hard you have to work just to stay full.' },
     retention: { match: /\bretention\b/i, title: 'Retention',
       text: 'The opposite of churn: how many of your members stay. Keeping a member is far cheaper than finding a new one, so small improvements here are worth a lot.' },
     lifetimevalue: { match: /\blifetime value\b/i, title: 'Lifetime value',

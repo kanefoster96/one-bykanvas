@@ -602,7 +602,7 @@ var recentRequests = [];
 async function showPoints(row) {
   /* Until there is a subscription the panel stays out of the way: nothing
      to add a feature to yet. */
-  var live = row && (row.subscription_status === 'active' || row.subscription_status === 'trialing');
+  var live = row && ['active', 'trialing', 'past_due'].indexOf(row.subscription_status) !== -1; // past_due: the grace period
   document.getElementById('pointsPanel').hidden = !live;
   if (!live) return;
 
@@ -626,7 +626,7 @@ async function showReferral(row) {
   var panel = document.getElementById('referralPanel');
   if (!panel) return;
 
-  var live = row && (row.subscription_status === 'active' || row.subscription_status === 'trialing');
+  var live = row && ['active', 'trialing', 'past_due'].indexOf(row.subscription_status) !== -1; // past_due: the grace period
   if (!live) { panel.hidden = true; return; }
 
   try {
@@ -682,7 +682,7 @@ async function claudeApi(payload) {
 async function showClaude(row) {
   var panel = document.getElementById('claudePanel');
   if (!panel) return;
-  var live = row && (row.subscription_status === 'active' || row.subscription_status === 'trialing');
+  var live = row && ['active', 'trialing', 'past_due'].indexOf(row.subscription_status) !== -1; // past_due: the grace period
   if (!live) { panel.hidden = true; return; }
   panel.hidden = false;
 
