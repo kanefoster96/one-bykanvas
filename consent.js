@@ -153,7 +153,7 @@
     if (loaded) flush(); else loadPixel();
   };
 
-  /* An event id the browser and the server both send, so Meta counts one. */
+  /* An id for a pixel event, so a repeat of the same one counts once. */
   window.oneEventId = function () {
     try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
     return 'ev-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);

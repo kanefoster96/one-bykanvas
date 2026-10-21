@@ -854,7 +854,7 @@ ${e.layout.order.map((k) => SECTIONS[k](e)).join('\n')}
 ${footer(e)}
 ${modal(e)}
 ${pill(e)}
-<script src="/consent.js?v=742cc96c"></script>
+<script src="/consent.js?v=5712679a"></script>
 <script src="/examples/ex.js?v=${EX_JS_V}"></script>
 <script src="/beacon.js?v=77a73cd5" data-site="${SITE_ID}" defer></script>
 </body>
@@ -925,7 +925,7 @@ ${o.body}
   </div>
 </footer>
 
-<script src="/consent.js?v=742cc96c"></script>
+<script src="/consent.js?v=5712679a"></script>
 <script src="/supabase-config.js?v=90fd89dc"></script>
 <script src="/session.js?v=59739977"></script>
 <script src="/script.js?v=${o.scriptV}"></script>
