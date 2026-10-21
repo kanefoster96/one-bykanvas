@@ -23,7 +23,6 @@ const NEEDED = {
   RESEND_API_KEY: 'all email',
   EMAIL_FROM: 'all email',
   CRON_SECRET: 'follow-ups, request emails and this check',
-  META_CAPI_TOKEN: 'Meta counting leads and sales from the server',
   ADMIN_EMAILS: 'admin access and alerts'
 };
 

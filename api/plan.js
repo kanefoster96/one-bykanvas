@@ -20,7 +20,6 @@ const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { notifyAdmin } = require('./_notify.js');
-const { sendMetaEvent, adContext } = require('./_meta.js');
 const growth = require('../growth-model.js');
 
 const TYPES = {
@@ -201,12 +200,6 @@ module.exports = async function handler(req, res) {
     if (error) throw new Error(error.message);
 
     const site = ourSiteUrl();
-    await sendMetaEvent(Object.assign(adContext(req, body), {
-      name: 'Lead', eventId: row.id, email, phone,
-      url: `${site}/check`,
-      custom: { content_category: 'growth-plan', content_name: p.recommend, campaign: campaign || undefined }
-    })).catch(() => {});
-
     /* This endpoint is open and emails whatever address is typed in, so the
        plan email is rationed like lead.js's: after a few in a day to one
        address the rest go quiet. The lead is kept either way. */

@@ -18,7 +18,6 @@ const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { notifyAdmin } = require('./_notify.js');
 const { candidates: domainCandidates, lookup: domainLookup } = require('./domains.js');
-const { sendMetaEvent, adContext } = require('./_meta.js');
 
 const PLAN_INTEREST = ['business', 'starter', 'max', 'unsure'];
 
@@ -180,15 +179,6 @@ module.exports = async function handler(req, res) {
     if (error) throw new Error(error.message);
 
     const site = ourSiteUrl();
-
-    /* Meta hears about the lead from here whether or not cookies were
-       accepted; the page fires the same event id (the thanks page for a free
-       example, the contact form for an enquiry), and Meta dedupes. */
-    await sendMetaEvent(Object.assign(adContext(req, body), {
-      name: 'Lead', eventId: row.id, email,
-      url: free ? `${site}/thanks.html` : `${site}/contact`,
-      custom: { content_category: free ? 'free-preview' : (plan_interest || 'enquiry'), campaign: campaign || undefined }
-    })).catch(() => {});
 
     /* Two different jobs arrive here, so they read differently in an inbox: an
        enquiry is a conversation to start, a free example is a piece of work to

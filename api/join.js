@@ -39,7 +39,6 @@ const { alertNow } = require('./_health.js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { openCheckout, CheckoutError } = require('./_checkout_session.js');
 const { isValidDomain, lookup } = require('./domains.js');
-const { sendMetaEvent, adContext, optedOut } = require('./_meta.js');
 
 const LIVE = ['active', 'trialing', 'past_due', 'unpaid'];
 const SESSION_ID = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
@@ -122,23 +121,10 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 
-  // ---- lead: step one done, for Meta ------------------------------------
+  // ---- lead: retired ----------------------------------------------------
+  /* This used to pass a Lead to Meta from the server. The pixel in the
+     browser does that now; pages still open from before get a quiet yes. */
   async function lead() {
-    // The email comes later now (step four): Meta matches on the click id,
-    // the browser and the address the visit came from.
-    const email = clean(body.email, 254).toLowerCase();
-    const eventId = clean(body.eventId, 80);
-    if ((email && !EMAIL.test(email)) || !/^[A-Za-z0-9_-]{8,80}$/.test(eventId)) return res.status(400).json({ error: 'Bad request.' });
-    const fbc = /^fb\.1\.\d{10,14}\.[A-Za-z0-9_-]{10,500}$/.test(String(body.fbc || '')) ? String(body.fbc) : undefined;
-    const fbp = /^fb\.1\.\d{10,14}\.\d{5,25}$/.test(String(body.fbp || '')) ? String(body.fbp) : undefined;
-    const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
-    await sendMetaEvent({
-      optOut: optedOut(req),
-      name: 'Lead', eventId, email: email || undefined, fbc, fbp,
-      url: `${ourSiteUrl()}/join`,
-      ip: fwd || undefined, userAgent: req.headers['user-agent'] || undefined,
-      custom: { content_category: 'join' }
-    }).catch(() => {});
     return res.status(204).end();
   }
 
@@ -255,7 +241,6 @@ module.exports = async function handler(req, res) {
       stripe, admin, user, profile, plan, billing, origin,
       offer: body.offer, referralCode: body.referralCode,
       metadata: { source: 'join', billing },
-      ad: adContext(req, body),
       // Stripe fills in {CHECKOUT_SESSION_ID} itself.
       successUrl: `${origin}/join?paid={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${origin}/join?cancelled=1`

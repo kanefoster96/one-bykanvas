@@ -168,7 +168,7 @@ const FOOT = `<footer class="foot">
   </div>
 </footer>
 
-<script src="consent.js?v=2c4fee5d"></script>
+<script src="consent.js?v=742cc96c"></script>
 <script src="supabase-config.js?v=90fd89dc"></script>
 <script src="session.js?v=59739977"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>
