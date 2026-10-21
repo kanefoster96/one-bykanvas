@@ -744,8 +744,8 @@ async function showClaude(row) {
 var STATUS_TEXT = {
   active:             ['Active', 'Your subscription is live.'],
   trialing:           ['Trial',  'You are on a trial.'],
-  past_due:           ['Past due', 'The last payment failed — update your card to stay live.'],
-  unpaid:             ['Unpaid', 'The last payment failed — update your card to stay live.'],
+  past_due:           ['Payment failed', 'Your last payment didn’t go through. Everything stays on while we retry the card for 14 days — update your card to settle it now.'],
+  unpaid:             ['Unpaid', 'Your last payment didn’t go through. Update your card to keep your plan.'],
   incomplete:         ['Pending', 'Payment did not finish. Try setting it up again.'],
   incomplete_expired: ['Expired', 'That payment attempt expired. Start again when ready.'],
   canceled:           ['Cancelled', 'Your subscription has ended.'],
@@ -866,8 +866,11 @@ function showBilling(row) {
   }
 
   var subscribed = status === 'active' || status === 'trialing';
-  payBtn.textContent = subscribed ? 'Change plan' : 'Set up payment';
-  payBtn.dataset.mode = subscribed ? 'change' : '';
+  /* A failed payment is fixed with a new card, not a new plan: checkout
+     would refuse a second subscription anyway. */
+  var failing = status === 'past_due' || status === 'unpaid';
+  payBtn.textContent = subscribed ? 'Change plan' : failing ? 'Update card' : 'Set up payment';
+  payBtn.dataset.mode = subscribed ? 'change' : failing ? 'card' : '';
 
   /* The step up from the plan they are on, said once under the billing
      box. Picking it only moves the select; the button above still does
@@ -951,6 +954,7 @@ document.getElementById('payBtn').addEventListener('click', async function () {
   var note = document.getElementById('billNote');
   var btn = this;
   var plan = document.getElementById('planChoice').value;
+  if (btn.dataset.mode === 'card') { document.getElementById('portalBtn').click(); return; }
   var changing = btn.dataset.mode === 'change';
   var label = btn.textContent;
 

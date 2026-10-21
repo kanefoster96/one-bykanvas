@@ -16,7 +16,6 @@ const { event } = require('./_notify.js');
 const { sendEmail } = require('./_email.js');
 const { html: emailHtml, esc } = require('./_email_template.js');
 const { cleanName, cleanEmail, cleanPhone } = require('./_chat.js');
-const { sendMetaEvent, adContext } = require('./_meta.js');
 
 /* Kanvas One's own site: its demo requests (clubs.html) are leads from our
    ads, so Meta hears of them. Every other site's enquiries are theirs. */
@@ -67,15 +66,6 @@ module.exports = async function handler(req, res) {
     if (error) throw new Error(error.message);
 
     await event(db, site.id, 'enquiry', { name: name || email || phone, email, phone, text: message, record: 'enquiry', id: row.id });
-
-    const metaId = String(b.metaEventId || '');
-    if (site.id === OUR_SITE && /^[A-Za-z0-9_-]{8,80}$/.test(metaId)) {
-      await sendMetaEvent(Object.assign(adContext(req, b), {
-        name: 'Lead', eventId: metaId, email: email || undefined, phone: phone || undefined,
-        url: ourSiteUrl() + String(b.page || '/clubs').slice(0, 100),
-        custom: { content_name: 'clubs demo', content_category: 'max' }
-      })).catch(() => {});
-    }
 
     const who = [name, email, phone].filter(Boolean).join(' · ');
     if (owner) {

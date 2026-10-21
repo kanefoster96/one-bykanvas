@@ -51,12 +51,6 @@
   var trade = String(q.get('trade') || '').toLowerCase();
   if (!/^[a-z]{2,20}$/.test(trade)) trade = '';
 
-  /* Meta's click id, when an ad lands straight here, kept as an fbc value
-     for the Lead and Purchase the server sends. */
-  try {
-    var clickId = q.get('fbclid');
-    if (clickId && !/(?:^|; )one_noads=1/.test(document.cookie) && !sessionStorage.getItem('one.fbc')) sessionStorage.setItem('one.fbc', 'fb.1.' + Date.now() + '.' + clickId);
-  } catch (e) {}
 
   var fromLink = String(q.get('business') || '').trim().slice(0, 120);
   if (fromLink) answers.business = fromLink;
@@ -177,27 +171,12 @@
     }
   }
 
-  /* A name and a web address chosen is a lead: Meta hears it from the
-     browser (with cookies accepted) and from our server (always), under one
-     event id so it counts once. Once per visit. The click id from the ad
-     (fbclid, kept by ex.js or above) lets Meta tie it to the ad. */
-  function cookie(name) {
-    var m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-    return m ? decodeURIComponent(m[1]) : '';
-  }
+  /* A name and a web address chosen is a lead: the Meta pixel hears it
+     (with cookies accepted), once per visit. */
   function tellMetaLead() {
     try { if (sessionStorage.getItem('one.join-lead')) return; sessionStorage.setItem('one.join-lead', '1'); } catch (e) {}
     var id = 'lead-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
     if (window.oneTrack) window.oneTrack('Lead', { content_category: 'join' }, id);
-    var fbc = cookie('_fbc');
-    if (!fbc) { try { fbc = sessionStorage.getItem('one.fbc') || ''; } catch (e) {} }
-    try {
-      fetch('/api/join', {
-        method: 'POST', keepalive: true,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'lead', eventId: id, fbc: fbc, fbp: cookie('_fbp') })
-      }).catch(function () {});
-    } catch (e) {}
   }
 
   /* ---------------------------------------------------------- 1. addresses
@@ -600,9 +579,7 @@
         files: answers.files.map(function (f) { return f.path; }),
         billing: answers.billing || 'monthly',
         offer: offerCode(), referralCode: referralCode(),
-        website: $('j_website').value,
-        fbc: cookie('_fbc') || (function () { try { return sessionStorage.getItem('one.fbc') || ''; } catch (e) { return ''; } })(),
-        fbp: cookie('_fbp')
+        website: $('j_website').value
       })
     })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d || {} }; }); })

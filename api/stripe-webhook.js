@@ -12,7 +12,6 @@ const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { PLANS } = require('./_plans.js');
 const { notify, notifyAdmin } = require('./_notify.js');
-const { sendMetaEvent, adFromMetadata } = require('./_meta.js');
 
 const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'One' }; // must match admin.js/account.js
 
@@ -57,6 +56,15 @@ function subscriptionIdOf(invoice) {
 /* Which Stripe statuses mean "this customer is paying us". */
 function isLive(status) {
   return status === 'active' || status === 'trialing';
+}
+
+/* The grace period. When a renewal fails the subscription goes past_due and
+   Stripe retries the card for 14 days (Billing > Revenue recovery > Retries,
+   set to cancel the subscription after the last one). The customer keeps
+   their plan all that time; only the cancellation at the end takes it away. */
+const GRACE_DAYS = 14;
+function inGrace(status) {
+  return status === 'past_due';
 }
 
 module.exports = async function handler(req, res) {
@@ -221,8 +229,9 @@ module.exports = async function handler(req, res) {
     /* A live subscription whose event carries no plan in its metadata (say,
        one edited by hand in the Stripe dashboard) must not wipe the plan the
        customer is paying for - keep what is already on the row. Only a
-       subscription that has stopped being live clears it. */
-    if (!isLive(sub.status)) patch.active_plan = null;
+       subscription that has stopped being live clears it, and a failed
+       renewal still in its grace period (past_due) has not. */
+    if (!isLive(sub.status) && !inGrace(sub.status)) patch.active_plan = null;
     else if (entitled) patch.active_plan = entitled;
     else if (before && before.active_plan) patch.active_plan = before.active_plan;
     else patch.active_plan = null;
@@ -288,11 +297,15 @@ module.exports = async function handler(req, res) {
       await admin.from('profiles')
         .update({ canceled_at: new Date().toISOString() }).eq('id', id)
         .then(({ error }) => { if (error) console.error('webhook: canceled_at stamp failed:', error.message); });
-      await announceCancellation(id, sub);
+      const endedPlan = (sub.metadata && sub.metadata.plan) || (before && before.active_plan) || null;
+      await announceCancellation(id, sub, endedPlan);
       await notify(admin, id, 'Your plan has ended',
         'Reactivate any time from your account - your site and address can come back as they were.',
         '/account.html');
-      await notifyAdmin(admin, 'A plan ended', 'Check their domain and site from admin.');
+      await notifyAdmin(admin, endedPlan === 'max' ? 'A One plan ended: pause their Supabase' : 'A plan ended',
+        endedPlan === 'max'
+          ? 'Their club is no longer paying. Pause their Supabase project, then check their domain, app and site. The email has the full list.'
+          : 'Check their domain and site from admin.');
     }
   }
 
@@ -435,7 +448,7 @@ module.exports = async function handler(req, res) {
      risk, and us, since cancelling a domain is still a manual job.
      Why it ended changes the words: someone who asked to cancel must not
      be told their card failed, and vice versa. */
-  async function announceCancellation(id, sub) {
+  async function announceCancellation(id, sub, plan) {
     const reason = (sub && sub.cancellation_details && sub.cancellation_details.reason) || '';
     const requested = reason === 'cancellation_requested';
     const { data: p } = await admin
@@ -451,10 +464,10 @@ module.exports = async function handler(req, res) {
     if (email) {
       const why = requested
         ? `As you asked, your Kanvas One plan has now ended.`
-        : `We weren't able to take payment after several attempts, so your Kanvas One plan has now ended.`;
+        : `We weren't able to take payment after ${GRACE_DAYS} days of trying, so your Kanvas One plan has now ended.`;
       const whyHtml = requested
         ? 'As you asked, your plan has now ended. Thanks for being with us.'
-        : 'We weren’t able to take payment after several attempts, so your plan has now ended.';
+        : `We weren’t able to take payment after ${GRACE_DAYS} days of trying, so your plan has now ended.`;
       const result = await sendEmail({
         to: email,
         subject: 'Your plan has ended',
@@ -488,10 +501,23 @@ module.exports = async function handler(req, res) {
     }
 
     const domainLine = (p && (p.site_url || p.requested_domain)) || 'no domain on file';
+    /* A One club runs on its own Supabase project, which costs money every
+       month whether or not they pay, so its end comes with the list of what
+       to switch off. Nothing here is switched off automatically. */
+    const oneSteps = plan === 'max'
+      ? `It was a One plan, so their club has its own setup to switch off:\n`
+        + `  1. Supabase: pause their club's project (Project settings > General > Pause project). `
+        + `Paused projects keep their data for 90 days, so they can come back.\n`
+        + `  2. Vercel: pause or remove their club's website project.\n`
+        + `  3. Meta: pause any ads still running for them.\n`
+        + `  4. Their app: it stays in the stores under their own developer account; tell them it will stop working.\n`
+        + `  5. Domain: as below.\n\n`
+      : '';
     const adminResult = await sendEmail({
       to: adminAddresses(),
-      subject: `${name}'s plan ended - check their domain`,
-      text: `${name}'s subscription ended (${requested ? 'they cancelled' : 'payment retries failed'}).\n\n`
+      subject: plan === 'max' ? `${name}'s One plan ended - pause their Supabase` : `${name}'s plan ended - check their domain`,
+      text: `${name}'s subscription ended (${requested ? 'they cancelled' : `payment still failing after the ${GRACE_DAYS}-day grace period`}).\n\n`
+          + oneSteps
           + `Domain: ${domainLine}\n\n`
           + `If you don't hear from them, you may need to cancel or release it, and take their site down.\n\n`
           + `Admin: ${site}/admin.html`
@@ -690,14 +716,15 @@ module.exports = async function handler(req, res) {
     const email = who && who.user && who.user.email;
     if (!email) {
       await notifyAdmin(admin, 'A payment failed: ' + (p.business_name || p.contact_name || 'a customer'),
-        'No login email on file, so they have not been told. Stripe will retry over the next week.');
+        'No login email on file, so they have not been told. Stripe will retry for ' + GRACE_DAYS + ' days.');
       return;
     }
 
     const site = ourSiteUrl();
 
-    /* Stripe reports the outstanding amount in the smallest currency unit,
-       and the retry window is the 7 days Smart Retries is configured for. */
+    /* Stripe reports the outstanding amount in the smallest currency unit.
+       The grace period runs GRACE_DAYS from this first failure, and Stripe
+       says when it will try next. */
     const due = typeof invoice.amount_due === 'number' ? invoice.amount_due : null;
     const amountDue = due == null
       ? '—'
@@ -706,36 +733,36 @@ module.exports = async function handler(req, res) {
           currency: (invoice.currency || 'gbp').toUpperCase(),
           minimumFractionDigits: due % 100 === 0 ? 0 : 2
         }).format(due / 100);
-    const retryUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-      .toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+    const dayMonth = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', timeZone: 'Europe/London' });
+    const graceEnds = dayMonth(new Date(Date.now() + GRACE_DAYS * 24 * 60 * 60 * 1000));
+    const nextTry = invoice.next_payment_attempt ? dayMonth(new Date(invoice.next_payment_attempt * 1000)) : 'Within 3 days';
 
     const result = await sendEmail({
       to: email,
       subject: "We couldn't take payment for your plan",
       text: `We tried to charge the card on file for your Kanvas One plan and it didn't go through.\n\n`
           + `Amount due:     ${amountDue}\n`
-          + `Retrying until: ${retryUntil}\n\n`
-          + `We'll automatically retry over the next 7 days - to make sure it goes through, you can `
-          + `update your card any time from your account:\n${site}/account.html\n\n`
-          + `If payment keeps failing we'll be in touch, and your plan may be paused until it's `
-          + `settled - which would put your site and web address at risk.`,
+          + `Next try:       ${nextTry}\n`
+          + `Plan stays on:  until ${graceEnds}\n\n`
+          + `Nothing changes for the next ${GRACE_DAYS} days: your site, app and everything else carry on while we `
+          + `retry the card. Updating your card from your account settles it straight away:\n${site}/account.html\n\n`
+          + `If it still hasn't gone through by ${graceEnds}, your plan will end, and your site and app will stop.`,
       html: emailHtml({
-        preheader: 'We’ll retry over the next 7 days — updating your card fixes it straight away.',
+        preheader: `Everything stays on for ${GRACE_DAYS} days — updating your card fixes it straight away.`,
         heading: 'We couldn’t take payment.',
         lines: [
           'We tried to charge the card on file for your plan and it didn’t go through. It happens &mdash; usually an expired card or a bank check.',
-          'We’ll retry automatically over the next 7 days. Updating your card sorts it immediately.'
+          `Nothing changes for the next ${GRACE_DAYS} days: everything carries on while we retry the card. Updating your card sorts it immediately.`
         ],
         details: [
           { label: 'Amount due', value: amountDue },
-          { label: 'Next retry', value: 'Within 3 days' },
-          { label: 'Retrying until', value: retryUntil }
+          { label: 'Next try', value: nextTry },
+          { label: 'Plan stays on until', value: graceEnds }
         ],
         ctaText: 'Update payment details',
         ctaHref: `${site}/account.html`,
         callout: {
-          text: 'If payment keeps failing we’ll be in touch, and your plan may be paused '
-              + 'until it’s settled — which would put your site and web address at risk.'
+          text: `If payment still hasn’t gone through by ${graceEnds}, your plan will end, and your site and app will stop.`
         },
         footer: 'You&rsquo;re getting this because a payment for your Kanvas One plan was declined.',
         footerLinks: standardFooter(site)
@@ -748,7 +775,7 @@ module.exports = async function handler(req, res) {
       '/account.html');
     await notifyAdmin(admin, 'A payment failed: ' + (p.business_name || p.contact_name || email),
       (p.business_name ? p.business_name + ' (' + email + ')' : email) + ' - ' + amountDue
-      + ' did not go through. Stripe will retry over the next week; their plan pauses if it keeps failing.');
+      + ' did not go through. Their ' + GRACE_DAYS + '-day grace period has started: Stripe keeps retrying, and the plan ends if it never goes through.');
   }
 
   /* True for the one event that gets to announce this subscription: the
@@ -778,24 +805,6 @@ module.exports = async function handler(req, res) {
     const { data: who } = await admin.auth.admin.getUserById(id);
     const email = (who && who.user && who.user.email) || 'unknown';
     const name = (p && p.business_name) || 'A new customer';
-
-    /* Meta hears about the purchase from here, cookies or not, with what
-       checkout kept of the ad click (click id, browser id, address,
-       browser) so it can be matched to the ad. The plan's price for the
-       billing period is the value; the subscription id keeps it to one. */
-    const plan = PLANS[patch.active_plan];
-    if (plan && email !== 'unknown') {
-      const md = (sub && sub.metadata) || {};
-      const item = sub && sub.items && sub.items.data && sub.items.data[0];
-      const yearly = Boolean(item && item.price && item.price.recurring && item.price.recurring.interval === 'year');
-      await sendMetaEvent(Object.assign(adFromMetadata(md), {
-        name: 'Purchase', eventId: patch.stripe_subscription_id || (sub && sub.id) || undefined,
-        email, phone: (p && p.phone) || undefined,
-        url: `${ourSiteUrl()}${md.source === 'join' ? '/join' : '/get-started'}`,
-        value: ((yearly && plan.yearly) ? plan.yearly : plan.amount) / 100, currency: 'GBP',
-        custom: { content_name: patch.active_plan }
-      })).catch(() => {});
-    }
 
     const domainLine = p && p.requested_domain
       ? `${p.requested_domain}${p.domain_owned ? ' (they already own it - move it across)' : ' (to register)'}`
