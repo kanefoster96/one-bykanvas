@@ -49,7 +49,7 @@
 
       <!-- ============ 1. about you ============ -->
       <section class="wiz-step" data-step="1" aria-label="About you">
-        <h1 data-one="Let&rsquo;s fill your sessions.">Let's get you online.</h1>
+        <h1 data-one="Let&rsquo;s get started.">Let's get you online.</h1>
         <p class="wiz-sub">First, the basics. Takes about two minutes.</p>
         <div class="field"><label for="contact_name">Your name <span class="opt">(optional)</span></label><input id="contact_name" type="text" autocomplete="name"></div>
       <div class="hp" aria-hidden="true">
@@ -233,6 +233,9 @@
         <!-- On Starter the features block above is hidden (the plan step
              does it) and this line stands in: the page is the site. -->
         <p class="hint starter-uses" id="starterUses" hidden>On Starter the page you saw is the site, with your contact form and click to call. Nothing to pick here.</p>
+      <!-- On One the rest is talked through after they join, so a club, a
+           salon and a boiler company all answer the same short form. -->
+      <p class="hint starter-uses" id="oneUses" hidden>That&rsquo;s all we need for now. Once you&rsquo;ve joined, Kane gets in touch to talk through your business and plan everything with you.</p>
 
         <p class="note" id="note2" role="status" aria-live="polite"></p>
         <button class="btn btn-primary full wiz-next" data-next type="button">Next</button>
@@ -340,7 +343,7 @@
         <!-- Shown while their address is still unconfirmed: the next thing to do
              after paying, not a gate in front of it. -->
         <p class="pay-then" id="payThen" hidden>Next, please confirm your email &mdash; we&rsquo;ve sent you a link.</p>
-        <p class="pay-proof" data-one="Built in our own kids&rsquo; club and run for you by our team. Message us any time, no ticket queue.">Designed and built by our team to get your business more customers online. Message us any time, no ticket queue.</p>
+        <p class="pay-proof" data-one="Built and run for you by our team. Message us any time, no ticket queue.">Designed and built by our team to get your business more customers online. Message us any time, no ticket queue.</p>
         <!-- The downsell, for the person hesitating at the card: keep the page,
              lose the features, for less. Hidden once they are on Starter. -->
         <button class="linkish" id="payDown" type="button" hidden>Not sure you need bookings and chat? Switch to Starter, &pound;9.99 a month, and keep this page live.</button>
@@ -382,10 +385,9 @@
           <li data-std-only data-starter-only><b>Live today.</b> We register your web address and put your page on it, and email you the moment it&rsquo;s live.</li>
           <li data-std-only data-biz-only hidden><b>Ready in 7 to 14 days.</b> We register your web address and build your site and features on it together, and email you the moment it&rsquo;s live.</li>
           <li data-std-only data-biz-only hidden><b>Your features, built with it.</b> Bookings, payments, reviews &mdash; whatever you asked for. Ready within 14 days, often sooner, or your next month is free.</li>
-          <li data-one-only hidden><b>Tell us about your sessions.</b> Your classes, timetable, prices and photos, in the setup form in your account. We&rsquo;ll be in touch to fill in the rest.</li>
-          <li data-one-only hidden><b>Your website in 7 to 14 days.</b> With trial bookings ready to go, then your members moved across. Once your website and app are both live, usually 4 to 8 weeks after you join, your ads go on, with the first 3 months on us.</li>
-          <li data-one-only hidden><b>Your own branded app, for your coaches and members.</b> We send it to Apple and Google as soon as your developer accounts are ready. Their review takes 1 to 4 weeks, and until then every app feature works on your website. It&rsquo;s published under your own Apple and Google developer accounts (about &pound;79 a year to Apple and a one-off $25 to Google, paid to them, not us).</li>
-        </ol>
+          <li data-one-only hidden><b>We&rsquo;ll be in touch.</b> Kane contacts you to talk through your business and what you need, and gets any details from you then.</li>
+          <li data-one-only hidden><b>Then we build it with you.</b> Your website first, then your app and ads, planned around your business.</li>
+      </ol>
 
         <div class="paynote">
           <p><strong>One thing that helps now:</strong> photos, your services and prices, and anything about your business that isn&rsquo;t already online. Send it from your account and we get ahead. If we need something else, we&rsquo;ll ask.</p>
@@ -412,7 +414,7 @@
 <script src="supabase-client.js?v=e6f553fc"></script>
 <script src="session.js?v=59739977"></script>
 <script src="feature-ideas.js?v=e04e5333"></script>
-<script src="get-started.js?v=2b23d626"></script>
+<script src="get-started.js?v=5bffa3ec"></script>
 <script src="chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=06da798b"></script>

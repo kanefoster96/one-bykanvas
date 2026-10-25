@@ -313,6 +313,8 @@ module.exports = async function handler(req, res) {
      what plan, where to go, and that the build is starting. Starter is
      different enough to have its own words: live within 24 hours from the
      link they gave us, and a reply with photos is all they need to send.
+     One says only that we will be in touch: what it builds depends on the
+     business, so nothing is asked for until Kane has spoken to them.
      Someone who paid on the join page but closed the tab before choosing a
      password gets the link back to that step here. */
   async function welcomeCustomer(id, patch, sub) {
@@ -360,16 +362,13 @@ module.exports = async function handler(req, res) {
     if (starter && domain) facts.push({ label: 'Web address', value: domain });
     facts.push({ label: 'Started', value: started });
 
-    /* One: the build starts from the setup form, the site is ready in 7 to
-       14 days, and the app waits on Apple and Google, not us. */
+    /* One: no form and no timeline yet. One is set up differently for a
+       club, a salon or a boiler company, so Kane gets in touch and works out
+       the rest with them; until then nothing here assumes what they do. */
     const one = patch.active_plan === 'max';
     const nowText = one
-      ? `Here's what happens now. Step 1 is your setup form, below. Your website is ready `
-        + `7 to 14 days after you send it. We build your app and send it to Apple and Google as soon `
-        + `as your developer accounts are ready; `
-        + `how long they take to approve it is up to them, usually 1 to 4 weeks. Until then, the app's `
-        + `features work on your website. Your ads start once your website and app are both live, `
-        + `usually 4 to 8 weeks after you join, and your first 3 months of ad spend are on us, up to £100 a month.`
+      ? `We can't wait to work with you. Kane will be in touch shortly to talk through your business `
+        + `and get any details we need from you, then we'll plan your build together.`
       : starter
       ? `Here's what happens now. We register ${domain || 'your web address'} and build your site from the page you sent us. `
         + `It goes live within 24 hours, and you get an email the moment it is.`
@@ -378,16 +377,12 @@ module.exports = async function handler(req, res) {
         + `If it isn't ready within 14 days, your next month is free. `
         + `If we need anything from you - photos, prices, an offer - we'll ask.`;
     const nowHtml = one
-      ? `Here&rsquo;s what happens now. <strong>Step 1</strong> is your setup form, below. Your website is ready <strong>7 to 14 days</strong> after you send it. We build your app and send it to Apple and Google as soon as your developer accounts are ready; how long they take to approve it is up to them, usually 1 to 4 weeks. Until then, the app&rsquo;s features work on your website. Your ads start once your website and app are both live, usually <strong>4 to 8 weeks</strong> after you join, and your first 3 months of ad spend are on us, up to &pound;100 a month.`
+      ? `We can&rsquo;t wait to work with you. Kane will be in touch shortly to talk through your business and get any details we need from you, then we&rsquo;ll plan your build together.`
       : starter
       ? `Here&rsquo;s what happens now. We register <strong>${esc(domain || 'your web address')}</strong> and build your site from the page you sent us. It goes live <strong>within 24 hours</strong>, and you get an email the moment it is.`
       : `Here&rsquo;s what happens now. We register your web address and build your site and the features you asked for, together. It&rsquo;s ready <strong>in 7 to 14 days</strong>, and you get an email the moment it&rsquo;s live. If it isn&rsquo;t ready within 14 days, your next month is free. If we need anything from you &mdash; photos, prices, an offer &mdash; we&rsquo;ll ask.`;
     const askText = one
-      ? `Complete your setup: ${site}/onboarding.html\n`
-        + `It takes about 10 minutes, saves as you go, and you can skip anything you're not sure of.\n\n`
-        + `One more thing to start today: your Apple and Google developer accounts, in your business's name. `
-        + `Apple can take up to 2 weeks to approve a business account, so the sooner it's started, the sooner `
-        + `your app is live. Reply to this email if you'd like a hand.`
+      ? `Nothing to do in the meantime. If you have a question before then, just reply to this email.`
       : starter
         ? (noLink
             ? `One thing that makes your site better: reply with a link to your Instagram, Facebook or `
@@ -400,7 +395,7 @@ module.exports = async function handler(req, res) {
         : `One thing that helps now: send us photos, your services and prices, and anything about `
           + `your business that isn't already online. From your account: ${site}/account.html`;
     const askHtml = one
-      ? `<strong>Complete your setup.</strong> It takes about 10 minutes, saves as you go, and you can skip anything you&rsquo;re not sure of.<br><br><strong>One more thing to start today:</strong> your Apple and Google developer accounts, in your business&rsquo;s name. Apple can take up to 2 weeks to approve a business account, so the sooner it&rsquo;s started, the sooner your app is live. Reply to this email if you&rsquo;d like a hand.`
+      ? `Nothing to do in the meantime. If you have a question before then, just reply to this email.`
       : starter
         ? (noLink
             ? `<strong>One thing that makes your site better:</strong> reply with a link to your Instagram, Facebook or current website, and we&rsquo;ll build from your photos and words there. Extra photos, your logo or your prices are welcome too. Changes to your words and photos are unlimited, any time.`
@@ -408,7 +403,9 @@ module.exports = async function handler(req, res) {
         : `One thing that helps now: send us photos, your services and prices, and anything about your business that isn&rsquo;t already online. Everything lives in your account from here: your plan, your requests, and your site.`;
 
     const cta = one
-      ? { text: 'Complete your setup', href: `${site}/onboarding.html`, note: 'About 10 minutes. It saves as you go.' }
+      ? (accountLink
+          ? { text: 'Make your account', href: accountLink, note: 'Choose a password so you can log in.' }
+          : { text: 'Open your account', href: `${site}/account.html`, note: 'Or just reply to this email.' })
       : accountLink
         ? { text: 'Make your account', href: accountLink, note: 'Choose a password to see your site and ask for changes.' }
         : starter
@@ -425,6 +422,8 @@ module.exports = async function handler(req, res) {
       html: emailHtml({
         preheader: starter
           ? `Your site goes live within 24 hours. Reply with any photos you'd like on it.`
+          : one
+          ? `We can't wait to work with you. Kane will be in touch shortly.`
           : `Your ${planName} plan is active. Here's what happens next.`,
         heading: `Welcome to Kanvas One${who2} 👋`,
         lines: [
