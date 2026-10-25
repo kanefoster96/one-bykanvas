@@ -9,6 +9,17 @@
 (function () {
   'use strict';
 
+  /* One has its own short, pay-first form (/start): name, business, type
+     and email, then pay, then a password. Every One button that still
+     points here (?plan=max) is passed on with what it carried. */
+  (function toStart() {
+    var q = new URLSearchParams(location.search);
+    if (q.get('plan') !== 'max') return;
+    var keep = new URLSearchParams();
+    ['max', 'business', 'lead', 'ref', 'type'].forEach(function (k) { if (q.get(k)) keep.set(k, q.get(k)); });
+    location.replace('/start' + (String(keep) ? '?' + keep : ''));
+  })();
+
   /* A referral link (?ref=CODE) can land on any visit before the one where
      they pay, so it is stashed the same way the offer code is. */
   var REF_KEY = 'one-ref';

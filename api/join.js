@@ -5,8 +5,9 @@
  * their socials, a booking page or site and up to 20 photos, then their
  * email - and sends them to Stripe: £9.99 a month or £99 a year for
  * Starter, £50 a month or £500 a year for Business. Only once that is paid
- * do they choose a password. One still goes through the get-started wizard,
- * which makes the account first.
+ * do they choose a password. One (/start) uses the same steps with less:
+ * their name, business, type of business and email, then £250 a month;
+ * the web address and everything else is sorted with Kane after.
  *
  * Five actions, one endpoint:
  *
@@ -155,8 +156,14 @@ module.exports = async function handler(req, res) {
       .replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
     const link = clean(body.link, 300);
     const social = clean(body.social, 300);
-    const billing = String(body.billing || '') === 'annual' ? 'annual' : 'monthly';
-    const plan = String(body.plan || '') === 'business' ? 'business' : 'starter';
+    const plan = ['business', 'max'].includes(String(body.plan || '')) ? String(body.plan) : 'starter';
+    const one = plan === 'max';
+    // One is monthly only.
+    const billing = !one && String(body.billing || '') === 'annual' ? 'annual' : 'monthly';
+    const name = clean(body.name, 120);
+    const type = clean(body.type, 120);
+    const model = ['trades', 'clubs', 'salon', 'other'].includes(String(body.model || '')) ? String(body.model) : null;
+    const goals = clean(body.goals, 600);
     const features = Array.isArray(body.features)
       ? body.features.map(String).filter((k, i, a) => FEATURES[k] && a.indexOf(k) === i).map((k) => FEATURES[k])
       : [];
@@ -164,8 +171,11 @@ module.exports = async function handler(req, res) {
     const owned = body.owned === true;   // they already have it: we connect it, not buy it
 
     if (business.length < 2) return res.status(400).json({ error: 'Add your business name.', field: 'business' });
+    if (one && name.length < 2) return res.status(400).json({ error: 'Add your name.', field: 'name' });
+    if (one && type.length < 2) return res.status(400).json({ error: 'What sort of business is it?', field: 'type' });
     if (!EMAIL.test(email)) return res.status(400).json({ error: 'That email does not look right.', field: 'email' });
-    if (!isValidDomain(domain)) return res.status(400).json({ error: 'Pick a web address.', field: 'domain' });
+    // One sorts the web address out with Kane after they join.
+    if (!one && !isValidDomain(domain)) return res.status(400).json({ error: 'Pick a web address.', field: 'domain' });
     if (files.length > MAX_FILES || files.some((f) => !FILE_PATH.test(f))) {
       return res.status(400).json({ error: 'One of those photos could not be sent. Remove it and add it again.', field: 'files' });
     }
@@ -173,7 +183,7 @@ module.exports = async function handler(req, res) {
     /* Free a minute ago is not free now. Taken is a clear no; a registry
        that does not answer is not a reason to lose the sale - we register
        it by hand and sort it with them if it has gone. */
-    if (!owned && await lookup(domain) === 'taken') {
+    if (!one && !owned && await lookup(domain) === 'taken') {
       return res.status(409).json({ error: domain + ' has just been taken. Pick another.', field: 'domain', code: 'domain_taken' });
     }
 
@@ -197,7 +207,7 @@ module.exports = async function handler(req, res) {
       const { data: made, error: makeErr } = await admin.auth.admin.createUser({
         email,
         email_confirm: false,
-        user_metadata: { business_name: business },
+        user_metadata: one ? { business_name: business, contact_name: name } : { business_name: business },
         app_metadata: { joined_via: 'join', needs_password: true }
       });
       if (makeErr || !made || !made.user) throw new Error((makeErr && makeErr.message) || 'createUser returned nothing');
@@ -215,15 +225,22 @@ module.exports = async function handler(req, res) {
     const row = {
       id: user.id,
       business_name: business,
-      requested_domain: domain,
-      domain_owned: owned,
+      requested_domain: one ? null : domain,
+      domain_owned: one ? false : owned,
       existing_links: online || null,
       site_uses: features.length ? features : null,
       selected_plan: plan,
       onboarded_at: new Date().toISOString()
     };
     /* No business type from the ad they came through: an ad is not what
-       they do. We ask them once their site is under way. */
+       they do. We ask them once their site is under way. One asks them
+       outright, with their name, and which One they came from. */
+    if (one) {
+      row.contact_name = name;
+      row.business_type = type;
+      if (model) row.max_model = model;
+      if (goals) row.site_goals = 'From their free profit plan: ' + goals;
+    }
     const { error: rowErr } = await admin.from('profiles').upsert(row, { onConflict: 'id' });
     if (rowErr) throw new Error(rowErr.message);
 
@@ -242,8 +259,8 @@ module.exports = async function handler(req, res) {
       offer: body.offer, referralCode: body.referralCode,
       metadata: { source: 'join', billing },
       // Stripe fills in {CHECKOUT_SESSION_ID} itself.
-      successUrl: `${origin}/join?paid={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${origin}/join?cancelled=1`
+      successUrl: `${origin}/${one ? 'start' : 'join'}?paid={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${origin}/${one ? 'start' : 'join'}?cancelled=1`
     });
 
     /* The welcome email links back to the password step with this, for
