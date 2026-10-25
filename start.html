@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Join One | Kanvas One</title>
+<meta name="description" content="Join Kanvas One: your own app, website and ads, built and run for you. £250 a month, no setup fee, cancel any time.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg?v=fa41229e" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=ed9a2381" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=0ecf9df9">
+<link rel="stylesheet" href="styles.css?v=aff04046">
+<style>
+  /* What One includes, on the pay step. */
+  .start-plan{margin:18px 0 0;padding:20px 22px;border:1px solid var(--line-soft,#e7e7ea);border-radius:20px;background:#fff;text-align:left}
+  .start-plan-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 12px}
+  .start-plan-head b{font-size:22px;letter-spacing:-.02em}
+  .start-plan-head span{font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .start-plan-head span small{font-size:15px;font-weight:500;color:var(--ink-2,#55555a)}
+  .start-plan .ticks{margin:0}
+  .start-due{display:flex;justify-content:space-between;align-items:center;margin:14px 0 0;padding:14px 18px;border-radius:14px;background:var(--bg-soft,#f4f4f6);font-weight:600}
+  .start-due b{font-size:22px}
+  .start-plan + .ref-have{margin-top:18px}
+</style>
+</head>
+<body class="auth-body join-body">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one<span class="wm-dot">.</span></a>
+    <button class="nav-chat" id="navChat" type="button" aria-label="Chat with us" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
+  </div>
+</header>
+
+<!-- Join One, paid first: who they are, then the plan and Stripe, then a
+     password. The web address and everything about the build are sorted
+     with Kane after they join. start.js, with api/join.js. -->
+<main class="wiz join">
+  <div class="wiz-top join-top" id="wizTop">
+    <ol class="join-steps" aria-label="Progress">
+      <li class="is-on"><i>1</i><span>You</span></li>
+      <li><i>2</i><span>Join</span></li>
+    </ol>
+    <p class="wiz-count sr-only">Step <span id="stepNow">1</span> of 2</p>
+    <div class="wiz-bar"><i id="bar"></i></div>
+  </div>
+
+  <div class="wiz-view">
+    <form class="wiz-track" id="track" novalidate>
+
+      <!-- ============ 1. who they are ============ -->
+      <section class="wiz-step" data-step="1" aria-label="About you">
+        <h1 tabindex="-1">Let&rsquo;s get started.</h1>
+        <p class="wiz-sub">Just the basics. Kane will be in touch for the rest once you&rsquo;ve joined.</p>
+        <div class="field"><label for="s_name">Your full name</label>
+          <input id="s_name" type="text" autocomplete="name" maxlength="120"></div>
+        <div class="field"><label for="s_business">Business name</label>
+          <input id="s_business" type="text" autocomplete="organization" maxlength="120"></div>
+        <div class="field"><label for="s_type">Type of business</label>
+          <input id="s_type" type="text" list="s_types" maxlength="120" placeholder="Heating engineer, dance school, salon&hellip;">
+          <datalist id="s_types">
+            <option value="Heating engineer"></option><option value="Plumber"></option><option value="Electrician"></option>
+            <option value="Roofer"></option><option value="Builder"></option><option value="Cleaner"></option>
+            <option value="Gardener or landscaper"></option><option value="Kids&rsquo; club"></option><option value="Dance school"></option>
+            <option value="Martial arts club"></option><option value="Gym or personal trainer"></option><option value="Hair and beauty salon"></option>
+          </datalist></div>
+        <div class="field"><label for="s_email">Email</label>
+          <input id="s_email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com"></div>
+        <div class="hp" aria-hidden="true">
+          <label for="s_extra">Leave this empty</label>
+          <input id="s_extra" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <p class="note" id="note1" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary full" id="next1" type="submit">Next</button>
+        <ul class="assure">
+          <li>Takes a minute</li>
+          <li>No setup fee</li>
+        </ul>
+        <p class="wiz-foot">Already have an account? <a href="/login.html">Log in</a></p>
+      </section>
+
+      <!-- ============ 2. confirm the plan and pay ============ -->
+      <section class="wiz-step" data-step="2" aria-label="Join" hidden>
+        <h1 tabindex="-1">Your plan.</h1>
+        <p class="wiz-sub" id="planSub">We build it all for you, then your first 3 months of ads are on us.</p>
+        <div class="start-plan">
+          <p class="start-plan-head"><b>One</b><span>&pound;250<small>/month</small></span></p>
+          <ul class="ticks">
+            <li>Your website and your own branded app</li>
+            <li>Built and run for you by our team</li>
+            <li>3 months of ads on us, up to &pound;100 a month</li>
+            <li>10 trials or enquiries in 3 months, or 3 months free</li>
+            <li>No setup fee. No contract, cancel any time</li>
+          </ul>
+          <p class="start-due"><span>Due today</span><b>&pound;250</b></p>
+        </div>
+        <details class="dom-have ref-have">
+          <summary>Got a referral code?</summary>
+          <div class="field"><label for="s_ref">Referral code</label>
+            <input id="s_ref" type="text" autocomplete="off" autocapitalize="characters" maxlength="20" placeholder="From another business on Kanvas One"></div>
+        </details>
+        <p class="note" id="note2" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary full" id="payBtn" type="button">Pay &pound;250 and join</button>
+        <ul class="assure">
+          <li>Payments secured by Stripe</li>
+          <li>Cancel any time</li>
+        </ul>
+        <p class="wiz-foot legal-consent">By paying you agree to our
+          <a href="/terms">terms of service</a> and <a href="/privacy">privacy notice</a>.</p>
+        <button class="linkish wiz-back" id="back2" type="button">Back</button>
+      </section>
+
+      <!-- ============ after Stripe: make the account ============ -->
+      <section class="wiz-step" data-step="3" aria-label="Make your account" hidden>
+        <h1 id="doneHead" tabindex="-1">You&rsquo;re in.</h1>
+        <p class="wiz-sub" id="doneSub">We can&rsquo;t wait to work with you. Kane will be in touch shortly to talk through your business and plan everything with you.</p>
+        <div id="accountBox">
+          <p class="wiz-label">Last thing: make your account</p>
+          <p class="join-acct-note">Logging in with <b id="doneEmail">your email</b>.</p>
+          <div class="field"><label for="s_password">Choose a password</label>
+            <input id="s_password" type="password" autocomplete="new-password" minlength="8" maxlength="72">
+            <p class="hint">At least 8 characters.</p></div>
+          <p class="note" id="note3" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary full" id="acctBtn" type="button">Make my account</button>
+        </div>
+        <a class="btn btn-ghost full" id="doneLogin" href="/login.html" hidden>Log in</a>
+      </section>
+
+    </form>
+  </div>
+
+<nav class="mini-legal" aria-label="Legal">
+  <a href="/terms">Terms</a>
+  <a href="/privacy">Privacy</a>
+  <a href="/cookies">Cookies</a>
+  <a href="/contact">Contact</a>
+  <button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
+</nav>
+</main>
+
+<script src="vendor/supabase.js?v=ec004176"></script>
+<script src="consent.js?v=5712679a"></script>
+<script src="supabase-config.js?v=90fd89dc"></script>
+<script src="supabase-client.js?v=e6f553fc"></script>
+<script src="session.js?v=59739977"></script>
+<script src="start.js?v=f4602cf5"></script>
+<script src="chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full defer></script>
+<script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
+<script src="admin-pill.js?v=06da798b"></script>
+<script src="/onemark.js?v=26409b0c" defer></script>
+</body>
+</html>

@@ -650,6 +650,9 @@
           $('doneLogin').hidden = false;
           return;
         }
+        /* A One payment has its own page for this step (/start): older
+           welcome emails and the site-live email link here for everyone. */
+        if (d.plan === 'max') { location.replace('/start?paid=' + encodeURIComponent(sessionId)); return; }
         accountEmail = d.email || '';
         $('doneEmail').textContent = accountEmail;
         var paidPlan = d.plan === 'business' ? 'business' : 'starter';

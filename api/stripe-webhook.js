@@ -344,7 +344,7 @@ module.exports = async function handler(req, res) {
     const domain = (p && p.requested_domain) || '';
     const noLink = !(p && p.existing_links);
     const accountLink = am.needs_password && am.join_session
-      ? `${site}/join?paid=${encodeURIComponent(am.join_session)}` : '';
+      ? `${site}/${patch.active_plan === 'max' ? 'start' : 'join'}?paid=${encodeURIComponent(am.join_session)}` : '';
 
     /* The three things someone actually wants confirmed after paying: which
        plan they are on, what it gets them, and from when. */
