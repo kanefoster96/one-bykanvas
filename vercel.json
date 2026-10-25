@@ -27,8 +27,8 @@
       "permanent": true
     },
     {
-      "source": "/trades",
-      "destination": "/max/trades",
+      "source": "/max/trades",
+      "destination": "/trades",
       "permanent": true
     },
     {

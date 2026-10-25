@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kanvas One for Trades: Your Own App, Website and Ads</title>
+<meta name="description" content="For heating engineers, plumbers, electricians and other trades: your own branded app, website and local ads, run for you. Free quote booking, missed-call text back, job tracking, payments and service plans in one place.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="Your trade&rsquo;s own app, website and ads. Run for you.">
+<meta property="og:description" content="More booked jobs, no missed calls and paperwork that does itself: your own branded app, website and local ads, set up and run for you.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kanvas One">
+<meta property="og:image" content="https://kanvas.one/assets/og-image.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://kanvas.one/trades">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","@id":"https://kanvas.one/trades#service","name":"Kanvas One for trades","serviceType":"Branded app, website and local advertising for trades, run for the business","description":"Kanvas One gives heating engineers, plumbers, electricians and other trades their own branded app, website and local Facebook and Instagram ads, set up and run for them, with free quote booking, missed-call text back, reminders, job tracking, payments and service plans in one place.","provider":{"@type":"Organization","@id":"https://kanvas.one/#org","name":"Kanvas One","url":"https://kanvas.one/"},"url":"https://kanvas.one/trades","areaServed":[{"@type":"City","name":"Newcastle upon Tyne"},{"@type":"AdministrativeArea","name":"North Tyneside"},{"@type":"AdministrativeArea","name":"Northumberland"},{"@type":"Country","name":"United Kingdom"}],"audience":{"@type":"BusinessAudience","audienceType":"Heating engineers, plumbers, electricians, roofers, builders and other trades"},"offers":{"@type":"Offer","price":"250","priceCurrency":"GBP","description":"Per month. Website, branded app, free quote booking, missed-call text back, job tracking, payments, service plans and ads run for you. First 3 months of ad spend included, up to £100 a month. Cancel any time.","url":"https://kanvas.one/trades#everything"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why is it £250 a month?","acceptedAnswer":{"@type":"Answer","text":"It replaces your website, job and quoting software, follow-up texts and emails, a business phone with missed-call text back, live chat, an agency to run your ads, and someone to get you found on Google and AI search. Bought separately that’s £530 to £1,740+ a month. At £180 a job, two extra jobs a month cover it."}},{"@type":"Question","name":"What if the ads don’t work for me?","acceptedAnswer":{"@type":"Answer","text":"That’s our risk, not yours. If your first 3 months of ads bring fewer than 10 enquiries, your next 3 months of One are free."}},{"@type":"Question","name":"What counts as an enquiry?","acceptedAnswer":{"@type":"Answer","text":"Someone getting in touch through the system we run for you: a quote request on your website or ad, a call to your business number, or a live chat message. Each person counts once, whether or not it becomes a job."}},{"@type":"Question","name":"Do my customers need to download an app?","acceptedAnswer":{"@type":"Answer","text":"No. Customers book, get their reminders, accept quotes and pay by text and link, with nothing to download. The app is for you and your team. Customers on a service plan can log in to see their plan, their next service and their job history."}},{"@type":"Question","name":"Can I sell service plans?","acceptedAnswer":{"@type":"Answer","text":"Yes. Set up a plan such as a yearly service paid monthly, and customers join on your website, from a quote, or on the spot while you are with them. It is paid by card every month into your own Stripe account, and we take 0%."}},{"@type":"Question","name":"Is there a contract?","acceptedAnswer":{"@type":"Answer","text":"No. It’s monthly, and you can cancel any time from your account."}}]}]}</script>
+<link rel="icon" href="assets/favicon.svg?v=fa41229e" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png?v=ed9a2381" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=0ecf9df9">
+<link rel="stylesheet" href="styles.css?v=aff04046">
+<link rel="stylesheet" href="home.css?v=61bfe768">
+<link rel="stylesheet" href="/learn/learn.css?v=8e2f7fb2">
+</head>
+<body class="home trades">
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one<span class="wm-dot">.</span></a>
+    <button class="nav-chat" id="navChat" type="button" aria-label="Chat with us" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Built by script.js so the nav has one source of truth across pages. -->
+<div class="menu" id="menu" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+
+<main id="main">
+
+<!-- ============ HERO ============
+     The homepage's layout, for a trade: the promise, the button, and two
+     phones behind a switch, what their customers see and their own app. -->
+<section class="mh" data-tone="white">
+  <div class="wrap mh-grid">
+    <div class="mh-copy">
+    <div class="mh-proof reveal">
+      <a class="mh-founder mh-founder-chat" href="#" data-chat-open="Hi Kane, I run a trade business. Would One work for me?"><img src="assets/kane-sm.jpg?v=cff8a019" alt="" width="64" height="64"><span><span>Built and run for you by Kane&rsquo;s team</span><em>Got a question? Ask me directly &rsaquo;</em></span></a>
+    </div>
+    <h1 class="reveal">More booked jobs and no missed calls. <span class="mh-off">The paperwork does itself.</span></h1>
+    <p class="sub reveal">Your trade&rsquo;s own branded app, website and local ads, run by our team.</p>
+    <div class="mh-cta reveal">
+      <a class="btn btn-primary" href="#calc">What are missed calls costing you?</a>
+      <p class="mh-in"><a href="#" data-chat-open="Hi Kane, I run a trade business. Would One work for me?">Prefer to talk first? Chat with Kane</a> &middot; <a href="/login.html">Log in</a></p>
+    </div>
+    </div>
+    <div class="mh-visual">
+    <div class="mh-role" role="group" aria-label="Show the app for" data-on="customers">
+      <span class="mh-role-thumb" aria-hidden="true"></span><button type="button" data-hp-show="customers" aria-pressed="true">For your customers</button><button type="button" data-hp-show="trader" aria-pressed="false">For you</button>
+    </div>
+    <div class="mh-phone" id="heroPhone" data-hp-role="customers" aria-hidden="true"></div><div class="mh-phone" data-hp-role="trader" aria-hidden="true" hidden></div>
+    <p class="mh-ask">Work a different way? <a href="#" data-chat-open="Hi Kane, can One fit the way my business works?">Tell me</a> and I&rsquo;ll set it up around how you do business, at no extra cost.</p>
+    <div class="mh-after">
+      <ul class="mh-risk">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>10 enquiries in 3 months, or 3 months free <button class="mh-info" type="button" aria-expanded="false" aria-controls="enqNote" aria-label="How that works">i</button></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>No setup fee, cancel any time</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>&pound;300 of ads, on us <button class="mh-info" type="button" aria-expanded="false" aria-controls="adsNote" aria-label="How the ads work">i</button></li>
+      </ul>
+      <p class="mh-info-note" id="enqNote" hidden><b>The 10-Enquiry Promise.</b> If your first 3 months of ads bring fewer than 10 enquiries, your next 3 months of One are free. An enquiry counts whether or not it becomes a job. Our risk, not yours.</p>
+      <p class="mh-info-note" id="adsNote" hidden><b>&pound;300 of ads, on us.</b> We pay for your first 3 months of ads, up to &pound;100 a month: a free test of what ads can do for your business. After that, keep them going on your own budget and we keep running them for you, or stop. Your choice.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ WE UNDERSTAND ============ -->
+<section id="understand" class="section pr band-dark" data-tone="dark">
+  <div class="wrap center">
+    <p class="pr-tag reveal">Sound familiar?</p>
+    <h2 class="reveal">You&rsquo;re on a job when the phone rings. <span class="dim dim-line">And they ring the next number.</span></h2>
+  </div>
+  <div class="wrap pr-strip three reveal">
+    <div class="pr-item"><span class="tile tile-green"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1z"/></svg></span><b>Missed calls, lost jobs</b><span>You can&rsquo;t answer from under a boiler.</span></div>
+    <div class="pr-item"><span class="tile tile-ink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10A.5.5 0 0 1 7 20z"/><path d="M14 3.5V8h4M10 12h5M10 15.5h5"/></svg></span><b>Quotes that go quiet</b><span>Nobody has time to chase them.</span></div>
+    <div class="pr-item"><span class="tile tile-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><b>Evenings on invoices</b><span>And chasing the ones that don&rsquo;t pay.</span></div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="one" class="section fx" data-tone="white">
+  <div class="wrap">
+    <h2 class="fx-steps-h fx-steps-top reveal">How it works</h2>
+    <ol class="fx-steps fx-steps4 reveal">
+      <li><span class="fx-n">1</span><div><b>Today: tell us how you work</b><span>Your jobs, your prices and the areas you cover. We plan it with you.</span></div></li>
+      <li><span class="fx-n">2</span><div><b>Within a week: your website</b><span>With free quote booking, your reviews and a page for every service and town.</span></div></li>
+      <li><span class="fx-n">3</span><div><b>Next: your app, live</b><span>For you and your team, with your name on it. Missed-call text back from day one.</span></div></li>
+      <li><span class="fx-n">4</span><div><b>Then: your ads, on us</b><span>Up to &pound;100 a month for 3 months. Quote requests land on your phone.</span></div></li>
+    </ol>
+  </div>
+  <div class="wrap center sec-cta reveal">
+    <a class="btn btn-primary" href="/get-started?plan=max&amp;max=trades">Get started <span aria-hidden="true">&rsaquo;</span></a>
+  </div>
+</section>
+
+<!-- ============ INSIDE THE APP ============
+     The trader's app and what their customers get, drawn from the same
+     system as the club app, with example names and numbers. -->
+<section id="app" class="section ap band-dark" data-tone="dark">
+  <div class="wrap center">
+    <p class="pr-tag reveal">See inside the app</p>
+    <h2 class="reveal">Your app. <span class="dim dim-line">Your name on it.</span></h2>
+  </div>
+  <div class="wrap ap-row reveal">
+    <figure class="ap-fig">
+      <div class="ap-hp" data-hp-screen="tmissed" aria-hidden="true"></div>
+      <figcaption><b>Missed-call text back.</b> Miss a call on a job and they get a text with your booking link, straight away.</figcaption>
+    </figure>
+    <figure class="ap-fig">
+      <div class="ap-hp" data-hp-screen="tjobs" aria-hidden="true"></div>
+      <figcaption><b>Today&rsquo;s jobs.</b> One tap on &ldquo;On my way&rdquo; and the customer gets a text.</figcaption>
+    </figure>
+    <figure class="ap-fig">
+      <div class="ap-hp" data-hp-screen="tquote" aria-hidden="true"></div>
+      <figcaption><b>Quotes they accept online.</b> With a service added in one tap and the deposit paid.</figcaption>
+    </figure>
+    <figure class="ap-fig">
+      <div class="ap-hp" data-hp-screen="toffer" aria-hidden="true"></div>
+      <figcaption><b>The right offer on every job.</b> A service plan or a discounted service, offered while you&rsquo;re there.</figcaption>
+    </figure>
+    <figure class="ap-fig">
+      <div class="ap-hp" data-hp-screen="tmoney" aria-hidden="true"></div>
+      <figcaption><b>Paid on the day.</b> Pay links, deposits and receipts, with late invoices chased for you.</figcaption>
+    </figure>
+    <figure class="ap-fig">
+      <div class="ap-hp" data-hp-screen="tplans" aria-hidden="true"></div>
+      <figcaption><b>Service plans.</b> Customers paying you every month, with their yearly service booked for you.</figcaption>
+    </figure>
+  </div>
+  <div class="wrap center ap-try reveal">
+    <a class="btn btn-primary" href="#" data-chat-open="Hi Kane, can you show me how One would work for my business?">See how it would work for you <span aria-hidden="true">&rsaquo;</span></a>
+    <p>Tell me what you do and I&rsquo;ll walk you through it, set up around your business.</p>
+  </div>
+  <p class="wrap center micro ap-micro reveal">Shown with example names and numbers.</p>
+</section>
+
+<!-- ============ MORE FROM EVERY JOB ============
+     The upsell, as a worked example: one callout, three ways to be paid. -->
+<section id="results" class="section" data-tone="white">
+  <div class="wrap center">
+    <p class="pr-tag reveal">More from every visit</p>
+    <h2 class="reveal">A single callout. <span class="dim dim-line">Three ways to be paid.</span></h2>
+    <p class="lede reveal">The app puts the right offer in front of you on every job, and the customer says yes in a tap. Here&rsquo;s one boiler repair.</p>
+  </div>
+  <div class="wrap">
+    <div class="mh-results reveal">
+      <p class="mh-results-tag">EXAMPLE &middot; ONE BOILER REPAIR</p>
+      <div class="mh-results-row">
+        <div><p class="mh-results-n">&pound;205</p><p class="mh-results-t">the repair</p></div>
+        <div><p class="mh-results-n">+&pound;45</p><p class="mh-results-t">a service, added to the quote</p></div>
+        <div><p class="mh-results-n">+&pound;144</p><p class="mh-results-t">a year on a &pound;12 service plan</p></div>
+        <div><p class="mh-results-n">&pound;394</p><p class="mh-results-t">from one callout, not &pound;205</p></div>
+      </div>
+      <p class="mh-results-foot">Example prices to show how it works, not a promise. Then next year the service reminder books them in again, without a phone call.</p>
+    </div>
+    <div class="fd reveal" style="margin-top:clamp(28px,4vw,44px)">
+      <img class="fd-img" src="assets/kane.jpg" alt="Kane, founder of One" width="640" height="640" loading="lazy">
+      <div class="fd-text">
+        <p class="fd-q">&ldquo;I built One to run my own business: the bookings, the reminders, the payments and the follow-ups, every day, without me chasing any of it. A trade runs on the same things. A booking, a reminder so they&rsquo;re in, getting paid, and coming back next year. If you want to know whether it&rsquo;d work for you, ask me. I&rsquo;ll give you a straight answer.&rdquo;</p>
+        <p class="fd-who"><b>Kane</b> &middot; Founder of One<br>Newcastle upon Tyne</p>
+        <a class="btn btn-primary fd-btn" href="#" data-chat-open="Hi Kane, I run a trade business. Would One work for me?">Chat with Kane</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHAT IT WOULD COST ============ -->
+<section id="compare" class="section band-dark" data-tone="dark">
+  <div class="wrap center">
+    <div id="everything" class="ev">
+      <p class="pr-tag reveal">The Booked Jobs System</p>
+      <h2 class="reveal">Everything included. <span class="dim">&pound;250 a month.</span></h2>
+      <p class="lede reveal">Tell us how you work. We do everything else. No setup fee, no contract, cancel any time.</p>
+      <p class="ev-fees reveal"><b>No cut of your payments.</b> Customers pay into your own Stripe account at Stripe&rsquo;s own card rates, and we take 0%. Double your jobs and your bill is still &pound;250.</p>
+      <ul class="ev-bonus reveal">
+        <li><b>Free switch-over</b><span>Your customers and their history moved across for you</span></li>
+        <li><b>&pound;300 of ads, on us</b><span>Your first 3 months, up to &pound;100 a month</span></li>
+        <li><b>The 10-Enquiry Promise</b><span>10 enquiries in 3 months, or 3 months free</span></li>
+        <li><b><button type="button" class="gl" data-gl="seo">SEO</button> and <button type="button" class="gl" data-gl="aeo">AEO</button>, done for you</b><span>Found on Google and AI search in every town you cover</span></li>
+      </ul>
+      <h3 class="ev-then reveal">How it compares. <span class="dim">Buying it all separately.</span></h3>
+      <div class="mh-compare reveal">
+        <div><span>An agency to run your ads</span><span>&pound;300&ndash;&pound;1,000+ a month</span></div>
+        <div><span>A new website</span><span>&pound;1,000&ndash;&pound;3,000 up front</span></div>
+        <div><span>Job, quote and invoice software</span><span>&pound;30&ndash;&pound;80 a month</span></div>
+        <div><span>Text and email follow-ups</span><span>&pound;20&ndash;&pound;80 a month</span></div>
+        <div><span>A business phone with missed-call text back</span><span>&pound;15&ndash;&pound;40 a month</span></div>
+        <div><span>Live chat for your website</span><span>&pound;15&ndash;&pound;40 a month</span></div>
+        <div><span>Getting found on Google and AI search <span style="white-space:nowrap">(<button type="button" class="gl" data-gl="seo">SEO</button> and <button type="button" class="gl" data-gl="aeo">AEO</button>)</span></span><span>&pound;150&ndash;&pound;500 a month</span></div>
+        <div><span>A branded app with your name on it</span><span>Rarely an option</span></div>
+        <div class="sum"><span>Bought separately</span><span>&pound;530&ndash;&pound;1,740+ a month, plus &pound;1,000+ up front</span></div>
+        <div class="us"><span>One does all of it for you</span><span>&pound;250 a month</span></div>
+      </div>
+      <p class="micro reveal">Typical UK prices, October 2026.</p>
+      <details class="ev-more">
+        <summary>See everything included</summary>
+      <div class="ev-grid">
+      <article class="ev-card">
+        <h3>Your app and website</h3>
+        <ul class="ticks">
+          <li class="tick-hero"><b>Your own app</b> <span>in the App Store and Google Play, with your name and logo</span></li>
+          <li class="tick-hero"><b>One app for you and your team</b> <span>each engineer sees their own jobs</span></li>
+          <li class="tick-hero"><b>Your website</b> <span>with free quote booking, your reviews and your prices</span></li>
+          <li><b>A page for every service and every town you cover</b></li>
+          <li><b>Your web address, hosting and security</b></li>
+          <li><b>Changes made for you</b> <span>just message us</span></li>
+        </ul>
+      </article>
+      <article class="ev-card">
+        <h3>Win more jobs</h3>
+        <ul class="ticks">
+          <li class="tick-hero"><b>Facebook and Instagram ads, run for you</b> <span>3 months on us, then on your budget if you want more</span></li>
+          <li class="tick-hero"><b>Free quote or callout booking online</b> <span>with photos of the job and a postcode check</span></li>
+          <li class="tick-hero"><b>Missed-call text back</b> <span>miss a call and they get a text straight away</span></li>
+          <li><b>Booking reminders</b> <span>by text and email, so they&rsquo;re in when you arrive</span></li>
+          <li class="tick-hero"><b>&ldquo;On my way&rdquo; texts</b> <span>in one tap</span></li>
+          <li class="tick-hero"><b>Quote follow-ups</b> <span>with an accept and pay deposit button</span></li>
+          <li><b>Google reviews asked for automatically</b></li>
+          <li><b>Referrals</b> <span>with something in it for both sides</span></li>
+        </ul>
+      </article>
+      <article class="ev-card">
+        <h3>Run your jobs</h3>
+        <ul class="ticks">
+          <li class="tick-hero"><b>Today&rsquo;s jobs</b> <span>for you and each engineer, with directions</span></li>
+          <li class="tick-hero"><b>Every enquiry and quote in one list</b> <span>so nothing goes cold</span></li>
+          <li><b>Customer and property records</b> <span>appliances, access notes, photos and job history</span></li>
+          <li><b>Certificates kept with the job</b></li>
+          <li><b>Days off and holidays</b> <span>bookings blocked automatically</span></li>
+        </ul>
+      </article>
+      <article class="ev-card">
+        <h3>Get paid and sell more</h3>
+        <ul class="ticks">
+          <li class="tick-hero"><b>Deposits, pay links and card on the day</b> <span>with the receipt sent for you</span></li>
+          <li class="tick-hero"><b>Service plans paid monthly</b> <span>such as a yearly service, with priority callouts</span></li>
+          <li class="tick-hero"><b>Offers on the job</b> <span>a service or a plan, accepted while you&rsquo;re there</span></li>
+          <li><b>Late invoices chased for you</b></li>
+          <li><b>No cut of your payments</b> <span>customers pay into your own Stripe account; we take 0%</span></li>
+          <li><b>Money paid straight to your bank</b></li>
+        </ul>
+      </article>
+      <article class="ev-card">
+        <h3>Talk to your customers</h3>
+        <ul class="ticks">
+          <li class="tick-hero"><b>Live chat</b> <span>on your website and in your app, in one inbox</span></li>
+          <li class="tick-hero"><b>Calls and texts from your business number</b> <span>right from the app</span></li>
+          <li class="tick-hero"><b>Service reminders</b> <span>so last year&rsquo;s customers book again</span></li>
+          <li><b>&pound;5 of texts and calls a month</b> <span>about 100 texts or 100 minutes. Live chat and email are always free</span></li>
+        </ul>
+      </article>
+      <article class="ev-card">
+        <h3>Know your numbers, with help on hand</h3>
+        <ul class="ticks">
+          <li><b>Your dashboard</b> <span>enquiries, jobs, payments and plans</span></li>
+          <li><b>A monthly report</b> <span>what the ads cost, what came in, what you won</span></li>
+          <li class="tick-hero"><b>A real person to message</b> <span>no ticket queue</span></li>
+          <li class="tick-hero"><b>Free switch-over</b> <span>your customers and their history moved across</span></li>
+        </ul>
+      </article>
+      </div>
+      </details>
+      <a class="btn btn-primary ev-cta reveal" href="/get-started?plan=max&amp;max=trades">Get started</a>
+      <a class="claim-link reveal" href="/get-started?plan=max&amp;max=trades">Claim your &pound;300 of ads, on us <span aria-hidden="true">&rsaquo;</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq" class="section" data-tone="white">
+  <div class="wrap center">
+    <h2 class="reveal">Questions. <span class="dim">Answered straight.</span></h2>
+  </div>
+  <div class="wrap faq reveal">
+    <details>
+      <summary>Why is it &pound;250 a month?</summary>
+      <div class="ans"><p>It replaces your website, job and quoting software, follow-up texts and emails, a business phone with missed-call text back, live chat, an agency to run your ads, and someone to get you found on Google and AI search. Bought separately that&rsquo;s &pound;530 to &pound;1,740+ a month. At &pound;180 a job, two extra jobs a month cover it.</p></div>
+    </details>
+    <details>
+      <summary>What if the ads don&rsquo;t work for me?</summary>
+      <div class="ans"><p>That&rsquo;s our risk, not yours. If your first 3 months of ads bring fewer than 10 enquiries, your next 3 months of One are free.</p></div>
+    </details>
+    <details>
+      <summary>What counts as an enquiry?</summary>
+      <div class="ans"><p>Someone getting in touch through the system we run for you: a quote request on your website or ad, a call to your business number, or a live chat message. Each person counts once, whether or not it becomes a job. The full detail is in our <a href="/terms#price">terms</a>.</p></div>
+    </details>
+    <details>
+      <summary>Do my customers need to download an app?</summary>
+      <div class="ans"><p>No. Customers book, get their reminders, accept quotes and pay by text and link, with nothing to download. The app is for you and your team. Customers on a service plan can log in to see their plan, their next service and their job history.</p></div>
+    </details>
+    <details>
+      <summary>Can my engineers use it?</summary>
+      <div class="ans"><p>Yes. Each one sees their own jobs for the day, the customer and property details, and the offer for each job, and can send &ldquo;on my way&rdquo; and take payment from their phone.</p></div>
+    </details>
+    <details>
+      <summary>Can I sell service plans?</summary>
+      <div class="ans"><p>Yes. Set up a plan such as a yearly service paid monthly, and customers join on your website, from a quote, or on the spot while you&rsquo;re with them. It&rsquo;s paid by card every month into your own Stripe account, and we take 0%.</p></div>
+    </details>
+    <details>
+      <summary>What happens when I miss a call?</summary>
+      <div class="ans"><p>They get a text straight away from your business number, with a link to book a free quote and a promise you&rsquo;ll call back. Most people book from the text instead of ringing the next number.</p></div>
+    </details>
+    <details>
+      <summary>Who pays for the ads?</summary>
+      <div class="ans"><p>Your first 3 months of ads: we do, up to &pound;100 a month, as a free test of what ads can do for you. After that it&rsquo;s your choice. Keep them going on your own budget, paid straight to <button type="button" class="gl" data-gl="meta">Meta</button>, and we keep running them for you at no extra cost. Or turn them off. We pause the ads when your diary is full.</p></div>
+    </details>
+    <details>
+      <summary>Do we get our own app?</summary>
+      <div class="ans"><p>Yes, with your name and logo, in the App Store and Google Play. Apple and Google charge for their developer accounts (&pound;79 a year and a one-off $25), paid to them, not us.</p></div>
+    </details>
+    <details>
+      <summary>Is there a contract?</summary>
+      <div class="ans"><p>No. It&rsquo;s monthly, and you can cancel any time from your account.</p></div>
+    </details>
+    <details>
+      <summary>What kind of businesses is it for?</summary>
+      <div class="ans"><p>Trades and home services that quote, visit and get paid: heating engineers, plumbers, electricians, roofers, builders, locksmiths, cleaners and gardeners. If you work a different way, tell me and I&rsquo;ll set it up around how you do business.</p></div>
+    </details>
+    <details>
+      <summary>Is our data ours?</summary>
+      <div class="ans"><p>Yes. Your customers, prices and data are only ever yours. Never shared, never used by anyone else.</p></div>
+    </details>
+    <p class="ask reveal">Still got a question? <a href="#" data-chat-open>Chat with Kane</a> or <a href="mailto:hello@kanvas.one?subject=Question%20about%20Kanvas%20One%20for%20trades">email us</a>.</p>
+  </div>
+</section>
+
+<!-- ============ MISSED CALLS ============
+     The trades version of the homepage's closing calculator: what the
+     calls they miss cost them in a year. Sums inline below. -->
+<section id="calc" class="section mh-spaces band-dark band-last" data-tone="dark">
+  <div class="wrap center">
+    <p class="mh-kicker reveal">Free &middot; 30 seconds</p>
+    <h2 class="reveal">What are missed calls costing you? <span class="dim dim-line">Let&rsquo;s find out.</span></h2>
+    <p class="lede reveal mh-plan-lede">Move the sliders. See what the calls you can&rsquo;t answer cost you in a year.</p>
+    <div class="mh-calc reveal">
+      <div class="mh-slide">
+        <div class="mh-slide-top"><label for="tCalls">Calls you miss a week</label><span class="mh-num"><input id="tCallsN" type="number" inputmode="numeric" min="0" max="200" step="1" value="5" aria-label="Calls you miss a week, typed"></span></div>
+        <input id="tCalls" class="mh-range" type="range" min="0" max="40" step="1" value="5">
+      </div>
+      <div class="mh-slide">
+        <div class="mh-slide-top"><label for="tJob">Your average job</label><span class="mh-num"><span class="mh-num-pre" aria-hidden="true">&pound;</span><input id="tJobN" type="number" inputmode="numeric" min="0" max="20000" step="1" value="180" aria-label="Your average job in pounds, typed"></span></div>
+        <input id="tJob" class="mh-range" type="range" min="50" max="2000" step="10" value="180">
+      </div>
+      <div class="mh-slide">
+        <div class="mh-slide-top"><label for="tRate">How many would have booked</label><span class="mh-num"><input id="tRateN" type="number" inputmode="numeric" min="0" max="100" step="1" value="30" aria-label="How many in 100 would have booked, typed"><span class="mh-num-pre" aria-hidden="true">%</span></span></div>
+        <input id="tRate" class="mh-range" type="range" min="0" max="100" step="5" value="30">
+      </div>
+      <div class="mh-calc-out" aria-live="polite">
+        <p class="mh-calc-pre">Missed calls are costing you</p>
+        <p class="mh-calc-big" id="tLoss">&pound;14,040</p>
+        <p class="mh-calc-sub">every single year.</p>
+        <p class="mh-calc-cover" id="tFix">&pound;250 a month could fix that. Just 2 jobs a month cover it.</p>
+      </div>
+      <a class="btn btn-primary mh-plan-go" href="/get-started?plan=max&amp;max=trades">Stop missing jobs <span aria-hidden="true">&rsaquo;</span></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="sticky-cta" id="stickyCta" hidden>
+  <a class="btn btn-primary" href="/get-started?plan=max&amp;max=trades">Get started</a>
+</div>
+
+<footer class="foot" data-tone="light">
+  <div class="wrap">
+    <div class="ft-top">
+      <p class="foot-logo">one<span class="wm-dot">.</span></p>
+      <p class="foot-by">by Kanvas</p>
+    </div>
+    <p class="ft-tag">Everything you need to win jobs and run them. Built and run for you by our team in the North East.</p>
+
+    <div class="ft-cols ft-cols3">
+      <nav class="ft-col" aria-label="One for trades">
+        <h4>One for trades</h4>
+        <a href="/trades#one">How it works</a><a href="/trades#app">Inside the app</a><a href="/trades#everything">Pricing</a><a href="/trades#faq">Questions</a><a href="/trades#calc">Missed calls calculator</a><a href="/login.html">Log in</a>
+      </nav>
+      <nav class="ft-col" aria-label="One">
+        <h4>One</h4>
+        <a href="/">Kids&rsquo; clubs</a><a href="/websites">Websites from &pound;9.99</a><a href="/websites-for-trades">Websites for trades</a>
+      </nav>
+      <nav class="ft-col" aria-label="Kanvas">
+        <h4>Kanvas</h4>
+        <a href="/contact">Contact</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/cookies">Cookies</a><button class="linkish-foot" type="button" data-consent-open hidden>Cookie settings</button>
+      </nav>
+    </div>
+
+    <hr class="ft-rule">
+    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. 3 months of ads included means we pay your ad spend, up to &pound;100 a month, for the first 3 months after your ads start, while you stay on One. Your ads start once your website and app are both live. After those 3 months, ads are optional: you pay Meta directly for any you keep, and we run them as part of One. 10 enquiries in 3 months, or 3 months free: if the ads we fund in those 3 months bring fewer than 10 enquiries, your next 3 months of One are free (see terms). Example figures on this page show how One works and are not a forecast. No contract: cancel any time.</p>
+    <div class="ft-bottom">
+      <div>
+        <p class="foot-copy">&copy; <span id="year">2026</span> Kanvas One. All rights reserved.</p>
+        <p class="ft-made">Proudly made in the North East</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Forwards an auth link that fell back to the Site URL. Must run first. -->
+<script src="auth-landing.js?v=91612eaa"></script>
+<script src="consent.js?v=5712679a"></script>
+<script src="supabase-config.js?v=90fd89dc"></script>
+<script src="session.js?v=59739977"></script>
+<script src="script.js?v=f58fbad4"></script>
+<script src="home.js?v=ec63472f"></script>
+<script src="chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One" data-intro="Hi, I&rsquo;m Kane. I built One and set it up for every business on it. Tell me what you do and I&rsquo;ll show you how it would work for you. I&rsquo;ll give you a straight answer." data-quick="How does the 10-enquiry promise work?|Can my engineers use it?|Can I sell service plans?" defer></script>
+<script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
+<script src="admin-pill.js?v=06da798b"></script>
+<script src="glossary.js?v=d3003e23" defer></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  // The (i) beside a tick: its note, opened and closed in place, one at a time.
+  var infos = document.querySelectorAll('.mh-info');
+  infos.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var open = b.getAttribute('aria-expanded') === 'true';
+      infos.forEach(function (o) { o.setAttribute('aria-expanded', 'false'); $(o.getAttribute('aria-controls')).hidden = true; });
+      if (!open) { b.setAttribute('aria-expanded', 'true'); $(b.getAttribute('aria-controls')).hidden = false; }
+      b.blur();
+    });
+  });
+
+  /* The missed-calls sum: calls a week x 52 x the share that would have
+     booked x the average job. Each number is a slider or typed, like the
+     homepage's free check. */
+  var PAIRS = [['tCalls', 'tCallsN'], ['tJob', 'tJobN'], ['tRate', 'tRateN']];
+  function num(id) {
+    var el = $(id), v = Math.round(+el.value);
+    if (!isFinite(v) || el.value === '') v = 0;
+    return Math.max(+el.min, Math.min(+el.max, v));
+  }
+  function fill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+  function money(n) { return '£' + Math.round(n).toLocaleString('en-GB'); }
+  function calc() {
+    PAIRS.forEach(function (pr) {
+      var box = $(pr[1]);
+      $(pr[0]).value = num(pr[1]); fill($(pr[0]));
+      box.style.width = (Math.max(2, String(box.value).length) + 0.4) + 'ch';
+    });
+    var job = num('tJobN'), year = num('tCallsN') * 52 * (num('tRateN') / 100) * job;
+    var cover = job > 0 ? Math.max(1, Math.ceil(250 / job)) : 0;
+    $('tLoss').textContent = money(year);
+    $('tFix').textContent = year > 0 && cover
+      ? '£250 a month could fix that. Just ' + cover + ' job' + (cover === 1 ? ' a month covers' : 's a month cover') + ' it.'
+      : 'Not missing any? One can still run the rest for you.';
+  }
+  PAIRS.forEach(function (pr) {
+    $(pr[0]).addEventListener('input', function () { $(pr[1]).value = $(pr[0]).value; calc(); });
+    $(pr[1]).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+<script src="/hero-phone.js?v=04de9072" defer></script>
+<script src="/onemark.js?v=26409b0c" defer></script>
+</body>
+</html>

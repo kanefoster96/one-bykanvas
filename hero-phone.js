@@ -2,7 +2,9 @@
    (no screenshots to wait for). The hero has two phones behind a switch:
    for coaches (registers, a notification to a class, medical notes, posts,
    memberships) and for parents (a trial from booking to member, their next
-   class and QR code, and a chat with the coach). Everything is drawn at
+   class and QR code, and a chat with the coach). /trades has the same two
+   phones for a trade: what their customers see, and the trader's own app.
+   Everything is drawn at
    720px wide and scaled to fit, so it stays sharp at any size. Pauses when
    off screen; with reduced motion it just steps between finished screens. */
 (function () {
@@ -24,10 +26,13 @@
     star: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2.8l2.75 5.6 6.15.9-4.45 4.33 1.05 6.12L12 16.87l-5.5 2.88 1.05-6.12L3.1 9.3l6.15-.9z"/></svg>',
     sig: '<svg width="34" height="22" viewBox="0 0 34 22" fill="currentColor"><rect x="0" y="14" width="6" height="8" rx="1.5"/><rect x="9" y="10" width="6" height="12" rx="1.5"/><rect x="18" y="5" width="6" height="17" rx="1.5"/><rect x="27" y="0" width="6" height="22" rx="1.5"/></svg>',
     wifi: '<svg width="32" height="24" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M2 6.5a14 14 0 0120 0M5.5 10a9 9 0 0113 0M9 13.4a4 4 0 016 0"/></svg>',
+    inbox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 13l2.5-8h11L20 13v6H4z"/><path d="M4 13h4.5l1 2h5l1-2H20"/></svg>',
+    pound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 6.5A4 4 0 0 0 9 9v9M7 13h7M6.5 18H17"/></svg>',
+    users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.5 14.2A5.5 5.5 0 0 1 20.5 19"/></svg>',
     bat: '<svg width="48" height="24" viewBox="0 0 48 24" fill="none"><rect x="1.5" y="1.5" width="40" height="21" rx="6" stroke="currentColor" stroke-width="2.4"/><rect x="5" y="5" width="33" height="14" rx="3" fill="currentColor"/><rect x="44" y="8" width="3" height="8" rx="1.5" fill="currentColor"/></svg>'
   };
   var AP = '<span class="hp-ap"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.2 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.8 1.2 1.8 2.6 3.1 2.5 1.3-.1 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.4-.9-2.4-4.1zM14 5.2c.7-.8 1.1-1.9 1-3-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.2-.6 2.9-1.4z"/></svg>Pay</span>';
-  var T = IC.tick, CLUB = 'Your Club', LOGO = '<span class="hp-lg">' + IC.star + '</span>';
+  var T = IC.tick, CLUB = 'Your Club', BIZ = 'Your Business', LOGO = '<span class="hp-lg">' + IC.star + '</span>';
 
   function qr(seed, on, off) {
     var N = 25, s = seed, r = function () { s = (s * 9301 + 49297) % 233280; return s / 233280; }, o = '';
@@ -37,7 +42,7 @@
     return '<svg viewBox="0 0 25 25" shape-rendering="crispEdges">' + o + '</svg>';
   }
   var sbar = function (light) { return '<div class="hp-sb' + (light ? ' hp-l' : '') + '"><b>9:41</b><span>' + IC.sig + IC.wifi + IC.bat + '</span></div>'; };
-  var ban = function (id, msg, light) { return '<div class="hp-ban' + (light ? ' hp-banl' : '') + '" id="' + id + '">' + (light ? '<span class="hp-mi">' + IC.mail + '</span>' : LOGO) + '<div><p class="hp-bt"><span>' + CLUB.toUpperCase() + '</span><span>now</span></p><p>' + msg + '</p></div></div>'; };
+  var ban = function (id, msg, light, name) { return '<div class="hp-ban' + (light ? ' hp-banl' : '') + '" id="' + id + '">' + (light ? '<span class="hp-mi">' + IC.mail + '</span>' : LOGO) + '<div><p class="hp-bt"><span>' + (name || CLUB).toUpperCase() + '</span><span>now</span></p><p>' + msg + '</p></div></div>'; };
   var row = function (name, tag, right, id) { return '<div class="hp-row"' + (id ? ' id="' + id + '"' : '') + '><span><span class="hp-t">' + name + (tag || '') + '</span></span>' + right + '</div>'; };
   var ok = function (txt) { return '<b class="hp-ok">' + T + txt + '</b>'; };
 
@@ -121,7 +126,102 @@
       row('James Morgan<span class="hp-s">Dad \u00b7 07700 900456</span>', '', '<b class="hp-call">' + IC.phone + '</b>') + '</div>' +
       '<p class="hp-lab">Medical and consent</p><div class="hp-cd">' +
       row('Asthma<span class="hp-s">Inhaler in her bag</span>', '', '<b class="hp-pill hp-pa">Note</b>') +
-      row('Photo consent', '', ok('Given')) + '</div>' }
+      row('Photo consent', '', ok('Given')) + '</div>' },
+    /* ---- Trades: what their customers see (no app needed) ---- */
+    { id: 'tweb', full: true, trade: true, label: 'They book a free quote on your website', html:
+      sbar() + '<div class="hp-wnav">' + LOGO + '<span class="hp-hb"><i></i><i></i><i></i></span></div>' +
+      '<div class="hp-wproof"><span class="hp-avs"><i style="background:#f59e0b"></i><i style="background:#6366f1"></i><i style="background:#ec4899"></i><i style="background:#10b981"></i></span><div><p class="hp-stars">★★★★★</p><p>4.9 from local customers</p></div></div>' +
+      '<p class="hp-wh">Book a free quote.<span>No callout charge.</span></p>' +
+      '<div class="hp-steps"><b class="on">1</b><i></i><b id="hp-tst2">2</b><i></i><b>3</b></div>' +
+      '<div class="hp-wcard"><div class="hp-wst" id="hp-tw1"><p class="hp-fl">What do you need?</p><div class="hp-chips"><span class="hp-chip" id="hp-tc1">Boiler repair</span><span class="hp-chip">New boiler</span><span class="hp-chip">Service</span></div>' +
+      '<p class="hp-fl">Your postcode</p><div class="hp-fi" id="hp-tpf"><span id="hp-tpt"></span></div><p class="hp-pok" id="hp-tpok">' + T + 'We cover NE3</p><div class="hp-nx"><span id="hp-tnx">Next</span></div></div>' +
+      '<div class="hp-wst" id="hp-tw2"><p class="hp-fl">Pick a time for your free quote</p><div class="hp-opt hp-sel"><span>Tuesday<small>8am to 10am</small></span><i class="hp-rd">' + T + '</i></div><div class="hp-opt"><span>Tuesday<small>12pm to 2pm</small></span><i class="hp-rd"></i></div><div class="hp-okp" id="hp-tokp">' + T + 'Free quote booked</div></div></div>' +
+      '<div class="hp-url">yourbusiness.co.uk</div>' },
+    { id: 'tsms', full: true, light: true, white: true, trade: true, label: 'Reminders, and a text when you’re on your way', html:
+      sbar(1) + '<div class="hp-snav"><span class="hp-sa">' + IC.star + '</span><b>' + BIZ + ' ›</b></div>' +
+      '<p class="hp-smeta">Text Message · SMS<br>Yesterday 16:02</p>' +
+      '<p class="hp-sin" id="hp-ts1">Booked! Dan from ' + BIZ + ' will see you tomorrow, 8 to 10am, for your free boiler quote. Need to change it? Just reply.</p>' +
+      '<p class="hp-smeta" id="hp-tsm2">Today 07:51</p>' +
+      '<span class="hp-styp" id="hp-tsty"><i></i><i></i><i></i></span>' +
+      '<p class="hp-sin" id="hp-ts2">Dan’s on his way and about 15 minutes away. He’s in the white van.</p>' +
+      '<p class="hp-sout" id="hp-tso">Brilliant, the kettle’s on!</p>' +
+      '<div class="hp-sinp"><span>+</span><div>Text Message · SMS</div></div>' },
+    { id: 'tquote', full: true, light: true, trade: true, label: 'Their quote, with a service added in one tap', html:
+      sbar(1) + '<div class="hp-mnav"><span class="hp-bk">‹</span><b>Your quote from Dan</b></div>' +
+      '<div class="hp-mail"><div class="hp-mh"><b>YOUR BUSINESS</b><span>YOUR QUOTE</span></div><div class="hp-mb"><h3>Boiler repair</h3>' +
+      '<div class="hp-ql"><span>New diverter valve</span><span>£145</span></div><div class="hp-ql"><span>Labour</span><span>£60</span></div>' +
+      '<div class="hp-ql hp-qadd" id="hp-qadd"><span>Boiler service</span><span>£45</span></div>' +
+      '<div class="hp-ql hp-qtot"><span>Total</span><span id="hp-qtot">£205</span></div>' +
+      '<div class="hp-qoff" id="hp-qoff"><span class="hp-qck" id="hp-qck">' + T + '</span><div><b>Add a boiler service while Dan’s there</b><small>£45, usually £60</small></div></div>' +
+      '<div class="hp-join" id="hp-qacc"><span id="hp-qacct">Accept and pay £50 deposit</span><span class="hp-joined" id="hp-qdone">' + T + 'Accepted. Booked for Thursday</span></div></div></div>' +
+      ban('hp-b-quote', 'Your quote from Dan is ready', true) },
+    { id: 'tpay', full: true, trade: true, label: 'They pay on the day, in a tap', html:
+      sbar() + '<div class="hp-wnav">' + LOGO + '<span class="hp-hb"><i></i><i></i><i></i></span></div>' +
+      '<div class="hp-tpw"><p class="hp-ttl">Pay ' + BIZ + '</p><p class="hp-sub">Invoice 1042 · 14 Elm Road</p>' +
+      '<div class="hp-cd" style="margin-top:26px">' + row('Boiler repair', '', '<b class="hp-t">£205</b>') + row('Boiler service', '', '<b class="hp-t">£45</b>') + row('Deposit paid', '', '<b class="hp-t">−£50</b>') + row('<b>To pay</b>', '', '<b class="hp-t">£200</b>') + '</div>' +
+      '<div class="hp-apb" id="hp-tapb" style="margin-top:26px">' + AP + '</div>' +
+      '<p class="hp-sub" style="text-align:center;margin-top:16px!important">or pay by card</p>' +
+      '<div class="hp-allok" id="hp-tpok2">' + T + 'Paid. Your receipt is on its way</div></div>' +
+      '<div class="hp-sheet hp-sheetf" id="hp-tsheet"><div class="hp-shh">' + AP + '<span>Cancel</span></div>' +
+      '<div class="hp-shr"><span class="hp-visa">VISA</span><div><b>Visa •••• 4242</b><span>James K</span></div></div>' +
+      '<div class="hp-shr"><span class="hp-shl">' + IC.star + '</span><div><b>' + BIZ + '</b><span>Invoice 1042 · £200</span></div></div>' +
+      '<div class="hp-shc"><span class="hp-fid" id="hp-tfid"><i></i></span><b id="hp-tsht">Confirm with Side Button</b></div></div>' },
+    { id: 'tdue', full: true, light: true, white: true, trade: true, label: 'Next year, their service books itself', html:
+      sbar(1) + '<div class="hp-snav"><span class="hp-sa">' + IC.star + '</span><b>' + BIZ + ' ›</b></div>' +
+      '<p class="hp-smeta">Text Message · SMS<br>3 September 10:00</p>' +
+      '<p class="hp-sin" id="hp-td1">Hi James, your boiler’s yearly service is due next month. Reply 1 for Tuesday 9am, 2 for Wednesday 1pm, or we’ll call you.</p>' +
+      '<p class="hp-sout" id="hp-tdo">1</p>' +
+      '<p class="hp-sin" id="hp-td2" style="margin-top:16px!important">Booked! Dan will see you Tuesday at 9am. It’s covered by your Boiler Care plan.</p>' +
+      '<div class="hp-sinp"><span>+</span><div>Text Message · SMS</div></div>' },
+    /* ---- Trades: what the business sees, in its own app ---- */
+    { id: 'tmissed', tab: 0, trade: true, label: 'Miss a call, and they get a text straight away', html:
+      '<p class="hp-ttl">Calls</p><p class="hp-sub">Your business number</p>' +
+      '<div class="hp-cd" style="margin-top:26px">' + row('07700 900321<span class="hp-s">10:42 · you were on a job</span>', '', '<b class="hp-pill hp-pr">Missed</b>', 'hp-mc1') + '</div>' +
+      '<p class="hp-lab">Sent for you, straight away</p>' +
+      '<p class="hp-txt" id="hp-mtx">Sorry we missed you, we’re on a job. Book a free quote here: yourbusiness.co.uk/quote, or we’ll call you back within the hour.</p>' +
+      '<p class="hp-txtm" id="hp-mtm">Text sent · 10:42</p>' +
+      '<div class="hp-allok" id="hp-mok">' + T + 'Free quote booked from the text</div>' +
+      ban('hp-b-missed', 'New free quote: Sarah M, NE3', false, BIZ) },
+    { id: 'tjobs', tab: 1, trade: true, label: 'Today’s jobs, and “on my way” in one tap', html:
+      '<p class="hp-ttl">Today</p><p class="hp-sub">Tuesday · 4 jobs · Dan</p>' +
+      '<div class="hp-cd" style="margin-top:26px">' +
+      row('8:00 · Free quote<span class="hp-s">Sarah M · NE3 4AB</span>', '', '<b class="hp-btnw" id="hp-omw">On my way</b>') +
+      row('10:30 · Boiler repair<span class="hp-s">James K · NE7 · Worcester 30i</span>', '', '<b class="hp-pill hp-pgr">Booked</b>') +
+      row('13:00 · Yearly service<span class="hp-s">Priya S · Boiler Care</span>', '', '<b class="hp-pill hp-pg">Plan</b>') +
+      row('15:30 · New boiler survey<span class="hp-s">Mark T · NE12</span>', '', '<b class="hp-pill hp-pgr">Booked</b>') + '</div>' +
+      '<div class="hp-sent" id="hp-jtx">' + T + 'Text sent to Sarah: Dan’s on his way</div>' },
+    { id: 'tenq', tab: 2, trade: true, label: 'Every enquiry and quote, followed up for you', html:
+      '<p class="hp-ttl">Enquiries</p><p class="hp-sub">Quotes are followed up for you</p>' +
+      '<div class="hp-stg"><div><b>3</b><span>New</span></div><div><b>4</b><span>Visit booked</span></div><div><b id="hp-eqs">2</b><span>Quote sent</span></div><div><b id="hp-ewon">6</b><span>Won</span></div></div>' +
+      '<p class="hp-lab">Quotes sent</p><div class="hp-cd">' +
+      row('James K · £250<span class="hp-s">Boiler repair · sent 3 days ago, followed up today</span>', '', '<b class="hp-pill hp-pa" id="hp-ejk">Following up</b>') +
+      row('Mark T · £2,450<span class="hp-s">New boiler · sent yesterday</span>', '', '<b class="hp-pill hp-pgr">Sent</b>') + '</div>' +
+      ban('hp-b-enq', 'James accepted his quote and paid the deposit', false, BIZ) },
+    { id: 'toffer', tab: 1, trade: true, label: 'The right offer on every job, while you’re there', html:
+      '<p class="hp-ttl">Boiler repair</p><p class="hp-sub">James K · 14 Elm Road, NE7 · 10:30</p>' +
+      '<p class="hp-lab">Property</p><div class="hp-cd">' +
+      row('Worcester Bosch 30i<span class="hp-s">Fitted 2016 · last serviced 2023</span>', '', '<b class="hp-pill hp-pa">Service due</b>') +
+      row('Access<span class="hp-s">Side gate · friendly dog</span>', '', '') + '</div>' +
+      '<p class="hp-lab">Offer while you’re here</p>' +
+      '<div class="hp-ocard"><b>Boiler Care · £12 a month</b><p>Yearly service, priority callouts and 10% off repairs. Today’s callout free.</p><div class="hp-obtn" id="hp-obtn">Offer to James</div></div>' +
+      '<div class="hp-allok" id="hp-ook">' + T + 'James joined. First payment taken</div>' },
+    { id: 'tmoney', tab: 3, trade: true, label: 'Paid on the day, and late invoices chased for you', html:
+      '<p class="hp-ttl">Payments</p><p class="hp-sub">Paid straight to your bank</p>' +
+      '<div class="hp-cd hp-pad" style="margin-top:26px"><p class="hp-big">£<span id="hp-mtot">3,280</span></p><p class="hp-sub">paid this week</p></div>' +
+      '<p class="hp-lab">Invoices</p><div class="hp-cd">' +
+      row('James K<span class="hp-s">Boiler repair · today</span>', '', '<b class="hp-pill hp-pgr" id="hp-mjk">Sent</b>') +
+      row('Sarah M<span class="hp-s">New boiler deposit · Monday</span>', '', ok('Paid')) +
+      row('Mark T<span class="hp-s">Radiator fitting · 8 days</span>', '', '<b class="hp-pill hp-pa">Chased for you</b>') +
+      row('Priya S<span class="hp-s">Boiler Care · monthly</span>', '', ok('Paid')) + '</div>' +
+      ban('hp-b-money', 'James paid £200. Receipt sent', false, BIZ) },
+    { id: 'tplans', tab: 4, trade: true, label: 'Service plans: money in every month', html:
+      '<p class="hp-ttl">Boiler Care</p><p class="hp-sub">Your service plan · £12 a month</p>' +
+      '<div class="hp-cd hp-pad" style="margin-top:26px"><p class="hp-big"><span id="hp-pcn">46</span> members</p><p class="hp-sub" id="hp-pmo">£552 a month, every month</p></div>' +
+      '<p class="hp-lab">Members</p><div class="hp-cd">' +
+      row('Priya S<span class="hp-s">Service booked · 3 March</span>', '', '<b class="hp-pill hp-pg">Active</b>') +
+      row('Tom W<span class="hp-s">Service due · reminder sent</span>', '', '<b class="hp-pill hp-pa">Due</b>') +
+      row('James K', '<span class="hp-tag hp-new">Joined today</span>', ok('On a repair'), 'hp-pnew') +
+      row('Ellie R<span class="hp-s">Card updated</span>', '', '<b class="hp-pill hp-pg">Active</b>') + '</div>' }
   ];
 
   var css = [
@@ -267,6 +367,28 @@
     '.hp-send{margin-top:22px;height:84px;border-radius:999px;background:#f5f5f2;color:#0a0a0c;display:grid;place-items:center;font:700 26px/1 Inter,sans-serif}',
     '.hp-bm{align-self:flex-end;max-width:82%;padding:16px 22px;border-radius:30px;background:#f1f1ee;color:#0a0a0c;font:500 22px/1.35 Inter,sans-serif;opacity:0}',
     '.hp-bt2{display:flex;gap:12px;align-items:flex-end;opacity:0}.hp-bt2 .hp-lg{width:44px;height:44px}.hp-bt2 p{max-width:82%;padding:16px 22px;border-radius:26px;background:#131316;border:1px solid rgba(255,255,255,.12);font:500 22px/1.38 Inter,sans-serif}',
+    /* trades */
+    '.hp-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}',
+    '.hp-chip{padding:14px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.18);font:600 20px/1 Inter,sans-serif;color:rgba(245,245,242,.85)}',
+    '.hp-chip.on{border-color:#60a5fa;background:rgba(96,165,250,.16);color:#fff}',
+    '.hp-pok{display:flex;align-items:center;gap:8px;margin:-12px 0 14px!important;color:#22c55e;font:700 20px/1 Inter,sans-serif;opacity:0}.hp-pok svg{width:20px;height:20px}',
+    '.hp-ql{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee;font:500 23px/1.3 Inter,sans-serif;color:#333;overflow:hidden}',
+    '.hp-qadd{opacity:0;max-height:0;padding:0;border:0}',
+    '.hp-qtot{font-weight:800;color:#111;border:0}',
+    '.hp-qoff{margin-top:18px;display:flex;gap:16px;align-items:center;padding:20px 22px;border-radius:22px;border:2px dashed #f0b38f;background:#fff7f2}',
+    '.hp-qoff b{display:block;font:700 22px/1.3 Inter,sans-serif;color:#111}.hp-qoff small{display:block;margin-top:4px;font:600 19px/1.3 Inter,sans-serif;color:#c2410c}',
+    '.hp-qck{flex:none;width:40px;height:40px;border-radius:10px;border:2px solid #c9c9c9;background:#fff;display:grid;place-items:center;color:#fff}.hp-qck svg{width:24px;height:24px;opacity:0}',
+    '.hp-tpw{padding:30px 32px 0}',
+    '.hp-sheet.hp-sheetf{left:0;right:0;bottom:0;padding-bottom:70px}',
+    '.hp-pr{background:rgba(239,68,68,.16);color:#f87171}.hp-pgr{background:rgba(255,255,255,.1);color:rgba(245,245,242,.75)}.hp-pb{background:rgba(96,165,250,.18);color:#93c5fd}',
+    '.hp-txt{margin-left:auto!important;max-width:88%;padding:18px 22px;border-radius:28px;background:#34c759;color:#fff;font:500 22px/1.4 Inter,sans-serif;opacity:0;transform-origin:100% 0}',
+    '.hp-txtm{margin-top:8px!important;text-align:right;font:600 16px/1 Inter,sans-serif;color:rgba(245,245,242,.55);opacity:0}',
+    '.hp-stg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px}',
+    '.hp-stg div{background:#131316;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:18px 8px;text-align:center}',
+    '.hp-stg b{display:block;font:800 40px/1 Inter,sans-serif}.hp-stg span{display:block;margin-top:8px;font:600 15px/1.2 Inter,sans-serif;color:rgba(245,245,242,.6)}',
+    '.hp-ocard{background:rgba(255,79,18,.12);border:1px solid rgba(255,79,18,.5);border-radius:26px;padding:24px}',
+    '.hp-ocard b{display:block;font:700 27px/1.2 Inter,sans-serif}.hp-ocard p{margin-top:8px!important;font:500 20px/1.45 Inter,sans-serif;color:rgba(245,245,242,.82)}',
+    '.hp-obtn{margin-top:20px;height:78px;border-radius:999px;background:#ff4f12;color:#fff;display:grid;place-items:center;font:700 24px/1 Inter,sans-serif}',
     /* caption under the phone */
     '.hp-cap{position:relative;height:1.5em;margin-top:18px;text-align:center;font-weight:600;font-size:15px;color:var(--ink-2,#55555a)}',
     '.hp-cap span{position:absolute;left:0;right:0;transition:opacity .35s,transform .35s;opacity:0;transform:translateY(6px)}.hp-cap span.on{opacity:1;transform:none}'
@@ -277,10 +399,15 @@
      each card in the app section ([data-hp-screen]) replays its one screen. */
   function mount(host, list, cap, row, labels) {
     var scr = list.map(function (id) { return SCREENS.filter(function (s) { return s.id === id; })[0]; });
+    /* A trade's app has its own tabs (today, enquiries, payments, customers)
+       and no QR button in the middle. */
+    var trade = scr.some(function (s) { return s.trade; });
     host.innerHTML = '<div class="hp-box"><div class="hp-in"><div class="hp-phone"><div class="hp-scr">' + sbar() +
       '<div class="hp-hd">' + LOGO + '<span>' + IC.bell + '</span></div>' +
-      scr.map(function (s) { return '<div class="hp-v' + (s.full ? ' hp-full' : '') + (s.light ? ' hp-light' : '') + (s.id === 'sms' ? ' hp-white' : '') + (s.ov ? ' hp-ov' : '') + '" id="hp-' + s.id + '">' + s.html + '</div>'; }).join('') +
-      '<div class="hp-tb"><i>' + IC.home + '</i><i>' + IC.cal + '</i><i>' + IC.chat + '</i><i>' + IC.shop + '</i><i class="hp-qrb">' + IC.qr + '</i></div>' +
+      scr.map(function (s) { return '<div class="hp-v' + (s.full ? ' hp-full' : '') + (s.light ? ' hp-light' : '') + (s.id === 'sms' || s.white ? ' hp-white' : '') + (s.ov ? ' hp-ov' : '') + '" id="hp-' + s.id + '">' + s.html + '</div>'; }).join('') +
+      (trade
+        ? '<div class="hp-tb"><i>' + IC.home + '</i><i>' + IC.cal + '</i><i>' + IC.inbox + '</i><i>' + IC.pound + '</i><i>' + IC.users + '</i></div>'
+        : '<div class="hp-tb"><i>' + IC.home + '</i><i>' + IC.cal + '</i><i>' + IC.chat + '</i><i>' + IC.shop + '</i><i class="hp-qrb">' + IC.qr + '</i></div>') +
       '</div></div></div></div><p class="hp-cap">' + scr.map(function (s) { return '<span>' + ((labels && labels[s.id]) || s.label) + '</span>'; }).join('') + '</p>';
 
     host.innerHTML = host.innerHTML.replace(/ id="(hp-[^"]+)"/g, ' data-k="$1"');
@@ -368,6 +495,87 @@
       },
       emg: function (u) {
         var r = (u % 1.1) / 1.1; $('hp-call').style.boxShadow = u > 1.2 ? '0 0 0 ' + (18 * r) + 'px rgba(34,197,94,' + (.45 * (1 - r)) + ')' : 'none';
+      },
+      /* ---- trades ---- */
+      tweb: function (u) {
+        $('hp-tc1').classList.toggle('on', u > .4);
+        var pc = 'NE3 4AB', n = Math.round(pc.length * cl((u - .55) / .5));
+        $('hp-tpt').textContent = pc.slice(0, n); $('hp-tpf').classList.toggle('on', u > .5 && u < 1.5);
+        var k = eo(p(u, 1.1, .25)); show($('hp-tpok'), k, 'translateY(' + (8 * (1 - k)) + 'px)');
+        $('hp-tnx').style.background = u > 1.15 ? '#f5f5f2' : '#5a5a5e'; $('hp-tnx').style.transform = 'scale(' + (u > 1.35 && u < 1.47 ? .94 : 1) + ')';
+        var sw = eo(p(u, 1.5, .3)); show($('hp-tw1'), 1 - sw, 'translateX(' + (-60 * sw) + 'px)'); show($('hp-tw2'), sw, 'translateX(' + (60 * (1 - sw)) + 'px)');
+        $('hp-tst2').classList.toggle('on', u > 1.5);
+        var b = pop(p(u, 2.0, .4)); show($('hp-tokp'), cl(b * 1.4), 'scale(' + (.9 + .1 * b) + ')');
+      },
+      tsms: function (u) {
+        var a = pop(p(u, .2, .4)); show($('hp-ts1'), cl(a * 1.4), 'scale(' + (.92 + .08 * a) + ')');
+        show($('hp-tsm2'), eo(p(u, .9, .3)));
+        $('hp-tsty').style.display = u > .9 && u < 1.5 ? 'inline-flex' : 'none';
+        [].forEach.call($('hp-tsty').children, function (d, i) { d.style.opacity = .35 + .65 * (.5 + .5 * Math.sin(u * 10 - i * 1.2)); });
+        var b = pop(p(u, 1.5, .4)); show($('hp-ts2'), cl(b * 1.4), 'scale(' + (.92 + .08 * b) + ')');
+        var c = pop(p(u, 2.4, .4)); show($('hp-tso'), cl(c * 1.4), 'scale(' + (.92 + .08 * c) + ')');
+      },
+      tquote: function (u) {
+        banner($('hp-b-quote'), u, .1, 1.0);
+        var on = u > 1.2, ck = $('hp-qck');
+        ck.style.background = on ? '#ff4f12' : '#fff'; ck.style.borderColor = on ? '#ff4f12' : '#c9c9c9'; ck.firstChild.style.opacity = on ? 1 : 0;
+        ck.style.transform = 'scale(' + (u > 1.1 && u < 1.25 ? .9 : 1) + ')';
+        $('hp-qoff').style.borderStyle = on ? 'solid' : 'dashed';
+        var k = eo(p(u, 1.2, .3)); show($('hp-qadd'), k); $('hp-qadd').style.maxHeight = (60 * k) + 'px';
+        $('hp-qtot').textContent = on ? '£250' : '£205';
+        var g = eo(p(u, 2.0, .3)); $('hp-qacc').style.background = green(g); $('hp-qacc').style.transform = 'scale(' + (u > 1.85 && u < 2.0 ? .96 : 1) + ')';
+        $('hp-qacct').style.opacity = 1 - g; $('hp-qdone').style.opacity = g;
+      },
+      tpay: function (u) {
+        $('hp-tapb').style.transform = 'scale(' + (u > .6 && u < .75 ? .95 : 1) + ')';
+        var up = eo(p(u, .75, .4)), down = eo(p(u, 2.2, .35));
+        $('hp-tsheet').style.transform = 'translateY(' + (110 * (1 - up) + 110 * down) + '%)';
+        var conf = p(u, 1.35, .5), done = u > 1.85, fid = $('hp-tfid');
+        fid.style.borderColor = done ? '#30d158' : 'rgba(255,255,255,' + (.35 + .5 * Math.abs(Math.sin(conf * Math.PI * 2))) + ')';
+        fid.style.background = done ? '#30d158' : 'transparent';
+        fid.firstChild.style.opacity = done ? 1 : 0;
+        $('hp-tsht').textContent = done ? 'Done' : 'Confirm with Side Button';
+        var a = pop(p(u, 2.4, .45)); show($('hp-tpok2'), cl(a * 1.4), 'scale(' + (.92 + .08 * a) + ')');
+      },
+      tdue: function (u) {
+        var a = pop(p(u, .2, .4)); show($('hp-td1'), cl(a * 1.4), 'scale(' + (.92 + .08 * a) + ')');
+        var b = pop(p(u, 1.2, .4)); show($('hp-tdo'), cl(b * 1.4), 'scale(' + (.92 + .08 * b) + ')');
+        var c = pop(p(u, 2.0, .4)); show($('hp-td2'), cl(c * 1.4), 'scale(' + (.92 + .08 * c) + ')');
+      },
+      tmissed: function (u) {
+        var a = pop(p(u, .8, .4)); show($('hp-mtx'), cl(a * 1.4), 'scale(' + (.92 + .08 * a) + ')');
+        show($('hp-mtm'), eo(p(u, 1.0, .3)));
+        var b = pop(p(u, 1.8, .45)); show($('hp-mok'), cl(b * 1.4), 'scale(' + (.92 + .08 * b) + ')');
+        banner($('hp-b-missed'), u, 1.9, 3.0);
+      },
+      tjobs: function (u) {
+        var on = u > 1.05, b = $('hp-omw');
+        b.textContent = on ? 'On my way' : 'On my way'; b.className = on ? 'hp-pill hp-pb' : 'hp-btnw';
+        b.style.transform = 'scale(' + (u > .9 && u < 1.05 ? .92 : 1) + ')';
+        var s = pop(p(u, 1.2, .4)); show($('hp-jtx'), cl(s * 1.4), 'scale(' + (.9 + .1 * s) + ')');
+      },
+      tenq: function (u) {
+        var won = u > 1.2, j = $('hp-ejk');
+        j.textContent = won ? 'Accepted' : 'Following up'; j.className = won ? 'hp-pill hp-pg' : 'hp-pill hp-pa';
+        $('hp-eqs').textContent = won ? '1' : '2'; $('hp-ewon').textContent = won ? '7' : '6';
+        banner($('hp-b-enq'), u, 1.3, 2.8);
+      },
+      toffer: function (u) {
+        $('hp-obtn').style.transform = 'scale(' + (u > .9 && u < 1.05 ? .95 : 1) + ')';
+        $('hp-obtn').textContent = u > 1.05 ? 'Waiting for James…' : 'Offer to James';
+        if (u > 1.6) $('hp-obtn').textContent = 'James said yes';
+        var a = pop(p(u, 1.7, .45)); show($('hp-ook'), cl(a * 1.4), 'scale(' + (.92 + .08 * a) + ')');
+      },
+      tmoney: function (u) {
+        var paid = u > .9, j = $('hp-mjk');
+        j.innerHTML = paid ? T + 'Paid' : 'Sent'; j.className = paid ? 'hp-ok' : 'hp-pill hp-pgr';
+        $('hp-mtot').textContent = paid ? '3,480' : '3,280';
+        banner($('hp-b-money'), u, .9, 2.4);
+      },
+      tplans: function (u) {
+        var k = pop(p(u, .7, .45)); show($('hp-pnew'), cl(k * 1.4), 'translateX(' + (60 * (1 - k)) + 'px)');
+        $('hp-pnew').style.background = 'rgba(96,165,250,' + (.16 * (1 - p(u, 1.8, .7))) + ')';
+        var on = u > .7; $('hp-pcn').textContent = on ? 47 : 46; $('hp-pmo').textContent = on ? '£564 a month, every month' : '£552 a month, every month';
       }
     };
 
@@ -386,7 +594,7 @@
       var c = Math.max(0, Math.min(N - 1, Math.floor(t / SEG)));
       if (c !== cur) {
         cur = c; caps.forEach(function (e, i) { e.classList.toggle('on', i === c); });
-        tabs.forEach(function (e, i) { e.classList.toggle('on', i === scr[c].tab && i < 4); });
+        tabs.forEach(function (e, i) { e.classList.toggle('on', i === scr[c].tab && (trade || i < 4)); });
       }
     }
 
@@ -429,7 +637,11 @@
       feed: 'Post to every parent, reply in one place' } },
     parents: { list: ['web', 'mail', 'sms', 'follow', 'payset', 'qrs', 'feed'], labels: {
       payset: 'They join and pay in a tap', qrs: 'Their next class and QR code',
-      feed: 'Club news, and a chat with the coach' } }
+      feed: 'Club news, and a chat with the coach' } },
+    /* /trades: a customer from free quote to paid and booked again, and
+       the trader's day, from a missed call to a new plan member. */
+    customers: { list: ['tweb', 'tsms', 'tquote', 'tpay', 'tdue'] },
+    trader: { list: ['tmissed', 'tjobs', 'tenq', 'toffer', 'tmoney'] }
   };
   var heroes = [].slice.call(document.querySelectorAll('[data-hp-role]'));
   heroes.forEach(function (h) { var r = ROLES[h.getAttribute('data-hp-role')]; mount(h, r.list, true, null, r.labels); });
