@@ -234,7 +234,12 @@
 
   track.addEventListener('click', function (e) {
     var back = e.target.closest('[data-back]');
-    if (back) { show(Math.max(1, current - 1)); return; }
+    if (back) {
+      /* One skips the address step, so its way back skips it too. */
+      var skip = current === 5 && answers.selected_plan === 'max';
+      show(Math.max(1, current - (skip ? 2 : 1)));
+      return;
+    }
     var next = e.target.closest('[data-next]');
     if (next) advance(next);
   });
@@ -509,8 +514,17 @@
     /* Nothing here is fine: on Starter the page is the site, and the first
        change can be asked for from day one. */
     answers.business_type = type;
-    answers.site_uses = uses;
+    answers.site_uses = answers.selected_plan === 'max' ? [] : uses;
     say(note, '');
+    /* One asks only the basics: the web address is sorted out with Kane
+       after they join, along with everything else about the build. */
+    if (answers.selected_plan === 'max') {
+      answers.requested_domain = null;
+      answers.domain_owned = false;
+      paintPay();
+      show(5);
+      return;
+    }
     show(4);
     askDomains();
   }
@@ -743,9 +757,11 @@
     var chosen = document.querySelector('input[name="plan"]:checked');
     answers.selected_plan = chosen ? chosen.value : 'starter';
     var starter = answers.selected_plan === 'starter';
-    var block = $('useBlock'), line = $('starterUses');
-    if (block) block.hidden = starter;
+    var one = answers.selected_plan === 'max';
+    var block = $('useBlock'), line = $('starterUses'), oneLine = $('oneUses');
+    if (block) block.hidden = starter || one;
     if (line) line.hidden = !starter;
+    if (oneLine) oneLine.hidden = !one;
     show(3);
   }
 
@@ -800,7 +816,7 @@
       free.textContent = 'Free with your plan.';
       note.appendChild(free);
       note.appendChild(document.createTextNode(answers.selected_plan === 'max'
-        ? ' Registered for you today, and your new site goes on it 7 to 14 days after your setup form.'
+        ? ' Registered for you today, and your new site goes on it once it is built.'
         : answers.selected_plan === 'business'
         ? ' Registered for you today, and your site and features go on it in 7 to 14 days.'
         : ' Registered for you today, and your site is live on it within 24 hours.'));
@@ -819,12 +835,12 @@
       var isOne = answers.selected_plan === 'max';
       var isBiz = answers.selected_plan === 'business';
       strong.textContent = isOne
-        ? 'Your website in 7 to 14 days.'
+        ? 'Planned with you, then built for you.'
         : isBiz ? 'Ready in 7 to 14 days.'
         : domain ? 'Live on ' + domain + ' today.' : 'Live on your own address today.';
       promise.appendChild(strong);
       promise.appendChild(document.createTextNode(isOne
-        ? ' On ' + (domain || 'your own address') + ', with trial bookings. Your app goes to Apple and Google as soon as your developer accounts are ready, and their review takes 1 to 4 weeks. Your ads start once both are live, usually 4 to 8 weeks after you join, and your first 3 months of ad spend are on us.'
+        ? ' Once you\u2019ve joined, Kane gets in touch to talk through your business and what you need. Your website comes first, then your app and ads, and your first 3 months of ad spend are on us.'
         : isBiz
         ? ' Your site on ' + (domain || 'your own address') + ', with the features you asked for, built together. Not ready within 14 days? Your next month is free.'
         : ' With your contact form and click to call. Your first change of the month, whenever you like.'));
