@@ -53,6 +53,13 @@ function subscriptionIdOf(invoice) {
   return null;
 }
 
+/* When a card stops working: the first moment of the month after the one
+   printed on it (a card marked 11/26 works until the end of November). */
+function cardEndsAt(card) {
+  if (!card || !card.exp_year || !card.exp_month) return null;
+  return Date.UTC(Number(card.exp_year), Number(card.exp_month), 1);
+}
+
 /* Which Stripe statuses mean "this customer is paying us". */
 function isLive(status) {
   return status === 'active' || status === 'trialing';
@@ -783,6 +790,94 @@ module.exports = async function handler(req, res) {
       + ' did not go through. Their ' + GRACE_DAYS + '-day grace period has started: Stripe keeps retrying, and the plan ends if it never goes through.');
   }
 
+  /* A card that will have expired by the next payment, told about before
+     that payment fails. Stripe has no "card expiring" event for cards taken
+     through Checkout (customer.source.expiring is only for the old Sources
+     API), so this hangs off invoice.upcoming, which Stripe sends a set
+     number of days before each renewal (Settings > Billing > Subscriptions >
+     upcoming renewal events). Only when the card on file runs out before
+     that renewal; a card the bank has already renewed (Stripe's card
+     updater) has a new date and says nothing. Once per card and expiry,
+     remembered on the Stripe customer, so a redelivered event or the next
+     month's renewal for the same card does not send it again. */
+  async function announceCardExpiring(invoice) {
+    const customerId = typeof invoice.customer === 'string' ? invoice.customer : (invoice.customer && invoice.customer.id);
+    const subId = subscriptionIdOf(invoice);
+    if (!customerId || !subId) return;
+
+    const sub = await stripe.subscriptions.retrieve(subId, { expand: ['default_payment_method'] });
+    if (!sub || !['active', 'trialing', 'past_due'].includes(sub.status) || sub.cancel_at_period_end) return;
+    const customer = await stripe.customers.retrieve(customerId, { expand: ['invoice_settings.default_payment_method'] });
+    if (!customer || customer.deleted) return;
+    const pm = (sub.default_payment_method && typeof sub.default_payment_method === 'object' && sub.default_payment_method)
+      || (customer.invoice_settings && typeof customer.invoice_settings.default_payment_method === 'object'
+        && customer.invoice_settings.default_payment_method) || null;
+    const card = pm && pm.card;
+    const ends = cardEndsAt(card);
+    if (!ends) return;
+
+    const periodEnd = periodEndOf(sub);
+    const renewal = invoice.next_payment_attempt ? invoice.next_payment_attempt * 1000
+      : (periodEnd ? new Date(periodEnd).getTime() : null);
+    if (!renewal || ends > renewal) return;
+
+    const key = pm.id + ':' + card.exp_year + '-' + card.exp_month;
+    if (customer.metadata && customer.metadata.card_expiry_warned === key) return;
+
+    const { data: p } = await admin
+      .from('profiles').select('id, business_name, contact_name').eq('stripe_customer_id', customerId).maybeSingle();
+    if (!p) return;
+    const { data: who } = await admin.auth.admin.getUserById(p.id);
+    const email = who && who.user && who.user.email;
+    if (!email) return;
+
+    const site = ourSiteUrl();
+    const brand = card.brand ? card.brand.charAt(0).toUpperCase() + card.brand.slice(1) : 'Card';
+    const cardName = brand + ' ending ' + (card.last4 || '····');
+    const expires = new Date(Date.UTC(Number(card.exp_year), Number(card.exp_month) - 1, 1))
+      .toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    const payDay = new Date(renewal).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', timeZone: 'Europe/London' });
+    const due = typeof invoice.amount_due === 'number' ? invoice.amount_due : null;
+    const amount = due == null ? '' : new Intl.NumberFormat('en-GB', {
+      style: 'currency', currency: (invoice.currency || 'gbp').toUpperCase(),
+      minimumFractionDigits: due % 100 === 0 ? 0 : 2
+    }).format(due / 100);
+
+    const details = [{ label: 'Card', value: cardName }, { label: 'Expires', value: 'End of ' + expires }, { label: 'Next payment', value: payDay }];
+    if (amount) details.push({ label: 'Amount', value: amount });
+
+    const result = await sendEmail({
+      to: email,
+      subject: 'Your card expires before your next payment',
+      text: `The card we charge for your Kanvas One plan, ${cardName}, expires at the end of ${expires}. `
+          + `Your next payment${amount ? ' of ' + amount : ''} is on ${payDay}.
+
+`
+          + `Update your card now and nothing changes. It takes a minute, from your account:
+${site}/account.html`,
+      html: emailHtml({
+        preheader: `Update it before ${payDay} and nothing changes.`,
+        heading: 'Your card is about to expire.',
+        lines: [
+          `The card we charge for your Kanvas One plan, <strong>${esc(cardName)}</strong>, expires at the end of ${esc(expires)}, before your next payment on <strong>${esc(payDay)}</strong>.`,
+          'Update it now and nothing changes. It takes a minute, from your account.'
+        ],
+        details,
+        ctaText: 'Update card',
+        ctaHref: `${site}/account.html`,
+        footer: 'You&rsquo;re getting this because the card on your Kanvas One plan expires before your next payment.',
+        footerLinks: standardFooter(site)
+      })
+    });
+    console.log('webhook: card expiring email', result);
+    if (result !== 'sent') return;
+
+    await stripe.customers.update(customerId, { metadata: { card_expiry_warned: key } })
+      .catch((e) => console.error('webhook: could not remember the card warning:', e && e.message));
+    await notify(admin, p.id, 'Your card is about to expire',
+      cardName + ' runs out before your payment on ' + payDay + '. Update it from your account.', '/account.html');
+  }
+
   /* True for the one event that gets to announce this subscription: the
      update only matches while announced_subscription_id is not yet this
      subscription, and Postgres lets one writer through. A database error
@@ -879,6 +974,10 @@ module.exports = async function handler(req, res) {
 
       case 'invoice.payment_failed':
         await announcePaymentFailed(event.data.object);
+        break;
+
+      case 'invoice.upcoming':
+        await announceCardExpiring(event.data.object);
         break;
 
       default:
