@@ -2763,9 +2763,34 @@ function billingPanel(p) {
     return box;
   }
 
-  /* ---- ending it: at the period end (undoable), or now (typed) ---- */
+  /* ---- ending it: at the period end (undoable), or now (typed) ----
+     Either way with a reason (and anything they said), kept against the
+     subscription for the Money tab and the monthly numbers
+     (api/_money.js CANCEL_REASONS; the keys must match). */
+  var END_REASONS = [['too_expensive', 'Too expensive'], ['not_enough_value', 'Not getting enough value'], ['not_using', 'Not using it'],
+    ['missing_feature', 'Missing something they need'], ['switched', 'Moved to another provider'], ['service', 'Unhappy with our service'],
+    ['closing', 'Closing or pausing the business'], ['other', 'Something else']];
+  function reasonPicker() {
+    var wrap = el('div', 'k1-reason');
+    var pick = el('select', 'danger-input');
+    pick.setAttribute('aria-label', 'Why are they leaving?');
+    var first = el('option', null, 'Why are they leaving?');
+    first.value = ''; first.disabled = true; first.selected = true;
+    pick.appendChild(first);
+    END_REASONS.forEach(function (r) { var o = el('option', null, r[1]); o.value = r[0]; pick.appendChild(o); });
+    var said = el('input', 'danger-input');
+    said.type = 'text'; said.maxLength = 450; said.placeholder = 'Anything they said (optional)';
+    said.setAttribute('aria-label', 'Anything they said');
+    wrap.appendChild(pick); wrap.appendChild(said);
+    return { node: wrap, select: pick, reason: function () { return pick.value; }, note: function () { return said.value.trim(); } };
+  }
+
   function endRow(sub) {
     var box = el('div', 'k1-end');
+    var why = reasonPicker();
+    /* Cancel now has its own reason when the period-end one is not on
+       show (already set to end); otherwise it shares that one. */
+    var nowWhy = sub.cancelAtPeriodEnd ? reasonPicker() : why;
     var ends = sub.currentPeriodEnd ? when(sub.cancelAt || sub.currentPeriodEnd) : 'their next payment date';
 
     if (sub.cancelAtPeriodEnd) {
@@ -2794,6 +2819,7 @@ function billingPanel(p) {
         armed = false; btn.textContent = 'End membership'; btn.classList.remove('is-armed'); stand.hidden = true; tell('');
       });
       btn.addEventListener('click', async function () {
+        if (!why.reason()) { tell('Pick why they are leaving first.', 'bad'); why.select.focus(); return; }
         if (!armed) {
           armed = true; btn.textContent = 'Yes, end it at the next payment'; btn.classList.add('is-armed'); stand.hidden = false;
           return;
@@ -2801,7 +2827,7 @@ function billingPanel(p) {
         btn.disabled = true;
         btn.textContent = 'Ending…';
         try {
-          var res = await api({ action: 'setCancelAtPeriodEnd', userId: p.id, cancel: true });
+          var res = await api({ action: 'setCancelAtPeriodEnd', userId: p.id, cancel: true, reason: why.reason(), note: why.note() });
           tell(res && res.endsAt ? 'Ending on ' + when(res.endsAt) + '.' : 'Ending at their next payment date.', 'ok');
           await paint();
         } catch (err) {
@@ -2812,6 +2838,7 @@ function billingPanel(p) {
       var row = el('div', 'danger-row');
       row.appendChild(btn);
       row.appendChild(stand);
+      box.appendChild(why.node);
       box.appendChild(row);
     }
 
@@ -2822,7 +2849,8 @@ function billingPanel(p) {
     var confirmBox = el('div', 'danger-confirm');
     confirmBox.hidden = true;
     confirmBox.appendChild(el('p', 'hint', 'Ends the membership today. Stripe bills nothing more and nothing is refunded '
-      + '(use Refund on an invoice for that). Type ' + label + ' to confirm.'));
+      + '(use Refund on an invoice for that). Pick why' + (sub.cancelAtPeriodEnd ? '' : ' above') + ', then type ' + label + ' to confirm.'));
+    if (nowWhy !== why) confirmBox.appendChild(nowWhy.node);
     var field = el('input', 'danger-input');
     field.type = 'text';
     field.autocomplete = 'off';
@@ -2830,11 +2858,13 @@ function billingPanel(p) {
     var go = el('button', 'btn btn-ghost admin-save danger', 'Cancel now');
     go.type = 'button';
     go.disabled = true;
-    field.addEventListener('input', function () { go.disabled = field.value.trim().toLowerCase() !== label.trim().toLowerCase(); });
+    function ready() { go.disabled = !nowWhy.reason() || field.value.trim().toLowerCase() !== label.trim().toLowerCase(); }
+    field.addEventListener('input', ready);
+    nowWhy.select.addEventListener('change', ready);
     go.addEventListener('click', async function () {
       go.disabled = true;
       try {
-        await api({ action: 'cancelNow', userId: p.id, confirm: field.value });
+        await api({ action: 'cancelNow', userId: p.id, confirm: field.value, reason: nowWhy.reason(), note: nowWhy.note() });
         tell('Cancelled. Stripe will stop billing them now.', 'ok');
         await paint();
       } catch (err) { tell(err.message, 'bad'); go.disabled = false; }

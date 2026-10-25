@@ -15,7 +15,7 @@ export function AppProvider({ children }) {
   const [me, setMe] = useState(null);
   const [siteId, setSiteId] = useState(null);
   const [bootError, setBootError] = useState(null);
-  const [counts, setCountsState] = useState({ chat: 0, build: 0, messages: 0 });
+  const [counts, setCountsState] = useState({ chat: 0, build: 0, messages: 0, money: 0 });
   const [logoVersion, setLogoVersion] = useState(0); // a new logo at the same path: load it afresh
   const meRef = useRef(null);
 

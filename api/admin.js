@@ -25,6 +25,7 @@ const { notify } = require('./_notify.js');
 const { notifySiteLive } = require('./_site_live.js');
 const { sendLeadPreview } = require('./_previews.js');
 const connect = require('./_connect.js');
+const ledger = require('./_money.js');
 const { STATUSES: REQUEST_STATUSES, cleanAttachments, cleanBody, addNote, listInbox, listJobs, getThread, editRequest, deleteRequest } = require('./_requests.js');
 
 const DEFAULT_ADMINS = ['kane@kanvas.one'];
@@ -56,12 +57,27 @@ function subSummary(sub) {
 }
 
 
+/* Why a plan is ending, as Stripe keeps it: our reason and note on the
+   subscription's metadata (so the webhook and the Money tab read the same
+   thing), and Stripe's own feedback word, which its dashboard shows. An
+   empty reason clears ours. */
+function cancelFields(reason, note, byEmail) {
+  const key = ledger.cleanReason(reason);
+  const text = String(note || '').trim().slice(0, 450);
+  const feedback = key && ledger.CANCEL_REASONS[key].feedback;
+  const out = { metadata: { cancel_reason: key || '', cancel_note: key ? text : '', cancel_by: key ? byEmail : '' } };
+  /* Stripe's own fields only when there is something to say: it clears
+     them itself when a cancellation is undone. */
+  if (key && (feedback || text)) out.cancellation_details = Object.assign({}, feedback ? { feedback } : {}, text ? { comment: text } : {});
+  return out;
+}
+
 /* Charges the card on file off-session, for a shortfall already worked out
  * by the caller. Shared by accepting a request (the normal path - before any
  * work starts) and the legacy done-stage charge button. Throws a plain Error
  * with .httpStatus set on anything the caller should show rather than a 500 -
  * no card on file, a decline, or a payment that did not complete. */
-async function chargeCardForRequest(stripe, profile, reqRow, amount) {
+async function chargeCardForRequest(stripe, profile, reqRow, amount, db) {
   if (!profile || !profile.stripe_customer_id) {
     const e = new Error('No card on file for them yet.'); e.httpStatus = 400; throw e;
   }
@@ -104,6 +120,11 @@ async function chargeCardForRequest(stripe, profile, reqRow, amount) {
     e.httpStatus = 400; throw e;
   }
 
+  /* Into the Money tab's record now rather than at tomorrow's catch-up. */
+  if (db && pi.latest_charge) {
+    await ledger.recordCharge(stripe, db, typeof pi.latest_charge === 'string' ? pi.latest_charge : pi.latest_charge.id)
+      .catch((err) => console.error('admin: request charge record failed, the daily catch-up will get it:', err && err.message));
+  }
   return pi;
 }
 
@@ -717,18 +738,96 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true, subscriptions: out });
     }
 
+    /* ---- Money: the admin app's Money tab (api/_money.js) --------------
+     * money     this month and last, the subscriptions, the care queue
+     * metrics   churn, lifetime, value, cost per customer, focus list
+     * Both read the payment record kept by the webhook and the daily
+     * catch-up; an empty record is filled from Stripe on the first look. */
+    if (action === 'money' || action === 'metrics') {
+      const { STRIPE_SECRET_KEY } = process.env;
+      const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
+      if (stripe) {
+        const { count } = await db.from('billing_charges').select('charge_id', { count: 'exact', head: true });
+        if (!count) {
+          await ledger.reconcileCharges(stripe, db)
+            .catch((e) => console.error('admin: first payment catch-up failed:', e && e.message));
+        }
+      }
+      const out = action === 'money' ? await ledger.overview(stripe, db) : await ledger.metrics(stripe, db);
+      out.reasons = Object.keys(ledger.CANCEL_REASONS)
+        .filter((k) => k !== 'payment_failed' && k !== 'dispute')
+        .map((k) => ({ key: k, label: ledger.CANCEL_REASONS[k].label }));
+      return res.status(200).json(out);
+    }
+
+    /* What our own ads cost in a month, typed in, for cost per customer.
+       month is YYYY-MM; amount in pounds. */
+    if (action === 'setAdSpend') {
+      const month = String(body.month || '');
+      if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return res.status(400).json({ error: 'Which month?' });
+      const pounds = Number(String(body.amount == null ? '' : body.amount).replace(/[£,\s]/g, ''));
+      if (!isFinite(pounds) || pounds < 0 || pounds > 1000000) return res.status(400).json({ error: 'That amount does not look right.' });
+      const { error } = await db.from('ad_spend').upsert({ month: month + '-01', amount: Math.round(pounds * 100), updated_at: new Date().toISOString() }, { onConflict: 'month' });
+      if (error) throw new Error(error.message);
+      return res.status(200).json({ ok: true });
+    }
+
+    /* ---- a bank dispute: the drafted evidence, saving it, sending it ----
+     * Nothing goes to Stripe until disputeSubmit, which needs SUBMIT typed:
+     * evidence can only be sent once. */
+    if (action === 'disputeDraft' || action === 'disputeSave' || action === 'disputeSubmit') {
+      const disputeId = String(body.disputeId || '');
+      if (!/^(dp|du)_[A-Za-z0-9]+$/.test(disputeId)) return res.status(400).json({ error: 'Which dispute?' });
+      const { STRIPE_SECRET_KEY } = process.env;
+      const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
+      try {
+        if (action === 'disputeDraft') {
+          const out = await ledger.draftEvidence(stripe, db, disputeId, ourSiteUrl());
+          return res.status(200).json(Object.assign({ ok: true, fields: ledger.EVIDENCE_FIELDS }, out));
+        }
+        if (action === 'disputeSave') {
+          const evidence = await ledger.saveEvidence(db, disputeId, body.evidence || {});
+          return res.status(200).json({ ok: true, evidence });
+        }
+        if (!stripe) return res.status(500).json({ error: 'Stripe is not configured.' });
+        if (String(body.confirm || '').trim().toUpperCase() !== 'SUBMIT') return res.status(400).json({ error: 'Type SUBMIT to send it. Evidence can only be sent once.' });
+        const { data: d } = await db.from('billing_disputes').select('submitted_at, closed_at').eq('dispute_id', disputeId).maybeSingle();
+        if (!d) return res.status(404).json({ error: 'No such dispute.' });
+        if (d.submitted_at) return res.status(400).json({ error: 'The evidence has already been sent.' });
+        if (d.closed_at) return res.status(400).json({ error: 'That dispute is closed.' });
+        const out = await ledger.submitEvidence(stripe, db, disputeId, body.evidence || {});
+        console.log('admin: dispute %s evidence submitted', disputeId);
+        return res.status(200).json(Object.assign({ ok: true }, out));
+      } catch (e) {
+        if (e && e.httpStatus) return res.status(e.httpStatus).json({ error: e.message });
+        if (e && e.type && /^Stripe/.test(e.type)) return res.status(400).json({ error: e.message });
+        throw e;
+      }
+    }
+
     /* ---- one customer's billing: the subscription and recent invoices -- */
     if (action === 'billing') {
       const userId = String(body.userId || '');
       if (!userId) return res.status(400).json({ error: 'Which customer?' });
       const { data: who, error: whoErr } = await db.from('profiles')
-        .select('stripe_customer_id, stripe_subscription_id, active_plan, subscription_status')
+        .select('stripe_customer_id, stripe_subscription_id, active_plan, subscription_status, business_name, contact_name, phone')
         .eq('id', userId).maybeSingle();
       if (whoErr) throw new Error(whoErr.message);
       if (!who) return res.status(404).json({ error: 'No such customer.' });
+      /* Who they are and why they are leaving, for the app's customer page. */
+      const { data: found } = await db.auth.admin.getUserById(userId).catch(() => ({ data: null }));
+      const { data: cancellation } = who.stripe_subscription_id
+        ? await db.from('billing_cancellations').select('reason, note, source, by_email, scheduled_at, ends_at, undone_at, ended_at')
+          .eq('subscription_id', who.stripe_subscription_id).maybeSingle()
+        : { data: null };
+      const person = {
+        name: who.business_name || who.contact_name || null, contact: who.contact_name || null, phone: who.phone || null,
+        email: (found && found.user && found.user.email) || null,
+        cancellation: cancellation ? Object.assign({ label: cancellation.reason ? ledger.reasonLabel(cancellation.reason) : null }, cancellation) : null
+      };
 
       const { STRIPE_SECRET_KEY } = process.env;
-      if (!STRIPE_SECRET_KEY) return res.status(200).json({ ok: true, configured: false, subscription: null, invoices: [] });
+      if (!STRIPE_SECRET_KEY) return res.status(200).json({ ok: true, configured: false, person, subscription: null, invoices: [] });
       const stripe = new Stripe(STRIPE_SECRET_KEY);
 
       let subscription = null;
@@ -765,7 +864,7 @@ module.exports = async function handler(req, res) {
       }
 
       return res.status(200).json({
-        ok: true, configured: true,
+        ok: true, configured: true, person,
         profileStatus: who.subscription_status || null, plan: who.active_plan || null,
         subscription, invoices
       });
@@ -796,6 +895,8 @@ module.exports = async function handler(req, res) {
           chargeId: prep.charge.id, customerId: who.stripe_customer_id, amount: prep.amount, reason: prep.reason
         });
         console.log('admin: refunded %s on %s (%s)', r.amount, prep.charge.id, who.business_name || userId);
+        await ledger.recordCharge(stripe, db, prep.charge.id)
+          .catch((e) => console.error('admin: refund record failed, the daily catch-up will get it:', e && e.message));
         return res.status(200).json({ ok: true, refund: r });
       } catch (e) {
         if (e && e.shown) return res.status(e.httpStatus || 400).json({ error: e.message });
@@ -842,7 +943,7 @@ module.exports = async function handler(req, res) {
       const { STRIPE_SECRET_KEY } = process.env;
       if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe is not configured.' });
       const { data: who, error: whoErr } = await db.from('profiles')
-        .select('stripe_subscription_id, business_name').eq('id', userId).maybeSingle();
+        .select('stripe_subscription_id, business_name, active_plan').eq('id', userId).maybeSingle();
       if (whoErr) throw new Error(whoErr.message);
       if (!who || !who.stripe_subscription_id) return res.status(400).json({ error: 'No subscription to cancel.' });
       const want = String(who.business_name || 'CANCEL').trim().toLowerCase();
@@ -850,8 +951,16 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'Type ' + (who.business_name || 'CANCEL') + ' to confirm.' });
       }
       try {
-        const sub = await new Stripe(STRIPE_SECRET_KEY).subscriptions.cancel(who.stripe_subscription_id);
+        const stripe = new Stripe(STRIPE_SECRET_KEY);
+        const why = cancelFields(body.reason, body.note, email);
+        /* The reason goes on first, so the webhook's "ended" reads it. */
+        if (why.metadata.cancel_reason) await stripe.subscriptions.update(who.stripe_subscription_id, { metadata: why.metadata });
+        const sub = await stripe.subscriptions.cancel(who.stripe_subscription_id,
+          why.cancellation_details ? { cancellation_details: why.cancellation_details } : undefined);
         console.log('admin: cancelled now %s (%s)', who.stripe_subscription_id, who.business_name || userId);
+        await ledger.noteCancellation(db, { subscriptionId: sub.id, userId, plan: (sub.metadata && sub.metadata.plan) || who.active_plan,
+          kind: 'immediate', reason: body.reason, note: body.note, source: 'admin', byEmail: email })
+          .catch((e) => console.error('admin: cancellation record failed:', e && e.message));
         return res.status(200).json({ ok: true, status: sub.status });
       } catch (e) {
         console.error('admin: cancel now failed:', e && e.message);
@@ -862,7 +971,7 @@ module.exports = async function handler(req, res) {
     /* ---- bring a membership back --------------------------------------
      * Only possible while it is still running and merely set to end. One
      * that has already ended cannot be restarted from here: they sign up
-     * again (Starter on /join, Business and One on /get-started). */
+     * again (Starter on /join, Business on /get-started, One on /start). */
     if (action === 'reactivate') {
       const userId = String(body.userId || '');
       if (!userId) return res.status(400).json({ error: 'Which customer?' });
@@ -871,7 +980,7 @@ module.exports = async function handler(req, res) {
       const { data: who, error: whoErr } = await db.from('profiles')
         .select('stripe_subscription_id').eq('id', userId).maybeSingle();
       if (whoErr) throw new Error(whoErr.message);
-      const ended = { error: 'That membership has ended, so it cannot be restarted here. Send them to ' + ourSiteUrl() + '/join (Starter) or ' + ourSiteUrl() + '/get-started (Business or One) to sign up again.', ended: true };
+      const ended = { error: 'That membership has ended, so it cannot be restarted here. Send them to ' + ourSiteUrl() + '/join (Starter), ' + ourSiteUrl() + '/get-started (Business) or ' + ourSiteUrl() + '/start (One) to sign up again.', ended: true };
       if (!who || !who.stripe_subscription_id) return res.status(400).json(ended);
       const stripe = new Stripe(STRIPE_SECRET_KEY);
       let sub;
@@ -879,7 +988,9 @@ module.exports = async function handler(req, res) {
       catch (e) { return res.status(400).json(ended); }
       if (sub.status === 'canceled' || sub.status === 'incomplete_expired') return res.status(400).json(ended);
       if (!sub.cancel_at_period_end) return res.status(400).json({ error: 'It is not set to end, so there is nothing to undo.' });
-      sub = await stripe.subscriptions.update(sub.id, { cancel_at_period_end: false });
+      sub = await stripe.subscriptions.update(sub.id, { cancel_at_period_end: false, metadata: cancelFields(null).metadata });
+      await ledger.noteCancellation(db, { subscriptionId: sub.id, userId, kind: 'undone' })
+        .catch((e) => console.error('admin: cancellation record failed:', e && e.message));
       return res.status(200).json({ ok: true, subscription: subSummary(sub) });
     }
 
@@ -1102,7 +1213,7 @@ module.exports = async function handler(req, res) {
       if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe is not configured.' });
 
       const { data: who, error: whoErr } = await db
-        .from('profiles').select('stripe_subscription_id, subscription_status, business_name')
+        .from('profiles').select('stripe_subscription_id, subscription_status, business_name, active_plan')
         .eq('id', userId).maybeSingle();
       if (whoErr) throw new Error(whoErr.message);
       if (!who || !who.stripe_subscription_id) {
@@ -1113,7 +1224,7 @@ module.exports = async function handler(req, res) {
       let sub;
       try {
         sub = await stripe.subscriptions.update(who.stripe_subscription_id,
-          { cancel_at_period_end: cancel });
+          Object.assign({ cancel_at_period_end: cancel }, cancelFields(cancel ? body.reason : null, body.note, email)));
       } catch (e) {
         console.error('admin: cancel toggle failed:', e && e.message);
         return res.status(400).json({ error: e && e.message ? e.message : 'Stripe refused that.' });
@@ -1125,6 +1236,10 @@ module.exports = async function handler(req, res) {
       const endsAt = sub.cancel_at || (sub.items && sub.items.data || [])
         .reduce((acc, i) => Math.max(acc, i.current_period_end || 0), 0) || null;
       console.log('admin: %s cancel_at_period_end=%s', userId, cancel);
+      await ledger.noteCancellation(db, { subscriptionId: sub.id, userId, plan: (sub.metadata && sub.metadata.plan) || who.active_plan,
+        kind: cancel ? 'scheduled' : 'undone', reason: cancel ? body.reason : null, note: cancel ? body.note : null,
+        source: cancel ? 'admin' : null, byEmail: cancel ? email : null, endsAt: endsAt ? new Date(endsAt * 1000).toISOString() : null })
+        .catch((e) => console.error('admin: cancellation record failed:', e && e.message));
       return res.status(200).json({
         ok: true,
         cancelAtPeriodEnd: Boolean(sub.cancel_at_period_end),
@@ -1530,7 +1645,7 @@ module.exports = async function handler(req, res) {
           const stripe = new Stripe(STRIPE_SECRET_KEY);
           let pi;
           try {
-            pi = await chargeCardForRequest(stripe, profile, reqRow, amount);
+            pi = await chargeCardForRequest(stripe, profile, reqRow, amount, db);
           } catch (err) {
             if (err.httpStatus) return res.status(err.httpStatus).json({ error: err.message });
             throw err;
@@ -1723,7 +1838,7 @@ module.exports = async function handler(req, res) {
 
       let pi;
       try {
-        pi = await chargeCardForRequest(stripe, profile, reqRow, amount);
+        pi = await chargeCardForRequest(stripe, profile, reqRow, amount, db);
       } catch (err) {
         if (err.httpStatus) return res.status(err.httpStatus).json({ error: err.message });
         throw err;

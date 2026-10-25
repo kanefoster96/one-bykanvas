@@ -1,7 +1,7 @@
 # Kanvas One, the phone app
 
 An Expo (React Native) app. From version 1.1 every screen a business uses
-is native: Build and requests (Kane), Analytics, Chat and contacts,
+is native: Build, requests and Money (Kane), Analytics, Chat and contacts,
 Messages (Starter), Support and the chat with Kane, Activity and Account.
 Lists push full-screen conversations that swipe back from the left edge,
 every tap has a little give and a tap of vibration, and changes animate.
