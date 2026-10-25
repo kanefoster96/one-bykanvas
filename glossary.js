@@ -112,6 +112,7 @@
     + '[aria-hidden="true"],[data-no-gl],[contenteditable],.gl,.gl-card,.pr-tag,.price,[class*="consent"],[id*="consent"],[class*="k1c"],[class*="k1s"],.mh-phone,.ap-hp,.mh-risk,.mh-info-note';
 
   var css = ''
+    + '.gl-glue{white-space:nowrap}'
     + '.gl{all:unset;display:inline;cursor:pointer;color:inherit;font:inherit;line-height:inherit;'
     + 'text-decoration:underline dotted;text-decoration-thickness:1.5px;text-underline-offset:3px;'
     + 'text-decoration-color:currentColor;-webkit-tap-highlight-color:transparent;border-radius:3px}'
@@ -178,8 +179,17 @@
         if (h.start > at) frag.appendChild(document.createTextNode(text.slice(at, h.start)));
         var b = document.createElement('button');
         b.type = 'button'; b.className = 'gl'; b.setAttribute('data-gl', h.key); b.textContent = h.word;
-        frag.appendChild(b);
         at = h.end;
+        // A button is an atomic box, so a line could break between it and
+        // the comma after it ("branded app / , website"). Punctuation that
+        // follows goes in a no-wrap span with it.
+        var tail = /^[,.;:!?)\u2019\u201d]+/.exec(text.slice(at));
+        if (tail) {
+          var glue = document.createElement('span');
+          glue.className = 'gl-glue';
+          glue.appendChild(b); glue.appendChild(document.createTextNode(tail[0]));
+          frag.appendChild(glue); at += tail[0].length;
+        } else frag.appendChild(b);
       });
       if (at < text.length) frag.appendChild(document.createTextNode(text.slice(at)));
       // In a flex or grid box every piece would become its own item and the

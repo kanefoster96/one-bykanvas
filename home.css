@@ -600,6 +600,9 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 .mh-cta .btn{width:100%;min-height:var(--btn-h-xl,56px);font-size:17px;justify-content:center}
 .mh-note{margin:12px 0 0;font-size:14px;color:var(--ink-3)}
 .mh-in{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
+/* /trades: the free calculator as its own line under the main button. */
+.mh-free{display:flex;justify-content:center;align-items:center;gap:6px;margin:12px 0 0;padding:13px 18px;border-radius:999px;background:var(--good-soft);color:var(--good);font-size:16px;font-weight:600;text-decoration:none}
+.mh-free b{font-weight:800}.mh-free span{font-size:20px;line-height:1}
 .mh-in a{color:var(--ink);font-weight:600}
 .mh .hh-scene{margin-top:clamp(44px,6vw,68px)}
 .mh .hh-screen > img{animation:none}
