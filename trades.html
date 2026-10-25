@@ -56,8 +56,8 @@
     <h1 class="reveal">More booked jobs and no missed calls. <span class="mh-off">The paperwork does itself.</span></h1>
     <p class="sub reveal">Your trade&rsquo;s own branded app, website and local ads, run by our team.</p>
     <div class="mh-cta reveal">
-      <a class="btn btn-primary" href="#calc">What are missed calls costing you?</a>
-      <p class="mh-in"><a href="#" data-chat-open="Hi Kane, I run a trade business. Would One work for me?">Prefer to talk first? Chat with Kane</a> &middot; <a href="/login.html">Log in</a></p>
+      <a class="btn btn-primary" href="/get-started?plan=max&amp;max=trades">Get started</a>
+      <p class="mh-in"><a href="#calc">What are missed calls costing you?</a> &middot; <a href="#" data-chat-open="Hi Kane, I run a trade business. Would One work for me?">Chat with Kane</a> &middot; <a href="/login.html">Log in</a></p>
     </div>
     </div>
     <div class="mh-visual">
@@ -424,6 +424,52 @@
 <script src="chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One" data-intro="Hi, I&rsquo;m Kane. I built One and set it up for every business on it. Tell me what you do and I&rsquo;ll show you how it would work for you. I&rsquo;ll give you a straight answer." data-quick="How does the 10-enquiry promise work?|Can my engineers use it?|Can I sell service plans?" defer></script>
 <script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=06da798b"></script>
+<script>
+/* The glossary's cards, in a trade's words: same keys as glossary.js, so
+   these replace the club wording on this page only. */
+window.GL_EXTRA = {
+  promise: { match: /\b(?:The )?10-Enquiry Promise\b|\b10 enquiries in 3 months\b/, title: 'The 10-Enquiry Promise',
+    text: 'If your first 3 months of ads bring fewer than 10 enquiries, your next 3 months of One are free. An enquiry counts whether or not it becomes a job. It’s applied automatically; there’s nothing to claim.' },
+  memberapp: { match: /\b(?:your own|member|branded) app\b/i, title: 'Your own app',
+    text: 'An app with your business’s name and logo in the App Store and Google Play, for you and your team: today’s jobs, enquiries, quotes, payments and customer details. Customers don’t need it; they get texts and links.' },
+  followups: { match: /\bfollow-ups?\b/i, title: 'Follow-ups',
+    text: 'Texts and emails sent automatically at the right moment: a reminder before a visit, a nudge when a quote goes quiet, a review request after the job. Nobody slips through the cracks.' },
+  switchover: { match: /\bswitch-over\b/i, title: 'Free switch-over',
+    text: 'We move your customers, their addresses and job history across from your old system or spreadsheet for you.' },
+  membership: { limit: 2, match: /\bmemberships?\b/i, title: 'Service plans',
+    text: 'A monthly payment for a plan, such as a yearly service with priority callouts, taken by card automatically. Customers can update their card themselves, and failed payments are chased for you.' },
+  seo: { match: /\bSEO\b/, title: 'SEO',
+    text: 'Short for search engine optimisation: setting up your website so Google shows it when people nearby search for things like “boiler repair near me”. We do it for you and keep it up to date.' },
+  aeo: { match: /\bAEO\b/, title: 'AEO',
+    text: 'Short for answer engine optimisation: the same idea for AI tools like ChatGPT and Google’s AI answers. When someone asks one “who’s a good plumber near me?”, we make sure the answer can include you.' },
+  aisearch: { match: /\bAI search\b/i, title: 'AI search',
+    text: 'More and more people ask ChatGPT, Google’s AI answers and similar tools instead of scrolling through a list of websites. Your site is set up so those tools understand it and can recommend you.' },
+  gbp: { match: /\bGoogle (?:Business )?[Pp]rofile\b/, title: 'Google Business Profile',
+    text: 'Your free listing on Google Maps and Google search: your areas, opening hours, photos and reviews. Often the first thing a customer sees, so we set it up and keep it current.' },
+  googlereviews: { match: /\bGoogle reviews\b/i, title: 'Google reviews',
+    text: 'The star ratings and comments customers leave on your Google listing. More good reviews means more people trust you and Google shows you higher, so the system asks happy customers the day after the job.' },
+  pixel: { match: /\b(?:Meta )?pixel\b/i, title: 'Pixel',
+    text: 'A small piece of code on your website that tells Facebook and Instagram when someone books a quote, so your ads learn who to show to next. It only counts visits; it never sees card details.' },
+  costper: { match: /\bcost per (?:trial|lead|enquiry|booking|member|customer|result)\b/i, title: 'Cost per enquiry',
+    text: 'What you spent on ads divided by the enquiries they brought. If £100 of ads brings 10 quote requests, that’s £10 an enquiry. It’s the number that tells you whether the ads are worth it.' },
+  stripe: { match: /\bStripe\b/, title: 'Stripe',
+    text: 'The secure card payment company behind your deposits, invoices and plans, used by millions of businesses. Customers pay by card, Apple Pay or Google Pay, and the money goes straight to your bank, never through us.' },
+  webaddress: { match: /\bweb address(?:es)?\b|\bdomain(?: name)?s?\b/i, title: 'Web address',
+    text: 'Your website’s name on the internet, like yourbusiness.co.uk. Also called a domain. It’s registered in your business’s name and renewed for you.' },
+  missedcall: { match: /\bmissed-call text back\b/i, title: 'Missed-call text back',
+    text: 'If you can’t answer the phone (on a job, say), the caller gets a text straight away with a link to book a free quote, so you don’t lose the job to the next number on Google.' },
+  dashboard: { match: /\bdashboard\b/i, title: 'Dashboard',
+    text: 'One screen, in your app and on your website, showing what matters today: new enquiries, today’s jobs, quotes waiting, payments and messages.' },
+  businessemail: { match: /\bbusiness email\b/i, title: 'Business email',
+    text: 'An email address at your own web address, like hello@yourbusiness.co.uk, instead of a Gmail or Hotmail one. It looks more professional and customers trust it more.' },
+  devaccount: { match: /\bdeveloper accounts?\b/i, title: 'Developer accounts',
+    text: 'The accounts Apple and Google need before an app can go in the App Store and Google Play under your business’s name. They’re in your name and paid to Apple and Google directly; we walk you through setting them up.' },
+  upsell: { match: /\bupsells?\b/i, title: 'Upsell',
+    text: 'Offering a customer something extra at the right moment, like a service while you’re there for a repair, or a monthly plan. Done in a tap, so it never feels pushy.' },
+  push: { match: /\bpush notifications?\b/i, title: 'Push notification',
+    text: 'A message that pops up on a phone from your app, like a text but free: a new enquiry, a quote accepted, a payment in.' }
+};
+</script>
 <script src="glossary.js?v=d3003e23" defer></script>
 <script>
 (function () {
