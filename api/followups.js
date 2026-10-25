@@ -20,11 +20,13 @@
 const { createClient } = require('@supabase/supabase-js');
 const { missingEnv, ourSiteUrl } = require('./_env.js');
 const { PREVIEW_OFFER } = require('./_plans.js');
-const { sendEmail } = require('./_email.js');
+const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { notifyAdmin } = require('./_notify.js');
 const { beat, alertAdmin } = require('./_health.js');
 const { startHref } = require('./plan.js');
+const ledger = require('./_money.js');
+const Stripe = require('stripe');
 
 const DAY = 24 * 60 * 60 * 1000;
 /* Send windows: due after the floor, skipped for good after the ceiling.
@@ -342,6 +344,88 @@ function growthTwo(lead, site) {
   };
 }
 
+/* ---- our own money, once a day (api/_money.js) ------------------------
+ * The payment record caught up from Stripe (anything the webhook missed,
+ * dashboard refunds, fees), disputes swept in case an event was lost, and
+ * on the 1st, the numbers for the month just ended. Each is on its own: a
+ * failure is reported and the rest carry on. */
+async function moneyChores(db, site, now) {
+  const { STRIPE_SECRET_KEY } = process.env;
+  if (!STRIPE_SECRET_KEY) return {};
+  const stripe = new Stripe(STRIPE_SECRET_KEY);
+  const out = {};
+  try { out.charges = (await ledger.reconcileCharges(stripe, db)).seen; }
+  catch (e) { console.error('followups: payment catch-up failed:', e && e.message); await alertAdmin(db, 'money', 'The payment catch-up failed', 'The daily catch-up of payments from Stripe stopped with: ' + (e && e.message)); }
+  try {
+    const fresh = await ledger.sweepDisputes(stripe, db);
+    for (const d of fresh) {
+      await notifyAdmin(db, 'Payment disputed', ledger.money(d.amount) + ' taken back by a bank. The evidence is drafted in Money > Care.', '/app#money');
+    }
+    out.disputes = fresh.length;
+  } catch (e) { console.error('followups: dispute sweep failed:', e && e.message); }
+
+  /* The 1st, in UK time; claimed so a rerun never sends it twice. */
+  const today = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', day: 'numeric' }).format(new Date(now));
+  if (today === '1') {
+    try {
+      const n = await ledger.monthlyNumbers(stripe, db, now);
+      const key = 'monthly:' + ledger.monthStart(-1, now).toISOString().slice(0, 7);
+      const { error: claimErr } = await db.from('sent_once').insert({ key });
+      if (!claimErr) { out.monthly = await sendMonthly(n, site); }
+      else if (claimErr.code !== '23505') throw new Error(claimErr.message);
+    } catch (e) { console.error('followups: monthly numbers failed:', e && e.message); await alertAdmin(db, 'money', 'The monthly numbers email failed', String(e && e.message)); }
+  }
+  return out;
+}
+
+/* The month just ended, next to the one before, to the admin addresses. */
+async function sendMonthly(n, site) {
+  const m = ledger.money;
+  const change = (now, was) => {
+    if (!was) return '';
+    const pct = Math.round((now - was) / was * 100);
+    return pct === 0 ? ' (same as ' + n.prevMonth.split(' ')[0] + ')' : ' (' + (pct > 0 ? 'up ' : 'down ') + Math.abs(pct) + '% on ' + n.prevMonth.split(' ')[0] + ')';
+  };
+  const plans = Object.keys(n.summary.byPlan).map((k) => (ledger.PLAN_WORD[k] || k) + ' ' + n.summary.byPlan[k].count).join(', ') || 'none';
+  const collected = n.money.gross - n.money.refunds;
+  const details = [
+    { label: 'Collected', value: m(collected) + change(collected, n.prevMoney.gross - n.prevMoney.refunds) },
+    { label: 'Stripe fees', value: m(n.money.fees) },
+    { label: 'Refunds', value: m(n.money.refunds) },
+    { label: 'Failed payments', value: String(n.money.failed) },
+    { label: 'Monthly income now', value: m(n.summary.mrr) },
+    { label: 'Paying customers', value: n.summary.paying + ' (' + plans + ')' },
+    { label: 'Joined', value: n.joined.length + ' (' + n.joinedPrev + ' in ' + n.prevMonth.split(' ')[0] + ')' },
+    { label: 'Left', value: n.ended.length + ' (' + n.endedPrev + ' in ' + n.prevMonth.split(' ')[0] + ')' }
+  ];
+  if (n.summary.failing) details.push({ label: 'On failing cards', value: m(n.summary.atRisk) + ' a month, ' + n.summary.failing + ' customer' + (n.summary.failing === 1 ? '' : 's') });
+  if (n.summary.endingCount) details.push({ label: 'Set to end', value: m(n.summary.ending) + ' a month, ' + n.summary.endingCount + ' customer' + (n.summary.endingCount === 1 ? '' : 's') });
+  const lines = ['Here are your numbers for ' + esc(n.month) + '.'];
+  if (n.joined.length) lines.push('<strong>Joined:</strong> ' + n.joined.map((j) => esc(j.name) + (j.plan ? ' (' + esc(ledger.PLAN_WORD[j.plan] || j.plan) + ')' : '')).join(', ') + '.');
+  if (n.ended.length) lines.push('<strong>Left:</strong> ' + n.ended.map((j) => esc(j.name) + ' (' + esc(j.reason.toLowerCase()) + ')').join(', ') + '.');
+  const text = ['Your numbers for ' + n.month + '.', '']
+    .concat(details.map((d) => d.label + ': ' + d.value))
+    .concat(n.joined.length ? ['', 'Joined: ' + n.joined.map((j) => j.name).join(', ')] : [])
+    .concat(n.ended.length ? ['', 'Left: ' + n.ended.map((j) => j.name + ' (' + j.reason.toLowerCase() + ')').join(', ')] : [])
+    .concat(['', 'The detail is in the app: Money.']).join('\n');
+  const outcome = await sendEmail({
+    to: adminAddresses(),
+    subject: n.month + ': ' + m(collected) + ' collected, ' + n.summary.paying + ' paying',
+    text,
+    html: emailHtml({
+      preheader: m(collected) + ' collected, ' + m(n.summary.mrr) + ' a month coming in.',
+      heading: n.month,
+      lines,
+      details,
+      ctaText: 'Open Money in the app',
+      ctaHref: site + '/app',
+      footer: 'Your monthly numbers from Kanvas One, sent on the 1st.'
+    })
+  });
+  console.log('followups: monthly numbers ->', outcome);
+  return outcome;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'POST') {
     res.setHeader('Allow', 'GET, POST');
@@ -581,8 +665,10 @@ module.exports = async function handler(req, res) {
     const chats = await db.from('conversations').delete().lt('last_message_at', new Date(now - 24 * 30 * DAY).toISOString());
     if (chats.error) console.error('followups: conversations sweep failed:', chats.error.message);
 
+    const money = await moneyChores(db, site, now);
+
     await beat(db, 'followups', `sent ${sentF1 + sentF2 + sentG1 + sentG2 + sentWb}`);
-    return res.status(200).json({ ok: true, followup1: sentF1, followup2: sentF2, growth1: sentG1, growth2: sentG2, winback: sentWb });
+    return res.status(200).json({ ok: true, followup1: sentF1, followup2: sentF2, growth1: sentG1, growth2: sentG2, winback: sentWb, money });
   } catch (err) {
     console.error('followups:', err && err.message);
     if (db) await alertAdmin(db, 'followups', 'The follow-up emails failed', 'The daily follow-up job stopped with: ' + (err && err.message));

@@ -1,7 +1,7 @@
 /* How the app is laid out.
  *
  * Tabs along the bottom, which depend on who is signed in:
- *   Kane (admin)   Build · Analytics · Chat · Dashboard
+ *   Kane (admin)   Build · Money · Analytics · Chat · Dashboard
  *   Business       Dashboard (when connected) · Analytics · Chat · Support
  *   Starter        Home · Messages · Support
  *   One client     Support only, no tab bar
@@ -34,6 +34,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import BuildScreen from './screens/admin/BuildScreen';
 import BuildDetailScreen from './screens/admin/BuildDetailScreen';
+import MoneyScreen from './screens/admin/MoneyScreen';
+import CustomerMoneyScreen from './screens/admin/CustomerMoneyScreen';
+import DisputeScreen from './screens/admin/DisputeScreen';
 import AdminRequestScreen from './screens/admin/AdminRequestScreen';
 import AnalyticsScreen from './screens/AnalyticsScreen';
 import InboxScreen from './screens/chat/InboxScreen';
@@ -147,6 +150,7 @@ function tabStack(name, Component, title, opts) {
 }
 
 const BuildStack = tabStack('Build', BuildScreen, 'Build');
+const MoneyStack = tabStack('Money', MoneyScreen, 'Money');
 const AnalyticsStack = tabStack('Analytics', AnalyticsScreen, 'Analytics');
 const HomeStack = tabStack('Home', AnalyticsScreen, 'Home');
 const ChatStack = tabStack('Chat', InboxScreen, 'Chat');
@@ -154,7 +158,7 @@ const MessagesStack = tabStack('Messages', MessagesScreen, 'Messages');
 const SupportStack = tabStack('Support', SupportScreen, 'Support');
 const DashboardStack = tabStack('Dashboard', DashboardScreen, 'Dashboard');
 
-const TAB_ICON = { Build: 'build', Analytics: 'chart', Home: 'home', Chat: 'chat', Contacts: 'contacts', Messages: 'mail', Support: 'support', Dashboard: 'grid' };
+const TAB_ICON = { Build: 'build', Money: 'pound', Analytics: 'chart', Home: 'home', Chat: 'chat', Contacts: 'contacts', Messages: 'mail', Support: 'support', Dashboard: 'grid' };
 
 function TabBar({ state, descriptors, navigation }) {
   const insets = useSafeAreaInsets();
@@ -231,6 +235,7 @@ function MainTabs() {
   const screens = [];
   if (isAdmin) {
     screens.push(<Tabs.Screen key="Build" name="Build" component={BuildStack} options={{ tabBarBadge: counts.build }} />);
+    screens.push(<Tabs.Screen key="Money" name="Money" component={MoneyStack} options={{ tabBarBadge: counts.money }} />);
     screens.push(<Tabs.Screen key="Analytics" name="Analytics" component={AnalyticsStack} />);
     if (chatTab) screens.push(<Tabs.Screen key="Chat" name="Chat" component={ChatStack} options={{ tabBarBadge: counts.chat, tabBarLabel: hasChat ? 'Chat' : 'Contacts', tabIcon: hasChat ? 'Chat' : 'Contacts' }} />);
     screens.push(<Tabs.Screen key="Dashboard" name="Dashboard" component={DashboardStack} />);
@@ -264,6 +269,8 @@ export function MainNavigator() {
         : <Root.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />}
       <Root.Screen name="AdminRequest" component={AdminRequestScreen} options={{ title: '' }} />
       <Root.Screen name="BuildDetail" component={BuildDetailScreen} options={{ title: '' }} />
+      <Root.Screen name="CustomerMoney" component={CustomerMoneyScreen} options={{ title: '' }} />
+      <Root.Screen name="Dispute" component={DisputeScreen} options={{ title: '' }} />
       <Root.Screen name="Thread" component={ThreadScreen} options={{ title: '' }} />
       <Root.Screen name="Contact" component={ContactScreen} options={{ title: '' }} />
       <Root.Screen name="Request" component={RequestScreen} options={{ title: '' }} />

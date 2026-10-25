@@ -12,6 +12,7 @@ const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { PLANS } = require('./_plans.js');
 const { notify, notifyAdmin } = require('./_notify.js');
+const ledger = require('./_money.js');
 
 const PLAN_NAME = { starter: 'Starter', business: 'Business', pro: 'Pro', max: 'One' }; // must match admin.js/account.js
 
@@ -935,6 +936,152 @@ ${site}/account.html`,
     console.log('webhook: new customer email', result);
   }
 
+  /* ------------------------------------------------ money records
+     The admin app's Money tab reads its own copy (api/_money.js). Each of
+     these is a record, not the event's main job: a failure is logged and
+     left for the daily catch-up rather than failing the event, which would
+     have Stripe resend it and repeat the customer's emails. */
+  async function keepRecord(what, fn) {
+    try { await fn(); } catch (err) { console.error('webhook: %s record failed:', what, err && err.message); }
+  }
+
+  /* Once per key, ever: a redelivered event, or the same change arriving on
+     two events, sends nothing the second time. */
+  async function sendOnce(key) {
+    const { error } = await admin.from('sent_once').insert({ key });
+    if (!error) return true;
+    if (error.code !== '23505') console.error('webhook: sent_once failed, sending anyway:', error.message);
+    return error.code !== '23505';
+  }
+
+  /* A plan set to end, or set to carry on again. Read from what changed on
+     the event (previous_attributes), then from the subscription as Stripe
+     has it now, so the order events arrive in does not matter. Covers the
+     customer's own portal, the admin app and the Stripe dashboard alike: the
+     reason comes from whichever of them gave one (reasonFromStripe in
+     api/_money.js). A first payment that never went through (incomplete,
+     then expired) was never a plan, so is not a cancellation. */
+  async function trackCancellation(event) {
+    const was = (event.data && event.data.previous_attributes) || {};
+    const touched = 'cancel_at_period_end' in was || 'cancel_at' in was;
+    const deleted = event.type === 'customer.subscription.deleted';
+    if (!touched && !deleted) return;
+
+    let sub = event.data.object;
+    try { sub = await stripe.subscriptions.retrieve(sub.id); } catch (e) { /* the event copy will do */ }
+    const id = await profileIdFor(sub);
+    const plan = (sub.metadata && sub.metadata.plan) || null;
+    const why = ledger.reasonFromStripe(sub);
+
+    if (sub.status === 'incomplete_expired' || sub.status === 'incomplete') return;
+    if (deleted || sub.status === 'canceled') {
+      await ledger.noteCancellation(admin, { subscriptionId: sub.id, userId: id, plan, kind: 'ended', reason: why.reason, note: why.note, source: why.source });
+      return;
+    }
+
+    const ending = Boolean(sub.cancel_at_period_end || sub.cancel_at);
+    const endsUnix = sub.cancel_at || (periodEndOf(sub) ? Date.parse(periodEndOf(sub)) / 1000 : null);
+    const endsAt = endsUnix ? new Date(endsUnix * 1000).toISOString() : null;
+    const { data: p } = id ? await admin.from('profiles').select('business_name, contact_name').eq('id', id).maybeSingle() : { data: null };
+    const name = (p && (p.business_name || p.contact_name)) || 'A customer';
+    const planWord = PLAN_NAME[plan] || 'their';
+    const day = endsAt ? new Date(endsAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' }) : 'the end of this period';
+
+    if (ending) {
+      await ledger.noteCancellation(admin, { subscriptionId: sub.id, userId: id, plan, kind: 'scheduled', reason: why.reason, note: why.note, source: why.source, endsAt });
+      if (!(await sendOnce('ending:' + sub.id + ':' + (endsUnix || '')))) return;
+      if (id) await announcePlanEnding(id, sub, endsAt, day);
+      await notifyAdmin(admin, name + ' is set to end on ' + day,
+        planWord + ' plan, ' + (why.reason ? ledger.reasonLabel(why.reason).toLowerCase() : 'no reason given')
+        + (why.note ? ': "' + why.note + '"' : '') + '. Worth a call before then: open Money > Care.',
+        '/app#money');
+      return;
+    }
+
+    await ledger.noteCancellation(admin, { subscriptionId: sub.id, userId: id, plan, kind: 'undone' });
+    /* Set to end again later, it is a new decision and gets its own email. */
+    await admin.from('sent_once').delete().like('key', 'ending:' + sub.id + ':%')
+      .then(({ error }) => { if (error) console.error('webhook: could not reset the ending email:', error.message); });
+    /* The reason picked for the last time belongs to that time. */
+    if (sub.metadata && (sub.metadata.cancel_reason || sub.metadata.cancel_note)) {
+      await stripe.subscriptions.update(sub.id, { metadata: { cancel_reason: '', cancel_note: '', cancel_by: '' } })
+        .catch((e) => console.error('webhook: could not clear the old cancel reason:', e && e.message));
+    }
+    if (await sendOnce('staying:' + sub.id + ':' + event.id)) {
+      await notifyAdmin(admin, name + ' is staying', 'Their ' + planWord + ' plan is no longer set to end.', '/app#money');
+    }
+  }
+
+  /* "Your plan ends on …": confirms a cancel the moment it is made, so
+     nobody is surprised by the date, and says how to change their mind. */
+  async function announcePlanEnding(id, sub, endsAt, day) {
+    const { data: who } = await admin.auth.admin.getUserById(id);
+    const email = who && who.user && who.user.email;
+    if (!email) return;
+    const site = ourSiteUrl();
+    const plan = PLAN_NAME[sub.metadata && sub.metadata.plan] || '';
+    const result = await sendEmail({
+      to: email,
+      subject: 'Your plan ends on ' + day,
+      text: `Your Kanvas One${plan ? ' ' + plan : ''} plan is set to end on ${day}. Everything carries on as normal until then, and you won't be charged again.\n\n`
+          + `Changed your mind? You can keep your plan from your account any time before ${day}:\n${site}/account.html\n\n`
+          + `If something wasn't right, just reply: we'd love the chance to fix it.`,
+      html: emailHtml({
+        preheader: `Everything carries on until ${day}. You won’t be charged again.`,
+        heading: 'Your plan is set to end.',
+        lines: [
+          `Your plan is set to end on <strong>${esc(day)}</strong>. Everything carries on as normal until then, and you won’t be charged again.`,
+          'Changed your mind? You can keep your plan from your account any time before then.',
+          'If something wasn’t right, just reply to this email. We’d love the chance to fix it.'
+        ],
+        details: [
+          { label: 'Plan', value: plan || 'Kanvas One' },
+          { label: 'Ends on', value: day },
+          { label: 'Further payments', value: 'None' }
+        ],
+        ctaText: 'Keep my plan',
+        ctaHref: `${site}/account.html`,
+        footer: 'You&rsquo;re getting this because your Kanvas One plan was set to end.',
+        footerLinks: standardFooter(site)
+      })
+    });
+    console.log('webhook: plan ending email', result);
+  }
+
+  /* A bank dispute. Money is taken back from us when it opens, and there
+     are only a few days to answer, so it is loud: a notification and an
+     email, with the evidence already drafted in the app. */
+  async function trackDispute(dispute) {
+    const out = await ledger.recordDispute(stripe, admin, dispute);
+    const { row } = out;
+    let name = 'A customer';
+    if (row.user_id) {
+      const { data: p } = await admin.from('profiles').select('business_name, contact_name').eq('id', row.user_id).maybeSingle();
+      name = (p && (p.business_name || p.contact_name)) || name;
+    }
+    const due = row.evidence_due_by ? new Date(row.evidence_due_by).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/London' }) : 'soon';
+    if (out.isNew && await sendOnce('dispute:' + row.dispute_id)) {
+      const said = ledger.DISPUTE_WORDS[row.reason] || row.reason || 'No reason given';
+      await notifyAdmin(admin, 'Payment disputed: ' + name,
+        money(row.amount) + ' taken back by their bank. ' + said + '. Answer by ' + due + ': the evidence is drafted in Money > Care.',
+        '/app#money');
+      await sendEmail({
+        to: adminAddresses(),
+        subject: `${name} disputed a ${money(row.amount)} payment - answer by ${due}`,
+        text: `${name}'s bank has disputed a payment of ${money(row.amount)}, and Stripe has taken it back while it is looked at.\n\n`
+            + `Their reason: ${said}.\nEvidence due: ${due}.\n\n`
+            + `The evidence is already drafted from what we hold (their sign-up, payments, site and requests). Read it, add anything you have, and submit it from the app: Money > Care.\n\n`
+            + `Stripe: https://dashboard.stripe.com/disputes/${row.dispute_id}`
+      }).then((r) => console.log('webhook: dispute email', r));
+    }
+    if (out.justClosed && await sendOnce('dispute-closed:' + row.dispute_id)) {
+      const won = row.status === 'won';
+      await notifyAdmin(admin, (won ? 'Dispute won: ' : 'Dispute closed: ') + name,
+        won ? money(row.amount) + ' comes back to you.' : 'Outcome: ' + String(row.status || '').replace(/_/g, ' ') + '.',
+        '/app#money');
+    }
+  }
+
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -955,6 +1102,7 @@ ${site}/account.html`,
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted':
         await writeSubscription(event.data.object);
+        await keepRecord('cancellation', () => trackCancellation(event));
         break;
 
       /* Every renewal produces a paid invoice, and re-reading the subscription
@@ -969,11 +1117,27 @@ ${site}/account.html`,
         if (subId) await writeSubscription(await stripe.subscriptions.retrieve(subId));
         await announceMaxRenewal(event.data.object);
         await recordPartnerPayment(event.data.object);
+        await keepRecord('payment', () => ledger.recordInvoice(stripe, admin, event.data.object.id));
         break;
       }
 
       case 'invoice.payment_failed':
         await announcePaymentFailed(event.data.object);
+        await keepRecord('payment', () => ledger.recordInvoice(stripe, admin, event.data.object.id));
+        break;
+
+      /* A refund made in the Stripe dashboard, or a one-off charge. */
+      case 'charge.succeeded':
+      case 'charge.refunded':
+        await keepRecord('charge', () => ledger.recordCharge(stripe, admin, event.data.object.id));
+        break;
+
+      /* Not keepRecord: a dispute that failed to record must be retried,
+         or nobody hears about it until the daily sweep. */
+      case 'charge.dispute.created':
+      case 'charge.dispute.updated':
+      case 'charge.dispute.closed':
+        await trackDispute(await stripe.disputes.retrieve(event.data.object.id));
         break;
 
       case 'invoice.upcoming':

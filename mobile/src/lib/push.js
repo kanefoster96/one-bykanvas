@@ -106,6 +106,8 @@ export function openLink(nav, app, n) {
   if (m) return go('AdminRequest', { id: m[1] });
   m = n.href && /^\/admin\.html#b\/([0-9a-f-]{36})(?:\/(site|app|ads))?$/i.exec(n.href);
   if (m) return go('BuildDetail', { id: m[1], job: m[2] || null });
+  /* Money: a dispute, a failing card, a plan set to end. */
+  if (app.isAdmin && n.href && /^\/app#money$/.test(n.href)) return tab('Money');
   if (app.isStarter) {
     if ((link && (link.kind === 'enquiry' || link.kind === 'person')) || n.kind === 'enquiry' || n.kind === 'person') return tab('Messages', { openId: link && link.id });
     if (n.href && /^https:\/\//.test(n.href)) { tab('Home'); openOutside(n.href); return true; }
