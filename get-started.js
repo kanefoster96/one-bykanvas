@@ -47,7 +47,7 @@
     if (!others) return;
     var std = sub ? sub.textContent : '';
     document.body.classList.add('one-focus');
-    if (sub) sub.textContent = 'One is built to fill your sessions, run for you: your website, member app, trial bookings, payments and ads.';
+    if (sub) sub.textContent = 'One gets you more customers, run for you: your website, your own app, bookings, payments and ads.';
     others.hidden = false;
     others.addEventListener('click', function () {
       document.body.classList.remove('one-focus');
@@ -1121,13 +1121,13 @@
       },
       business: {
         to: 'max',
-        tag: 'Fill your sessions',
+        tag: 'Get more customers',
         head: 'One: the whole system run for you, from the first ad to the monthly payment.',
         list: [
           'Facebook and Instagram ads, run for you. First 3 months on us',
-          'Trial bookings, reminders and follow-ups that turn trials into members',
-          'Memberships and monthly payments, taken automatically',
-          'A member app, and bring-a-friend referrals'
+          'Bookings, reminders and follow-ups that turn enquiries into customers',
+          'Payments taken automatically, monthly memberships included',
+          'Your own branded app, and referrals'
         ],
         note: 'We need a photo or a line of text; we do the rest. <strong>Your price is locked for as long as you stay.</strong> Step down any month; you keep the ranking.',
         btn: 'Switch to One — £250 a month',
