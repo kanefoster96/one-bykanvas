@@ -11,7 +11,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="styles.css?v=aff04046">
-<link rel="stylesheet" href="home.css?v=49c77fe8">
+<link rel="stylesheet" href="home.css?v=7cd1c862">
 </head>
 <body class="home page-check">
 
@@ -43,12 +43,12 @@
         <div><b id="nCapacity">60</b><span>you could take</span></div>
         <div><b id="nFee">&pound;50</b><span>a month each</span></div>
       </div>
-      <p class="mh-numbers-line" id="nLine">That leaves <b>20 spaces</b> empty, costing you <b>&pound;12,000</b> every single year.</p>
+      <p class="mh-numbers-line" id="nLine">That leaves <b>20 spaces</b> empty, costing you <b class="mh-locked">&pound;88,888</b> every single year.</p>
       <a class="mh-numbers-edit" id="nEdit" href="/profit-plan">&lsaquo; Change my numbers</a>
     </div>
 
     <form class="mh-calc mh-plan-form" id="checkForm" novalidate>
-      <p class="mh-plan-step">Enter your details to see if One can help your business.</p>
+      <p class="mh-plan-step">Enter your details to see your number, and exactly how One would fill your spaces.</p>
       <div class="mh-field"><label for="gBusiness">Business name</label><input id="gBusiness" type="text" autocomplete="organization" maxlength="120" required></div>
       <div class="mh-field"><label for="gType">What do you run?</label>
         <select id="gType"><option value="kids">Kids&rsquo; club</option><option value="dance">Dance or cheer school</option><option value="gymnastics">Gymnastics</option><option value="martial">Martial arts</option><option value="swim">Swim school</option><option value="sport">Football or sport</option><option value="gym">Gym or personal training</option><option value="yoga">Yoga or Pilates</option><option value="music">Music or tutoring</option><option value="other">Something else</option></select></div>
@@ -58,7 +58,7 @@
       <div class="mh-field"><label for="gTown">Town <span style="font-weight:400">(optional)</span></label><input id="gTown" type="text" autocomplete="address-level2" maxlength="80"></div>
       <div class="mh-hp" aria-hidden="true"><label for="gWebsite">Leave this empty</label><input id="gWebsite" type="text" tabindex="-1" autocomplete="off"></div>
       <p class="note wide" id="gNote" role="status" aria-live="polite"></p>
-      <button class="btn btn-primary wide" type="submit" id="gSend">Get my free plan</button>
+      <button class="btn btn-primary wide" type="submit" id="gSend">Show my number and plan</button>
       <p class="mh-plan-small wide">Free, no card, no obligation. We&rsquo;ll email you a copy of your result.</p>
     </form>
   </div>
@@ -76,7 +76,7 @@
 <script src="script.js?v=6c69ddf5"></script>
 <script src="chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One. Ask me anything, or ask to look round our own site and app. I&rsquo;ll give you a straight answer." data-quick="How does the 10-trial guarantee work?|Can I see your site and app?|Is it right for my club?" defer></script>
 <script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
-<script src="growth-model.js?v=401c2a70"></script>
+<script src="growth-model.js?v=1a94c298"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -90,9 +90,11 @@
   $('nMembers').textContent = p.members;
   $('nCapacity').textContent = p.capacity;
   $('nFee').textContent = money(p.fee);
+  // What it costs them is the result, shown on /your-plan once they've
+  // given their details; here it's blurred stand-in digits.
   $('nLine').innerHTML = p.spaces > 0
-    ? 'That leaves <b>' + p.spaces + ' space' + (p.spaces === 1 ? '' : 's') + '</b> empty, costing you <b>' + money(p.gapYear) + '</b> every single year.'
-    : 'Every space is full: <b>' + money(p.total) + '</b> coming in every month.';
+    ? 'That leaves <b>' + p.spaces + ' space' + (p.spaces === 1 ? '' : 's') + '</b> empty, costing you <b class="mh-locked" aria-label="your number">' + G.locked(p.gapYear) + '</b> every single year.'
+    : 'Every space is full: <b class="mh-locked" aria-label="your number">' + G.locked(p.total) + '</b> coming in every month.';
   $('nEdit').href = '/profit-plan?' + G.query(p);
 
   var shownAt = Date.now();
@@ -134,7 +136,7 @@
       .catch(function (err) {
         note.className = 'note wide bad';
         note.textContent = (err && err.message && err.message !== 'failed') ? err.message : 'That didn’t send. Try again, or email hello@kanvas.one.';
-        btn.disabled = false; btn.textContent = 'Get my free plan';
+        btn.disabled = false; btn.textContent = 'Show my number and plan';
       });
   });
 })();

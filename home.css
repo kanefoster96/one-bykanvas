@@ -1198,3 +1198,8 @@ body.home .band-dark .tile-green{box-shadow:0 6px 18px var(--neon-glow)}
 .band-dark .mh-promise-list b::before{box-shadow:0 0 8px var(--neon-glow)}
 body.home .band-dark .faq details[open]{box-shadow:var(--glass-shadow),0 14px 40px rgba(255,79,18,.08)}
 body.home .band-dark .mh-results-tag{text-shadow:0 0 14px rgba(255,79,18,.45)}
+
+/* The free calculator's figure, blurred until they give their details on
+   /check (free-check.js). The digits are stand-ins, not the real sum. */
+.mh-locked{filter:blur(9px);user-select:none;-webkit-user-select:none}
+.mh-numbers-line .mh-locked{display:inline-block;filter:blur(6px)}

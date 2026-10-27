@@ -17,7 +17,7 @@
 <link rel="icon" href="/assets/favicon.svg?v=fa41229e" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
-<link rel="stylesheet" href="/get-found.css?v=218475cb">
+<link rel="stylesheet" href="/get-found.css?v=8ef7388a">
 <style>
 :root{
   --ink:#1d1d1f;--ink-2:#6e6e73;--ink-3:#86868b;
@@ -49,7 +49,13 @@ h1,h2,h3,p{margin:0}
 .nav-links a{text-decoration:none;color:var(--ink-2)}
 .nav-links a:hover{color:var(--ink)}
 .nav .btn{margin-left:auto;min-height:40px;padding:0 16px;font-size:14px}
-@media (min-width:860px){.nav-links{display:flex}.nav .btn{margin-left:8px}}
+/* Chat with Kane (chat.js shows it once it has loaded). */
+.nav-chat{position:relative;display:grid;place-items:center;width:40px;height:40px;margin-left:auto;border:0;border-radius:50%;background:var(--soft);color:var(--ink);cursor:pointer}
+.nav-chat svg{width:20px;height:20px}
+.nav .nav-chat + .btn{margin-left:0}
+.nav .btn{white-space:nowrap}
+@media (max-width:440px){.nav-tag{display:none}}
+@media (min-width:860px){.nav-links{display:flex}.nav .btn{margin-left:8px}.nav-chat{margin-left:8px}}
 
 /* ---- buttons ---- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:0;font:inherit;font-size:16px;font-weight:600;text-decoration:none;cursor:pointer;transition:transform .15s var(--ease),background .2s var(--ease)}
@@ -314,6 +320,7 @@ p,li,summary,small{text-wrap:pretty}
       <a href="#pricing">Pricing</a>
       <a href="#faq">Questions</a>
     </nav>
+    <button class="nav-chat" id="navChat" type="button" aria-label="Chat with Kane" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
     <a class="btn btn-dark" href="#demo">Book a demo</a>
   </div>
 </header>
@@ -329,7 +336,7 @@ p,li,summary,small{text-wrap:pretty}
       <p class="lede reveal">Your website, parent app, trial bookings, memberships and ads, built and run for you by a team that runs a kids&rsquo; club too.</p>
       <div class="cta-row reveal">
         <a class="btn btn-dark" href="#demo">Book a 10-minute demo</a>
-        <a class="btn btn-light" href="#results">See the results</a>
+        <a class="btn btn-light" href="#" data-chat-open="Hi Kane, can I look round the app for free?">Look round our app, free</a>
       </div>
       <p class="hero-note reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span><b>3 months of ads included.</b> Worth &pound;300.</span></p>
     </div>
@@ -450,6 +457,11 @@ p,li,summary,small{text-wrap:pretty}
       <div class="us"><b>One</b><p>Runs them too, then brings you new ones.</p></div>
     </div>
     <p class="gf-note reveal"><b>Your website, your own branded app, getting found on Google and AI, and your ads, all in the &pound;250 a month.</b> New families find you every month, and you run them all in one place. Your first 3 months of ads are on us, worth &pound;300. Then look at what they brought in and choose: keep reinvesting in ads on your own budget, paid straight to <button type="button" class="gl" data-gl="meta">Meta</button>, or pause them and keep everything else. No one honest can promise a number one spot, so we don&rsquo;t: we do the work every month and show you what came in.</p>
+    <div class="invite reveal">
+      <img class="invite-face" src="/assets/kane-sm.jpg?v=cff8a019" alt="" width="56" height="56" loading="lazy">
+      <div class="invite-text"><b>Want to see how we&rsquo;d do this for your club?</b><span>Message me. I&rsquo;ll show you round our own club&rsquo;s app and website, and how we&rsquo;d get your club found. Free, and ask anything you like.</span></div>
+      <a class="btn btn-dark" href="#" data-chat-open="Hi Kane, how would this work for my club?">Ask me anything</a>
+    </div>
   </div>
 </section>
 
@@ -528,6 +540,11 @@ p,li,summary,small{text-wrap:pretty}
       <article class="card feat reveal"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6v3H9z"/><path d="M8 5.5H6.5A1.5 1.5 0 0 0 5 7v12.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V7a1.5 1.5 0 0 0-1.5-1.5H16"/><path d="M8.5 13l2.5 2.5 4.5-5"/></svg></span><div><h3>Registers and check-in</h3><p>A tap at the door, on the coach&rsquo;s phone.</p></div></article>
       <article class="card feat reveal"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.2-7.5 9.5-4.3-1.3-7.5-4.9-7.5-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><div><h3>Consent and medical forms</h3><p>Collected at booking, kept with the member, ready for the coach.</p></div></article>
       <article class="card feat reveal"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4.5a2.5 2.5 0 0 0 0-5z"/><path d="M10 4v16" stroke-dasharray="2 2.5"/></svg></span><div><h3>Events and show tickets</h3><p>Sold online and kept on parents&rsquo; phones.</p></div></article>
+    </div>
+  <div class="invite reveal">
+      <img class="invite-face" src="/assets/kane-sm.jpg?v=cff8a019" alt="" width="56" height="56" loading="lazy">
+      <div class="invite-text"><b>Have a look round our app, free</b><span>On your own phone, with a made-up club: bookings, payments, registers and messages. Message me and I&rsquo;ll set you up, and ask anything while you&rsquo;re there.</span></div>
+      <a class="btn btn-dark" href="#" data-chat-open="Hi Kane, can I look round the app for free?">Look round the app</a>
     </div>
   </div>
 </section>
@@ -664,6 +681,7 @@ p,li,summary,small{text-wrap:pretty}
       <div class="vs-row vs-pay"><b>What&rsquo;s included</b><span data-vs="Typical software">The software. A website, Google and ads are up to you, and extra</span><span data-vs="One">Website, branded app, Google and AI, and ads, all in &pound;250 a month. First 3 months of ads on us</span></div>
     </div>
     <p class="cmp-note">From the public pricing and features of the booking software most UK kids&rsquo; clubs use, October 2026.</p>
+    <p class="invite-line reveal">Not sure it does something you need? <a href="#" data-chat-open="Hi Kane, can it do ">Just ask me</a>. If it doesn&rsquo;t, I&rsquo;ll do my best to build it.</p>
   </div>
 </section>
 
@@ -694,6 +712,7 @@ p,li,summary,small{text-wrap:pretty}
       <details><summary>What kind of clubs is it for?</summary><p>Kids&rsquo; activity clubs that run weekly classes and memberships: dance, cheer, gymnastics, martial arts, swimming, drama, football and multi-sport.</p></details>
       <details><summary>Who owns our members and data?</summary><p>You do. Your members, your payments and your ad account are yours, and they go with you if you ever leave.</p></details>
     </div>
+    <p class="invite-line reveal">Still got a question? <a href="#" data-chat-open>Message Kane</a>. You&rsquo;ll get a straight answer.</p>
   </div>
 </section>
 
@@ -829,6 +848,7 @@ p,li,summary,small{text-wrap:pretty}
 <script src="/consent.js?v=5712679a"></script>
 <script src="/beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/glossary.js?v=ce336630" defer></script>
+<script src="/chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One. Ask me anything, or ask to look round our own site and app. I&rsquo;ll give you a straight answer." data-quick="Can I look round your app?|How would this work for my club?|Does it do something I need?" defer></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
 </body>
 </html>
