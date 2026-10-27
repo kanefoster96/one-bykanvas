@@ -353,18 +353,18 @@ function lookRoundNudge(lead, site) {
     replyTo: 'kane@kanvas.one',
     subject: 'Did you get a look round?',
     text: `${first ? 'Hi ' + first + ',' : 'Hi,'}\n\n`
-        + `Just checking you got into our club's app OK. If anything didn't work, or you'd like me to show you round on a quick call, just reply.\n\n`
+        + `Just checking you got into the showroom OK. If anything didn't work, or you'd like me to show you round on a quick call, just reply.\n\n`
         + `And if you're wondering whether it would work for ${lead.business || 'your club'}, ask me anything. You'll get a straight answer.\n\nKane\nKanvas One`,
     html: emailHtml({
       preheader: 'Any questions about what you saw? Just reply.',
       heading: 'Did you get a look round?',
       lines: [
-        `${first ? 'Hi ' + esc(first) + ', just' : 'Just'} checking you got into our club&rsquo;s app OK. If anything didn&rsquo;t work, or you&rsquo;d like me to show you round on a quick call, just reply.`,
+        `${first ? 'Hi ' + esc(first) + ', just' : 'Just'} checking you got into the showroom OK. If anything didn&rsquo;t work, or you&rsquo;d like me to show you round on a quick call, just reply.`,
         `And if you&rsquo;re wondering whether it would work for ${esc(lead.business || 'your club')}, ask me anything. You&rsquo;ll get a straight answer.`
       ],
       ctaText: 'Chat with Kane',
       ctaHref: site + '/#chat',
-      footer: 'You&rsquo;re getting this because you asked to look round our app on kanvas.one. It&rsquo;s the only follow-up.',
+      footer: 'You&rsquo;re getting this because you asked to look round your app on kanvas.one. It&rsquo;s the only follow-up.',
       footerLinks: standardFooter(site)
     })
   };

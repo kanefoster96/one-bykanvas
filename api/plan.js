@@ -187,17 +187,18 @@ function appEmail(site, lead, p) {
   ];
   const num = numbersLine(p);
   const lines = [
-    `${first ? 'Hi ' + esc(first) + ', here' : 'Here'}&rsquo;s how to look round our own club&rsquo;s app. Everything you&rsquo;ll see is what we&rsquo;d build for ${esc(lead.business)}, with your name and logo on it.`
+    `${first ? 'Hi ' + esc(first) + ', here' : 'Here'}&rsquo;s how to look round your club&rsquo;s app. It&rsquo;s a showroom inside our own club&rsquo;s app, showing how yours could look, with your name and logo on it.`,
+    `Anything you&rsquo;d want different, we change. We work closely with you, so it fits ${esc(lead.business)}.`
   ];
   if (num) lines.push(`<strong>Your number:</strong> ${esc(num)}`);
   lines.push('Any questions while you&rsquo;re looking round, just reply to this email. You&rsquo;ll get me, not a help desk.');
   return {
     to: lead.email,
     replyTo: 'kane@kanvas.one',
-    subject: 'How to look round our club’s app',
+    subject: 'How to look round your club’s app',
     text: [
       (first ? `Hi ${first},` : 'Hi,'),
-      `Here's how to look round our own club's app. Everything you'll see is what we'd build for ${lead.business}, with your name and logo on it.`,
+      `Here's how to look round your club's app. It's a showroom inside our own club's app, showing how yours could look, with your name and logo on it. Anything you'd want different, we change. We work closely with you, so it fits ${lead.business}.`,
       num ? `Your number: ${num}` : null,
       [
         `1. Download our club's app: ${DEMO.app}, in the App Store: ${DEMO.ios}` + (DEMO.android ? `\n   Google Play: ${DEMO.android}` : ' (Android is coming soon).'),
@@ -209,14 +210,14 @@ function appEmail(site, lead, p) {
       'Kane\nKanvas One'
     ].filter(Boolean).join('\n\n'),
     html: emailHtml({
-      preheader: 'Download it, tap the orange dot, and look round a real club’s app.',
-      heading: 'Look round our club’s app.',
+      preheader: 'Download it, tap the orange dot, and see how your club’s app could look.',
+      heading: 'Look round your club’s app.',
       lines,
       perks: steps,
       ctaText: 'Download from the App Store',
       ctaHref: DEMO.ios,
       ctaNote: DEMO.android ? `On Android? <a href="${DEMO.android}">Get it on Google Play</a>.` : 'On Android? It&rsquo;s coming soon. Reply and I&rsquo;ll show you round on a quick video call instead.',
-      footer: 'You&rsquo;re getting this because you asked to look round our app on kanvas.one.',
+      footer: 'You&rsquo;re getting this because you asked to look round your app on kanvas.one.',
       footerLinks: standardFooter(site)
     })
   };
