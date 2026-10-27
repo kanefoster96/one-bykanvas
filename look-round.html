@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Look Round a Real Club&rsquo;s App, Free | Kanvas One</title>
+<meta name="description" content="Download our own kids&rsquo; club&rsquo;s branded app and look round as the owner, a coach or a parent. Free, no card, no sales call.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg?v=fa41229e" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png?v=0ecf9df9">
+<link rel="stylesheet" href="styles.css?v=aff04046">
+<link rel="stylesheet" href="home.css?v=d92bebb1">
+<style>
+/* The look-round page (look-round.js): their number if they came from the
+   calculator, what One does in four lines, then the offer: look round our
+   own club's app (details, emailed) or chat with Kane. */
+/* Light cards on the dark band: their own dark text, as the calculator has. */
+.lr-num,.lr-card{--ink:#1d1d1f;--ink-2:#6e6e73;--ink-3:#86868b;--line:#d2d2d7;--line-soft:#e8e8ed;--bg-grey:#f5f5f7;--good:#c93e09;--good-soft:#fff0e8;color:var(--ink)}
+body.home .band-dark .lr-card h2,body.home .band-dark .lr-done h3,.page-look .lr-num .mh-numbers-edit{color:#1d1d1f}
+body.home .band-dark .lr-num .mh-kicker{color:#6e6e73}
+.page-look .lr-chat{background:#fff;color:#1d1d1f;box-shadow:inset 0 0 0 1px #d2d2d7}
+.page-look .lr-chat:hover{background:#f5f5f7}
+.lr-num{margin:0 0 30px;padding:22px 22px 18px;border-radius:24px;background:var(--glass);box-shadow:var(--glass-shadow);text-align:center}
+.lr-num .mh-kicker{margin-bottom:6px}
+.lr-big{margin:0;font-size:clamp(46px,9vw,68px);font-weight:700;letter-spacing:-.04em;line-height:1;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.lr-numline{margin:8px 0 0;font-size:17px;line-height:1.45;color:var(--ink)}
+.lr-numline b{color:var(--good)}
+.lr-num .mh-numbers-edit{display:inline-block;margin-top:10px}
+.lr-what{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:14px}
+.lr-what li{display:flex;gap:14px;align-items:flex-start;font-size:16.5px;line-height:1.45;color:var(--ink-2)}
+.lr-what li b{display:block;color:var(--ink);font-size:17px}
+.lr-what .lr-ico{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--good-soft);color:var(--good)}
+.lr-what .lr-ico svg{width:20px;height:20px}
+.lr-card{margin:34px 0 0;padding:26px 22px;border-radius:26px;background:var(--glass);box-shadow:var(--glass-shadow)}
+@media (min-width:600px){.lr-card{padding:32px}}
+.lr-card h2{margin:0;font-size:clamp(24px,4.4vw,32px);letter-spacing:-.03em;line-height:1.12}
+.lr-card > p{margin:10px 0 0;font-size:16.5px;line-height:1.5;color:var(--ink-2)}
+.lr-see{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.lr-see li{padding:6px 12px;border-radius:999px;background:var(--good-soft);color:var(--good);font-size:13.5px;font-weight:600}
+.lr-card .mh-plan-form{margin-top:20px}
+.lr-small{margin:0;font-size:13.5px;color:var(--ink-3);text-align:center}
+.lr-or{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--ink-3);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.lr-or::before,.lr-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.lr-chat{width:100%;justify-content:center;min-height:52px;gap:10px}
+.lr-chat img{width:28px;height:28px;border-radius:50%}
+.lr-done{text-align:center;padding:10px 0}
+.lr-done h3{margin:0;font-size:24px;letter-spacing:-.02em}
+.lr-done p{margin:8px 0 0;font-size:16px;line-height:1.5;color:var(--ink-2)}
+</style>
+</head>
+<body class="home page-check page-look">
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/" aria-label="Kanvas One — home">one<span class="wm-dot">.</span></a>
+    <button class="nav-chat" id="navChat" type="button" aria-label="Chat with us" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.6A7.5 7.5 0 1 1 20 12.5z"/></svg></button>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+<div class="menu" id="menu" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+
+<!-- Step two of the free check. The numbers arrive in the address from the
+     homepage sliders (?members=&capacity=&fee=) and are shown, not typed
+     again. Their details go to api/plan.js; the result opens on /your-plan. -->
+<!-- The lead magnet. From the calculator (?members=&capacity=&fee=) their
+     number leads; from anywhere else it starts at the offer. Details go to
+     api/plan.js (kind "app"), which emails how to look round our own club's
+     app; or they chat with Kane. look-round.js. -->
+<main id="main" class="mh-page band-dark">
+  <div class="wrap mh-page-wrap">
+    <div class="lr-num" id="lrNum" data-no-gl hidden>
+      <p class="mh-kicker">Your empty spaces are costing you</p>
+      <p class="lr-big" id="lrBig">&pound;12,000</p>
+      <p class="lr-numline" id="lrLine">a year, in <b>20 empty spaces</b>.</p>
+      <a class="mh-numbers-edit" id="lrEdit" href="/profit-plan">&lsaquo; Change my numbers</a>
+    </div>
+
+    <p class="mh-kicker" id="lrKick">See it before you join</p>
+    <h1 class="mh-page-h" id="lrHead">Look round a real club&rsquo;s app. <span class="dim">Free.</span></h1>
+    <p class="mh-page-sub" id="lrSub">Kanvas One brings your club new families and lets you run them all from your own app:</p>
+    <ul class="lr-what">
+      <li><span class="lr-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span><span><b>Found on Google and AI</b>When parents search or ask for a club like yours, you come up.</span></li>
+      <li><span class="lr-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-8-8 18-2-8z"/></svg></span><span><b>Ads that bring families in</b>For the classes with spaces. Your first 3 months of ads are on us.</span></li>
+      <li><span class="lr-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></span><span><b>Your own branded app and website</b>Your name and logo, for parents and coaches.</span></li>
+      <li><span class="lr-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span><b>Everyone in one place</b>Trials, members, payments, registers and messages.</span></li>
+    </ul>
+
+    <section class="lr-card" id="lrCard" aria-labelledby="lrCardH">
+      <h2 id="lrCardH">How does it work before you join?</h2>
+      <p>Download our own club&rsquo;s app and look round for yourself, as the owner, a coach or a parent. It&rsquo;s a made-up club, so tap anything.</p>
+      <ul class="lr-see" aria-label="What you can try" data-no-gl><li>Trial bookings</li><li>Memberships and payments</li><li>Registers and check-in</li><li>Messages and posts</li></ul>
+      <form class="mh-plan-form" id="lrForm" novalidate>
+        <div class="mh-field"><label for="lrName">First name</label><input id="lrName" type="text" autocomplete="given-name" maxlength="120" required></div>
+        <div class="mh-field"><label for="lrBiz">Club or business name</label><input id="lrBiz" type="text" autocomplete="organization" maxlength="120" required></div>
+        <div class="mh-field wide"><label for="lrEmail">Email</label><input id="lrEmail" type="email" autocomplete="email" maxlength="254" required></div>
+        <div class="mh-hp" aria-hidden="true"><label for="lrWebsite">Leave this empty</label><input id="lrWebsite" type="text" tabindex="-1" autocomplete="off"></div>
+        <p class="note wide" id="lrNote" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary wide" type="submit" id="lrSend">Send me the instructions</button>
+        <p class="lr-small wide">iPhone now, Android soon. Free, no card, no sales call.</p>
+      </form>
+      <div class="lr-done" id="lrDone" hidden>
+        <h3 tabindex="-1">Check your inbox.</h3>
+        <p>We&rsquo;ve sent <b id="lrDoneEmail">you</b> the steps to download our club&rsquo;s app and get in. Any questions while you look round, just reply to the email.</p>
+      </div>
+      <div class="lr-or">or</div>
+      <a class="btn btn-ghost lr-chat" id="lrChat" href="#" data-chat-open="Hi Kane, can I look round the app?"><img src="assets/kane-sm.jpg?v=cff8a019" alt="" width="28" height="28">Chat with Kane instead</a>
+    </section>
+  </div>
+</main>
+
+<footer class="mh-page-foot">
+  <div class="wrap">
+    <p>&copy; <span id="year">2026</span> Kanvas One &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></p>
+  </div>
+</footer>
+
+<script src="consent.js?v=5712679a"></script>
+<script src="supabase-config.js?v=90fd89dc"></script>
+<script src="session.js?v=59739977"></script>
+<script src="script.js?v=82580ee5"></script>
+<script src="chat.js?v=0897e6e1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One. Ask me anything, or ask to look round our own site and app. I&rsquo;ll give you a straight answer." data-quick="How does the 10-trial guarantee work?|Can I see your site and app?|Is it right for my club?" defer></script>
+<script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
+<script src="growth-model.js?v=401c2a70"></script>
+<script src="look-round.js?v=02debfd0"></script>
+<script src="/onemark.js?v=26409b0c" defer></script>
+<script src="/glossary.js?v=ce336630" defer></script>
+</body>
+</html>

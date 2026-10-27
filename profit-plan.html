@@ -11,7 +11,7 @@
 <link rel="icon" href="assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="styles.css?v=aff04046">
-<link rel="stylesheet" href="home.css?v=7cd1c862">
+<link rel="stylesheet" href="home.css?v=d92bebb1">
 </head>
 <body class="home page-check page-profit">
 
@@ -29,18 +29,15 @@
 <div class="menu" id="menu" hidden></div>
 <div class="scrim" id="scrim" hidden></div>
 
-<!-- Step two of the free check. The numbers arrive in the address from the
-     homepage sliders (?members=&capacity=&fee=) and are shown, not typed
-     again. Their details go to api/plan.js; the result opens on /your-plan. -->
 <!-- Step one of the free check, as a page of its own: every "Get my free
      profit plan" button lands here. The sliders are free-check.js, shared
      with the homepage's closing section; the button carries the numbers to
-     /check. -->
+     /look-round, where their number and the app look-round offer are. -->
 <main id="main" class="mh-page band-dark">
   <div class="wrap mh-page-wrap">
-    <p class="mh-kicker">Free profit plan &middot; step 1 of 2</p>
+    <p class="mh-kicker">Free calculator</p>
     <h1 class="mh-page-h">What are your empty spaces costing you? <span class="dim">Let&rsquo;s find out.</span></h1>
-    <p class="mh-page-sub">Enter your numbers. In two minutes you&rsquo;ll see what you&rsquo;re losing each year, and exactly how One would fill your spaces. Free, no card.</p>
+    <p class="mh-page-sub">Enter your numbers to see what your empty spaces cost you each year, and how we&rsquo;d fill them. Free, no card.</p>
     <p class="mh-claim"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span><b>Includes up to &pound;100 a month for ads,</b> paid by us, until you take them over or pause them.</span></p>
     <div class="mh-calc" id="gpCard">
       <div class="mh-slide">
@@ -57,12 +54,19 @@
       </div>
       <div class="mh-calc-out" aria-live="polite">
         <p class="mh-calc-left" id="gLeft">That leaves <b>20 spaces</b> empty.</p>
-        <p class="mh-calc-pre" id="gPre">Your empty spaces are costing you</p>
-        <p class="mh-calc-big" id="gLoss">&pound;12,000</p>
-        <p class="mh-calc-sub" id="gLossSub">every single year.</p>
-        <p class="mh-calc-cover" id="gFix">&pound;250 a month could fix that. Just 5 new members cover it.</p>
+        <p class="mh-calc-tease" id="gTease">See what they&rsquo;re costing you each year, and how we&rsquo;d fill them.</p>
       </div>
-      <a class="btn btn-primary mh-plan-go" id="gGo" href="/check?members=40&amp;capacity=60&amp;fee=50">See what it&rsquo;s costing me <span aria-hidden="true">&rsaquo;</span></a>
+      <div class="mh-opt">
+        <p class="mh-opt-h">Your club name and email <span>Optional</span></p>
+        <div class="mh-opt-row">
+          <input id="gOptBiz" type="text" autocomplete="organization" maxlength="120" placeholder="Club or business name" aria-label="Club or business name, optional">
+          <input id="gOptEmail" type="email" autocomplete="email" maxlength="254" placeholder="Email" aria-label="Email, optional">
+        </div>
+        <p class="mh-opt-note">Add them and we&rsquo;ll send you how to look round our own club&rsquo;s app.</p>
+        <p class="mh-opt-bad" id="gOptNote" role="status" aria-live="polite"></p>
+        <div class="mh-hp" aria-hidden="true"><label for="gOptWebsite">Leave this empty</label><input id="gOptWebsite" type="text" tabindex="-1" autocomplete="off"></div>
+      </div>
+      <a class="btn btn-primary mh-plan-go" id="gGo" href="/look-round?members=40&amp;capacity=60&amp;fee=50">See how much I&rsquo;m losing <span aria-hidden="true">&rsaquo;</span></a>
     </div>
   </div>
 </main>
@@ -76,11 +80,11 @@
 <script src="consent.js?v=5712679a"></script>
 <script src="supabase-config.js?v=90fd89dc"></script>
 <script src="session.js?v=59739977"></script>
-<script src="script.js?v=6c69ddf5"></script>
-<script src="chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One. Ask me anything, or ask to look round our own site and app. I&rsquo;ll give you a straight answer." data-quick="How does the 10-trial guarantee work?|Can I see your site and app?|Is it right for my club?" defer></script>
+<script src="script.js?v=82580ee5"></script>
+<script src="chat.js?v=0897e6e1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One. Ask me anything, or ask to look round our own site and app. I&rsquo;ll give you a straight answer." data-quick="How does the 10-trial guarantee work?|Can I see your site and app?|Is it right for my club?" defer></script>
 <script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
-<script src="growth-model.js?v=1a94c298"></script>
-<script src="free-check.js?v=0fac7d40"></script>
+<script src="growth-model.js?v=401c2a70"></script>
+<script src="free-check.js?v=55aba306"></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
 <script>
 /* Message match: an ad for one kind of club lands on wording for that club.

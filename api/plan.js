@@ -12,6 +12,17 @@
  * The lead lands in leads with source 'growth-plan' and plan_interest set to
  * the recommendation; api/followups.js takes it from there (day 2 and day 6,
  * stopped by joining).
+ *
+ * Two more asks share this endpoint, for the "look round our app" lead
+ * magnet (look-round.html), so no new function is added:
+ *   kind 'calc'  the optional business and email under the calculator:
+ *                kept as a lead (source 'calculator'), Kane told, nothing
+ *                sent yet. If they never ask for the app, followups.js sends
+ *                the instructions the next day.
+ *   kind 'app'   "send me the instructions": the email with how to download
+ *                our own club's app and get into its showroom (source
+ *                'app-demo'). The calculator lead, if they left one, is
+ *                updated rather than counted twice.
  */
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
@@ -144,6 +155,162 @@ function businessEmail(site, lead, p, type) {
   };
 }
 
+/* ---- the "look round our app" lead magnet --------------------------- */
+
+/* Our own club's app, where the showroom (a made-up club, no real
+   families) sits behind the dot at the bottom of the login screen. iPhone
+   only until it is in Google Play. The password comes from the
+   SHOWROOM_PASSWORD setting; without it the email says Kane will send it
+   and he is told to. */
+const DEMO = {
+  app: 'Kanvas Academy',
+  ios: 'https://apps.apple.com/gb/app/kanvas-academy-app/id6804209542',
+  android: process.env.SHOWROOM_ANDROID_URL || ''
+};
+
+/* Their number, when they came from the calculator. */
+function numbersLine(p) {
+  if (!p) return null;
+  return p.spaces > 0
+    ? `${p.spaces} empty space${p.spaces === 1 ? '' : 's'}: ${money(p.gapYear)} a year you could be taking.`
+    : `Every space full: ${money(p.total)} a month coming in.`;
+}
+
+function appEmail(site, lead, p) {
+  const password = process.env.SHOWROOM_PASSWORD || '';
+  const first = String(lead.name || '').split(' ')[0];
+  const steps = [
+    `<strong>1. Download our club&rsquo;s app.</strong> It&rsquo;s called ${DEMO.app}, in the App Store` + (DEMO.android ? ' and Google Play.' : '. (Android is coming soon.)'),
+    '<strong>2. On the login screen, tap the small orange dot</strong> at the very bottom.',
+    password ? `<strong>3. Enter the password:</strong> <code style="font-size:16px;font-weight:700">${esc(password)}</code>` : '<strong>3. Enter the password</strong> Kane sends you. He&rsquo;ll be in touch shortly.',
+    '<strong>4. Look round as the owner, a coach or a parent.</strong> Bookings, payments, registers, messages: it&rsquo;s a made-up club, so tap anything.'
+  ];
+  const num = numbersLine(p);
+  const lines = [
+    `${first ? 'Hi ' + esc(first) + ', here' : 'Here'}&rsquo;s how to look round our own club&rsquo;s app. Everything you&rsquo;ll see is what we&rsquo;d build for ${esc(lead.business)}, with your name and logo on it.`
+  ];
+  if (num) lines.push(`<strong>Your number:</strong> ${esc(num)}`);
+  lines.push('Any questions while you&rsquo;re looking round, just reply to this email. You&rsquo;ll get me, not a help desk.');
+  return {
+    to: lead.email,
+    replyTo: 'kane@kanvas.one',
+    subject: 'How to look round our club’s app',
+    text: [
+      (first ? `Hi ${first},` : 'Hi,'),
+      `Here's how to look round our own club's app. Everything you'll see is what we'd build for ${lead.business}, with your name and logo on it.`,
+      num ? `Your number: ${num}` : null,
+      [
+        `1. Download our club's app: ${DEMO.app}, in the App Store: ${DEMO.ios}` + (DEMO.android ? `\n   Google Play: ${DEMO.android}` : ' (Android is coming soon).'),
+        '2. On the login screen, tap the small orange dot at the very bottom.',
+        password ? `3. Enter the password: ${password}` : '3. Enter the password Kane sends you. He\'ll be in touch shortly.',
+        '4. Look round as the owner, a coach or a parent. It\'s a made-up club, so tap anything.'
+      ].join('\n'),
+      'Any questions, just reply to this email.',
+      'Kane\nKanvas One'
+    ].filter(Boolean).join('\n\n'),
+    html: emailHtml({
+      preheader: 'Download it, tap the orange dot, and look round a real club’s app.',
+      heading: 'Look round our club’s app.',
+      lines,
+      perks: steps,
+      ctaText: 'Download from the App Store',
+      ctaHref: DEMO.ios,
+      ctaNote: DEMO.android ? `On Android? <a href="${DEMO.android}">Get it on Google Play</a>.` : 'On Android? It&rsquo;s coming soon. Reply and I&rsquo;ll show you round on a quick video call instead.',
+      footer: 'You&rsquo;re getting this because you asked to look round our app on kanvas.one.',
+      footerLinks: standardFooter(site)
+    })
+  };
+}
+
+/* Up to three emails a day to one address from these open forms; the lead
+   is kept either way. */
+async function emailAllowed(db, email) {
+  try {
+    const { count } = await db.from('leads')
+      .select('id', { count: 'exact', head: true })
+      .ilike('email', email.replace(/[%_\\]/g, '\\$&'))
+      .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+    return !(Number.isFinite(count) && count > 3);
+  } catch (e) { console.error('plan: rate check failed:', e && e.message); return true; }
+}
+
+/* Numbers from the calculator, if they came that way. */
+function numbersFrom(body) {
+  if (body.members == null || body.capacity == null || body.fee == null) return null;
+  return growth.plan({ members: body.members, capacity: body.capacity, fee: body.fee });
+}
+
+async function lookRound(req, res, body, db) {
+  const kind = body.kind;
+  const business = clean(body.business, 200);
+  const email = clean(body.email, 320).toLowerCase();
+  const name = clean(body.name, 200);
+  const campaign = clean(body.campaign, 200);
+  const from = clean(body.from, 40);
+  const p = numbersFrom(body);
+
+  if (!business) return res.status(400).json({ error: 'Add your club or business name.', field: 'business' });
+  if (!looksLikeEmail(email)) return res.status(400).json({ error: 'That email doesn’t look right.', field: 'email' });
+  if (kind === 'app' && !name) return res.status(400).json({ error: 'Add your first name.', field: 'name' });
+
+  /* Bots: the same answer, nothing stored or sent. */
+  if (clean(body.website, 200)) return res.status(200).json({ ok: true, id: crypto.randomUUID() });
+  const elapsed = Number(body.elapsed);
+  if (Number.isFinite(elapsed) && elapsed >= 0 && elapsed < 1500) return res.status(200).json({ ok: true, id: crypto.randomUUID() });
+  if (await limitIp(db, req, 'plan', 10, 3600)) return tooMany(res);
+
+  const num = numbersLine(p);
+  const about = [
+    kind === 'app' ? 'Asked to look round our app.' : 'Left their details on the calculator.',
+    num ? num + (p ? ` (${p.members} members now, room for ${p.capacity}, ${money(p.fee)} a month each)` : '') : '',
+    from ? `From: ${from}` : ''
+  ].filter(Boolean).join('\n');
+
+  /* The calculator lead they left a moment ago becomes this one. Only a
+     calculator lead, only with the same email, only within a day. */
+  let row = null;
+  const leadId = /^[0-9a-f-]{36}$/i.test(String(body.lead || '')) ? String(body.lead) : null;
+  if (kind === 'app' && leadId) {
+    const { data: had } = await db.from('leads').select('id, email, source, about, created_at').eq('id', leadId).maybeSingle();
+    if (had && had.source === 'calculator' && String(had.email).toLowerCase() === email
+        && Date.now() - new Date(had.created_at).getTime() < 24 * 60 * 60 * 1000) {
+      const { data: up, error } = await db.from('leads')
+        .update({ name, business, source: 'app-demo', about: about.slice(0, 4000) })
+        .eq('id', had.id).select('id, name, business, email').single();
+      if (error) throw new Error(error.message);
+      row = up;
+    }
+  }
+  if (!row) {
+    const { data: ins, error } = await db.from('leads').insert({
+      name: name || business, business, email, about: about.slice(0, 4000),
+      plan_interest: 'max', source: kind === 'app' ? 'app-demo' : 'calculator',
+      campaign: campaign || null
+    }).select('id, name, business, email').single();
+    if (error) throw new Error(error.message);
+    row = ins;
+  }
+
+  const site = ourSiteUrl();
+  if (kind === 'app') {
+    const sent = (await emailAllowed(db, email)) ? await sendEmail(appEmail(site, row, p)) : 'rationed';
+    console.log('plan: app look-round to %s -> %s', email, sent);
+  }
+  const noPassword = kind === 'app' && !process.env.SHOWROOM_PASSWORD;
+  const title = kind === 'app' ? `Wants to look round the app: ${business}` : `Calculator lead: ${business}`;
+  await sendEmail({
+    to: adminAddresses(),
+    subject: oneLine(title),
+    text: `${name || business} (${email})\n\n${about}\n` + (campaign ? `Campaign: ${campaign}\n` : '')
+      + (noPassword ? '\nThe showroom password is not set (SHOWROOM_PASSWORD), so their email says you will send it. Reply to them with it.\n' : '')
+      + `\n${site}/admin.html\n`,
+    replyTo: email
+  }).catch(() => {});
+  await notifyAdmin(db, title, noPassword ? 'They have the steps. Send them the showroom password.' : (kind === 'app' ? 'Instructions sent. A good one to message.' : 'They used the calculator and left their email.'), '/admin.html');
+
+  return res.status(200).json({ ok: true, id: row.id });
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -159,6 +326,12 @@ module.exports = async function handler(req, res) {
 
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+    if (body.kind === 'calc' || body.kind === 'app') {
+      const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false }
+      });
+      return await lookRound(req, res, body, db);
+    }
     const name = clean(body.name, 200);
     const business = clean(body.business, 200);
     const email = clean(body.email, 320).toLowerCase();
@@ -234,3 +407,4 @@ module.exports = async function handler(req, res) {
 };
 
 module.exports.startHref = startHref;
+module.exports.appEmail = appEmail;

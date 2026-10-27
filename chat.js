@@ -296,6 +296,8 @@
     askEl.appendChild(b); msgs.appendChild(askEl);
     msgs.scrollTop = msgs.scrollHeight;
   }
+  /* A link from an email (kanvas.one/#chat) opens it on arrival. */
+  if (location.hash === '#chat') setTimeout(function () { setOpen(true); }, 400);
   /* Any link on the page can open it: <a href="#" data-chat-open>. With a
      value, that message waits as a one-tap send. */
   document.addEventListener('click', function (e) {

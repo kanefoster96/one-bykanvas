@@ -24,7 +24,7 @@ const { sendEmail, adminAddresses } = require('./_email.js');
 const { html: emailHtml, esc, standardFooter } = require('./_email_template.js');
 const { notifyAdmin } = require('./_notify.js');
 const { beat, alertAdmin } = require('./_health.js');
-const { startHref } = require('./plan.js');
+const { startHref, appEmail } = require('./plan.js');
 const ledger = require('./_money.js');
 const Stripe = require('stripe');
 
@@ -344,6 +344,32 @@ function growthTwo(lead, site) {
   };
 }
 
+/* Two days after they asked for the app: did they get in, and anything
+   they want to know. Plain, from Kane, one email. */
+function lookRoundNudge(lead, site) {
+  const first = String(lead.name || '').split(' ')[0];
+  return {
+    to: lead.email,
+    replyTo: 'kane@kanvas.one',
+    subject: 'Did you get a look round?',
+    text: `${first ? 'Hi ' + first + ',' : 'Hi,'}\n\n`
+        + `Just checking you got into our club's app OK. If anything didn't work, or you'd like me to show you round on a quick call, just reply.\n\n`
+        + `And if you're wondering whether it would work for ${lead.business || 'your club'}, ask me anything. You'll get a straight answer.\n\nKane\nKanvas One`,
+    html: emailHtml({
+      preheader: 'Any questions about what you saw? Just reply.',
+      heading: 'Did you get a look round?',
+      lines: [
+        `${first ? 'Hi ' + esc(first) + ', just' : 'Just'} checking you got into our club&rsquo;s app OK. If anything didn&rsquo;t work, or you&rsquo;d like me to show you round on a quick call, just reply.`,
+        `And if you&rsquo;re wondering whether it would work for ${esc(lead.business || 'your club')}, ask me anything. You&rsquo;ll get a straight answer.`
+      ],
+      ctaText: 'Chat with Kane',
+      ctaHref: site + '/#chat',
+      footer: 'You&rsquo;re getting this because you asked to look round our app on kanvas.one. It&rsquo;s the only follow-up.',
+      footerLinks: standardFooter(site)
+    })
+  };
+}
+
 /* ---- our own money, once a day (api/_money.js) ------------------------
  * The payment record caught up from Stripe (anything the webhook missed,
  * dashboard refunds, fees), disputes swept in case an event was lost, and
@@ -560,6 +586,34 @@ module.exports = async function handler(req, res) {
       if (outcome === 'sent') { if (stamp === 'followup1_sent_at') sentG1++; else sentG2++; }
     }
 
+    /* ---- the "look round our app" lead magnet (api/plan.js) ----------
+       A calculator lead who never asked for the app gets the instructions
+       the next morning anyway: they gave their email for a reason. Someone
+       who did ask gets one nudge two days later. Once each, stopped by
+       joining. */
+    let sentApp = 0;
+    const { data: looks, error: lErr } = await db.from('leads')
+      .select('id, name, business, email, source, created_at, followup1_sent_at')
+      .in('source', ['calculator', 'app-demo'])
+      .is('followup1_sent_at', null)
+      .gte('created_at', new Date(now - 7 * DAY).toISOString())
+      .limit(200);
+    if (lErr) console.error('followups: look-round query failed:', lErr.message);
+    for (const lead of looks || []) {
+      if (!lead.email || paying.has(String(lead.email).toLowerCase())) continue;
+      const age = now - new Date(lead.created_at).getTime();
+      let message = null;
+      if (lead.source === 'calculator' && age >= 2 * 60 * 60 * 1000) message = appEmail(site, lead, null);
+      if (lead.source === 'app-demo' && age >= 2 * DAY) message = lookRoundNudge(lead, site);
+      if (!message) continue;
+      const { error: stampErr } = await db.from('leads').update({ followup1_sent_at: new Date().toISOString() })
+        .eq('id', lead.id).is('followup1_sent_at', null);
+      if (stampErr) { console.error('followups: look-round stamp failed for %s:', lead.id, stampErr.message); continue; }
+      const outcome = await sendEmail(message);
+      console.log('followups: look-round (%s) to %s -> %s', lead.source, lead.email, outcome);
+      if (outcome === 'sent') sentApp++;
+    }
+
     /* ---- win-back: cancelled customers, one nudge ever ---------------- */
     let sentWb = 0;
     const { data: gone, error: wbErr } = await db.from('profiles')
@@ -651,9 +705,9 @@ module.exports = async function handler(req, res) {
       if (outcome === 'sent') sentPn++;
     }
 
-    if (sentF1 + sentF2 + sentG1 + sentG2 + sentWb + sentPn > 0) {
+    if (sentF1 + sentF2 + sentG1 + sentG2 + sentWb + sentPn + sentApp > 0) {
       await notifyAdmin(db, 'Follow-ups sent',
-        `${sentF1} "what did you think", ${sentF2} final follow-ups, ${sentG1 + sentG2} growth-plan follow-ups, ${sentWb} win-backs and ${sentPn} month-in notes went out.`);
+        `${sentF1} "what did you think", ${sentF2} final follow-ups, ${sentG1 + sentG2} growth-plan follow-ups, ${sentApp} look-round emails, ${sentWb} win-backs and ${sentPn} month-in notes went out.`);
     }
 
     /* ---- retention: what the privacy notice promises, kept true ------- */
