@@ -141,7 +141,8 @@
   // One source of truth for the nav. Pages only need an empty #menu element;
   // the header itself stays in the markup so it renders without JavaScript.
   var MENU = [
-    { label: 'Free profit plan', href: '/profit-plan' },
+    { label: 'Look round our app', href: '/look-round?from=menu' },
+    { label: 'Free calculator', href: '/profit-plan' },
     { label: 'How it works',    href: '/#one' },
     { label: 'Results',         href: '/#results' },
     { label: 'Pricing',         href: '/#everything' },
@@ -251,7 +252,7 @@
       ? '<a class="btn btn-ghost" href="/account.html">Your account</a>' +
         '<button class="btn btn-primary" type="button" id="navLogout">Log out</button>'
       : '<a class="btn btn-ghost" href="/login.html">Log in</a>' +
-        '<a class="btn btn-primary" href="/profit-plan">Get my free plan</a>';
+        '<a class="btn btn-primary" href="/look-round?from=menu">Look round our app</a>';
     nav.appendChild(actions);
     menu.appendChild(nav);
 

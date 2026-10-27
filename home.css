@@ -1199,7 +1199,17 @@ body.home .band-dark .tile-green{box-shadow:0 6px 18px var(--neon-glow)}
 body.home .band-dark .faq details[open]{box-shadow:var(--glass-shadow),0 14px 40px rgba(255,79,18,.08)}
 body.home .band-dark .mh-results-tag{text-shadow:0 0 14px rgba(255,79,18,.45)}
 
-/* The free calculator's figure, blurred until they give their details on
-   /check (free-check.js). The digits are stand-ins, not the real sum. */
-.mh-locked{filter:blur(9px);user-select:none;-webkit-user-select:none}
-.mh-numbers-line .mh-locked{display:inline-block;filter:blur(6px)}
+/* The calculator's optional details (free-check.js): kept as a lead if
+   given, never required to see the number on /look-round. */
+.mh-calc-tease{margin:6px 0 0;font-size:15.5px;line-height:1.45;color:var(--ink-2)}
+.mh-opt{margin:20px 0 0;text-align:left}
+.mh-opt-h{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.mh-opt-h span{padding:2px 8px;border-radius:999px;background:var(--good-soft);color:var(--good);font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.mh-opt-row{display:grid;gap:10px}
+@media (min-width:600px){.mh-opt-row{grid-template-columns:1fr 1fr}}
+.mh-opt input{width:100%;min-height:48px;padding:0 16px;border:1px solid var(--line);border-radius:14px;background:#fff;font:inherit;font-size:16px;color:#1d1d1f}
+.mh-opt input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(29,29,31,.1)}
+.mh-opt-note{margin:8px 0 0;font-size:13.5px;color:var(--ink-3)}
+.mh-opt-bad{margin:6px 0 0;font-size:14px;color:#ff7a5c}
+.mh-opt-bad:empty{display:none}
+.mh-opt .mh-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}

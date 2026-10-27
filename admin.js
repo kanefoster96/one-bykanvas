@@ -614,8 +614,12 @@ function renderHome() {
     var recent = function (r) { return new Date(r.created_at).getTime() >= week; };
     var designs = leadState.rows.filter(function (r) { return r.source === 'free-preview' && !r.preview_sent_at; }).length;
     var plans = leadState.rows.filter(function (r) { return r.source === 'growth-plan' && recent(r); }).length;
-    var asks = leadState.rows.filter(function (r) { return r.source !== 'free-preview' && r.source !== 'growth-plan' && recent(r); }).length;
+    /* The look-round lead magnet: asked for the app, or left an email on
+       the calculator (api/plan.js). */
+    var looks = leadState.rows.filter(function (r) { return (r.source === 'app-demo' || r.source === 'calculator') && recent(r); }).length;
+    var asks = leadState.rows.filter(function (r) { return ['free-preview', 'growth-plan', 'app-demo', 'calculator'].indexOf(r.source) === -1 && recent(r); }).length;
     bits.textContent = designs + ' free design' + (designs === 1 ? '' : 's') + ' to make · '
+      + looks + ' app look-round' + (looks === 1 ? '' : 's') + ' · '
       + plans + ' profit plan' + (plans === 1 ? '' : 's') + ' · '
       + asks + ' enquir' + (asks === 1 ? 'y' : 'ies') + ' this week';
   }
@@ -2279,8 +2283,10 @@ function leadCard(row) {
   head.appendChild(names);
 
   var growth = row.source === 'growth-plan';
-  var chip = el('span', 'plan-chip' + (free || growth ? ' is-free' : ''),
-    free ? 'Free example' : growth ? 'Free plan: ' + (row.plan_interest === 'max' ? 'One' : 'Business') : 'Enquiry');
+  var look = row.source === 'app-demo', calc = row.source === 'calculator';
+  var chip = el('span', 'plan-chip' + (free || growth || look || calc ? ' is-free' : ''),
+    free ? 'Free example' : growth ? 'Free plan: ' + (row.plan_interest === 'max' ? 'One' : 'Business')
+      : look ? 'Looking round the app' : calc ? 'Calculator' : 'Enquiry');
   head.appendChild(chip);
   card.appendChild(head);
 
@@ -2294,7 +2300,7 @@ function leadCard(row) {
   if (row.campaign) card.appendChild(el('p', 'cust-sub', 'From: ' + row.campaign));
 
   if (row.about) card.appendChild(el('p', 'queue-what', row.about));
-  if (!free && !growth && row.plan_interest) {
+  if (!free && !growth && !look && !calc && row.plan_interest) {
     card.appendChild(el('p', 'cust-sub', 'Interested in ' + row.plan_interest
       + (row.want_app ? ', wants an app' : '')));
   }

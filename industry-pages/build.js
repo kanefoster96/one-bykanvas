@@ -175,7 +175,7 @@ const FOOT = `<footer class="foot">
 <script src="/onemark.js?v=26409b0c" defer></script>
 <script src="/glossary.js?v=ce336630" defer></script>
 <script src="reviews.js?v=4d29b5d9"></script>
-<script src="chat.js?v=e0fc2af5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
+<script src="chat.js?v=0897e6e1" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>
 <script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=06da798b"></script>
 </body>
