@@ -1,7 +1,6 @@
 /* "How parents find a club": Google, AI answers and ads, each shown as a
-   small phone-like card, then the line between booking software and us,
-   and the flat-fee-or-a-cut calculator (fee-calc.js). Shared by the
-   homepage and /clubs, so it uses only the variables both pages define
+   small phone-like card, then the line between booking software and us.
+   Shared by the homepage and /clubs, so it uses only the variables both pages define
    (--ink, --ink-2, --ink-3, --line, --good, --good-soft). The cards
    themselves are always white with dark text, on either band. */
 
@@ -63,25 +62,6 @@
 .gf-vs .us b{color:var(--good)}
 .gf-note{max-width:62ch;margin:22px auto 0;font-size:15px;line-height:1.55;color:var(--ink-2);text-align:center}
 .gf-note b{color:var(--ink)}
-
-/* Flat fee or a cut of every payment (fee-calc.js). */
-.fee-calc{--f-ink:#1d1d1f;--f-ink2:#6e6e73;margin:26px auto 0;max-width:620px;padding:22px;border-radius:22px;background:#fff;color:var(--f-ink);text-align:left;box-shadow:0 1px 2px rgba(0,0,0,.05),0 12px 30px rgba(0,0,0,.08)}
-.fee-calc h3{margin:0;font-size:20px;line-height:1.25;letter-spacing:-.015em;font-weight:700;color:var(--f-ink)}
-.fee-calc label{display:block;margin:14px 0 6px;font-size:14px;font-weight:600;color:var(--f-ink)}
-.fee-calc label small{font-weight:400;color:var(--f-ink2)}
-.fee-money{display:flex;align-items:center;max-width:240px;height:48px;padding:0 14px;border:1px solid #d2d2d7;border-radius:14px;background:#fff;font-size:18px;font-weight:600}
-.fee-money input{flex:1;min-width:0;height:100%;border:0;background:none;font:inherit;color:var(--f-ink);padding-left:4px}
-.fee-money input:focus{outline:none}
-.fee-money:focus-within{border-color:var(--f-ink)}
-.fee-rows{margin:16px 0 0;display:grid;gap:10px}
-.fee-row{display:grid;grid-template-columns:minmax(0,9.5em) 1fr auto;align-items:center;gap:10px;font-size:14.5px}
-.fee-row span{color:var(--f-ink2)}
-.fee-row i{display:block;height:10px;border-radius:6px;background:#d2d2d7;width:var(--w,50%);transition:width .3s ease}
-.fee-row.us i{background:linear-gradient(90deg,#c93e09,#ef4a10)}
-.fee-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
-.fee-out{margin:14px 0 0;font-size:15px;line-height:1.5;color:var(--f-ink2)}
-.fee-out b{color:var(--f-ink)}
-.fee-small{margin:10px 0 0;font-size:12.5px;color:var(--f-ink2)}
 
 /* The one line above the booking software table. */
 .vs-lead{margin:0;padding:16px 22px;border-top:1px solid var(--line);font-size:17px;line-height:1.45;font-weight:600;color:var(--ink);text-align:left}
