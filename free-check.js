@@ -1,6 +1,7 @@
 /* one — the free check, step one: three numbers on sliders or typed, what
- * the empty spaces cost, and a button that carries the numbers to /check
- * in the address. Used by the homepage's closing section and /profit-plan.
+ * how many spaces are empty (what they cost stays blurred until /check,
+ * where they give their details), and a button that carries the numbers
+ * to /check in the address. Used by the homepage's closing section and /profit-plan.
  * Needs growth-model.js first. A return from /check (?members=..) puts the
  * numbers back.
  */
@@ -48,15 +49,20 @@
     var n = numbers(), p = G.plan(n);
     sync();
     var lose = p.spaces > 0;
+    /* The spaces count is free; the money it costs them is what the plan
+       is for, so it stays blurred (stand-in digits, the real sum's shape)
+       until they give their details on /check. */
     $('gLeft').innerHTML = lose
       ? 'That leaves <b>' + p.spaces + ' space' + (p.spaces === 1 ? '' : 's') + '</b> empty.'
       : 'That&rsquo;s every space <b>full</b>.';
-    $('gPre').textContent = lose ? 'Your empty spaces are costing you' : 'Nice. That\u2019s coming in';
-    $('gLoss').textContent = lose ? money(p.gapYear) : money(p.total);
-    $('gLossSub').textContent = lose ? 'every single year.' : 'every month.';
+    $('gPre').textContent = lose ? 'Your empty spaces are costing you' : 'Nice. Here’s what’s coming in';
+    $('gLoss').textContent = G.locked(lose ? p.gapYear : p.total);
+    $('gLoss').classList.add('mh-locked');
+    $('gLoss').setAttribute('aria-label', 'Hidden until the next step');
+    $('gLossSub').textContent = lose ? 'every year.' : 'every month.';
     $('gFix').textContent = lose
-      ? '\u00a3250 a month could fix that. Just ' + p.cover + ' new member' + (p.cover === 1 ? ' covers' : 's cover') + ' it.'
-      : 'One can still run it all for you, for the fees of ' + p.cover + ' member' + (p.cover === 1 ? '' : 's') + '.';
+      ? 'See your number, and exactly how we’d fill those spaces. Free, no card.'
+      : 'See how One could run it all for you. Free, no card.';
     $('gGo').href = '/check?' + G.query({ members: n.members, capacity: Math.max(n.members, n.capacity), fee: n.fee });
   }
   /* Meta: someone used the calculator, once a visit, on the first move.

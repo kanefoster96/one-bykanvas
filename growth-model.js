@@ -86,5 +86,8 @@
     return '£' + Math.round(n).toLocaleString('en-GB');
   }
 
-  return { plan: plan, query: query, maxModel: maxModel, money: money, AVG: AVG, PRICE: PRICE };
+  /* A sum's shape with stand-in digits, for showing it blurred before
+     someone has given their details (the free calculator). */
+  function locked(n) { return money(n).replace(/\d/g, '8'); }
+  return { plan: plan, query: query, maxModel: maxModel, money: money, locked: locked, AVG: AVG, PRICE: PRICE };
 });

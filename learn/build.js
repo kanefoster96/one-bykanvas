@@ -1780,7 +1780,7 @@ ${ld.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script
 <link rel="icon" href="/assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="/styles.css?v=aff04046">
-<link rel="stylesheet" href="/home.css?v=49c77fe8">
+<link rel="stylesheet" href="/home.css?v=7cd1c862">
 <link rel="stylesheet" href="/learn/learn.css?v=8e2f7fb2">
 </head>
 <body class="home learn">
