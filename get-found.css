@@ -1,0 +1,87 @@
+/* "How parents find a club": Google, AI answers and ads, each shown as a
+   small phone-like card, then the line between booking software and us,
+   and the flat-fee-or-a-cut calculator (fee-calc.js). Shared by the
+   homepage and /clubs, so it uses only the variables both pages define
+   (--ink, --ink-2, --ink-3, --line, --good, --good-soft). The cards
+   themselves are always white with dark text, on either band. */
+
+.gf-cards{display:grid;gap:18px;margin:44px 0 0;text-align:left}
+@media (min-width:860px){.gf-cards{grid-template-columns:repeat(3,1fr)}}
+.gf-card{display:flex;flex-direction:column}
+.gf-kind{display:flex;align-items:center;gap:8px;margin:18px 0 6px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--good)}
+.gf-kind span{font-size:11px;letter-spacing:.04em;padding:2px 8px;border-radius:999px;background:var(--good-soft);color:var(--good)}
+.gf-card h3{margin:0;font-size:21px;line-height:1.25;letter-spacing:-.015em;font-weight:700;color:var(--ink)}
+.gf-card > p{margin:8px 0 0;font-size:16px;line-height:1.5;color:var(--ink-2)}
+
+/* The little screens. */
+.gf-mock{--m-ink:#1d1d1f;--m-ink2:#6e6e73;--m-line:#e8e8ed;position:relative;height:240px;padding:16px;border-radius:24px;background:#fff;color:var(--m-ink);box-shadow:0 1px 2px rgba(0,0,0,.05),0 14px 34px rgba(0,0,0,.09);border:1px solid var(--m-line);overflow:hidden;font-size:13px;line-height:1.35}
+.gf-bar{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--m-line);color:var(--m-ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.gf-bar svg{width:15px;height:15px;flex:none;color:var(--m-ink2)}
+.gf-map{position:relative;height:50px;margin:10px 0 8px;border-radius:12px;background:linear-gradient(135deg,#eef3ea 0%,#e7eef5 100%);overflow:hidden}
+.gf-map::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 46%,rgba(255,255,255,.9) 46%,rgba(255,255,255,.9) 50%,transparent 50%),linear-gradient(0deg,transparent 40%,rgba(255,255,255,.9) 40%,rgba(255,255,255,.9) 46%,transparent 46%)}
+.gf-pin{position:absolute;width:12px;height:12px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#b7b7bd}
+.gf-pin.on{width:18px;height:18px;background:#ef4a10;box-shadow:0 0 0 5px rgba(239,74,16,.18)}
+.gf-res{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px}
+.gf-res + .gf-res{margin-top:4px}
+.gf-res.on{background:#fff4ee;box-shadow:inset 0 0 0 1.5px #ffcfb8}
+.gf-res div{flex:1;min-width:0}
+.gf-res b{display:block;font-size:14px}
+.gf-res small{display:block;color:var(--m-ink2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gf-res:not(.on){opacity:.5}
+.gf-stars{color:#e8a200}
+.gf-go{flex:none;padding:5px 11px;border-radius:999px;background:linear-gradient(135deg,#c93e09 0%,#ef4a10 100%);color:#fff;font-size:12px;font-weight:600}
+
+.gf-q{margin-left:auto;max-width:86%;padding:10px 13px;border-radius:18px 18px 4px 18px;background:#1d1d1f;color:#fff;font-weight:500}
+.gf-a{margin-top:12px;max-width:94%;padding:12px 14px;border-radius:18px 18px 18px 4px;background:#f5f5f7}
+.gf-ai{display:inline-flex;align-items:center;gap:5px;margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--m-ink2)}
+.gf-ai svg{width:12px;height:12px;color:#ef4a10}
+.gf-a p{margin:0}
+.gf-a b{color:#c93e09}
+.gf-typing{display:flex;gap:4px;margin-top:10px;padding-left:4px}
+.gf-typing i{width:6px;height:6px;border-radius:50%;background:#c7c7cc}
+
+.gf-ad{border-radius:16px;border:1px solid var(--m-line);overflow:hidden}
+.gf-ad-top{display:flex;align-items:center;gap:8px;padding:8px 10px}
+.gf-ad-top i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#1d1d1f;color:#fff;font-style:normal;font-size:10px;font-weight:700}
+.gf-ad-top b{font-size:13px}
+.gf-ad-top small{margin-left:auto;color:var(--m-ink2);font-size:11px}
+.gf-ad-img{padding:16px 12px 14px;background:linear-gradient(135deg,#c93e09 0%,#ff6a1f 100%);color:#fff;font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+.gf-ad-img small{display:block;margin-top:4px;font-size:12px;font-weight:500;opacity:.9}
+.gf-ad-cta{display:flex;justify-content:space-between;padding:8px 12px;font-weight:600;font-size:13px}
+.gf-booked{position:absolute;left:16px;right:16px;bottom:14px;display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:14px;background:#fff;box-shadow:0 8px 22px rgba(0,0,0,.14);font-weight:600}
+.gf-booked span{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#fff0e8;color:#c93e09}
+.gf-booked span svg{width:13px;height:13px}
+.gf-booked small{display:block;font-weight:500;color:var(--m-ink2);font-size:11.5px}
+
+/* Booking software vs us, in a line. */
+.gf-vs{display:grid;gap:12px;margin:40px 0 0;text-align:left}
+@media (min-width:720px){.gf-vs{grid-template-columns:1fr 1fr}}
+.gf-vs > div{padding:20px 22px;border-radius:20px;border:1px solid var(--line)}
+.gf-vs b{display:block;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.gf-vs p{margin:6px 0 0;font-size:18px;line-height:1.4;font-weight:600;color:var(--ink)}
+.gf-vs .us{border-color:var(--good);background:var(--good-soft)}
+.gf-vs .us b{color:var(--good)}
+.gf-note{max-width:62ch;margin:22px auto 0;font-size:15px;line-height:1.55;color:var(--ink-2);text-align:center}
+.gf-note b{color:var(--ink)}
+
+/* Flat fee or a cut of every payment (fee-calc.js). */
+.fee-calc{--f-ink:#1d1d1f;--f-ink2:#6e6e73;margin:26px auto 0;max-width:620px;padding:22px;border-radius:22px;background:#fff;color:var(--f-ink);text-align:left;box-shadow:0 1px 2px rgba(0,0,0,.05),0 12px 30px rgba(0,0,0,.08)}
+.fee-calc h3{margin:0;font-size:20px;line-height:1.25;letter-spacing:-.015em;font-weight:700;color:var(--f-ink)}
+.fee-calc label{display:block;margin:14px 0 6px;font-size:14px;font-weight:600;color:var(--f-ink)}
+.fee-calc label small{font-weight:400;color:var(--f-ink2)}
+.fee-money{display:flex;align-items:center;max-width:240px;height:48px;padding:0 14px;border:1px solid #d2d2d7;border-radius:14px;background:#fff;font-size:18px;font-weight:600}
+.fee-money input{flex:1;min-width:0;height:100%;border:0;background:none;font:inherit;color:var(--f-ink);padding-left:4px}
+.fee-money input:focus{outline:none}
+.fee-money:focus-within{border-color:var(--f-ink)}
+.fee-rows{margin:16px 0 0;display:grid;gap:10px}
+.fee-row{display:grid;grid-template-columns:minmax(0,9.5em) 1fr auto;align-items:center;gap:10px;font-size:14.5px}
+.fee-row span{color:var(--f-ink2)}
+.fee-row i{display:block;height:10px;border-radius:6px;background:#d2d2d7;width:var(--w,50%);transition:width .3s ease}
+.fee-row.us i{background:linear-gradient(90deg,#c93e09,#ef4a10)}
+.fee-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.fee-out{margin:14px 0 0;font-size:15px;line-height:1.5;color:var(--f-ink2)}
+.fee-out b{color:var(--f-ink)}
+.fee-small{margin:10px 0 0;font-size:12.5px;color:var(--f-ink2)}
+
+/* The one line above the booking software table. */
+.vs-lead{margin:0;padding:16px 22px;border-top:1px solid var(--line);font-size:17px;line-height:1.45;font-weight:600;color:var(--ink);text-align:left}

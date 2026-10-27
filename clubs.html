@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Your Kids’ Club’s Own App, Website and Ads, Run for You | Kanvas One</title>
-<meta name="description" content="For kids' dance, cheer, gymnastics and martial arts clubs: your own branded parent app, website, trial bookings, memberships and local ads, built and run for you. £250 a month, 3 months of ads included. Cancel any time.">
+<meta name="description" content="For every kind of kids' club, from football and gymnastics to dance and martial arts: get found on Google and AI, your own branded parent app, website, trial bookings, memberships and local ads, built and run for you. £250 a month, 3 months of ads included. Cancel any time.">
 <meta name="theme-color" content="#ffffff">
 <meta property="og:title" content="Full classes, every term. We bring the trials.">
 <meta property="og:description" content="Website, parent app, trial bookings, memberships and ads for kids' clubs, built and run for you. 3 months of ads included.">
@@ -17,6 +17,7 @@
 <link rel="icon" href="/assets/favicon.svg?v=fa41229e" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
+<link rel="stylesheet" href="/get-found.css?v=b4686ee8">
 <style>
 :root{
   --ink:#1d1d1f;--ink-2:#6e6e73;--ink-3:#86868b;
@@ -241,11 +242,11 @@ h3{font-size:21px;line-height:1.25;letter-spacing:-.015em;font-weight:700}
 .vs-head{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
 .vs-head span:last-child{color:var(--good)}
 .vs-row{border-top:1px solid var(--line)}
-.vs-row span:nth-child(2){color:var(--ink-2)}
-.vs-row span:last-child{font-weight:600}
+.vs-row > span:nth-child(2){color:var(--ink-2)}
+.vs-row > span:last-child{font-weight:600}
 .vs-both{margin:0;padding:14px 24px;border-top:1px solid var(--line);background:var(--soft);font-size:15px;color:var(--ink-2)}
-.vs-pay{background:var(--ink);color:#fff}.vs-pay span:nth-child(2){color:rgba(255,255,255,.7)}.vs-pay span:last-child{color:#ff7a3d}
-@media (max-width:640px){.vs-head{display:none}.vs-row{grid-template-columns:1fr;gap:6px}.vs-row span::before{content:attr(data-vs) ": ";font-weight:700;color:var(--ink)}.vs-pay span::before{color:#fff}}
+.vs-pay{background:var(--ink);color:#fff}.vs-pay > span:nth-child(2){color:rgba(255,255,255,.7)}.vs-pay > span:last-child{color:#ff7a3d}
+@media (max-width:640px){.vs-head{display:none}.vs-row{grid-template-columns:1fr;gap:6px}.vs-row > span::before{content:attr(data-vs) ": ";font-weight:700;color:var(--ink)}.vs-pay > span::before{color:#fff}}
 
 /* ---- about ---- */
 .about{max-width:760px;margin:0 auto;text-align:center}
@@ -323,7 +324,7 @@ p,li,summary,small{text-wrap:pretty}
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <p class="eyebrow reveal"><b></b>For kids&rsquo; dance, cheer, gymnastics and martial arts clubs</p>
+      <p class="eyebrow reveal"><b></b>For every kind of kids&rsquo; club: football, dance, gymnastics, martial arts and more</p>
       <h1 class="reveal">Full classes, every term. <span>We bring the trials.</span></h1>
       <p class="lede reveal">Your website, parent app, trial bookings, memberships and ads, built and run for you by a team that runs a kids&rsquo; club too.</p>
       <div class="cta-row reveal">
@@ -400,8 +401,60 @@ p,li,summary,small{text-wrap:pretty}
   </div>
 </section>
 
+<!-- 3b. How parents find a club: Google, AI answers and ads, as outcomes.
+     Styles in get-found.css, shared with the homepage. -->
+<section class="sec" id="found">
+  <div class="wrap" style="text-align:center">
+    <div class="sec-head">
+      <h2 class="reveal">Parents are looking for a club like yours. <span>Most can&rsquo;t find it.</span></h2>
+      <p class="lede reveal">When a parent searches for a kids&rsquo; club near them, or asks AI which one is best, a few clubs come up. The rest might as well not exist. Getting you into those few is what we do.</p>
+    </div>
+    <div class="gf-cards reveal">
+      <article class="gf-card">
+        <div class="gf-mock" aria-hidden="true">
+          <div class="gf-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>kids football club near me</div>
+          <div class="gf-map"><i class="gf-pin on" style="left:44%;top:16px"></i><i class="gf-pin" style="left:18%;top:30px"></i><i class="gf-pin" style="left:76%;top:12px"></i></div>
+          <div class="gf-res on"><div><b>Your club</b><small><span class="gf-stars">&#9733;</span> 4.9 (38) &middot; 0.8 miles &middot; Free trial</small></div><span class="gf-go">Book</span></div>
+          <div class="gf-res"><div><b>Another club</b><small><span class="gf-stars">&#9733;</span> 4.1 (6) &middot; 2.4 miles</small></div></div>
+        </div>
+        <p class="gf-kind">Searched on Google <span>SEO</span></p>
+        <h3>First on Google, and on the map</h3>
+        <p>When a parent types &ldquo;kids football club near me&rdquo;, most clubs don&rsquo;t show up, or sit on page two behind a club half as good. We get you on the map and near the top, with your reviews and a free trial button.</p>
+      </article>
+      <article class="gf-card">
+        <div class="gf-mock" aria-hidden="true">
+          <div class="gf-q">What&rsquo;s the best kids&rsquo; gymnastics club in Newcastle?</div>
+          <div class="gf-a"><p class="gf-ai"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.7z"/></svg>AI answer</p><p>Parents recommend <b>Your club</b>: friendly coaches, classes from age 3, and a free first session you can book online.</p></div>
+          <div class="gf-typing"><i></i><i></i><i></i></div>
+        </div>
+        <p class="gf-kind">Asked AI <span>AEO</span></p>
+        <h3>The club AI recommends</h3>
+        <p>More parents now ask ChatGPT or Google&rsquo;s AI which club is best. It only names clubs it understands, and most clubs&rsquo; websites don&rsquo;t tell it enough. We make sure it knows yours: your classes, ages, times, area and reviews.</p>
+      </article>
+      <article class="gf-card">
+        <div class="gf-mock" aria-hidden="true">
+          <div class="gf-ad">
+            <div class="gf-ad-top"><i>YC</i><b>Your club</b><small>Sponsored</small></div>
+            <div class="gf-ad-img">Martial arts for 5&ndash;11s<small>Your first class is free</small></div>
+            <div class="gf-ad-cta">Book a free trial<span>&rsaquo;</span></div>
+          </div>
+          <div class="gf-booked"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div>Trial booked<small>Leo, 7 &middot; Tuesday 5:30pm</small></div></div>
+        </div>
+        <p class="gf-kind">Seen on social media <span>Ads</span></p>
+        <h3>In front of parents who aren&rsquo;t looking yet</h3>
+        <p>Most families don&rsquo;t go searching until they see something. Your Facebook and Instagram ads reach local parents for the classes with spaces, and trials book straight into your app. Your first 3 months of ads are on us.</p>
+      </article>
+    </div>
+    <div class="gf-vs reveal">
+      <div><b>Booking apps</b><p>Run the members you&rsquo;ve already got.</p></div>
+      <div class="us"><b>One</b><p>Runs them too, then brings you new ones.</p></div>
+    </div>
+    <p class="gf-note reveal"><b>All of this is in the &pound;250 a month.</b> Your first 3 months of ads are on us, up to &pound;100 a month, so you can see what they bring. After that it&rsquo;s your choice: keep them going on your own budget, paid straight to <button type="button" class="gl" data-gl="meta">Meta</button>, or stop. Getting found on Google and AI carries on either way. No one honest can promise a number one spot, so we don&rsquo;t: we do the work every month and show you what came in.</p>
+  </div>
+</section>
+
 <!-- 4. The journey, from an ad to a member. -->
-<section class="sec sec-soft" id="how" style="padding-top:0">
+<section class="sec sec-soft" id="how">
   <div class="wrap">
     <div class="sec-head">
       <h2 class="reveal">From an ad to a member. <span>Run for you.</span></h2>
@@ -452,9 +505,9 @@ p,li,summary,small{text-wrap:pretty}
     </div>
     <div class="classes reveal" aria-label="Example timetable with ads on or off per class">
       <div class="class"><div class="class-t"><b>Street dance &middot; <span class="nw">4&ndash;7</span></b><small>Monday 6:15pm</small></div><span class="spaces">4 spaces</span><span class="ads on"><i></i>Ads on</span></div>
-      <div class="class"><div class="class-t"><b>Street dance &middot; 8+</b><small>Monday 7:15pm</small></div><span class="spaces">6 spaces</span><span class="ads on"><i></i>Ads on</span></div>
+      <div class="class"><div class="class-t"><b>Football &middot; 8+</b><small>Tuesday 5:30pm</small></div><span class="spaces">6 spaces</span><span class="ads on"><i></i>Ads on</span></div>
       <div class="class"><div class="class-t"><b>Cheer &middot; 8+</b><small>Wednesday 6:15pm</small></div><span class="spaces">Full</span><span class="ads off"><i></i>Ads off</span></div>
-      <div class="class"><div class="class-t"><b>Cheer &middot; <span class="nw">4&ndash;7</span></b><small>Sunday 12:00pm</small></div><span class="spaces">2 spaces</span><span class="ads on"><i></i>Ads on</span></div>
+      <div class="class"><div class="class-t"><b>Gymnastics &middot; <span class="nw">4&ndash;7</span></b><small>Saturday 10:00am</small></div><span class="spaces">2 spaces</span><span class="ads on"><i></i>Ads on</span></div>
     </div>
   </div>
 </section>
@@ -598,9 +651,12 @@ p,li,summary,small{text-wrap:pretty}
     </div>
     <div class="vs reveal">
       <div class="vs-head"><span></span><span>Typical kids&rsquo; club booking software</span><span>One</span></div>
+      <p class="vs-lead">Booking apps run the members you&rsquo;ve already got. One runs them too, then brings you new ones.</p>
       <p class="vs-both">Both do the basics: memberships by card, failed payments retried, registers, medical notes, sibling discounts, waiting lists and online trial booking.</p>
       <div class="vs-row"><b>Your app</b><span data-vs="Typical software">A single shared app, used by every club</span><span data-vs="One">Your own app, with your name and logo, for parents and coaches</span></div>
       <div class="vs-row"><b>Your website</b><span data-vs="Typical software">A booking page on their web address. A website costs extra</span><span data-vs="One">Your website on your own web address, built around your timetable</span></div>
+<div class="vs-row"><b>Showing up on Google</b><span data-vs="Typical software">Up to you</span><span data-vs="One">Worked on every month to get you on the map and near the top of local searches (SEO)</span></div>
+      <div class="vs-row"><b>Recommended by AI</b><span data-vs="Typical software">Up to you</span><span data-vs="One">Your site written so ChatGPT and Google&rsquo;s AI understand your club and can recommend it (AEO)</span></div>
       <div class="vs-row"><b>New members</b><span data-vs="Typical software">A tracking code and a directory listing</span><span data-vs="One">Ads run for you, 3 months on us, with the 10-Trial Promise</span></div>
       <div class="vs-row"><b>Selling extras</b><span data-vs="Typical software">Classes, terms and camps</span><span data-vs="One">Plus uniform, kit, show tickets and event fees, in the same app</span></div>
       <div class="vs-row"><b>Talking to parents</b><span data-vs="Typical software">Email, with texts charged one by one</span><span data-vs="One">Push notifications, live chat and a community feed, free; plus &pound;5 of texts and calls a month</span></div>
@@ -608,6 +664,17 @@ p,li,summary,small{text-wrap:pretty}
       <div class="vs-row vs-pay"><b>What you pay</b><span data-vs="Typical software">A monthly fee plus a cut of every payment, growing as you do</span><span data-vs="One">&pound;250 a month, flat. 0% of your payments</span></div>
     </div>
     <p class="cmp-note">From the public pricing and features of the booking software most UK kids&rsquo; clubs use, October 2026.</p>
+    <div class="fee-calc" data-fee-calc>
+        <h3>A flat fee, or a cut of every payment?</h3>
+        <label for="feeInClubs">What your members pay you a month <small>(200 members at &pound;50 is &pound;10,000)</small></label>
+        <div class="fee-money">&pound;<input id="feeInClubs" type="number" inputmode="decimal" min="0" max="10000000" step="100" value="10000" data-fee-in></div>
+        <div class="fee-rows">
+          <div class="fee-row"><span>Software taking 3%</span><i data-fee-bar-pct></i><b data-fee-pct>&pound;300 a month</b></div>
+          <div class="fee-row us"><span>One, flat</span><i data-fee-bar-us></i><b>&pound;250 a month</b></div>
+        </div>
+        <p class="fee-out" data-fee-out aria-live="polite"></p>
+        <p class="fee-small">Card fees are the same either way. Some platforms charge a monthly fee on top of the 3% too.</p>
+      </div>
   </div>
 </section>
 
@@ -631,6 +698,7 @@ p,li,summary,small{text-wrap:pretty}
     <div class="faq reveal">
       <details><summary>Who pays for the ads?</summary><p>For your first 3 months of ads, we do, up to &pound;100 a month: a free test of what ads can do for your club. They start once your website and app are both live, so the ads land on something that works. After that, it&rsquo;s your choice. Keep them going on your own budget, paid straight to <button type="button" class="gl" data-gl="meta">Meta</button> from your own <button type="button" class="gl" data-gl="adaccount">ad account</button>, and we keep running them for you as part of One. Or turn them off and keep everything else for the same &pound;250. We never take a cut of what your members pay.</p></details>
       <details><summary>Will parents find us on Google and AI search?</summary><p>That&rsquo;s part of One. Your site is built so Google and AI search, like ChatGPT and Google&rsquo;s AI answers, understand your classes, ages, times and area: a page for each class, your <button type="button" class="gl" data-gl="gbp">Google Business Profile</button> kept up to date, reviews asked for after every trial, and clear answers to the questions parents ask. This is called <button type="button" class="gl" data-gl="seo">SEO</button> and <button type="button" class="gl" data-gl="aeo">AEO</button>, and it&rsquo;s done for you. Our own academy gets trial bookings from Google and AI search, not just ads. No one honest can promise a ranking, so we don&rsquo;t.</p></details>
+      <details><summary>Why don&rsquo;t we show up on Google or AI already?</summary><p>Usually because nothing tells them enough about you: a website that doesn&rsquo;t spell out your classes, ages, times and area, a Google profile that&rsquo;s half filled in, and too few recent reviews. Google and AI recommend the clubs they understand and trust, and most clubs never get that far. We fix all of it and keep it up to date every month, as part of the &pound;250.</p></details>
       <details><summary>What if our classes are full?</summary><p>We pause the ads for full classes, so you never pay to find families you can&rsquo;t take. You just pay the &pound;250 for the system, and we turn the ads back on when you have room.</p></details>
       <details><summary>We already use booking software. Can we switch?</summary><p>Yes, and between terms is the easiest time. We move your members, memberships and timetable across for you, and your parents get one message with the link to your new app.</p></details>
       <details><summary>Is there a contract?</summary><p>No. It&rsquo;s monthly, and you can cancel any time from your account.</p></details>
@@ -656,7 +724,7 @@ p,li,summary,small{text-wrap:pretty}
       <div class="field"><label for="dName">Your name</label><input id="dName" name="name" type="text" autocomplete="name" maxlength="120" required></div>
       <div class="field"><label for="dClub">Club name</label><input id="dClub" name="club" type="text" autocomplete="organization" maxlength="120" required></div>
       <div class="field"><label for="dType">Type of club</label>
-        <select id="dType" name="type"><option>Dance</option><option>Cheer</option><option>Gymnastics</option><option>Martial arts</option><option>Swimming</option><option>Drama</option><option>Football or sport</option><option>Something else</option></select></div>
+        <select id="dType" name="type"><option>Football or sport</option><option>Dance</option><option>Cheer</option><option>Gymnastics</option><option>Martial arts</option><option>Swimming</option><option>Drama</option><option>Holiday camps</option><option>Something else</option></select></div>
       <div class="field"><label for="dSize">Roughly how many members?</label>
         <select id="dSize" name="size"><option>Under 50</option><option selected>50 to 100</option><option>100 to 200</option><option>Over 200</option></select></div>
       <div class="field"><label for="dEmail">Email</label><input id="dEmail" name="email" type="email" autocomplete="email" maxlength="254" required></div>
@@ -772,6 +840,7 @@ p,li,summary,small{text-wrap:pretty}
 <script src="/consent.js?v=5712679a"></script>
 <script src="/beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/glossary.js?v=ce336630" defer></script>
+<script src="/fee-calc.js?v=74117048" defer></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
 </body>
 </html>
