@@ -1,8 +1,8 @@
 /* one — the look-round page (look-round.html), the lead magnet.
  *
  * From the calculator the address carries their numbers
- * (?members=&capacity=&fee=) and their number leads the page; from the
- * homepage or an ad it starts at the offer. Either way the offer is the
+ * (?members=&capacity=&fee=) and their number is a line at the top; from the
+ * homepage or an ad it starts at the price. Either way the offer is the
  * same: their details, and api/plan.js (kind "app") emails how to download
  * our own club's app and get into its showroom; or a chat with Kane.
  *
@@ -33,16 +33,15 @@
   if (G && q.get('members') && q.get('capacity') && q.get('fee')) {
     p = G.plan({ members: q.get('members'), capacity: q.get('capacity'), fee: q.get('fee') });
     if (p.spaces > 0) {
+      $('lrKickNum').textContent = p.spaces + ' empty space' + (p.spaces === 1 ? ' costs' : 's cost') + ' you';
       $('lrBig').textContent = G.money(p.gapYear);
-      $('lrLine').innerHTML = 'a year, in <b>' + p.spaces + ' empty space' + (p.spaces === 1 ? '' : 's') + '</b> at ' + G.money(p.fee) + ' a month each.';
-      $('lrHead').innerHTML = 'Here&rsquo;s how we&rsquo;d fill them. <span class="dim">See it first.</span>';
+      $('lrHead').innerHTML = 'Here&rsquo;s how we&rsquo;d fill them. <span class="dim">See it free.</span>';
     } else {
-      $('lrNum').querySelector('.mh-kicker').textContent = 'Every space is full';
+      $('lrKickNum').textContent = 'Every space is full:';
       $('lrBig').textContent = G.money(p.total);
-      $('lrLine').textContent = 'a month coming in. Nice work.';
-      $('lrHead').innerHTML = 'Here&rsquo;s how we&rsquo;d run it for you. <span class="dim">See it first.</span>';
+      $('lrLine').textContent = 'a month coming in.';
+      $('lrHead').innerHTML = 'Here&rsquo;s how we&rsquo;d run it for you. <span class="dim">See it free.</span>';
     }
-    $('lrKick').textContent = 'How Kanvas One helps';
     $('lrEdit').href = '/profit-plan?' + G.query(p);
     $('lrNum').hidden = false;
     step(13, 'Saw their number');
@@ -67,8 +66,8 @@
     var v = function (id) { return $(id).value.trim(); };
     var bad = function (msg, id) { note.className = 'note wide bad'; note.textContent = msg; $(id).focus(); };
     note.className = 'note wide'; note.textContent = '';
-    if (v('lrName').length < 1) return bad('Add your first name.', 'lrName');
-    if (v('lrBiz').length < 2) return bad('Add your club or business name.', 'lrBiz');
+    if (v('lrBiz').length < 2) return bad('Add your business name.', 'lrBiz');
+    if (v('lrName').length < 2) return bad('Add your full name.', 'lrName');
     if (!EMAIL.test(v('lrEmail'))) return bad('That email doesn’t look right.', 'lrEmail');
     btn.disabled = true; btn.textContent = 'Sending…';
     var body = {
@@ -82,7 +81,7 @@
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d || {} }; }); })
       .then(function (res) {
         if (!res.ok) {
-          btn.disabled = false; btn.textContent = 'Send me the instructions';
+          btn.disabled = false; btn.textContent = 'Email me the app, free';
           return bad(res.d.error || 'That didn’t send. Try again, or chat with Kane.', res.d.field === 'email' ? 'lrEmail' : res.d.field === 'name' ? 'lrName' : 'lrBiz');
         }
         step(15, 'Asked for the app instructions');
@@ -98,10 +97,11 @@
         $('lrDoneEmail').textContent = body.email;
         $('lrForm').hidden = true;
         $('lrDone').hidden = false;
+        $('lrChat').lastChild.textContent = 'Chat with Kane';
         $('lrDone').querySelector('h3').focus();
       })
       .catch(function () {
-        btn.disabled = false; btn.textContent = 'Send me the instructions';
+        btn.disabled = false; btn.textContent = 'Email me the app, free';
         bad('We couldn’t reach the server. Try again, or chat with Kane.', 'lrEmail');
       });
   });

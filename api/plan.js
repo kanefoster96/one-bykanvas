@@ -251,7 +251,7 @@ async function lookRound(req, res, body, db) {
 
   if (!business) return res.status(400).json({ error: 'Add your club or business name.', field: 'business' });
   if (!looksLikeEmail(email)) return res.status(400).json({ error: 'That email doesn’t look right.', field: 'email' });
-  if (kind === 'app' && !name) return res.status(400).json({ error: 'Add your first name.', field: 'name' });
+  if (kind === 'app' && !name) return res.status(400).json({ error: 'Add your full name.', field: 'name' });
 
   /* Bots: the same answer, nothing stored or sent. */
   if (clean(body.website, 200)) return res.status(200).json({ ok: true, id: crypto.randomUUID() });
@@ -303,6 +303,7 @@ async function lookRound(req, res, body, db) {
     subject: oneLine(title),
     text: `${name || business} (${email})\n\n${about}\n` + (campaign ? `Campaign: ${campaign}\n` : '')
       + (noPassword ? '\nThe showroom password is not set (SHOWROOM_PASSWORD), so their email says you will send it. Reply to them with it.\n' : '')
+      + (kind === 'app' ? `\nTo surprise them: look ${business} up, and if you're sure it's the right club, put their name, logo and coaches in the showroom before they sign in.\n` : '')
       + `\n${site}/admin.html\n`,
     replyTo: email
   }).catch(() => {});
