@@ -1168,18 +1168,18 @@ body.home .ap-fig figcaption{margin-top:18px}
 .vs-head span:last-child{color:var(--accent,#e8400c)}
 .vs-row{border-top:1px solid rgba(255,79,18,.12)}
 .vs-row b{font-weight:700}
-.vs-row span:nth-child(2){color:var(--ink-2)}
-.vs-row span:last-child{font-weight:600}
+.vs-row > span:nth-child(2){color:var(--ink-2)}
+.vs-row > span:last-child{font-weight:600}
 .vs-both{margin:0;padding:14px 22px;border-top:1px solid rgba(255,79,18,.12);background:rgba(255,79,18,.06);font-size:15px;line-height:1.5;color:var(--ink-2)}
 .vs-pay{background:#1d1d1f;color:#fff}
-.vs-pay span:nth-child(2){color:rgba(255,255,255,.7)}
-.vs-pay span:last-child{color:var(--good-dark,#22c55e)}
+.vs-pay > span:nth-child(2){color:rgba(255,255,255,.7)}
+.vs-pay > span:last-child{color:var(--good-dark,#22c55e)}
 @media (max-width:640px){
   .vs-head{display:none}
   .vs-row{grid-template-columns:1fr;gap:6px}
-  .vs-row span::before{content:attr(data-vs) ": ";font-weight:700}
-  .vs-row span:nth-child(2)::before{color:#1d1d1f}
-  .vs-pay span:nth-child(2)::before{color:#fff}
+  .vs-row > span::before{content:attr(data-vs) ": ";font-weight:700}
+  .vs-row > span:nth-child(2)::before{color:#1d1d1f}
+  .vs-pay > span:nth-child(2)::before{color:#fff}
 }
 
 /* ---------- Shadows by section ----------
