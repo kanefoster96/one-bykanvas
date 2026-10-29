@@ -1153,6 +1153,18 @@ body.home .ap-fig figcaption{margin-top:18px}
 .ap-fit{margin-top:clamp(56px,8vw,88px)}
 .ap-fit .lede{margin:14px auto 0;max-width:46ch}
 .ap-try{margin-top:clamp(28px,4vw,40px)}
+/* Thinking of switching? (#switch): the six checks, then what coaches and
+   parents see, in two cards side by side. */
+.sw-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;columns:auto;max-width:880px;margin-inline:auto}
+.sw-two .ev-card{margin:0}
+@media (max-width:860px){
+  #switch .pr-strip{gap:10px}
+  #switch .pr-item{display:grid;grid-template-columns:42px 1fr;column-gap:14px;row-gap:3px;padding:16px;align-items:start}
+  #switch .pr-item .tile{grid-row:1 / 3;margin:0}
+}
+.sw-cta{margin-top:clamp(12px,2vw,20px)}
+.sw-cta p{margin:12px auto 0;max-width:44ch;font-size:15px;line-height:1.45;color:var(--ink-2)}
+.sw-cta p a{color:var(--good);font-weight:600}
 .ap-try p{margin:12px auto 0;max-width:40ch;font-size:15px;line-height:1.45;color:rgba(245,245,242,.72)}
 
 /* ---------- One against booking software ----------
