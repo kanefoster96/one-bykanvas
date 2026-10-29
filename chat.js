@@ -299,11 +299,27 @@
   /* A link from an email (kanvas.one/#chat) opens it on arrival. */
   if (location.hash === '#chat') setTimeout(function () { setOpen(true); }, 400);
   /* Any link on the page can open it: <a href="#" data-chat-open>. With a
-     value, that message waits as a one-tap send. */
+     value, that message waits as a one-tap send. With data-chat-draft, the
+     words go in the box instead, for them to finish ("Hi Kane, can One …").
+     data-chat-step="17|What they did" counts it as a step (beacon.js). */
+  function step(st) {
+    if (!st) return;
+    var i = st.indexOf('|');
+    (window.k1q = window.k1q || []).push([+st.slice(0, i), st.slice(i + 1)]);
+  }
   document.addEventListener('click', function (e) {
     var t = e.target.closest && e.target.closest('[data-chat-open]');
     if (!t) return;
     e.preventDefault(); if (tz) tz.remove(); setOpen(true);
+    step(t.getAttribute('data-chat-step'));
+    var draft = t.getAttribute('data-chat-draft');
+    if (draft) {
+      if (askEl) { askEl.remove(); askEl = null; }
+      if (quickEl) { quickEl.remove(); quickEl = null; }
+      input.value = draft;
+      setTimeout(function () { input.focus(); input.setSelectionRange(draft.length, draft.length); input.dispatchEvent(new Event('input')); }, 350);
+      return;
+    }
     var text = t.getAttribute('data-chat-open');
     if (text) ask(text);
   });
@@ -321,8 +337,8 @@
       tz.querySelector('b').textContent = agent || name;
       tz.querySelector('p').textContent = teaser;
       tz.querySelector('.k1s-tx').addEventListener('click', function (e) { e.stopPropagation(); tz.remove(); });
-      tz.addEventListener('click', function () { tz.remove(); setOpen(true); });
-      tz.addEventListener('keydown', function (e) { if (e.key === 'Enter') { tz.remove(); setOpen(true); } });
+      tz.addEventListener('click', function () { tz.remove(); setOpen(true); step(me.getAttribute('data-teaser-step')); });
+      tz.addEventListener('keydown', function (e) { if (e.key === 'Enter') { tz.remove(); setOpen(true); step(me.getAttribute('data-teaser-step')); } });
       document.body.appendChild(tz);
     }, 9000);
   }
