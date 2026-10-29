@@ -454,6 +454,14 @@
       faqs.forEach(function (other) { if (other !== d) other.open = false; });
     });
   });
+  /* The homepage shows the questions that decide it; the rest wait behind
+     "More questions". */
+  var faqMore = document.querySelector('.faq-more');
+  if (faqMore) faqMore.addEventListener('click', function () {
+    var rest = document.getElementById(faqMore.getAttribute('aria-controls'));
+    rest.hidden = false; faqMore.remove();
+    var first = rest.querySelector('summary'); if (first) first.focus();
+  });
 
   /* ---------- Lead form ---------- */
   var form = document.getElementById('lead');
