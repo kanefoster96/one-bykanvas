@@ -1297,10 +1297,8 @@ body.home.page-index #one{padding-top:clamp(16px,3vw,40px)}
   .page-index .mh-visual{order:1;margin-top:28px}
 }
 @media (max-width:1023px){
-  .page-index .mh-visual{margin-top:22px}
-  .page-index .mh-visual .mh-phone{order:1}
-  .page-index .mh-visual .mh-role{order:2;margin:22px 0 0}
-  .page-index .mh-visual .mh-ask{order:3}
+  .page-index .mh-visual{margin-top:24px}
+  .page-index .mh-visual .mh-role{margin-bottom:16px}
 }
 @media (max-width:1023px){body.home.page-index .mh{padding-top:20px}}
 /* Wide screens: the headline and button sit level with the middle of the phone. */
