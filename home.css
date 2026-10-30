@@ -1300,7 +1300,7 @@ body.home.page-index .mh-teaser{background:#f5f5f7;border-color:transparent}
 
 /* Pass two: two white sections in a row share the gap instead of doubling
    it; the step numbers lose their glow; the steps get room to breathe. */
-body.home.page-index #one,body.home.page-index #switch{padding-top:clamp(16px,3vw,40px)}
+body.home.page-index #one{padding-top:clamp(16px,3vw,40px)}
 .page-index .fx-n{box-shadow:none}
 .page-index .fx-steps{row-gap:26px}
 .page-index #one .sec-cta{margin-top:44px}
