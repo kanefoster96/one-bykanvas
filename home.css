@@ -1305,3 +1305,22 @@ body.home.page-index #one,body.home.page-index #switch{padding-top:clamp(16px,3v
 .page-index .fx-steps{row-gap:26px}
 .page-index #one .sec-cta{margin-top:44px}
 .page-index .mh-teaser{margin-top:28px}
+
+/* Phones and tablets: the animated app comes straight after the button, then
+   the price and the promises. On wide screens the phone already sits beside
+   the headline. mh-copy steps aside (display:contents) so its parts can be
+   ordered around the phone. */
+@media (max-width:1023px){
+  .page-index .mh-grid{display:flex;flex-direction:column}
+  .page-index .mh-copy{display:contents}
+  .page-index .mh-copy > *{order:0}
+  .page-index .mh-visual{order:1;margin-top:28px}
+  .page-index .mh-copy > .mh-after{order:2;margin-top:28px}
+}
+@media (max-width:1023px){
+  .page-index .mh-visual{margin-top:22px}
+  .page-index .mh-visual .mh-phone{order:1}
+  .page-index .mh-visual .mh-role{order:2;margin:22px 0 0}
+  .page-index .mh-visual .mh-ask{order:3}
+}
+@media (max-width:1023px){body.home.page-index .mh{padding-top:20px}}
