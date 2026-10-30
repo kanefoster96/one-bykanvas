@@ -104,7 +104,7 @@ function maxEmail(site, lead, p, type) {
       perks: steps,
       ctaText: 'Start One — £250 a month',
       ctaHref: start,
-      ctaNote: '3 months of ads included, worth &pound;300. 10 trials in those 3 months, or your next 3 months free. No contract: cancel any time. '
+      ctaNote: 'A &pound;300 launch boost: your first 3 months of ads on us. No contract: cancel any time. '
         + 'Rather talk first? Just reply and we&rsquo;ll find 10 minutes.',
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. The figures are what happened in our own academy, not a promise: what ads bring depends on your type of club and your local area. Two short follow-ups come after this, then we leave you be.',
       footerLinks: standardFooter(site)
@@ -113,7 +113,7 @@ function maxEmail(site, lead, p, type) {
       + `Members now: ${p.members}\nRoom for: ${p.capacity}\nSpaces empty: ${p.spaces}\nFee a month: ${money(p.fee)}\nWhen full: ${money(p.total)} a month\n\n`
       + steps.map((s) => '- ' + s.replace(/<[^>]+>/g, '').replace(/&pound;/g, '£').replace(/&rsquo;/g, '’')).join('\n')
       + `\n\nStart One, £250 a month: ${start}\n\n`
-      + '3 months of ads included, worth £300. 10 trials in those 3 months, or your next 3 months free. No contract: cancel any time.\n'
+      + 'A £300 launch boost: your first 3 months of ads on us. No contract: cancel any time.\n'
       + 'Rather talk first? Just reply.\n'
   };
 }

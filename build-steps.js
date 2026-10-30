@@ -130,7 +130,7 @@
       /* Keys kept from when ads ran in months 2 to 4 of the plan. */
       ['month_2', 'Ads month 1 checked: spend and trials'],
       ['month_3', 'Ads month 2 checked'],
-      ['month_4', 'Ads month 3 checked: 10-Trial Promise met?']
+      ['month_4', 'Ads month 3 checked: results shared, own budget offered']
     ] }
   ];
 
