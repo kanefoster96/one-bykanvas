@@ -519,7 +519,7 @@ export const JOBS = {
       ],
       [
        "month_4",
-       "Ads month 3 checked: 10-Trial Promise met?"
+       "Ads month 3 checked: results shared, own budget offered"
       ]
      ]
     }

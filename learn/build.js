@@ -378,7 +378,7 @@ ${term('costper')}
 
 <h2>How much should a kids&rsquo; club spend?</h2>
 <p>You don&rsquo;t need a big budget. We spent about &pound;35 a week. Start small, watch what each trial booking costs you, and spend more on the classes that have space and fill well.</p>`,
-    one: ['Your Facebook and Instagram ads, written, built and run for you.', 'The first 3 months of ad spend on us, up to &pound;100 a month.', 'The 10-Trial Promise: 10 trials in 3 months, or your next 3 months free.', 'Ads pause on their own when a class fills.', 'Every booking gets the confirmation, the reminders and the follow-up.', 'A monthly report: what ran, what it cost, what came in.'],
+    one: ['Your Facebook and Instagram ads, written, built and run for you.', 'The first 3 months of ad spend on us, up to &pound;100 a month.', 'Ads pause on their own when a class fills.', 'Every booking gets the confirmation, the reminders and the follow-up.', 'A monthly report: what ran, what it cost, what came in.'],
     oneLead: 'Ads run for you. <span>The first 3 months on us.</span>',
     faq: [
       ['Do Facebook ads work for kids&rsquo; clubs?', 'They can work very well if they advertise a free trial, stay local, only run for classes with space, and every booking is followed up. Our club spent &pound;145 in four weeks and got 24 trial bookings and 8 new members.'],
@@ -419,7 +419,7 @@ ${term('costper')}
     <tr><td>How you get started</td><td>You set it up yourself, with help guides</td><td>We build it for you around how your club runs</td></tr>
     <tr><td>Your app</td><td>Parents book through ClassForKids</td><td>Your own app in the App Store and Google Play, with your club&rsquo;s name and logo, for parents and coaches</td></tr>
     <tr><td>Your website</td><td>Booking pages you can brand</td><td>Your own website on your own web address, built around your timetable</td></tr>
-    <tr><td>New families</td><td>Up to you</td><td>Facebook and Instagram ads run for you, 3 months on us, with the 10-Trial Promise</td></tr>
+    <tr><td>New families</td><td>Up to you</td><td>Facebook and Instagram ads run for you, the first 3 months on us</td></tr>
     <tr><td>Google and AI search</td><td>Up to you</td><td>Done for you, worked on every month</td></tr>
     <tr><td>Selling extras</td><td>Classes, terms and camps</td><td>Plus uniform, kit, show tickets and event fees</td></tr>
     <tr><td>Talking to parents</td><td>Email and texts</td><td>Push notifications, live chat, a community feed, email, and &pound;5 of texts and calls a month included</td></tr>
@@ -452,7 +452,7 @@ ${term('costper')}
 
 <h2>Switching over</h2>
 <p>We move your members, memberships and timetable across for you. Between terms is the easiest time, and your parents get one message with the link to your new app.</p>`,
-    one: ['Your own app and website, with your club&rsquo;s name on them.', 'Bookings, memberships, registers and payments, like you have now.', 'Ads run for you, the first 3 months on us, with the 10-Trial Promise.', 'We take 0% of your payments, so your bill stays &pound;250 as you grow.', 'Free switch-over: your members, memberships and timetable moved for you.', 'Me on the other end of a message, not a ticket queue.'],
+    one: ['Your own app and website, with your club&rsquo;s name on them.', 'Bookings, memberships, registers and payments, like you have now.', 'Ads run for you, the first 3 months on us.', 'We take 0% of your payments, so your bill stays &pound;250 as you grow.', 'Free switch-over: your members, memberships and timetable moved for you.', 'Me on the other end of a message, not a ticket queue.'],
     oneLead: 'Everything you have now. <span>Plus the bit that grows your club.</span>',
     faq: [
       ['Is Kanvas One cheaper than ClassForKids?', 'Not for a small club. ClassForKids starts lower each month. Kanvas One is a flat &pound;250 a month with no cut of your payments, and it includes your own app, website and ads run for you, so it suits clubs that want to grow.'],
@@ -1017,9 +1017,9 @@ ${chain('From idea to first members', [['1', 'One class, one age group'], ['2', 
 <h2>If you&rsquo;re about to start, talk to me</h2>
 <p>This is the bit I enjoy most. If you&rsquo;re planning a club, message me and I&rsquo;ll help you work out your price, what you can afford for rent and coaches, and how many members you need to break even.</p>
 ${term('breakeven')}
-<p>If you&rsquo;d like, we can then set everything up for you on Kanvas One: your website, your own app, trial bookings and payments, run for you. Your first 3 months of ads are on us, up to &pound;100 a month, so free trials come in while you get going. If those ads bring fewer than 10 trial bookings, your next 3 months of One are free.</p>
+<p>If you&rsquo;d like, we can then set everything up for you on Kanvas One: your website, your own app, trial bookings and payments, run for you. Your first 3 months of ads are on us, up to &pound;100 a month, so free trials come in while you get going.</p>
 <p>It&rsquo;s &pound;250 a month, with no contract. At &pound;50 a month, five members cover it. Your ads start once your website and app are live, which is usually 4 to 8 weeks after you join, so it&rsquo;s worth starting before your first class.</p>`,
-    one: ['Help working out your price, rent and coach costs before you open.', 'Your website and your own app, set up for you.', 'Free trial bookings, consent and medical forms from day one.', 'Your first 3 months of ads on us, up to &pound;100 a month.', '10 trial bookings in those 3 months, or your next 3 months free.'],
+    one: ['Help working out your price, rent and coach costs before you open.', 'Your website and your own app, set up for you.', 'Free trial bookings, consent and medical forms from day one.', 'Your first 3 months of ads on us, up to &pound;100 a month.', 'No contract: cancel any time.'],
     oneLead: 'Starting a club? <span>Let&rsquo;s get you going.</span>',
     faq: [
       ['What do I need to start a kids’ club?', 'Decide what you’ll teach and to which ages, check with your sport’s governing body what you need for working with children, find a hall, and work out your price before your first class. Then offer free trials to get your first members.'],
@@ -1734,7 +1734,7 @@ const FOOTER = `<footer class="foot" data-tone="light">
     </div>
 
     <hr class="ft-rule">
-    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. 3 months of ads included means we pay your ad spend, up to &pound;100 a month, for the first 3 months after your ads start, while you stay on One. Your ads start once your website and app are both live. After those 3 months, ads are optional: you pay Meta directly for any you keep, and we run them as part of One. 10 trials in 3 months, or 3 months free: if the ads we fund in those 3 months bring fewer than 10 trial bookings, your next 3 months of One are free (see terms). No contract: cancel any time.</p>
+    <p class="foot-legal">All prices in GBP. The price you see is the total price &mdash; we are not VAT registered, so there is no VAT to add. 3 months of ads included means we pay your ad spend, up to &pound;100 a month, for the first 3 months after your ads start, while you stay on One. Your ads start once your website and app are both live. After those 3 months, ads are optional: you pay Meta directly for any you keep, and we run them as part of One. No contract: cancel any time.</p>
     <div class="ft-bottom">
       <div>
         <p class="foot-copy">&copy; <span id="year">2026</span> Kanvas One. All rights reserved.</p>
@@ -1752,7 +1752,7 @@ const SCRIPTS = `<script src="/consent.js?v=5712679a"></script>
 <script src="/beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/admin-pill.js?v=06da798b"></script>
 <script src="/learn/terms.js?v=bbafc742" defer></script>
-<script src="/glossary.js?v=ce336630" defer></script>
+<script src="/glossary.js?v=fff6419c" defer></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
 <script src="/learn/learn.js?v=3a84b052" defer></script>
 </body>

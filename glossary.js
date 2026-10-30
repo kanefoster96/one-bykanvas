@@ -24,10 +24,9 @@
   // match: the words in the text this explains (case-sensitive unless the
   // pattern says otherwise).
   var WORDS = {
-    // How One works for a club. The promise comes before "trial" so it wins
-    // where both would match.
-    promise: { match: /\b(?:The )?10-Trial Promise\b|\b10 trials in 3 months\b/, title: 'The 10-Trial Promise',
-      text: 'If your first 3 months of ads bring fewer than 10 trial bookings, your next 3 months of One are free. It’s applied automatically; there’s nothing to claim.' },
+    // How One works for a club.
+    boost: { match: /\blaunch boost\b/i, title: 'The £300 launch boost',
+      text: 'When your new app and website go live, we pay for your first 3 months of Facebook and Instagram ads, up to £100 a month, so you can see what ads bring in. After that, ads are optional: keep them going on your own budget, or stop.' },
     trial: { limit: 2, match: /\b(?:free )?trials?(?: bookings?| class(?:es)?)?\b/i, title: 'Free trials',
       text: 'A free first class for a new child. Parents book it online in a minute, get reminders so they turn up, you check them in at the door, and afterwards they’re sent the link to join. Every step happens by itself.' },
     emptyspaces: { limit: 2, match: /\bempty spaces\b/i, title: 'Empty spaces',
