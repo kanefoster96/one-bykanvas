@@ -1232,24 +1232,6 @@ body.home .band-dark .mh-results-tag{text-shadow:0 0 14px rgba(255,79,18,.45)}
 .page-index .section .lede{margin-top:18px}
 .page-index .band-dark .pr-item,.page-index .band-dark .ev-card{box-shadow:none}
 
-/* Hero: the price, the ads and the promise sit under the button as a plain
-   list, with our academy's numbers under them. */
-.page-index .mh .mh-after{max-width:none;margin-top:30px;text-align:left}
-.page-index .mh .mh-after .mh-risk{width:fit-content;max-width:100%;margin:0 auto;padding:0;gap:4px;border-radius:0;background:none;box-shadow:none}
-.page-index .mh .mh-after .mh-risk li{padding:5px 0;font-size:16px;font-weight:500;color:var(--ink)}
-.page-index .mh .mh-after .mh-risk li b{font-weight:700}
-.page-index .mh .mh-after .mh-risk li + li{border-top:0}
-body.home.page-index .mh .mh-after .mh-risk svg{color:var(--good)}
-.page-index .mh .mh-after .mh-risk .mh-info{margin-left:8px;background:var(--good-soft);color:var(--good)}
-@media (hover:hover){.page-index .mh .mh-after .mh-risk .mh-info:hover{background:var(--good);color:#fff}}
-.page-index .mh .mh-after .mh-risk .mh-info[aria-expanded="true"]{background:var(--good);color:#fff}
-body.home.page-index .mh .mh-after .mh-info-note{max-width:440px;border:0;background:#f5f5f7}
-.page-index .mh .mh-after .mh-info-note b{color:var(--ink)}
-.page-index .mh-after .mh-proofline{margin-top:18px;text-align:center}
-@media (min-width:1000px){
-  .page-index .mh .mh-after .mh-risk{margin:0}
-  .page-index .mh-after .mh-proofline,.page-index .mh .mh-after .mh-info-note{text-align:left;margin-left:0}
-}
 .page-index .mh-ask{margin-top:24px}
 
 /* How parents find a club: room between each picture and its words. */
@@ -1296,7 +1278,6 @@ body.home.page-index .sw-list .pr-item b{font-size:16.5px}
 body.home.page-index #faq details{background:#f5f5f7}
 body.home.page-index #faq details[open]{background:#f0f0f2}
 body.home.page-index .mh-teaser{background:#f5f5f7;border-color:transparent}
-.page-index .mh .mh-after .mh-risk li{font-size:15.5px}
 
 /* Pass two: two white sections in a row share the gap instead of doubling
    it; the step numbers lose their glow; the steps get room to breathe. */
@@ -1306,8 +1287,7 @@ body.home.page-index #one{padding-top:clamp(16px,3vw,40px)}
 .page-index #one .sec-cta{margin-top:44px}
 .page-index .mh-teaser{margin-top:28px}
 
-/* Phones and tablets: the animated app comes straight after the button, then
-   the price and the promises. On wide screens the phone already sits beside
+/* Phones and tablets: the animated app comes straight after the button. On wide screens the phone already sits beside
    the headline. mh-copy steps aside (display:contents) so its parts can be
    ordered around the phone. */
 @media (max-width:1023px){
@@ -1315,7 +1295,6 @@ body.home.page-index #one{padding-top:clamp(16px,3vw,40px)}
   .page-index .mh-copy{display:contents}
   .page-index .mh-copy > *{order:0}
   .page-index .mh-visual{order:1;margin-top:28px}
-  .page-index .mh-copy > .mh-after{order:2;margin-top:28px}
 }
 @media (max-width:1023px){
   .page-index .mh-visual{margin-top:22px}
@@ -1324,3 +1303,5 @@ body.home.page-index #one{padding-top:clamp(16px,3vw,40px)}
   .page-index .mh-visual .mh-ask{order:3}
 }
 @media (max-width:1023px){body.home.page-index .mh{padding-top:20px}}
+/* Wide screens: the headline and button sit level with the middle of the phone. */
+@media (min-width:1024px){.page-index .mh-grid{align-items:center}.page-index .mh-copy{padding-top:0}}
