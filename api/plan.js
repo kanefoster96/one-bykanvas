@@ -79,7 +79,6 @@ function maxSteps(p) {
 }
 
 function maxEmail(site, lead, p, type) {
-  const start = startHref(site, 'max', lead.business, type, lead.id);
   const details = [
     { label: 'Members now', value: String(p.members) },
     { label: 'Room for', value: String(p.capacity) },
@@ -102,17 +101,17 @@ function maxEmail(site, lead, p, type) {
       ],
       details,
       perks: steps,
-      ctaText: 'Start One — £250 a month',
-      ctaHref: start,
+      ctaText: 'Chat with Kane about your club',
+      ctaHref: site + '/#chat',
       ctaNote: 'A &pound;300 launch boost: your first 3 months of ads on us. No contract: cancel any time. '
-        + 'Rather talk first? Just reply and we&rsquo;ll find 10 minutes.',
+        + 'We always chat first, so you only join if it&rsquo;s right for your club. Or just reply.',
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. The figures are what happened in our own academy, not a promise: what ads bring depends on your type of club and your local area. Two short follow-ups come after this, then we leave you be.',
       footerLinks: standardFooter(site)
     }),
     text: `Your growth plan, ${lead.business}\n\n`
       + `Members now: ${p.members}\nRoom for: ${p.capacity}\nSpaces empty: ${p.spaces}\nFee a month: ${money(p.fee)}\nWhen full: ${money(p.total)} a month\n\n`
       + steps.map((s) => '- ' + s.replace(/<[^>]+>/g, '').replace(/&pound;/g, '£').replace(/&rsquo;/g, '’')).join('\n')
-      + `\n\nStart One, £250 a month: ${start}\n\n`
+      + `\n\nChat with Kane about your club: ${site}/#chat\n\n`
       + 'A £300 launch boost: your first 3 months of ads on us. No contract: cancel any time.\n'
       + 'Rather talk first? Just reply.\n'
   };
@@ -120,7 +119,6 @@ function maxEmail(site, lead, p, type) {
 
 function businessEmail(site, lead, p, type) {
   const start = startHref(site, 'business', lead.business, type, lead.id);
-  const max = startHref(site, 'max', lead.business, type, lead.id);
   const why = p.mode === 'run'
     ? 'you&rsquo;re already nearly full, so paying for ads you don&rsquo;t need isn&rsquo;t worth it'
     : 'at the size you are now, we&rsquo;d rather you didn&rsquo;t pay for more than you need';
@@ -144,14 +142,14 @@ function businessEmail(site, lead, p, type) {
       perks,
       ctaText: 'Start with Business — £50 a month',
       ctaHref: start,
-      ctaNote: `When you open a new class or want the ads running, One is there. <a href="${esc(max)}" style="color:inherit;">Prefer One now?</a> Or just reply with any questions.`,
+      ctaNote: `When you open a new class or want the ads running, One is there. <a href="${esc(site + '/#chat')}" style="color:inherit;">Rather have One? Chat with Kane first.</a> Or just reply with any questions.`,
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. Two short follow-ups come after this, then we leave you be.',
       footerLinks: standardFooter(site)
     }),
     text: `Your plan, ${lead.business}\n\n`
       + `Thanks for telling us about ${lead.business}. Honestly, ${why.replace(/&rsquo;/g, '’')}.\n\n`
       + 'We’d start you on Business, £50 a month: £200 a month less than One, with your website, bookings and payments run for you.\n\n'
-      + `Start with Business: ${start}\n\nPrefer One now? ${max}\n`
+      + `Start with Business: ${start}\n\nRather have One? Chat with Kane first: ${site}/#chat\n`
   };
 }
 

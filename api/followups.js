@@ -228,7 +228,6 @@ function growthOne(lead, site) {
   const biz = String(lead.business).replace(/[\r\n]+/g, ' ');
   const type = planType(lead.about);
   if (lead.plan_interest === 'max') {
-    const start = startHref(site, 'max', lead.business, type, lead.id);
     return {
       to: lead.email,
       subject: `What happened in our own club, ${biz}`,
@@ -250,9 +249,9 @@ function growthOne(lead, site) {
           '<strong>Those 8 members pay every month</strong>: £4,620 a year from £145 of ads, still paying back long after the ads stopped. Some joined after a trial, some straight from the ad.',
           '<strong>Your first 3 months of ads are on us</strong>, so the first trials cost you nothing. We build it all first.'
         ],
-        ctaText: 'Start One — £250 a month',
-        ctaHref: start,
-        ctaNote: 'Rather talk it through first? Reply and we&rsquo;ll find 10 minutes.',
+        ctaText: 'Chat with Kane about your club',
+        ctaHref: site + '/#chat',
+        ctaNote: 'We always chat first, so you only join if it&rsquo;s right for your club. Or just reply.',
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. The figures are our own academy&rsquo;s, not a promise: what ads bring depends on your type of club and your local area. One more email follows, then we leave you be.',
         footerLinks: standardFooter(site)
       }),
@@ -260,7 +259,7 @@ function growthOne(lead, site) {
         + 'First four weeks of ads: £145 spent, 24 trial bookings, 8 new members, £4,620 a year in new fees.\n\n'
         + 'Your first 3 months of ads are on us.\n\n'
         + 'These are our own academy’s numbers, not a promise: what ads bring depends on your type of club and your local area.\n\n'
-        + `Start One: ${start}\n\nRather talk first? Just reply.\n`
+        + `Chat with Kane about your club: ${site}/#chat\n\nOr just reply.\n`
     };
   }
   const start = startHref(site, 'business', lead.business, type, lead.id);
@@ -292,7 +291,6 @@ function growthTwo(lead, site) {
   const biz = String(lead.business).replace(/[\r\n]+/g, ' ');
   const type = planType(lead.about);
   if (lead.plan_interest === 'max') {
-    const start = startHref(site, 'max', lead.business, type, lead.id);
     return {
       to: lead.email,
       subject: `The two questions everyone asks, ${biz}`,
@@ -305,8 +303,8 @@ function growthTwo(lead, site) {
           'And when your classes are full, we pause the ads. You just pay the &pound;250.',
           'This is the last email about your plan. If now isn&rsquo;t the time, no hard feelings.'
         ],
-        ctaText: 'Start One — £250 a month',
-        ctaHref: start,
+        ctaText: 'Chat with Kane about your club',
+        ctaHref: site + '/#chat',
         ctaNote: 'Or reply with anything you&rsquo;d like to ask.',
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
         footerLinks: standardFooter(site)
@@ -314,11 +312,10 @@ function growthTwo(lead, site) {
       text: '"What does it really cost?" £250 a month for everything, including getting found on Google and AI search. We build it first, then your first 3 months of ads are on us, as a free test. After that, keep them going on your own budget, paid straight to Meta, and we keep running them for you. Or stop them and keep everything else. We never take a cut of what your members pay.\n\n'
         + '"What if it doesn’t work?" No contract, no minimum. Cancel any time.\n\n'
         + 'When you’re full, we pause the ads.\n\n'
-        + `Start One: ${start}\n\nThis is the last email about your plan.\n`
+        + `Chat with Kane about your club: ${site}/#chat\n\nThis is the last email about your plan.\n`
     };
   }
   const start = startHref(site, 'business', lead.business, type, lead.id);
-  const max = startHref(site, 'max', lead.business, type, lead.id);
   return {
     to: lead.email,
     subject: `When you're ready to grow, ${biz}`,
@@ -335,12 +332,12 @@ function growthTwo(lead, site) {
       ],
       ctaText: 'Start with Business — £50 a month',
       ctaHref: start,
-      ctaNote: `Switch to One from your account any month. <a href="${esc(max)}" style="color:inherit;">Or start on One now.</a>`,
+      ctaNote: `Switch to One from your account any month. <a href="${esc(site + '/#chat')}" style="color:inherit;">Or chat with Kane about One.</a>`,
       footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
       footerLinks: standardFooter(site)
     }),
     text: `Business is still what we'd suggest for ${lead.business} today. When you open a new class, One adds ads run for you, trial bookings and follow-ups, and a member app.\n\n`
-      + `Start with Business: ${start}\nOr One: ${max}\n\nThis is the last email about your plan.\n`
+      + `Start with Business: ${start}\nOr One: chat with Kane first: ${site}/#chat\n\nThis is the last email about your plan.\n`
   };
 }
 
