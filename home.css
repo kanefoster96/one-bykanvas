@@ -1119,6 +1119,8 @@ body.home .ap-fig figcaption{margin-top:18px}
 .mh-founder-chat em{font-style:normal;font-weight:600;color:var(--good)}
 .mh-founder-chat:hover em{text-decoration:underline}
 .mh-founder-chat > span > *{white-space:nowrap}
+/* Narrow phones: the first line wraps rather than running off the screen. */
+@media (max-width:420px){.mh-founder-chat{max-width:100%}.mh-founder-chat > span > span{white-space:normal}}
 @media (max-width:359px){.mh-founder-chat{font-size:12.5px;padding-right:12px}.mh-founder-chat img{width:34px;height:34px;flex-basis:34px}}
 /* The orange gradient phrase always starts its own line: it looked wrong
    wrapping mid-line. Shrink-wrapped so the gradient spans the words, and
