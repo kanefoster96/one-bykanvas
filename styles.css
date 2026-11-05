@@ -3550,3 +3550,96 @@ body.home .band-dark :is(.oc-card,.ab-card,.up-card) .lede{color:#6e6e73}
 .band-dark .max-app-pill{box-shadow:0 4px 12px rgba(255,79,18,.35)}
 .band-dark .dot-face{box-shadow:0 12px 32px rgba(255,79,18,.22)}
 .band-dark .sb-example .sb-preview{box-shadow:0 10px 24px -12px rgba(255,79,18,.6)}
+
+/* ================= Liquid glass =================
+   The same material as the Kanvas Academy site (glisse's look, in plain
+   CSS, no JavaScript): a breath of light for the tint, a sheen across the
+   top and a lit rim (bright at the top left, a glint at the bottom right,
+   a hairline between) drawn with a mask, not a painted image. No backdrop
+   filter except on what floats over the page (the nav), so long pages
+   scroll smoothly on older phones.
+   Dark glass on the black bands; on the white bands, clear light glass
+   (a pale sheet with a bright top edge) and black glass for the switches.
+   The main action keeps the orange, with a glass face on it. */
+:root{
+  --glass-fill:rgba(255,255,255,.04);
+  --glass-fill-raised:rgba(255,255,255,.075);
+  --glass-fill-hover:rgba(255,255,255,.12);
+  --glass-fill-active:rgba(255,255,255,.16);
+  --glass-sheen:linear-gradient(180deg,rgba(255,255,255,.055) 0%,rgba(255,255,255,0) 46%);
+  --glass-rim:
+    linear-gradient(150deg,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 24%,rgba(255,255,255,0) 74%,rgba(255,255,255,.16) 100%),
+    linear-gradient(rgba(255,255,255,.085),rgba(255,255,255,.085));
+  /* A small piece of dark glass (a pill or tab) has its rim as a shadow. */
+  --glass-pill-edge:inset 0 1px 0 rgba(255,255,255,.2),inset 0 0 0 1px rgba(255,255,255,.1);
+  /* White glass: a light top and a soft shade along the bottom. */
+  --glass-white-face:linear-gradient(180deg,#fff 0%,rgba(255,255,255,0) 55%),linear-gradient(0deg,rgba(0,0,0,.045) 0%,rgba(0,0,0,0) 40%);
+  --glass-white-edge:inset 0 1px 0 #fff,inset 0 -1px 1.5px rgba(0,0,0,.1);
+  /* Black glass, for a switch or a card on a white surface. */
+  --glass-ink-face:linear-gradient(180deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 52%);
+  --glass-ink-edge:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(255,255,255,.08),0 2px 8px -2px rgba(0,0,0,.35);
+  /* Light glass, for cards on the white bands. */
+  --glass-light-face:linear-gradient(180deg,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 58%);
+  --glass-light-edge:inset 0 1px 0 #fff,inset 0 0 0 1px rgba(0,0,0,.055),0 1px 2px rgba(0,0,0,.035),0 14px 34px -22px rgba(0,0,0,.22);
+  /* The orange main action: lit from above, a soft glow under it. */
+  --glass-or-face:linear-gradient(180deg,rgba(255,255,255,.26) 0%,rgba(255,255,255,0) 52%);
+  --glass-or-edge:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(0,0,0,.14);
+  --glass-or-glow:0 8px 22px -10px rgba(201,62,9,.6);
+  --glass-or-glow-hover:0 12px 28px -10px rgba(201,62,9,.7)
+}
+
+/* The nav: frosted, with a line of light underneath that fades out
+   towards the edges. */
+.nav{
+  background-color:rgba(255,255,255,.7);
+  background-image:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0));
+  -webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7);
+  border-bottom:1px solid transparent;
+  border-image:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.12) 50%,rgba(0,0,0,.03)) 1
+}
+
+/* The main action: orange glass. */
+.btn-primary,.btn-primary:hover{border:0}
+.btn-primary{
+  background:var(--glass-or-face),var(--or-grad);
+  box-shadow:var(--glass-or-edge),var(--glass-or-glow);
+  transition:box-shadow .25s var(--ease),background .22s var(--ease),transform .15s var(--ease),scale .15s var(--ease)
+}
+.btn-primary:hover{background:var(--glass-or-face),var(--or-grad-hover);box-shadow:var(--glass-or-edge),var(--glass-or-glow-hover)}
+.btn-primary:active{scale:.97}
+.btn-primary:disabled{scale:none;box-shadow:var(--glass-or-edge)}
+/* Where the main action is white (on the black app section): white glass. */
+.app .btn-primary,.app .btn-primary:hover{background-color:#fff;background-image:var(--glass-white-face);color:#1d1d1f;box-shadow:var(--glass-white-edge),0 8px 28px -6px rgba(255,255,255,.3)}
+
+/* Secondary buttons and pills on the black bands: clear dark glass. */
+.band-dark :is(.btn-ghost,.rail-btn){background-color:var(--glass-fill-raised);background-image:var(--glass-sheen);border-color:transparent;box-shadow:var(--glass-pill-edge);color:#fff}
+.band-dark :is(.btn-ghost,.rail-btn):hover{background-color:var(--glass-fill-hover);border-color:transparent;color:#fff}
+.band-dark :is(.btn-ghost,.rail-btn):active{background-color:var(--glass-fill-active);scale:.97}
+
+/* Cards on the black bands: dark glass with a lit rim. :root lifts these
+   over the homepage's own card colours. */
+:root .band-dark :is(.card,.plan,.pr-item,.ev-card,.two-col .col,.boost,.mh-numbers){
+  position:relative;background-color:var(--glass-fill);background-image:var(--glass-sheen);border:0;box-shadow:none
+}
+:root .band-dark .plan.featured{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5),0 10px 30px -12px rgba(255,255,255,.18)}
+:root .band-dark :is(.card,.plan,.pr-item,.ev-card,.two-col .col,.boost,.mh-numbers)::before,
+.glass-rim::before,.mh-results::before,.page-index .ev-bonus li::before{
+  content:"";position:absolute;inset:0;padding:1px;border-radius:inherit;background:var(--glass-rim);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  pointer-events:none
+}
+
+/* No frosting in this browser, or the visitor asked for less see-through:
+   a solid nav. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.nav{background-color:rgba(255,255,255,.97)}}
+@media (prefers-reduced-transparency:reduce){.nav{background-color:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}}
+/* High-contrast modes drop backgrounds and shadows: give glass a line. */
+@media (forced-colors:active){
+  .nav{border-image:none;border-bottom:1px solid CanvasText}
+  .btn-primary,.band-dark :is(.btn-ghost,.rail-btn){border:1px solid CanvasText}
+  :root .band-dark :is(.card,.plan,.pr-item,.ev-card,.two-col .col,.boost,.mh-numbers){border:1px solid CanvasText}
+}
+@media (prefers-reduced-motion:reduce){
+  .btn-primary:active,.band-dark :is(.btn-ghost,.rail-btn):active{scale:none}
+}
