@@ -166,14 +166,14 @@
         if (d.paid) {
           // The payment in Analytics, and the ad conversion, once each.
           whenBeacon(function () {
-            window.k1.payment({ amount: typeof d.amount === 'number' ? d.amount : 25000, ref: d.sub || sessionId, email: accountEmail, description: 'One, monthly' });
+            window.k1.payment({ amount: typeof d.amount === 'number' ? d.amount : 34900, ref: d.sub || sessionId, email: accountEmail, description: 'One, monthly' });
           });
           if (window.oneTrack) {
             var seen;
             try { seen = localStorage.getItem('one.join-tracked'); } catch (e) {}
             if (seen !== sessionId) {
               try { localStorage.setItem('one.join-tracked', sessionId); } catch (e) {}
-              window.oneTrack('Purchase', { currency: 'GBP', value: 250, content_name: 'max' }, d.sub || sessionId);
+              window.oneTrack('Purchase', { currency: 'GBP', value: 349, content_name: 'max' }, d.sub || sessionId);
             }
           }
         }

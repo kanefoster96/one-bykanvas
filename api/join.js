@@ -6,7 +6,7 @@
  * email - and sends them to Stripe: £9.99 a month or £99 a year for
  * Starter, £50 a month or £500 a year for Business. Only once that is paid
  * do they choose a password. One (/start) uses the same steps with less:
- * their name, business, type of business and email, then £250 a month;
+ * their name, business, type of business and email, then £349 a month;
  * the web address and everything else is sorted with Kane after.
  *
  * Five actions, one endpoint:

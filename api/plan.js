@@ -65,7 +65,7 @@ function maxSteps(p) {
       '<strong>Weeks 1 to 8: we build it.</strong> Your website and timetable ready in 7 to 14 days, then your members moved across and your app sent to Apple and Google as soon as your developer accounts are ready (their review takes 1 to 4 weeks). Until then, every app feature works on your website. Once your website and app are both live, usually 4 to 8 weeks after you join, your ads start.',
       `<strong>Then 3 months of ads, on us.</strong> Ads go live for the classes with spaces. In our own academy, &pound;${growth.AVG.adBudget} a month of ads brought around ${p.trials} trial bookings and ${p.perMonth} new members a month.`,
       `<strong>At that pace</strong>, your ${p.spaces} spaces would fill in about ${p.months} month${p.months === 1 ? '' : 's'}.`,
-      `<strong>${p.cover} new member${p.cover === 1 ? '' : 's'}</strong> at ${money(p.fee)} cover the &pound;250, and your first 3 months of ads are on us.`,
+      `<strong>${p.cover} new member${p.cover === 1 ? '' : 's'}</strong> at ${money(p.fee)} cover the &pound;349, and your first 3 months of ads are on us.`,
       '<strong>Every trial</strong> gets reminders and a follow-up with the link to join, and members pay monthly by card, automatically.'
     ];
   }

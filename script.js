@@ -491,7 +491,7 @@
       return;
     }
 
-    /* The plan <select> shows prices ("One — £250/month"); the endpoint wants
+    /* The plan <select> shows prices ("One — £349/month"); the endpoint wants
        the plan key. Read the option's position rather than parsing its text,
        so a price change never quietly stops this matching. */
     var planEl = document.getElementById('plan');

@@ -158,7 +158,7 @@
     starter:  { label: 'Starter',  price: '£9.99', yearly: '£99' },
     business: { label: 'Business', price: '£50', half: '£25',    yearly: '£500' },
     pro:      { label: 'Pro',      price: '£120' },
-    max:      { label: 'One',      price: '£250' }
+    max:      { label: 'One',      price: '£349' }
   };
 
   /* Monthly or annual, shared with the plans page through the same stash;
@@ -1012,7 +1012,7 @@
         var ip = answers.selected_plan || 'business', annualPay = billingMode() === 'annual' && ip !== 'max';
         window.oneTrack('InitiateCheckout', {
           content_category: ip, currency: 'GBP',
-          value: annualPay ? ({ starter: 99, business: 500 }[ip] || 0) : ({ starter: 9.99, business: 50, max: 250 }[ip] || 0)
+          value: annualPay ? ({ starter: 99, business: 500 }[ip] || 0) : ({ starter: 9.99, business: 50, max: 349 }[ip] || 0)
         });
       }
       location.href = data.url;
@@ -1141,7 +1141,7 @@
           'Your own branded app, and referrals'
         ],
         note: 'We need a photo or a line of text; we do the rest. <strong>Your price is locked for as long as you stay.</strong> Step down any month; you keep the ranking.',
-        btn: 'Switch to One — £250 a month',
+        btn: 'Switch to One — £349 a month',
         line: 'Want us to go and get you customers? '
       }
     };
