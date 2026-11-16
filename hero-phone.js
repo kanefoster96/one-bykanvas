@@ -53,24 +53,24 @@
       '<p class="hp-wh">Book a free trial class.<span>No card needed.</span></p>' +
       '<div class="hp-steps"><b class="on">1</b><i></i><b id="hp-st2">2</b><i></i><b>3</b><i></i><b>4</b></div>' +
       '<div class="hp-wcard"><div class="hp-wst" id="hp-w1"><p class="hp-fl">Child\u2019s name</p><div class="hp-fi" id="hp-fn"><span id="hp-fnt"></span></div><p class="hp-fl">Age</p><div class="hp-fi" id="hp-fa"><span id="hp-fat"></span></div><div class="hp-nx"><span id="hp-nx">Next</span></div></div>' +
-      '<div class="hp-wst" id="hp-w2"><p class="hp-fl">Pick a class</p><div class="hp-opt hp-sel"><span>Hip Hop<small>Tuesday \u00b7 5:30pm</small></span><i class="hp-rd">' + T + '</i></div><div class="hp-opt"><span>Hip Hop<small>Thursday \u00b7 5:30pm</small></span><i class="hp-rd"></i></div><div class="hp-okp" id="hp-okp">' + T + 'Free trial booked</div></div></div>' +
+      '<div class="hp-wst" id="hp-w2"><p class="hp-fl hp-fq">Which classes would you like to try?</p><div class="hp-opt hp-sel"><span>Hip Hop<small>Tuesday \u00b7 5:30pm</small></span><i class="hp-rd">' + T + '</i></div><div class="hp-opt"><span>Hip Hop<small>Thursday \u00b7 5:30pm</small></span><i class="hp-rd"></i></div><div class="hp-okp" id="hp-okp">' + T + 'Free trial booked</div></div></div>' +
       '<div class="hp-url">yourclub.co.uk</div>' },
     { id: 'mail', full: true, light: true, label: 'Their trial pass, emailed for you', html:
       sbar(1) + '<div class="hp-mnav"><span class="hp-bk">\u2039</span><b>Ava\u2019s trial is confirmed \ud83c\udf89</b></div>' +
-      '<div class="hp-mail"><div class="hp-mh"><b>YOUR CLUB</b><span>FREE TRIAL PASS</span></div><div class="hp-mb"><h3>You\u2019re booked in! \ud83c\udf89</h3><p>Ava\u2019s free trial is confirmed. We can\u2019t wait to meet her!</p>' +
-      '<div class="hp-mbox"><b>\u23f0 Day and time</b>Hip Hop \u00b7 Tuesday \u00b7 5:30pm</div><p>Just show this QR code when you arrive.</p><div class="hp-mqr">' + qr(11, '#000', '#fff') + '</div></div></div>' +
+      '<div class="hp-mail"><div class="hp-mh"><b>YOUR CLUB</b><span>EST. 2017</span></div><div class="hp-mb"><h3>You\u2019re booked in! \ud83c\udf89</h3><p>You\u2019re all set. Ava\u2019s free trial is confirmed and we\u2019re looking forward to meeting them!</p>' +
+      '<div class="hp-mbox"><b>\u23f0 Day/Time</b>Hip Hop \u00b7 Tuesday \u00b7 5:30pm</div><p class="hp-mre">Need a different date?</p><p>Just show the QR code below when you arrive.</p><div class="hp-mqr">' + qr(11, '#000', '#fff') + '</div></div></div>' +
       ban('hp-b-mail', 'Ava\u2019s trial is confirmed \ud83c\udf89', true) },
     { id: 'sms', full: true, light: true, label: 'A reminder text, so they turn up', html:
       sbar(1) + '<div class="hp-snav"><span class="hp-sa">' + IC.star + '</span><b>' + CLUB + ' \u203a</b></div>' +
-      '<p class="hp-smeta">Text Message \u00b7 SMS<br>Today 09:00</p>' +
+      '<p class="hp-smeta">Text Message \u00b7 SMS<br>Today 16:30</p>' +
       '<span class="hp-styp" id="hp-sty"><i></i><i></i><i></i></span>' +
-      '<p class="hp-sin" id="hp-sin">Hi! Reminder: Ava\u2019s free Hip Hop trial is tomorrow at 5:30pm. Comfy clothes and a water bottle. See you there!</p>' +
+      '<p class="hp-sin" id="hp-sin">Ava\u2019s free trial at Your Club starts shortly. Coach Jess will be at the door to meet them - see you in there. Reply STOP to opt out.</p>' +
       '<p class="hp-sout" id="hp-sout">Thank you, we\u2019ll be there! \ud83d\ude0a</p>' +
       '<div class="hp-sinp"><span>+</span><div>Text Message \u00b7 SMS</div></div>' },
     { id: 'follow', full: true, light: true, label: 'A follow-up, so they join', html:
       sbar(1) + '<div class="hp-mnav"><span class="hp-bk">\u2039</span><b>How was Ava\u2019s first class?</b></div>' +
-      '<div class="hp-mail"><div class="hp-mh"><b>YOUR CLUB</b><span>AFTER THE TRIAL</span></div><div class="hp-mb"><h3>Ava was brilliant! \u2b50</h3><p>Thanks for coming to Hip Hop. We\u2019d love Ava to join us every week, and her spot is saved for her.</p>' +
-      '<div class="hp-mbox"><b>\ud83d\udcc5 Every Tuesday</b>Hip Hop \u00b7 5:30pm \u00b7 Coach Jess</div><div class="hp-join" id="hp-join"><span id="hp-joint">Join Your Club</span><span class="hp-joined" id="hp-joined">' + T + 'Membership started</span></div><p class="hp-small">Pay monthly by card. Cancel any time.</p></div></div>' +
+      '<div class="hp-mail"><div class="hp-mh"><b>YOUR CLUB</b><span>EST. 2017</span></div><div class="hp-mb"><h3>How was Ava\u2019s first class?</h3><p>We hope Ava had a great time at their free trial! If they\u2019re ready to keep going, joining takes a couple of minutes.</p>' +
+      '<div class="hp-join" id="hp-join"><span id="hp-joint">Join Your Club</span><span class="hp-joined" id="hp-joined">' + T + 'Membership started</span></div><p class="hp-small">Any questions? Just reply to this email.</p></div></div>' +
       ban('hp-b-follow', 'How was Ava\u2019s first class?', true) },
     { id: 'payset', tab: 0, ov: true, label: 'Easy payment setup', html:
       '<p class="hp-ttl">Join Hip Hop</p><p class="hp-sub">Monthly membership \u00b7 cancel any time</p>' +
@@ -391,7 +391,39 @@
     '.hp-obtn{margin-top:20px;height:78px;border-radius:999px;background:#ff4f12;color:#fff;display:grid;place-items:center;font:700 24px/1 Inter,sans-serif}',
     /* caption under the phone */
     '.hp-cap{position:relative;height:1.5em;margin-top:18px;text-align:center;font-weight:600;font-size:15px;color:var(--ink-2,#55555a)}',
-    '.hp-cap span{position:absolute;left:0;right:0;transition:opacity .35s,transform .35s;opacity:0;transform:translateY(6px)}.hp-cap span.on{opacity:1;transform:none}'
+    '.hp-cap span{position:absolute;left:0;right:0;transition:opacity .35s,transform .35s;opacity:0;transform:translateY(6px)}.hp-cap span.on{opacity:1;transform:none}',
+    /* The club's screens as a club really gets them: the website in the
+       Kanvas Academy 2026 look, the emails as the real light card, and the
+       reminder text as sent, with no reply (texts are automatic, one way). */
+    '.hp-v.hp-full[data-k="hp-web"]{background:#0e1012}',
+    '[data-k="hp-web"] .hp-steps b:first-child:has(~ b.on){font-size:0}',
+    '[data-k="hp-web"] .hp-steps b:first-child:has(~ b.on)::after{content:"";width:28px;height:28px;background:#0e1012;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Cpath d=%27M5 13l4 4L19 7%27 fill=%27none%27 stroke=%27%23000%27 stroke-width=%273.2%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Cpath d=%27M5 13l4 4L19 7%27 fill=%27none%27 stroke=%27%23000%27 stroke-width=%273.2%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/contain no-repeat}',
+    '[data-k="hp-web"] .hp-wnav{border-bottom:2px solid #2b3036}',
+    '[data-k="hp-web"] .hp-avs i{border-color:#0e1012}',
+    '[data-k="hp-web"] .hp-stars{color:#ffc23d}',
+    '[data-k="hp-web"] .hp-wh span{width:fit-content;margin:0 auto;padding-right:.08em;background:linear-gradient(100deg,#ffd166 0%,#ffc23d 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}',
+    '[data-k="hp-web"] .hp-steps b{border:0;background:#22262b;box-shadow:inset 0 0 0 3px #2b3036;color:#9aa1a9}',
+    '[data-k="hp-web"] .hp-steps b.on{background:#f7f7f8;box-shadow:none;color:#0e1012}',
+    '[data-k="hp-web"] .hp-steps i{height:3px;background:#2b3036}',
+    '[data-k="hp-web"] .hp-wcard{background:#181b1f;border:3px solid #2b3036}',
+    '[data-k="hp-web"] .hp-fl{color:#9aa1a9}',
+    '.hp-fq{font-weight:600;color:#f5f5f7}',
+    '[data-k="hp-web"] .hp-fi{background:#121417;border:3px solid #2b3036}',
+    '[data-k="hp-web"] .hp-fi.on{border-color:#ffc23d}',
+    '[data-k="hp-web"] .hp-nx span{box-shadow:inset 0 0 0 3px rgba(0,0,0,.12);transition:background .3s,color .3s}',
+    '[data-k="hp-web"] .hp-opt{background:#181b1f;border:0;box-shadow:inset 0 0 0 3px #2b3036}',
+    '[data-k="hp-web"] .hp-opt.hp-sel{background:rgba(255,194,61,.12);box-shadow:inset 0 0 0 3px #ffc23d}',
+    '[data-k="hp-web"] .hp-sel .hp-rd{background:#ffc23d;border-color:#ffc23d;color:#2a1a00}',
+    '[data-k="hp-web"] .hp-url{background:rgba(43,48,54,.95)}',
+    '.hp-v.hp-light[data-k="hp-mail"],[data-k="hp-web"] .h-hero-art .hp-v.hp-light[data-k="hp-follow"]{background:#f4f4f2}',
+    '[data-k="hp-mail"] .hp-mail,[data-k="hp-follow"] .hp-mail{border-radius:38px;border:2px solid #e4e4e0}',
+    '[data-k="hp-mail"] .hp-mh b,[data-k="hp-follow"] .hp-mh b{letter-spacing:.08em;color:#08080a}',
+    '[data-k="hp-mail"] .hp-mh span,[data-k="hp-follow"] .hp-mh span{letter-spacing:.15em;color:#6b6b70}',
+    '[data-k="hp-mail"] .hp-mbox,[data-k="hp-follow"] .hp-mbox{border-color:#e4e4e0;border-radius:28px}',
+    '[data-k="hp-mail"] .hp-mre,[data-k="hp-follow"] .hp-mre{margin-top:12px!important;font-size:18px!important;color:#6b6b70!important;text-decoration:underline}',
+    '[data-k="hp-mail"] .hp-mqr,[data-k="hp-follow"] .hp-mqr{width:250px;height:250px;padding:20px;border:2px solid #e4e4e0;background:#f4f4f2;border-radius:28px}',
+    '[data-k="hp-mail"] .hp-join,[data-k="hp-follow"] .hp-join{background:#08080a}',
+    '.hp-sout{display:none}',
   ].join('');
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -432,7 +464,7 @@
         var n = Math.floor(cl((u - .3) / .45) * 3 + .001);
         $('hp-fnt').textContent = 'Ava'.slice(0, n); $('hp-fat').textContent = u > 1.05 ? '7' : '';
         $('hp-fn').classList.toggle('on', u < 1); $('hp-fa').classList.toggle('on', u >= 1 && u < 1.4);
-        $('hp-nx').style.background = u > 1.15 ? '#f5f5f2' : '#5a5a5e'; $('hp-nx').style.transform = 'scale(' + (u > 1.35 && u < 1.47 ? .94 : 1) + ')';
+        $('hp-nx').style.background = u > 1.15 ? '#ffc23d' : '#2b3036'; $('hp-nx').style.color = u > 1.15 ? '#2a1a00' : 'rgba(245,245,242,.45)'; $('hp-nx').style.transform = 'scale(' + (u > 1.35 && u < 1.47 ? .94 : 1) + ')';
         var sw = eo(p(u, 1.5, .3)); show($('hp-w1'), 1 - sw, 'translateX(' + (-60 * sw) + 'px)'); show($('hp-w2'), sw, 'translateX(' + (60 * (1 - sw)) + 'px)');
         $('hp-st2').classList.toggle('on', u > 1.5);
         var k = pop(p(u, 2.0, .4)); show($('hp-okp'), cl(k * 1.4), 'scale(' + (.9 + .1 * k) + ')');
@@ -583,13 +615,20 @@
     function seek(t) {
       scr.forEach(function (s, i) {
         var a = i * SEG, u = t - a;
-        var fin = i === 0 ? Math.max(p(t, 0, .25), p(t, TOTAL - .25, .25)) : p(t, a, .25); // the first screen also fades in at the loop's end
-        var o = Math.min(fin, i === N - 1 ? 1 - p(t, TOTAL - .25, .25) : 1 - p(t, a + SEG - .2, .25));
-        if (i === 0 && t > TOTAL - .3) { u = 0; }
-        // A card in the swipe row is one screen: always on, never fading
-        // through black, so its first frame is already there before it plays.
-        views[i].style.opacity = row ? 1 : o;
-        if (u > -.3 && u < SEG + .3) A[s.id](u);
+        if (row) { views[i].style.opacity = 1; if (u > -.3 && u < SEG + .3) A[s.id](u); return; }
+        // Like an app pushing a new screen: the next one slides in from the
+        // right as the last slides a little left and fades, overlapping, so
+        // the phone never dips to black. Time is counted round the loop, so
+        // the first screen arriving after the last is the same move.
+        var IN = .5, OUT = .32, LEAD = .14, L = SEG + LEAD;
+        var d = ((t - (a - LEAD)) % TOTAL + TOTAL) % TOTAL;
+        var v = views[i];
+        if (d >= L) { v.style.opacity = 0; v.style.visibility = 'hidden'; return; }
+        var kin = eo(d / IN), ko = p(d, L - OUT, OUT); ko = ko * ko;
+        v.style.visibility = '';
+        v.style.opacity = Math.min(1, kin * 1.15) * (1 - ko);
+        v.style.transform = 'translateX(' + ((1 - kin) * 70 - ko * 46).toFixed(1) + 'px) scale(' + (.985 + .015 * kin - .015 * ko).toFixed(4) + ')';
+        A[s.id](d - LEAD);
       });
       var c = Math.max(0, Math.min(N - 1, Math.floor(t / SEG)));
       if (c !== cur) {
