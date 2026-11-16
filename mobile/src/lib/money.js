@@ -40,7 +40,7 @@ export function reasonWord(key, list) {
 }
 
 export function money(pence) { return pounds(pence); }
-/* "£250 a month", or "£41.67 a month" for a yearly plan. */
+/* "£349 a month", or "£41.67 a month" for a yearly plan. */
 export function perMonth(pence) { return pounds(pence) + ' a month'; }
 
 export function day(iso) {

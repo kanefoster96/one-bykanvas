@@ -24,7 +24,7 @@ const PLANS = {
   starter:  { label: 'Kanvas One — Starter',  amount: 999,   yearly: 9900,   points: 1 },
   business: { label: 'Kanvas One — Business', amount: 5000,  yearly: 50000,  points: 1 },
   pro:      { label: 'Kanvas One — Pro',      amount: 12000,                 points: 3 },
-  max:      { label: 'One by Kanvas',      amount: 25000,                  points: 5 }
+  max:      { label: 'One by Kanvas',      amount: 34900,                  points: 5 }
 };
 
 /* What a request costs, and what it would cost paid for on its own. */

@@ -107,7 +107,7 @@ function planNote(plan, name, site) {
       ],
       ctaText: 'See what One does',
       ctaHref: `${site}/plans.html#max`,
-      ctaNote: 'It is &pound;250 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.',
+      ctaNote: 'It is &pound;349 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.',
       footer: 'You&rsquo;re getting this because your Kanvas One plan went live about a month ago. It is the only email like it.',
       footerLinks: standardFooter(site)
     }),
@@ -118,7 +118,7 @@ function planNote(plan, name, site) {
         + `- Your Google ranking worked on every month.\n`
         + `- Reviews, referrals and upsells asked for automatically, and the follow-up emails written and sent for you.\n`
         + `- Business email at your own address. Built per business type: Trades, Clubs, Salon, or yours.\n\n`
-        + `It is GBP 250 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.\n`
+        + `It is GBP 349 a month, no setup fee. If you ever want it, switch from your account. If not, nothing changes.\n`
         + `${site}/plans.html#max\n`
   };
 }
@@ -298,9 +298,9 @@ function growthTwo(lead, site) {
         preheader: 'What it really costs, and what happens if it doesn’t work.',
         heading: 'The two questions everyone asks',
         lines: [
-          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;250 a month for everything: website, member app, trial bookings, memberships, payments, getting found on Google and AI search, and the ads run for you. We build it first, then your first 3 months of ads are on us, as a free test. After that, keep them going on your own budget, paid straight to Meta, and we keep running them for you. Or stop them and keep everything else. We never take a cut of what your members pay.',
+          '<strong>&ldquo;What does it really cost?&rdquo;</strong> &pound;349 a month for everything: website, member app, trial bookings, memberships, payments, getting found on Google and AI search, and the ads run for you. We build it first, then your first 3 months of ads are on us, as a free test. After that, keep them going on your own budget, paid straight to Meta, and we keep running them for you. Or stop them and keep everything else. We never take a cut of what your members pay.',
           '<strong>&ldquo;What if it doesn&rsquo;t work?&rdquo;</strong> There&rsquo;s no contract and no minimum. Cancel any time from your account.',
-          'And when your classes are full, we pause the ads. You just pay the &pound;250.',
+          'And when your classes are full, we pause the ads. You just pay the &pound;349.',
           'This is the last email about your plan. If now isn&rsquo;t the time, no hard feelings.'
         ],
         ctaText: 'Chat with Kane about your club',
@@ -309,7 +309,7 @@ function growthTwo(lead, site) {
         footer: 'You&rsquo;re getting this because you asked for a free growth plan at kanvas.one. This is the last email about it.',
         footerLinks: standardFooter(site)
       }),
-      text: '"What does it really cost?" £250 a month for everything, including getting found on Google and AI search. We build it first, then your first 3 months of ads are on us, as a free test. After that, keep them going on your own budget, paid straight to Meta, and we keep running them for you. Or stop them and keep everything else. We never take a cut of what your members pay.\n\n'
+      text: '"What does it really cost?" £349 a month for everything, including getting found on Google and AI search. We build it first, then your first 3 months of ads are on us, as a free test. After that, keep them going on your own budget, paid straight to Meta, and we keep running them for you. Or stop them and keep everything else. We never take a cut of what your members pay.\n\n'
         + '"What if it doesn’t work?" No contract, no minimum. Cancel any time.\n\n'
         + 'When you’re full, we pause the ads.\n\n'
         + `Chat with Kane about your club: ${site}/#chat\n\nThis is the last email about your plan.\n`

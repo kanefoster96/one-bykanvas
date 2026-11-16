@@ -424,7 +424,7 @@ ${term('costper')}
     <tr><td>Selling extras</td><td>Classes, terms and camps</td><td>Plus uniform, kit, show tickets and event fees</td></tr>
     <tr><td>Talking to parents</td><td>Email and texts</td><td>Push notifications, live chat, a community feed, email, reminder texts sent for you, and WhatsApp Business on your number</td></tr>
     <tr><td>Something missing</td><td>Use what&rsquo;s there</td><td>Tell me what your club needs and I&rsquo;ll do my best to build it, at no extra cost</td></tr>
-    <tr><td>Price</td><td>From &pound;34.99 a month, plus a fee on each payment (from 2.5% including card fees)</td><td>&pound;250 a month, flat. We take 0% of your payments</td></tr>
+    <tr><td>Price</td><td>From &pound;34.99 a month, plus a fee on each payment (from 2.5% including card fees)</td><td>&pound;349 a month, flat. We take 0% of your payments</td></tr>
   </tbody>
 </table></div>
 <p class="lc-note">ClassForKids details from their own website, checked October 2026. Prices and features change, so check theirs for the latest.</p>
@@ -432,7 +432,7 @@ ${term('costper')}
 <h2>Which costs more?</h2>
 <p>For a small club, ClassForKids will usually cost less each month. That&rsquo;s worth saying plainly.</p>
 <p>The difference is that our price doesn&rsquo;t grow as you do. With a fee on every payment, the more members you have, the more you pay. At 2.5%, a club taking &pound;5,000 a month pays about &pound;125 a month in payment fees on top of the subscription, and that fee includes the card processing.</p>
-<p>With Kanvas One, members pay into your own Stripe account, you pay Stripe&rsquo;s own card fees directly, and we add nothing on top. Card fees grow with your takings whichever system you use. Our &pound;250 doesn&rsquo;t.</p>
+<p>With Kanvas One, members pay into your own Stripe account, you pay Stripe&rsquo;s own card fees directly, and we add nothing on top. Card fees grow with your takings whichever system you use. Our &pound;349 doesn&rsquo;t.</p>
 <p>And what you&rsquo;re paying for is different. Kanvas One is your app, your website and your ads, with someone running them for you. It&rsquo;s built to bring new families in, not just to look after the ones you have.</p>
 
 <h2>Who should stay with ClassForKids</h2>
@@ -452,10 +452,10 @@ ${term('costper')}
 
 <h2>Switching over</h2>
 <p>We move your members, memberships and timetable across for you. Between terms is the easiest time, and your parents get one message with the link to your new app.</p>`,
-    one: ['Your own app and website, with your club&rsquo;s name on them.', 'Bookings, memberships, registers and payments, like you have now.', 'Ads run for you, the first 3 months on us.', 'We take 0% of your payments, so your bill stays &pound;250 as you grow.', 'Free switch-over: your members, memberships and timetable moved for you.', 'Me on the other end of a message, not a ticket queue.'],
+    one: ['Your own app and website, with your club&rsquo;s name on them.', 'Bookings, memberships, registers and payments, like you have now.', 'Ads run for you, the first 3 months on us.', 'We take 0% of your payments, so your bill stays &pound;349 as you grow.', 'Free switch-over: your members, memberships and timetable moved for you.', 'Me on the other end of a message, not a ticket queue.'],
     oneLead: 'Everything you have now. <span>Plus the bit that grows your club.</span>',
     faq: [
-      ['Is Kanvas One cheaper than ClassForKids?', 'Not for a small club. ClassForKids starts lower each month. Kanvas One is a flat &pound;250 a month with no cut of your payments, and it includes your own app, website and ads run for you, so it suits clubs that want to grow.'],
+      ['Is Kanvas One cheaper than ClassForKids?', 'Not for a small club. ClassForKids starts lower each month. Kanvas One is a flat &pound;349 a month with no cut of your payments, and it includes your own app, website and ads run for you, so it suits clubs that want to grow.'],
       ['Can I move from ClassForKids to Kanvas One?', 'Yes. We move your members, memberships and timetable across for you. Between terms is easiest, and your parents get one message with the link to your new app.'],
       ['Does Kanvas One take a percentage of my payments?', 'No. Members pay into your own Stripe account at Stripe&rsquo;s own card rates, and we take 0%.']
     ],
@@ -649,7 +649,7 @@ ${term('capacity')}
   <li>Charge termly or monthly, whichever your families expect.</li>
   <li>Review your price whenever classes fill up.</li>
 </ol>`,
-    one: ['Your free profit plan works out your price and your break-even before you start.', 'Monthly, termly or a mix, paid by card in your own app.', 'Sibling and family discounts worked out automatically.', 'Payments go straight to your own Stripe account. We take 0%.', 'A flat &pound;250 a month, however many members you have.'],
+    one: ['Your free profit plan works out your price and your break-even before you start.', 'Monthly, termly or a mix, paid by card in your own app.', 'Sibling and family discounts worked out automatically.', 'Payments go straight to your own Stripe account. We take 0%.', 'A flat &pound;349 a month, however many members you have.'],
     oneLead: 'Work out your price. <span>Then get paid it, automatically.</span>',
     faq: [
       ['How much should I charge for a kids’ class?', 'Work it out from what you need, not from what others charge. Add up what you want to take home plus every cost for the year, divide by 10 months, then divide by 80% of your class spaces. That gives you a price per child per month. Our own club charges £50 a month.'],
@@ -914,7 +914,7 @@ ${postOnce('Classes off tonight', 'The snow&rsquo;s too heavy, so tonight&rsquo;
     oneLead: 'Your club, on every parent&rsquo;s phone. <span>With your name on it.</span>',
     faq: [
       ['Does a small club need an app?', 'It helps small clubs most, because it takes the admin off your plate and makes you look established. Messages are free and seen, registers and payments run themselves, and parents find everything in one place.'],
-      ['How much does it cost to have your own app?', 'Apple charges £79 a year and Google a one-off $25 for the developer accounts your app is published under. Kanvas One includes the app itself in its £250 a month.'],
+      ['How much does it cost to have your own app?', 'Apple charges £79 a year and Google a one-off $25 for the developer accounts your app is published under. Kanvas One includes the app itself in its £349 a month.'],
       ['Will parents actually download it?', 'They will if the app is where things happen: the pass to scan in at the door, payments, photos and news. Everything should still work on your website for anyone who doesn’t.']
     ],
     related: ['easiest-software-for-dance-schools', 'classforkids-alternative']
@@ -1018,7 +1018,7 @@ ${chain('From idea to first members', [['1', 'One class, one age group'], ['2', 
 <p>This is the bit I enjoy most. If you&rsquo;re planning a club, message me and I&rsquo;ll help you work out your price, what you can afford for rent and coaches, and how many members you need to break even.</p>
 ${term('breakeven')}
 <p>If you&rsquo;d like, we can then set everything up for you on Kanvas One: your website, your own app, trial bookings and payments, run for you. Your first 3 months of ads are on us, up to &pound;100 a month, so free trials come in while you get going.</p>
-<p>It&rsquo;s &pound;250 a month, with no contract. At &pound;50 a month, five members cover it. Your ads start once your website and app are live, which is usually 4 to 8 weeks after you join, so it&rsquo;s worth starting before your first class.</p>`,
+<p>It&rsquo;s &pound;349 a month, with no contract. At &pound;50 a month, seven members cover it. Your ads start once your website and app are live, which is usually 4 to 8 weeks after you join, so it&rsquo;s worth starting before your first class.</p>`,
     one: ['Help working out your price, rent and coach costs before you open.', 'Your website and your own app, set up for you.', 'Free trial bookings, consent and medical forms from day one.', 'Your first 3 months of ads on us, up to &pound;100 a month.', 'No contract: cancel any time.'],
     oneLead: 'Starting a club? <span>Let&rsquo;s get you going.</span>',
     faq: [
@@ -1679,7 +1679,7 @@ ${postOnce('Photo day on Saturday', 'Full club kit and hair tied back please. Ph
 <p>Running a club is running a business, and business comes with its own words. You don&rsquo;t need them to run a great club. But knowing them makes it much easier to spot what&rsquo;s working, what isn&rsquo;t, and what to fix.</p>
 <p>Here they are in plain English, with examples from a real club. Wherever you see a word with a dotted line in our guides, tap it for the same explanation.</p>
 ${WORD_LIST}`,
-    one: ['Trials, show-ups and new members counted for you.', 'See who&rsquo;s joined, who&rsquo;s paused and who&rsquo;s left.', 'Failed payments chased, so involuntary churn stays low.', 'Your website and booking built with as little bad friction as possible.', 'A flat &pound;250 a month. We take 0% of your payments.'],
+    one: ['Trials, show-ups and new members counted for you.', 'See who&rsquo;s joined, who&rsquo;s paused and who&rsquo;s left.', 'Failed payments chased, so involuntary churn stays low.', 'Your website and booking built with as little bad friction as possible.', 'A flat &pound;349 a month. We take 0% of your payments.'],
     oneLead: 'The numbers that matter. <span>Kept for you.</span>',
     faq: [
       ['What is churn?', 'Churn is how many members leave over a period, usually counted each month. If 3 of your 60 members leave in a month, your churn is 5%.'],
@@ -1747,7 +1747,7 @@ const FOOTER = `<footer class="foot" data-tone="light">
 const SCRIPTS = `<script src="/consent.js?v=5712679a"></script>
 <script src="/supabase-config.js?v=90fd89dc"></script>
 <script src="/session.js?v=59739977"></script>
-<script src="/script.js?v=6595abfc"></script>
+<script src="/script.js?v=4012ca19"></script>
 <script src="/chat.js?v=f4fc006f" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built One. Ask me anything about running or growing your club. I&rsquo;ll give you a straight answer." data-quick="How do I get more trials to turn up?|Can I see your site and app?|Is it right for my club?" defer></script>
 <script src="/beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/admin-pill.js?v=06da798b"></script>
@@ -1876,7 +1876,7 @@ function indexPage() {
     <p class="lc-none" id="lcNone" hidden>No guide on that yet. <a href="#" data-chat-open="Hi Kane, I was looking for a guide on this:">Ask me instead &rsaquo;</a></p>
   </div>
 </section>
-${oneBand('Everything in these guides. <span>In one system.</span>', ['Trials confirmed and reminded four times, automatically.', 'Bring-a-friend passes, joining in a tap and follow-ups sent for you.', 'Ads run for you, the first 3 months on us.', 'Your own app and website, with your club&rsquo;s name.', 'A flat &pound;250 a month. We take 0% of your payments.'])}
+${oneBand('Everything in these guides. <span>In one system.</span>', ['Trials confirmed and reminded four times, automatically.', 'Bring-a-friend passes, joining in a tap and follow-ups sent for you.', 'Ads run for you, the first 3 months on us.', 'Your own app and website, with your club&rsquo;s name.', 'A flat &pound;349 a month. We take 0% of your payments.'])}
 </main>
 
 ${FOOTER}

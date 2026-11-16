@@ -156,7 +156,7 @@ async function start() {
 }
 
 /* What each plan costs a month, for the checkout and purchase events. */
-var MONTHLY_GBP = { starter: 9.99, business: 50, max: 250 };
+var MONTHLY_GBP = { starter: 9.99, business: 50, max: 349 };
 
 /* The browser's copy of the sale, once the plan is live: same event and id
    (the subscription) as the webhook's, so Meta keeps one. A no-op without
@@ -752,7 +752,7 @@ var STATUS_TEXT = {
   paused:             ['Paused', 'Your subscription is paused.']
 };
 
-var PLAN_LABEL = { starter: 'Starter — £9.99/month', business: 'Business — £50/month', pro: 'Pro — £120/month', max: 'One — £250/month' };
+var PLAN_LABEL = { starter: 'Starter — £9.99/month', business: 'Business — £50/month', pro: 'Pro — £120/month', max: 'One — £349/month' };
 var YEAR_LABEL = { starter: 'Starter — £99/year', business: 'Business — £500/year' };
 
 function showBilling(row) {

@@ -75,7 +75,7 @@
   }
 
   /* ---------- 3. The empty-spaces sum ---------- */
-  var PRICE = 250, SEATS = 40;
+  var PRICE = 349, SEATS = 40;
   var empty = document.getElementById('hEmpty'), fee = document.getElementById('hFee');
   var seats = document.getElementById('hSeats'), resN = document.getElementById('hResN');
   var resLabel = document.getElementById('hResLabel'), fillBtn = document.getElementById('hFill');

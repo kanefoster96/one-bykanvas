@@ -91,7 +91,7 @@ module.exports = [
     search: 'Facebook and Instagram ads for local businesses, run for you',
     h1: 'Facebook and Instagram ads, run for you.',
     lede: '3 months of ads on us. We write the offer, build the ad and the form, run it, and tell you each month what it cost and what came in.',
-    desc: 'Facebook and Instagram ads for local businesses, set up, run and tracked for you. We write the offer, build the ad and the form, and report every month. Part of One, £250 a month, with 3 months of ads on us.',
+    desc: 'Facebook and Instagram ads for local businesses, set up, run and tracked for you. We write the offer, build the ad and the form, and report every month. Part of One, £349 a month, with 3 months of ads on us.',
     pain: 'You boosted a post once and got likes from people three hundred miles away. An agency wanted &pound;600 a month before the budget. So the ads never got done, and the phone stays as quiet as it was.',
     lines: ['Run a Facebook ad for my boiler service offer', 'Get me more customers in my town', 'Put a form on my site the ad can send people to', 'Tell me what the ads brought in this month'],
     how: [
@@ -108,7 +108,7 @@ module.exports = [
       'Every enquiry from the ads followed up by email if it goes quiet'
     ],
     plan: 'max',
-    planLine: 'Ads are part of One: &pound;250 a month with the website, the ranking work and the follow-up emails in it. No setup fee, and your price is locked for as long as you stay.',
+    planLine: 'Ads are part of One: &pound;349 a month with the website, the ranking work and the follow-up emails in it. No setup fee, and your price is locked for as long as you stay.',
     faq: [
       ['Who pays for the ads?', 'For your first 3 months of ads, we do, up to &pound;100 a month: a free test of what ads can do for you. After that it&rsquo;s your choice. Keep them going on your own budget, paid straight to Meta from your own ad account, and we keep running them as part of One. Or turn them off and keep everything else. We never take a cut of what your customers pay.'],
       ['Will it definitely bring customers?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, and a note every month showing what it brought in, so you can decide with numbers.'],
