@@ -301,17 +301,37 @@
   /* Any link on the page can open it: <a href="#" data-chat-open>. With a
      value, that message waits as a one-tap send. With data-chat-draft, the
      words go in the box instead, for them to finish ("Hi Kane, can One …").
+     With data-chat-send, the message is sent straight away, as if they had
+     typed it, so the ask reaches Kane at once and they can carry on with
+     their own questions.
      data-chat-step="17|What they did" counts it as a step (beacon.js). */
   function step(st) {
     if (!st) return;
     var i = st.indexOf('|');
     (window.k1q = window.k1q || []).push([+st.slice(0, i), st.slice(i + 1)]);
   }
+  /* Sent once per browser: tapping the same button again just opens the
+     chat, rather than sending the same message twice. */
+  function sendNow(text) {
+    if (askEl) { askEl.remove(); askEl = null; }
+    if (quickEl) { quickEl.remove(); quickEl = null; }
+    var key = 'k1c-sent:' + text, sent = false;
+    try { sent = localStorage.getItem(key) === '1'; } catch (er) {}
+    if (sent && conv) return;
+    setTimeout(function () {
+      if (editMode) return;
+      input.value = text;
+      try { localStorage.setItem(key, '1'); } catch (er) {}
+      form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true }));
+    }, 350);
+  }
   document.addEventListener('click', function (e) {
     var t = e.target.closest && e.target.closest('[data-chat-open]');
     if (!t) return;
     e.preventDefault(); if (tz) tz.remove(); setOpen(true);
     step(t.getAttribute('data-chat-step'));
+    var send = t.getAttribute('data-chat-send');
+    if (send) { sendNow(send); return; }
     var draft = t.getAttribute('data-chat-draft');
     if (draft) {
       if (askEl) { askEl.remove(); askEl = null; }
