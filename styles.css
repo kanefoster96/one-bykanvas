@@ -3643,3 +3643,8 @@ body.home .band-dark :is(.oc-card,.ab-card,.up-card) .lede{color:#6e6e73}
 @media (prefers-reduced-motion:reduce){
   .btn-primary:active,.band-dark :is(.btn-ghost,.rail-btn):active{scale:none}
 }
+
+/* The chat's "1" (chat.js): on the icon itself rather than the corner of
+   its 44px tap area, with a ring in the nav's colour so it reads as a
+   badge, not a stray dot. */
+.nav .nav-chat .k1c-n{top:6px;right:4px;box-shadow:0 0 0 2px #fff}

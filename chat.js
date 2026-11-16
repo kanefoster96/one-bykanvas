@@ -61,6 +61,7 @@
   var css = '.k1c-btn{position:fixed;right:18px;bottom:18px;z-index:2147483000;width:56px;height:56px;border-radius:50%;border:0;background:' + color + ';color:#fff;box-shadow:0 6px 24px rgba(0,0,0,.22);cursor:pointer;display:flex;align-items:center;justify-content:center;font:inherit}'
     + '.k1c-btn svg{width:26px;height:26px}.k1c-n{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e5484d;color:#fff;font:600 12px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;text-align:center}'
     + '.k1c-launch{position:relative}.k1c-launch .k1c-n{top:-3px;right:-5px;min-width:16px;height:16px;padding:0 4px;font-size:11px;line-height:16px}'
+    + '.k1c-n.k1c-pop{animation:k1c-pop .5s cubic-bezier(.34,1.56,.64,1)}@keyframes k1c-pop{from{transform:scale(0)}to{transform:scale(1)}}@media (prefers-reduced-motion:reduce){.k1c-n.k1c-pop{animation:none}}'
     + '.k1c{position:fixed;right:18px;bottom:86px;z-index:2147483000;width:min(360px,calc(100vw - 36px));max-height:min(560px,calc(100vh - 110px));display:flex;flex-direction:column;background:#fff;color:#1d1d1f;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.24);overflow:hidden;font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}'
     + '.k1c[hidden]{display:none}.k1c-head{padding:14px 16px;background:' + color + ';color:#fff;display:flex;justify-content:space-between;align-items:center}.k1c-head b{font-size:15px}.k1c-head small{display:block;opacity:.85;font-size:12.5px}.k1c-x{background:none;border:0;color:#fff;font-size:22px;cursor:pointer;line-height:1;padding:4px 8px}'
     + '.k1c-msgs{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:8px;min-height:160px;-webkit-overflow-scrolling:touch}'
@@ -139,11 +140,11 @@
     var sb0 = panel.querySelector('.k1c-send'); sb0.innerHTML = SEND; sb0.setAttribute('aria-label', 'Send message');
     panel.querySelector('textarea').placeholder = 'Type a message\u2026';
     var dp = panel.querySelector('.k1c-details p');
-    dp.textContent = 'Who\u2019s asking? Leave an email too and ' + (agent ? 'I\u2019ll' : 'we\u2019ll') + ' reply there if you\u2019ve gone.';
+    dp.textContent = 'Nice to meet you! Can we have your name and email, so we can get back to you asap in case we\u2019re offline?';
     var dIns = panel.querySelectorAll('.k1c-details input'), wrapIn = document.createElement('div'); wrapIn.className = 'k1s-in';
     dIns[0].parentNode.insertBefore(wrapIn, dIns[0]);
     Array.prototype.forEach.call(dIns, function (el) { wrapIn.appendChild(el); });
-    dIns[1].placeholder = 'Email (optional)';
+    dIns[1].placeholder = 'Your email';
     panel.querySelector('.k1c-skip').textContent = 'Skip';
     var foot = document.createElement('p'); foot.className = 'k1s-foot';
     foot.textContent = 'Replies come here, and by email if you leave one.';
@@ -251,6 +252,11 @@
     // Full screen on a phone: the page behind must not scroll instead.
     if (full && window.innerWidth <= 700) document.documentElement.style.overflow = open ? 'hidden' : '';
     if (open && tz) { tz.remove(); tz = null; }
+    if (open && nudged) {
+      nudged = false;
+      if (plainLabel) btn.setAttribute('aria-label', plainLabel);
+      step(me.getAttribute('data-teaser-step'));
+    }
     if (open) {
       renderGuide(); unread = 0; badge.hidden = true;
       /* On a phone, opening must not throw the keyboard up: it hides the
@@ -343,23 +349,21 @@
     var text = t.getAttribute('data-chat-open');
     if (text) ask(text);
   });
-  /* The teaser: once a visit, a few seconds in, never over an open chat or
-     for someone already talking to us. */
-  var tz = null;
+  /* The nudge: once a visit, a few seconds in, a "1" on the chat button,
+     for the hello waiting inside. Never over an open chat or for someone
+     already talking to us. (It used to be a card over the page; a quiet
+     dot asks for less.) Opening the chat while it shows counts as the
+     data-teaser-step. */
+  var tz = null, nudged = false, plainLabel = btn.getAttribute('aria-label') || '';
   if (sheet && teaser && !conv) {
     var seen = false; try { seen = sessionStorage.getItem(KEY + ':t') === '1'; } catch (e) {}
     if (!seen) setTimeout(function () {
-      if (open || conv) return;
+      if (open || conv || unread) return;
       try { sessionStorage.setItem(KEY + ':t', '1'); } catch (e) {}
-      tz = document.createElement('div'); tz.className = 'k1s-teaser'; tz.setAttribute('role', 'button'); tz.tabIndex = 0;
-      tz.innerHTML = (avatar ? '<img class="k1s-av" alt="">' : '') + '<div><b></b><p></p></div><button class="k1s-tx" type="button" aria-label="Dismiss">&times;</button>';
-      if (avatar) tz.querySelector('img').src = avatar;
-      tz.querySelector('b').textContent = agent || name;
-      tz.querySelector('p').textContent = teaser;
-      tz.querySelector('.k1s-tx').addEventListener('click', function (e) { e.stopPropagation(); tz.remove(); });
-      tz.addEventListener('click', function () { tz.remove(); setOpen(true); step(me.getAttribute('data-teaser-step')); });
-      tz.addEventListener('keydown', function (e) { if (e.key === 'Enter') { tz.remove(); setOpen(true); step(me.getAttribute('data-teaser-step')); } });
-      document.body.appendChild(tz);
+      nudged = true; unread = 1;
+      badge.textContent = '1'; badge.hidden = false;
+      badge.classList.add('k1c-pop');
+      btn.setAttribute('aria-label', (plainLabel || 'Chat with ' + name) + ', 1 new message');
     }, 9000);
   }
   panel.querySelector('.k1c-x').addEventListener('click', function () { setOpen(false); });
