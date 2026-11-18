@@ -21,8 +21,11 @@
   --wrap:1040px;
   --nav-h:48px;
   --ease:cubic-bezier(.25,.1,.25,1);
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font:"Geist",-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
+
+/* Geist, the homepage's typeface, on every page so the site reads as one. */
+@font-face{font-family:"Geist";src:url("/assets/fonts/Geist-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
 
 *,*::before,*::after{box-sizing:border-box}
 /* A display rule on a class beats the hidden attribute, which had left the
@@ -88,7 +91,7 @@ h3{font-size:21px;letter-spacing:-.02em}
 }
 .logo{
   margin-right:auto;
-  font-size:22px;font-weight:600;letter-spacing:-.045em;color:var(--ink);
+  font-size:22px;font-weight:700;letter-spacing:-.045em;color:var(--ink);
   text-transform:lowercase;line-height:1;
 }
 .logo:hover{text-decoration:none;opacity:.7}
@@ -174,23 +177,18 @@ body.locked{overflow:hidden}
 .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px}
 
 /* ---------- The wordmark's full stop ----------
-   "one." with the full stop in the green gradient, wherever the wordmark
-   is set: the header, the footer, the homepage hero. Left to right across
-   the dot, so the whole gradient shows on so small a mark. */
+   "one." wherever the wordmark is set: the header, the footer, the hero.
+   Drawn as a round dot in the app icon's orange, since the typeface's own
+   full stop is square. The "." stays in the text for copying and screen
+   readers, just not painted. overflow:hidden puts the box's baseline at its
+   bottom edge, so the dot sits on the line like a full stop. */
 .wm-dot{
-  /* Tight letter-spacing makes the full stop's box narrower than the glyph,
-     and a text gradient only paints inside the box, so the right of the dot
-     was cut off. Padding widens the painted area; the negative margin keeps
-     the spacing as it was. */
-  padding-right:.12em;margin-right:-.12em;
-  background:linear-gradient(90deg,#c93e09 0%,#ff4f12 100%);
-  -webkit-background-clip:text;background-clip:text;
+  display:inline-block;width:.17em;height:.17em;margin-left:0;
+  border-radius:50%;overflow:hidden;vertical-align:baseline;line-height:0;
+  background:linear-gradient(135deg,#c93e09 0%,#ff4f12 100%);
   color:transparent;-webkit-text-fill-color:transparent;
 }
-@supports not ((-webkit-background-clip:text) or (background-clip:text)){
-  .wm-dot{background:none;color:var(--good);-webkit-text-fill-color:currentColor}
-}
-@media (forced-colors:active){.wm-dot{background:none;color:CanvasText;-webkit-text-fill-color:CanvasText}}
+@media (forced-colors:active){.wm-dot{forced-color-adjust:none;background:CanvasText}}
 
 /* ---------- Free, in green ----------
    The word "free" in a heading next to the free-page ask, and nowhere
@@ -243,10 +241,13 @@ body.locked{overflow:hidden}
   overflow:hidden;
 }
 .hero-pill{
-  display:inline-flex;align-items:center;gap:6px;margin:0 0 clamp(18px,3vw,26px);
-  padding:8px 16px;border-radius:980px;background:var(--good-soft);color:var(--good);
-  font-size:13.5px;font-weight:600;letter-spacing:.01em;
+  display:inline-flex;align-items:center;gap:8px;margin:0 0 clamp(18px,3vw,26px);
+  padding:7px 14px 7px 10px;border-radius:980px;background:var(--bg-grey,#f5f5f7);
+  box-shadow:inset 0 0 0 1px var(--line-soft,#e8e8ed);color:var(--ink);
+  font-size:13.5px;font-weight:600;line-height:1.25;
 }
+/* The same orange dot as .hx-pill, unless the pill brings its own icon. */
+.hero-pill:not(:has(svg))::before{content:"";flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:#ff5a1f}
 .hero h1{
   font-size:clamp(76px,17vw,168px);
   letter-spacing:-.055em;line-height:.9;
@@ -288,7 +289,7 @@ body.locked{overflow:hidden}
    chosen button, so the buttons keep their natural widths and only the knob
    travels. Until measured (or without JS) the chosen button is simply lit. */
 .bill-toggle{
-  position:relative;display:inline-flex;gap:4px;margin-top:26px;padding:4px;border-radius:980px;
+  position:relative;display:inline-flex;gap:4px;margin-top:26px;padding:4px;border-radius:980px;max-width:100%;
   background:#f2f2f5;border:1px solid var(--line-soft);
 }
 .bill-toggle::before{
@@ -922,7 +923,7 @@ body.dialog-open{overflow:hidden}
 /* The pill was a label. As a link it needs to look pressable without
    becoming a second button above the logo. */
 a.hero-pill{text-decoration:none;transition:background .2s var(--ease)}
-a.hero-pill:hover{background:#ffe0d1;text-decoration:none}
+a.hero-pill:hover{background:#ececf0;text-decoration:none}
 a.hero-pill:focus-visible{outline:2px solid var(--good);outline-offset:3px}
 .pill-go{margin-left:1px;font-size:15px;line-height:1;opacity:.75}
 a.hero-pill:hover .pill-go{opacity:1}
@@ -1329,7 +1330,7 @@ a.hero-pill:hover .pill-go{opacity:1}
 
 /* ---------- Footer ---------- */
 .foot{background:var(--bg-grey);padding:56px 0 calc(68px + env(safe-area-inset-bottom));border-top:1px solid var(--line-soft)}
-.foot-logo{margin:0;font-size:24px;font-weight:600;letter-spacing:-.045em}
+.foot-logo{margin:0;font-size:24px;font-weight:700;letter-spacing:-.045em}
 .foot-by{margin:2px 0 0;font-size:13px;color:var(--ink-3)}
 .foot-links{display:flex;flex-wrap:wrap;gap:22px;margin:26px 0 14px}
 .foot-links a{font-size:14px;color:var(--ink-2)}

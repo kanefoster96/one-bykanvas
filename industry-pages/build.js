@@ -174,7 +174,7 @@ const FOOT = `<footer class="foot">
 <script src="supabase-config.js?v=90fd89dc"></script>
 <script src="session.js?v=59739977"></script>
 <script src="script.js?v=${SCRIPT_V}"></script>
-<script src="/onemark.js?v=26409b0c" defer></script>
+<script src="/onemark.js?v=1a30917b" defer></script>
 <script src="/glossary.js?v=c896ab42" defer></script>
 <script src="reviews.js?v=4d29b5d9"></script>
 <script src="chat.js?v=1c33bee0" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-edits data-trigger="#navChat" data-full defer></script>

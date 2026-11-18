@@ -26,7 +26,7 @@
   --r:20px;--r-lg:28px;--wrap:1080px;
   --sh:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);
   --ease:cubic-bezier(.25,.1,.25,1);
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font:"Geist",-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -42,8 +42,10 @@ h1,h2,h3,p{margin:0}
 /* ---- nav ---- */
 .nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid rgba(0,0,0,.06)}
 .nav-in{display:flex;align-items:center;gap:18px;height:60px}
-.logo{font-size:24px;font-weight:700;letter-spacing:-.04em;text-decoration:none}
-.logo i{font-style:normal;color:var(--neon)}
+@font-face{font-family:"Geist";src:url("/assets/fonts/Geist-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+.logo{font-size:22px;font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--ink);text-decoration:none}
+/* The wordmark's round dot, as in styles.css. */
+.wm-dot{display:inline-block;width:.17em;height:.17em;margin-left:0;border-radius:50%;overflow:hidden;vertical-align:baseline;line-height:0;background:linear-gradient(135deg,#c93e09 0%,#ff4f12 100%);color:transparent;-webkit-text-fill-color:transparent}
 .nav-tag{font-size:13px;font-weight:600;color:var(--ink-2);padding:4px 10px;border-radius:999px;background:var(--soft)}
 .nav-links{display:none;gap:22px;margin-left:auto;font-size:14px}
 .nav-links a{text-decoration:none;color:var(--ink-2)}
@@ -164,6 +166,7 @@ h3{font-size:21px;line-height:1.25;letter-spacing:-.015em;font-weight:700}
 
 /* ---- full classes ---- */
 .split{display:grid;gap:40px;align-items:center}
+.split>*{min-width:0}
 @media (min-width:900px){.split{grid-template-columns:1fr 1fr;gap:64px}}
 .split .lede{margin-top:18px}
 .classes{background:#fff;border-radius:var(--r-lg);padding:10px;box-shadow:var(--sh)}
@@ -313,7 +316,7 @@ p,li,summary,small{text-wrap:pretty}
 
 <header class="nav">
   <div class="wrap nav-in">
-    <a class="logo" href="/" aria-label="Kanvas One home">one<i>.</i></a>
+    <a class="logo" href="/" aria-label="Kanvas One home">one<span class="wm-dot">.</span></a>
     <span class="nav-tag">for kids&rsquo; clubs</span>
     <nav class="nav-links" aria-label="Page">
       <a href="#how">How it works</a>
@@ -854,6 +857,6 @@ p,li,summary,small{text-wrap:pretty}
 <script src="/beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/glossary.js?v=c896ab42" defer></script>
 <script src="/chat.js?v=1c33bee0" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" data-name="Kanvas One" data-trigger="#navChat" data-full data-style="sheet" data-color="#c93e09" data-agent="Kane" data-avatar="/assets/kane-sm.jpg?v=cff8a019" data-subtitle="Founder of Kanvas One &middot; runs a dance school too" data-intro="Hi, I&rsquo;m Kane. I&rsquo;ve run our dance school since 2017 and built Kanvas One. Ask me anything, or ask to look round our own site and app. I&rsquo;ll give you a straight answer." data-quick="Can you do something my software can&rsquo;t?|Can I look round your app?|How would this work for my club?" data-teaser="Is your software missing something? Ask me if we can do it. Free, and a straight answer." data-teaser-step="18|Opened chat from the 1 on the chat icon" defer></script>
-<script src="/onemark.js?v=26409b0c" defer></script>
+<script src="/onemark.js?v=1a30917b" defer></script>
 </body>
 </html>

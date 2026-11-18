@@ -678,7 +678,7 @@ figcaption small{display:block;font-size:13px;color:var(--muted)}
 .k1-switch{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 12px 0 14px;border:0;border-radius:999px;background:transparent;color:#fff;font:inherit;cursor:pointer;text-align:left}
 .k1-switch:hover,.k1-switch[aria-expanded="true"]{background:rgba(255,255,255,.1)}
 .k1-logo{font-weight:700;font-size:17px;letter-spacing:-.04em}
-.k1-logo i{font-style:normal;color:#34c17a}
+.k1-logo i{display:inline-block;width:.17em;height:.17em;margin-left:0;border-radius:50%;overflow:hidden;vertical-align:baseline;line-height:0;background:linear-gradient(135deg,#c93e09,#ff4f12);color:transparent}
 .k1-switch-t{display:flex;flex-direction:column;line-height:1.15}
 .k1-switch-t small{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.6)}
 .k1-switch-t b{font-size:14px;font-weight:600;white-space:nowrap}

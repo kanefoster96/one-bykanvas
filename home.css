@@ -483,7 +483,10 @@ body.home .plan-wide-ticks li{font-size:16px;margin-bottom:14px}
 .up-chips .chip:nth-child(1){transform:rotate(-2deg)}
 .up-chips .chip:nth-child(2){transform:rotate(1.5deg)}
 .up-chips .chip:nth-child(3){transform:rotate(-1deg)}
-@media (max-width:760px){.up-card{grid-template-columns:1fr;gap:22px}}
+@media (max-width:760px){.up-card{grid-template-columns:minmax(0,1fr);gap:22px}}
+.up-card>*{min-width:0}
+.up-chips .chip{max-width:100%}
+.up-chips .chip-text{min-width:0;overflow:hidden;text-overflow:ellipsis}
 
 /* ---------- Reviews ---------- */
 body.home .quote{border-radius:var(--r-card);box-shadow:0 10px 30px rgba(29,29,31,.05);border:1px solid var(--line-soft)}
@@ -709,7 +712,6 @@ body.home .foot-legal{font-size:12.5px;max-width:80ch}
 /* ---------- Neon orange, everywhere on this page ----------
    The wordmark dot and the free-word gradient live in styles.css in green;
    on the homepage they take the neon orange. */
-body.home .wm-dot{background:none;color:var(--neon);-webkit-text-fill-color:var(--neon)}
 body.home .g-free{background:none;color:var(--neon);-webkit-text-fill-color:var(--neon)}
 /* Phones: the headline sized to sit on two lines, never leaving "back." alone. */
 @media (max-width:600px){.mh h1{max-width:none;font-size:clamp(32px,calc((100vw - 44px) / 9.3),44px)}}

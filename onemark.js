@@ -1,5 +1,5 @@
 /* The One wordmark in running text.
-   Wherever a sentence names the product, "One" gets the same orange gradient
+   Wherever a sentence names the product, "One" gets the same round orange
    full stop as the logo, so it reads as a name, not a stray word. Common
    phrases that just mean "one" ("One price", "One system", "one or two")
    and the company name "Kanvas One" are left alone. Runs on load and on
@@ -8,12 +8,13 @@
   if (window.__oneMark) return; window.__oneMark = true;
 
   var css = '.one-n{white-space:nowrap}' +
-    '.one-n i{font-style:normal;padding-right:.12em;margin-right:-.12em;' +
-    'background:linear-gradient(90deg,#c93e09 0%,#ff4f12 100%);-webkit-background-clip:text;background-clip:text;' +
-    'color:transparent;-webkit-text-fill-color:transparent}' +
+    /* a round dot, like the logo's: the typeface's own full stop is square */
+    '.one-n i{font-style:normal;display:inline-block;width:.17em;height:.17em;margin-left:0;border-radius:50%;' +
+    'overflow:hidden;vertical-align:baseline;line-height:0;' +
+    'background:linear-gradient(135deg,#c93e09 0%,#ff4f12 100%);color:transparent;-webkit-text-fill-color:transparent}' +
     /* on solid orange cards the orange dot would vanish, so it goes light there */
-    '.pr-item .one-n i,.fx-card .one-n i,.ev-card .one-n i,.on-orange .one-n i{background:none;color:#ffd9c7;-webkit-text-fill-color:#ffd9c7}' +
-    '@media (forced-colors:active){.one-n i{background:none;color:CanvasText;-webkit-text-fill-color:CanvasText}}';
+    '.pr-item .one-n i,.fx-card .one-n i,.ev-card .one-n i,.on-orange .one-n i{background:#ffd9c7}' +
+    '@media (forced-colors:active){.one-n i{forced-color-adjust:none;background:CanvasText}}';
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
   var SKIP = /^(SCRIPT|STYLE|NOSCRIPT|TEXTAREA|INPUT|SELECT|OPTION|TITLE|CODE|PRE|SVG|BUTTON)$/;
