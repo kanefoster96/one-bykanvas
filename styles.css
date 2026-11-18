@@ -3648,3 +3648,19 @@ body.home .band-dark :is(.oc-card,.ab-card,.up-card) .lede{color:#6e6e73}
    its 44px tap area, with a ring in the nav's colour so it reads as a
    badge, not a stray dot. */
 .nav .nav-chat .k1c-n{top:6px;right:4px;box-shadow:0 0 0 2px #fff}
+
+/* ================= Clear heroes =================
+   Every page's hero reads in one order, like the homepage: a quiet pill
+   (what this is, or isn't), a short outcome headline, a few ticks to scan,
+   then one button. Works on light and dark bands. */
+.hx-pill{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;padding:7px 14px 7px 10px;border-radius:999px;background:var(--bg-grey,#f5f5f7);box-shadow:inset 0 0 0 1px var(--line-soft,#e8e8ed);font-size:13.5px;font-weight:600;line-height:1.25;color:var(--ink,#1d1d1f);text-align:left}
+.hx-pill::before{content:"";flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:#ff5a1f}
+.band-dark .hx-pill{background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.hx-ticks{list-style:none;display:grid;gap:11px;margin:22px 0 0;padding:0;font-size:17.5px;font-weight:500;line-height:1.35;color:var(--ink,#1d1d1f)}
+.hx-ticks li{display:flex;align-items:center;gap:12px;text-align:left}
+.hx-ticks svg{flex:0 0 26px;width:26px;height:26px;padding:5px;border-radius:50%;background:rgba(201,62,9,.1);color:#c93e09}
+.center .hx-ticks,.hx-ticks.hx-center{display:inline-grid;text-align:left}
+.hx-ticks.hx-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 20px;font-size:15.5px}
+.hx-ticks.hx-row svg{flex-basis:22px;width:22px;height:22px;padding:4px}
+.hx-ticks + .cta-row,.hx-ticks + .mh-cta{margin-top:28px}
+@media (max-width:480px){.hx-ticks{font-size:16px;gap:9px}.hx-ticks.hx-row{font-size:14.5px}}

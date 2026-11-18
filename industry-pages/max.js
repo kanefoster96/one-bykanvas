@@ -39,6 +39,8 @@ module.exports = [
     name: 'One for trades',
     unit: 'job',
     promise: 'Your phone rings with jobs. The rest is done for you.',
+    h1: 'Your phone rings with jobs.',
+    ticks: ['Your own app and website, with your name on them', 'Local ads that bring in jobs', 'Quotes, bookings and payments that run themselves'],
     desc: 'One for trades: a website, ads, local SEO, quotes, bookings, payments, reviews and referrals, built and run for plumbers, electricians, roofers and builders. £349 a month, no setup fee, 3 months of ads on us, cancel any time. Your website ready in 7 to 14 days.',
     who: 'Plumbers, electricians, gas engineers, roofers, builders, plasterers, landscapers. One or two vans, good at the work, want more of it, and no time to do the marketing yourself.',
     stages: [
@@ -108,6 +110,8 @@ module.exports = [
     name: 'One for clubs',
     unit: 'member',
     promise: 'New members every week. Trials, sign-ups and renewals, run for you.',
+    h1: 'New members every week.',
+    ticks: ['Your club&rsquo;s own app and website', 'Ads that bring in new families', 'Trials, sign-ups and renewals that run themselves'],
     desc: 'One for clubs: a website, ads, local SEO, trial bookings, memberships, payments, reviews and referrals, built and run for dance schools, gyms, martial arts and sports clubs. £349 a month, no setup fee, 3 months of ads on us, cancel any time. Your website ready in 7 to 14 days.',
     who: 'Dance schools, gyms, martial arts, cheer, swim schools, sports clubs. You run the classes and the shows; you want every class full and every term renewed; you have no evenings left for the admin.',
     stages: [
@@ -176,6 +180,8 @@ module.exports = [
     name: 'One for salons',
     unit: 'client',
     promise: 'A full book, fewer no-shows, and clients who come back on their own.',
+    h1: 'A full book, every week.',
+    ticks: ['Your salon&rsquo;s own app and website', 'Ads that fill your quiet days', 'Bookings, deposits and rebooking that run themselves'],
     desc: 'One for salons: a website, ads, local SEO, online booking with deposits, payments, reviews, rebooking and referrals, built and run for salons, barbers, nail techs and beauty rooms. £349 a month, no setup fee, 3 months of ads on us, cancel any time. Your website ready in 7 to 14 days.',
     who: 'Hair salons, barbers, nail techs, lash and brow rooms, beauty clinics. You do the work and the client comes back for you; you want a full book and fewer gaps; you have no time to chase the ones who drift.',
     stages: [
