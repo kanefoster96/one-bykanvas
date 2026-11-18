@@ -275,6 +275,9 @@ input[type=range]:active::-webkit-slider-thumb{scale:1.15}
 .h-card .h-pain{margin-top:18px;font-size:15.5px;font-weight:500;line-height:1.45;color:#c9cdd2}
 .h-card .h-pain + h3{margin-top:10px}
 
+/* The hero's label: what Kanvas One isn't, before the promise. */
+.h-hero-kicker{margin:0;line-height:1.4}
+
 /* ---------- Less motion ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
