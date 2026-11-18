@@ -28,7 +28,7 @@ function adDeal(m) {
 }
 function adFaq(m) {
   return [
-    ['Who pays for the ads?', `For your first 3 months of ads, we do, up to &pound;100 a month: a free test of what ads can do for you. They start once your website and app are both live, so the ads land on something that works. After that, it&rsquo;s your choice. Keep them going on your own budget, paid straight to Meta from your own ad account, and we keep running them for you: pausing the ones that tire, refreshing them and testing new ones every month. Or turn them off and keep everything else for the same &pound;349. Every ${m.unit} they bring in is fully yours.`]
+    ['Who pays for the ads?', `You do, from your own ad account, and for your first 3 months of ads we pay you back, up to &pound;100 a month: a free test of what ads can do for you. They start once your website and app are both live, so the ads land on something that works. After that, it&rsquo;s your choice. Keep them going on your own budget, paid straight to Meta from your own ad account, and we keep running them for you: pausing the ones that tire, refreshing them and testing new ones every month. Or turn them off and keep everything else for the same &pound;349. Every ${m.unit} they bring in is fully yours.`]
   ];
 }
 

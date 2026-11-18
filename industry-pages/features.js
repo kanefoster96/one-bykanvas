@@ -97,7 +97,7 @@ module.exports = [
     how: [
       ['A photo, or a line of text', 'The job you want more of, and a picture of it. That is all we need from you, plus access to your Facebook page.'],
       ['We build the offer, the ad and the form', 'Written for your town and your trade, pointing at a page on your own site that turns a click into a call. Live once your site and app are built and tested.'],
-      ['3 months of ads on us', 'We build it all first. Then for your first 3 months of ads we pay, up to &pound;100 a month. Every month, a note: what ran, what it cost, what came in.']
+      ['3 months of ads on us', 'We build it all first. Then for your first 3 months of ads we pay you back, up to &pound;100 a month. Every month, a note: what ran, what it cost, what came in.']
     ],
     gets: [
       'The offer, the ad and the landing form, written and built for you',
@@ -110,7 +110,7 @@ module.exports = [
     plan: 'max',
     planLine: 'Ads are part of One: &pound;349 a month with the website, the ranking work and the follow-up emails in it. No setup fee, and your price is locked for as long as you stay.',
     faq: [
-      ['Who pays for the ads?', 'For your first 3 months of ads, we do, up to &pound;100 a month: a free test of what ads can do for you. After that it&rsquo;s your choice. Keep them going on your own budget, paid straight to Meta from your own ad account, and we keep running them as part of One. Or turn them off and keep everything else. We never take a cut of what your customers pay.'],
+      ['Who pays for the ads?', 'You do, from your own ad account, and for your first 3 months of ads we pay you back, up to &pound;100 a month: a free test of what ads can do for you. After that it&rsquo;s your choice. Keep them going on your own budget, paid straight to Meta from your own ad account, and we keep running them as part of One. Or turn them off and keep everything else. We never take a cut of what your customers pay.'],
       ['Will it definitely bring customers?', 'No one honest can promise that. What we promise is the work: a proper offer, a proper ad, a page that converts, and a note every month showing what it brought in, so you can decide with numbers.'],
       ['What do you need from me?', 'A photo or a line about the job you want more of, and admin access to your Facebook page. We do the rest.']
     ]
