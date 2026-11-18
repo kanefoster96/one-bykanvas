@@ -896,7 +896,7 @@ ${postOnce('Classes off tonight', 'The snow&rsquo;s too heavy, so tonight&rsquo;
 
 <h2>The honest downsides</h2>
 <ul>
-  <li><strong>Apple and Google charge for developer accounts.</strong> &pound;79 a year for Apple and a one-off $25 for Google, paid to them.</li>
+  <li><strong>Apple and Google charge for developer accounts.</strong> &pound;79 a year for Apple and a one-off $25 for Google, paid to them. On Kanvas One we set them up with you and cover your first year: &pound;100 off your first month.</li>
   <li><strong>Getting into the stores takes time.</strong> Apple and Google review every app, which usually takes 1 to 4 weeks.</li>
   <li><strong>Parents have to download it.</strong> The trick is making the app the place where things happen: the pass to scan in, the payments, the photos. Then they open it every week.</li>
 </ul>
@@ -914,7 +914,7 @@ ${postOnce('Classes off tonight', 'The snow&rsquo;s too heavy, so tonight&rsquo;
     oneLead: 'Your club, on every parent&rsquo;s phone. <span>With your name on it.</span>',
     faq: [
       ['Does a small club need an app?', 'It helps small clubs most, because it takes the admin off your plate and makes you look established. Messages are free and seen, registers and payments run themselves, and parents find everything in one place.'],
-      ['How much does it cost to have your own app?', 'Apple charges £79 a year and Google a one-off $25 for the developer accounts your app is published under. Kanvas One includes the app itself in its £349 a month.'],
+      ['How much does it cost to have your own app?', 'Apple charges £79 a year and Google a one-off $25 for the developer accounts your app is published under. Kanvas One includes the app itself in its £349 a month, and covers your first year of those fees: £100 off your first month.'],
       ['Will parents actually download it?', 'They will if the app is where things happen: the pass to scan in at the door, payments, photos and news. Everything should still work on your website for anyone who doesn’t.']
     ],
     related: ['easiest-software-for-dance-schools', 'classforkids-alternative']
@@ -1752,7 +1752,7 @@ const SCRIPTS = `<script src="/consent.js?v=5712679a"></script>
 <script src="/beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="/admin-pill.js?v=06da798b"></script>
 <script src="/learn/terms.js?v=bbafc742" defer></script>
-<script src="/glossary.js?v=fff6419c" defer></script>
+<script src="/glossary.js?v=2291a668" defer></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
 <script src="/learn/learn.js?v=3a84b052" defer></script>
 </body>

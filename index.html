@@ -24,7 +24,7 @@
 <link rel="apple-touch-icon" href="assets/favicon-180.png?v=0ecf9df9">
 <link rel="stylesheet" href="styles.css?v=c3f040ae">
 <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="home26.css?v=c3112919">
+<link rel="stylesheet" href="home26.css?v=e0910734">
 <link rel="stylesheet" href="/learn/learn.css?v=8e2f7fb2">
 <script>document.documentElement.classList.add('h-anim')</script>
 </head>
@@ -96,21 +96,19 @@
     <div class="h-sum">
       <div class="h-card h-reveal">
         <div class="h-field">
-          <div class="h-field-top"><label for="hEmpty">Empty spaces across your classes</label><output id="hEmptyOut" for="hEmpty">12</output></div>
-          <input type="range" id="hEmpty" min="1" max="40" value="12">
+          <div class="h-field-top"><label for="hEmptyN">Empty spaces across your classes</label><span class="h-num-in"><input id="hEmptyN" type="number" inputmode="numeric" min="0" max="9999" step="1" value="12" aria-describedby="hSumHint"></span></div>
+          <input type="range" id="hEmpty" min="0" max="100" value="12" aria-label="Empty spaces, slider" tabindex="-1">
         </div>
         <div class="h-field">
-          <div class="h-field-top"><label for="hFee">What a member pays a month</label><output id="hFeeOut" for="hFee">&pound;50</output></div>
-          <input type="range" id="hFee" min="20" max="100" step="5" value="50">
+          <div class="h-field-top"><label for="hFeeN">What a member pays a month</label><span class="h-num-in"><span aria-hidden="true">&pound;</span><input id="hFeeN" type="number" inputmode="numeric" min="0" max="9999" step="1" value="50"></span></div>
+          <input type="range" id="hFee" min="10" max="150" step="5" value="50" aria-label="Monthly fee, slider" tabindex="-1">
         </div>
-        <div class="h-seats" id="hSeats" aria-hidden="true"></div>
-        <div class="h-seats-key" aria-hidden="true"><span><i></i>Taken</span><span><i class="h-e"></i>Empty</span></div>
+        <p class="h-sum-hint" id="hSumHint">Slide, or tap a number and type your own.</p>
       </div>
       <div class="h-card h-result h-reveal" aria-live="polite">
-        <p class="h-result-l" id="hResLabel">Empty spaces cost you</p>
+        <p class="h-result-l">Empty spaces cost you</p>
         <p class="h-result-n" id="hResN">&pound;7,200</p>
         <p class="h-result-l">a year</p>
-        <button class="h-btn h-btn-pill" type="button" id="hFill" aria-pressed="false">Fill them</button>
         <p class="h-payback">Kanvas One pays for itself at <b id="hPayback">7 new members</b>.</p>
       </div>
     </div>
@@ -126,22 +124,22 @@
     </div>
     <div class="h-grid3">
       <div class="h-card h-reveal" data-delay="0">
-        <span class="h-tile h-t-orange"><svg aria-hidden="true"><use href="#i-mega"/></svg></span>
-        <h3>More members</h3>
-        <p>We run your Facebook and Instagram ads, and trials book straight into your classes. You see who joined, not just who clicked.</p>
-        <div class="h-chips" aria-hidden="true"><div class="h-chip" style="--r:-2deg"><span class="h-chip-ic h-bg-blue"><svg><use href="#i-cal"/></svg></span><span><b>Trial booked</b><small>Tuesday, 5:30pm</small></span></div></div>
-      </div>
-      <div class="h-card h-reveal" data-delay="90">
         <span class="h-tile h-t-blue"><svg aria-hidden="true"><use href="#i-moon"/></svg></span>
         <h3>Your evenings back</h3>
         <p>Payments, registers and reminders run themselves. Parents book, pay and message you in your own app.</p>
         <div class="h-chips" aria-hidden="true"><div class="h-chip" style="--r:2deg"><span class="h-chip-ic h-bg-green"><svg><use href="#i-pound"/></svg></span><span><b>Payment in</b><small>&pound;50, on time, no chasing</small></span></div></div>
       </div>
-      <div class="h-card h-reveal" data-delay="180">
+      <div class="h-card h-reveal" data-delay="90">
         <span class="h-tile h-t-purple"><svg aria-hidden="true"><use href="#i-trophy"/></svg></span>
         <h3>Families who stay</h3>
         <p>Parents see their child&rsquo;s progress, levels and badges, so they&rsquo;ve a reason to stay. A member kept is worth as much as a new one.</p>
         <div class="h-chips" aria-hidden="true"><div class="h-chip" style="--r:-1.5deg"><span class="h-chip-ic h-bg-gold"><svg><use href="#i-star"/></svg></span><span><b>Level up!</b><small>Ava reached Level 2</small></span></div></div>
+      </div>
+      <div class="h-card h-reveal" data-delay="180">
+        <span class="h-tile h-t-orange"><svg aria-hidden="true"><use href="#i-mega"/></svg></span>
+        <h3>More members</h3>
+        <p>We run your Facebook and Instagram ads, and trials book straight into your classes. You see who joined, not just who clicked.</p>
+        <div class="h-chips" aria-hidden="true"><div class="h-chip" style="--r:-2deg"><span class="h-chip-ic h-bg-blue"><svg><use href="#i-cal"/></svg></span><span><b>Trial booked</b><small>Tuesday, 5:30pm</small></span></div></div>
       </div>
     </div>
     <p class="h-also h-center h-reveal">Plus your own website, found on Google and in AI search, and a real person to message, not a ticket queue.</p>
@@ -216,6 +214,7 @@
     <div class="h-card h-price h-reveal">
       <p class="h-price-n">&pound;349<small> a month</small></p>
       <p class="h-price-sub">For your whole club, however many members.</p>
+      <p class="h-day">That&rsquo;s <b>&pound;11.47 a day</b>. 7 members at &pound;50 a month cover it.</p>
       <ul class="h-ticks">
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Your club&rsquo;s own app and website</li>
         <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transition-delay:.12s"/></svg>Your ads run for you, the first 3 months on us</li>
@@ -226,7 +225,36 @@
       </ul>
       <div class="h-price-pills"><span>No setup fee</span><span>No contract</span><span>0% of your payments</span></div>
       <a class="h-btn h-btn-main" href="#chat" data-chat-open data-chat-send="Hi Kane, I&rsquo;d like to look round your dance school&rsquo;s app." data-chat-step="19|Asked to look round our app (price)">Look round our dance school&rsquo;s app</a>
-      <p class="h-price-note">What else you&rsquo;d pay: your own ad budget after the first 3 months (if you want more), Stripe&rsquo;s card fees, and Apple and Google&rsquo;s developer accounts (&pound;79 a year and a one-off $25).</p>
+      <p class="h-price-note">What else you&rsquo;d pay: your own ad budget after the first 3 months (if you want more), Stripe&rsquo;s card fees, and Apple&rsquo;s &pound;79 a year for your app store account after your first year.</p>
+    </div>
+    <div class="h-value">
+      <div class="h-card h-reveal">
+        <span class="h-kicker h-k-blue">Bought separately</span>
+        <h3>What it would cost you</h3>
+        <ul class="h-rows">
+          <li><span>Someone to run your ads</span><span>&pound;300&ndash;&pound;1,000+ a month</span></li>
+          <li><span>Getting found on Google and AI search</span><span>&pound;150&ndash;&pound;500 a month</span></li>
+          <li><span>Booking and membership software</span><span>&pound;35&ndash;&pound;150 a month</span></li>
+          <li><span>Text and email follow-ups</span><span>&pound;20&ndash;&pound;80 a month</span></li>
+          <li><span>Live chat for your website</span><span>&pound;15&ndash;&pound;40 a month</span></li>
+          <li><span>A new website</span><span>&pound;1,000&ndash;&pound;3,000 up front</span></li>
+          <li><span>Your own branded app</span><span>Rarely an option</span></li>
+          <li class="h-tot"><span>All of it</span><span>&pound;520&ndash;&pound;1,770+ a month, plus &pound;1,000+ up front</span></li>
+          <li class="h-us"><span>Kanvas One</span><span>&pound;349 a month</span></li>
+        </ul>
+        <p class="h-src">Typical UK prices, October 2026.</p>
+      </div>
+      <div class="h-card h-bonus h-reveal" data-delay="90">
+        <span class="h-kicker h-k-green">To start, on us</span>
+        <h3>What you get when you join</h3>
+        <ul class="h-rows">
+          <li><span>Your first 3 months of ads<small>Whenever you first switch ads on</small></span><span>up to &pound;300</span></li>
+          <li><span>Your app store accounts, year one<small>Set up with you, and taken off your first month</small></span><span>&pound;100 off</span></li>
+          <li><span>Your website built<small>No setup fee, usually &pound;1,000+</small></span><span>&pound;0</span></li>
+          <li><span>Your switch-over<small>Members, memberships and timetable moved for you</small></span><span>Done for you</span></li>
+          <li class="h-tot"><span>Worth</span><span>over &pound;1,400 in year one</span></li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
@@ -313,7 +341,7 @@
 <script src="beacon.js?v=77a73cd5" data-site="9094de37-b610-41b6-98f1-2aaf8f5bd52b" defer></script>
 <script src="admin-pill.js?v=06da798b"></script>
 <script src="/hero-phone.js?v=f99ba693" defer></script>
-<script src="home26.js?v=3e7115e1" defer></script>
+<script src="home26.js?v=08d4dc67" defer></script>
 <script src="/onemark.js?v=26409b0c" defer></script>
 </body>
 </html>

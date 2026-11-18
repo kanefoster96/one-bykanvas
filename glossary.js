@@ -86,7 +86,7 @@
     businessemail: { match: /\bbusiness email\b/i, title: 'Business email',
       text: 'An email address at your own web address, like hello@yourclub.co.uk, instead of a Gmail or Hotmail one. It looks more professional and parents trust it more.' },
     devaccount: { match: /\bdeveloper accounts?\b/i, title: 'Developer accounts',
-      text: 'The accounts Apple and Google need before an app can go in the App Store and Google Play under your club’s name. They’re in your name and paid to Apple and Google directly; we walk you through setting them up.' },
+      text: 'The accounts Apple and Google need before an app can go in the App Store and Google Play under your club’s name. They’re in your name and paid to Apple and Google directly; we set them up with you, and on Kanvas One your first year is on us (£100 off your first month).' },
     launchboost: { match: /\bLaunch Boost\b/, title: 'Launch Boost',
       text: 'Our bonus when you pay for the year: your first month after going live is spent getting you found on Google, so the site starts bringing people in straight away.' },
     upsell: { match: /\bupsells?\b/i, title: 'Upsell',
