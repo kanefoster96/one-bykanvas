@@ -5,8 +5,8 @@
  *    before it paints, so with no JavaScript everything simply shows.
  * 2. The phone rises in once, floats gently, and on a computer leans a
  *    touch towards the pointer.
- * 3. The empty-spaces sum: two sliders, a grid of class spaces, and
- *    "Fill them" turning the empty ones green.
+ * 3. The empty-spaces sum: two numbers to slide or type, and what
+ *    the empty spaces cost a year.
  * 4. Only one question open at a time.
  * Reduce Motion shows everything straight away and keeps the phone still.
  */
@@ -74,50 +74,52 @@
     hero.addEventListener('pointerleave', function () { aim(0, 0); });
   }
 
-  /* ---------- 3. The empty-spaces sum ---------- */
-  var PRICE = 349, SEATS = 40;
-  var empty = document.getElementById('hEmpty'), fee = document.getElementById('hFee');
-  var seats = document.getElementById('hSeats'), resN = document.getElementById('hResN');
-  var resLabel = document.getElementById('hResLabel'), fillBtn = document.getElementById('hFill');
-  if (empty && fee && seats && resN && fillBtn) {
-    var filled = false, shown = 0, raf = 0;
-    for (var i = 0; i < SEATS; i++) { var s = document.createElement('span'); s.className = 'h-seat'; seats.appendChild(s); }
-    var seatEls = [].slice.call(seats.children);
-    var paintRange = function (r) { r.style.setProperty('--p', ((r.value - r.min) / (r.max - r.min) * 100) + '%'); };
+  /* ---------- 3. The empty-spaces sum ----------
+     Each number can be slid or typed. Typing has no cap (a big club can
+     have 60 empty spaces); the slider just sits at its end past that. */
+  var PRICE = 349;
+  var pairs = [['hEmptyN', 'hEmpty'], ['hFeeN', 'hFee']].map(function (ids) {
+    return { num: document.getElementById(ids[0]), range: document.getElementById(ids[1]) };
+  });
+  var resN = document.getElementById('hResN'), payback = document.getElementById('hPayback');
+  if (pairs.every(function (x) { return x.num && x.range; }) && resN && payback) {
+    var shown = 7200, raf = 0;
+    var paintRange = function (r) {
+      var v = Math.min(+r.value, +r.max);
+      r.style.setProperty('--p', ((v - r.min) / (r.max - r.min) * 100) + '%');
+    };
     var animateTo = function (val) {
       cancelAnimationFrame(raf);
-      var from = shown, t0 = performance.now(), dur = reduce ? 0 : 500;
+      var from = shown, t0 = performance.now(), dur = reduce ? 0 : 450;
       (function tick(now) {
-        var k = dur ? Math.min(1, (now - t0) / dur) : 1, e = 1 - Math.pow(1 - k, 3);
-        shown = Math.round(from + (val - from) * e);
-        resN.textContent = (filled ? '+£' : '£') + gb(shown);
+        var k = dur ? Math.min(1, (now - t0) / dur) : 1, ease = 1 - Math.pow(1 - k, 3);
+        shown = Math.round(from + (val - from) * ease);
+        resN.textContent = '\u00a3' + gb(shown);
         if (k < 1) raf = requestAnimationFrame(tick);
       })(t0);
     };
+    var read = function (x) { var v = Math.floor(+x.num.value); return isFinite(v) && v > 0 ? v : 0; };
     var update = function () {
-      var e = +empty.value, f = +fee.value;
-      document.getElementById('hEmptyOut').textContent = e;
-      document.getElementById('hFeeOut').textContent = '£' + f;
-      paintRange(empty); paintRange(fee);
-      var n = Math.ceil(PRICE / f);
-      document.getElementById('hPayback').textContent = n + ' new member' + (n === 1 ? '' : 's');
-      seatEls.forEach(function (el, idx) {
-        var isEmpty = idx >= SEATS - e;
-        el.classList.toggle('h-empty', isEmpty && !filled);
-        el.classList.toggle('h-won', isEmpty && filled);
-        el.style.animationDelay = isEmpty && filled ? ((idx - (SEATS - e)) * 35) + 'ms' : '';
-      });
-      animateTo(e * f * 12);
+      var spaces = read(pairs[0]), fee = read(pairs[1]);
+      pairs.forEach(function (x) { paintRange(x.range); });
+      if (fee > 0) {
+        var n = Math.ceil(PRICE / fee);
+        payback.textContent = n + ' new member' + (n === 1 ? '' : 's');
+      } else {
+        payback.textContent = 'a few new members';
+      }
+      animateTo(spaces * fee * 12);
     };
-    fillBtn.addEventListener('click', function () {
-      filled = !filled;
-      fillBtn.textContent = filled ? 'Show me again' : 'Fill them';
-      fillBtn.setAttribute('aria-pressed', String(filled));
-      resLabel.textContent = filled ? 'Filled, that’s' : 'Empty spaces cost you';
-      shown = 0; update();
+    pairs.forEach(function (x) {
+      x.range.addEventListener('input', function () { x.num.value = x.range.value; update(); });
+      x.num.addEventListener('input', function () {
+        var v = read(x);
+        x.range.value = Math.max(+x.range.min, Math.min(v, +x.range.max));
+        update();
+      });
+      /* Tidy what was typed once they move on: no blanks or decimals. */
+      x.num.addEventListener('blur', function () { x.num.value = String(read(x)); });
     });
-    empty.addEventListener('input', update);
-    fee.addEventListener('input', update);
     update();
   }
 
