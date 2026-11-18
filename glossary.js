@@ -26,7 +26,7 @@
   var WORDS = {
     // How One works for a club.
     boost: { match: /\blaunch boost\b/i, title: 'The £300 launch boost',
-      text: 'When your new app and website go live, we pay for your first 3 months of Facebook and Instagram ads, up to £100 a month, so you can see what ads bring in. After that, ads are optional: keep them going on your own budget, or stop.' },
+      text: 'When your new app and website go live, we pay back your first 3 months of Facebook and Instagram ad spend, up to £100 a month, so you can see what ads bring in. After that, ads are optional: keep them going on your own budget, or stop.' },
     trial: { limit: 2, match: /\b(?:free )?trials?(?: bookings?| class(?:es)?)?\b/i, title: 'Free trials',
       text: 'A free first class for a new child. Parents book it online in a minute, get reminders so they turn up, you check them in at the door, and afterwards they’re sent the link to join. Every step happens by itself.' },
     emptyspaces: { limit: 2, match: /\bempty spaces\b/i, title: 'Empty spaces',
@@ -86,7 +86,7 @@
     businessemail: { match: /\bbusiness email\b/i, title: 'Business email',
       text: 'An email address at your own web address, like hello@yourclub.co.uk, instead of a Gmail or Hotmail one. It looks more professional and parents trust it more.' },
     devaccount: { match: /\bdeveloper accounts?\b/i, title: 'Developer accounts',
-      text: 'The accounts Apple and Google need before an app can go in the App Store and Google Play under your club’s name. They’re in your name and paid to Apple and Google directly; we set them up with you, and on Kanvas One your first year is on us (£100 off your first month).' },
+      text: 'The accounts Apple and Google need before an app can go in the App Store and Google Play under your club’s name. They’re in your name and paid to Apple and Google directly; we set them up with you, and on Kanvas One we pay back your first year, up to £100, once they’re set up.' },
     launchboost: { match: /\bLaunch Boost\b/, title: 'Launch Boost',
       text: 'Our bonus when you pay for the year: your first month after going live is spent getting you found on Google, so the site starts bringing people in straight away.' },
     upsell: { match: /\bupsells?\b/i, title: 'Upsell',
