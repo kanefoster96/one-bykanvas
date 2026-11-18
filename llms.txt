@@ -1,43 +1,53 @@
 # Kanvas One
 
-> Kanvas One designs, builds and looks after websites for small businesses in the UK, with a North East team working across Newcastle, North Tyneside and Northumberland. A business gets its website built for it and live within 24 hours for £9.99 a month, with the web address, hosting, security, support and unlimited changes to its words and photos included. Joining takes two minutes: the business name, an email, a web address and a link to where the business is already online, then payment. No setup fee, no VAT, no contract: cancel any month.
+> Kanvas One is an all-in-one system for kids' clubs, dance schools, martial arts clubs and activity classes in the UK. A club gets its own branded app (in the App Store and Google Play, under the club's name) and website, trial bookings, memberships and payments, registers and reminders that run themselves, work on Google and AI search, and Facebook and Instagram ads run for it, all set up and looked after by the Kanvas team. It costs £349 a month for everything, with no setup fee, no contract and 0% of the club's payments. It was built and tested in Kanvas Academy, the founder's own dance school in Wallsend, North Tyneside, running since 2017.
 
-## The offer
+## The problems it solves
 
-- Starter, £9.99 a month: the website, built for them from Kanvas One's designs and live within 24 hours, with their own web address (domain), hosting, security, a contact or quote form, click to call, Google and AI search set up, and unlimited changes to their words and photos made by the team, worked through in turn. No setup fee.
-- Built from what they already have: they send a link to their Instagram, Facebook or current site when they join, and the site is built from it. More photos or changes can be sent any time.
-- Business, £50 a month (first month half price): everything in Starter plus online bookings, payments, live chat, reviews asked for automatically and changes done within 48 hours.
-- One, £349 a month: for clubs, trades and salons. The website, a member app in the App Store and Google Play under the business's own name, trial bookings, memberships and payments, plus Facebook and Instagram ads run for them. The website is ready 7 to 14 days after the setup form; the ads start once the website and app are both live, usually 4 to 8 weeks after joining, and Kanvas One pays back the first 3 months of ad spend, up to £100 a month.
-- Annual: £99 a year for Starter and £500 a year for Business (two months free). One is monthly only.
-- Live on the business's own web address within 24 hours of joining. If they leave, the web address is transferred to them free.
+- Evenings lost to admin: payments come in on time without chasing, registers fill in as children check in with a QR code, trial and payment reminders send themselves, and parents book, pay and message the club in one app.
+- Children drifting off after a term: parents see their child's progress, levels and badges in the app, so there's a reason to keep coming. A member kept is worth as much as a new one.
+- Posts and boosts that bring likes, not members: Kanvas One runs the club's Facebook and Instagram ads, trials book straight into classes, and the club sees which ads brought families who joined, not just clicks.
+- Not being found: the club's website and Google profile are worked on every month, so parents searching for a club near them on Google, or asking an AI assistant, find it.
 
-## How it compares with a local web design agency
+## The price
 
-A small business website from a local agency typically costs £1,000 to £3,000 or more up front, takes weeks, and often bills hosting and changes on top. Kanvas One costs £9.99 a month all in, with no setup fee, is online within 24 hours, and changes to words and photos are unlimited.
+- £349 a month, everything included, for the whole club however many members. No setup fee, no contract (cancel from the account any time), and Kanvas One takes 0% of the club's payments; members pay into the club's own Stripe account at Stripe's card rates.
+- To start: Kanvas One pays back the club's first 3 months of ad spend, up to £100 a month (the club pays Meta from its own ad account and is refunded within 7 days of each month's end), and the first year of app store fees, up to £100, once the club's Apple and Google developer accounts are set up. The website is built with no setup fee, and the switch-over (members, memberships and timetable) is done for the club.
+- Other costs: the club's own ad budget after the first 3 months of ads, if it wants more; Stripe's card fees; and Apple's developer membership (about £79 a year) after the first year.
+- Bought separately, the same things typically cost £520 to £1,770 or more a month (ads management, Google and AI search work, booking software, follow-ups, live chat) plus £1,000 or more up front for a website, and a branded app is rarely available.
+- Proof, from Kanvas Academy's first 4 weeks of ads (21 September to 17 October 2026): £145 spent on ads, 24 trial bookings, 8 new paying members, £4,620 a year in new fees. The academy's numbers, not a promise.
+
+## How it works
+
+1. First, the admin: trial bookings, payments, registers and reminders run in the club's own app. Clubs can start with new families only and move current members across when ready, ideally between terms.
+2. In about a week, the website goes live and takes trial bookings straight into classes. The app follows in the App Store and Google Play once Apple and Google approve it, usually 1 to 4 weeks.
+3. Once both are live, the ads start and Google and AI search work continues every month, sending new families to the club's site and app.
+
+## How it differs from booking software
+
+Booking and class software (for example ClassForKids, Class Manager or martial arts gym software) runs the classes a club already has, and the club does its own website, marketing and setup. Kanvas One also fills the classes: the club's own website and branded app, ads run for it, search work every month, the switch-over done, and features built when a club asks if they can be. One club per activity in each area.
 
 ## Who it's for
 
-Small and local businesses that need a proper website without agency prices: trades (electricians, heating engineers, plumbers), hairdressers, barbers, lash artists, makeup artists, nail techs, cake makers, kids' clubs, dance schools, gyms, driving instructors, mobile car valeters, cleaners, gardeners, tutors, photographers and coffee shops.
+Kids' clubs and classes with weekly sessions and monthly members: dance and cheer schools, gymnastics, martial arts, football and other sports clubs, swimming, drama and music classes. Run online, so clubs anywhere in the UK can use it.
 
-## Areas
+## Websites for other small businesses
 
-Based in the North East of England. Web design for Newcastle upon Tyne (Gosforth, Jesmond, Heaton, Gateshead), North Tyneside (North Shields, Tynemouth, Whitley Bay, Wallsend, Killingworth) and Northumberland (Cramlington, Blyth, Morpeth, Ashington, Bedlington, Hexham, Alnwick, Berwick-upon-Tweed). Everything is done online, so businesses anywhere in the UK can use it.
+Kanvas also builds websites for small businesses: Starter, £9.99 a month (a website live within 24 hours on the business's own web address, hosting, security and unlimited changes to words and photos), and Business, £50 a month (adds online bookings, payments, live chat and reviews asked for automatically). No setup fee, no contract. Built from the business's Instagram, Facebook or current site. North East team covering Newcastle upon Tyne, North Tyneside and Northumberland, working with businesses across the UK.
 
 ## Key pages
 
-- [Join](https://kanvas.one/join): Starter, £9.99 a month or £99 a year, live within 24 hours
-- [Web design in Newcastle](https://kanvas.one/web-design-newcastle)
-- [Web design in Northumberland](https://kanvas.one/web-design-northumberland)
-- [Plans and prices](https://kanvas.one/plans)
-- [How it works](https://kanvas.one/how-it-works)
-- [What's included](https://kanvas.one/whats-included)
-- [Example websites](https://kanvas.one/examples): example sites for hairdressers, electricians, cake makers, nail techs and more
-- [Websites for trades](https://kanvas.one/websites-for-trades)
-- [Websites for hairdressers](https://kanvas.one/websites-for-hairdressers)
-- [Websites for electricians](https://kanvas.one/websites-for-electricians)
-- [Websites for cake makers](https://kanvas.one/websites-for-cake-makers)
-- [Websites for kids' clubs](https://kanvas.one/websites-for-kids-clubs)
+- [Kanvas One for kids' clubs](https://kanvas.one/): the homepage, with the price, what's included and questions
+- [Kids' clubs](https://kanvas.one/clubs): football, gymnastics, dance, martial arts and other clubs
+- [Kanvas One Learning Centre](https://kanvas.one/learn): free guides for club owners on trials, members, pricing and ads
+- [ClassForKids alternative](https://kanvas.one/learn/classforkids-alternative)
+- [Easiest software for dance schools](https://kanvas.one/learn/easiest-software-for-dance-schools)
+- [Easiest software for martial arts clubs](https://kanvas.one/learn/easiest-software-for-martial-arts-clubs)
+- [Does my kids' club need an app?](https://kanvas.one/learn/does-my-kids-club-need-an-app)
+- [Trades](https://kanvas.one/trades): Kanvas One for trades
+- [Website plans](https://kanvas.one/plans): Starter and Business
+- [Terms](https://kanvas.one/terms)
 
 ## Contact
 
-hello@kanvas.one. A real person replies, usually the same working day.
+Chat with Kane, the founder, on kanvas.one, or email hello@kanvas.one. A real person replies, usually the same working day.
