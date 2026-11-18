@@ -148,7 +148,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;heigh
 input[type=range]::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:#fff;box-shadow:0 0 0 2px var(--h-or-edge)}
 input[type=range]:active::-webkit-slider-thumb{scale:1.15}
 .h-result{display:flex;flex-direction:column;justify-content:center;text-align:center}
-.h-card .h-result-n{margin-top:6px;color:var(--h-fg);font-size:clamp(48px,10vw,68px);font-weight:800;line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.h-card .h-result-n{margin-top:6px;color:var(--h-green);font-size:clamp(48px,10vw,68px);font-weight:800;line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
 .h-card .h-result-l{margin-top:8px;font-size:16px;color:var(--h-muted)}
 .h-card .h-payback{margin-top:22px;padding-top:20px;border-top:2px solid var(--h-edge);font-size:15px;color:var(--h-muted)}
 .h-payback b{color:var(--h-fg)}
