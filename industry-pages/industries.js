@@ -618,7 +618,7 @@ module.exports = [
     buildNote: 'Send us your Facebook or Instagram and your timetable. We build the site and you&rsquo;re live within 24 hours.',
     steps: starterSteps(['Send us your Facebook or Instagram', 'Your classes, your timetable and where you are. That&rsquo;s all we need.']),
     stepsLine: 'Business, &pound;50 a month, adds trial bookings confirmed automatically, payments and priority changes within 48 hours, any month.',
-    maxPitch: { heading: MAX_HEADING, text: 'The clubs parents find first keep adding pages, photos and reviews. Starter gets you found. One keeps your classes full.' },
+    maxPitch: { heading: 'Want your own app as well?', text: 'With trial bookings, payments and registers that run themselves, that&rsquo;s Kanvas One: your club&rsquo;s own app, website and ads, run for you, &pound;349 a month with everything included.' },
     promise: PROMISE,
     pricingExtra: ['&pound;9.99 a month, and one new family a year pays for it many times over. About &pound;2.30 a week, no VAT.'],
     faq: [

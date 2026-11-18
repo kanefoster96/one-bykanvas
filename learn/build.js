@@ -917,7 +917,123 @@ ${postOnce('Classes off tonight', 'The snow&rsquo;s too heavy, so tonight&rsquo;
       ['How much does it cost to have your own app?', 'Apple charges £79 a year and Google a one-off $25 for the developer accounts your app is published under. Kanvas One includes the app itself in its £349 a month, and pays back your first year of those fees, up to £100, once your accounts are set up.'],
       ['Will parents actually download it?', 'They will if the app is where things happen: the pass to scan in at the door, payments, photos and news. Everything should still work on your website for anyone who doesn’t.']
     ],
-    related: ['easiest-software-for-dance-schools', 'classforkids-alternative']
+    related: ['how-to-get-your-own-app-for-your-kids-club', 'kids-club-management-software']
+  },
+
+  {
+    slug: 'how-to-get-your-own-app-for-your-kids-club',
+    updated: '2026-11-18',
+    updatedText: '18 November 2026',
+    topic: 'software',
+    title: 'How to get your own app for your kids’ club',
+    short: 'How to get your own club app',
+    docTitle: 'How to Get Your Own App for Your Kids’ Club (UK Guide) | Kanvas One',
+    desc: 'Your club’s name in the App Store and Google Play, without paying an agency thousands. The three ways to do it, what Apple and Google need from you, and how long it takes.',
+    card: 'Your club’s name in the App Store and Google Play. The three ways to do it, what it costs and how long it takes.',
+    read: 6,
+    body: `
+<p>A club app used to mean paying an agency thousands of pounds and waiting months. It doesn&rsquo;t have to now. Here&rsquo;s how clubs actually get one, what Apple and Google need from you, and the questions to ask before you choose.</p>
+
+<h2>First: what &ldquo;your own app&rdquo; means</h2>
+<p>Lots of booking systems say they have an app. Usually that&rsquo;s <strong>their</strong> app, with your club listed inside it next to other clubs. Parents download the booking company&rsquo;s app, not yours.</p>
+<p><strong>Your own app</strong> is in the App Store and Google Play under your club&rsquo;s name, with your logo on the parent&rsquo;s home screen. When you send a notification, it comes from your club. That&rsquo;s what makes a small club look established, and it&rsquo;s why parents open it.</p>
+
+<h2>The three ways to get one</h2>
+<ol>
+  <li><strong>Have one built from scratch.</strong> An agency designs and codes it for you. You get exactly what you ask for, but it usually costs thousands up front, takes months, and you pay again every time Apple or Google change something.</li>
+  <li><strong>Use an app builder.</strong> You drag and drop the screens yourself. Cheaper, but you&rsquo;re the one building it, and most builders aren&rsquo;t made for clubs: no registers, no trial bookings, no memberships that take payment every month.</li>
+  <li><strong>Use a service that builds it for clubs.</strong> The club features are already made (bookings, payments, registers, messages), and your app is set up with your name, logo and timetable. This is the quickest and usually the cheapest way. It&rsquo;s how Kanvas One works.</li>
+</ol>
+
+<h2>What Apple and Google need from you</h2>
+<p>Whichever way you choose, your app is published under your own developer accounts, so it carries your club&rsquo;s name. Here&rsquo;s what that involves:</p>
+<ul>
+  <li><strong>An Apple Developer account:</strong> about &pound;79 a year. To show your club&rsquo;s name rather than your own, you sign up as an organisation, which needs a free D-U-N-S number for your business.</li>
+  <li><strong>A Google Play account:</strong> a one-off $25. An organisation account also needs the D-U-N-S number, and it skips the rule that new personal accounts must test with 12 people for 14 days before going live.</li>
+  <li><strong>App review:</strong> Apple and Google check every app before it goes live, usually 1 to 4 weeks.</li>
+</ul>
+<div class="lc-callout"><p>The paperwork is where most club owners get stuck, not the app. Whoever builds your app should set these accounts up with you.</p></div>
+
+<h2>What your app should do</h2>
+<ol>
+  <li>Let parents book a trial, join and pay monthly by card in a couple of taps.</li>
+  <li>Give every child a pass to scan in at the door, so registers fill themselves in.</li>
+  <li>Send free notifications to one class, one age group or everyone.</li>
+  <li>Chase failed payments for you, and let parents pause or change their plan.</li>
+  <li>Show their child&rsquo;s progress, levels and badges, so families have a reason to stay.</li>
+  <li>Work on your website too, for parents who never download it.</li>
+</ol>
+
+<h2>Questions to ask before you choose</h2>
+<ul>
+  <li>Is it in the stores under <strong>my</strong> club&rsquo;s name, or theirs?</li>
+  <li>Do you take a percentage of my payments?</li>
+  <li>Will you set up my Apple and Google accounts with me?</li>
+  <li>Who moves my current members across?</li>
+  <li>If I leave, do I keep my members&rsquo; details and my web address?</li>
+</ul>`,
+    one: ['Your own app with your club&rsquo;s name and logo, in the App Store and Google Play.', 'Your Apple and Google accounts set up with you, and your first year of fees paid back, up to &pound;100.', 'Trial bookings, memberships and payments, registers and messages already built.', 'Your website, Google and AI search, and your ads, all included in &pound;349 a month.'],
+    oneLead: 'Your own club app, <span>without building one.</span>',
+    faq: [
+      ['How much does it cost to get an app for my club?', 'Built from scratch by an agency, usually thousands of pounds up front plus upkeep. With a service made for clubs, it’s a monthly fee: Kanvas One is £349 a month with your app, website, bookings, payments and ads included. On top, Apple charges about £79 a year and Google a one-off $25.'],
+      ['How long does it take to get my club app in the App Store?', 'Once your developer accounts are ready, Apple and Google review the app, usually in 1 to 4 weeks. Your website, with the same bookings and payments, can be live in about a week while you wait.'],
+      ['Do I need a D-U-N-S number?', 'To publish under your club’s name rather than your own, yes. It’s free, and whoever builds your app should help you get it.'],
+      ['Can my app have my club’s name and logo?', 'It should. If parents download an app with another company’s name on it and find your club inside, that’s their app, not yours.']
+    ],
+    related: ['does-my-kids-club-need-an-app', 'kids-club-management-software']
+  },
+
+  {
+    slug: 'kids-club-management-software',
+    updated: '2026-11-18',
+    updatedText: '18 November 2026',
+    topic: 'software',
+    title: 'Kids’ club management software: what you actually need',
+    short: 'Club management software',
+    docTitle: 'Kids’ Club Management Software: What You Actually Need (UK) | Kanvas One',
+    desc: 'Spreadsheets, WhatsApp and bank transfers, or one system? What a kids’ club really needs to manage trials, members, payments and registers, and the questions to ask before you choose.',
+    card: 'Spreadsheets, WhatsApp and bank transfers, or one system? What a kids’ club really needs, from a club owner.',
+    read: 6,
+    body: `
+<p>Most clubs start the same way: a spreadsheet for members, a WhatsApp group for parents, bank transfers you check by hand and a paper register. It works until it doesn&rsquo;t, usually around the time your evenings disappear. Here&rsquo;s what a kids&rsquo; club actually needs to manage, and how to choose software for it.</p>
+
+<h2>What you&rsquo;re really managing</h2>
+<ul>
+  <li><strong>Trials:</strong> who&rsquo;s booked, who turned up, and who to follow up so they join.</li>
+  <li><strong>Members:</strong> who&rsquo;s in which class, their medical notes and emergency contacts.</li>
+  <li><strong>Payments:</strong> monthly fees taken on time, failed payments chased, siblings and pauses handled.</li>
+  <li><strong>Registers:</strong> who&rsquo;s in tonight, without paper.</li>
+  <li><strong>Messages:</strong> class cancelled, show tickets, kit orders, without your personal number.</li>
+  <li><strong>New families:</strong> being found by parents searching for a club near them, and turning interest into trials.</li>
+</ul>
+<p>Most club software only does the middle of that list. The first and last items are where your growth comes from.</p>
+
+<h2>The three usual setups</h2>
+<ol>
+  <li><strong>Spreadsheets, WhatsApp and bank transfers.</strong> Free, and fine for a handful of families. It costs you your evenings, and payments slip because nobody likes chasing friends for money.</li>
+  <li><strong>Booking software.</strong> Takes bookings and payments, often for a monthly fee plus a percentage of what parents pay. It runs the classes you already have, but finding new families is still up to you.</li>
+  <li><strong>An all-in-one system run for you.</strong> Your own app and website, bookings, payments and registers, plus ads and Google work to bring new families in. Costs more each month, but replaces several things you&rsquo;d otherwise pay for separately.</li>
+</ol>
+
+<h2>Questions to ask before you choose</h2>
+<ul>
+  <li><strong>Do you take a percentage of my payments?</strong> 1 to 2.5% sounds small, but it grows with your club.</li>
+  <li><strong>Is the app mine?</strong> Your club&rsquo;s name in the App Store, or a shared app with other clubs in it?</li>
+  <li><strong>Who does the switch-over?</strong> Moving members, memberships and your timetable is the part that puts most owners off.</li>
+  <li><strong>Can parents book a trial and join without messaging me?</strong> Every message you don&rsquo;t have to answer is time back.</li>
+  <li><strong>Does it help me get new members,</strong> or just manage the ones I have?</li>
+  <li><strong>Who do I talk to when something&rsquo;s wrong?</strong> A real person, or a ticket queue?</li>
+</ul>
+
+<div class="lc-callout"><p>The right software should give you your evenings back <strong>and</strong> fill your empty spaces. If it only does one, you&rsquo;ll still be paying for the other somewhere else.</p></div>`,
+    one: ['Trial bookings, memberships, payments and registers that run themselves.', 'Your own app with your club&rsquo;s name, and your website.', 'Ads run for you, and Google and AI search worked on every month.', 'The switch-over done for you, and 0% of your payments, for &pound;349 a month.'],
+    oneLead: 'Run your club, <span>and fill it.</span>',
+    faq: [
+      ['What is the best software to manage a kids’ club?', 'The one that runs your admin and helps you get new members. Look for trial bookings, monthly payments with failed-payment chasing, registers on your phone, your own app, and no percentage of your payments.'],
+      ['Is there free software for managing a kids’ club?', 'Some booking tools are free to start but take a percentage of every payment, so they cost more as you grow. Spreadsheets and WhatsApp are free but cost your evenings.'],
+      ['How do I switch club software without losing members?', 'Start new families on the new system and move existing members across when you’re ready, ideally between terms, with one message to parents explaining the change. With Kanvas One, we do the move for you.']
+    ],
+    related: ['how-to-get-your-own-app-for-your-kids-club', 'classforkids-alternative']
   },
 
   {
@@ -1805,7 +1921,7 @@ function card(g) {
 function guidePage(g) {
   const url = `${SITE}/learn/${g.slug}`;
   const ld = [
-    { '@context': 'https://schema.org', '@type': 'Article', headline: plain(g.title), description: g.desc, author: AUTHOR, publisher: PUBLISHER, datePublished: UPDATED, dateModified: UPDATED, mainEntityOfPage: url, image: SITE + '/assets/og-image.png', inLanguage: 'en-GB' },
+    { '@context': 'https://schema.org', '@type': 'Article', headline: plain(g.title), description: g.desc, author: AUTHOR, publisher: PUBLISHER, datePublished: g.updated || UPDATED, dateModified: g.updated || UPDATED, mainEntityOfPage: url, image: SITE + '/assets/og-image.png', inLanguage: 'en-GB' },
     { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Kanvas One', item: SITE + '/' },
       { '@type': 'ListItem', position: 2, name: 'Learning Centre', item: SITE + '/learn' },
@@ -1820,7 +1936,7 @@ function guidePage(g) {
     <nav class="lc-crumb" aria-label="Breadcrumb"><a href="/learn">Learning Centre</a><span aria-hidden="true">&rsaquo;</span><span>${TOPICS[g.topic]}</span></nav>
     <h1>${g.title}</h1>
     <p class="lc-stand">${g.desc.replace(/'/g, '&rsquo;').replace(/’/g, '&rsquo;').replace(/£/g, '&pound;')}</p>
-    <p class="lc-by"><img src="/assets/kane-sm.jpg?v=cff8a019" alt="" width="44" height="44"><span><b>Kane Foster</b>, founder of Kanvas One and owner of Kanvas Academy in Newcastle<br>${g.read} min read &middot; Updated ${UPDATED_TEXT}</span></p>
+    <p class="lc-by"><img src="/assets/kane-sm.jpg?v=cff8a019" alt="" width="44" height="44"><span><b>Kane Foster</b>, founder of Kanvas One and owner of Kanvas Academy in Newcastle<br>${g.read} min read &middot; Updated ${g.updatedText || UPDATED_TEXT}</span></p>
   </div></div>
 </header>
 <div class="lc-body"><div class="wrap"><div class="lc-col">
