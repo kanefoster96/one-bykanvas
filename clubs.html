@@ -17,7 +17,7 @@
 <link rel="icon" href="/assets/favicon.svg?v=fa41229e" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
-<link rel="stylesheet" href="/get-found.css?v=8ef7388a">
+<link rel="stylesheet" href="/get-found.css?v=9c53be19">
 <style>
 :root{
   --ink:#1d1d1f;--ink-2:#6e6e73;--ink-3:#86868b;
@@ -112,7 +112,8 @@ h3{font-size:21px;line-height:1.25;letter-spacing:-.015em;font-weight:700}
 .hero h1{margin:20px 0 20px}
 .hero .lede{max-width:560px}
 .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
-.hero-note{display:flex;align-items:center;gap:8px;margin-top:18px;font-size:15px;color:var(--ink-2)}
+.hero-note{margin-top:18px;font-size:15px;line-height:1.5;color:var(--ink-2)}
+.hero-note a{color:var(--ink);font-weight:600}
 .hero-note svg{width:18px;height:18px;color:var(--neon);flex:0 0 18px}
 .hero-note b{color:var(--ink)}
 .phone{position:relative;width:min(320px,80vw);margin:0 auto;padding:14px;border-radius:46px;background:#1d1d1f;box-shadow:0 30px 60px rgba(0,0,0,.18)}
@@ -331,14 +332,13 @@ p,li,summary,small{text-wrap:pretty}
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <p class="eyebrow reveal"><b></b>For every kind of kids&rsquo; club: football, dance, gymnastics, martial arts and more</p>
+      <p class="hx-pill reveal">Not just class management software</p>
       <h1 class="reveal">Full classes, every term. <span>We bring the trials.</span></h1>
-      <p class="lede reveal">Your website, parent app, trial bookings, memberships and ads, built and run for you by a team that runs a kids&rsquo; club too.</p>
+      <ul class="hx-ticks reveal"><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Your club&rsquo;s own app and website</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Ads that bring in new families</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Payments and registers that run themselves</li></ul>
       <div class="cta-row reveal">
         <a class="btn btn-dark" href="#demo">Book a 10-minute demo</a>
-        <a class="btn btn-light" href="/look-round?from=clubs">Look round your app, free</a>
       </div>
-      <p class="hero-note reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span><b>3 months of ads included.</b> Worth &pound;300.</span></p>
+      <p class="hero-note reveal">Or <a href="#chat" data-chat-open data-chat-send="Hi Kane, I&rsquo;d like to look round your dance school&rsquo;s app." data-chat-step="19|Asked to look round our app (clubs)">look round our dance school&rsquo;s app</a>. Football, dance, gymnastics, martial arts and more.</p>
     </div>
     <div class="reveal" aria-label="An example of a week on One, shown as phone notifications">
       <div class="phone">

@@ -1895,7 +1895,7 @@ ${ld.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script
 <link rel="icon" href="/assets/favicon.svg?v=fa41229e" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png?v=6ae0fb7f" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/favicon-180.png?v=0ecf9df9">
-<link rel="stylesheet" href="/styles.css?v=c3f040ae">
+<link rel="stylesheet" href="/styles.css?v=42c86c58">
 <link rel="stylesheet" href="/home.css?v=d5e4df2c">
 <link rel="stylesheet" href="/learn/learn.css?v=8e2f7fb2">
 </head>

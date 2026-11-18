@@ -140,6 +140,8 @@ const NAV = `<header class="nav" id="nav">
 /* The offer, straight after the hero: pay, and the site is built for
    you from the page you already have. Trade and local pages send it to
    /join; the feature and One pages pass their own plan. */
+const TICK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
 function joinCta(href, label, micro) {
   return `<section class="section pt0">
   <div class="wrap center">
@@ -246,25 +248,32 @@ ${JSON.stringify({
 
 ${NAV}<section class="page-hero">
   <div class="wrap center">
+    <!-- The clear order every hero follows: what this isn't, the outcome,
+         a few ticks to scan, then one button. -->
+    <p class="hx-pill reveal">Not a website builder. We build it for you.</p>
     <h1 class="reveal">${b.h1}</h1>
     <p class="lede reveal">${lines(b.lede)}</p>
-${b.heroNote ? `    <p class="micro reveal hero-note">${b.heroNote}</p>
-` : ''}${EXAMPLE_SLUGS.includes(b.slug) ? `    <p class="micro reveal hero-example"><a href="/examples/${b.slug}">See an example website for ${b.title.toLowerCase()} &rsaquo;</a></p>
-` : ''}    <p class="by-line reveal"><span>Designed and built by <b>our team</b>, specifically to get your business more customers online.</span></p>
+${b.trust ? `    <ul class="hx-ticks hx-row reveal">${b.trust.map((x) => `<li>${TICK}${x}</li>`).join('')}</ul>
+` : ''}    <div class="cta-row reveal">
+      <a class="btn btn-primary" href="#join">Get started, &pound;9.99 a month &rsaquo;</a>
+    </div>
+    <p class="micro reveal">${b.trustLine || 'Built for you from the page you already have, live within 24 hours.'}${EXAMPLE_SLUGS.includes(b.slug) ? ` <a href="/examples/${b.slug}">See an example website for ${b.title.toLowerCase()} &rsaquo;</a>` : ''}</p>
+  </div>
+</section>
 
-    <!-- A request being typed, as this trade would type it. Decorative: the
-         copy around it says the same things, so screen readers skip the
-         animation rather than hearing it letter by letter. -->
+<!-- A request being typed, as this trade would type it. Decorative: the
+     copy around it says the same things, so screen readers skip the
+     animation rather than hearing it letter by letter. -->
+<section class="section pt0">
+  <div class="wrap center">
+    <p class="by-line reveal"><span>Designed and built by <b>our team</b>, specifically to get your business more customers online.</span></p>
     <div class="typebox reveal" aria-hidden="true">
       <span class="typebox-text" id="typeDemo" data-lines="${JSON.stringify(b.lines).replace(/"/g, '&quot;')}"></span>
       <span class="typebox-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></svg></span>
     </div>
-${b.trust ? `    <ul class="assure trust reveal">${b.trust.map((t) => `<li>${t}</li>`).join('')}</ul>
-    <p class="micro reveal trust-line">${b.trustLine}</p>
-` : ''}  </div>
+  </div>
 </section>
 
-${joinCta()}
 <section class="section pt0">
   <div class="wrap center">
     <h2 class="reveal">What your site can do.</h2>
@@ -701,12 +710,12 @@ ${nav}<!-- 1. The promise, the price, the ask. -->
       <span class="max-app-pill">ONE</span>
     </div>
     <p class="hero-pill reveal">${m.name}</p>
-    <h1 class="reveal">${m.promise}</h1>
-    <p class="lede reveal">&pound;349 a month. No setup fee. Your website ready in 7 to 14 days.</p>
-    <div class="cta-row reveal">
+    <h1 class="reveal">${m.h1 || m.promise}</h1>
+${m.ticks ? `    <ul class="hx-ticks reveal">${m.ticks.map((x) => `<li>${TICK}${x}</li>`).join('')}</ul>
+` : ''}    <div class="cta-row reveal">
       <a class="btn btn-primary" href="${start}">Start ${m.name} &rsaquo;</a>
-      <a class="btn btn-ghost" href="/plans">All the plans</a>
     </div>
+    <p class="micro reveal">&pound;349 a month, everything included. No setup fee, no contract. <a href="/plans">All the plans</a></p>
     <p class="fineprint reveal">${MAX.adDeal(m)}</p>
   </div>
 </section>
