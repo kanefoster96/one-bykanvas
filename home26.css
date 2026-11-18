@@ -271,6 +271,10 @@ input[type=range]:active::-webkit-slider-thumb{scale:1.15}
 .h-bonus .h-rows li.h-tot span:last-child{color:var(--h-fg)}
 @media (max-width:480px){.h-rows li{font-size:14.5px}}
 
+/* What a club owner says before Kanvas One, above what changes. */
+.h-card .h-pain{margin-top:18px;font-size:15.5px;font-weight:500;line-height:1.45;color:#c9cdd2}
+.h-card .h-pain + h3{margin-top:10px}
+
 /* ---------- Less motion ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
